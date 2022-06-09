@@ -9,13 +9,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b3 Python/3.10.4 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b2 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://foo.api.adu.microsoft.com/deviceUpdate/bar/updates/providers/foo/names/bar/versions/1.2?api-version=2022-07-01-preview
+    uri: https://foo.api.adu.microsoft.com/deviceupdate/bar/updates/providers/foo/names/bar/versions/1.2?api-version=2021-06-01-preview
   response:
     body:
       string: '{"type":"https://tools.ietf.org/html/rfc7231#section-6.5.4","title":"Not
-        Found","status":404,"traceId":"00-3b9c2c64e8544c4b931c63a6fd2d0675-09f188f031e08e4e-00"}'
+        Found","status":404,"traceId":"00-68af65196255e84bac717b9b6bd64fca-1ae531b4f72d8a42-00"}'
     headers:
       cache-control:
       - max-age=60, private
@@ -24,9 +24,11 @@ interactions:
       content-type:
       - application/problem+json; charset=utf-8
       date:
-      - Tue, 07 Jun 2022 20:01:16 GMT
+      - Thu, 09 Jun 2022 23:56:16 GMT
+      mise-correlation-id:
+      - 8d1ccc91-c152-49db-8cd8-723a63f7958e
       traceparent:
-      - 00-3b9c2c64e8544c4b931c63a6fd2d0675-f35b9426c7a65545-00
+      - 00-68af65196255e84bac717b9b6bd64fca-fda40988b13bcc4e-00
     status:
       code: 404
       message: Not Found

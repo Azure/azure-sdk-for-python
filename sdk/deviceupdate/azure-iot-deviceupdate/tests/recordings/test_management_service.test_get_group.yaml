@@ -14,20 +14,22 @@ interactions:
     uri: https://foo.api.adu.microsoft.com/deviceupdate/bar/management/groups/foo?api-version=2021-06-01-preview
   response:
     body:
-      string: "{\r\n  \"type\": \"https://tools.ietf.org/html/rfc7231#section-6.5.4\",\r\n
-        \ \"title\": \"Not Found\",\r\n  \"status\": 404,\r\n  \"traceId\": \"00-2e9b00fc3887824f9543aafc68568afb-3999e1429519594b-00\"\r\n}"
+      string: "{\r\n  \"deploymentId\": \"test0609070108\",\r\n  \"groupId\": \"foo\",\r\n
+        \ \"tags\": [\r\n    \"foo\"\r\n  ],\r\n  \"createdDateTime\": \"2022-01-12T01:10:50.868+00:00\",\r\n
+        \ \"groupType\": \"DeviceClassIdAndIoTHubTag\",\r\n  \"deviceCount\": 1,\r\n
+        \ \"deviceClassId\": \"0919e3ae422a2bfa8c84ff905813e60351e456d1\"\r\n}"
     headers:
       content-length:
-      - '183'
+      - '296'
       content-type:
-      - application/problem+json; charset=utf-8
+      - application/json; charset=utf-8
       date:
       - Thu, 09 Jun 2022 23:56:31 GMT
       mise-correlation-id:
-      - ef162616-4644-4b82-8f6f-47540a4167c4
+      - bc2d7b13-7c86-440c-a992-d69b02d5e789
       traceparent:
-      - 00-2e9b00fc3887824f9543aafc68568afb-65c7e74d4d134748-00
+      - 00-424bb9e093005647866624496b3bc5af-4009c1e4d4bff744-00
     status:
-      code: 404
-      message: Not Found
+      code: 200
+      message: OK
 version: 1

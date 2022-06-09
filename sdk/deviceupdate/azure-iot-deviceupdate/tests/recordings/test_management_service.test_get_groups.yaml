@@ -1,0 +1,51 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b2 Python/3.10.4 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://foo.api.adu.microsoft.com/deviceupdate/bar/management/groups?api-version=2021-06-01-preview
+  response:
+    body:
+      string: "{\r\n  \"value\": [\r\n    {\r\n      \"deploymentId\": \"test20211117112017\",\r\n
+        \     \"groupId\": \"testgroup\",\r\n      \"tags\": [\r\n        \"testgroup\"\r\n
+        \     ],\r\n      \"createdDateTime\": \"2021-11-16T00:49:25.141+00:00\",\r\n
+        \     \"groupType\": \"DeviceClassIdAndIoTHubTag\",\r\n      \"deviceCount\":
+        1,\r\n      \"deviceClassId\": \"0919e3ae422a2bfa8c84ff905813e60351e456d1\"\r\n
+        \   },\r\n    {\r\n      \"deploymentId\": \"test1118014304\",\r\n      \"groupId\":
+        \"dpokluda-edgevm\",\r\n      \"tags\": [\r\n        \"dpokluda-edgevm\"\r\n
+        \     ],\r\n      \"createdDateTime\": \"2021-11-17T22:57:28.78+00:00\",\r\n
+        \     \"groupType\": \"DeviceClassIdAndIoTHubTag\",\r\n      \"deviceCount\":
+        0,\r\n      \"deviceClassId\": \"0919e3ae422a2bfa8c84ff905813e60351e456d1\"\r\n
+        \   },\r\n    {\r\n      \"deploymentId\": \"test0609070108\",\r\n      \"groupId\":
+        \"foo\",\r\n      \"tags\": [\r\n        \"foo\"\r\n      ],\r\n      \"createdDateTime\":
+        \"2022-01-12T01:10:50.868+00:00\",\r\n      \"groupType\": \"DeviceClassIdAndIoTHubTag\",\r\n
+        \     \"deviceCount\": 1,\r\n      \"deviceClassId\": \"0919e3ae422a2bfa8c84ff905813e60351e456d1\"\r\n
+        \   },\r\n    {\r\n      \"deploymentId\": \"joegroup-2022-128-1751-30-0129015341\",\r\n
+        \     \"groupId\": \"joegroup\",\r\n      \"tags\": [\r\n        \"joegroup\"\r\n
+        \     ],\r\n      \"createdDateTime\": \"2022-01-29T00:57:40.152+00:00\",\r\n
+        \     \"groupType\": \"DeviceClassIdAndIoTHubTag\",\r\n      \"deviceCount\":
+        1,\r\n      \"deviceClassId\": \"0919e3ae422a2bfa8c84ff905813e60351e456d1\"\r\n
+        \   }\r\n  ]\r\n}"
+    headers:
+      content-length:
+      - '1405'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 09 Jun 2022 23:56:32 GMT
+      mise-correlation-id:
+      - 7a58733f-a3a4-44e5-9aa8-4606ffceb0a3
+      traceparent:
+      - 00-ec75342e5d14e648938867198d5182b0-1a95205a73497444-00
+    status:
+      code: 200
+      message: OK
+version: 1

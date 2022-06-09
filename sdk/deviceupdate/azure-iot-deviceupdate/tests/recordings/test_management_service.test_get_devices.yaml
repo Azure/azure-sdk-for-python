@@ -9,22 +9,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b3 Python/3.10.4 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b2 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://foo.api.adu.microsoft.com/deviceUpdate/bar/management/devices?api-version=2022-07-01-preview
+    uri: https://foo.api.adu.microsoft.com/deviceupdate/bar/management/devices?api-version=2021-06-01-preview
   response:
     body:
-      string: '{"value":[{"deviceId":"adu-sdk-test-device-1","deviceClassId":"0919e3ae422a2bfa8c84ff905813e60351e456d1","groupId":"testgroup","onLatestUpdate":false,"deploymentStatus":"Succeeded","lastInstallResult":{"resultCode":700,"extendedResultCode":0,"resultDetails":""}},{"deviceId":"joseph-edgevm2","deviceClassId":"0919e3ae422a2bfa8c84ff905813e60351e456d1","groupId":"joegroup","installedUpdate":{"updateId":{"provider":"foo","name":"bar","version":"2022.128.1751.30"}},"onLatestUpdate":false,"lastAttemptedUpdate":{"updateId":{"provider":"foo","name":"bar","version":"2022.128.1751.30"}},"deploymentStatus":"Succeeded","lastDeploymentId":"joegroup-2022-128-1751-30-0129015341","lastInstallResult":{"resultCode":700,"extendedResultCode":0,"resultDetails":""}},{"deviceId":"foo","deviceClassId":"0919e3ae422a2bfa8c84ff905813e60351e456d1","groupId":"foo","installedUpdate":{"updateId":{"provider":"foo","name":"bar","version":"2022.131.655.39"}},"onLatestUpdate":false,"lastAttemptedUpdate":{"updateId":{"provider":"foo","name":"bar","version":"2022.131.655.39"}},"deploymentStatus":"Succeeded","lastDeploymentId":"test0201031705","lastInstallResult":{"resultCode":700,"extendedResultCode":0,"resultDetails":"apply
-        success"}}]}'
+      string: '{"value":[{"deviceId":"adu-sdk-test-device-1","deviceClassId":"0919e3ae422a2bfa8c84ff905813e60351e456d1","manufacturer":"foo","model":"bar","lastAttemptedUpdateId":null,"installedUpdateId":null,"onLatestUpdate":false,"deploymentStatus":"Succeeded","groupId":"testgroup","lastDeploymentId":null,"lastInstallResult":{"resultCode":700,"extendedResultCode":0,"resultDetails":""}},{"deviceId":"joseph-edgevm2","deviceClassId":"0919e3ae422a2bfa8c84ff905813e60351e456d1","manufacturer":"foo","model":"bar","lastAttemptedUpdateId":{"provider":"foo","name":"bar","version":"2022.128.1751.30"},"installedUpdateId":{"provider":"foo","name":"bar","version":"2022.128.1751.30"},"onLatestUpdate":false,"deploymentStatus":"Succeeded","groupId":"joegroup","lastDeploymentId":"joegroup-2022-128-1751-30-0129015341","lastInstallResult":{"resultCode":700,"extendedResultCode":0,"resultDetails":""}},{"deviceId":"foo","deviceClassId":"0919e3ae422a2bfa8c84ff905813e60351e456d1","manufacturer":"foo","model":"bar","lastAttemptedUpdateId":{"provider":"foo","name":"bar","version":"2022.608.554.1"},"installedUpdateId":null,"onLatestUpdate":false,"deploymentStatus":"Failed","groupId":"foo","lastDeploymentId":"test0609070108","lastInstallResult":{"resultCode":0,"extendedResultCode":805306371,"resultDetails":""}}]}'
     headers:
       content-length:
-      - '1271'
+      - '1360'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 07 Jun 2022 20:01:06 GMT
+      - Thu, 09 Jun 2022 23:56:30 GMT
+      mise-correlation-id:
+      - 8dddb546-20f5-4f9f-9895-a6a274784480
       traceparent:
-      - 00-cce6772bc9a78747958560920afed354-49c50825c7c18c47-00
+      - 00-281452a9f6fe334bb5df504f75327112-2f1048d4929c074e-00
     status:
       code: 200
       message: OK

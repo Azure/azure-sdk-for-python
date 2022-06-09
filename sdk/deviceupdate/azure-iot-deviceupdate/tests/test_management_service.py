@@ -38,7 +38,7 @@ class DeviceUpdateSmokeTest(DeviceUpdateTest):
             self.assertEqual(404, e.status_code)
 
     @DeviceUpdatePowerShellPreparer()
-    def _test_get_groups(
+    def test_get_groups(
             self,
             deviceupdate_endpoint,
             deviceupdate_instance_id
@@ -52,7 +52,7 @@ class DeviceUpdateSmokeTest(DeviceUpdateTest):
             self.assertEqual(404, e.status_code)
 
     @DeviceUpdatePowerShellPreparer()
-    def _test_get_group(
+    def test_get_group(
             self,
             deviceupdate_endpoint,
             deviceupdate_instance_id,
