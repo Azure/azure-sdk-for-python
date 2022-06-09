@@ -69,5 +69,6 @@ setup(
         "azure-core<2.0.0,>=1.23.0",
         "msrest>=0.6.21",
         'azure-common~=1.1',
+        "typing-extensions>=4.0.1",
     ],
 )
