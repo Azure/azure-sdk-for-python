@@ -8,7 +8,7 @@ from azure.maps.search import SearchClient
 from azure.maps.search.models import LatLon, StructuredAddress
 
 
-
+# cSpell:disable
 class HeaderReplacer(RecordingProcessor):
     def __init__(self):
         self.headers = []
@@ -25,7 +25,7 @@ class HeaderReplacer(RecordingProcessor):
         return request
 
 
-
+# cSpell:disable
 class AzureMapsSearchClientE2ETest(AzureTestCase):
     def __init__(self, *args, **kwargs):
         super(AzureMapsSearchClientE2ETest, self).__init__(*args, **kwargs)

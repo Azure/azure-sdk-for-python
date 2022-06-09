@@ -147,9 +147,7 @@ class SearchClient(object):
         :keyword int max_fuzzy_level: Maximum fuzziness level to be used. Default: 2, minimum: 1 and maximum:
          4
         :keyword index_filter: A comma separated list of indexes which should be utilized for the search.
-         Item order does not matter. Available indexes are: Addr = Address range interpolation, Geo =
-         Geographies, PAD = Point Addresses, POI = Points of interest, Str = Streets, Xstr = Cross
-         Streets (intersections).
+         Item order does not matter.
         :paramtype index_filter: list[str or ~azure.maps.search.models.SearchIndexes]
         :keyword list[str] brand_filter: A comma-separated list of brand names which could be used to restrict the
          result to specific brands. Item order does not matter. When multiple brands are provided, only
@@ -285,7 +283,7 @@ class SearchClient(object):
          maximum: 100.
         :keyword int heading: The directional heading of the vehicle in degrees, for travel along a segment
          of roadway. 0 is North, 90 is East and so on, values range from -360 to 360. The precision can
-         include upto one decimal place.
+         include up to one decimal place.
         :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
         :keyword str language: Language in which search results should be returned. Should be one of
@@ -411,9 +409,7 @@ class SearchClient(object):
          the results.
         :paramtype extended_postal_codes_for: list[str or ~azure.maps.search.models.SearchIndexes]
         :keyword index_filter: A comma separated list of indexes which should be utilized for the search.
-         Item order does not matter. Available indexes are: Addr = Address range interpolation, Geo =
-         Geographies, PAD = Point Addresses, POI = Points of interest, Str = Streets, Xstr = Cross
-         Streets (intersections).
+         Item order does not matter.
         :paramtype index_filter: list[str or ~azure.maps.search.models.SearchIndexes]
         :keyword localized_map_view: The View parameter (also called the "user region" parameter) allows
          you to show the correct maps for a certain country/region for geopolitically disputed regions.

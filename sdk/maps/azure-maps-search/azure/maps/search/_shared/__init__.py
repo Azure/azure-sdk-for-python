@@ -1,6 +1,4 @@
 
-from .._generated.models import *
-
 from .models import (
     LatLon,
     BoundingBox

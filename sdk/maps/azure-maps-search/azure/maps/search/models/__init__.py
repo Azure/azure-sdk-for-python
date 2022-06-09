@@ -24,8 +24,6 @@ from ._models import (
 
 
 __all__ = [
-    'SearchClient',
-    'GeoJsonObject',
     'BatchRequest',
     'LatLon',
     'AddressRanges',

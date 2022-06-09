@@ -1,4 +1,4 @@
-import os
+
 import sys
 import pytest
 try:
@@ -14,7 +14,7 @@ from azure.maps.search import SearchClient
 from azure.maps.search.models import LatLon, StructuredAddress
 
 
-
+# cSpell:disable
 class MockTransport(HttpTransport):
     def __init__(self, status_code, body, **kwargs):
         self.status_code = status_code

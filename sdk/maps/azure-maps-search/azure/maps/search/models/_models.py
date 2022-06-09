@@ -1,5 +1,6 @@
+# pylint: disable=unused-import,ungrouped-imports
 from typing import List, Optional
-from .._generated.models import PointOfInterest, Address, EntryPoint, AddressRanges, DataSource, ReverseSearchAddressResultItem, ReverseSearchAddressBatchItem, BatchResultSummary
+from .._generated.models import PointOfInterest, DataSource, ReverseSearchAddressBatchItem, BatchResultSummary
 
 class LatLon(object):
 
@@ -19,8 +20,7 @@ class LatLon(object):
     def lat(self, value: float) -> None:
         if not isinstance(value, float):
             raise TypeError(f'lat.setter(): got {type(value).__name__} but expected type is float')
-        else:
-            self._lat = value
+        self._lat = value
 
     @property
     def lon(self) -> float:
@@ -30,8 +30,7 @@ class LatLon(object):
     def lon(self, value: float) -> None:
         if not isinstance(value, float):
             raise TypeError(f'lon.setter(): got {type(value).__name__} but expected type is float')
-        else:
-            self._lon = value
+        self._lon = value
 
 class BoundingBox(object):
 
@@ -85,8 +84,7 @@ class StructuredAddress(object):
     def country_code(self, value: str) -> None:
         if not isinstance(value, str):
             raise TypeError(f'country_code.setter(): got {type(value).__name__} but expected type is string')
-        else:
-            self._country_code = value
+        self._country_code = value
 
     @property
     def cross_street(self) -> str:
@@ -96,8 +94,7 @@ class StructuredAddress(object):
     def cross_street(self, value: str) -> None:
         if not isinstance(value, str):
             raise TypeError(f'cross_street.setter(): got {type(value).__name__} but expected type is string')
-        else:
-            self._cross_street = value
+        self._cross_street = value
 
     @property
     def street_number(self) -> str:
@@ -107,8 +104,7 @@ class StructuredAddress(object):
     def street_number(self, value) -> None:
         if not isinstance(value, str):
             raise TypeError(f'street_number.setter(): got {type(value).__name__} but expected type is string')
-        else:
-            self._street_number = value
+        self._street_number = value
 
     @property
     def street_name(self) -> str:
@@ -118,8 +114,7 @@ class StructuredAddress(object):
     def street_name(self, value: str) -> None:
         if not isinstance(value, str):
             raise TypeError(f'street_name.setter(): got {type(value).__name__} but expected type is string')
-        else:
-            self._street_name = value
+        self._street_name = value
 
     @property
     def municipality(self) -> str:
@@ -129,8 +124,7 @@ class StructuredAddress(object):
     def municipality(self, value: str) -> None:
         if not isinstance(value, str):
             raise TypeError(f'municipality.setter(): got {type(value).__name__} but expected type is string')
-        else:
-            self._municipality = value
+        self._municipality = value
 
     @property
     def municipality_subdivision(self) -> str:
@@ -140,8 +134,7 @@ class StructuredAddress(object):
     def municipality_subdivision(self, value: str) -> None:
         if not isinstance(value, str):
             raise TypeError(f'municipality_subdivision.setter(): got {type(value).__name__} but expected type is string')
-        else:
-            self._municipality_subdivision = value
+        self._municipality_subdivision = value
 
     @property
     def country_tertiary_subdivision(self) -> str:
@@ -151,8 +144,7 @@ class StructuredAddress(object):
     def country_tertiary_subdivision(self, value: str) -> None:
         if not isinstance(value, str):
             raise TypeError(f'country_tertiary_subdivision.setter(): got {type(value).__name__} but expected type is string')
-        else:
-            self._country_tertiary_subdivision = value
+        self._country_tertiary_subdivision = value
 
     @property
     def country_secondary_subdivision(self) -> str:
@@ -162,8 +154,7 @@ class StructuredAddress(object):
     def country_secondary_subdivision(self, value: str) -> None:
         if not isinstance(value, str):
             raise TypeError(f'country_secondary_subdivision.setter(): got {type(value).__name__} but expected type is string')
-        else:
-            self._country_secondary_subdivision = value
+        self._country_secondary_subdivision = value
 
     @property
     def country_subdivision(self) -> str:
@@ -184,8 +175,7 @@ class StructuredAddress(object):
     def postal_code(self, value: str) -> None:
         if not isinstance(value, str):
             raise TypeError(f'postal_code.setter(): got {type(value).__name__} but expected type is string')
-        else:
-            self._postal_code = value
+        self._postal_code = value
 
 
 class SearchSummary(object):
@@ -214,7 +204,6 @@ class SearchSummary(object):
 
 
 class AddressRanges(object):
-
     def __init__(
         self,
         range_left: str = None,
@@ -222,18 +211,17 @@ class AddressRanges(object):
         from_property: LatLon = None,
         to_: LatLon = None
     ):
-        self.range_left = range_left,
-        self.range_right = range_right,
+        self.range_left = range_left
+        self.range_right = range_right
         self.from_property = LatLon() if not from_property else LatLon(
             from_property.lat, from_property.lon
-        ),
+        )
         self.to =  LatLon() if not to_ else LatLon(
             to_.lat, to_.lon
         )
 
 
 class EntryPoint(object):
-    
     def __init__(
         self,
         type: str = None,

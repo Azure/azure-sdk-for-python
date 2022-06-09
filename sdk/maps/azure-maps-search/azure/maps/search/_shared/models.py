@@ -1,6 +1,4 @@
-from typing import List, Optional
-from .._generated.models import *
-
+# pylint: disable=unused-import,ungrouped-imports
 class LatLon(object):
 
     def __init__(
