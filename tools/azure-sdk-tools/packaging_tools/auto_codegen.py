@@ -6,7 +6,7 @@ from subprocess import check_call
 
 from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE, CONFIG_FILE_DPG
 from .generate_sdk import generate
-from .generate_utils import get_package_names, init_new_service, update_servicemetadata, judge_tag_preview
+from .generate_utils import get_package_names, init_new_service, update_servicemetadata, judge_tag_preview, generate_dpg
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -23,7 +23,10 @@ def main(generate_input, generate_output):
         relative_path_readme = str(Path(spec_folder, input_readme))
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
         config_file = CONFIG_FILE if 'resource-manager' in input_readme else CONFIG_FILE_DPG
-        config = generate(config_file, sdk_folder, [], relative_path_readme, spec_folder, force_generation=True)
+        if 'resource-manager' in input_readme:
+            config = generate(CONFIG_FILE, sdk_folder, [], relative_path_readme, spec_folder, force_generation=True)
+        else:
+            generate_dpg(input_readme, data.get('autorestConfig', ''))
         package_names = get_package_names(sdk_folder)
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 

@@ -6,7 +6,9 @@ import re
 from azure_devtools.ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
 from subprocess import check_call
-from typing import List
+from typing import List, Union
+from glob import glob
+import yaml
 
 from .swaggertosdk.autorest_tools import build_autorest_options
 
@@ -126,3 +128,74 @@ def judge_tag_preview(path: str) -> bool:
 
     _LOGGER.info(f'find single api version:{api_version}')
     return 'preview' in api_version
+
+
+def extract_yaml_content(autorest_config: str) -> str:
+    num = []
+    content = autorest_config.split('\r\n')
+    for i in range(len(content)):
+        if "```" in content[i]:
+            num.append(i)
+    if len(num) != 2:
+        raise Exception(f"autorestConfig content is not valid: {autorest_config}")
+    return '\n'.join(content[num[0] + 1: num[1]])
+
+
+def add_yaml_title(content: str, annotation: str = "", tag: str = "") -> str:
+    return f"{annotation}\n\n" + f"``` yaml {tag}\n" + content + "```\n"
+
+
+def generate_dpg_config(autorest_config: str) -> str:
+    # remove useless lines
+    autorest_config = extract_yaml_content(autorest_config)
+    _LOGGER.info(f"autoresConfig after remove useles lines:\n{autorest_config}")
+
+    # make dir if not exist
+    origin_config = yaml.safe_load(autorest_config)
+    _LOGGER.info(f"autoresConfig: {origin_config}")
+    swagger_folder = str(Path(origin_config["output-folder"], "swagger"))
+    if not os.path.exists(swagger_folder):
+        os.makedirs(swagger_folder)
+
+    # generate autorest configuration
+    package_name = Path(origin_config["output-folder"]).parts[-1]
+    readme_content = {
+        "package-name": package_name,
+        "license-header": "MICROSOFT_MIT_NO_VERSION",
+        "clear-output-folder": True,
+        "no-namespace-folders": True,
+        "version-tolerant": True,
+        "package-version": "1.0.0b1",
+        "require": ["../../../../azure-rest-api-specs/" + line for line in origin_config["require"]],
+        "output-folder": "../" + package_name.replace('-', '/'),
+        "namespace": package_name.replace('-', '.')
+    }
+
+    # output autorest configuration
+    swagger_readme = str(Path(swagger_folder, "README.md"))
+    with open(swagger_readme, "w") as file:
+        file.write(add_yaml_title(yaml.safe_dump(readme_content)))
+    return swagger_readme
+
+
+def lookup_swagger_readme(rest_readme_path: str) -> str:
+    all_swagger_readme = glob(str(Path('sdk/*/*/swagger/README.md')))
+    for readme in all_swagger_readme:
+        with open(readme, 'r') as file:
+            content = file.read()
+            if rest_readme_path in content:
+                return readme
+    return ""
+
+
+def generate_dpg(rest_readme_path: str, autorest_config: str):
+    if autorest_config:
+        swagger_readme = generate_dpg_config(autorest_config)
+    else:
+        swagger_readme = lookup_swagger_readme(rest_readme_path)
+    if not swagger_readme:
+        return
+
+    # extract global config
+
+    # generate code
