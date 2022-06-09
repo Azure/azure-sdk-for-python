@@ -212,7 +212,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mixedreality-authentication azure-core<2.0.0,>=1.4.0
 #override azure-iot-deviceupdate azure-core<2.0.0,>=1.20.1
 #override azure-template azure-core<2.0.0,>=1.10.0
-#override azure-purview-catalog azure-core<2.0.0,>=1.20.1
+#override azure-purview-catalog azure-core<2.0.0,>=1.23.0
 #override azure-purview-scanning azure-core<2.0.0,>=1.18.0
 #override azure-purview-account azure-core<2.0.0,>=1.16.0
 #override azure-purview-administration azure-core<2.0.0,>=1.18.0
