@@ -142,7 +142,9 @@ def extract_yaml_content(autorest_config: str) -> str:
 
 
 def add_yaml_title(content: str, annotation: str = "", tag: str = "") -> str:
-    return f"{annotation}\n\n" + f"``` yaml {tag}\n" + content + "```\n"
+    if annotation:
+        annotation = f"{annotation}\n\n"
+    return f"# autorest configuration for Python\n\n{annotation}" + f"``` yaml {tag}\n" + content + "```\n"
 
 
 def generate_dpg_config(autorest_config: str) -> str:
@@ -166,7 +168,7 @@ def generate_dpg_config(autorest_config: str) -> str:
         "no-namespace-folders": True,
         "version-tolerant": True,
         "package-version": "1.0.0b1",
-        "require": ["../../../../azure-rest-api-specs/" + line for line in origin_config["require"]],
+        "require": ["../../../../../azure-rest-api-specs/" + line for line in origin_config["require"]],
         "output-folder": "../" + package_name.replace('-', '/'),
         "namespace": package_name.replace('-', '.')
     }
