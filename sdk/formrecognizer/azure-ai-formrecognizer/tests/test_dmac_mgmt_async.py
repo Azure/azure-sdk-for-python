@@ -43,7 +43,9 @@ class TestManagementAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
-    async def test_dmac_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+    async def test_dmac_auth_bad_key(self, **kwargs):
+        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
+        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with pytest.raises(ClientAuthenticationError):
             async with client:
@@ -84,7 +86,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_account_info(self, client):
+    async def test_account_info(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             info = await client.get_account_info()
 
@@ -94,7 +97,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_get_model_prebuilt(self, client):
+    async def test_get_model_prebuilt(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             model = await client.get_model("prebuilt-invoice")
             assert model.model_id == "prebuilt-invoice"
@@ -111,7 +115,9 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_mgmt_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    async def test_mgmt_model(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -146,7 +152,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_get_list_operations(self, client):
+    async def test_get_list_operations(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             operations = client.list_operations()
             successful_op = None
@@ -208,7 +215,9 @@ class TestManagementAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
-    async def test_get_document_analysis_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+    async def test_get_document_analysis_client(self, **kwargs):
+        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
+        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"

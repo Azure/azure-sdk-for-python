@@ -29,7 +29,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
-    async def test_account_properties_v2(self, client):
+    async def test_account_properties_v2(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             properties = await client.get_account_properties()
 
@@ -40,7 +41,9 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
-    async def test_mgmt_model_labeled_v2(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
+    async def test_mgmt_model_labeled_v2(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url_v2 = kwargs.pop("formrecognizer_storage_container_sas_url_v2")
         async with client:
             poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True)
             labeled_model_from_train = await poller.result()
@@ -78,7 +81,9 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
-    async def test_mgmt_model_unlabeled_v2(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
+    async def test_mgmt_model_unlabeled_v2(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url_v2 = kwargs.pop("formrecognizer_storage_container_sas_url_v2")
         async with client:
             poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
             unlabeled_model_from_train = await poller.result()
@@ -113,7 +118,9 @@ class TestManagementAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
-    async def test_get_form_recognizer_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+    async def test_get_form_recognizer_client(self, **kwargs):
+        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
+        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"

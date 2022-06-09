@@ -38,7 +38,9 @@ class TestChallengeAuth(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",only_default_version)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
-    async def test_multitenant_authentication(self, client, is_hsm, **kwargs):
+    async def test_multitenant_authentication(self, **kwargs):
+        client = kwargs.pop("client")
+        is_hsm = kwargs.pop("is_hsm")
         if not self.is_live:
             pytest.skip("This test is incompatible with vcrpy in playback")
 

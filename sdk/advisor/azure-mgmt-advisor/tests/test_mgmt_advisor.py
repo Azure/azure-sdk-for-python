@@ -164,7 +164,8 @@ class TestMgmtAdvisor(AzureMgmtRecordedTestCase):
 
     @ResourceGroupPreparer()
     @recorded_by_proxy
-    def test_configurations_resourcegroup(self, resource_group):
+    def test_configurations_resourcegroup(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         resourceGroupName = resource_group.name
         configurationName = "default"
 

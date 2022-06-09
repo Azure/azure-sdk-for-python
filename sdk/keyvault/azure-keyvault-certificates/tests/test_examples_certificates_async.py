@@ -44,7 +44,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @AsyncCertificatesClientPreparer(logging_enable = True)
     @recorded_by_proxy_async
-    async def test_example_certificate_crud_operations(self, certificate_client, **kwargs):
+    async def test_example_certificate_crud_operations(self, **kwargs):
+        certificate_client = kwargs.pop("certificate_client")
         cert_name = self.get_resource_name("cert-name")
 
         # [START create_certificate]
@@ -117,7 +118,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @AsyncCertificatesClientPreparer(logging_enable = True)
     @recorded_by_proxy_async
-    async def test_example_certificate_list_operations(self, certificate_client, **kwargs):
+    async def test_example_certificate_list_operations(self, **kwargs):
+        certificate_client = kwargs.pop("certificate_client")
         # specify the certificate policy
         cert_policy = CertificatePolicy(
             issuer_name=WellKnownIssuerNames.self,
@@ -177,7 +179,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", exclude_2016_10_01)
     @AsyncCertificatesClientPreparer(logging_enable = True)
     @recorded_by_proxy_async
-    async def test_example_certificate_backup_restore(self, certificate_client, **kwargs):
+    async def test_example_certificate_backup_restore(self, **kwargs):
+        certificate_client = kwargs.pop("certificate_client")
         # specify the certificate policy
         cert_policy = CertificatePolicy(
             issuer_name=WellKnownIssuerNames.self,
@@ -224,7 +227,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @AsyncCertificatesClientPreparer(logging_enable = True)
     @recorded_by_proxy_async
-    async def test_example_certificate_recover(self, certificate_client, **kwargs):
+    async def test_example_certificate_recover(self, **kwargs):
+        certificate_client = kwargs.pop("certificate_client")
         # specify the certificate policy
         cert_policy = CertificatePolicy(
             issuer_name=WellKnownIssuerNames.self,
@@ -263,7 +267,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @AsyncCertificatesClientPreparer(logging_enable = True)
     @recorded_by_proxy_async
-    async def test_example_contacts(self, certificate_client, **kwargs):
+    async def test_example_contacts(self, **kwargs):
+        certificate_client = kwargs.pop("certificate_client")
         # [START set_contacts]
         from azure.keyvault.certificates import CertificateContact
 
@@ -303,7 +308,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @AsyncCertificatesClientPreparer(logging_enable = True)
     @recorded_by_proxy_async
-    async def test_example_issuers(self, certificate_client, **kwargs):
+    async def test_example_issuers(self, **kwargs):
+        certificate_client = kwargs.pop("certificate_client")
         # [START create_issuer]
         from azure.keyvault.certificates import AdministratorContact
 

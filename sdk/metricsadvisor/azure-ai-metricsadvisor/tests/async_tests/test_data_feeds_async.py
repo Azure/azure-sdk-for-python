@@ -44,7 +44,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_create_simple_data_feed(self, client, variables):
+    async def test_create_simple_data_feed(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         data_feed_name = self.create_random_name("testfeed")
         if self.is_live:
             variables["data_feed_name"] = data_feed_name
@@ -80,7 +82,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_create_data_feed_from_sql_server(self, client, variables):
+    async def test_create_data_feed_from_sql_server(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
 
         data_feed_name = self.create_random_name("testfeed")
         if self.is_live:
@@ -174,7 +178,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_create_data_feed_from_sql_server_with_custom_values(self, client, variables):
+    async def test_create_data_feed_from_sql_server_with_custom_values(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
 
         data_feed_name = self.create_random_name("testfeed")
         if self.is_live:
@@ -272,7 +278,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_create_data_feed_with_azure_table(self, client, variables):
+    async def test_create_data_feed_with_azure_table(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         name = self.create_random_name("tablefeed")
         if self.is_live:
             variables["data_feed_name"] = name
@@ -319,7 +327,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_create_data_feed_with_azure_blob(self, client, variables):
+    async def test_create_data_feed_with_azure_blob(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         name = self.create_random_name("blobfeed")
         if self.is_live:
             variables["data_feed_name"] = name
@@ -366,7 +376,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_create_data_feed_with_azure_cosmos_db(self, client, variables):
+    async def test_create_data_feed_with_azure_cosmos_db(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         name = self.create_random_name("cosmosfeed")
         if self.is_live:
             variables["data_feed_name"] = name
@@ -415,7 +427,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_create_data_feed_with_application_insights(self, client, variables):
+    async def test_create_data_feed_with_application_insights(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         name = self.create_random_name("applicationinsights")
         if self.is_live:
             variables["data_feed_name"] = name
@@ -467,7 +481,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_create_data_feed_with_data_explorer(self, client, variables):
+    async def test_create_data_feed_with_data_explorer(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         name = self.create_random_name("azuredataexplorer")
         if self.is_live:
             variables["data_feed_name"] = name
@@ -514,7 +530,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_create_data_feed_with_influxdb(self, client, variables):
+    async def test_create_data_feed_with_influxdb(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         name = self.create_random_name("influxdb")
         if self.is_live:
             variables["data_feed_name"] = name
@@ -565,7 +583,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_create_data_feed_with_datalake(self, client, variables):
+    async def test_create_data_feed_with_datalake(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         name = self.create_random_name("datalake")
         if self.is_live:
             variables["data_feed_name"] = name
@@ -616,7 +636,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_create_data_feed_with_mongodb(self, client, variables):
+    async def test_create_data_feed_with_mongodb(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         name = self.create_random_name("mongodb")
         if self.is_live:
             variables["data_feed_name"] = name
@@ -663,7 +685,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_create_data_feed_with_mysql(self, client, variables):
+    async def test_create_data_feed_with_mysql(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         name = self.create_random_name("mysql")
         if self.is_live:
             variables["data_feed_name"] = name
@@ -708,7 +732,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_create_data_feed_with_postgresql(self, client, variables):
+    async def test_create_data_feed_with_postgresql(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         name = self.create_random_name("postgresql")
         if self.is_live:
             variables["data_feed_name"] = name
@@ -753,7 +779,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_data_feeds(self, client):
+    async def test_list_data_feeds(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             feeds = client.list_data_feeds()
             feeds_list = []
@@ -765,7 +792,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_data_feeds_with_data_feed_name(self, client):
+    async def test_list_data_feeds_with_data_feed_name(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             feeds = client.list_data_feeds(data_feed_name="azureSqlDatafeed")
             feeds_list = []
@@ -777,7 +805,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_data_feeds_with_skip(self, client):
+    async def test_list_data_feeds_with_skip(self, **kwargs):
+        client = kwargs.pop("client")
         all_feeds = client.list_data_feeds()
         skipped_feeds = client.list_data_feeds(skip=10)
         all_feeds_list = []
@@ -792,7 +821,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_data_feeds_with_status(self, client):
+    async def test_list_data_feeds_with_status(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             feeds = client.list_data_feeds(status="Active")
             feeds_list = []
@@ -804,7 +834,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_data_feeds_with_source_type(self, client):
+    async def test_list_data_feeds_with_source_type(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             feeds = client.list_data_feeds(data_source_type="SqlServer")
             feeds_list = []
@@ -816,7 +847,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_data_feeds_with_granularity_type(self, client):
+    async def test_list_data_feeds_with_granularity_type(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             feeds = client.list_data_feeds(granularity_type="Daily")
             feeds_list = []
@@ -828,7 +860,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True)
     @recorded_by_proxy_async
-    async def test_update_data_feed_with_model(self, client, variables):
+    async def test_update_data_feed_with_model(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         async with client:
             try:
                 update_name = "update" + str(uuid.uuid4())
@@ -884,7 +918,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True)
     @recorded_by_proxy_async
-    async def test_update_data_feed_with_kwargs(self, client, variables):
+    async def test_update_data_feed_with_kwargs(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         async with client:
             try:
                 data_feed = await client.get_data_feed(variables["data_feed_id"])
@@ -943,7 +979,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True)
     @recorded_by_proxy_async
-    async def test_update_data_feed_with_model_and_kwargs(self, client, variables):
+    async def test_update_data_feed_with_model_and_kwargs(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         async with client:
             try:
                 update_name = "update" + str(uuid.uuid4())
@@ -1022,7 +1060,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True)
     @recorded_by_proxy_async
-    async def test_update_data_feed_by_reseting_properties(self, client, variables):
+    async def test_update_data_feed_by_reseting_properties(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         async with client:
             try:
                 data_feed = await client.get_data_feed(variables["data_feed_id"])

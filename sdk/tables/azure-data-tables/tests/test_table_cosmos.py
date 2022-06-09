@@ -22,7 +22,9 @@ TEST_TABLE_PREFIX = 'pytablesync'
 class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
     @cosmos_decorator
     @recorded_by_proxy
-    def test_create_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    def test_create_table(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
 
@@ -38,7 +40,9 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
 
     @cosmos_decorator
     @recorded_by_proxy
-    def test_create_table_fail_on_exist(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    def test_create_table_fail_on_exist(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table_name = self._get_table_reference()
@@ -54,7 +58,9 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
 
     @cosmos_decorator
     @recorded_by_proxy
-    def test_query_tables_per_page(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    def test_query_tables_per_page(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
 
@@ -82,7 +88,9 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
 
     @cosmos_decorator
     @recorded_by_proxy
-    def test_query_tables(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    def test_query_tables(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table = self._create_table(ts)
@@ -98,7 +106,9 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
 
     @cosmos_decorator
     @recorded_by_proxy
-    def test_query_tables_with_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    def test_query_tables_with_filter(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table = self._create_table(ts)
@@ -116,7 +126,9 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
 
     @cosmos_decorator
     @recorded_by_proxy
-    def test_query_tables_with_num_results(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    def test_query_tables_with_num_results(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         prefix = 'listtable'
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
@@ -142,7 +154,9 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
 
     @cosmos_decorator
     @recorded_by_proxy
-    def test_query_tables_with_marker(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    def test_query_tables_with_marker(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         prefix = 'listtable'
@@ -171,7 +185,9 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
 
     @cosmos_decorator
     @recorded_by_proxy
-    def test_delete_table_with_existing_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    def test_delete_table_with_existing_table(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table = self._create_table(ts)
@@ -185,8 +201,9 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
 
     @cosmos_decorator
     @recorded_by_proxy
-    def test_delete_table_with_non_existing_table_fail_not_exist(self, tables_cosmos_account_name,
-                                                                 tables_primary_cosmos_account_key):
+    def test_delete_table_with_non_existing_table_fail_not_exist(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table_name = self._get_table_reference()
@@ -194,7 +211,9 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
         
     @cosmos_decorator
     @recorded_by_proxy
-    def test_create_table_underscore_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    def test_create_table_underscore_name(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table_name = "my_table"
@@ -206,7 +225,9 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
         
     @cosmos_decorator
     @recorded_by_proxy
-    def test_create_table_unicode_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    def test_create_table_unicode_name(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table_name = u'啊齄丂狛狜'

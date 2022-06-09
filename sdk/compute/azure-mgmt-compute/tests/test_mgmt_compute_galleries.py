@@ -72,7 +72,8 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
     @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_compute_galleries(self, resource_group):
+    def test_compute_galleries(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         GALLERY_NAME = self.get_resource_name("galleryname")

@@ -17,7 +17,7 @@ class TestDocumentStatus(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_list_statuses(self, **kwargs):
-        client = kwargs.pop("client")
+                client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         # prepare containers and test data
         blob_data = [Document(data=b'This is some text')]

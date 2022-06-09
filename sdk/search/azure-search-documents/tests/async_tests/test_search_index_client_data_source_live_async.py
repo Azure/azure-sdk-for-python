@@ -33,7 +33,9 @@ class TestSearchClientDataSourcesAsync(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy_async
-    async def test_data_source(self, endpoint, api_key, **kwargs):
+    async def test_data_source(self, **kwargs):
+        endpoint = kwargs.pop("endpoint")
+        api_key = kwargs.pop("api_key")
         storage_cs = kwargs.get("search_storage_connection_string")
         client = SearchIndexerClient(endpoint, api_key)
         async with client:

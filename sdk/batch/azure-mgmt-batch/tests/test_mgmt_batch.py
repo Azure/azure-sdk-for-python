@@ -124,7 +124,9 @@ class TestMgmtBatch(AzureMgmtRecordedTestCase):
     # @KeyVaultPreparer(location=AZURE_LOCATION)
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_mgmt_batch_byos_account(self, resource_group, location):
+    def test_mgmt_batch_byos_account(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         # if self.is_live:
         #     keyvault = keyvault.result()
         batch_account = models.BatchAccountCreateParameters(
@@ -153,7 +155,9 @@ class TestMgmtBatch(AzureMgmtRecordedTestCase):
     @pytest.mark.skip('hard to test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_mgmt_batch_account(self, resource_group, location):
+    def test_mgmt_batch_account(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         batch_account = models.BatchAccountCreateParameters(
             location=location,
         )
@@ -207,7 +211,11 @@ class TestMgmtBatch(AzureMgmtRecordedTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @StorageAccountPreparer(name_prefix='batch', location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_mgmt_batch_applications(self, resource_group, location, storage_account, storage_account_key):
+    def test_mgmt_batch_applications(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
+        storage_account = kwargs.pop("storage_account")
+        storage_account_key = kwargs.pop("storage_account_key")
         # Test Create Account with Auto-Storage 
         storage_resource = '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Storage/storageAccounts/{}'.format(
             self.get_settings_value("SUBSCRIPTION_ID"),
@@ -314,7 +322,10 @@ class TestMgmtBatch(AzureMgmtRecordedTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @SimpleBatchPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_mgmt_batch_certificates(self, resource_group, location, batch_account):
+    def test_mgmt_batch_certificates(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
+        batch_account = kwargs.pop("batch_account")
         # Test Add Certificate
         parameters = models.CertificateCreateOrUpdateParameters(
             thumbprint='cff2ab63c8c955aaf71989efa641b906558d9fb7',
@@ -358,7 +369,10 @@ class TestMgmtBatch(AzureMgmtRecordedTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @SimpleBatchPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_mgmt_batch_pools(self, resource_group, location, batch_account):
+    def test_mgmt_batch_pools(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
+        batch_account = kwargs.pop("batch_account")
         # Test create PAAS pool
         paas_pool = "test_paas_pool"
         parameters = models.Pool(
@@ -464,7 +478,9 @@ class TestMgmtBatch(AzureMgmtRecordedTestCase):
     @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('yes', 'true'), reason='only run live test')
     @ResourceGroupPreparer(location=AZURE_LOCATION, random_name_enabled=True)
     @recorded_by_proxy
-    def test_mgmt_batch_account_advanced(self, resource_group, location):
+    def test_mgmt_batch_account_advanced(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         batch_account_name = self.get_resource_name('batchpendpoint')
         vnet_name = self.get_resource_name('vnet')
         subnet_name = self.get_resource_name('subnet')

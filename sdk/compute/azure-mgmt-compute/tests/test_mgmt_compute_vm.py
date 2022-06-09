@@ -83,7 +83,8 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
     @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_compute_vm(self, resource_group):
+    def test_compute_vm(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
@@ -295,7 +296,8 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
     @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_compute_vm_2(self, resource_group):
+    def test_compute_vm_2(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
@@ -392,7 +394,8 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
     @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_compute_vm_image(self, resource_group):
+    def test_compute_vm_image(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         PUBLISHER_NAME = "MicrosoftWindowsServer"
         OFFER = "WindowsServer"
         SKUS = "2019-Datacenter"
@@ -416,7 +419,8 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
     @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_compute_vm_extension_image(self, resource_group):
+    def test_compute_vm_extension_image(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         EXTENSION_PUBLISHER_NAME = "Microsoft.Compute"
         EXTENSION_IMAGE_TYPE = "VMAccessAgent"
         EXTENSION_IMAGE_VERSION = "1.0.2"

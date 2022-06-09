@@ -43,7 +43,9 @@ TEST_TABLE_PREFIX = 'table'
 class TestTableBatchCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_batch_single_insert(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_batch_single_insert(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -80,7 +82,9 @@ class TestTableBatchCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_batch_single_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_batch_single_update(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -121,7 +125,9 @@ class TestTableBatchCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_batch_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_batch_update(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -161,7 +167,9 @@ class TestTableBatchCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_batch_merge(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_batch_merge(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -205,7 +213,9 @@ class TestTableBatchCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_batch_update_if_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_batch_update_if_match(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -238,7 +248,9 @@ class TestTableBatchCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_batch_update_if_doesnt_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_batch_update_if_doesnt_match(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -273,7 +285,9 @@ class TestTableBatchCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_batch_insert_replace(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_batch_insert_replace(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -308,7 +322,9 @@ class TestTableBatchCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_batch_insert_merge(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_batch_insert_merge(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -343,7 +359,9 @@ class TestTableBatchCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_batch_delete(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_batch_delete(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -380,7 +398,9 @@ class TestTableBatchCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_batch_inserts(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_batch_inserts(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -423,7 +443,9 @@ class TestTableBatchCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_batch_all_operations_together(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_batch_all_operations_together(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -501,7 +523,9 @@ class TestTableBatchCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_batch_different_partition_operations_fail(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_batch_different_partition_operations_fail(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -532,7 +556,9 @@ class TestTableBatchCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_new_non_existent_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_new_non_existent_table(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -571,7 +597,9 @@ class TestTableBatchCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_new_delete_nonexistent_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_new_delete_nonexistent_entity(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -621,7 +649,9 @@ class TestTableBatchCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_delete_batch_with_bad_kwarg(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_delete_batch_with_bad_kwarg(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -707,7 +737,9 @@ class TestTableBatchCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_batch_with_specialchar_partitionkey(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_batch_with_specialchar_partitionkey(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -771,7 +803,9 @@ class TestTableBatchCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_async_batch_inserts(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_async_batch_inserts(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"

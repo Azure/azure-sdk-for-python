@@ -34,7 +34,9 @@ _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 
 class TestTableClient(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
-    def test_user_agent_custom(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_user_agent_custom(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         custom_app = "TestApp/v1.0"
         service = TableServiceClient(
             self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key, user_agent=custom_app)
@@ -71,7 +73,9 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_user_agent_append(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_user_agent_append(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 
         def callback(response):
@@ -88,7 +92,9 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_user_agent_default(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_user_agent_default(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 
         def callback(response):
@@ -109,7 +115,9 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
     @pytest.mark.live_test_only
     @tables_decorator
     @recorded_by_proxy
-    def test_table_name_errors(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_table_name_errors(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         endpoint = self.account_url(tables_storage_account_name, "table")
 
         # storage table names must be alphanumeric, cannot begin with a number, and must be between 3 and 63 chars long.       

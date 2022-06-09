@@ -19,7 +19,7 @@ class TestCancelTranslation(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_cancel_translation(self, **kwargs):
-        '''
+                '''
             some notes (test sporadically failing):
             1. use a large number of translations
                 - because when running tests the translations sometimes finishes with status 'Succeeded'

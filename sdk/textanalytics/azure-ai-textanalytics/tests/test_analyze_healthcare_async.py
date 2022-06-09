@@ -36,7 +36,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_no_single_input(self, client):
+    async def test_no_single_input(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(TypeError):
             async with client:
                 response = await (await client.begin_analyze_healthcare_entities("hello world", polling_interval=self._interval())).result()
@@ -44,7 +45,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_passing_only_string(self, client):
+    async def test_passing_only_string(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [
             "Patient does not suffer from high blood pressure.",
             "Prescribed 100mg ibuprofen, taken twice daily.",
@@ -67,7 +69,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy_async
-    async def test_passing_only_string_v3_1(self, client):
+    async def test_passing_only_string_v3_1(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [
             "Patient does not suffer from high blood pressure.",
             "Prescribed 100mg ibuprofen, taken twice daily.",
@@ -90,7 +93,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_input_with_some_errors(self, client):
+    async def test_input_with_some_errors(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "language": "en", "text": ""},
                 {"id": "2", "language": "english", "text": "Patient does not suffer from high blood pressure."},
                 {"id": "3", "language": "en", "text": "Prescribed 100mg ibuprofen, taken twice daily."}]
@@ -108,7 +112,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_too_many_documents(self, client):
+    async def test_too_many_documents(self, **kwargs):
+        client = kwargs.pop("client")
         docs = list(itertools.repeat("input document", 26))  # Maximum number of documents per request is 25
 
         with pytest.raises(HttpResponseError) as excinfo:
@@ -120,7 +125,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_payload_too_large(self, client):
+    async def test_payload_too_large(self, **kwargs):
+        client = kwargs.pop("client")
         large_doc = "RECORD #333582770390100 | MH | 85986313 | | 054351 | 2/14/2001 12:00:00 AM | \
             CORONARY ARTERY DISEASE | Signed | DIS | Admission Date: 5/22/2001 \
             Report Status: Signed Discharge Date: 4/24/2001 ADMISSION DIAGNOSIS: \
@@ -145,7 +151,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_out_of_order_ids(self, client):
+    async def test_out_of_order_ids(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "22", "text": ""},
@@ -171,7 +178,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.1"})
     @recorded_by_proxy_async
-    async def test_show_stats_and_model_version_v3_1(self, client):
+    async def test_show_stats_and_model_version_v3_1(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "22", "text": ""},
@@ -210,7 +218,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_show_stats_and_model_version(self, client):
+    async def test_show_stats_and_model_version(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "22", "text": ""},
@@ -259,7 +268,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_whole_batch_language_hint_and_dict_input(self, client):
+    async def test_whole_batch_language_hint_and_dict_input(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "text": "I will go to the park."},
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
@@ -277,7 +287,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_invalid_language_hint_method(self, client):
+    async def test_invalid_language_hint_method(self, **kwargs):
+        client = kwargs.pop("client")
         docs = ["This should fail because we're passing in an invalid language hint"]
 
         async with client:
@@ -291,7 +302,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_invalid_language_hint_docs(self, client):
+    async def test_invalid_language_hint_docs(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
 
         async with client:
@@ -305,7 +317,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_user_agent(self, client):  # TODO: verify
+    async def test_user_agent(self, **kwargs):
+        client = kwargs.pop("client")  # TODO: verify
         def callback(resp):
             assert "azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
                 VERSION, platform.python_version(), platform.platform()) in \
@@ -324,7 +337,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_bad_model_version_error(self, client):
+    async def test_bad_model_version_error(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         with pytest.raises(HttpResponseError) as err:
@@ -339,7 +353,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_errors(self, client):
+    async def test_document_errors(self, **kwargs):
+        client = kwargs.pop("client")
         text = ""
         for _ in range(5121):
             text += "x"
@@ -363,7 +378,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_duplicate_ids_error(self, client):
+    async def test_duplicate_ids_error(self, **kwargs):
+        client = kwargs.pop("client")
         # Duplicate Ids
         docs = [{"id": "1", "text": "hello world"},
                 {"id": "1", "text": "I did not like the hotel we stayed at."}]
@@ -377,7 +393,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_pass_cls(self, client):
+    async def test_pass_cls(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(pipeline_response, deserialized, _):
             return "cls result"
 
@@ -392,7 +409,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_cancellation(self, client):
+    async def test_cancellation(self, **kwargs):
+        client = kwargs.pop("client")
         large_doc = "RECORD #333582770390100 | MH | 85986313 | | 054351 | 2/14/2001 12:00:00 AM | \
             CORONARY ARTERY DISEASE | Signed | DIS | Admission Date: 5/22/2001 \
             Report Status: Signed Discharge Date: 4/24/2001 ADMISSION DIAGNOSIS: \
@@ -421,7 +439,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy_async
-    async def test_default_string_index_type_is_UnicodeCodePoint(self, client):
+    async def test_default_string_index_type_is_UnicodeCodePoint(self, **kwargs):
+        client = kwargs.pop("client")
         poller = await client.begin_analyze_healthcare_entities(documents=["Hello world"], polling_interval=self._interval())
         actual_string_index_type = poller._polling_method._initial_response.http_request.query["stringIndexType"]
         assert actual_string_index_type == "UnicodeCodePoint"
@@ -430,7 +449,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy_async
-    async def test_explicit_set_string_index_type(self, client):
+    async def test_explicit_set_string_index_type(self, **kwargs):
+        client = kwargs.pop("client")
         poller = await client.begin_analyze_healthcare_entities(
             documents=["Hello world"],
             string_index_type="TextElement_v8",
@@ -443,7 +463,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_relations(self, client):
+    async def test_relations(self, **kwargs):
+        client = kwargs.pop("client")
         response = await (await client.begin_analyze_healthcare_entities(
             documents=["The patient was diagnosed with Parkinsons Disease (PD)"],
             polling_interval=self._interval(),
@@ -476,7 +497,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_normalized_text(self, client):
+    async def test_normalized_text(self, **kwargs):
+        client = kwargs.pop("client")
         response = await (await client.begin_analyze_healthcare_entities(
             documents=["patients must have histologically confirmed NHL"],
             polling_interval=self._interval(),
@@ -496,7 +518,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_healthcare_assertion(self, client):
+    async def test_healthcare_assertion(self, **kwargs):
+        client = kwargs.pop("client")
         response = await (await client.begin_analyze_healthcare_entities(
             documents=["Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."],
             polling_interval=self._interval(),
@@ -514,7 +537,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_disable_service_logs(self, client):
+    async def test_disable_service_logs(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             # this is called for both the initial post
             # and the gets. Only care about the initial post
@@ -530,7 +554,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_healthcare_continuation_token(self, client):
+    async def test_healthcare_continuation_token(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             initial_poller = await client.begin_analyze_healthcare_entities(
                 documents=[
@@ -570,7 +595,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_poller_metadata(self, client):
+    async def test_poller_metadata(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "56", "text": ":)"}]
 
         async with client:
@@ -662,7 +688,8 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_healthcare_fhir_bundle(self, client):
+    async def test_healthcare_fhir_bundle(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             poller = await client.begin_analyze_healthcare_entities(
                 documents=[

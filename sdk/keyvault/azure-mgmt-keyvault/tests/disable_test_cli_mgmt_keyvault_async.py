@@ -36,7 +36,8 @@ class TestMgmtKeyVault(AzureMgmtAsyncTestCase):
     @pytest.mark.skip('skip aio test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_keyvault(self, resource_group):
+    def test_keyvault(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         TENANT_ID = self.get_settings_value("TENANT_ID") # self.settings.TENANT_ID

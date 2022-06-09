@@ -45,7 +45,9 @@ class TestEventGridPublisherClientExceptions(AzureMgmtRecordedTestCase):
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_raise_on_auth_error(self, variables, eventgrid_topic_endpoint):
+    def test_raise_on_auth_error(self, **kwargs):
+        variables = kwargs.pop("variables")
+        eventgrid_topic_endpoint = kwargs.pop("eventgrid_topic_endpoint")
         akc_credential = AzureKeyCredential("bad credential")
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         eg_event = EventGridEvent(
@@ -59,7 +61,9 @@ class TestEventGridPublisherClientExceptions(AzureMgmtRecordedTestCase):
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_raise_on_bad_resource(self, variables, eventgrid_topic_key):
+    def test_raise_on_bad_resource(self, **kwargs):
+        variables = kwargs.pop("variables")
+        eventgrid_topic_key = kwargs.pop("eventgrid_topic_key")
         akc_credential = AzureKeyCredential(eventgrid_topic_key)
         client = EventGridPublisherClient("https://bad-resource.westus-1.eventgrid.azure.net/api/events", akc_credential)
         eg_event = EventGridEvent(
@@ -73,7 +77,9 @@ class TestEventGridPublisherClientExceptions(AzureMgmtRecordedTestCase):
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_raise_on_large_payload(self, variables, eventgrid_topic_endpoint):
+    def test_raise_on_large_payload(self, **kwargs):
+        variables = kwargs.pop("variables")
+        eventgrid_topic_endpoint = kwargs.pop("eventgrid_topic_endpoint")
         client = self.create_eg_publisher_client(eventgrid_topic_endpoint)
 
         path  = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./large_data.json"))

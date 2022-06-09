@@ -31,7 +31,9 @@ class TestMgmtResourceDeploymentScript(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer()
     @recorded_by_proxy
-    def test_deployment_scripts(self, resource_group, location):
+    def test_deployment_scripts(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         SUBSCRIPTION = self.get_settings_value("SUBSCRIPTION_ID")
         script_name = "scripttest"
         identity_name = "uai"

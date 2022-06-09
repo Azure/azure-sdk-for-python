@@ -289,7 +289,8 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
     
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_network_watcher_troubleshoot(self, resource_group):
+    def test_network_watcher_troubleshoot(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
 
@@ -342,7 +343,8 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
     @unittest.skip("NsgsNotAppliedOnNic")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_network_watcher_ip_flow(self, resource_group):
+    def test_network_watcher_ip_flow(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
@@ -386,7 +388,8 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
  
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_network_watcher_flow_log(self, resource_group):
+    def test_network_watcher_flow_log(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
 
@@ -468,7 +471,8 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_network_watcher_monitor(self, resource_group):
+    def test_network_watcher_monitor(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
@@ -614,7 +618,8 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_network_watcher_packet_capture(self, resource_group):
+    def test_network_watcher_packet_capture(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
@@ -680,7 +685,8 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_network_watcher(self, resource_group):
+    def test_network_watcher(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
@@ -816,7 +822,8 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
     
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_network(self, resource_group):
+    def test_network(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name

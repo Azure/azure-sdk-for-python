@@ -17,7 +17,8 @@ class TestParseId(KeyVaultTestCase):
 
     @PowerShellPreparer("keyvault", azure_keyvault_url="https://vaultname.vault.azure.net")
     @recorded_by_proxy
-    def test_parse_certificate_id_with_version(self, azure_keyvault_url):
+    def test_parse_certificate_id_with_version(self, **kwargs):
+        azure_keyvault_url = kwargs.pop("azure_keyvault_url")
         client = self.create_client(azure_keyvault_url)
 
         cert_name = self.get_resource_name("cert")

@@ -20,7 +20,9 @@ class TestMgmtIoTHub(AzureMgmtRecordedTestCase):
 
     @ResourceGroupPreparer()
     @recorded_by_proxy
-    def test_iothub(self, resource_group, location):
+    def test_iothub(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         account_name = self.get_resource_name('iot')
         
         is_available = self.iothub_client.iot_hub_resource.check_name_availability(
@@ -99,7 +101,9 @@ class TestMgmtIoTHub(AzureMgmtRecordedTestCase):
     @unittest.skip('hard to test')
     @ResourceGroupPreparer()
     @recorded_by_proxy
-    def test_iothub_consumer_group(self, resource_group, location):
+    def test_iothub_consumer_group(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         account_name = self.get_resource_name('iot')
 
         async_iot_hub = self.iothub_client.iot_hub_resource.begin_create_or_update(

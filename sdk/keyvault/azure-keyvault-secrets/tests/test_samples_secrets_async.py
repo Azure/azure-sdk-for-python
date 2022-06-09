@@ -45,7 +45,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @AsyncSecretsClientPreparer()
     @recorded_by_proxy_async
-    async def test_example_secret_crud_operations(self, client, **kwargs):
+    async def test_example_secret_crud_operations(self, **kwargs):
+        client = kwargs.pop("client")
         secret_client = client
         secret_name = self.get_resource_name("secret-name")
 
@@ -108,7 +109,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @AsyncSecretsClientPreparer()
     @recorded_by_proxy_async
-    async def test_example_secret_list_operations(self, client, **kwargs):
+    async def test_example_secret_list_operations(self, **kwargs):
+        client = kwargs.pop("client")
         if not is_live():
             set_custom_default_matcher(excluded_headers="Authorization")
         secret_client = client
@@ -156,7 +158,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @AsyncSecretsClientPreparer()
     @recorded_by_proxy_async
-    async def test_example_secrets_backup_restore(self, client, **kwargs):
+    async def test_example_secrets_backup_restore(self, **kwargs):
+        client = kwargs.pop("client")
         secret_client = client
         secret_name = self.get_resource_name("secret-name")
         async with secret_client:
@@ -186,7 +189,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @AsyncSecretsClientPreparer()
     @recorded_by_proxy_async
-    async def test_example_secrets_recover(self, client, **kwargs):
+    async def test_example_secrets_recover(self, **kwargs):
+        client = kwargs.pop("client")
         secret_client = client
         secret_name = self.get_resource_name("secret-name")
         async with client:

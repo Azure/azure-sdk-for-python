@@ -56,7 +56,8 @@ class TestMgmtAuthorization(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_deny_assignment(self, resource_group):
+    def test_deny_assignment(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
@@ -100,7 +101,8 @@ class TestMgmtAuthorization(AzureMgmtRecordedTestCase):
     @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_role_assignment_by_id(self, resource_group):
+    def test_role_assignment_by_id(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
@@ -133,7 +135,8 @@ class TestMgmtAuthorization(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource(self, resource_group):
+    def test_list_by_resource(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_NAME = "resourcexxx"
@@ -179,7 +182,8 @@ class TestMgmtAuthorization(AzureMgmtRecordedTestCase):
     @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_role_assignment(self, resource_group):
+    def test_role_assignment(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name

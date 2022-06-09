@@ -81,7 +81,9 @@ class TestMgmtDns(AzureMgmtRecordedTestCase):
 
     @ResourceGroupPreparer()
     @recorded_by_proxy
-    def test_public_zone(self, resource_group, location):
+    def test_public_zone(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         zone_name = self.get_resource_name('pydns.com')
 
         # Zones are a 'global' resource.
@@ -183,7 +185,11 @@ class TestMgmtDns(AzureMgmtRecordedTestCase):
     @ResourceGroupPreparer()
     @VirtualNetworkPreparer()
     @recorded_by_proxy
-    def test_private_zone(self, resource_group, location, registration_virtual_network, resolution_virtual_network):
+    def test_private_zone(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
+        registration_virtual_network = kwargs.pop("registration_virtual_network")
+        resolution_virtual_network = kwargs.pop("resolution_virtual_network")
         zone_name = self.get_resource_name('pydns.com')
 
         # Zones are a 'global' resource.

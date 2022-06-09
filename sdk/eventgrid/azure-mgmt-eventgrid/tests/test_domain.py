@@ -19,7 +19,9 @@ class TestMgmtEventGrid(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location="eastus2euap")
     @recorded_by_proxy
-    def test_domain(self, resource_group, location):
+    def test_domain(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         # create
         DOMAIN_NAME = self.get_resource_name('domain')
         BODY = {

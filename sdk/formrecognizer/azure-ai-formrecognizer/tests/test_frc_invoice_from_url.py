@@ -26,7 +26,9 @@ class TestInvoiceFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+    def test_polling_interval(self, **kwargs):
+        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
+        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -44,7 +46,8 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_invoice_bad_url(self, client):
+    def test_invoice_bad_url(self, **kwargs):
+        client = kwargs.pop("client")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -55,7 +58,8 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_invoice_url_multipage_transform_pdf(self, client):
+    def test_invoice_url_multipage_transform_pdf(self, **kwargs):
+        client = kwargs.pop("client")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -121,7 +125,8 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_invoice_locale_specified(self, client):
+    def test_invoice_locale_specified(self, **kwargs):
+        client = kwargs.pop("client")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -134,7 +139,8 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_invoice_locale_error(self, client):
+    def test_invoice_locale_error(self, **kwargs):
+        client = kwargs.pop("client")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -146,7 +152,8 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_pages_kwarg_specified(self, client):
+    def test_pages_kwarg_specified(self, **kwargs):
+        client = kwargs.pop("client")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -159,7 +166,8 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_invoice_no_sub_line_items(self, client):
+    def test_invoice_no_sub_line_items(self, **kwargs):
+        client = kwargs.pop("client")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"

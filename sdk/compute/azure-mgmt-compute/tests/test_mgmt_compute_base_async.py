@@ -74,7 +74,8 @@ class TestMgmtCompute(AzureMgmtAsyncTestCase):
     @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_compute_vm(self, resource_group):
+    def test_compute_vm(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name

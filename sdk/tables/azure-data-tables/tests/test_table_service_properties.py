@@ -28,7 +28,9 @@ from preparers import tables_decorator
 class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
-    def test_table_service_properties(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_table_service_properties(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
         tsc = TableServiceClient(url, credential=tables_primary_storage_account_key)
@@ -48,7 +50,9 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
     # --Test cases per feature ---------------------------------------
     @tables_decorator
     @recorded_by_proxy
-    def test_set_logging(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_set_logging(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
         tsc = TableServiceClient(url, credential=tables_primary_storage_account_key)
@@ -65,7 +69,9 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_set_hour_metrics(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_set_hour_metrics(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
         tsc = TableServiceClient(url, credential=tables_primary_storage_account_key)
@@ -82,7 +88,9 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_set_minute_metrics(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_set_minute_metrics(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
         tsc = TableServiceClient(url, credential=tables_primary_storage_account_key)
@@ -100,7 +108,9 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_set_cors(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_set_cors(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
         tsc = TableServiceClient(url, credential=tables_primary_storage_account_key)
@@ -130,7 +140,9 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
     # --Test cases for errors ---------------------------------------
     @tables_decorator
     @recorded_by_proxy
-    def test_too_many_cors_rules(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_too_many_cors_rules(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
         cors = []
@@ -143,7 +155,9 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_retention_too_long(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_retention_too_long(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
         minute_metrics = TableMetrics(enabled=True, include_apis=True,

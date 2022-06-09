@@ -41,7 +41,9 @@ class TestManagement(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_dmac_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+    def test_dmac_auth_bad_key(self, **kwargs):
+        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
+        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with pytest.raises(ClientAuthenticationError):
             result = client.get_account_info()
@@ -77,7 +79,8 @@ class TestManagement(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_account_info(self, client):
+    def test_account_info(self, **kwargs):
+        client = kwargs.pop("client")
         info = client.get_account_info()
 
         assert info.document_model_limit
@@ -86,7 +89,8 @@ class TestManagement(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_get_model_prebuilt(self, client, **kwargs):
+    def test_get_model_prebuilt(self, **kwargs):
+        client = kwargs.pop("client")
         model = client.get_model("prebuilt-invoice")
         assert model.model_id == "prebuilt-invoice"
         assert model.description is not None
@@ -104,7 +108,9 @@ class TestManagement(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_mgmt_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    def test_mgmt_model(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -138,7 +144,8 @@ class TestManagement(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_get_list_operations(self, client, **kwargs):
+    def test_get_list_operations(self, **kwargs):
+        client = kwargs.pop("client")
         operations = client.list_operations()
         successful_op = None
         failed_op = None
@@ -203,7 +210,9 @@ class TestManagement(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_get_document_analysis_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+    def test_get_document_analysis_client(self, **kwargs):
+        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
+        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"

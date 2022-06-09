@@ -50,7 +50,9 @@ class TestMgmtResourceLocks(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer()
     @recorded_by_proxy
-    def test_locks_by_scope(self, resource_group, location):
+    def test_locks_by_scope(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         lock_name = "pylockrg"
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         resource_name = self.get_resource_name("pytestavset")
@@ -99,7 +101,9 @@ class TestMgmtResourceLocks(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer()
     @recorded_by_proxy
-    def test_locks_at_resource_level(self, resource_group, location):
+    def test_locks_at_resource_level(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         lock_name = 'pylockrg'
         resource_name = self.get_resource_name("pytestavset")
 
@@ -167,7 +171,9 @@ class TestMgmtResourceLocks(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer()
     @recorded_by_proxy
-    def test_locks_at_resource_group_level(self, resource_group, location):
+    def test_locks_at_resource_group_level(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         lock_name = 'pylockrg'
 
         lock = self.locks_client.management_locks.create_or_update_at_resource_group_level(

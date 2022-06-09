@@ -17,7 +17,7 @@ class TestSupportedFormats(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_supported_document_formats(self, **kwargs):
-        client = kwargs.pop("client")
+                client = kwargs.pop("client")
         # get supported formats
         supported_doc_formats = client.get_supported_document_formats()
         assert supported_doc_formats is not None
@@ -29,7 +29,7 @@ class TestSupportedFormats(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_supported_glossary_formats(self, **kwargs):
-        client = kwargs.pop("client")
+                client = kwargs.pop("client")
         # get supported formats
         supported_glossary_formats = client.get_supported_glossary_formats()
         assert supported_glossary_formats is not None

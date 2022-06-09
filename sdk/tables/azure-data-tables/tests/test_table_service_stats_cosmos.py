@@ -35,7 +35,9 @@ class TestTableServiceStatsCosmos(AzureRecordedTestCase, TableTestCase):
     @pytest.mark.skip("JSON is invalid for cosmos")
     @cosmos_decorator
     @recorded_by_proxy
-    def test_table_service_stats_f(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    def test_table_service_stats_f(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         stats = tsc.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
         self._assert_stats_default(stats)
@@ -43,7 +45,9 @@ class TestTableServiceStatsCosmos(AzureRecordedTestCase, TableTestCase):
     @pytest.mark.skip("JSON is invalid for cosmos")
     @cosmos_decorator
     @recorded_by_proxy
-    def test_table_service_stats_when_unavailable(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    def test_table_service_stats_when_unavailable(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         stats = tsc.get_service_stats(raw_response_hook=self.override_response_body_with_unavailable_status)
         self._assert_stats_unavailable(stats)

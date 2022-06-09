@@ -29,7 +29,9 @@ class TestSearchClientAlias(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy_async
-    async def test_alias(self, endpoint, api_key):
+    async def test_alias(self, **kwargs):
+        endpoint = kwargs.pop("endpoint")
+        api_key = kwargs.pop("api_key")
         client = SearchIndexClient(endpoint, api_key)
         aliases = ["resort", "motel"]
 

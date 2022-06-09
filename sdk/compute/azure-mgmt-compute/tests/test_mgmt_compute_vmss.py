@@ -167,7 +167,8 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
     @unittest.skip("skip temporary")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_compute_vmss_rolling_upgrades(self, resource_group):
+    def test_compute_vmss_rolling_upgrades(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         VIRTUAL_MACHINE_SCALE_SET_NAME = self.get_resource_name("virtualmachinescaleset")
@@ -264,7 +265,8 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
     @unittest.skip("The entity was not found in this Azure location.")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_compute_vmss_extension(self, resource_group):
+    def test_compute_vmss_extension(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         VIRTUAL_MACHINE_SCALE_SET_NAME = self.get_resource_name("virtualmachinescaleset")
@@ -396,7 +398,8 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
     @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_compute_vmss_vm(self, resource_group):
+    def test_compute_vmss_vm(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
@@ -553,7 +556,8 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
     @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_compute_vmss_vm_2(self, resource_group):
+    def test_compute_vmss_vm_2(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         VIRTUAL_MACHINE_SCALE_SET_NAME = self.get_resource_name("virtualmachinescaleset")
@@ -665,7 +669,8 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
     @unittest.skip("The (VMRedeployment) need artificially generated,skip for now")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_compute(self, resource_group):
+    def test_compute(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
@@ -856,7 +861,8 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
     @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_compute_vmss_base_2(self, resource_group):
+    def test_compute_vmss_base_2(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
@@ -989,7 +995,8 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
     @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_compute_vmss_perform_maintenance(self, resource_group):
+    def test_compute_vmss_perform_maintenance(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         VIRTUAL_MACHINE_SCALE_SET_NAME = self.get_resource_name("virtualmachinescaleset")

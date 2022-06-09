@@ -35,7 +35,9 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Malformed string")
     @cosmos_decorator
     @recorded_by_proxy
-    def test_user_agent_default(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    def test_user_agent_default(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         service = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
 
         def callback(response):
@@ -55,7 +57,9 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     @recorded_by_proxy
-    def test_user_agent_custom(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    def test_user_agent_custom(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         custom_app = "TestApp/v1.0"
         service = TableServiceClient(
             self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key, user_agent=custom_app)
@@ -93,7 +97,9 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     @recorded_by_proxy
-    def test_user_agent_append(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    def test_user_agent_append(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         service = TableServiceClient(
             self.account_url(tables_cosmos_account_name, "cosmos"),
             credential=tables_primary_cosmos_account_key)
@@ -113,7 +119,9 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
     @pytest.mark.live_test_only
     @cosmos_decorator
     @recorded_by_proxy
-    def test_table_name_errors_bad_chars(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    def test_table_name_errors_bad_chars(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         endpoint = self.account_url(tables_cosmos_account_name, "cosmos")
         
         # cosmos table names must be a non-empty string without chars '\', '/', '#', '?', and less than 255 chars.
@@ -150,7 +158,9 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
     @pytest.mark.live_test_only
     @cosmos_decorator
     @recorded_by_proxy
-    def test_table_name_errors_bad_length(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    def test_table_name_errors_bad_length(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         endpoint = self.account_url(tables_cosmos_account_name, "cosmos")
         
         # cosmos table names must be a non-empty string without chars '\', '/', '#', '?', and less than 255 chars.

@@ -36,7 +36,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @SecretsClientPreparer()
     @recorded_by_proxy
-    def test_example_secret_crud_operations(self, client, **kwargs):
+    def test_example_secret_crud_operations(self, **kwargs):
+        client = kwargs.pop("client")
         secret_client = client
         secret_name = self.get_resource_name("secret-name")
 
@@ -101,7 +102,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @SecretsClientPreparer()
     @recorded_by_proxy
-    def test_example_secret_list_operations(self, client, **kwargs):
+    def test_example_secret_list_operations(self, **kwargs):
+        client = kwargs.pop("client")
         secret_client = client
 
         for i in range(7):
@@ -148,7 +150,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @SecretsClientPreparer()
     @recorded_by_proxy
-    def test_example_secrets_backup_restore(self, client, **kwargs):
+    def test_example_secrets_backup_restore(self, **kwargs):
+        client = kwargs.pop("client")
         secret_client = client
         secret_name = self.get_resource_name("secret-name")
         secret_client.set_secret(secret_name, "secret-value")
@@ -176,7 +179,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @SecretsClientPreparer()
     @recorded_by_proxy
-    def test_example_secrets_recover(self, client, **kwargs):
+    def test_example_secrets_recover(self, **kwargs):
+        client = kwargs.pop("client")
         secret_client = client
         secret_name = self.get_resource_name("secret-name")
         secret_client.set_secret(secret_name, "secret-value")

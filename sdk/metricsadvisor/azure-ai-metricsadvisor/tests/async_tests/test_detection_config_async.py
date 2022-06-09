@@ -31,7 +31,9 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True)
     @recorded_by_proxy_async
-    async def test_create_ad_config_whole_series_detection(self, client, variables):
+    async def test_create_ad_config_whole_series_detection(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         detection_config_name = self.create_random_name("testdetectionconfig")
         if self.is_live:
             variables["detection_config_name"] = detection_config_name
@@ -110,7 +112,9 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True)
     @recorded_by_proxy_async
-    async def test_create_ad_conf_series_and_group_cond(self, client, variables):
+    async def test_create_ad_conf_series_and_group_cond(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         detection_config_name = self.create_random_name("testdetectionconfig")
         if self.is_live:
             variables["detection_config_name"] = detection_config_name
@@ -213,7 +217,9 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True)
     @recorded_by_proxy_async
-    async def test_create_ad_conf_series_and_group_conds(self, client, variables):
+    async def test_create_ad_conf_series_and_group_conds(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         detection_config_name = self.create_random_name("testdetectionconfig")
         if self.is_live:
             variables["detection_config_name"] = detection_config_name
@@ -424,7 +430,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_detection_configs(self, client):
+    async def test_list_detection_configs(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             configs = client.list_detection_configurations(metric_id=self.metric_id)
             configs_list = []
@@ -436,7 +443,9 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy_async
-    async def test_update_detection_config_with_model(self, client, variables):
+    async def test_update_detection_config_with_model(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         async with client:
             try:
                 detection_config = await client.get_detection_configuration(variables["detection_config_id"])
@@ -543,7 +552,9 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy_async
-    async def test_update_detection_config_with_kwargs(self, client, variables):
+    async def test_update_detection_config_with_kwargs(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         async with client:
             try:
                 change_threshold_condition = ChangeThresholdCondition(
@@ -660,7 +671,9 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy_async
-    async def test_update_ad_conf_model_and_kwargs(self, client, variables):
+    async def test_update_ad_conf_model_and_kwargs(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         async with client:
             try:
                 detection_config = await client.get_detection_configuration(variables["detection_config_id"])
@@ -778,7 +791,9 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy_async
-    async def test_update_ad_conf_by_reset_props(self, client, variables):
+    async def test_update_ad_conf_by_reset_props(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         async with client:
             try:
                 update_name = "update" + str(uuid.uuid4())

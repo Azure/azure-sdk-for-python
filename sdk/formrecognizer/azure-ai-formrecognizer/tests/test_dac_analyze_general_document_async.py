@@ -26,7 +26,8 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_stream_transform_pdf(self, client):
+    async def test_document_stream_transform_pdf(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
 
@@ -61,7 +62,8 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_stream_transform_jpg(self, client):
+    async def test_document_stream_transform_jpg(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.form_jpg, "rb") as fd:
             document = fd.read()
 
@@ -97,7 +99,8 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_multipage_transform(self, client):
+    async def test_document_multipage_transform(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.multipage_invoice_pdf, "rb") as fd:
             document = fd.read()
 
@@ -133,8 +136,9 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_multipage_table_span_pdf(self, client, **kwargs):
-
+    async def test_document_multipage_table_span_pdf(self, **kwargs):
+        client = kwargs.pop("client")
+        
         with open(self.multipage_table_pdf, "rb") as fd:
             my_file = fd.read()
         async with client:
@@ -151,7 +155,8 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_specify_pages(self, client):
+    async def test_document_specify_pages(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.multipage_invoice_pdf, "rb") as fd:
             document = fd.read()
 

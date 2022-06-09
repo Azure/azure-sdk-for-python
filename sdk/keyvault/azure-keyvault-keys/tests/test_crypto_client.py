@@ -139,7 +139,9 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_ec_key_id(self, key_client, is_hsm, **kwargs):
+    def test_ec_key_id(self, **kwargs):
+        key_client = kwargs.pop("key_client")
+        is_hsm = kwargs.pop("is_hsm")
         """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
         set_bodiless_matcher()
         key = self._create_ec_key(key_client, self.get_resource_name("eckey"), hardware_protected=is_hsm)
@@ -156,7 +158,9 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_rsa_key_id(self, key_client, is_hsm, **kwargs):
+    def test_rsa_key_id(self, **kwargs):
+        key_client = kwargs.pop("key_client")
+        is_hsm = kwargs.pop("is_hsm")
         """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
         key = self._create_rsa_key(key_client, self.get_resource_name("rsakey"), hardware_protected=is_hsm)
 
@@ -174,7 +178,9 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm", no_get)
     @KeysClientPreparer(permissions=NO_GET)
     @recorded_by_proxy
-    def test_encrypt_and_decrypt(self, key_client, is_hsm, **kwargs):
+    def test_encrypt_and_decrypt(self, **kwargs):
+        key_client = kwargs.pop("key_client")
+        is_hsm = kwargs.pop("is_hsm")
         set_bodiless_matcher()
         key_name = self.get_resource_name("keycrypt")
 
@@ -192,7 +198,9 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm", no_get)
     @KeysClientPreparer(permissions=NO_GET)
     @recorded_by_proxy
-    def test_sign_and_verify(self, key_client, is_hsm, **kwargs):
+    def test_sign_and_verify(self, **kwargs):
+        key_client = kwargs.pop("key_client")
+        is_hsm = kwargs.pop("is_hsm")
         key_name = self.get_resource_name("keysign")
 
         md = hashlib.sha256()
@@ -213,7 +221,9 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm", no_get)
     @KeysClientPreparer(permissions=NO_GET)
     @recorded_by_proxy
-    def test_wrap_and_unwrap(self, key_client, is_hsm, **kwargs):
+    def test_wrap_and_unwrap(self, **kwargs):
+        key_client = kwargs.pop("key_client")
+        is_hsm = kwargs.pop("is_hsm")
         set_bodiless_matcher()
         key_name = self.get_resource_name("keywrap")
 
@@ -232,7 +242,8 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm", only_hsm)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_symmetric_encrypt_and_decrypt(self, key_client, **kwargs):
+    def test_symmetric_encrypt_and_decrypt(self, **kwargs):
+        key_client = kwargs.pop("key_client")
         """Encrypt and decrypt with the service"""
         key_name = self.get_resource_name("symmetric-encrypt")
 
@@ -279,7 +290,8 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm", only_hsm)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_symmetric_wrap_and_unwrap(self, key_client, **kwargs):
+    def test_symmetric_wrap_and_unwrap(self, **kwargs):
+        key_client = kwargs.pop("key_client")
         key_name = self.get_resource_name("symmetric-kw")
 
         imported_key = self._import_symmetric_test_key(key_client, key_name)
@@ -295,7 +307,9 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_encrypt_local(self, key_client, is_hsm, **kwargs):
+    def test_encrypt_local(self, **kwargs):
+        key_client = kwargs.pop("key_client")
+        is_hsm = kwargs.pop("is_hsm")
         set_bodiless_matcher()
         """Encrypt locally, decrypt with Key Vault"""
         key_name = self.get_resource_name("encrypt-local")
@@ -313,7 +327,9 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_encrypt_local_from_jwk(self, key_client, is_hsm, **kwargs):
+    def test_encrypt_local_from_jwk(self, **kwargs):
+        key_client = kwargs.pop("key_client")
+        is_hsm = kwargs.pop("is_hsm")
         set_bodiless_matcher()
         """Encrypt locally, decrypt with Key Vault"""
         key_name = self.get_resource_name("encrypt-local")
@@ -332,7 +348,8 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",only_hsm)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_symmetric_encrypt_local(self, key_client, **kwargs):
+    def test_symmetric_encrypt_local(self, **kwargs):
+        key_client = kwargs.pop("key_client")
         """Encrypt locally, decrypt with the service"""
         key_name = self.get_resource_name("symmetric-encrypt")
 
@@ -362,7 +379,8 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm", only_hsm)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_symmetric_decrypt_local(self, key_client, **kwargs):
+    def test_symmetric_decrypt_local(self, **kwargs):
+        key_client = kwargs.pop("key_client")
         """Encrypt with the service, decrypt locally"""
         key_name = self.get_resource_name("symmetric-encrypt")
 
@@ -393,7 +411,9 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_wrap_local(self, key_client, is_hsm, **kwargs):
+    def test_wrap_local(self, **kwargs):
+        key_client = kwargs.pop("key_client")
+        is_hsm = kwargs.pop("is_hsm")
         set_bodiless_matcher()
         """Wrap locally, unwrap with Key Vault"""
         key_name = self.get_resource_name("wrap-local")
@@ -410,7 +430,9 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_wrap_local_from_jwk(self, key_client, is_hsm, **kwargs):
+    def test_wrap_local_from_jwk(self, **kwargs):
+        key_client = kwargs.pop("key_client")
+        is_hsm = kwargs.pop("is_hsm")
         """Wrap locally, unwrap with Key Vault"""
         set_bodiless_matcher()
         key_name = self.get_resource_name("wrap-local")
@@ -428,7 +450,9 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_rsa_verify_local(self, key_client, is_hsm, **kwargs):
+    def test_rsa_verify_local(self, **kwargs):
+        key_client = kwargs.pop("key_client")
+        is_hsm = kwargs.pop("is_hsm")
         """Sign with Key Vault, verify locally"""
         for size in (2048, 3072, 4096):
             key_name = self.get_resource_name("rsa-verify-{}".format(size))
@@ -453,7 +477,9 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_rsa_verify_local_from_jwk(self, key_client, is_hsm, **kwargs):
+    def test_rsa_verify_local_from_jwk(self, **kwargs):
+        key_client = kwargs.pop("key_client")
+        is_hsm = kwargs.pop("is_hsm")
         """Sign with Key Vault, verify locally"""
         for size in (2048, 3072, 4096):
             key_name = self.get_resource_name("rsa-verify-{}".format(size))
@@ -479,7 +505,9 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_ec_verify_local(self, key_client, is_hsm, **kwargs):
+    def test_ec_verify_local(self, **kwargs):
+        key_client = kwargs.pop("key_client")
+        is_hsm = kwargs.pop("is_hsm")
         """Sign with Key Vault, verify locally"""
         matrix = {
             KeyCurveName.p_256: (SignatureAlgorithm.es256, hashlib.sha256),
@@ -504,7 +532,9 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_ec_verify_local_from_jwk(self, key_client, is_hsm, **kwargs):
+    def test_ec_verify_local_from_jwk(self, **kwargs):
+        key_client = kwargs.pop("key_client")
+        is_hsm = kwargs.pop("is_hsm")
         """Sign with Key Vault, verify locally"""
         matrix = {
             KeyCurveName.p_256: (SignatureAlgorithm.es256, hashlib.sha256),
@@ -530,7 +560,9 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_local_validity_period_enforcement(self, key_client, is_hsm, **kwargs):
+    def test_local_validity_period_enforcement(self, **kwargs):
+        key_client = kwargs.pop("key_client")
+        is_hsm = kwargs.pop("is_hsm")
         """Local crypto operations should respect a key's nbf and exp properties"""
         def test_operations(key, expected_error_substrings, encrypt_algorithms, wrap_algorithms):
             crypto_client = self.create_crypto_client(key, api_version=key_client.api_version)

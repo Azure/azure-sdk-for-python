@@ -22,7 +22,9 @@ from async_preparers import cosmos_decorator_async
 class TestTableServicePropertiesCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_too_many_cors_rules_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_too_many_cors_rules_async(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         cors = []
@@ -35,7 +37,9 @@ class TestTableServicePropertiesCosmosAsync(AzureRecordedTestCase, AsyncTableTes
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_retention_too_long_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_retention_too_long_async(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         minute_metrics = TableMetrics(enabled=True, include_apis=True,

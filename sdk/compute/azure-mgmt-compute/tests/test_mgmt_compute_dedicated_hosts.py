@@ -27,7 +27,8 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
     @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dedicated_hosts(self, resource_group):
+    def test_dedicated_hosts(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         HOST_GROUP_NAME = self.get_resource_name("hostgroup")
         HOST_NAME = self.get_resource_name("hostname")
 

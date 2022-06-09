@@ -40,7 +40,9 @@ class TestChallengeAuth(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm", only_default_version)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_multitenant_authentication(self, client, is_hsm, **kwargs):
+    def test_multitenant_authentication(self, **kwargs):
+        client = kwargs.pop("client")
+        is_hsm = kwargs.pop("is_hsm")
         if not self.is_live:
             pytest.skip("This test is incompatible with test proxy in playback")
 

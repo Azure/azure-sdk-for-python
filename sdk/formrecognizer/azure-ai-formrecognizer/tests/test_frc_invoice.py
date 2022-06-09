@@ -29,7 +29,8 @@ class TestInvoice(FormRecognizerTest):
     @pytest.mark.skip()
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_invoice_bad_endpoint(self, formrecognizer_test_api_key, **kwargs):
+    def test_invoice_bad_endpoint(self, **kwargs):
+        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         with open(self.invoice_pdf, "rb") as fd:
             my_file = fd.read()
         with pytest.raises(ServiceRequestError):
@@ -39,7 +40,8 @@ class TestInvoice(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_passing_enum_content_type(self, client):
+    def test_passing_enum_content_type(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.invoice_pdf, "rb") as fd:
             my_file = fd.read()
         poller = client.begin_recognize_invoices(
@@ -97,7 +99,8 @@ class TestInvoice(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_invoice_stream_transform_pdf(self, client):
+    def test_invoice_stream_transform_pdf(self, **kwargs):
+        client = kwargs.pop("client")
         responses = []
 
         def callback(raw_response, _, headers):
@@ -137,7 +140,8 @@ class TestInvoice(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_invoice_stream_multipage_transform_pdf(self, client):
+    def test_invoice_stream_multipage_transform_pdf(self, **kwargs):
+        client = kwargs.pop("client")
         responses = []
 
         def callback(raw_response, _, headers):
@@ -181,7 +185,8 @@ class TestInvoice(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_invoice_tiff(self, client):
+    def test_invoice_tiff(self, **kwargs):
+        client = kwargs.pop("client")
 
         with open(self.invoice_tiff, "rb") as stream:
             poller = client.begin_recognize_invoices(stream)
@@ -205,7 +210,8 @@ class TestInvoice(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_invoice_multipage_pdf(self, client):
+    def test_invoice_multipage_pdf(self, **kwargs):
+        client = kwargs.pop("client")
 
         with open(self.multipage_vendor_pdf, "rb") as fd:
             invoice = fd.read()
@@ -233,7 +239,8 @@ class TestInvoice(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_invoice_jpg_include_field_elements(self, client):
+    def test_invoice_jpg_include_field_elements(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.invoice_jpg, "rb") as fd:
             invoice = fd.read()
         poller = client.begin_recognize_invoices(invoice, include_field_elements=True)
@@ -311,7 +318,8 @@ class TestInvoice(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_invoice_locale_specified(self, client):
+    def test_invoice_locale_specified(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.invoice_tiff, "rb") as fd:
             invoice = fd.read()
         poller = client.begin_recognize_invoices(invoice, locale="en-US")
@@ -322,7 +330,8 @@ class TestInvoice(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_invoice_locale_error(self, client):
+    def test_invoice_locale_error(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.invoice_pdf, "rb") as fd:
             invoice = fd.read()
         with pytest.raises(HttpResponseError) as e:
@@ -332,7 +341,8 @@ class TestInvoice(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_pages_kwarg_specified(self, client):
+    def test_pages_kwarg_specified(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.invoice_pdf, "rb") as fd:
             invoice = fd.read()
 

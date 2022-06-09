@@ -26,7 +26,8 @@ class TestBackupClientTests(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @KeyVaultBackupClientPreparer()
     @recorded_by_proxy
-    def test_full_backup_and_restore(self, client, **kwargs):
+    def test_full_backup_and_restore(self, **kwargs):
+        client = kwargs.pop("client")
         set_bodiless_matcher()
         # backup the vault
         container_uri = kwargs.pop("container_uri")
@@ -44,7 +45,8 @@ class TestBackupClientTests(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @KeyVaultBackupClientPreparer()
     @recorded_by_proxy
-    def test_full_backup_and_restore_rehydration(self, client, **kwargs):
+    def test_full_backup_and_restore_rehydration(self, **kwargs):
+        client = kwargs.pop("client")
         set_bodiless_matcher()
         container_uri = kwargs.pop("container_uri")
         sas_token = kwargs.pop("sas_token")
@@ -76,7 +78,8 @@ class TestBackupClientTests(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @KeyVaultBackupClientPreparer()
     @recorded_by_proxy
-    def test_selective_key_restore(self, client, **kwargs):
+    def test_selective_key_restore(self, **kwargs):
+        client = kwargs.pop("client")
         set_bodiless_matcher()
         # create a key to selectively restore
         managed_hsm_url = kwargs.pop("managed_hsm_url")
@@ -106,7 +109,8 @@ class TestBackupClientTests(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @KeyVaultBackupClientPreparer()
     @recorded_by_proxy
-    def test_backup_client_polling(self, client, **kwargs):
+    def test_backup_client_polling(self, **kwargs):
+        client = kwargs.pop("client")
         set_bodiless_matcher()
         # if not self.is_live:
         #     pytest.skip("Poller requests are incompatible with vcrpy in playback")

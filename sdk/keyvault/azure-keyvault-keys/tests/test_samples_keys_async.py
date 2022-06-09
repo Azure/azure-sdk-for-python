@@ -44,7 +44,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
-    async def test_example_key_crud_operations(self, key_client, **kwargs):
+    async def test_example_key_crud_operations(self, **kwargs):
+        key_client = kwargs.pop("key_client")
         if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
             pytest.skip("This test not supprot in usgov/china region. Follow up with service team")
 
@@ -134,7 +135,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",only_hsm)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
-    async def test_example_create_oct_key(self, key_client, **kwargs):
+    async def test_example_create_oct_key(self, **kwargs):
+        key_client = kwargs.pop("key_client")
         key_name = self.get_resource_name("key")
 
         # [START create_oct_key]
@@ -149,7 +151,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
-    async def test_example_key_list_operations(self, key_client, **kwargs):
+    async def test_example_key_list_operations(self, **kwargs):
+        key_client = kwargs.pop("key_client")
         for i in range(4):
             key_name = self.get_resource_name("key{}".format(i))
             await key_client.create_ec_key(key_name)
@@ -196,7 +199,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
-    async def test_example_keys_backup_restore(self, key_client, **kwargs):
+    async def test_example_keys_backup_restore(self, **kwargs):
+        key_client = kwargs.pop("key_client")
         key_name = self.get_resource_name("key-name")
         await key_client.create_key(key_name, "RSA")
         # [START backup_key]
@@ -231,7 +235,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
-    async def test_example_keys_recover(self, key_client, **kwargs):
+    async def test_example_keys_recover(self, **kwargs):
+        key_client = kwargs.pop("key_client")
         key_name = self.get_resource_name("key-name")
         created_key = await key_client.create_key(key_name, "RSA")
 

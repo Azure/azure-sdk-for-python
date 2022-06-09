@@ -33,7 +33,8 @@ from async_preparers import tables_decorator_async
 class TestTableAADAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_aad_create_table(self, tables_storage_account_name):
+    async def test_aad_create_table(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
         try:
             account_url = self.account_url(tables_storage_account_name, "table")
             ts = TableServiceClient(credential=self.get_token_credential(), endpoint=account_url)
@@ -52,7 +53,8 @@ class TestTableAADAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_aad_query_list_tables(self, tables_storage_account_name):
+    async def test_aad_query_list_tables(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
         try:
             account_url = self.account_url(tables_storage_account_name, "table")
             ts = TableServiceClient(credential=self.get_token_credential(), endpoint=account_url)
@@ -84,7 +86,8 @@ class TestTableAADAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_aad_create_table_tc(self, tables_storage_account_name):
+    async def test_aad_create_table_tc(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
         try:
             account_url = self.account_url(tables_storage_account_name, "table")
             ts = TableServiceClient(credential=self.get_token_credential(), endpoint=account_url)
@@ -106,7 +109,8 @@ class TestTableAADAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_aad_service_properties(self, tables_storage_account_name):
+    async def test_aad_service_properties(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
         try:
             account_url = self.account_url(tables_storage_account_name, "table")
             ts = TableServiceClient(credential=self.get_token_credential(), endpoint=account_url)
@@ -132,7 +136,8 @@ class TestTableAADAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_aad_table_service_stats(self, tables_storage_account_name):
+    async def test_aad_table_service_stats(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
         tsc = TableServiceClient(
             self.account_url(tables_storage_account_name, "table"), credential=self.get_token_credential()
         )
@@ -141,7 +146,8 @@ class TestTableAADAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_aad_insert_entity_dictionary(self, tables_storage_account_name):
+    async def test_aad_insert_entity_dictionary(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
 
         await self._set_up(tables_storage_account_name, self.get_token_credential())
         try:
@@ -154,7 +160,8 @@ class TestTableAADAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_aad_query_user_filter(self, tables_storage_account_name):
+    async def test_aad_query_user_filter(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
 
         await self._set_up(tables_storage_account_name, self.get_token_credential())
         try:
@@ -175,7 +182,8 @@ class TestTableAADAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_aad_batch_all_operations_together(self, tables_storage_account_name):
+    async def test_aad_batch_all_operations_together(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -249,7 +257,8 @@ class TestTableAADAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_aad_access_policy_error(self, tables_storage_account_name):
+    async def test_aad_access_policy_error(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
         account_url = self.account_url(tables_storage_account_name, "table")
         table_name = self._get_table_reference()
         table_client = TableClient(credential=self.get_token_credential(), endpoint=account_url, table_name=table_name)
@@ -262,7 +271,8 @@ class TestTableAADAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_aad_delete_entities(self, tables_storage_account_name):
+    async def test_aad_delete_entities(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
         await self._set_up(tables_storage_account_name, self.get_token_credential())
         try:
             entity, _ = await self._insert_random_entity()
@@ -276,7 +286,8 @@ class TestTableAADAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_aad_query_user_filter(self, tables_storage_account_name):
+    async def test_aad_query_user_filter(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
 
         await self._set_up(tables_storage_account_name, self.get_token_credential())
         try:
@@ -296,7 +307,8 @@ class TestTableAADAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_aad_list_entities(self, tables_storage_account_name):
+    async def test_aad_list_entities(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
         await self._set_up(tables_storage_account_name, self.get_token_credential())
         try:
             table = await self._create_query_table(2)
@@ -313,7 +325,8 @@ class TestTableAADAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_merge_entity(self, tables_storage_account_name):
+    async def test_merge_entity(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
         await self._set_up(tables_storage_account_name, self.get_token_credential())
         try:
             entity, _ = await self._insert_random_entity()

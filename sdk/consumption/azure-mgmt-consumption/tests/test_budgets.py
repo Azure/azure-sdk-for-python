@@ -22,7 +22,8 @@ class TestMgmtConsumption(AzureMgmtRecordedTestCase):
 
     @ResourceGroupPreparer()
     @recorded_by_proxy
-    def test_budgets(self, resource_group):
+    def test_budgets(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         SUBSCRIPTION_ID = self.get_settings_value('SUBSCRIPTION_ID')
         SCOPE = '/subscriptions/{}/resourceGroups/{}'.format(SUBSCRIPTION_ID, resource_group.name)
         BUDGET_NAME = self.get_resource_name('budget')

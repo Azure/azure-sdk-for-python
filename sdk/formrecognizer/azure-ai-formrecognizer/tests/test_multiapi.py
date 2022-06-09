@@ -140,7 +140,9 @@ class TestMultiapi(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     @recorded_by_proxy
-    def test_v2_0_compatibility(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
+    def test_v2_0_compatibility(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url_v2 = kwargs.pop("formrecognizer_storage_container_sas_url_v2")
         # test that the addition of new attributes in v2.1 does not break v2.0
 
         label_poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True)

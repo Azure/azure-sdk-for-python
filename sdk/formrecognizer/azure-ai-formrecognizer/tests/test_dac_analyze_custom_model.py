@@ -40,7 +40,9 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_custom_document_transform(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    def test_custom_document_transform(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -89,7 +91,9 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_custom_document_multipage_transform(self, client, formrecognizer_multipage_storage_container_sas_url, **kwargs):
+    def test_custom_document_multipage_transform(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_multipage_storage_container_sas_url = kwargs.pop("formrecognizer_multipage_storage_container_sas_url")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -137,7 +141,9 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_custom_document_selection_mark(self, client, formrecognizer_selection_mark_storage_container_sas_url, **kwargs):
+    def test_custom_document_selection_mark(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_selection_mark_storage_container_sas_url = kwargs.pop("formrecognizer_selection_mark_storage_container_sas_url")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -185,7 +191,9 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_pages_kwarg_specified(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    def test_pages_kwarg_specified(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -206,7 +214,9 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_custom_document_signature_field(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    def test_custom_document_signature_field(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 

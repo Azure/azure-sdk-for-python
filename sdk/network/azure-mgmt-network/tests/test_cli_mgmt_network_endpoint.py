@@ -122,7 +122,8 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
     
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_network(self, resource_group):
+    def test_network(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name

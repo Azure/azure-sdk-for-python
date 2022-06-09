@@ -65,7 +65,8 @@ class TestMgmtComputeMultiVersion(AzureMgmtRecordedTestCase):
     @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_compute_disks_multi(self, resource_group):
+    def test_compute_disks_multi(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         DISK_NAME = self.get_resource_name("disknamex")
 
@@ -198,7 +199,8 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
     @unittest.skip("The KEY_VAULT_NAME need artificially generated,skip for now")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_compute_disk_encryption(self, resource_group):
+    def test_compute_disk_encryption(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         TENANT_ID = self.settings.TENANT_ID
         CLIENT_OID = self.settings.CLIENT_OID if self.is_live else "000"
@@ -260,7 +262,8 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
     @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_compute_shot(self, resource_group):
+    def test_compute_shot(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         DISK_NAME = self.get_resource_name("disknamex")
@@ -373,7 +376,8 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
     @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_compute_disks(self, resource_group):
+    def test_compute_disks(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         DISK_NAME = self.get_resource_name("disknamex")
 

@@ -23,7 +23,8 @@ class TestMgmtNotificationHubs(AzureMgmtRecordedTestCase):
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_notification_hubs(self, resource_group):
+    def test_notification_hubs(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         GROUP_NAME = resource_group.name
         namespace_name = "namespacexxz"
         notification_hub_name = "notificationhubxxzx"
@@ -71,7 +72,8 @@ class TestMgmtNotificationHubs(AzureMgmtRecordedTestCase):
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_namespaces(self, resource_group):
+    def test_namespaces(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         GROUP_NAME = resource_group.name
         namespace_name = "namespacexxx"
 

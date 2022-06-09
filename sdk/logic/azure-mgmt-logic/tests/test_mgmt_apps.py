@@ -20,7 +20,9 @@ class TestMgmtApps(AzureMgmtRecordedTestCase):
 
     @ResourceGroupPreparer(location="West US")
     @recorded_by_proxy
-    def test_logic(self, resource_group, location):
+    def test_logic(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         workflow_name = '12HourHeartBeat'
         # workflow_name1 = workflow_name+'1'
         workflow=azure.mgmt.logic.models.Workflow(

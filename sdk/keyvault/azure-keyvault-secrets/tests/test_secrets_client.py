@@ -72,7 +72,8 @@ class TestSecretClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @SecretsClientPreparer()
     @recorded_by_proxy
-    def test_secret_crud_operations(self, client, **kwargs):
+    def test_secret_crud_operations(self, **kwargs):
+        client = kwargs.pop("client")
         secret_name = self.get_resource_name("crud-secret")
         secret_value = "crud_secret_value"
 
@@ -141,7 +142,8 @@ class TestSecretClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @SecretsClientPreparer()
     @recorded_by_proxy
-    def test_secret_list(self, client, **kwargs):
+    def test_secret_list(self, **kwargs):
+        client = kwargs.pop("client")
         max_secrets = list_test_size
         expected = {}
 
@@ -161,8 +163,9 @@ class TestSecretClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @SecretsClientPreparer()
     @recorded_by_proxy
-    def test_list_versions(self, client, **kwargs):
-
+    def test_list_versions(self, **kwargs):
+        client = kwargs.pop("client")
+        
         secret_name = self.get_resource_name("secVer")
         secret_value = "secVal"
 
@@ -189,7 +192,8 @@ class TestSecretClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @SecretsClientPreparer()
     @recorded_by_proxy
-    def test_list_deleted_secrets(self, client, **kwargs):
+    def test_list_deleted_secrets(self, **kwargs):
+        client = kwargs.pop("client")
         expected = {}
 
         # create secrets
@@ -214,8 +218,9 @@ class TestSecretClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @SecretsClientPreparer()
     @recorded_by_proxy
-    def test_backup_restore(self, client, **kwargs):
-
+    def test_backup_restore(self, **kwargs):
+        client = kwargs.pop("client")
+        
         secret_name = self.get_resource_name("secbak")
         secret_value = "secVal"
 
@@ -240,8 +245,9 @@ class TestSecretClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @SecretsClientPreparer()
     @recorded_by_proxy
-    def test_recover(self, client, **kwargs):
-
+    def test_recover(self, **kwargs):
+        client = kwargs.pop("client")
+        
         secrets = {}
 
         # create secrets to recover
@@ -270,8 +276,9 @@ class TestSecretClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @SecretsClientPreparer()
     @recorded_by_proxy
-    def test_purge(self, client, **kwargs):
-
+    def test_purge(self, **kwargs):
+        client = kwargs.pop("client")
+        
         secrets = {}
 
         # create secrets to purge
@@ -300,7 +307,8 @@ class TestSecretClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @SecretsClientPreparer(logging_enable=True)
     @recorded_by_proxy
-    def test_logging_enabled(self, client, **kwargs):
+    def test_logging_enabled(self, **kwargs):
+        client = kwargs.pop("client")
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
@@ -334,7 +342,8 @@ class TestSecretClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @SecretsClientPreparer(logging_enable=False)
     @recorded_by_proxy
-    def test_logging_disabled(self, client, **kwargs):
+    def test_logging_disabled(self, **kwargs):
+        client = kwargs.pop("client")
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")

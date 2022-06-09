@@ -20,7 +20,9 @@ class TestMgmtSearch(AzureMgmtRecordedTestCase):
 
     @ResourceGroupPreparer()
     @recorded_by_proxy
-    def test_search_services(self, resource_group, location):
+    def test_search_services(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         account_name = 'ptvstestsearch'
 
         availability = self.client.services.check_name_availability(account_name)
@@ -61,7 +63,9 @@ class TestMgmtSearch(AzureMgmtRecordedTestCase):
 
     @ResourceGroupPreparer()
     @recorded_by_proxy
-    def test_search_query_keys(self, resource_group, location):
+    def test_search_query_keys(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         account_name = 'ptvstestquerykeysxxy'
         key_name = 'testkey'
 
@@ -102,7 +106,9 @@ class TestMgmtSearch(AzureMgmtRecordedTestCase):
 
     @ResourceGroupPreparer()
     @recorded_by_proxy
-    def test_search_admin_keys(self, resource_group, location):
+    def test_search_admin_keys(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         account_name = 'ptvstestquerykeys'
 
         service = self.client.services.begin_create_or_update(

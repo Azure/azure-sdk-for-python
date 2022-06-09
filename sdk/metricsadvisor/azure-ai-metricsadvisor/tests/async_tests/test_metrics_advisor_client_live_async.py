@@ -28,7 +28,8 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_anomalies_for_detection_configuration(self, client):
+    async def test_list_anomalies_for_detection_configuration(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             results = client.list_anomalies(
                 detection_configuration_id=self.anomaly_detection_configuration_id,
@@ -44,7 +45,8 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_anomaly_dimension_values(self, client):
+    async def test_list_anomaly_dimension_values(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             results = client.list_anomaly_dimension_values(
                 detection_configuration_id=self.anomaly_detection_configuration_id,
@@ -61,7 +63,8 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_incidents_for_detection_configuration(self, client):
+    async def test_list_incidents_for_detection_configuration(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             results = client.list_incidents(
                 detection_configuration_id=self.anomaly_detection_configuration_id,
@@ -77,7 +80,8 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_metric_dimension_values(self, client):
+    async def test_list_metric_dimension_values(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             results = client.list_metric_dimension_values(
                 metric_id=self.metric_id,
@@ -92,7 +96,8 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_incident_root_cause(self, client):
+    async def test_list_incident_root_cause(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             results = client.list_incident_root_causes(
                 detection_configuration_id=self.anomaly_detection_configuration_id,
@@ -107,7 +112,8 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_metric_enriched_series_data(self, client):
+    async def test_list_metric_enriched_series_data(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             series_identity = {"region": "Los Angeles"}
             results = client.list_metric_enriched_series_data(
@@ -125,7 +131,8 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_metric_enrichment_status(self, client):
+    async def test_list_metric_enrichment_status(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             results = client.list_metric_enrichment_status(
                 metric_id=self.metric_id,
@@ -141,7 +148,8 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_alerts(self, client):
+    async def test_list_alerts(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             results = client.list_alerts(
                 alert_configuration_id=self.anomaly_alert_configuration_id,
@@ -158,7 +166,8 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_metrics_series_data(self, client):
+    async def test_list_metrics_series_data(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             results = client.list_metric_series_data(
                 metric_id=self.metric_id,
@@ -177,7 +186,8 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_metric_series_definitions(self, client):
+    async def test_list_metric_series_definitions(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             results = client.list_metric_series_definitions(
                 metric_id=self.metric_id,
@@ -192,7 +202,8 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", API_KEY, ids=ids)  # only using API key for now since service issue with AAD
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_add_anomaly_feedback(self, client):
+    async def test_add_anomaly_feedback(self, **kwargs):
+        client = kwargs.pop("client")
         anomaly_feedback = AnomalyFeedback(metric_id=self.metric_id,
                                            dimension_key={"category": "Shoes Handbags & Sunglasses"},
                                            start_time=datetime.datetime(2021, 8, 5),
@@ -205,7 +216,8 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", API_KEY, ids=ids)  # only using API key for now since service issue with AAD
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_add_change_point_feedback(self, client):
+    async def test_add_change_point_feedback(self, **kwargs):
+        client = kwargs.pop("client")
         change_point_feedback = ChangePointFeedback(metric_id=self.metric_id,
                                                     dimension_key={"category": "Shoes Handbags & Sunglasses"},
                                                     start_time=datetime.datetime(2021, 8, 5),
@@ -218,7 +230,8 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", API_KEY, ids=ids)  # only using API key for now since service issue with AAD
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_add_comment_feedback(self, client):
+    async def test_add_comment_feedback(self, **kwargs):
+        client = kwargs.pop("client")
         comment_feedback = CommentFeedback(metric_id=self.metric_id,
                                            dimension_key={"category": "Shoes Handbags & Sunglasses"},
                                            start_time=datetime.datetime(2021, 8, 5),
@@ -231,7 +244,8 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", API_KEY, ids=ids)  # only using API key for now since service issue with AAD
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_add_period_feedback(self, client):
+    async def test_add_period_feedback(self, **kwargs):
+        client = kwargs.pop("client")
         period_feedback = PeriodFeedback(metric_id=self.metric_id,
                                          dimension_key={"category": "Shoes Handbags & Sunglasses"},
                                          start_time=datetime.datetime(2021, 8, 5),
@@ -245,7 +259,8 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_feedback(self, client):
+    async def test_list_feedback(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             results = client.list_feedback(
                 metric_id=self.metric_id,
@@ -262,7 +277,8 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_get_feedback(self, client):
+    async def test_get_feedback(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             result = await client.get_feedback(feedback_id=self.feedback_id)
             assert result
@@ -272,7 +288,8 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_anomalies_for_alert(self, client):
+    async def test_list_anomalies_for_alert(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             results = client.list_anomalies(
                 alert_configuration_id=self.anomaly_alert_configuration_id,
@@ -287,7 +304,8 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_incidents_for_alert(self, client):
+    async def test_list_incidents_for_alert(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             results = client.list_incidents(
                 alert_configuration_id=self.anomaly_alert_configuration_id,

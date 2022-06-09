@@ -31,14 +31,16 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_no_single_input(self, client):
+    async def test_no_single_input(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(TypeError):
             response = await client.detect_language("hello world")
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_all_successful_passing_dict(self, client):
+    async def test_all_successful_passing_dict(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "text": "I should take my cat to the veterinarian."},
                 {"id": "2", "text": "Este es un document escrito en Español."},
                 {"id": "3", "text": "猫は幸せ"},
@@ -63,7 +65,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_all_successful_passing_text_document_input(self, client):
+    async def test_all_successful_passing_text_document_input(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [
             DetectLanguageInput(id="1", text="I should take my cat to the veterinarian"),
             DetectLanguageInput(id="2", text="Este es un document escrito en Español."),
@@ -88,7 +91,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_passing_only_string(self, client):
+    async def test_passing_only_string(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [
             "I should take my cat to the veterinarian.",
             "Este es un document escrito en Español.",
@@ -107,7 +111,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_input_with_some_errors(self, client):
+    async def test_input_with_some_errors(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "country_hint": "United States", "text": "I should take my cat to the veterinarian."},
                 {"id": "2", "text": "Este es un document escrito en Español."},
                 {"id": "3", "text": ""},
@@ -123,7 +128,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_input_with_all_errors(self, client):
+    async def test_input_with_all_errors(self, **kwargs):
+        client = kwargs.pop("client")
         text = ""
         for _ in range(5121):
             text += "x"
@@ -141,7 +147,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_output_same_order_as_input(self, client):
+    async def test_output_same_order_as_input(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [
             DetectLanguageInput(id="1", text="one"),
             DetectLanguageInput(id="2", text="two"),
@@ -158,7 +165,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": ""})
     @recorded_by_proxy_async
-    async def test_empty_credential_class(self, client):
+    async def test_empty_credential_class(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ClientAuthenticationError):
             response = await client.detect_language(
                 ["This is written in English."]
@@ -167,7 +175,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": "xxxxxxxxxxxx"})
     @recorded_by_proxy_async
-    async def test_bad_credentials(self, client):
+    async def test_bad_credentials(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ClientAuthenticationError):
             response = await client.detect_language(
                 ["This is written in English."]
@@ -176,7 +185,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_bad_document_input(self, client):
+    async def test_bad_document_input(self, **kwargs):
+        client = kwargs.pop("client")
         docs = "This is the wrong type"
 
         with pytest.raises(TypeError):
@@ -185,7 +195,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_mixing_inputs(self, client):
+    async def test_mixing_inputs(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
             DetectLanguageInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
@@ -197,7 +208,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_out_of_order_ids(self, client):
+    async def test_out_of_order_ids(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "22", "text": ""},
@@ -212,7 +224,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_show_stats_and_model_version(self, client):
+    async def test_show_stats_and_model_version(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(response):
             assert response is not None
             assert response.model_version
@@ -238,7 +251,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_batch_size_over_limit(self, client):
+    async def test_batch_size_over_limit(self, **kwargs):
+        client = kwargs.pop("client")
         docs = ["hello world"] * 1050
         with pytest.raises(HttpResponseError):
             response = await client.detect_language(docs)
@@ -246,7 +260,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_whole_batch_country_hint(self, client):
+    async def test_whole_batch_country_hint(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
             country = resp.http_request.body.count(country_str)
@@ -263,7 +278,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_whole_batch_dont_use_country_hint(self, client):
+    async def test_whole_batch_dont_use_country_hint(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             country_str = "\"countryHint\": \"\""
             country = resp.http_request.body.count(country_str)
@@ -280,7 +296,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_per_item_dont_use_country_hint(self, client):
+    async def test_per_item_dont_use_country_hint(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             country_str = "\"countryHint\": \"\""
             country = resp.http_request.body.count(country_str)
@@ -299,7 +316,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_whole_batch_country_hint_and_obj_input(self, client):
+    async def test_whole_batch_country_hint_and_obj_input(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
             country = resp.http_request.body.count(country_str)
@@ -316,7 +334,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_whole_batch_country_hint_and_dict_input(self, client):
+    async def test_whole_batch_country_hint_and_dict_input(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
             country = resp.http_request.body.count(country_str)
@@ -331,7 +350,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_whole_batch_country_hint_and_obj_per_item_hints(self, client):
+    async def test_whole_batch_country_hint_and_obj_per_item_hints(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
             country = resp.http_request.body.count(country_str)
@@ -351,7 +371,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_whole_batch_country_hint_and_dict_per_item_hints(self, client):
+    async def test_whole_batch_country_hint_and_dict_per_item_hints(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
             country = resp.http_request.body.count(country_str)
@@ -369,7 +390,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"default_country_hint": "CA"})
     @recorded_by_proxy_async
-    async def test_client_passed_default_country_hint(self, client):
+    async def test_client_passed_default_country_hint(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
             country = resp.http_request.body.count(country_str)
@@ -390,7 +412,9 @@ class TestDetectLanguage(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @recorded_by_proxy_async
-    async def test_rotate_subscription_key(self, textanalytics_test_endpoint, textanalytics_test_api_key):
+    async def test_rotate_subscription_key(self, **kwargs):
+        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
+        textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         credential = AzureKeyCredential(textanalytics_test_api_key)
         client = TextAnalyticsClient(textanalytics_test_endpoint, credential)
 
@@ -412,7 +436,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_user_agent(self, client):
+    async def test_user_agent(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             assert "azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
                 VERSION, platform.python_version(), platform.platform()) in resp.http_request.headers["User-Agent"]
@@ -426,7 +451,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_attribute_error_no_result_attribute(self, client):
+    async def test_document_attribute_error_no_result_attribute(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "text": ""}]
         response = await client.detect_language(docs)
 
@@ -447,7 +473,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_attribute_error_nonexistent_attribute(self, client):
+    async def test_document_attribute_error_nonexistent_attribute(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "text": ""}]
         response = await client.detect_language(docs)
 
@@ -460,7 +487,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_bad_model_version_error(self, client):
+    async def test_bad_model_version_error(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:
@@ -472,7 +500,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_errors(self, client):
+    async def test_document_errors(self, **kwargs):
+        client = kwargs.pop("client")
         text = ""
         for _ in range(5121):
             text += "x"
@@ -489,7 +518,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_warnings(self, client):
+    async def test_document_warnings(self, **kwargs):
+        client = kwargs.pop("client")
         # No warnings actually returned for detect_language. Will update when they add
         docs = [
             {"id": "1", "text": "This won't actually create a warning :'("},
@@ -503,7 +533,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_not_passing_list_for_docs(self, client):
+    async def test_not_passing_list_for_docs(self, **kwargs):
+        client = kwargs.pop("client")
         docs = {"id": "1", "text": "hello world"}
         with pytest.raises(TypeError) as excinfo:
             await client.detect_language(docs)
@@ -512,7 +543,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_missing_input_records_error(self, client):
+    async def test_missing_input_records_error(self, **kwargs):
+        client = kwargs.pop("client")
         docs = []
         with pytest.raises(ValueError) as excinfo:
             await client.detect_language(docs)
@@ -521,7 +553,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_passing_none_docs(self, client):
+    async def test_passing_none_docs(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError) as excinfo:
             await client.detect_language(None)
         assert "Input documents can not be empty or None" in str(excinfo.value)
@@ -529,7 +562,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_duplicate_ids_error(self, client):
+    async def test_duplicate_ids_error(self, **kwargs):
+        client = kwargs.pop("client")
         # Duplicate Ids
         docs = [{"id": "1", "text": "hello world"},
                 {"id": "1", "text": "I did not like the hotel we stayed at."}]
@@ -542,7 +576,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_batch_size_over_limit_error(self, client):
+    async def test_batch_size_over_limit_error(self, **kwargs):
+        client = kwargs.pop("client")
 
         # Batch size over limit
         docs = ["hello world"] * 1001
@@ -555,7 +590,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_invalid_country_hint_method(self, client):
+    async def test_invalid_country_hint_method(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "text": "hello world"}]
 
         response = await client.detect_language(docs, country_hint="United States")
@@ -565,7 +601,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_invalid_country_hint_docs(self, client):
+    async def test_invalid_country_hint_docs(self, **kwargs):
+        client = kwargs.pop("client")
 
         docs = [{"id": "1", "country_hint": "United States", "text": "hello world"}]
 
@@ -575,7 +612,9 @@ class TestDetectLanguage(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @recorded_by_proxy_async
-    async def test_country_hint_none(self, textanalytics_test_endpoint, textanalytics_test_api_key):
+    async def test_country_hint_none(self, **kwargs):
+        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
+        textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         client = TextAnalyticsClient(textanalytics_test_endpoint, AzureKeyCredential(textanalytics_test_api_key))
         # service will eventually support this and we will not need to send "" for input == "none"
         documents = [{"id": "0", "country_hint": "none", "text": "This is written in English."}]
@@ -599,7 +638,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_country_hint_kwarg(self, client):
+    async def test_country_hint_kwarg(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(response):
             country_str = "\"countryHint\": \"ES\""
             assert response.http_request.body.count(country_str) == 1
@@ -616,7 +656,9 @@ class TestDetectLanguage(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @recorded_by_proxy_async
-    async def test_pass_cls(self, textanalytics_test_endpoint, textanalytics_test_api_key):
+    async def test_pass_cls(self, **kwargs):
+        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
+        textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         def callback(pipeline_response, deserialized, _):
             return "cls result"
         text_analytics = TextAnalyticsClient(textanalytics_test_endpoint, AzureKeyCredential(textanalytics_test_api_key))
@@ -629,7 +671,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
     @recorded_by_proxy_async
-    async def test_string_index_type_not_fail_v3(self, client):
+    async def test_string_index_type_not_fail_v3(self, **kwargs):
+        client = kwargs.pop("client")
         # make sure that the addition of the string_index_type kwarg for v3.1-preview.1 doesn't
         # cause v3.0 calls to fail
         await client.detect_language(["please don't fail"])
@@ -637,7 +680,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy_async
-    async def test_disable_service_logs(self, client):
+    async def test_disable_service_logs(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             assert resp.http_request.query['loggingOptOut']
         await client.detect_language(
@@ -649,7 +693,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy_async
-    async def test_disable_service_logs_body_param(self, client):
+    async def test_disable_service_logs_body_param(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             import json
             assert json.loads(resp.http_request.body)['parameters']['loggingOptOut']

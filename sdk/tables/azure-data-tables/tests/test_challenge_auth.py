@@ -30,7 +30,8 @@ except ModuleNotFoundError:
 class TestTableChallengeAuth(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
-    def test_challenge_auth_supported_version(self, tables_storage_account_name):
+    def test_challenge_auth_supported_version(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
         """This test requires a client that uses an API version that supports 401 challenge responses.
 
         Recorded using an incorrect tenant for the credential provided to our client. To run this live, ensure that the
@@ -52,7 +53,8 @@ class TestTableChallengeAuth(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_challenge_auth_unsupported_version(self, tables_storage_account_name):
+    def test_challenge_auth_unsupported_version(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
         """This test requires a client that uses an API version that doesn't support 401 challenge responses.
 
         Recorded using an incorrect tenant for the credential provided to our client. To run this live, ensure that the

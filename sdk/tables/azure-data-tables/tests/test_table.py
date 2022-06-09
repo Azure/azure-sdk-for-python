@@ -34,7 +34,9 @@ from preparers import tables_decorator, tables_decorator
 class TestTable(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
-    def test_create_properties(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_create_properties(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
@@ -63,7 +65,9 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_create_table(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_create_table(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
@@ -80,7 +84,9 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_create_table_fail_on_exist(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_create_table_fail_on_exist(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
@@ -100,7 +106,9 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_query_tables_per_page(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_query_tables_per_page(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
@@ -129,7 +137,9 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_create_table_if_exists(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_create_table_if_exists(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
         table_name = self._get_table_reference()
@@ -144,7 +154,9 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_create_table_if_exists_new_table(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_create_table_if_exists_new_table(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
         table_name = self._get_table_reference()
@@ -157,7 +169,9 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_query_tables(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_query_tables(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
@@ -178,7 +192,9 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_query_tables_with_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_query_tables_with_filter(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
@@ -200,7 +216,9 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_query_tables_with_num_results(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_query_tables_with_num_results(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         prefix = 'listtable'
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -227,7 +245,9 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_query_tables_with_marker(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_query_tables_with_marker(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
@@ -255,7 +275,9 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_delete_table_with_existing_table(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_delete_table_with_existing_table(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
@@ -271,7 +293,9 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_delete_table_with_non_existing_table_fail_not_exist(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_delete_table_with_non_existing_table_fail_not_exist(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
@@ -280,7 +304,9 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_get_table_acl(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_get_table_acl(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -298,7 +324,9 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_set_table_acl_with_empty_signed_identifiers(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_set_table_acl_with_empty_signed_identifiers(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
 
@@ -318,7 +346,9 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_set_table_acl_with_empty_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_set_table_acl_with_empty_signed_identifier(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
 
@@ -367,7 +397,9 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_set_table_acl_with_signed_identifiers(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_set_table_acl_with_signed_identifiers(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
 
@@ -395,7 +427,9 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_set_table_acl_too_many_ids(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_set_table_acl_too_many_ids(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
 
@@ -416,7 +450,9 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_account_sas(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_account_sas(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         account_url = self.account_url(tables_storage_account_name, "table")
         tsc = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
 
@@ -459,7 +495,9 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
     
     @tables_decorator
     @recorded_by_proxy
-    def test_unicode_create_table_unicode_name(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_unicode_create_table_unicode_name(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         account_url = self.account_url(tables_storage_account_name, "table")
         tsc = TableServiceClient(account_url, credential=tables_primary_storage_account_key)
         invalid_table_name = u'啊齄丂狛狜'
@@ -471,7 +509,9 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
     
     @tables_decorator
     @recorded_by_proxy
-    def test_create_table_invalid_name(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_create_table_invalid_name(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         account_url = self.account_url(tables_storage_account_name, "table")
         tsc = TableServiceClient(account_url, credential=tables_primary_storage_account_key)
         invalid_table_name = "my_table"

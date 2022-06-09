@@ -61,7 +61,7 @@ class TestTranslation(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_single_source_single_target(self, **kwargs):
-        client = kwargs.pop("client")
+                client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
@@ -89,7 +89,7 @@ class TestTranslation(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_single_source_two_targets(self, **kwargs):
-        client = kwargs.pop("client")
+                client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
@@ -122,7 +122,7 @@ class TestTranslation(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_multiple_sources_single_target(self, **kwargs):
-        client = kwargs.pop("client")
+                client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
@@ -161,7 +161,7 @@ class TestTranslation(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_single_source_single_target_with_prefix(self, **kwargs):
-        client = kwargs.pop("client")
+                client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
@@ -191,7 +191,7 @@ class TestTranslation(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_single_source_single_target_with_suffix(self, **kwargs):
-        client = kwargs.pop("client")
+                client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
@@ -221,7 +221,7 @@ class TestTranslation(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_bad_input_source(self, **kwargs):
-        client = kwargs.pop("client")
+                client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         # prepare containers and test data
         target_container_sas_url = self.create_target_container(variables=variables)
@@ -249,7 +249,7 @@ class TestTranslation(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_bad_input_target(self, **kwargs):
-        client = kwargs.pop("client")
+                client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
@@ -278,7 +278,7 @@ class TestTranslation(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_use_supported_and_unsupported_files(self, **kwargs):
-        client = kwargs.pop("client")
+                client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=[
@@ -313,7 +313,7 @@ class TestTranslation(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_existing_documents_in_target(self, **kwargs):
-        client = kwargs.pop("client")
+                client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=Document(name="document"), variables=variables)
@@ -345,7 +345,7 @@ class TestTranslation(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_existing_documents_in_target_one_valid(self, **kwargs):
-        client = kwargs.pop("client")
+                client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=[Document(name="document"), Document()], variables=variables)
@@ -377,7 +377,7 @@ class TestTranslation(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_empty_document(self, **kwargs):
-        client = kwargs.pop("client")
+                client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(Document(data=b''), variables=variables)
@@ -409,7 +409,7 @@ class TestTranslation(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_overloaded_inputs(self, **kwargs):
-        client = kwargs.pop("client")
+                client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'), variables=variables)
@@ -446,7 +446,7 @@ class TestTranslation(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_overloaded_single_input(self, **kwargs):
-        client = kwargs.pop("client")
+                client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'), variables=variables)
@@ -514,7 +514,7 @@ class TestTranslation(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_single_input_with_kwargs(self, **kwargs):
-        client = kwargs.pop("client")
+                client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'), variables=variables)
@@ -559,7 +559,7 @@ class TestTranslation(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_single_input_with_kwarg_successful(self, **kwargs):
-        client = kwargs.pop("client")
+                client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=[Document(data=b'hello world', prefix="kwargs"),

@@ -113,7 +113,8 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
     @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_compute(self, resource_group):
+    def test_compute(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         # List operations (TODO: need swagger file)
         result = self.mgmt_client.operations.list()
@@ -127,7 +128,8 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
     @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_compute_availability_sets(self, resource_group):
+    def test_compute_availability_sets(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         AVAILABILITY_SET_NAME = self.get_resource_name("availabilitysets")
 
         # Create an availability set.[put]
@@ -163,7 +165,8 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
     @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_compute_proximity_placement_groups(self, resource_group):
+    def test_compute_proximity_placement_groups(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         PROXIMITY_PLACEMENT_GROUP_NAME = self.get_resource_name("proximiityplacementgroups")
         
         # Create or Update a proximity placement group.[put]
@@ -195,7 +198,8 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
     @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_compute_log_analytics(self, resource_group):
+    def test_compute_log_analytics(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         RESOURCE_GROUP = resource_group.name
         STORAGE_ACCOUNT_NAME = self.get_resource_name("accountxyz")
         LOG_ANALYTIC_NAME = self.get_resource_name("loganalyticx")

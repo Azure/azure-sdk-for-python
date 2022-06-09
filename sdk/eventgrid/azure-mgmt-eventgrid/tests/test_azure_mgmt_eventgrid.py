@@ -39,14 +39,18 @@ class TestMgmtEventGrid(AzureMgmtRecordedTestCase):
 
     @ResourceGroupPreparer()
     @recorded_by_proxy
-    def test_topic_types(self, resource_group, location):
+    def test_topic_types(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         # List all topic types
         for result in self.eventgrid_client.topic_types.list():
             self.process(result)
 
     @ResourceGroupPreparer()
     @recorded_by_proxy
-    def test_user_topics(self, resource_group, location):
+    def test_user_topics(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         topic_name = "kalspython1"
         eventsubscription_name = "kalspythonEventSubscription2"
 
@@ -80,7 +84,9 @@ class TestMgmtEventGrid(AzureMgmtRecordedTestCase):
 
     @ResourceGroupPreparer()
     @recorded_by_proxy
-    def test_input_mappings_and_queue_destination(self, resource_group, location):
+    def test_input_mappings_and_queue_destination(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         topic_name = "kalspython2"
         eventsubscription_name = "kalspythonEventSubscription3"
 
@@ -129,7 +135,9 @@ class TestMgmtEventGrid(AzureMgmtRecordedTestCase):
 
     @ResourceGroupPreparer()
     @recorded_by_proxy
-    def test_domains_and_advanced_filter(self, resource_group, location):
+    def test_domains_and_advanced_filter(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         domain_name = "kalspythond1"
         eventsubscription_name = "kalspythonEventSubscription2"
 

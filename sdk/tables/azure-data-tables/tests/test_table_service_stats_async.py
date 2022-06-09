@@ -33,7 +33,9 @@ class TestTableServiceStatsAsync(AzureRecordedTestCase, AsyncTableTestCase):
     # --Test cases per service ---------------------------------------
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_table_service_stats_f(self, tables_storage_account_name, tables_primary_storage_account_key):
+    async def test_table_service_stats_f(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 
@@ -44,7 +46,9 @@ class TestTableServiceStatsAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_table_service_stats_when_unavailable(self, tables_storage_account_name, tables_primary_storage_account_key):
+    async def test_table_service_stats_when_unavailable(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 

@@ -24,7 +24,8 @@ class TestGetChildren(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_document_line_get_words(self, client, **kwargs):
+    def test_document_line_get_words(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
 
@@ -38,7 +39,8 @@ class TestGetChildren(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_document_line_get_words_error(self, client, **kwargs):
+    def test_document_line_get_words_error(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
 

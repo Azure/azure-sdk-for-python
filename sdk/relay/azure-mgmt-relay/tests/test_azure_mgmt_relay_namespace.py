@@ -22,7 +22,9 @@ class TestMgmtRelayNamespace(AzureMgmtRecordedTestCase):
 
     @ResourceGroupPreparer()
     @recorded_by_proxy
-    def test_relay_namespace_curd(self, resource_group, location):
+    def test_relay_namespace_curd(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
 
         resource_group_name = resource_group.name
 

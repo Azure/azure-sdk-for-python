@@ -20,7 +20,9 @@ class TestMgmtDevTestLabs(AzureMgmtRecordedTestCase):
 
     @ResourceGroupPreparer()
     @recorded_by_proxy
-    def test_devtestlabs(self, resource_group, location):
+    def test_devtestlabs(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         lab_name = self.get_resource_name('pylab')
 
         async_lab = self.client.labs.begin_create_or_update(

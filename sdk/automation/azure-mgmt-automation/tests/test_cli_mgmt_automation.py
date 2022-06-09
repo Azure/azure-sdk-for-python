@@ -35,7 +35,8 @@ class TestMgmtAutomationClient(AzureMgmtRecordedTestCase):
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_automation(self, resource_group):
+    def test_automation(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         AUTOMATION_ACCOUNT_NAME = 'myAutomationAccount9'
 

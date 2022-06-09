@@ -41,7 +41,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @pytest.mark.skip()
     @recorded_by_proxy_async
-    async def test_copy_model_successful(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    async def test_copy_model_successful(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         async with client:
             training_poller = await client.begin_build_model(formrecognizer_storage_container_sas_url)
             model = await training_poller.result()
@@ -66,7 +68,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @pytest.mark.skip()
     @recorded_by_proxy_async
-    async def test_copy_model_with_model_id_and_desc(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    async def test_copy_model_with_model_id_and_desc(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url)
             model = await poller.result()
@@ -93,7 +97,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_copy_model_fail_bad_model_id(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    async def test_copy_model_fail_bad_model_id(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url)
             model = await poller.result()
@@ -109,7 +115,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @pytest.mark.skip()
     @recorded_by_proxy_async
-    async def test_copy_model_transform(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    async def test_copy_model_transform(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         raw_response = []
 
         def callback(response, _, headers):
@@ -134,7 +142,10 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_copy_authorization(self, client, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+    async def test_copy_authorization(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_region = kwargs.pop("formrecognizer_region")
+        formrecognizer_resource_id = kwargs.pop("formrecognizer_resource_id")
         async with client:
             target = await client.get_copy_authorization()
 
@@ -149,7 +160,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @pytest.mark.skip()
     @recorded_by_proxy_async
-    async def test_copy_model_with_composed_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    async def test_copy_model_with_composed_model(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         async with client:
             poller_1 = await client.begin_build_model(formrecognizer_storage_container_sas_url)
             model_1 = await poller_1.result()
@@ -202,7 +215,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @pytest.mark.skip()
     @recorded_by_proxy_async
-    async def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    async def test_poller_metadata(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url)
             model = await poller.result()

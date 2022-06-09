@@ -28,7 +28,8 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_business_card_multipage_pdf(self, client):
+    def test_business_card_multipage_pdf(self, **kwargs):
+        client = kwargs.pop("client")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -91,7 +92,8 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_identity_document_jpg_passport(self, client):
+    def test_identity_document_jpg_passport(self, **kwargs):
+        client = kwargs.pop("client")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -116,7 +118,8 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_identity_document_jpg(self, client):
+    def test_identity_document_jpg(self, **kwargs):
+        client = kwargs.pop("client")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -141,7 +144,8 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_invoice_tiff(self, client, **kwargs):
+    def test_invoice_tiff(self, **kwargs):
+        client = kwargs.pop("client")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -166,7 +170,9 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+    def test_polling_interval(self, **kwargs):
+        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
+        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -194,7 +200,8 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipts_encoded_url(self, client):
+    def test_receipts_encoded_url(self, **kwargs):
+        client = kwargs.pop("client")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -207,7 +214,8 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @pytest.mark.skip("TODO check if the error changed")
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_receipt_url_bad_endpoint(self, formrecognizer_test_api_key, **kwargs):
+    def test_receipt_url_bad_endpoint(self, **kwargs):
+        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -218,7 +226,8 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_receipt_url_auth_bad_key(self, formrecognizer_test_endpoint, **kwargs):
+    def test_receipt_url_auth_bad_key(self, **kwargs):
+        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -230,7 +239,8 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_bad_url(self, client):
+    def test_receipt_bad_url(self, **kwargs):
+        client = kwargs.pop("client")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -242,7 +252,8 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_url_pass_stream(self, client, **kwargs):
+    def test_receipt_url_pass_stream(self, **kwargs):
+        client = kwargs.pop("client")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -254,7 +265,8 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_url_transform_jpg(self, client):
+    def test_receipt_url_transform_jpg(self, **kwargs):
+        client = kwargs.pop("client")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -294,7 +306,8 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_url_png(self, client):
+    def test_receipt_url_png(self, **kwargs):
+        client = kwargs.pop("client")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -319,7 +332,8 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_multipage_url(self, client):
+    def test_receipt_multipage_url(self, **kwargs):
+        client = kwargs.pop("client")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -356,7 +370,8 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_multipage_transform_url(self, client, **kwargs):
+    def test_receipt_multipage_transform_url(self, **kwargs):
+        client = kwargs.pop("client")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -410,7 +425,8 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_locale_specified(self, client):
+    def test_receipt_locale_specified(self, **kwargs):
+        client = kwargs.pop("client")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -423,7 +439,8 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_locale_error(self, client):
+    def test_receipt_locale_error(self, **kwargs):
+        client = kwargs.pop("client")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -435,7 +452,8 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_pages_kwarg_specified(self, client):
+    def test_pages_kwarg_specified(self, **kwargs):
+        client = kwargs.pop("client")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"

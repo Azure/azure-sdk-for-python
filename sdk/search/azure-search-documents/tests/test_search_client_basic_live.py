@@ -17,14 +17,21 @@ class TestSearchClient(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
-    def test_get_document_count(self, endpoint, api_key, index_name):
+    def test_get_document_count(self, **kwargs):
+        endpoint = kwargs.pop("endpoint")
+        api_key = kwargs.pop("api_key")
+        index_name = kwargs.pop("index_name")
         client = SearchClient(endpoint, index_name, api_key)
         assert client.get_document_count() == 10
 
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
-    def test_get_document(self, endpoint, api_key, index_name, index_batch):
+    def test_get_document(self, **kwargs):
+        endpoint = kwargs.pop("endpoint")
+        api_key = kwargs.pop("api_key")
+        index_name = kwargs.pop("index_name")
+        index_batch = kwargs.pop("index_batch")
         client = SearchClient(endpoint, index_name, api_key)
         for hotel_id in range(1, 11):
             result = client.get_document(key=str(hotel_id))
@@ -36,7 +43,10 @@ class TestSearchClient(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
-    def test_get_document_missing(self, endpoint, api_key, index_name):
+    def test_get_document_missing(self, **kwargs):
+        endpoint = kwargs.pop("endpoint")
+        api_key = kwargs.pop("api_key")
+        index_name = kwargs.pop("index_name")
         client = SearchClient(endpoint, index_name, api_key)
         with pytest.raises(HttpResponseError):
             client.get_document(key="1000")

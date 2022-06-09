@@ -31,14 +31,16 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_no_single_input(self, client):
+    async def test_no_single_input(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(TypeError):
             response = await client.recognize_entities("hello world")
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_all_successful_passing_dict(self, client):
+    async def test_all_successful_passing_dict(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975."},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975."},
                 {"id": "3", "language": "de", "text": "Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet."}]
@@ -57,7 +59,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_all_successful_passing_text_document_input(self, client):
+    async def test_all_successful_passing_text_document_input(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [
             TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975.", language="en"),
             TextDocumentInput(id="2", text="Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975.", language="es"),
@@ -76,7 +79,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_passing_only_string(self, client):
+    async def test_passing_only_string(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [
             "Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975.",
             "Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975.",
@@ -91,7 +95,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_input_with_some_errors(self, client):
+    async def test_input_with_some_errors(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975."},
                 {"id": "2", "language": "Spanish", "text": "Hola"},
                 {"id": "3", "language": "de", "text": ""}]
@@ -104,7 +109,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_input_with_all_errors(self, client):
+    async def test_input_with_all_errors(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "text": ""},
                 {"id": "2", "language": "Spanish", "text": "Hola"},
                 {"id": "3", "language": "de", "text": ""}]
@@ -117,7 +123,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_too_many_documents(self, client):
+    async def test_too_many_documents(self, **kwargs):
+        client = kwargs.pop("client")
         docs = ["One", "Two", "Three", "Four", "Five", "Six"]
 
         with pytest.raises(HttpResponseError) as excinfo:
@@ -129,7 +136,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_output_same_order_as_input(self, client):
+    async def test_output_same_order_as_input(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [
             TextDocumentInput(id="1", text="one"),
             TextDocumentInput(id="2", text="two"),
@@ -146,7 +154,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": ""})
     @recorded_by_proxy_async
-    async def test_empty_credential_class(self, client):
+    async def test_empty_credential_class(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ClientAuthenticationError):
             response = await client.recognize_entities(
                 ["This is written in English."]
@@ -155,7 +164,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": "xxxxxxxxxxxx"})
     @recorded_by_proxy_async
-    async def test_bad_credentials(self, client):
+    async def test_bad_credentials(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ClientAuthenticationError):
             response = await client.recognize_entities(
                 ["This is written in English."]
@@ -164,7 +174,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_bad_document_input(self, client):
+    async def test_bad_document_input(self, **kwargs):
+        client = kwargs.pop("client")
         docs = "This is the wrong type"
 
         with pytest.raises(TypeError):
@@ -173,7 +184,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_mixing_inputs(self, client):
+    async def test_mixing_inputs(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
             TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
@@ -185,7 +197,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_out_of_order_ids(self, client):
+    async def test_out_of_order_ids(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "22", "text": ""},
@@ -200,7 +213,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_show_stats_and_model_version(self, client):
+    async def test_show_stats_and_model_version(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(response):
             assert response is not None
             assert response.model_version
@@ -226,7 +240,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_batch_size_over_limit(self, client):
+    async def test_batch_size_over_limit(self, **kwargs):
+        client = kwargs.pop("client")
         docs = ["hello world"] * 1050
         with pytest.raises(HttpResponseError):
             response = await client.recognize_entities(docs)
@@ -234,7 +249,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_whole_batch_language_hint(self, client):
+    async def test_whole_batch_language_hint(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             language_str = "\"language\": \"fr\""
             language = resp.http_request.body.count(language_str)
@@ -251,7 +267,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_whole_batch_dont_use_language_hint(self, client):
+    async def test_whole_batch_dont_use_language_hint(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             language_str = "\"language\": \"\""
             language = resp.http_request.body.count(language_str)
@@ -268,7 +285,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_per_item_dont_use_language_hint(self, client):
+    async def test_per_item_dont_use_language_hint(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             language_str = "\"language\": \"\""
             language = resp.http_request.body.count(language_str)
@@ -287,7 +305,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_whole_batch_language_hint_and_obj_input(self, client):
+    async def test_whole_batch_language_hint_and_obj_input(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             language_str = "\"language\": \"de\""
             language = resp.http_request.body.count(language_str)
@@ -304,7 +323,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_whole_batch_language_hint_and_obj_per_item_hints(self, client):
+    async def test_whole_batch_language_hint_and_obj_per_item_hints(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             language_str = "\"language\": \"es\""
             language = resp.http_request.body.count(language_str)
@@ -324,7 +344,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_whole_batch_language_hint_and_dict_per_item_hints(self, client):
+    async def test_whole_batch_language_hint_and_dict_per_item_hints(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             language_str = "\"language\": \"es\""
             language = resp.http_request.body.count(language_str)
@@ -343,7 +364,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"default_language": "es"})
     @recorded_by_proxy_async
-    async def test_client_passed_default_language_hint(self, client):
+    async def test_client_passed_default_language_hint(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             language_str = "\"language\": \"es\""
             language = resp.http_request.body.count(language_str)
@@ -365,7 +387,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_invalid_language_hint_method(self, client):
+    async def test_invalid_language_hint_method(self, **kwargs):
+        client = kwargs.pop("client")
         response = await client.recognize_entities(
             ["This should fail because we're passing in an invalid language hint"], language="notalanguage"
         )
@@ -374,7 +397,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_invalid_language_hint_docs(self, client):
+    async def test_invalid_language_hint_docs(self, **kwargs):
+        client = kwargs.pop("client")
         response = await client.recognize_entities(
             [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
         )
@@ -382,7 +406,9 @@ class TestRecognizeEntities(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @recorded_by_proxy_async
-    async def test_rotate_subscription_key(self, textanalytics_test_endpoint, textanalytics_test_api_key):
+    async def test_rotate_subscription_key(self, **kwargs):
+        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
+        textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         credential = AzureKeyCredential(textanalytics_test_api_key)
         client = TextAnalyticsClient(textanalytics_test_endpoint, credential)
 
@@ -404,7 +430,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_user_agent(self, client):
+    async def test_user_agent(self, **kwargs):
+        client = kwargs.pop("client")
 
         def callback(resp):
             assert "azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
@@ -420,7 +447,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_attribute_error_no_result_attribute(self, client):
+    async def test_document_attribute_error_no_result_attribute(self, **kwargs):
+        client = kwargs.pop("client")
 
         docs = [{"id": "1", "text": ""}]
         response = await client.recognize_entities(docs)
@@ -443,7 +471,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_attribute_error_nonexistent_attribute(self, client):
+    async def test_document_attribute_error_nonexistent_attribute(self, **kwargs):
+        client = kwargs.pop("client")
 
         docs = [{"id": "1", "text": ""}]
         response = await client.recognize_entities(docs)
@@ -457,7 +486,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_bad_model_version_error(self, client):
+    async def test_bad_model_version_error(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:
@@ -469,7 +499,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_errors(self, client):
+    async def test_document_errors(self, **kwargs):
+        client = kwargs.pop("client")
         text = ""
         for _ in range(5121):
             text += "x"
@@ -489,7 +520,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_warnings(self, client):
+    async def test_document_warnings(self, **kwargs):
+        client = kwargs.pop("client")
         # No warnings actually returned for recognize_entities. Will update when they add
         docs = [
             {"id": "1", "text": "This won't actually create a warning :'("},
@@ -503,7 +535,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_not_passing_list_for_docs(self, client):
+    async def test_not_passing_list_for_docs(self, **kwargs):
+        client = kwargs.pop("client")
         docs = {"id": "1", "text": "hello world"}
         with pytest.raises(TypeError) as excinfo:
             await client.recognize_entities(docs)
@@ -512,7 +545,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_missing_input_records_error(self, client):
+    async def test_missing_input_records_error(self, **kwargs):
+        client = kwargs.pop("client")
         docs = []
         with pytest.raises(ValueError) as excinfo:
             await client.recognize_entities(docs)
@@ -521,7 +555,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_passing_none_docs(self, client):
+    async def test_passing_none_docs(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError) as excinfo:
             await client.recognize_entities(None)
         assert "Input documents can not be empty or None" in str(excinfo.value)
@@ -529,7 +564,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_duplicate_ids_error(self, client):
+    async def test_duplicate_ids_error(self, **kwargs):
+        client = kwargs.pop("client")
         # Duplicate Ids
         docs = [{"id": "1", "text": "hello world"},
                 {"id": "1", "text": "I did not like the hotel we stayed at."}]
@@ -542,7 +578,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_batch_size_over_limit_error(self, client):
+    async def test_batch_size_over_limit_error(self, **kwargs):
+        client = kwargs.pop("client")
         # Batch size over limit
         docs = ["hello world"] * 1001
         try:
@@ -554,7 +591,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_language_kwarg_spanish(self, client):
+    async def test_language_kwarg_spanish(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(response):
             language_str = "\"language\": \"es\""
             assert response.http_request.body.count(language_str) == 1
@@ -572,7 +610,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_pass_cls(self, client):
+    async def test_pass_cls(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(pipeline_response, deserialized, _):
             return "cls result"
         res = await client.recognize_entities(
@@ -584,7 +623,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_offset(self, client):
+    async def test_offset(self, **kwargs):
+        client = kwargs.pop("client")
         result = await client.recognize_entities(["Microsoft was founded by Bill Gates and Paul Allen"])
         entities = result[0].entities
 
@@ -597,7 +637,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
     @recorded_by_proxy_async
-    async def test_no_offset_v3_categorized_entities(self, client):
+    async def test_no_offset_v3_categorized_entities(self, **kwargs):
+        client = kwargs.pop("client")
         result = await client.recognize_entities(["Microsoft was founded by Bill Gates and Paul Allen"])
         entities = result[0].entities
 
@@ -608,7 +649,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy_async
-    async def test_default_string_index_type_is_UnicodeCodePoint(self, client):
+    async def test_default_string_index_type_is_UnicodeCodePoint(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(response):
             assert response.http_request.query["stringIndexType"] == "UnicodeCodePoint"
 
@@ -620,7 +662,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy_async
-    async def test_default_string_index_type_UnicodeCodePoint_body_param(self, client):
+    async def test_default_string_index_type_UnicodeCodePoint_body_param(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(response):
             assert json.loads(response.http_request.body)['parameters']["stringIndexType"] == "UnicodeCodePoint"
 
@@ -632,7 +675,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy_async
-    async def test_explicit_set_string_index_type(self, client):
+    async def test_explicit_set_string_index_type(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(response):
             assert response.http_request.query["stringIndexType"] == "TextElement_v8"
 
@@ -645,7 +689,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy_async
-    async def test_explicit_set_string_index_type_body_param(self, client):
+    async def test_explicit_set_string_index_type_body_param(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(response):
             assert json.loads(response.http_request.body)['parameters']["stringIndexType"] == "TextElements_v8"
 
@@ -658,7 +703,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy_async
-    async def test_disable_service_logs(self, client):
+    async def test_disable_service_logs(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             assert resp.http_request.query['loggingOptOut']
         await client.recognize_entities(
@@ -670,7 +716,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy_async
-    async def test_disable_service_logs_body_param(self, client):
+    async def test_disable_service_logs_body_param(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             assert json.loads(resp.http_request.body)['parameters']['loggingOptOut']
         await client.recognize_entities(

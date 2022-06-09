@@ -178,7 +178,9 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_key_crud_operations(self, client, is_hsm, **kwargs):
+    def test_key_crud_operations(self, **kwargs):
+        client = kwargs.pop("client")
+        is_hsm = kwargs.pop("is_hsm")
         set_bodiless_matcher()
         assert client is not None
 
@@ -243,7 +245,8 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",only_hsm)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_rsa_public_exponent(self, client, **kwargs):
+    def test_rsa_public_exponent(self, **kwargs):
+        client = kwargs.pop("client")
         """The public exponent of a Managed HSM RSA key can be specified during creation"""
         set_bodiless_matcher()
         assert client is not None
@@ -256,7 +259,9 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_backup_restore(self, client, is_hsm, **kwargs):
+    def test_backup_restore(self, **kwargs):
+        client = kwargs.pop("client")
+        is_hsm = kwargs.pop("is_hsm")
         set_bodiless_matcher()
         assert client is not None
 
@@ -283,7 +288,9 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_key_list(self, client, is_hsm, **kwargs):
+    def test_key_list(self, **kwargs):
+        client = kwargs.pop("client")
+        is_hsm = kwargs.pop("is_hsm")
         set_bodiless_matcher()
 
         assert client is not None
@@ -308,7 +315,9 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_list_versions(self, client, is_hsm, **kwargs):
+    def test_list_versions(self, **kwargs):
+        client = kwargs.pop("client")
+        is_hsm = kwargs.pop("is_hsm")
         assert client is not None
 
         key_name = self.get_resource_name("testKey")
@@ -334,7 +343,9 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_list_deleted_keys(self, client, is_hsm, **kwargs):
+    def test_list_deleted_keys(self, **kwargs):
+        client = kwargs.pop("client")
+        is_hsm = kwargs.pop("is_hsm")
         set_bodiless_matcher()
         assert client is not None
 
@@ -365,7 +376,9 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_recover(self, client, is_hsm, **kwargs):
+    def test_recover(self, **kwargs):
+        client = kwargs.pop("client")
+        is_hsm = kwargs.pop("is_hsm")
         set_bodiless_matcher()
         assert client is not None
 
@@ -392,7 +405,9 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_purge(self, client, is_hsm, **kwargs):
+    def test_purge(self, **kwargs):
+        client = kwargs.pop("client")
+        is_hsm = kwargs.pop("is_hsm")
         set_bodiless_matcher()
         assert client is not None
 
@@ -424,7 +439,9 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",logging_enabled)
     @KeysClientPreparer(logging_enable = True)
     @recorded_by_proxy
-    def test_logging_enabled(self, client, is_hsm, **kwargs):
+    def test_logging_enabled(self, **kwargs):
+        client = kwargs.pop("client")
+        is_hsm = kwargs.pop("is_hsm")
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
@@ -459,7 +476,9 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",logging_enabled)
     @KeysClientPreparer(logging_enable = False)
     @recorded_by_proxy
-    def test_logging_disabled(self, client, is_hsm, **kwargs):
+    def test_logging_disabled(self, **kwargs):
+        client = kwargs.pop("client")
+        is_hsm = kwargs.pop("is_hsm")
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
@@ -493,7 +512,8 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",only_hsm_7_3)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_get_random_bytes(self, client, **kwargs):
+    def test_get_random_bytes(self, **kwargs):
+        client = kwargs.pop("client")
         assert client
 
         generated_random_bytes = []
@@ -509,7 +529,8 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",only_7_3)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_key_release(self, client, **kwargs):
+    def test_key_release(self, **kwargs):
+        client = kwargs.pop("client")
         set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
         attestation = get_attestation_token(attestation_uri)
@@ -529,7 +550,8 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",only_hsm_7_3)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_imported_key_release(self, client, **kwargs):
+    def test_imported_key_release(self, **kwargs):
+        client = kwargs.pop("client")
         set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
         attestation = get_attestation_token(attestation_uri)
@@ -549,7 +571,8 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",only_7_3)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_update_release_policy(self, client, **kwargs):
+    def test_update_release_policy(self, **kwargs):
+        client = kwargs.pop("client")
         set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
         release_policy = get_release_policy(attestation_uri)
@@ -591,7 +614,8 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",only_vault_7_3)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_immutable_release_policy(self, client, **kwargs):
+    def test_immutable_release_policy(self, **kwargs):
+        client = kwargs.pop("client")
         set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
         release_policy = get_release_policy(attestation_uri, immutable=True)
@@ -625,7 +649,8 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",only_vault_7_3)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_key_rotation(self, client, **kwargs):
+    def test_key_rotation(self, **kwargs):
+        client = kwargs.pop("client")
         set_bodiless_matcher()
         if (not is_public_cloud() and self.is_live):
             pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
@@ -642,7 +667,8 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",only_vault_7_3)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_key_rotation_policy(self, client, **kwargs):
+    def test_key_rotation_policy(self, **kwargs):
+        client = kwargs.pop("client")
         set_bodiless_matcher()
         if (not is_public_cloud() and self.is_live):
             pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
@@ -710,7 +736,9 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_get_cryptography_client(self, client, is_hsm, **kwargs):
+    def test_get_cryptography_client(self, **kwargs):
+        client = kwargs.pop("client")
+        is_hsm = kwargs.pop("is_hsm")
         key_name = self.get_resource_name("key-name")
         key = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 

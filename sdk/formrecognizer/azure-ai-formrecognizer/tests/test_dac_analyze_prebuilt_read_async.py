@@ -26,7 +26,8 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_read_stream_languages(self, client):
+    async def test_document_read_stream_languages(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
 
@@ -63,7 +64,8 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_read_stream_docx(self, client, **kwargs):
+    async def test_document_read_stream_docx(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.invoice_docx, "rb") as fd:
             document = fd.read()
 

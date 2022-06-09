@@ -171,7 +171,8 @@ class TestCertificateClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @AsyncCertificatesClientPreparer()
     @recorded_by_proxy_async
-    async def test_crud_operations(self, client, **kwargs):
+    async def test_crud_operations(self, **kwargs):
+        client = kwargs.pop("client")
         cert_name = self.get_resource_name("cert")
         lifetime_actions = [LifetimeAction(lifetime_percentage=80, action=CertificatePolicyAction.auto_renew)]
         cert_policy = CertificatePolicy(
@@ -225,7 +226,8 @@ class TestCertificateClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @AsyncCertificatesClientPreparer()
     @recorded_by_proxy_async
-    async def test_import_certificate_not_password_encoded_no_policy(self, client, **kwargs):
+    async def test_import_certificate_not_password_encoded_no_policy(self, **kwargs):
+        client = kwargs.pop("client")
         # If a certificate is not password encoded, we can import the certificate
         # without passing in 'password'
         certificate = await client.import_certificate(
@@ -238,7 +240,8 @@ class TestCertificateClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @AsyncCertificatesClientPreparer()
     @recorded_by_proxy_async
-    async def test_import_certificate_password_encoded_no_policy(self, client, **kwargs):
+    async def test_import_certificate_password_encoded_no_policy(self, **kwargs):
+        client = kwargs.pop("client")
         # If a certificate is password encoded, we have to pass in 'password'
         # when importing the certificate
         certificate = await client.import_certificate(
@@ -252,7 +255,8 @@ class TestCertificateClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @AsyncCertificatesClientPreparer()
     @recorded_by_proxy_async
-    async def test_list(self, client, **kwargs):
+    async def test_list(self, **kwargs):
+        client = kwargs.pop("client")
         max_certificates = LIST_TEST_SIZE
         expected = {}
 
@@ -282,7 +286,8 @@ class TestCertificateClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @AsyncCertificatesClientPreparer()
     @recorded_by_proxy_async
-    async def test_list_certificate_versions(self, client, **kwargs):
+    async def test_list_certificate_versions(self, **kwargs):
+        client = kwargs.pop("client")
         cert_name = self.get_resource_name("certver")
 
         max_certificates = LIST_TEST_SIZE
@@ -316,7 +321,8 @@ class TestCertificateClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @AsyncCertificatesClientPreparer()
     @recorded_by_proxy_async
-    async def test_crud_contacts(self, client, **kwargs):
+    async def test_crud_contacts(self, **kwargs):
+        client = kwargs.pop("client")
         contact_list = [
             CertificateContact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
             CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
@@ -346,7 +352,8 @@ class TestCertificateClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @AsyncCertificatesClientPreparer()
     @recorded_by_proxy_async
-    async def test_recover_and_purge(self, client, **kwargs):
+    async def test_recover_and_purge(self, **kwargs):
+        client = kwargs.pop("client")
         set_bodiless_matcher()
         certs = {}
         # create certificates to recover
@@ -400,7 +407,8 @@ class TestCertificateClient(KeyVaultTestCase):
     @pytest.mark.skip("Skipping because service doesn't allow cancellation of certificates with issuer 'Unknown'")
     @AsyncCertificatesClientPreparer()
     @recorded_by_proxy_async
-    async def test_async_request_cancellation_and_deletion(self, client, **kwargs):
+    async def test_async_request_cancellation_and_deletion(self, **kwargs):
+        client = kwargs.pop("client")
         cert_name = self.get_resource_name("asyncCanceledDeletedCert")
         cert_policy = CertificatePolicy.get_default()
 
@@ -460,7 +468,8 @@ class TestCertificateClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", exclude_2016_10_01)
     @AsyncCertificatesClientPreparer()
     @recorded_by_proxy_async
-    async def test_policy(self, client, **kwargs):
+    async def test_policy(self, **kwargs):
+        client = kwargs.pop("client")
         cert_name = self.get_resource_name("policyCertificate")
         cert_policy = CertificatePolicy(
             issuer_name="Self",
@@ -498,7 +507,8 @@ class TestCertificateClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @AsyncCertificatesClientPreparer()
     @recorded_by_proxy_async
-    async def test_get_pending_certificate_signing_request(self, client, **kwargs):
+    async def test_get_pending_certificate_signing_request(self, **kwargs):
+        client = kwargs.pop("client")
         cert_name = self.get_resource_name("unknownIssuerCert")
 
         # get pending certificate signing request
@@ -511,7 +521,8 @@ class TestCertificateClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", exclude_2016_10_01)
     @AsyncCertificatesClientPreparer()
     @recorded_by_proxy_async
-    async def test_backup_restore(self, client, **kwargs):
+    async def test_backup_restore(self, **kwargs):
+        client = kwargs.pop("client")
         cert_name = self.get_resource_name("cert")
         policy = CertificatePolicy.get_default()
         policy._san_user_principal_names = ["john.doe@domain.com"]
@@ -539,7 +550,8 @@ class TestCertificateClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @AsyncCertificatesClientPreparer()
     @recorded_by_proxy_async
-    async def test_crud_issuer(self, client, **kwargs):
+    async def test_crud_issuer(self, **kwargs):
+        client = kwargs.pop("client")
         issuer_name = self.get_resource_name("issuer")
         admin_contacts = [
             AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
@@ -620,7 +632,8 @@ class TestCertificateClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @AsyncCertificatesClientPreparer(logging_enable = True)
     @recorded_by_proxy_async
-    async def test_logging_enabled(self, client, **kwargs):
+    async def test_logging_enabled(self, **kwargs):
+        client = kwargs.pop("client")
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
@@ -655,7 +668,8 @@ class TestCertificateClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @AsyncCertificatesClientPreparer(logging_enable = False)
     @recorded_by_proxy_async
-    async def test_logging_disabled(self, client, **kwargs):
+    async def test_logging_disabled(self, **kwargs):
+        client = kwargs.pop("client")
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
@@ -689,7 +703,8 @@ class TestCertificateClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @AsyncCertificatesClientPreparer(logging_enable = True)
     @recorded_by_proxy_async
-    async def test_get_certificate_version(self, client, **kwargs):
+    async def test_get_certificate_version(self, **kwargs):
+        client = kwargs.pop("client")
         cert_name = self.get_resource_name("cert")
         policy = CertificatePolicy.get_default()
         for _ in range(LIST_TEST_SIZE):
@@ -717,7 +732,8 @@ class TestCertificateClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", only_2016_10_01)
     @AsyncCertificatesClientPreparer(logging_enable = True)
     @recorded_by_proxy_async
-    async def test_list_properties_of_certificates(self, client, **kwargs):
+    async def test_list_properties_of_certificates(self, **kwargs):
+        client = kwargs.pop("client")
         """Tests API version v2016_10_01"""
 
         certs = client.list_properties_of_certificates()
@@ -736,7 +752,8 @@ class TestCertificateClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", only_2016_10_01)
     @AsyncCertificatesClientPreparer(logging_enable = True)
     @recorded_by_proxy_async
-    async def test_list_deleted_certificates_2016_10_01(self, client, **kwargs):
+    async def test_list_deleted_certificates_2016_10_01(self, **kwargs):
+        client = kwargs.pop("client")
         """Tests API version v2016_10_01"""
 
         certs = client.list_deleted_certificates()

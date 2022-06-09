@@ -106,14 +106,16 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_no_single_input(self, client):
+    async def test_no_single_input(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(TypeError):
             response = await client.begin_analyze_actions("hello world", actions=[], polling_interval=self._interval())
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_all_successful_passing_dict_key_phrase_task(self, client):
+    async def test_all_successful_passing_dict_key_phrase_task(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
 
@@ -142,7 +144,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_all_successful_passing_dict_sentiment_task(self, client):
+    async def test_all_successful_passing_dict_sentiment_task(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
                 {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at. It was too expensive."},
                 {"id": "3", "language": "en", "text": "The restaurant had really good food. I recommend you try it."}]
@@ -187,7 +190,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_sentiment_analysis_task_with_opinion_mining(self, client):
+    async def test_sentiment_analysis_task_with_opinion_mining(self, **kwargs):
+        client = kwargs.pop("client")
         documents = [
             "It has a sleek premium aluminum design that makes it beautiful to look at.",
             "The food and service is not good"
@@ -267,7 +271,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_all_successful_passing_text_document_input_entities_task(self, client):
+    async def test_all_successful_passing_text_document_input_entities_task(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [
             TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975", language="en"),
             TextDocumentInput(id="2", text="Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975.", language="es"),
@@ -306,7 +311,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_all_successful_passing_string_pii_entities_task(self, client):
+    async def test_all_successful_passing_string_pii_entities_task(self, **kwargs):
+        client = kwargs.pop("client")
 
         docs = ["My SSN is 859-98-0987.",
                 "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check.",
@@ -344,7 +350,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_bad_request_on_empty_document(self, client):
+    async def test_bad_request_on_empty_document(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [""]
 
         with pytest.raises(HttpResponseError):
@@ -360,7 +367,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         "textanalytics_test_api_key": "",
     })
     @recorded_by_proxy_async
-    async def test_empty_credential_class(self, client):
+    async def test_empty_credential_class(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ClientAuthenticationError):
             async with client:
                 await (await client.begin_analyze_actions(
@@ -381,7 +389,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         "textanalytics_test_api_key": "xxxxxxxxxxxx"
     })
     @recorded_by_proxy_async
-    async def test_bad_credentials(self, client):
+    async def test_bad_credentials(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ClientAuthenticationError):
             async with client:
                 await (await client.begin_analyze_actions(
@@ -400,7 +409,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_out_of_order_ids_multiple_tasks(self, client):
+    async def test_out_of_order_ids_multiple_tasks(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "19", "text": ":P"},
@@ -443,7 +453,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.1"})
     @recorded_by_proxy_async
-    async def test_show_stats_and_model_version_multiple_tasks_v3_1(self, client):
+    async def test_show_stats_and_model_version_multiple_tasks_v3_1(self, **kwargs):
+        client = kwargs.pop("client")
 
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
@@ -506,7 +517,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_show_stats_and_model_version_multiple_tasks(self, client):
+    async def test_show_stats_and_model_version_multiple_tasks(self, **kwargs):
+        client = kwargs.pop("client")
 
         def callback(resp):
             assert resp.raw_response
@@ -570,7 +582,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_poller_metadata(self, client):
+    async def test_poller_metadata(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "56", "text": ":)"}]
 
         async with client:
@@ -598,7 +611,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_bad_model_version_error_multiple_tasks(self, client):
+    async def test_bad_model_version_error_multiple_tasks(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "language": "en", "text": "I did not like the hotel we stayed at."}]
 
         async with client:
@@ -620,7 +634,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_bad_model_version_error_all_tasks(self, client):  # TODO: verify behavior of service
+    async def test_bad_model_version_error_all_tasks(self, **kwargs):
+        client = kwargs.pop("client")  # TODO: verify behavior of service
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         with pytest.raises(HttpResponseError):
@@ -641,7 +656,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_missing_input_records_error(self, client):
+    async def test_missing_input_records_error(self, **kwargs):
+        client = kwargs.pop("client")
         docs = []
         with pytest.raises(ValueError) as excinfo:
             async with client:
@@ -662,7 +678,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_passing_none_docs(self, client):
+    async def test_passing_none_docs(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError) as excinfo:
             async with client:
                 await client.begin_analyze_actions(None, None, polling_interval=self._interval())
@@ -671,7 +688,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_pass_cls(self, client):
+    async def test_pass_cls(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(pipeline_response, deserialized, _):
             return "cls result"
 
@@ -689,7 +707,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_multiple_pages_of_results_returned_successfully(self, client):
+    async def test_multiple_pages_of_results_returned_successfully(self, **kwargs):
+        client = kwargs.pop("client")
         single_doc = "hello world"
         docs = [{"id": str(idx), "text": val} for (idx, val) in
                 enumerate(list(itertools.repeat(single_doc, 25)))]  # max number of documents is 25
@@ -738,7 +757,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_too_many_documents(self, client):
+    async def test_too_many_documents(self, **kwargs):
+        client = kwargs.pop("client")
         docs = list(itertools.repeat("input document", 26))  # Maximum number of documents per request is 25
 
         with pytest.raises(HttpResponseError) as excinfo:
@@ -810,7 +830,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_pii_action_categories_filter(self, client):
+    async def test_pii_action_categories_filter(self, **kwargs):
+        client = kwargs.pop("client")
 
         docs = [{"id": "1", "text": "My SSN is 859-98-0987."},
                 {"id": "2",
@@ -842,7 +863,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_partial_success_for_actions(self, client):
+    async def test_partial_success_for_actions(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "language": "tr", "text": "I did not like the hotel we stayed at."},
                 {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at."}]
 
@@ -883,7 +905,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_multiple_of_same_action(self, client):
+    async def test_multiple_of_same_action(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [
             {"id": "28", "text": "My SSN is 859-98-0987. Here is another sentence."},
             {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number? Here is another sentence."},
@@ -976,7 +999,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_multiple_of_same_action_with_partial_results(self, client):
+    async def test_multiple_of_same_action_with_partial_results(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "5", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
                 {"id": "2", "text": ""}]
 
@@ -1017,7 +1041,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_all_successful_passing_dict_extract_summary_action(self, client):
+    async def test_all_successful_passing_dict_extract_summary_action(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "language": "en", "text":
             "The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
             " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
@@ -1066,7 +1091,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_extract_summary_action_with_options(self, client):
+    async def test_extract_summary_action_with_options(self, **kwargs):
+        client = kwargs.pop("client")
         docs = ["The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
             " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
             "Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of "
@@ -1115,7 +1141,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_extract_summary_partial_results(self, client):
+    async def test_extract_summary_partial_results(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "language": "en", "text": ""}, {"id": "2", "language": "en", "text": "hello world"}]
 
         async with client:
@@ -1327,7 +1354,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_analyze_continuation_token(self, client):
+    async def test_analyze_continuation_token(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
@@ -1803,7 +1831,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.1"})
     @recorded_by_proxy_async
-    async def test_analyze_works_with_v3_1(self, client):
+    async def test_analyze_works_with_v3_1(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "19", "text": ":P"},
@@ -1916,7 +1945,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_healthcare_action(self, client):
+    async def test_healthcare_action(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [
             "Patient does not suffer from high blood pressure.",
             "Prescribed 100mg ibuprofen, taken twice daily.",

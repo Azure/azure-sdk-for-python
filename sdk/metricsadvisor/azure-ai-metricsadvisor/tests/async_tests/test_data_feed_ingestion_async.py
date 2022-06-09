@@ -22,7 +22,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_get_data_feed_ingestion_progress(self, client):
+    async def test_get_data_feed_ingestion_progress(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             ingestion = await client.get_data_feed_ingestion_progress(
                 data_feed_id=self.data_feed_id
@@ -34,7 +35,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_data_feed_ingestion_status(self, client):
+    async def test_list_data_feed_ingestion_status(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             ingestions = client.list_data_feed_ingestion_status(
                 data_feed_id=self.data_feed_id,
@@ -50,7 +52,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_data_feed_ingest_status_skip(self, client):
+    async def test_list_data_feed_ingest_status_skip(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             ingestions = client.list_data_feed_ingestion_status(
                 data_feed_id=self.data_feed_id,
@@ -78,7 +81,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_refresh_data_feed_ingestion(self, client):
+    async def test_refresh_data_feed_ingestion(self, **kwargs):
+        client = kwargs.pop("client")
         async with client:
             await client.refresh_data_feed_ingestion(
                 self.data_feed_id,

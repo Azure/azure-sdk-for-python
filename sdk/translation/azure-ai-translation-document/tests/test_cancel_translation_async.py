@@ -20,7 +20,7 @@ class TestCancelTranslation(AsyncDocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
     async def test_cancel_translation(self, **kwargs):
-        '''
+                '''
             some notes (test sporadically failing):
             1. use a large number of translations
                 - because when running tests the translation sometimes finishes with status 'Succeeded'

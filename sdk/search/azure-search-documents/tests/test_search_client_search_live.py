@@ -15,7 +15,10 @@ class TestSearchClient(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
-    def test_search_client(self, endpoint, api_key, index_name):
+    def test_search_client(self, **kwargs):
+        endpoint = kwargs.pop("endpoint")
+        api_key = kwargs.pop("api_key")
+        index_name = kwargs.pop("index_name")
         client = SearchClient(endpoint, index_name, api_key)
         self._test_get_search_simple(client)
         self._test_get_search_simple_with_top(client)

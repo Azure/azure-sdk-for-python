@@ -34,7 +34,9 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_user_agent_default_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_user_agent_default_async(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         service = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
 
         def callback(response):
@@ -54,7 +56,9 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_user_agent_custom_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_user_agent_custom_async(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         custom_app = "TestApp/v1.0"
         service = TableServiceClient(
             self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key, user_agent=custom_app)
@@ -88,7 +92,9 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_user_agent_append(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_user_agent_append(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         service = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
 
         def callback(response):
@@ -106,7 +112,9 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @pytest.mark.live_test_only
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_table_name_errors_bad_chars(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_table_name_errors_bad_chars(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         endpoint = self.account_url(tables_cosmos_account_name, "cosmos")
         
         # cosmos table names must be a non-empty string without chars '\', '/', '#', '?', and less than 255 chars.
@@ -144,7 +152,9 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @pytest.mark.live_test_only
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_table_name_errors_bad_length(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_table_name_errors_bad_length(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         endpoint = self.account_url(tables_cosmos_account_name, "cosmos")
         
         # cosmos table names must be a non-empty string without chars '\', '/', '#', '?', and less than 255 chars.

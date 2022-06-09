@@ -25,7 +25,8 @@ class TestMgmtServiceBus(AzureMgmtRecordedTestCase):
     
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_queue(self, resource_group):
+    def test_queue(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         RESOURCE_GROUP = resource_group.name
         NAMESPACE_NAME = "myNamespacexxyyzzybx"

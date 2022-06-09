@@ -442,7 +442,8 @@ class TestMgmtMonitorClient(AzureMgmtRecordedTestCase):
     @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_monitor_diagnostic_settings(self, resource_group):
+    def test_monitor_diagnostic_settings(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         # RESOURCE_URI = "subscriptions/{}/resourcegroups/{}".format(SUBSCRIPTION_ID, RESOURCE_GROUP)
@@ -522,7 +523,8 @@ class TestMgmtMonitorClient(AzureMgmtRecordedTestCase):
     @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_log_profiles(self, resource_group):
+    def test_log_profiles(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         LOGPROFILE_NAME  = self.get_resource_name("logprofilex")
@@ -587,7 +589,8 @@ class TestMgmtMonitorClient(AzureMgmtRecordedTestCase):
     @unittest.skip("cannot create or modify classic metric alerts")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_alert_rule(self, resource_group):
+    def test_alert_rule(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
@@ -688,7 +691,8 @@ class TestMgmtMonitorClient(AzureMgmtRecordedTestCase):
     @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_metric_alerts(self, resource_group):
+    def test_metric_alerts(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         METRIC_ALERT_NAME = "metricnamexx"
@@ -857,7 +861,8 @@ class TestMgmtMonitorClient(AzureMgmtRecordedTestCase):
     @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_action_groups(self, resource_group):
+    def test_action_groups(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         ACTION_GROUP_NAME = self.get_resource_name("actiongroup")
         
@@ -916,7 +921,8 @@ class TestMgmtMonitorClient(AzureMgmtRecordedTestCase):
     @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_activity_log_alerts(self, resource_group):
+    def test_activity_log_alerts(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         ACTIVITY_LOG_ALERT_NAME = self.get_resource_name("activitylogalertx")
 
@@ -989,7 +995,8 @@ class TestMgmtMonitorClient(AzureMgmtRecordedTestCase):
     @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_autoscale_settings(self, resource_group):
+    def test_autoscale_settings(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
@@ -1090,7 +1097,8 @@ class TestMgmtMonitorClient(AzureMgmtRecordedTestCase):
     @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_scheduled_query_rules(self, resource_group):
+    def test_scheduled_query_rules(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         RESOURCE_GROUP = resource_group.name
         WORKSPACE_NAME = self.get_resource_name("workspacex")
         SCHEDULED_QUERY_RULE_NAME = self.get_resource_name("scheduledqueryrule")
@@ -1162,7 +1170,8 @@ class TestMgmtMonitorClient(AzureMgmtRecordedTestCase):
     @unittest.skip("(InvalidResourceType) The resource type could not be found in the namespace 'microsoft.insights' for api version '2018-06-01-preview'.")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_guest_diagnostics_settings(self, resource_group):
+    def test_guest_diagnostics_settings(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
         DIAGNOSTIC_SETTINGS_NAME = self.get_resource_name("diagnosticsettings")
 
         BODY = {

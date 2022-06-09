@@ -69,7 +69,8 @@ class TestMgmtServiceBus(AzureMgmtRecordedTestCase):
     @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_namespace(self, resource_group):
+    def test_namespace(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
@@ -257,7 +258,8 @@ class TestMgmtServiceBus(AzureMgmtRecordedTestCase):
     @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_migration_configs(self, resource_group):
+    def test_migration_configs(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         RESOURCE_GROUP = resource_group.name
         NAMESPACE_NAME = "myNamespacexxyyzzxyyma"
@@ -385,7 +387,8 @@ class TestMgmtServiceBus(AzureMgmtRecordedTestCase):
     @unittest.skip("unsupport.")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_disaster_recovery_configs(self, resource_group):
+    def test_disaster_recovery_configs(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         RESOURCE_GROUP = resource_group.name
         NAMESPACE_NAME = "myNamespacexxyyzzxyyab"

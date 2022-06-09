@@ -33,7 +33,8 @@ class TestMgmtCdn(AzureMgmtRecordedTestCase):
     
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_cdn(self, resource_group):
+    def test_cdn(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         SUBSCRIPTION_ID = None
         if self.is_live:

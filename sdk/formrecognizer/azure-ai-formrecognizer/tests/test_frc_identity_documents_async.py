@@ -29,7 +29,9 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
     @pytest.mark.skip()
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
-    async def test_identity_document_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+    async def test_identity_document_bad_endpoint(self, **kwargs):
+        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
+        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         with open(self.identity_document_license_jpg, "rb") as fd:
             my_file = fd.read()
         with pytest.raises(ServiceRequestError):
@@ -88,7 +90,8 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_identity_document_stream_transform_jpg(self, client):
+    async def test_identity_document_stream_transform_jpg(self, **kwargs):
+        client = kwargs.pop("client")
         responses = []
 
         def callback(raw_response, _, headers):
@@ -128,7 +131,8 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_identity_document_jpg_include_field_elements(self, client):
+    async def test_identity_document_jpg_include_field_elements(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.identity_document_license_jpg, "rb") as fd:
             id_document = fd.read()
         async with client:
@@ -178,7 +182,8 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_pages_kwarg_specified(self, client):
+    async def test_pages_kwarg_specified(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.identity_document_license_jpg, "rb") as fd:
             id_document = fd.read()
         async with client:

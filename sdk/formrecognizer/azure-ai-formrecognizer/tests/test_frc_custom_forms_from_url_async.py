@@ -27,7 +27,9 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_custom_form_multipage_unlabeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+    async def test_custom_form_multipage_unlabeled(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_multipage_storage_container_sas_url_v2 = kwargs.pop("formrecognizer_multipage_storage_container_sas_url_v2")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -54,7 +56,9 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_form_multipage_labeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+    async def test_form_multipage_labeled(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_multipage_storage_container_sas_url_v2 = kwargs.pop("formrecognizer_multipage_storage_container_sas_url_v2")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -82,7 +86,9 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_multipage_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+    async def test_multipage_unlabeled_transform(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_multipage_storage_container_sas_url_v2 = kwargs.pop("formrecognizer_multipage_storage_container_sas_url_v2")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -127,7 +133,9 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_multipage_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+    async def test_multipage_labeled_transform(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_multipage_storage_container_sas_url_v2 = kwargs.pop("formrecognizer_multipage_storage_container_sas_url_v2")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -200,7 +208,9 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_custom_form_multipage_vendor_set_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2, **kwargs):
+    async def test_custom_form_multipage_vendor_set_unlabeled_transform(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_multipage_storage_container_sas_url_2_v2 = kwargs.pop("formrecognizer_multipage_storage_container_sas_url_2_v2")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -243,7 +253,9 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_custom_form_multipage_vendor_set_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2, **kwargs):
+    async def test_custom_form_multipage_vendor_set_labeled_transform(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_multipage_storage_container_sas_url_2_v2 = kwargs.pop("formrecognizer_multipage_storage_container_sas_url_2_v2")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -288,7 +300,9 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_pages_kwarg_specified(self, client, formrecognizer_testing_data_container_sas_url, **kwargs):
+    async def test_pages_kwarg_specified(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_testing_data_container_sas_url = kwargs.pop("formrecognizer_testing_data_container_sas_url")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"

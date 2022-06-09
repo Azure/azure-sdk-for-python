@@ -70,7 +70,9 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
     # --Test Cases --------------------------------------------
     @tables_decorator
     @recorded_by_proxy
-    def test_retry_on_server_error(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_retry_on_server_error(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key, default_table=False)
         try:
             callback = ResponseCallback(status=201, new_status=500).override_status
@@ -86,7 +88,9 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_retry_on_timeout(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_retry_on_timeout(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         self._set_up(
             tables_storage_account_name,
             tables_primary_storage_account_key,
@@ -125,7 +129,9 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_no_retry(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_no_retry(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key, retry_total=0, default_table=False)
 
         new_table_name = self.get_resource_name('uttable')

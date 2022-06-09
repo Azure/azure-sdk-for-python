@@ -21,7 +21,10 @@ class TestSearchClientDocumentsAsync(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy_async
-    async def test_search_client_index_document(self, endpoint, api_key, index_name):
+    async def test_search_client_index_document(self, **kwargs):
+        endpoint = kwargs.pop("endpoint")
+        api_key = kwargs.pop("api_key")
+        index_name = kwargs.pop("index_name")
         client = SearchClient(endpoint, index_name, api_key)
         doc_count = 10
         async with client:

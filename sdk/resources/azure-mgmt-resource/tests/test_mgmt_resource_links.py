@@ -27,7 +27,9 @@ class TestMgmtResourceLinks(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer()
     @recorded_by_proxy
-    def test_links(self, resource_group, location):
+    def test_links(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         resource_name = self.get_resource_name("pytestavset")
         if not self.is_playback():
             create_result = self.resource_client.resources.begin_create_or_update(

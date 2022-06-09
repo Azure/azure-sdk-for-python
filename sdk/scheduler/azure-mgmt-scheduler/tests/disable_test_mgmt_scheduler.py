@@ -24,7 +24,9 @@ class TestMgmtScheduler(AzureMgmtRecordedTestCase):
 
     @ResourceGroupPreparer()
     @recorded_by_proxy
-    def test_scheduler(self, resource_group, location):
+    def test_scheduler(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         jobcollection_name = "myjobcollection"
         self.scheduler_client.job_collections.create_or_update(
             resource_group.name,
@@ -46,7 +48,9 @@ class TestMgmtScheduler(AzureMgmtRecordedTestCase):
     @unittest.skip("(BadRequest) Malformed Job Object")
     @ResourceGroupPreparer()
     @recorded_by_proxy
-    def test_scheduler_job_custom_time(self, resource_group, location):
+    def test_scheduler_job_custom_time(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
+        location = kwargs.pop("location")
         jobcollection_name = "myjobcollection"
         self.scheduler_client.job_collections.create_or_update(
             resource_group.name,

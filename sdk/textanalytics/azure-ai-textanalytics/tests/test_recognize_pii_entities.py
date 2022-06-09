@@ -30,14 +30,16 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_no_single_input(self, client):
+    def test_no_single_input(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(TypeError):
             response = client.recognize_pii_entities("hello world")
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_all_successful_passing_dict(self, client):
+    def test_all_successful_passing_dict(self, **kwargs):
+        client = kwargs.pop("client")
 
         docs = [{"id": "1", "text": "My SSN is 859-98-0987."},
                 {"id": "2", "text": "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check."},
@@ -63,7 +65,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_all_successful_passing_text_document_input(self, client):
+    def test_all_successful_passing_text_document_input(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [
             TextDocumentInput(id="1", text="My SSN is 859-98-0987."),
             TextDocumentInput(id="2", text="Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check."),
@@ -90,7 +93,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_passing_only_string(self, client):
+    def test_passing_only_string(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [
             "My SSN is 859-98-0987.",
             "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check.",
@@ -112,7 +116,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_input_with_some_errors(self, client):
+    def test_input_with_some_errors(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "language": "notalanguage", "text": "hola"},
                 {"id": "2", "text": ""},
                 {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number?"}]
@@ -125,7 +130,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_input_with_all_errors(self, client):
+    def test_input_with_all_errors(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "text": ""},
                 {"id": "2", "language": "Spanish", "text": "Hola"},
                 {"id": "3", "language": "de", "text": ""}]
@@ -138,7 +144,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_too_many_documents(self, client):
+    def test_too_many_documents(self, **kwargs):
+        client = kwargs.pop("client")
         docs = ["One", "Two", "Three", "Four", "Five", "Six"]
 
         with pytest.raises(HttpResponseError) as excinfo:
@@ -150,7 +157,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_output_same_order_as_input(self, client):
+    def test_output_same_order_as_input(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [
             TextDocumentInput(id="1", text="one"),
             TextDocumentInput(id="2", text="two"),
@@ -167,7 +175,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": ""})
     @recorded_by_proxy
-    def test_empty_credential_class(self, client):
+    def test_empty_credential_class(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ClientAuthenticationError):
             response = client.recognize_pii_entities(
                 ["This is written in English."]
@@ -176,7 +185,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": "xxxxxxxxxxxx"})
     @recorded_by_proxy
-    def test_bad_credentials(self, client):
+    def test_bad_credentials(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ClientAuthenticationError):
             response = client.recognize_pii_entities(
                 ["This is written in English."]
@@ -185,7 +195,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_bad_document_input(self, client):
+    def test_bad_document_input(self, **kwargs):
+        client = kwargs.pop("client")
         docs = "This is the wrong type"
 
         with pytest.raises(TypeError):
@@ -194,7 +205,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_mixing_inputs(self, client):
+    def test_mixing_inputs(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
             TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
@@ -206,7 +218,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_out_of_order_ids(self, client):
+    def test_out_of_order_ids(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "22", "text": ""},
@@ -221,7 +234,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_show_stats_and_model_version(self, client):
+    def test_show_stats_and_model_version(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(response):
             assert response is not None
             assert response.model_version
@@ -247,7 +261,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_batch_size_over_limit(self, client):
+    def test_batch_size_over_limit(self, **kwargs):
+        client = kwargs.pop("client")
         docs = ["hello world"] * 1050
         with pytest.raises(HttpResponseError):
             response = client.recognize_pii_entities(docs)
@@ -255,7 +270,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_whole_batch_language_hint(self, client):
+    def test_whole_batch_language_hint(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             language_str = "\"language\": \"fr\""
             language = resp.http_request.body.count(language_str)
@@ -272,7 +288,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_whole_batch_dont_use_language_hint(self, client):
+    def test_whole_batch_dont_use_language_hint(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             language_str = "\"language\": \"\""
             language = resp.http_request.body.count(language_str)
@@ -289,7 +306,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_per_item_dont_use_language_hint(self, client):
+    def test_per_item_dont_use_language_hint(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             language_str = "\"language\": \"\""
             language = resp.http_request.body.count(language_str)
@@ -308,7 +326,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_whole_batch_language_hint_and_obj_input(self, client):
+    def test_whole_batch_language_hint_and_obj_input(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             language_str = "\"language\": \"de\""
             language = resp.http_request.body.count(language_str)
@@ -325,7 +344,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_whole_batch_language_hint_and_obj_per_item_hints(self, client):
+    def test_whole_batch_language_hint_and_obj_per_item_hints(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             language_str = "\"language\": \"es\""
             language = resp.http_request.body.count(language_str)
@@ -345,7 +365,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_whole_batch_language_hint_and_dict_per_item_hints(self, client):
+    def test_whole_batch_language_hint_and_dict_per_item_hints(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             language_str = "\"language\": \"es\""
             language = resp.http_request.body.count(language_str)
@@ -364,7 +385,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"default_language": "es"})
     @recorded_by_proxy
-    def test_client_passed_default_language_hint(self, client):
+    def test_client_passed_default_language_hint(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             language_str = "\"language\": \"es\""
             language = resp.http_request.body.count(language_str)
@@ -386,7 +408,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_invalid_language_hint_method(self, client):
+    def test_invalid_language_hint_method(self, **kwargs):
+        client = kwargs.pop("client")
         response = client.recognize_pii_entities(
             ["This should fail because we're passing in an invalid language hint"], language="notalanguage"
         )
@@ -395,7 +418,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_invalid_language_hint_docs(self, client):
+    def test_invalid_language_hint_docs(self, **kwargs):
+        client = kwargs.pop("client")
         response = client.recognize_pii_entities(
             [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
         )
@@ -403,7 +427,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @recorded_by_proxy
-    def test_rotate_subscription_key(self, textanalytics_test_endpoint, textanalytics_test_api_key):
+    def test_rotate_subscription_key(self, **kwargs):
+        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
+        textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         credential = AzureKeyCredential(textanalytics_test_api_key)
         client = TextAnalyticsClient(textanalytics_test_endpoint, credential)
 
@@ -425,7 +451,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_user_agent(self, client):
+    def test_user_agent(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             assert "azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
                 VERSION, platform.python_version(), platform.platform()) in \
@@ -440,7 +467,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_document_attribute_error_no_result_attribute(self, client):
+    def test_document_attribute_error_no_result_attribute(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "text": ""}]
         response = client.recognize_pii_entities(docs)
 
@@ -462,7 +490,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_document_attribute_error_nonexistent_attribute(self, client):
+    def test_document_attribute_error_nonexistent_attribute(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "text": ""}]
         response = client.recognize_pii_entities(docs)
 
@@ -475,7 +504,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_bad_model_version_error(self, client):
+    def test_bad_model_version_error(self, **kwargs):
+        client = kwargs.pop("client")
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:
@@ -487,7 +517,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_document_errors(self, client):
+    def test_document_errors(self, **kwargs):
+        client = kwargs.pop("client")
         text = ""
         for _ in range(5121):
             text += "x"
@@ -507,7 +538,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_document_warnings(self, client):
+    def test_document_warnings(self, **kwargs):
+        client = kwargs.pop("client")
         # No warnings actually returned for recognize_pii_entities. Will update when they add
         docs = [
             {"id": "1", "text": "This won't actually create a warning :'("},
@@ -521,7 +553,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_not_passing_list_for_docs(self, client):
+    def test_not_passing_list_for_docs(self, **kwargs):
+        client = kwargs.pop("client")
         docs = {"id": "1", "text": "hello world"}
         with pytest.raises(TypeError) as excinfo:
             client.recognize_pii_entities(docs)
@@ -530,7 +563,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_missing_input_records_error(self, client):
+    def test_missing_input_records_error(self, **kwargs):
+        client = kwargs.pop("client")
         docs = []
         with pytest.raises(ValueError) as excinfo:
             client.recognize_pii_entities(docs)
@@ -539,7 +573,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_passing_none_docs(self, client):
+    def test_passing_none_docs(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError) as excinfo:
             client.recognize_pii_entities(None)
         assert "Input documents can not be empty or None" in str(excinfo.value)
@@ -547,7 +582,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_duplicate_ids_error(self, client):
+    def test_duplicate_ids_error(self, **kwargs):
+        client = kwargs.pop("client")
         # Duplicate Ids
         docs = [{"id": "1", "text": "hello world"},
                 {"id": "1", "text": "I did not like the hotel we stayed at."}]
@@ -560,7 +596,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_batch_size_over_limit_error(self, client):
+    def test_batch_size_over_limit_error(self, **kwargs):
+        client = kwargs.pop("client")
         # Batch size over limit
         docs = ["hello world"] * 1001
         try:
@@ -573,7 +610,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_pass_cls(self, client):
+    def test_pass_cls(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(pipeline_response, deserialized, _):
             return "cls result"
         res = client.recognize_pii_entities(
@@ -585,7 +623,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_language_kwarg_english(self, client):
+    def test_language_kwarg_english(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(response):
             language_str = "\"language\": \"en\""
             assert response.http_request.body.count(language_str) == 1
@@ -603,7 +642,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_redacted_text(self, client):
+    def test_redacted_text(self, **kwargs):
+        client = kwargs.pop("client")
         result = client.recognize_pii_entities(["My SSN is 859-98-0987."])
         assert "My SSN is ***********." == result[0].redacted_text
 
@@ -611,7 +651,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_phi_domain_filter(self, client):
+    def test_phi_domain_filter(self, **kwargs):
+        client = kwargs.pop("client")
         # without the domain filter, this should return two entities: Microsoft as an org,
         # and the phone number. With the domain filter, it should only return one.
         result = client.recognize_pii_entities(
@@ -627,7 +668,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_categories_filter(self, client):
+    def test_categories_filter(self, **kwargs):
+        client = kwargs.pop("client")
         result = client.recognize_pii_entities(
             ["My name is Inigo Montoya, my SSN in 243-56-0987 and my phone number is 333-3333."],
         )
@@ -646,7 +688,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_categories_filter_with_domain_filter(self, client):
+    def test_categories_filter_with_domain_filter(self, **kwargs):
+        client = kwargs.pop("client")
         # Currently there seems to be no effective difference with or without the PHI domain filter.
         result = client.recognize_pii_entities(
             ["My name is Inigo Montoya, my SSN in 243-56-0987 and my phone number is 333-3333."],
@@ -661,7 +704,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy
-    def test_default_string_index_type_is_UnicodeCodePoint(self, client):
+    def test_default_string_index_type_is_UnicodeCodePoint(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(response):
             assert response.http_request.query["stringIndexType"] == "UnicodeCodePoint"
 
@@ -673,7 +717,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy
-    def test_default_string_index_type_UnicodeCodePoint_body_param(self, client):
+    def test_default_string_index_type_UnicodeCodePoint_body_param(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(response):
             assert json.loads(response.http_request.body)['parameters']["stringIndexType"] == "UnicodeCodePoint"
 
@@ -685,7 +730,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy
-    def test_explicit_set_string_index_type(self, client):
+    def test_explicit_set_string_index_type(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(response):
             assert response.http_request.query["stringIndexType"] == "TextElement_v8"
 
@@ -698,7 +744,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy
-    def test_explicit_set_string_index_type_body_param(self, client):
+    def test_explicit_set_string_index_type_body_param(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(response):
             assert json.loads(response.http_request.body)['parameters']["stringIndexType"] == "TextElements_v8"
 
@@ -711,7 +758,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy
-    def test_disable_service_logs(self, client):
+    def test_disable_service_logs(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             assert resp.http_request.query['loggingOptOut']
         client.recognize_pii_entities(
@@ -723,7 +771,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy
-    def test_disable_service_logs_body_param(self, client):
+    def test_disable_service_logs_body_param(self, **kwargs):
+        client = kwargs.pop("client")
         def callback(resp):
             assert json.loads(resp.http_request.body)['parameters']['loggingOptOut']
         client.recognize_pii_entities(

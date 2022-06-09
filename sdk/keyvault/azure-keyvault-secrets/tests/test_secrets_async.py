@@ -70,7 +70,8 @@ class TestKeyVaultSecret(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @AsyncSecretsClientPreparer()
     @recorded_by_proxy_async
-    async def test_secret_crud_operations(self, client, **kwargs):
+    async def test_secret_crud_operations(self, **kwargs):
+        client = kwargs.pop("client")
         secret_name = self.get_resource_name("crud-secret")
         secret_value = "crud_secret_value"
 
@@ -137,8 +138,9 @@ class TestKeyVaultSecret(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @AsyncSecretsClientPreparer()
     @recorded_by_proxy_async
-    async def test_secret_list(self, client, **kwargs):
-
+    async def test_secret_list(self, **kwargs):
+        client = kwargs.pop("client")
+        
         max_secrets = list_test_size
         expected = {}
 
@@ -159,7 +161,8 @@ class TestKeyVaultSecret(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @AsyncSecretsClientPreparer()
     @recorded_by_proxy_async
-    async def test_list_deleted_secrets(self, client, **kwargs):
+    async def test_list_deleted_secrets(self, **kwargs):
+        client = kwargs.pop("client")
         expected = {}
 
         async with client:
@@ -186,7 +189,8 @@ class TestKeyVaultSecret(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @AsyncSecretsClientPreparer()
     @recorded_by_proxy_async
-    async def test_list_versions(self, client, **kwargs):
+    async def test_list_versions(self, **kwargs):
+        client = kwargs.pop("client")
         secret_name = self.get_resource_name("sec")
         secret_value = "secVal"
 
@@ -216,7 +220,8 @@ class TestKeyVaultSecret(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @AsyncSecretsClientPreparer()
     @recorded_by_proxy_async
-    async def test_backup_restore(self, client, **kwargs):
+    async def test_backup_restore(self, **kwargs):
+        client = kwargs.pop("client")
         secret_name = self.get_resource_name("secbak")
         secret_value = "secVal"
 
@@ -245,7 +250,8 @@ class TestKeyVaultSecret(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @AsyncSecretsClientPreparer()
     @recorded_by_proxy_async
-    async def test_recover(self, client, **kwargs):
+    async def test_recover(self, **kwargs):
+        client = kwargs.pop("client")
         secrets = {}
 
         async with client:
@@ -278,7 +284,8 @@ class TestKeyVaultSecret(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @AsyncSecretsClientPreparer()
     @recorded_by_proxy_async
-    async def test_purge(self, client, **kwargs):
+    async def test_purge(self, **kwargs):
+        client = kwargs.pop("client")
         secrets = {}
         async with client:
             # create secrets to purge
@@ -305,7 +312,8 @@ class TestKeyVaultSecret(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @AsyncSecretsClientPreparer(logging_enable=True)
     @recorded_by_proxy_async
-    async def test_logging_enabled(self, client, **kwargs):
+    async def test_logging_enabled(self, **kwargs):
+        client = kwargs.pop("client")
         mock_handler = MockHandler()
         logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
@@ -342,7 +350,8 @@ class TestKeyVaultSecret(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @AsyncSecretsClientPreparer(logging_enable=False)
     @recorded_by_proxy_async
-    async def test_logging_disabled(self, client, **kwargs):
+    async def test_logging_disabled(self, **kwargs):
+        client = kwargs.pop("client")
         mock_handler = MockHandler()
         logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)

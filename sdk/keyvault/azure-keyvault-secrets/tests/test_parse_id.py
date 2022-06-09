@@ -16,7 +16,8 @@ class TestParseId(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", [(DEFAULT_VERSION)])
     @SecretsClientPreparer()
     @recorded_by_proxy
-    def test_parse_secret_id_with_version(self, client, **kwargs):
+    def test_parse_secret_id_with_version(self, **kwargs):
+        client = kwargs.pop("client")
         secret_name = self.get_resource_name("secret")
         secret_value = "secret_value"
         # create secret

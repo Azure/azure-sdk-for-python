@@ -25,7 +25,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
-    def test_create_email_hook(self, client, variables):
+    def test_create_email_hook(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         email_hook_name = self.create_random_name("testemailhook")
         if self.is_live:
             variables["email_hook_name"] = email_hook_name
@@ -58,7 +60,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
-    def test_create_web_hook(self, client, variables):
+    def test_create_web_hook(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         web_hook_name = self.create_random_name("testwebhook")
         if self.is_live:
             variables["web_hook_name"] = web_hook_name
@@ -90,14 +94,17 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
-    def test_list_hooks(self, client):
+    def test_list_hooks(self, **kwargs):
+        client = kwargs.pop("client")
         hooks = client.list_hooks()
         assert len(list(hooks)) > 0
 
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(email_hook=True)
     @recorded_by_proxy
-    def test_update_email_hook_with_model(self, client, variables):
+    def test_update_email_hook_with_model(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         hook = client.get_hook(variables["email_hook_id"])
         try:
             update_name = "update" + str(uuid.uuid4())
@@ -123,7 +130,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(email_hook=True)
     @recorded_by_proxy
-    def test_update_email_hook_with_kwargs(self, client, variables):
+    def test_update_email_hook_with_kwargs(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         try:
             update_name = "update" + str(uuid.uuid4())
             if self.is_live:
@@ -149,7 +158,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(email_hook=True)
     @recorded_by_proxy
-    def test_update_email_hook_with_model_and_kwargs(self, client, variables):
+    def test_update_email_hook_with_model_and_kwargs(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         try:
             update_name = "update" + str(uuid.uuid4())
             if self.is_live:
@@ -179,7 +190,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(email_hook=True)
     @recorded_by_proxy
-    def test_update_email_hook_by_resetting_properties(self, client, variables):
+    def test_update_email_hook_by_resetting_properties(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         try:
             update_name = "update" + str(uuid.uuid4())
             if self.is_live:
@@ -205,7 +218,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(web_hook=True)
     @recorded_by_proxy
-    def test_update_web_hook_with_model(self, client, variables):
+    def test_update_web_hook_with_model(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         try:
             update_name = "update" + str(uuid.uuid4())
             if self.is_live:
@@ -231,7 +246,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(web_hook=True)
     @recorded_by_proxy
-    def test_update_web_hook_with_kwargs(self, client, variables):
+    def test_update_web_hook_with_kwargs(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         try:
             update_name = "update" + str(uuid.uuid4())
             if self.is_live:
@@ -259,7 +276,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(web_hook=True)
     @recorded_by_proxy
-    def test_update_web_hook_with_model_and_kwargs(self, client, variables):
+    def test_update_web_hook_with_model_and_kwargs(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         try:
             update_name = "update" + str(uuid.uuid4())
             if self.is_live:
@@ -292,7 +311,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(web_hook=True)
     @recorded_by_proxy
-    def test_update_web_hook_by_resetting_properties(self, client, variables):
+    def test_update_web_hook_by_resetting_properties(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         try:
             update_name = "update" + str(uuid.uuid4())
             if self.is_live:

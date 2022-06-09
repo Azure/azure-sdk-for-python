@@ -39,7 +39,8 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
     
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_network(self, resource_group):
+    def test_network(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         SERVICE_NAME = "myapimrndxyz"
         PUBLIC_IPPREFIX_NAME = self.get_resource_name("publicipprefix")

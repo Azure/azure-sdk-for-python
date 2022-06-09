@@ -25,7 +25,9 @@ from preparers import cosmos_decorator
 class TestTableServicePropertiesCosmos(AzureRecordedTestCase, TableTestCase):
     @cosmos_decorator
     @recorded_by_proxy
-    def test_too_many_cors_rules(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    def test_too_many_cors_rules(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         cors = []
         for i in range(0, 6):
@@ -36,7 +38,9 @@ class TestTableServicePropertiesCosmos(AzureRecordedTestCase, TableTestCase):
 
     @cosmos_decorator
     @recorded_by_proxy
-    def test_retention_too_long(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    def test_retention_too_long(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         minute_metrics = TableMetrics(enabled=True, include_apis=True, retention_policy=TableRetentionPolicy(enabled=True, days=366))
 

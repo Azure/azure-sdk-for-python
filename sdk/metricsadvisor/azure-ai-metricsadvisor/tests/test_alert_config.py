@@ -29,7 +29,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
-    def test_create_alert_config_top_n_alert_direction_both(self, client, variables):
+    def test_create_alert_config_top_n_alert_direction_both(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         alert_config_name = self.create_random_name("alertconfig")
         if self.is_live:
             variables["alert_config_name"] = alert_config_name
@@ -91,7 +93,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
-    def test_create_alert_config_top_n_alert_direction_down(self, client, variables):
+    def test_create_alert_config_top_n_alert_direction_down(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         alert_config_name = self.create_random_name("alertconfig")
         if self.is_live:
             variables["alert_config_name"] = alert_config_name
@@ -144,7 +148,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
-    def test_create_alert_config_top_n_alert_direction_up(self, client, variables):
+    def test_create_alert_config_top_n_alert_direction_up(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         alert_config_name = self.create_random_name("alertconfig")
         if self.is_live:
             variables["alert_config_name"] = alert_config_name
@@ -197,7 +203,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
-    def test_create_alert_config_top_n_severity_condition(self, client, variables):
+    def test_create_alert_config_top_n_severity_condition(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         alert_config_name = self.create_random_name("alertconfig")
         if self.is_live:
             variables["alert_config_name"] = alert_config_name
@@ -246,7 +254,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
-    def test_create_alert_config_snooze_condition(self, client, variables):
+    def test_create_alert_config_snooze_condition(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         alert_config_name = self.create_random_name("alertconfig")
         if self.is_live:
             variables["alert_config_name"] = alert_config_name
@@ -295,7 +305,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
-    def test_create_alert_conf_whole_series_dir_both(self, client, variables):
+    def test_create_alert_conf_whole_series_dir_both(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         alert_config_name = self.create_random_name("alertconfig")
         if self.is_live:
             variables["alert_config_name"] = alert_config_name
@@ -341,7 +353,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
-    def test_create_alert_conf_whole_series_dir_down(self, client, variables):
+    def test_create_alert_conf_whole_series_dir_down(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         alert_config_name = self.create_random_name("alertconfig")
         if self.is_live:
             variables["alert_config_name"] = alert_config_name
@@ -386,7 +400,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
-    def test_create_alert_config_whole_series_alert_direction_up(self, client, variables):
+    def test_create_alert_config_whole_series_alert_direction_up(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         alert_config_name = self.create_random_name("alertconfig")
         if self.is_live:
             variables["alert_config_name"] = alert_config_name
@@ -431,7 +447,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
-    def test_create_alert_config_whole_series_sev_cond(self, client, variables):
+    def test_create_alert_config_whole_series_sev_cond(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         alert_config_name = self.create_random_name("alertconfig")
         if self.is_live:
             variables["alert_config_name"] = alert_config_name
@@ -472,7 +490,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
-    def test_create_alert_conf_series_group_dir_both(self, client, variables):
+    def test_create_alert_conf_series_group_dir_both(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         alert_config_name = self.create_random_name("alertconfig")
         if self.is_live:
             variables["alert_config_name"] = alert_config_name
@@ -520,7 +540,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
-    def test_create_alert_conf_series_group_dir_down(self, client, variables):
+    def test_create_alert_conf_series_group_dir_down(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         alert_config_name = self.create_random_name("alertconfig")
         if self.is_live:
             variables["alert_config_name"] = alert_config_name
@@ -567,7 +589,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
-    def test_create_alert_config_series_group_alert_direction_up(self, client, variables):
+    def test_create_alert_config_series_group_alert_direction_up(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         alert_config_name = self.create_random_name("alertconfig")
         if self.is_live:
             variables["alert_config_name"] = alert_config_name
@@ -614,7 +638,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
-    def test_create_alert_conf_series_group_sev_cond(self, client, variables):
+    def test_create_alert_conf_series_group_sev_cond(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         alert_config_name = self.create_random_name("alertconfig")
         if self.is_live:
             variables["alert_config_name"] = alert_config_name
@@ -657,7 +683,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
-    def test_create_alert_config_multiple_configurations(self, client, variables):
+    def test_create_alert_config_multiple_configurations(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         alert_config_name = self.create_random_name("alertconfig")
         if self.is_live:
             variables["alert_config_name"] = alert_config_name
@@ -743,7 +771,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
-    def test_list_alert_configs(self, client):
+    def test_list_alert_configs(self, **kwargs):
+        client = kwargs.pop("client")
 
         configs = client.list_alert_configurations(
             detection_configuration_id=self.anomaly_detection_configuration_id
@@ -753,7 +782,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
     @recorded_by_proxy
-    def test_update_alert_config_with_model(self, client, variables):
+    def test_update_alert_config_with_model(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
 
         alert_config = client.get_alert_configuration(variables["alert_config_id"])
         try:
@@ -800,7 +831,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
     @recorded_by_proxy
-    def test_update_alert_config_with_kwargs(self, client, variables):
+    def test_update_alert_config_with_kwargs(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
 
         try:
             update_name = "update" + str(uuid.uuid4())
@@ -889,7 +922,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
     @recorded_by_proxy
-    def test_update_alert_config_with_model_and_kwargs(self, client, variables):
+    def test_update_alert_config_with_model_and_kwargs(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
         alert_config = client.get_alert_configuration(variables["alert_config_id"])
 
         try:
@@ -984,7 +1019,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
     @recorded_by_proxy
-    def test_update_anomaly_alert_by_resetting_properties(self, client, variables):
+    def test_update_anomaly_alert_by_resetting_properties(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables")
 
         try:
             update_name = "update" + str(uuid.uuid4())

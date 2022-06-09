@@ -29,7 +29,8 @@ class TestManagement(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy
-    def test_account_properties_v2(self, client):
+    def test_account_properties_v2(self, **kwargs):
+        client = kwargs.pop("client")
         properties = client.get_account_properties()
 
         assert properties.custom_model_limit
@@ -39,8 +40,10 @@ class TestManagement(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy
-    def test_mgmt_model_labeled_v2(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
-
+    def test_mgmt_model_labeled_v2(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url_v2 = kwargs.pop("formrecognizer_storage_container_sas_url_v2")
+        
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True)
         labeled_model_from_train = poller.result()
 
@@ -77,8 +80,10 @@ class TestManagement(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy
-    def test_mgmt_model_unlabeled_v2(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
-
+    def test_mgmt_model_unlabeled_v2(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url_v2 = kwargs.pop("formrecognizer_storage_container_sas_url_v2")
+        
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
         unlabeled_model_from_train = poller.result()
 
@@ -112,7 +117,9 @@ class TestManagement(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_get_form_recognizer_client_v2(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+    def test_get_form_recognizer_client_v2(self, **kwargs):
+        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
+        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"

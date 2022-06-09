@@ -25,7 +25,8 @@ class TestReceiptFromStream(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_passing_enum_content_type_v2(self, client):
+    def test_passing_enum_content_type_v2(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.receipt_png, "rb") as fd:
             my_file = fd.read()
         poller = client.begin_recognize_receipts(
@@ -81,7 +82,8 @@ class TestReceiptFromStream(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_receipt_jpg_include_field_elements(self, client):
+    def test_receipt_jpg_include_field_elements(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
         poller = client.begin_recognize_receipts(receipt, include_field_elements=True)

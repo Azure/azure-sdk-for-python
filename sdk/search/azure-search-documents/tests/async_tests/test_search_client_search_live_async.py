@@ -18,7 +18,10 @@ class TestClientTestAsync(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy_async
-    async def test_search_client(self, endpoint, api_key, index_name):
+    async def test_search_client(self, **kwargs):
+        endpoint = kwargs.pop("endpoint")
+        api_key = kwargs.pop("api_key")
+        index_name = kwargs.pop("index_name")
         client = SearchClient(endpoint, index_name, api_key)
         async with client:
             await self._test_get_search_simple(client)
@@ -152,7 +155,10 @@ class TestClientTestAsync(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_large.json")
     @recorded_by_proxy_async
-    async def test_search_client_large(self, endpoint, api_key, index_name):
+    async def test_search_client_large(self, **kwargs):
+        endpoint = kwargs.pop("endpoint")
+        api_key = kwargs.pop("api_key")
+        index_name = kwargs.pop("index_name")
         client = SearchClient(endpoint, index_name, api_key)
         async with client:
             await self._test_get_search_simple_large(client)

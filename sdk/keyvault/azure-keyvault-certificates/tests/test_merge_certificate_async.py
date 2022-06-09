@@ -22,7 +22,8 @@ class TestMergeCertificate(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @AsyncCertificatesClientPreparer(logging_enable = True)
     @recorded_by_proxy_async
-    async def test_merge_certificate(self, client, **kwargs):
+    async def test_merge_certificate(self, **kwargs):
+        client = kwargs.pop("client")
         set_bodiless_matcher()
         cert_name = self.get_resource_name("mergeCertificate")
         cert_policy = CertificatePolicy(

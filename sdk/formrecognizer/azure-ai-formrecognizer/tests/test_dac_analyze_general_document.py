@@ -26,7 +26,8 @@ class TestDACAnalyzeDocument(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_document_stream_transform_pdf(self, client):
+    def test_document_stream_transform_pdf(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
 
@@ -60,7 +61,8 @@ class TestDACAnalyzeDocument(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_document_stream_transform_jpg(self, client):
+    def test_document_stream_transform_jpg(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.form_jpg, "rb") as fd:
             document = fd.read()
 
@@ -95,7 +97,8 @@ class TestDACAnalyzeDocument(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_document_multipage_transform(self, client):
+    def test_document_multipage_transform(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.multipage_invoice_pdf, "rb") as fd:
             document = fd.read()
 
@@ -130,7 +133,8 @@ class TestDACAnalyzeDocument(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_document_multipage_table_span_pdf(self, client):
+    def test_document_multipage_table_span_pdf(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.multipage_table_pdf, "rb") as fd:
             my_file = fd.read()
         poller = client.begin_analyze_document("prebuilt-document", my_file)
@@ -146,7 +150,8 @@ class TestDACAnalyzeDocument(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_document_specify_pages(self, client):
+    def test_document_specify_pages(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.multipage_invoice_pdf, "rb") as fd:
             document = fd.read()
 

@@ -27,7 +27,8 @@ class TestMgmtServiceBus(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_subscrpition_and_rule(self, resource_group):
+    def test_subscrpition_and_rule(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         RESOURCE_GROUP = resource_group.name
         NAMESPACE_NAME = "myNamespacexxyyzzxyye"
@@ -117,7 +118,8 @@ class TestMgmtServiceBus(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_topic(self, resource_group):
+    def test_topic(self, **kwargs):
+        resource_group = kwargs.pop("resource_group")
 
         RESOURCE_GROUP = resource_group.name
         NAMESPACE_NAME = "myNamespacexxyyzzxyyf"

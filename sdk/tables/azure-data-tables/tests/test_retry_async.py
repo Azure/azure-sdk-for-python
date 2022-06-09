@@ -59,7 +59,9 @@ class TestStorageRetryAsync(AzureRecordedTestCase, AsyncTableTestCase):
     # --Test Cases --------------------------------------------
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_retry_on_server_error_async(self, tables_storage_account_name, tables_primary_storage_account_key):
+    async def test_retry_on_server_error_async(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key, default_table=False)
         try:
             callback = ResponseCallback(status=201, new_status=500).override_status
@@ -75,7 +77,9 @@ class TestStorageRetryAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_retry_on_timeout_async(self, tables_storage_account_name, tables_primary_storage_account_key):
+    async def test_retry_on_timeout_async(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         await self._set_up(
             tables_storage_account_name,
             tables_primary_storage_account_key,
@@ -114,7 +118,9 @@ class TestStorageRetryAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_no_retry_async(self, tables_storage_account_name, tables_primary_storage_account_key):
+    async def test_no_retry_async(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key, retry_total=0, default_table=False)
 
         new_table_name = self.get_resource_name('uttable')

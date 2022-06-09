@@ -28,7 +28,8 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_passing_enum_content_type(self, client):
+    async def test_passing_enum_content_type(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.receipt_png, "rb") as fd:
             my_file = fd.read()
         async with client:
@@ -81,7 +82,8 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_receipt_jpg_include_field_elements(self, client):
+    async def test_receipt_jpg_include_field_elements(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
         async with client:

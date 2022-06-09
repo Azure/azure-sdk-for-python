@@ -28,7 +28,9 @@ class TestSearchSkillset(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
-    def test_skillset_crud(self, api_key, endpoint):
+    def test_skillset_crud(self, **kwargs):
+        api_key = kwargs.pop("api_key")
+        endpoint = kwargs.pop("endpoint")
         client = SearchIndexerClient(endpoint, api_key)
         self._test_create_skillset_validation()
         self._test_create_skillset(client)

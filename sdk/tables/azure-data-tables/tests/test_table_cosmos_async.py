@@ -23,7 +23,9 @@ TEST_TABLE_PREFIX = 'pytableasync'
 class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_create_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_create_table(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table_name = self._get_table_reference()
@@ -39,7 +41,9 @@ class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_create_table_fail_on_exist(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_create_table_fail_on_exist(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table_name = self._get_table_reference()
@@ -55,7 +59,9 @@ class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_query_tables_per_page(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_query_tables_per_page(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
 
@@ -83,7 +89,9 @@ class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_list_tables(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_list_tables(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table = await self._create_table(ts)
@@ -100,7 +108,9 @@ class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_query_tables_with_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_query_tables_with_filter(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table = await self._create_table(ts)
@@ -118,7 +128,9 @@ class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_list_tables_with_num_results(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_list_tables_with_num_results(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         await self._delete_all_tables(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         prefix = 'listtable'
@@ -145,7 +157,9 @@ class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_list_tables_with_marker(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_list_tables_with_marker(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         prefix = 'listtable'
@@ -178,8 +192,9 @@ class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_delete_table_with_existing_table(self, tables_cosmos_account_name,
-                                                    tables_primary_cosmos_account_key):
+    async def test_delete_table_with_existing_table(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table = await self._create_table(ts)
@@ -192,8 +207,9 @@ class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_delete_table_with_non_existing_table_fail_not_exist(self, tables_cosmos_account_name,
-                                                                       tables_primary_cosmos_account_key):
+    async def test_delete_table_with_non_existing_table_fail_not_exist(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table_name = self._get_table_reference()
@@ -201,7 +217,9 @@ class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_create_table_underscore_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_create_table_underscore_name(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table_name = "my_table"
@@ -213,7 +231,9 @@ class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_create_table_unicode_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_create_table_unicode_name(self, **kwargs):
+        tables_cosmos_account_name = kwargs.pop("tables_cosmos_account_name")
+        tables_primary_cosmos_account_key = kwargs.pop("tables_primary_cosmos_account_key")
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table_name = u'啊齄丂狛狜'

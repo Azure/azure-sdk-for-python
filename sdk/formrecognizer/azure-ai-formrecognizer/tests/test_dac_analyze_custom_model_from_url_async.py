@@ -44,7 +44,9 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_custom_document_selection_mark(self, client, formrecognizer_selection_mark_storage_container_sas_url, **kwargs):
+    async def test_custom_document_selection_mark(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_selection_mark_storage_container_sas_url = kwargs.pop("formrecognizer_selection_mark_storage_container_sas_url")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -91,7 +93,9 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_label_tables_variable_rows(self, client, formrecognizer_table_variable_rows_container_sas_url, **kwargs):
+    async def test_label_tables_variable_rows(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_table_variable_rows_container_sas_url = kwargs.pop("formrecognizer_table_variable_rows_container_sas_url")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -138,7 +142,9 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_label_tables_fixed_rows(self, client, formrecognizer_table_fixed_rows_container_sas_url, **kwargs):
+    async def test_label_tables_fixed_rows(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_table_fixed_rows_container_sas_url = kwargs.pop("formrecognizer_table_fixed_rows_container_sas_url")
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
