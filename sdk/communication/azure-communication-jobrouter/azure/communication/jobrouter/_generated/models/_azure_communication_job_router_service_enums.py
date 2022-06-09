@@ -11,6 +11,8 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class JobStateSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """JobStateSelector.
+    """
 
     ALL = "all"
     PENDING_CLASSIFICATION = "pendingClassification"
@@ -36,7 +38,7 @@ class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CREATED = "created"
 
 class LabelOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describes how the value of the label is compared to the value pass through
+    """Describes how the value of the label is compared to the value pass through.
     """
 
     EQUAL = "equal"
@@ -63,13 +65,15 @@ class RouterWorkerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INACTIVE = "inactive"
 
 class ScoringRuleParameterSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Supported parameters for scoring workers
+    """Supported parameters for scoring workers.
     """
 
     JOB_LABELS = "jobLabels"
     WORKER_SELECTORS = "workerSelectors"
 
 class WorkerStateSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """WorkerStateSelector.
+    """
 
     ACTIVE = "active"
     DRAINING = "draining"

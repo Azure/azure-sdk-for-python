@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,21 +7,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
-class AcceptJobOfferResponse(msrest.serialization.Model):
+class AcceptJobOfferResult(msrest.serialization.Model):
     """Response containing Id's for the worker, job, and assignment from an accepted offer.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar assignment_id: Required. The assignment Id that assigns a worker that has accepted an
-     offer to a job.
+    :ivar assignment_id: The assignment Id that assigns a worker that has accepted an offer to a
+     job. Required.
     :vartype assignment_id: str
-    :ivar job_id: Required. The Id of the job assigned.
+    :ivar job_id: The Id of the job assigned. Required.
     :vartype job_id: str
-    :ivar worker_id: Required. The Id of the worker that has been assigned this job.
+    :ivar worker_id: The Id of the worker that has been assigned this job. Required.
     :vartype worker_id: str
     """
 
@@ -31,9 +31,9 @@ class AcceptJobOfferResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'assignment_id': {'key': 'assignmentId', 'type': 'str'},
-        'job_id': {'key': 'jobId', 'type': 'str'},
-        'worker_id': {'key': 'workerId', 'type': 'str'},
+        "assignment_id": {"key": "assignmentId", "type": "str"},
+        "job_id": {"key": "jobId", "type": "str"},
+        "worker_id": {"key": "workerId", "type": "str"},
     }
 
     def __init__(
@@ -41,15 +41,15 @@ class AcceptJobOfferResponse(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword assignment_id: Required. The assignment Id that assigns a worker that has accepted an
-         offer to a job.
+        :keyword assignment_id: The assignment Id that assigns a worker that has accepted an offer to a
+         job. Required.
         :paramtype assignment_id: str
-        :keyword job_id: Required. The Id of the job assigned.
+        :keyword job_id: The Id of the job assigned. Required.
         :paramtype job_id: str
-        :keyword worker_id: Required. The Id of the worker that has been assigned this job.
+        :keyword worker_id: The Id of the worker that has been assigned this job. Required.
         :paramtype worker_id: str
         """
-        super(AcceptJobOfferResponse, self).__init__(**kwargs)
+        super(AcceptJobOfferResult, self).__init__(**kwargs)
         self.assignment_id = kwargs['assignment_id']
         self.job_id = kwargs['job_id']
         self.worker_id = kwargs['worker_id']
@@ -63,13 +63,12 @@ DirectMapRule:  A rule that return the same labels as the input labels.
 ExpressionRule: A rule providing inline expression rules.
 AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureFunctionRule, DirectMapRule, ExpressionRule, StaticRule.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureFunctionRule, DirectMapRule, ExpressionRule, StaticRule
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing a sub-type of Rule.Constant filled by
-     server.
+    :ivar kind: The type discriminator describing a sub-type of Rule. Required.
     :vartype kind: str
     """
 
@@ -78,7 +77,7 @@ AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Functio
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
     }
 
     _subtype_map = {
@@ -100,10 +99,9 @@ class AzureFunctionRule(RouterRule):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing a sub-type of Rule.Constant filled by
-     server.
+    :ivar kind: The type discriminator describing a sub-type of Rule. Required.
     :vartype kind: str
-    :ivar function_url: Required. URL for Azure Function.
+    :ivar function_url: URL for Azure Function. Required.
     :vartype function_url: str
     :ivar credential: Credentials used to access Azure function rule.
     :vartype credential: ~azure.communication.jobrouter.models.AzureFunctionRuleCredential
@@ -115,9 +113,9 @@ class AzureFunctionRule(RouterRule):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'function_url': {'key': 'functionUrl', 'type': 'str'},
-        'credential': {'key': 'credential', 'type': 'AzureFunctionRuleCredential'},
+        "kind": {"key": "kind", "type": "str"},
+        "function_url": {"key": "functionUrl", "type": "str"},
+        "credential": {"key": "credential", "type": "AzureFunctionRuleCredential"},
     }
 
     def __init__(
@@ -125,7 +123,7 @@ class AzureFunctionRule(RouterRule):
         **kwargs
     ):
         """
-        :keyword function_url: Required. URL for Azure Function.
+        :keyword function_url: URL for Azure Function. Required.
         :paramtype function_url: str
         :keyword credential: Credentials used to access Azure function rule.
         :paramtype credential: ~azure.communication.jobrouter.models.AzureFunctionRuleCredential
@@ -150,15 +148,15 @@ class AzureFunctionRuleCredential(msrest.serialization.Model):
     """
 
     _validation = {
-        'function_key': {'max_length': 500, 'min_length': 0},
-        'app_key': {'max_length': 500, 'min_length': 0},
-        'client_id': {'max_length': 500, 'min_length': 0},
+        'function_key': {'max_length': 500},
+        'app_key': {'max_length': 500},
+        'client_id': {'max_length': 500},
     }
 
     _attribute_map = {
-        'function_key': {'key': 'functionKey', 'type': 'str'},
-        'app_key': {'key': 'appKey', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "function_key": {"key": "functionKey", "type": "str"},
+        "app_key": {"key": "appKey", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
     def __init__(
@@ -184,19 +182,18 @@ class AzureFunctionRuleCredential(msrest.serialization.Model):
 class DistributionMode(msrest.serialization.Model):
     """Abstract base class for defining a distribution mode.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: BestWorkerMode, LongestIdleMode, RoundRobinMode.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    BestWorkerMode, LongestIdleMode, RoundRobinMode
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing a sub-type of Mode.Constant filled by
-     server.
+    :ivar kind: The type discriminator describing a sub-type of Mode. Required.
     :vartype kind: str
-    :ivar min_concurrent_offers: Required. Governs the minimum desired number of active concurrent
-     offers a job can have.
+    :ivar min_concurrent_offers: Governs the minimum desired number of active concurrent offers a
+     job can have. Required.
     :vartype min_concurrent_offers: int
-    :ivar max_concurrent_offers: Required. Governs the maximum number of active concurrent offers a
-     job can have.
+    :ivar max_concurrent_offers: Governs the maximum number of active concurrent offers a job can
+     have. Required.
     :vartype max_concurrent_offers: int
     :ivar bypass_selectors: (Optional)
      If set to true, then router will match workers to jobs even if they don't match label
@@ -215,10 +212,10 @@ class DistributionMode(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'min_concurrent_offers': {'key': 'minConcurrentOffers', 'type': 'int'},
-        'max_concurrent_offers': {'key': 'maxConcurrentOffers', 'type': 'int'},
-        'bypass_selectors': {'key': 'bypassSelectors', 'type': 'bool'},
+        "kind": {"key": "kind", "type": "str"},
+        "min_concurrent_offers": {"key": "minConcurrentOffers", "type": "int"},
+        "max_concurrent_offers": {"key": "maxConcurrentOffers", "type": "int"},
+        "bypass_selectors": {"key": "bypassSelectors", "type": "bool"},
     }
 
     _subtype_map = {
@@ -230,11 +227,11 @@ class DistributionMode(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword min_concurrent_offers: Required. Governs the minimum desired number of active
-         concurrent offers a job can have.
+        :keyword min_concurrent_offers: Governs the minimum desired number of active concurrent offers
+         a job can have. Required.
         :paramtype min_concurrent_offers: int
-        :keyword max_concurrent_offers: Required. Governs the maximum number of active concurrent
-         offers a job can have.
+        :keyword max_concurrent_offers: Governs the maximum number of active concurrent offers a job
+         can have. Required.
         :paramtype max_concurrent_offers: int
         :keyword bypass_selectors: (Optional)
          If set to true, then router will match workers to jobs even if they don't match label
@@ -257,14 +254,13 @@ class BestWorkerMode(DistributionMode):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing a sub-type of Mode.Constant filled by
-     server.
+    :ivar kind: The type discriminator describing a sub-type of Mode. Required.
     :vartype kind: str
-    :ivar min_concurrent_offers: Required. Governs the minimum desired number of active concurrent
-     offers a job can have.
+    :ivar min_concurrent_offers: Governs the minimum desired number of active concurrent offers a
+     job can have. Required.
     :vartype min_concurrent_offers: int
-    :ivar max_concurrent_offers: Required. Governs the maximum number of active concurrent offers a
-     job can have.
+    :ivar max_concurrent_offers: Governs the maximum number of active concurrent offers a job can
+     have. Required.
     :vartype max_concurrent_offers: int
     :ivar bypass_selectors: (Optional)
      If set to true, then router will match workers to jobs even if they don't match label
@@ -294,12 +290,12 @@ class BestWorkerMode(DistributionMode):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'min_concurrent_offers': {'key': 'minConcurrentOffers', 'type': 'int'},
-        'max_concurrent_offers': {'key': 'maxConcurrentOffers', 'type': 'int'},
-        'bypass_selectors': {'key': 'bypassSelectors', 'type': 'bool'},
-        'scoring_rule': {'key': 'scoringRule', 'type': 'RouterRule'},
-        'scoring_rule_options': {'key': 'scoringRuleOptions', 'type': 'ScoringRuleOptions'},
+        "kind": {"key": "kind", "type": "str"},
+        "min_concurrent_offers": {"key": "minConcurrentOffers", "type": "int"},
+        "max_concurrent_offers": {"key": "maxConcurrentOffers", "type": "int"},
+        "bypass_selectors": {"key": "bypassSelectors", "type": "bool"},
+        "scoring_rule": {"key": "scoringRule", "type": "RouterRule"},
+        "scoring_rule_options": {"key": "scoringRuleOptions", "type": "ScoringRuleOptions"},
     }
 
     def __init__(
@@ -307,11 +303,11 @@ class BestWorkerMode(DistributionMode):
         **kwargs
     ):
         """
-        :keyword min_concurrent_offers: Required. Governs the minimum desired number of active
-         concurrent offers a job can have.
+        :keyword min_concurrent_offers: Governs the minimum desired number of active concurrent offers
+         a job can have. Required.
         :paramtype min_concurrent_offers: int
-        :keyword max_concurrent_offers: Required. Governs the maximum number of active concurrent
-         offers a job can have.
+        :keyword max_concurrent_offers: Governs the maximum number of active concurrent offers a job
+         can have. Required.
         :paramtype max_concurrent_offers: int
         :keyword bypass_selectors: (Optional)
          If set to true, then router will match workers to jobs even if they don't match label
@@ -342,13 +338,12 @@ class BestWorkerMode(DistributionMode):
 class ExceptionAction(msrest.serialization.Model):
     """The action to take when the exception is triggered.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CancelExceptionAction, ManualReclassifyExceptionAction, ReclassifyExceptionAction.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    CancelExceptionAction, ManualReclassifyExceptionAction, ReclassifyExceptionAction
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing a sub-type of ExceptionAction.Constant
-     filled by server.
+    :ivar kind: The type discriminator describing a sub-type of ExceptionAction. Required.
     :vartype kind: str
     """
 
@@ -357,7 +352,7 @@ class ExceptionAction(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
     }
 
     _subtype_map = {
@@ -379,8 +374,7 @@ class CancelExceptionAction(ExceptionAction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing a sub-type of ExceptionAction.Constant
-     filled by server.
+    :ivar kind: The type discriminator describing a sub-type of ExceptionAction. Required.
     :vartype kind: str
     :ivar note: (Optional) A note that will be appended to the jobs' Notes collection with th
      current timestamp.
@@ -392,14 +386,14 @@ class CancelExceptionAction(ExceptionAction):
 
     _validation = {
         'kind': {'required': True},
-        'note': {'max_length': 2000, 'min_length': 0},
-        'disposition_code': {'max_length': 500, 'min_length': 0},
+        'note': {'max_length': 2000},
+        'disposition_code': {'max_length': 500},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'note': {'key': 'note', 'type': 'str'},
-        'disposition_code': {'key': 'dispositionCode', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
+        "note": {"key": "note", "type": "str"},
+        "disposition_code": {"key": "dispositionCode", "type": "str"},
     }
 
     def __init__(
@@ -433,13 +427,13 @@ class CancelJobRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'note': {'max_length': 2000, 'min_length': 0},
-        'disposition_code': {'max_length': 500, 'min_length': 0},
+        'note': {'max_length': 2000},
+        'disposition_code': {'max_length': 500},
     }
 
     _attribute_map = {
-        'note': {'key': 'note', 'type': 'str'},
-        'disposition_code': {'key': 'dispositionCode', 'type': 'str'},
+        "note": {"key": "note", "type": "str"},
+        "disposition_code": {"key": "dispositionCode", "type": "str"},
     }
 
     def __init__(
@@ -465,8 +459,8 @@ class ChannelConfiguration(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar capacity_cost_per_job: Required. The amount of capacity that an instance of a job of this
-     channel will consume of the total worker capacity.
+    :ivar capacity_cost_per_job: The amount of capacity that an instance of a job of this channel
+     will consume of the total worker capacity. Required.
     :vartype capacity_cost_per_job: int
     """
 
@@ -475,7 +469,7 @@ class ChannelConfiguration(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'capacity_cost_per_job': {'key': 'capacityCostPerJob', 'type': 'int'},
+        "capacity_cost_per_job": {"key": "capacityCostPerJob", "type": "int"},
     }
 
     def __init__(
@@ -483,8 +477,8 @@ class ChannelConfiguration(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword capacity_cost_per_job: Required. The amount of capacity that an instance of a job of
-         this channel will consume of the total worker capacity.
+        :keyword capacity_cost_per_job: The amount of capacity that an instance of a job of this
+         channel will consume of the total worker capacity. Required.
         :paramtype capacity_cost_per_job: int
         """
         super(ChannelConfiguration, self).__init__(**kwargs)
@@ -522,12 +516,12 @@ class ClassificationPolicy(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'fallback_queue_id': {'key': 'fallbackQueueId', 'type': 'str'},
-        'queue_selectors': {'key': 'queueSelectors', 'type': '[QueueSelectorAttachment]'},
-        'prioritization_rule': {'key': 'prioritizationRule', 'type': 'RouterRule'},
-        'worker_selectors': {'key': 'workerSelectors', 'type': '[WorkerSelectorAttachment]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "fallback_queue_id": {"key": "fallbackQueueId", "type": "str"},
+        "queue_selectors": {"key": "queueSelectors", "type": "[QueueSelectorAttachment]"},
+        "prioritization_rule": {"key": "prioritizationRule", "type": "RouterRule"},
+        "worker_selectors": {"key": "workerSelectors", "type": "[WorkerSelectorAttachment]"},
     }
 
     def __init__(
@@ -582,8 +576,8 @@ class ClassificationPolicyCollection(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PagedClassificationPolicy]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PagedClassificationPolicy]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -604,7 +598,7 @@ class CloseJobRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar assignment_id: Required. The assignment within which the job is to be closed.
+    :ivar assignment_id: The assignment within which the job is to be closed. Required.
     :vartype assignment_id: str
     :ivar disposition_code: Indicates the outcome of the job, populate this field with your own
      custom values.
@@ -620,16 +614,16 @@ class CloseJobRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'assignment_id': {'required': True, 'max_length': 50, 'min_length': 0},
-        'disposition_code': {'max_length': 500, 'min_length': 0},
-        'note': {'max_length': 2000, 'min_length': 0},
+        'assignment_id': {'required': True, 'max_length': 50},
+        'disposition_code': {'max_length': 500},
+        'note': {'max_length': 2000},
     }
 
     _attribute_map = {
-        'assignment_id': {'key': 'assignmentId', 'type': 'str'},
-        'disposition_code': {'key': 'dispositionCode', 'type': 'str'},
-        'close_time': {'key': 'closeTime', 'type': 'iso-8601'},
-        'note': {'key': 'note', 'type': 'str'},
+        "assignment_id": {"key": "assignmentId", "type": "str"},
+        "disposition_code": {"key": "dispositionCode", "type": "str"},
+        "close_time": {"key": "closeTime", "type": "iso-8601"},
+        "note": {"key": "note", "type": "str"},
     }
 
     def __init__(
@@ -637,7 +631,7 @@ class CloseJobRequest(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword assignment_id: Required. The assignment within which the job is to be closed.
+        :keyword assignment_id: The assignment within which the job is to be closed. Required.
         :paramtype assignment_id: str
         :keyword disposition_code: Indicates the outcome of the job, populate this field with your own
          custom values.
@@ -663,7 +657,7 @@ class CommunicationErrorResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar error: Required. The Communication Services error.
+    :ivar error: The Communication Services error. Required.
     :vartype error: ~azure.communication.jobrouter.models.JobRouterError
     """
 
@@ -672,7 +666,7 @@ class CommunicationErrorResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'JobRouterError'},
+        "error": {"key": "error", "type": "JobRouterError"},
     }
 
     def __init__(
@@ -680,7 +674,7 @@ class CommunicationErrorResponse(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword error: Required. The Communication Services error.
+        :keyword error: The Communication Services error. Required.
         :paramtype error: ~azure.communication.jobrouter.models.JobRouterError
         """
         super(CommunicationErrorResponse, self).__init__(**kwargs)
@@ -692,7 +686,7 @@ class CompleteJobRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar assignment_id: Required. The assignment within the job to complete.
+    :ivar assignment_id: The assignment within the job to complete. Required.
     :vartype assignment_id: str
     :ivar note: (Optional) A note that will be appended to the jobs' Notes collection with th
      current timestamp.
@@ -700,13 +694,13 @@ class CompleteJobRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'assignment_id': {'required': True, 'max_length': 50, 'min_length': 0},
-        'note': {'max_length': 2000, 'min_length': 0},
+        'assignment_id': {'required': True, 'max_length': 50},
+        'note': {'max_length': 2000},
     }
 
     _attribute_map = {
-        'assignment_id': {'key': 'assignmentId', 'type': 'str'},
-        'note': {'key': 'note', 'type': 'str'},
+        "assignment_id": {"key": "assignmentId", "type": "str"},
+        "note": {"key": "note", "type": "str"},
     }
 
     def __init__(
@@ -714,7 +708,7 @@ class CompleteJobRequest(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword assignment_id: Required. The assignment within the job to complete.
+        :keyword assignment_id: The assignment within the job to complete. Required.
         :paramtype assignment_id: str
         :keyword note: (Optional) A note that will be appended to the jobs' Notes collection with th
          current timestamp.
@@ -728,13 +722,13 @@ class CompleteJobRequest(msrest.serialization.Model):
 class QueueSelectorAttachment(msrest.serialization.Model):
     """An attachment of label selectors to resolve a queue to a job from a classification policy.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ConditionalQueueSelector, PassThroughQueueSelector, RuleEngineQueueSelector, StaticQueueSelector, WeightedAllocationQueueSelector.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ConditionalQueueSelector, PassThroughQueueSelector, RuleEngineQueueSelector,
+    StaticQueueSelector, WeightedAllocationQueueSelector
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing the type of label selector
-     attachment.Constant filled by server.
+    :ivar kind: The type discriminator describing the type of label selector attachment. Required.
     :vartype kind: str
     """
 
@@ -743,7 +737,7 @@ class QueueSelectorAttachment(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
     }
 
     _subtype_map = {
@@ -765,18 +759,17 @@ class ConditionalQueueSelector(QueueSelectorAttachment):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing the type of label selector
-     attachment.Constant filled by server.
+    :ivar kind: The type discriminator describing the type of label selector attachment. Required.
     :vartype kind: str
-    :ivar condition: Required. A rule of one of the following types:
+    :ivar condition: A rule of one of the following types:
     
      StaticRule:  A rule providing static rules that always return the same result, regardless of
      input.
      DirectMapRule:  A rule that return the same labels as the input labels.
      ExpressionRule: A rule providing inline expression rules.
-     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function. Required.
     :vartype condition: ~azure.communication.jobrouter.models.RouterRule
-    :ivar label_selectors: Required. The label selectors to attach.
+    :ivar label_selectors: The label selectors to attach. Required.
     :vartype label_selectors: list[~azure.communication.jobrouter.models.QueueSelector]
     """
 
@@ -787,9 +780,9 @@ class ConditionalQueueSelector(QueueSelectorAttachment):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'condition': {'key': 'condition', 'type': 'RouterRule'},
-        'label_selectors': {'key': 'labelSelectors', 'type': '[QueueSelector]'},
+        "kind": {"key": "kind", "type": "str"},
+        "condition": {"key": "condition", "type": "RouterRule"},
+        "label_selectors": {"key": "labelSelectors", "type": "[QueueSelector]"},
     }
 
     def __init__(
@@ -797,15 +790,15 @@ class ConditionalQueueSelector(QueueSelectorAttachment):
         **kwargs
     ):
         """
-        :keyword condition: Required. A rule of one of the following types:
+        :keyword condition: A rule of one of the following types:
         
          StaticRule:  A rule providing static rules that always return the same result, regardless of
          input.
          DirectMapRule:  A rule that return the same labels as the input labels.
          ExpressionRule: A rule providing inline expression rules.
-         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function. Required.
         :paramtype condition: ~azure.communication.jobrouter.models.RouterRule
-        :keyword label_selectors: Required. The label selectors to attach.
+        :keyword label_selectors: The label selectors to attach. Required.
         :paramtype label_selectors: list[~azure.communication.jobrouter.models.QueueSelector]
         """
         super(ConditionalQueueSelector, self).__init__(**kwargs)
@@ -817,13 +810,13 @@ class ConditionalQueueSelector(QueueSelectorAttachment):
 class WorkerSelectorAttachment(msrest.serialization.Model):
     """An attachment which attaches WorkerSelectors to workers.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ConditionalWorkerSelector, PassThroughWorkerSelector, RuleEngineWorkerSelector, StaticWorkerSelector, WeightedAllocationWorkerSelector.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ConditionalWorkerSelector, PassThroughWorkerSelector, RuleEngineWorkerSelector,
+    StaticWorkerSelector, WeightedAllocationWorkerSelector
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing the type of label selector
-     attachment.Constant filled by server.
+    :ivar kind: The type discriminator describing the type of label selector attachment. Required.
     :vartype kind: str
     """
 
@@ -832,7 +825,7 @@ class WorkerSelectorAttachment(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
     }
 
     _subtype_map = {
@@ -854,18 +847,17 @@ class ConditionalWorkerSelector(WorkerSelectorAttachment):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing the type of label selector
-     attachment.Constant filled by server.
+    :ivar kind: The type discriminator describing the type of label selector attachment. Required.
     :vartype kind: str
-    :ivar condition: Required. A rule of one of the following types:
+    :ivar condition: A rule of one of the following types:
     
      StaticRule:  A rule providing static rules that always return the same result, regardless of
      input.
      DirectMapRule:  A rule that return the same labels as the input labels.
      ExpressionRule: A rule providing inline expression rules.
-     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function. Required.
     :vartype condition: ~azure.communication.jobrouter.models.RouterRule
-    :ivar label_selectors: Required. The label selectors to attach.
+    :ivar label_selectors: The label selectors to attach. Required.
     :vartype label_selectors: list[~azure.communication.jobrouter.models.WorkerSelector]
     """
 
@@ -876,9 +868,9 @@ class ConditionalWorkerSelector(WorkerSelectorAttachment):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'condition': {'key': 'condition', 'type': 'RouterRule'},
-        'label_selectors': {'key': 'labelSelectors', 'type': '[WorkerSelector]'},
+        "kind": {"key": "kind", "type": "str"},
+        "condition": {"key": "condition", "type": "RouterRule"},
+        "label_selectors": {"key": "labelSelectors", "type": "[WorkerSelector]"},
     }
 
     def __init__(
@@ -886,15 +878,15 @@ class ConditionalWorkerSelector(WorkerSelectorAttachment):
         **kwargs
     ):
         """
-        :keyword condition: Required. A rule of one of the following types:
+        :keyword condition: A rule of one of the following types:
         
          StaticRule:  A rule providing static rules that always return the same result, regardless of
          input.
          DirectMapRule:  A rule that return the same labels as the input labels.
          ExpressionRule: A rule providing inline expression rules.
-         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function. Required.
         :paramtype condition: ~azure.communication.jobrouter.models.RouterRule
-        :keyword label_selectors: Required. The label selectors to attach.
+        :keyword label_selectors: The label selectors to attach. Required.
         :paramtype label_selectors: list[~azure.communication.jobrouter.models.WorkerSelector]
         """
         super(ConditionalWorkerSelector, self).__init__(**kwargs)
@@ -908,8 +900,7 @@ class DirectMapRule(RouterRule):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing a sub-type of Rule.Constant filled by
-     server.
+    :ivar kind: The type discriminator describing a sub-type of Rule. Required.
     :vartype kind: str
     """
 
@@ -918,7 +909,7 @@ class DirectMapRule(RouterRule):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
     }
 
     def __init__(
@@ -952,10 +943,10 @@ class DistributionPolicy(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'offer_ttl_seconds': {'key': 'offerTtlSeconds', 'type': 'float'},
-        'mode': {'key': 'mode', 'type': 'DistributionMode'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "offer_ttl_seconds": {"key": "offerTtlSeconds", "type": "float"},
+        "mode": {"key": "mode", "type": "DistributionMode"},
     }
 
     def __init__(
@@ -997,8 +988,8 @@ class DistributionPolicyCollection(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PagedDistributionPolicy]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PagedDistributionPolicy]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -1033,9 +1024,9 @@ class ExceptionPolicy(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'exception_rules': {'key': 'exceptionRules', 'type': '{ExceptionRule}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "exception_rules": {"key": "exceptionRules", "type": "{ExceptionRule}"},
     }
 
     def __init__(
@@ -1074,8 +1065,8 @@ class ExceptionPolicyCollection(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PagedExceptionPolicy]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PagedExceptionPolicy]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -1096,10 +1087,10 @@ class ExceptionRule(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar trigger: Required. The trigger for this exception rule.
+    :ivar trigger: The trigger for this exception rule. Required.
     :vartype trigger: ~azure.communication.jobrouter.models.JobExceptionTrigger
-    :ivar actions: Required. A dictionary collection of actions to perform once the exception is
-     triggered. Key is the Id of each exception action.
+    :ivar actions: A dictionary collection of actions to perform once the exception is triggered.
+     Key is the Id of each exception action. Required.
     :vartype actions: dict[str, ~azure.communication.jobrouter.models.ExceptionAction]
     """
 
@@ -1109,8 +1100,8 @@ class ExceptionRule(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'trigger': {'key': 'trigger', 'type': 'JobExceptionTrigger'},
-        'actions': {'key': 'actions', 'type': '{ExceptionAction}'},
+        "trigger": {"key": "trigger", "type": "JobExceptionTrigger"},
+        "actions": {"key": "actions", "type": "{ExceptionAction}"},
     }
 
     def __init__(
@@ -1118,10 +1109,10 @@ class ExceptionRule(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword trigger: Required. The trigger for this exception rule.
+        :keyword trigger: The trigger for this exception rule. Required.
         :paramtype trigger: ~azure.communication.jobrouter.models.JobExceptionTrigger
-        :keyword actions: Required. A dictionary collection of actions to perform once the exception is
-         triggered. Key is the Id of each exception action.
+        :keyword actions: A dictionary collection of actions to perform once the exception is
+         triggered. Key is the Id of each exception action. Required.
         :paramtype actions: dict[str, ~azure.communication.jobrouter.models.ExceptionAction]
         """
         super(ExceptionRule, self).__init__(**kwargs)
@@ -1136,27 +1127,26 @@ class ExpressionRule(RouterRule):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing a sub-type of Rule.Constant filled by
-     server.
+    :ivar kind: The type discriminator describing a sub-type of Rule. Required.
     :vartype kind: str
-    :ivar language: The expression language to compile to and execute. Has constant value:
+    :ivar language: The expression language to compile to and execute. Required. Default value is
      "powerFx".
     :vartype language: str
-    :ivar expression: Required. The string containing the expression to evaluate. Should contain
-     return statement with calculated values.
+    :ivar expression: The string containing the expression to evaluate. Should contain return
+     statement with calculated values. Required.
     :vartype expression: str
     """
 
     _validation = {
         'kind': {'required': True},
         'language': {'required': True, 'constant': True},
-        'expression': {'required': True, 'max_length': 500, 'min_length': 0},
+        'expression': {'required': True, 'max_length': 500},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'language': {'key': 'language', 'type': 'str'},
-        'expression': {'key': 'expression', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
+        "language": {"key": "language", "type": "str"},
+        "expression": {"key": "expression", "type": "str"},
     }
 
     language = "powerFx"
@@ -1166,8 +1156,8 @@ class ExpressionRule(RouterRule):
         **kwargs
     ):
         """
-        :keyword expression: Required. The string containing the expression to evaluate. Should contain
-         return statement with calculated values.
+        :keyword expression: The string containing the expression to evaluate. Should contain return
+         statement with calculated values. Required.
         :paramtype expression: str
         """
         super(ExpressionRule, self).__init__(**kwargs)
@@ -1180,11 +1170,11 @@ class JobAssignment(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. The Id of the job assignment.
+    :ivar id: The Id of the job assignment. Required.
     :vartype id: str
     :ivar worker_id: The Id of the Worker assigned to the job.
     :vartype worker_id: str
-    :ivar assign_time: Required. The assignment time of the job.
+    :ivar assign_time: The assignment time of the job. Required.
     :vartype assign_time: ~datetime.datetime
     :ivar complete_time: The time the job was marked as completed after being assigned.
     :vartype complete_time: ~datetime.datetime
@@ -1198,11 +1188,11 @@ class JobAssignment(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'worker_id': {'key': 'workerId', 'type': 'str'},
-        'assign_time': {'key': 'assignTime', 'type': 'iso-8601'},
-        'complete_time': {'key': 'completeTime', 'type': 'iso-8601'},
-        'close_time': {'key': 'closeTime', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "worker_id": {"key": "workerId", "type": "str"},
+        "assign_time": {"key": "assignTime", "type": "iso-8601"},
+        "complete_time": {"key": "completeTime", "type": "iso-8601"},
+        "close_time": {"key": "closeTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -1210,11 +1200,11 @@ class JobAssignment(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword id: Required. The Id of the job assignment.
+        :keyword id: The Id of the job assignment. Required.
         :paramtype id: str
         :keyword worker_id: The Id of the Worker assigned to the job.
         :paramtype worker_id: str
-        :keyword assign_time: Required. The assignment time of the job.
+        :keyword assign_time: The assignment time of the job. Required.
         :paramtype assign_time: ~datetime.datetime
         :keyword complete_time: The time the job was marked as completed after being assigned.
         :paramtype complete_time: ~datetime.datetime
@@ -1248,8 +1238,8 @@ class JobCollection(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PagedRouterJobInternal]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PagedRouterJobInternal]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -1268,13 +1258,12 @@ class JobCollection(msrest.serialization.Model):
 class JobExceptionTrigger(msrest.serialization.Model):
     """The trigger for this exception rule.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: QueueLengthExceptionTrigger, WaitTimeExceptionTrigger.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    QueueLengthExceptionTrigger, WaitTimeExceptionTrigger
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing a sub-type of ExceptionTrigger.Constant
-     filled by server.
+    :ivar kind: The type discriminator describing a sub-type of ExceptionTrigger. Required.
     :vartype kind: str
     """
 
@@ -1283,7 +1272,7 @@ class JobExceptionTrigger(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
     }
 
     _subtype_map = {
@@ -1305,11 +1294,11 @@ class JobOffer(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. The Id of the offer.
+    :ivar id: The Id of the offer. Required.
     :vartype id: str
-    :ivar job_id: Required. The Id of the job.
+    :ivar job_id: The Id of the job. Required.
     :vartype job_id: str
-    :ivar capacity_cost: Required. The capacity cost consumed by the job offer.
+    :ivar capacity_cost: The capacity cost consumed by the job offer. Required.
     :vartype capacity_cost: int
     :ivar offer_time_utc: The time the offer was created.
     :vartype offer_time_utc: ~datetime.datetime
@@ -1324,11 +1313,11 @@ class JobOffer(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'job_id': {'key': 'jobId', 'type': 'str'},
-        'capacity_cost': {'key': 'capacityCost', 'type': 'int'},
-        'offer_time_utc': {'key': 'offerTimeUtc', 'type': 'iso-8601'},
-        'expiry_time_utc': {'key': 'expiryTimeUtc', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "job_id": {"key": "jobId", "type": "str"},
+        "capacity_cost": {"key": "capacityCost", "type": "int"},
+        "offer_time_utc": {"key": "offerTimeUtc", "type": "iso-8601"},
+        "expiry_time_utc": {"key": "expiryTimeUtc", "type": "iso-8601"},
     }
 
     def __init__(
@@ -1336,11 +1325,11 @@ class JobOffer(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword id: Required. The Id of the offer.
+        :keyword id: The Id of the offer. Required.
         :paramtype id: str
-        :keyword job_id: Required. The Id of the job.
+        :keyword job_id: The Id of the job. Required.
         :paramtype job_id: str
-        :keyword capacity_cost: Required. The capacity cost consumed by the job offer.
+        :keyword capacity_cost: The capacity cost consumed by the job offer. Required.
         :paramtype capacity_cost: int
         :keyword offer_time_utc: The time the offer was created.
         :paramtype offer_time_utc: ~datetime.datetime
@@ -1360,16 +1349,16 @@ class JobPositionDetails(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar job_id: Required. Id of the job these details are about.
+    :ivar job_id: Id of the job these details are about. Required.
     :vartype job_id: str
-    :ivar position: Required. Position of the job in question within that queue.
+    :ivar position: Position of the job in question within that queue. Required.
     :vartype position: int
-    :ivar queue_id: Required. Id of the queue this job is enqueued in.
+    :ivar queue_id: Id of the queue this job is enqueued in. Required.
     :vartype queue_id: str
-    :ivar queue_length: Required. Length of the queue: total number of enqueued jobs.
+    :ivar queue_length: Length of the queue: total number of enqueued jobs. Required.
     :vartype queue_length: int
-    :ivar estimated_wait_time_minutes: Required. Estimated wait time of the job rounded up to the
-     nearest minute.
+    :ivar estimated_wait_time_minutes: Estimated wait time of the job rounded up to the nearest
+     minute. Required.
     :vartype estimated_wait_time_minutes: float
     """
 
@@ -1382,11 +1371,11 @@ class JobPositionDetails(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'job_id': {'key': 'jobId', 'type': 'str'},
-        'position': {'key': 'position', 'type': 'int'},
-        'queue_id': {'key': 'queueId', 'type': 'str'},
-        'queue_length': {'key': 'queueLength', 'type': 'int'},
-        'estimated_wait_time_minutes': {'key': 'estimatedWaitTimeMinutes', 'type': 'float'},
+        "job_id": {"key": "jobId", "type": "str"},
+        "position": {"key": "position", "type": "int"},
+        "queue_id": {"key": "queueId", "type": "str"},
+        "queue_length": {"key": "queueLength", "type": "int"},
+        "estimated_wait_time_minutes": {"key": "estimatedWaitTimeMinutes", "type": "float"},
     }
 
     def __init__(
@@ -1394,16 +1383,16 @@ class JobPositionDetails(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword job_id: Required. Id of the job these details are about.
+        :keyword job_id: Id of the job these details are about. Required.
         :paramtype job_id: str
-        :keyword position: Required. Position of the job in question within that queue.
+        :keyword position: Position of the job in question within that queue. Required.
         :paramtype position: int
-        :keyword queue_id: Required. Id of the queue this job is enqueued in.
+        :keyword queue_id: Id of the queue this job is enqueued in. Required.
         :paramtype queue_id: str
-        :keyword queue_length: Required. Length of the queue: total number of enqueued jobs.
+        :keyword queue_length: Length of the queue: total number of enqueued jobs. Required.
         :paramtype queue_length: int
-        :keyword estimated_wait_time_minutes: Required. Estimated wait time of the job rounded up to
-         the nearest minute.
+        :keyword estimated_wait_time_minutes: Estimated wait time of the job rounded up to the nearest
+         minute. Required.
         :paramtype estimated_wait_time_minutes: float
         """
         super(JobPositionDetails, self).__init__(**kwargs)
@@ -1425,8 +1414,8 @@ class JobQueueInternal(msrest.serialization.Model):
     :vartype id: str
     :ivar name: The name of this queue.
     :vartype name: str
-    :ivar distribution_policy_id: Required. The ID of the distribution policy that will determine
-     how a job is distributed to workers.
+    :ivar distribution_policy_id: The ID of the distribution policy that will determine how a job
+     is distributed to workers. Required.
     :vartype distribution_policy_id: str
     :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
      engines to make decisions.
@@ -1442,11 +1431,11 @@ class JobQueueInternal(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'distribution_policy_id': {'key': 'distributionPolicyId', 'type': 'str'},
-        'labels': {'key': 'labels', 'type': '{object}'},
-        'exception_policy_id': {'key': 'exceptionPolicyId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "distribution_policy_id": {"key": "distributionPolicyId", "type": "str"},
+        "labels": {"key": "labels", "type": "{object}"},
+        "exception_policy_id": {"key": "exceptionPolicyId", "type": "str"},
     }
 
     def __init__(
@@ -1456,8 +1445,8 @@ class JobQueueInternal(msrest.serialization.Model):
         """
         :keyword name: The name of this queue.
         :paramtype name: str
-        :keyword distribution_policy_id: Required. The ID of the distribution policy that will
-         determine how a job is distributed to workers.
+        :keyword distribution_policy_id: The ID of the distribution policy that will determine how a
+         job is distributed to workers. Required.
         :paramtype distribution_policy_id: str
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
@@ -1481,9 +1470,9 @@ class JobRouterError(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Required. The error code.
+    :ivar code: The error code. Required.
     :vartype code: str
-    :ivar message: Required. The error message.
+    :ivar message: The error message. Required.
     :vartype message: str
     :ivar target: The error target.
     :vartype target: str
@@ -1502,11 +1491,11 @@ class JobRouterError(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[JobRouterError]'},
-        'inner_error': {'key': 'innererror', 'type': 'JobRouterError'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[JobRouterError]"},
+        "inner_error": {"key": "innererror", "type": "JobRouterError"},
     }
 
     def __init__(
@@ -1514,9 +1503,9 @@ class JobRouterError(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword code: Required. The error code.
+        :keyword code: The error code. Required.
         :paramtype code: str
-        :keyword message: Required. The error message.
+        :keyword message: The error message. Required.
         :paramtype message: str
         """
         super(JobRouterError, self).__init__(**kwargs)
@@ -1532,14 +1521,13 @@ class LongestIdleMode(DistributionMode):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing a sub-type of Mode.Constant filled by
-     server.
+    :ivar kind: The type discriminator describing a sub-type of Mode. Required.
     :vartype kind: str
-    :ivar min_concurrent_offers: Required. Governs the minimum desired number of active concurrent
-     offers a job can have.
+    :ivar min_concurrent_offers: Governs the minimum desired number of active concurrent offers a
+     job can have. Required.
     :vartype min_concurrent_offers: int
-    :ivar max_concurrent_offers: Required. Governs the maximum number of active concurrent offers a
-     job can have.
+    :ivar max_concurrent_offers: Governs the maximum number of active concurrent offers a job can
+     have. Required.
     :vartype max_concurrent_offers: int
     :ivar bypass_selectors: (Optional)
      If set to true, then router will match workers to jobs even if they don't match label
@@ -1558,10 +1546,10 @@ class LongestIdleMode(DistributionMode):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'min_concurrent_offers': {'key': 'minConcurrentOffers', 'type': 'int'},
-        'max_concurrent_offers': {'key': 'maxConcurrentOffers', 'type': 'int'},
-        'bypass_selectors': {'key': 'bypassSelectors', 'type': 'bool'},
+        "kind": {"key": "kind", "type": "str"},
+        "min_concurrent_offers": {"key": "minConcurrentOffers", "type": "int"},
+        "max_concurrent_offers": {"key": "maxConcurrentOffers", "type": "int"},
+        "bypass_selectors": {"key": "bypassSelectors", "type": "bool"},
     }
 
     def __init__(
@@ -1569,11 +1557,11 @@ class LongestIdleMode(DistributionMode):
         **kwargs
     ):
         """
-        :keyword min_concurrent_offers: Required. Governs the minimum desired number of active
-         concurrent offers a job can have.
+        :keyword min_concurrent_offers: Governs the minimum desired number of active concurrent offers
+         a job can have. Required.
         :paramtype min_concurrent_offers: int
-        :keyword max_concurrent_offers: Required. Governs the maximum number of active concurrent
-         offers a job can have.
+        :keyword max_concurrent_offers: Governs the maximum number of active concurrent offers a job
+         can have. Required.
         :paramtype max_concurrent_offers: int
         :keyword bypass_selectors: (Optional)
          If set to true, then router will match workers to jobs even if they don't match label
@@ -1593,8 +1581,7 @@ class ManualReclassifyExceptionAction(ExceptionAction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing a sub-type of ExceptionAction.Constant
-     filled by server.
+    :ivar kind: The type discriminator describing a sub-type of ExceptionAction. Required.
     :vartype kind: str
     :ivar queue_id: Updated QueueId.
     :vartype queue_id: str
@@ -1606,14 +1593,14 @@ class ManualReclassifyExceptionAction(ExceptionAction):
 
     _validation = {
         'kind': {'required': True},
-        'queue_id': {'max_length': 50, 'min_length': 0},
+        'queue_id': {'max_length': 50},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'queue_id': {'key': 'queueId', 'type': 'str'},
-        'priority': {'key': 'priority', 'type': 'int'},
-        'worker_selectors': {'key': 'workerSelectors', 'type': '[WorkerSelector]'},
+        "kind": {"key": "kind", "type": "str"},
+        "queue_id": {"key": "queueId", "type": "str"},
+        "priority": {"key": "priority", "type": "int"},
+        "worker_selectors": {"key": "workerSelectors", "type": "[WorkerSelector]"},
     }
 
     def __init__(
@@ -1666,12 +1653,12 @@ class PagedClassificationPolicy(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'fallback_queue_id': {'key': 'fallbackQueueId', 'type': 'str'},
-        'queue_selectors': {'key': 'queueSelectors', 'type': '[QueueSelectorAttachment]'},
-        'prioritization_rule': {'key': 'prioritizationRule', 'type': 'RouterRule'},
-        'worker_selectors': {'key': 'workerSelectors', 'type': '[WorkerSelectorAttachment]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "fallback_queue_id": {"key": "fallbackQueueId", "type": "str"},
+        "queue_selectors": {"key": "queueSelectors", "type": "[QueueSelectorAttachment]"},
+        "prioritization_rule": {"key": "prioritizationRule", "type": "RouterRule"},
+        "worker_selectors": {"key": "workerSelectors", "type": "[WorkerSelectorAttachment]"},
     }
 
     def __init__(
@@ -1728,10 +1715,10 @@ class PagedDistributionPolicy(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'offer_ttl_seconds': {'key': 'offerTtlSeconds', 'type': 'float'},
-        'mode': {'key': 'mode', 'type': 'DistributionMode'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "offer_ttl_seconds": {"key": "offerTtlSeconds", "type": "float"},
+        "mode": {"key": "mode", "type": "DistributionMode"},
     }
 
     def __init__(
@@ -1773,9 +1760,9 @@ class PagedExceptionPolicy(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'exception_rules': {'key': 'exceptionRules', 'type': '{ExceptionRule}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "exception_rules": {"key": "exceptionRules", "type": "{ExceptionRule}"},
     }
 
     def __init__(
@@ -1820,11 +1807,11 @@ class PagedJobQueueInternal(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'distribution_policy_id': {'key': 'distributionPolicyId', 'type': 'str'},
-        'labels': {'key': 'labels', 'type': '{object}'},
-        'exception_policy_id': {'key': 'exceptionPolicyId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "distribution_policy_id": {"key": "distributionPolicyId", "type": "str"},
+        "labels": {"key": "labels", "type": "{object}"},
+        "exception_policy_id": {"key": "exceptionPolicyId", "type": "str"},
     }
 
     def __init__(
@@ -1852,7 +1839,7 @@ class PagedJobQueueInternal(msrest.serialization.Model):
         self.exception_policy_id = kwargs.get('exception_policy_id', None)
 
 
-class PagedRouterJobInternal(msrest.serialization.Model):
+class PagedRouterJobInternal(msrest.serialization.Model):  # pylint: disable=too-many-instance-attributes
     """A job returned from a pageable list.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1862,7 +1849,7 @@ class PagedRouterJobInternal(msrest.serialization.Model):
     :ivar channel_reference: Reference to an external parent context, eg. call ID.
     :vartype channel_reference: str
     :ivar job_status: The state of the Job. Known values are: "pendingClassification", "queued",
-     "assigned", "completed", "closed", "cancelled", "classificationFailed", "created".
+     "assigned", "completed", "closed", "cancelled", "classificationFailed", and "created".
     :vartype job_status: str or ~azure.communication.jobrouter.models.JobStatus
     :ivar enqueue_time_utc: The time a job was queued.
     :vartype enqueue_time_utc: ~datetime.datetime
@@ -1888,7 +1875,7 @@ class PagedRouterJobInternal(msrest.serialization.Model):
     :ivar assignments: A collection of the assignments of the job.
      Key is AssignmentId.
     :vartype assignments: dict[str, ~azure.communication.jobrouter.models.JobAssignment]
-    :ivar tags: A set of tags. A set of non-identifying attributes attached to this job.
+    :ivar tags: A set of non-identifying attributes attached to this job.
     :vartype tags: dict[str, any]
     :ivar notes: Notes attached to a job, sorted by timestamp.
     :vartype notes: dict[str, str]
@@ -1903,21 +1890,21 @@ class PagedRouterJobInternal(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'channel_reference': {'key': 'channelReference', 'type': 'str'},
-        'job_status': {'key': 'jobStatus', 'type': 'str'},
-        'enqueue_time_utc': {'key': 'enqueueTimeUtc', 'type': 'iso-8601'},
-        'channel_id': {'key': 'channelId', 'type': 'str'},
-        'classification_policy_id': {'key': 'classificationPolicyId', 'type': 'str'},
-        'queue_id': {'key': 'queueId', 'type': 'str'},
-        'priority': {'key': 'priority', 'type': 'int'},
-        'disposition_code': {'key': 'dispositionCode', 'type': 'str'},
-        'requested_worker_selectors': {'key': 'requestedWorkerSelectors', 'type': '[WorkerSelector]'},
-        'attached_worker_selectors': {'key': 'attachedWorkerSelectors', 'type': '[WorkerSelector]'},
-        'labels': {'key': 'labels', 'type': '{object}'},
-        'assignments': {'key': 'assignments', 'type': '{JobAssignment}'},
-        'tags': {'key': 'tags', 'type': '{object}'},
-        'notes': {'key': 'notes', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "channel_reference": {"key": "channelReference", "type": "str"},
+        "job_status": {"key": "jobStatus", "type": "str"},
+        "enqueue_time_utc": {"key": "enqueueTimeUtc", "type": "iso-8601"},
+        "channel_id": {"key": "channelId", "type": "str"},
+        "classification_policy_id": {"key": "classificationPolicyId", "type": "str"},
+        "queue_id": {"key": "queueId", "type": "str"},
+        "priority": {"key": "priority", "type": "int"},
+        "disposition_code": {"key": "dispositionCode", "type": "str"},
+        "requested_worker_selectors": {"key": "requestedWorkerSelectors", "type": "[WorkerSelector]"},
+        "attached_worker_selectors": {"key": "attachedWorkerSelectors", "type": "[WorkerSelector]"},
+        "labels": {"key": "labels", "type": "{object}"},
+        "assignments": {"key": "assignments", "type": "{JobAssignment}"},
+        "tags": {"key": "tags", "type": "{object}"},
+        "notes": {"key": "notes", "type": "{str}"},
     }
 
     def __init__(
@@ -1945,7 +1932,7 @@ class PagedRouterJobInternal(msrest.serialization.Model):
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
         :paramtype labels: dict[str, any]
-        :keyword tags: A set of tags. A set of non-identifying attributes attached to this job.
+        :keyword tags: A set of non-identifying attributes attached to this job.
         :paramtype tags: dict[str, any]
         :keyword notes: Notes attached to a job, sorted by timestamp.
         :paramtype notes: dict[str, str]
@@ -1968,25 +1955,25 @@ class PagedRouterJobInternal(msrest.serialization.Model):
         self.notes = kwargs.get('notes', None)
 
 
-class PagedRouterWorkerInternal(msrest.serialization.Model):
+class PagedRouterWorkerInternal(msrest.serialization.Model):  # pylint: disable=too-many-instance-attributes
     """A worker returned from a pageable list.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id:
     :vartype id: str
-    :ivar state: The current state of the worker. Known values are: "active", "draining",
+    :ivar state: The current state of the worker. Known values are: "active", "draining", and
      "inactive".
     :vartype state: str or ~azure.communication.jobrouter.models.PagedWorkerState
     :ivar queue_assignments: The queue(s) that this worker can receive work from.
-    :vartype queue_assignments: dict[str, any]
+    :vartype queue_assignments: dict[str, JSON]
     :ivar total_capacity: The total capacity score this worker has to manage multiple concurrent
      jobs.
     :vartype total_capacity: int
     :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
      engines to make decisions.
     :vartype labels: dict[str, any]
-    :ivar tags: A set of tags. A set of non-identifying attributes attached to this worker.
+    :ivar tags: A set of non-identifying attributes attached to this worker.
     :vartype tags: dict[str, any]
     :ivar channel_configurations: The channel(s) this worker can handle and their impact on the
      workers capacity.
@@ -2012,17 +1999,17 @@ class PagedRouterWorkerInternal(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'queue_assignments': {'key': 'queueAssignments', 'type': '{object}'},
-        'total_capacity': {'key': 'totalCapacity', 'type': 'int'},
-        'labels': {'key': 'labels', 'type': '{object}'},
-        'tags': {'key': 'tags', 'type': '{object}'},
-        'channel_configurations': {'key': 'channelConfigurations', 'type': '{ChannelConfiguration}'},
-        'offers': {'key': 'offers', 'type': '[JobOffer]'},
-        'assigned_jobs': {'key': 'assignedJobs', 'type': '[WorkerAssignment]'},
-        'load_ratio': {'key': 'loadRatio', 'type': 'float'},
-        'available_for_offers': {'key': 'availableForOffers', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "queue_assignments": {"key": "queueAssignments", "type": "{object}"},
+        "total_capacity": {"key": "totalCapacity", "type": "int"},
+        "labels": {"key": "labels", "type": "{object}"},
+        "tags": {"key": "tags", "type": "{object}"},
+        "channel_configurations": {"key": "channelConfigurations", "type": "{ChannelConfiguration}"},
+        "offers": {"key": "offers", "type": "[JobOffer]"},
+        "assigned_jobs": {"key": "assignedJobs", "type": "[WorkerAssignment]"},
+        "load_ratio": {"key": "loadRatio", "type": "float"},
+        "available_for_offers": {"key": "availableForOffers", "type": "bool"},
     }
 
     def __init__(
@@ -2031,14 +2018,14 @@ class PagedRouterWorkerInternal(msrest.serialization.Model):
     ):
         """
         :keyword queue_assignments: The queue(s) that this worker can receive work from.
-        :paramtype queue_assignments: dict[str, any]
+        :paramtype queue_assignments: dict[str, JSON]
         :keyword total_capacity: The total capacity score this worker has to manage multiple concurrent
          jobs.
         :paramtype total_capacity: int
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
         :paramtype labels: dict[str, any]
-        :keyword tags: A set of tags. A set of non-identifying attributes attached to this worker.
+        :keyword tags: A set of non-identifying attributes attached to this worker.
         :paramtype tags: dict[str, any]
         :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
          workers capacity.
@@ -2066,27 +2053,26 @@ class PassThroughQueueSelector(QueueSelectorAttachment):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing the type of label selector
-     attachment.Constant filled by server.
+    :ivar kind: The type discriminator describing the type of label selector attachment. Required.
     :vartype kind: str
-    :ivar key: Required. The label key to query against.
+    :ivar key: The label key to query against. Required.
     :vartype key: str
-    :ivar label_operator: Required. Describes how the value of the label is compared to the value
-     pass through. Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
-     "greaterThan", "greaterThanEqual".
+    :ivar label_operator: Describes how the value of the label is compared to the value pass
+     through. Required. Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
+     "greaterThan", and "greaterThanEqual".
     :vartype label_operator: str or ~azure.communication.jobrouter.models.LabelOperator
     """
 
     _validation = {
         'kind': {'required': True},
-        'key': {'required': True, 'max_length': 500, 'min_length': 0},
+        'key': {'required': True, 'max_length': 500},
         'label_operator': {'required': True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'key': {'key': 'key', 'type': 'str'},
-        'label_operator': {'key': 'labelOperator', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "label_operator": {"key": "labelOperator", "type": "str"},
     }
 
     def __init__(
@@ -2094,11 +2080,11 @@ class PassThroughQueueSelector(QueueSelectorAttachment):
         **kwargs
     ):
         """
-        :keyword key: Required. The label key to query against.
+        :keyword key: The label key to query against. Required.
         :paramtype key: str
-        :keyword label_operator: Required. Describes how the value of the label is compared to the
-         value pass through. Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
-         "greaterThan", "greaterThanEqual".
+        :keyword label_operator: Describes how the value of the label is compared to the value pass
+         through. Required. Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
+         "greaterThan", and "greaterThanEqual".
         :paramtype label_operator: str or ~azure.communication.jobrouter.models.LabelOperator
         """
         super(PassThroughQueueSelector, self).__init__(**kwargs)
@@ -2112,14 +2098,13 @@ class PassThroughWorkerSelector(WorkerSelectorAttachment):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing the type of label selector
-     attachment.Constant filled by server.
+    :ivar kind: The type discriminator describing the type of label selector attachment. Required.
     :vartype kind: str
-    :ivar key: Required. The label key to query against.
+    :ivar key: The label key to query against. Required.
     :vartype key: str
-    :ivar label_operator: Required. Describes how the value of the label is compared to the value
-     pass through. Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
-     "greaterThan", "greaterThanEqual".
+    :ivar label_operator: Describes how the value of the label is compared to the value pass
+     through. Required. Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
+     "greaterThan", and "greaterThanEqual".
     :vartype label_operator: str or ~azure.communication.jobrouter.models.LabelOperator
     :ivar ttl_seconds: Describes how long the attached label selector is valid in seconds.
     :vartype ttl_seconds: float
@@ -2127,15 +2112,15 @@ class PassThroughWorkerSelector(WorkerSelectorAttachment):
 
     _validation = {
         'kind': {'required': True},
-        'key': {'required': True, 'max_length': 500, 'min_length': 0},
+        'key': {'required': True, 'max_length': 500},
         'label_operator': {'required': True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'key': {'key': 'key', 'type': 'str'},
-        'label_operator': {'key': 'labelOperator', 'type': 'str'},
-        'ttl_seconds': {'key': 'ttlSeconds', 'type': 'float'},
+        "kind": {"key": "kind", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "label_operator": {"key": "labelOperator", "type": "str"},
+        "ttl_seconds": {"key": "ttlSeconds", "type": "float"},
     }
 
     def __init__(
@@ -2143,11 +2128,11 @@ class PassThroughWorkerSelector(WorkerSelectorAttachment):
         **kwargs
     ):
         """
-        :keyword key: Required. The label key to query against.
+        :keyword key: The label key to query against. Required.
         :paramtype key: str
-        :keyword label_operator: Required. Describes how the value of the label is compared to the
-         value pass through. Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
-         "greaterThan", "greaterThanEqual".
+        :keyword label_operator: Describes how the value of the label is compared to the value pass
+         through. Required. Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
+         "greaterThan", and "greaterThanEqual".
         :paramtype label_operator: str or ~azure.communication.jobrouter.models.LabelOperator
         :keyword ttl_seconds: Describes how long the attached label selector is valid in seconds.
         :paramtype ttl_seconds: float
@@ -2178,8 +2163,8 @@ class QueueCollection(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PagedJobQueueInternal]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PagedJobQueueInternal]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -2200,11 +2185,10 @@ class QueueLengthExceptionTrigger(JobExceptionTrigger):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing a sub-type of ExceptionTrigger.Constant
-     filled by server.
+    :ivar kind: The type discriminator describing a sub-type of ExceptionTrigger. Required.
     :vartype kind: str
-    :ivar threshold: Required. Threshold of number of jobs ahead in the queue to for this trigger
-     to fire.
+    :ivar threshold: Threshold of number of jobs ahead in the queue to for this trigger to fire.
+     Required.
     :vartype threshold: int
     """
 
@@ -2214,8 +2198,8 @@ class QueueLengthExceptionTrigger(JobExceptionTrigger):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'threshold': {'key': 'threshold', 'type': 'int'},
+        "kind": {"key": "kind", "type": "str"},
+        "threshold": {"key": "threshold", "type": "int"},
     }
 
     def __init__(
@@ -2223,8 +2207,8 @@ class QueueLengthExceptionTrigger(JobExceptionTrigger):
         **kwargs
     ):
         """
-        :keyword threshold: Required. Threshold of number of jobs ahead in the queue to for this
-         trigger to fire.
+        :keyword threshold: Threshold of number of jobs ahead in the queue to for this trigger to fire.
+         Required.
         :paramtype threshold: int
         """
         super(QueueLengthExceptionTrigger, self).__init__(**kwargs)
@@ -2237,25 +2221,25 @@ class QueueSelector(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar key: Required. The label key to query against.
+    :ivar key: The label key to query against. Required.
     :vartype key: str
-    :ivar label_operator: Required. Describes how the value of the label is compared to the value
-     defined on the label selector. Known values are: "equal", "notEqual", "lessThan",
-     "lessThanEqual", "greaterThan", "greaterThanEqual".
+    :ivar label_operator: Describes how the value of the label is compared to the value defined on
+     the label selector. Required. Known values are: "equal", "notEqual", "lessThan",
+     "lessThanEqual", "greaterThan", and "greaterThanEqual".
     :vartype label_operator: str or ~azure.communication.jobrouter.models.LabelOperator
     :ivar value: The value to compare against the actual label value with the given operator.
-    :vartype value: any
+    :vartype value: JSON
     """
 
     _validation = {
-        'key': {'required': True, 'max_length': 500, 'min_length': 0},
+        'key': {'required': True, 'max_length': 500},
         'label_operator': {'required': True},
     }
 
     _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
-        'label_operator': {'key': 'labelOperator', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'object'},
+        "key": {"key": "key", "type": "str"},
+        "label_operator": {"key": "labelOperator", "type": "str"},
+        "value": {"key": "value", "type": "object"},
     }
 
     def __init__(
@@ -2263,14 +2247,14 @@ class QueueSelector(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword key: Required. The label key to query against.
+        :keyword key: The label key to query against. Required.
         :paramtype key: str
-        :keyword label_operator: Required. Describes how the value of the label is compared to the
-         value defined on the label selector. Known values are: "equal", "notEqual", "lessThan",
-         "lessThanEqual", "greaterThan", "greaterThanEqual".
+        :keyword label_operator: Describes how the value of the label is compared to the value defined
+         on the label selector. Required. Known values are: "equal", "notEqual", "lessThan",
+         "lessThanEqual", "greaterThan", and "greaterThanEqual".
         :paramtype label_operator: str or ~azure.communication.jobrouter.models.LabelOperator
         :keyword value: The value to compare against the actual label value with the given operator.
-        :paramtype value: any
+        :paramtype value: JSON
         """
         super(QueueSelector, self).__init__(**kwargs)
         self.key = kwargs['key']
@@ -2283,9 +2267,9 @@ class QueueStatistics(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar queue_id: Required. Id of the queue these details are about.
+    :ivar queue_id: Id of the queue these details are about. Required.
     :vartype queue_id: str
-    :ivar length: Required. Length of the queue: total number of enqueued jobs.
+    :ivar length: Length of the queue: total number of enqueued jobs. Required.
     :vartype length: int
     :ivar estimated_wait_time_minutes: The estimated wait time of this queue rounded up to the
      nearest minute, grouped by job priority.
@@ -2301,10 +2285,10 @@ class QueueStatistics(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'queue_id': {'key': 'queueId', 'type': 'str'},
-        'length': {'key': 'length', 'type': 'int'},
-        'estimated_wait_time_minutes': {'key': 'estimatedWaitTimeMinutes', 'type': '{float}'},
-        'longest_job_wait_time_minutes': {'key': 'longestJobWaitTimeMinutes', 'type': 'float'},
+        "queue_id": {"key": "queueId", "type": "str"},
+        "length": {"key": "length", "type": "int"},
+        "estimated_wait_time_minutes": {"key": "estimatedWaitTimeMinutes", "type": "{float}"},
+        "longest_job_wait_time_minutes": {"key": "longestJobWaitTimeMinutes", "type": "float"},
     }
 
     def __init__(
@@ -2312,9 +2296,9 @@ class QueueStatistics(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword queue_id: Required. Id of the queue these details are about.
+        :keyword queue_id: Id of the queue these details are about. Required.
         :paramtype queue_id: str
-        :keyword length: Required. Length of the queue: total number of enqueued jobs.
+        :keyword length: Length of the queue: total number of enqueued jobs. Required.
         :paramtype length: int
         :keyword estimated_wait_time_minutes: The estimated wait time of this queue rounded up to the
          nearest minute, grouped by job priority.
@@ -2335,10 +2319,10 @@ class QueueWeightedAllocation(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar weight: Required. The percentage of this weight, expressed as a fraction of 1.
+    :ivar weight: The percentage of this weight, expressed as a fraction of 1. Required.
     :vartype weight: float
-    :ivar label_selectors: Required. A collection of label selectors that will be applied if this
-     allocation is selected.
+    :ivar label_selectors: A collection of label selectors that will be applied if this allocation
+     is selected. Required.
     :vartype label_selectors: list[~azure.communication.jobrouter.models.QueueSelector]
     """
 
@@ -2348,8 +2332,8 @@ class QueueWeightedAllocation(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'weight': {'key': 'weight', 'type': 'float'},
-        'label_selectors': {'key': 'labelSelectors', 'type': '[QueueSelector]'},
+        "weight": {"key": "weight", "type": "float"},
+        "label_selectors": {"key": "labelSelectors", "type": "[QueueSelector]"},
     }
 
     def __init__(
@@ -2357,10 +2341,10 @@ class QueueWeightedAllocation(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword weight: Required. The percentage of this weight, expressed as a fraction of 1.
+        :keyword weight: The percentage of this weight, expressed as a fraction of 1. Required.
         :paramtype weight: float
-        :keyword label_selectors: Required. A collection of label selectors that will be applied if
-         this allocation is selected.
+        :keyword label_selectors: A collection of label selectors that will be applied if this
+         allocation is selected. Required.
         :paramtype label_selectors: list[~azure.communication.jobrouter.models.QueueSelector]
         """
         super(QueueWeightedAllocation, self).__init__(**kwargs)
@@ -2373,8 +2357,7 @@ class ReclassifyExceptionAction(ExceptionAction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing a sub-type of ExceptionAction.Constant
-     filled by server.
+    :ivar kind: The type discriminator describing a sub-type of ExceptionAction. Required.
     :vartype kind: str
     :ivar classification_policy_id: (optional) The new classification policy that will determine
      queue, priority and worker selectors.
@@ -2386,13 +2369,13 @@ class ReclassifyExceptionAction(ExceptionAction):
 
     _validation = {
         'kind': {'required': True},
-        'classification_policy_id': {'max_length': 50, 'min_length': 0},
+        'classification_policy_id': {'max_length': 50},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'classification_policy_id': {'key': 'classificationPolicyId', 'type': 'str'},
-        'labels_to_upsert': {'key': 'labelsToUpsert', 'type': '{object}'},
+        "kind": {"key": "kind", "type": "str"},
+        "classification_policy_id": {"key": "classificationPolicyId", "type": "str"},
+        "labels_to_upsert": {"key": "labelsToUpsert", "type": "{object}"},
     }
 
     def __init__(
@@ -2418,14 +2401,13 @@ class RoundRobinMode(DistributionMode):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing a sub-type of Mode.Constant filled by
-     server.
+    :ivar kind: The type discriminator describing a sub-type of Mode. Required.
     :vartype kind: str
-    :ivar min_concurrent_offers: Required. Governs the minimum desired number of active concurrent
-     offers a job can have.
+    :ivar min_concurrent_offers: Governs the minimum desired number of active concurrent offers a
+     job can have. Required.
     :vartype min_concurrent_offers: int
-    :ivar max_concurrent_offers: Required. Governs the maximum number of active concurrent offers a
-     job can have.
+    :ivar max_concurrent_offers: Governs the maximum number of active concurrent offers a job can
+     have. Required.
     :vartype max_concurrent_offers: int
     :ivar bypass_selectors: (Optional)
      If set to true, then router will match workers to jobs even if they don't match label
@@ -2444,10 +2426,10 @@ class RoundRobinMode(DistributionMode):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'min_concurrent_offers': {'key': 'minConcurrentOffers', 'type': 'int'},
-        'max_concurrent_offers': {'key': 'maxConcurrentOffers', 'type': 'int'},
-        'bypass_selectors': {'key': 'bypassSelectors', 'type': 'bool'},
+        "kind": {"key": "kind", "type": "str"},
+        "min_concurrent_offers": {"key": "minConcurrentOffers", "type": "int"},
+        "max_concurrent_offers": {"key": "maxConcurrentOffers", "type": "int"},
+        "bypass_selectors": {"key": "bypassSelectors", "type": "bool"},
     }
 
     def __init__(
@@ -2455,11 +2437,11 @@ class RoundRobinMode(DistributionMode):
         **kwargs
     ):
         """
-        :keyword min_concurrent_offers: Required. Governs the minimum desired number of active
-         concurrent offers a job can have.
+        :keyword min_concurrent_offers: Governs the minimum desired number of active concurrent offers
+         a job can have. Required.
         :paramtype min_concurrent_offers: int
-        :keyword max_concurrent_offers: Required. Governs the maximum number of active concurrent
-         offers a job can have.
+        :keyword max_concurrent_offers: Governs the maximum number of active concurrent offers a job
+         can have. Required.
         :paramtype max_concurrent_offers: int
         :keyword bypass_selectors: (Optional)
          If set to true, then router will match workers to jobs even if they don't match label
@@ -2474,7 +2456,7 @@ class RoundRobinMode(DistributionMode):
         self.kind = 'round-robin'  # type: str
 
 
-class RouterJobInternal(msrest.serialization.Model):
+class RouterJobInternal(msrest.serialization.Model):  # pylint: disable=too-many-instance-attributes
     """A unit of work to be routed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2484,7 +2466,7 @@ class RouterJobInternal(msrest.serialization.Model):
     :ivar channel_reference: Reference to an external parent context, eg. call ID.
     :vartype channel_reference: str
     :ivar job_status: The state of the Job. Known values are: "pendingClassification", "queued",
-     "assigned", "completed", "closed", "cancelled", "classificationFailed", "created".
+     "assigned", "completed", "closed", "cancelled", "classificationFailed", and "created".
     :vartype job_status: str or ~azure.communication.jobrouter.models.JobStatus
     :ivar enqueue_time_utc: The time a job was queued.
     :vartype enqueue_time_utc: ~datetime.datetime
@@ -2510,7 +2492,7 @@ class RouterJobInternal(msrest.serialization.Model):
     :ivar assignments: A collection of the assignments of the job.
      Key is AssignmentId.
     :vartype assignments: dict[str, ~azure.communication.jobrouter.models.JobAssignment]
-    :ivar tags: A set of tags. A set of non-identifying attributes attached to this job.
+    :ivar tags: A set of non-identifying attributes attached to this job.
     :vartype tags: dict[str, any]
     :ivar notes: Notes attached to a job, sorted by timestamp.
     :vartype notes: dict[str, str]
@@ -2525,21 +2507,21 @@ class RouterJobInternal(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'channel_reference': {'key': 'channelReference', 'type': 'str'},
-        'job_status': {'key': 'jobStatus', 'type': 'str'},
-        'enqueue_time_utc': {'key': 'enqueueTimeUtc', 'type': 'iso-8601'},
-        'channel_id': {'key': 'channelId', 'type': 'str'},
-        'classification_policy_id': {'key': 'classificationPolicyId', 'type': 'str'},
-        'queue_id': {'key': 'queueId', 'type': 'str'},
-        'priority': {'key': 'priority', 'type': 'int'},
-        'disposition_code': {'key': 'dispositionCode', 'type': 'str'},
-        'requested_worker_selectors': {'key': 'requestedWorkerSelectors', 'type': '[WorkerSelector]'},
-        'attached_worker_selectors': {'key': 'attachedWorkerSelectors', 'type': '[WorkerSelector]'},
-        'labels': {'key': 'labels', 'type': '{object}'},
-        'assignments': {'key': 'assignments', 'type': '{JobAssignment}'},
-        'tags': {'key': 'tags', 'type': '{object}'},
-        'notes': {'key': 'notes', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "channel_reference": {"key": "channelReference", "type": "str"},
+        "job_status": {"key": "jobStatus", "type": "str"},
+        "enqueue_time_utc": {"key": "enqueueTimeUtc", "type": "iso-8601"},
+        "channel_id": {"key": "channelId", "type": "str"},
+        "classification_policy_id": {"key": "classificationPolicyId", "type": "str"},
+        "queue_id": {"key": "queueId", "type": "str"},
+        "priority": {"key": "priority", "type": "int"},
+        "disposition_code": {"key": "dispositionCode", "type": "str"},
+        "requested_worker_selectors": {"key": "requestedWorkerSelectors", "type": "[WorkerSelector]"},
+        "attached_worker_selectors": {"key": "attachedWorkerSelectors", "type": "[WorkerSelector]"},
+        "labels": {"key": "labels", "type": "{object}"},
+        "assignments": {"key": "assignments", "type": "{JobAssignment}"},
+        "tags": {"key": "tags", "type": "{object}"},
+        "notes": {"key": "notes", "type": "{str}"},
     }
 
     def __init__(
@@ -2567,7 +2549,7 @@ class RouterJobInternal(msrest.serialization.Model):
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
         :paramtype labels: dict[str, any]
-        :keyword tags: A set of tags. A set of non-identifying attributes attached to this job.
+        :keyword tags: A set of non-identifying attributes attached to this job.
         :paramtype tags: dict[str, any]
         :keyword notes: Notes attached to a job, sorted by timestamp.
         :paramtype notes: dict[str, str]
@@ -2590,25 +2572,25 @@ class RouterJobInternal(msrest.serialization.Model):
         self.notes = kwargs.get('notes', None)
 
 
-class RouterWorkerInternal(msrest.serialization.Model):
+class RouterWorkerInternal(msrest.serialization.Model):  # pylint: disable=too-many-instance-attributes
     """An entity for jobs to be routed to.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id:
     :vartype id: str
-    :ivar state: The current state of the worker. Known values are: "active", "draining",
+    :ivar state: The current state of the worker. Known values are: "active", "draining", and
      "inactive".
     :vartype state: str or ~azure.communication.jobrouter.models.RouterWorkerState
     :ivar queue_assignments: The queue(s) that this worker can receive work from.
-    :vartype queue_assignments: dict[str, any]
+    :vartype queue_assignments: dict[str, JSON]
     :ivar total_capacity: The total capacity score this worker has to manage multiple concurrent
      jobs.
     :vartype total_capacity: int
     :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
      engines to make decisions.
     :vartype labels: dict[str, any]
-    :ivar tags: A set of tags. A set of non-identifying attributes attached to this worker.
+    :ivar tags: A set of non-identifying attributes attached to this worker.
     :vartype tags: dict[str, any]
     :ivar channel_configurations: The channel(s) this worker can handle and their impact on the
      workers capacity.
@@ -2634,17 +2616,17 @@ class RouterWorkerInternal(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'queue_assignments': {'key': 'queueAssignments', 'type': '{object}'},
-        'total_capacity': {'key': 'totalCapacity', 'type': 'int'},
-        'labels': {'key': 'labels', 'type': '{object}'},
-        'tags': {'key': 'tags', 'type': '{object}'},
-        'channel_configurations': {'key': 'channelConfigurations', 'type': '{ChannelConfiguration}'},
-        'offers': {'key': 'offers', 'type': '[JobOffer]'},
-        'assigned_jobs': {'key': 'assignedJobs', 'type': '[WorkerAssignment]'},
-        'load_ratio': {'key': 'loadRatio', 'type': 'float'},
-        'available_for_offers': {'key': 'availableForOffers', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "queue_assignments": {"key": "queueAssignments", "type": "{object}"},
+        "total_capacity": {"key": "totalCapacity", "type": "int"},
+        "labels": {"key": "labels", "type": "{object}"},
+        "tags": {"key": "tags", "type": "{object}"},
+        "channel_configurations": {"key": "channelConfigurations", "type": "{ChannelConfiguration}"},
+        "offers": {"key": "offers", "type": "[JobOffer]"},
+        "assigned_jobs": {"key": "assignedJobs", "type": "[WorkerAssignment]"},
+        "load_ratio": {"key": "loadRatio", "type": "float"},
+        "available_for_offers": {"key": "availableForOffers", "type": "bool"},
     }
 
     def __init__(
@@ -2653,14 +2635,14 @@ class RouterWorkerInternal(msrest.serialization.Model):
     ):
         """
         :keyword queue_assignments: The queue(s) that this worker can receive work from.
-        :paramtype queue_assignments: dict[str, any]
+        :paramtype queue_assignments: dict[str, JSON]
         :keyword total_capacity: The total capacity score this worker has to manage multiple concurrent
          jobs.
         :paramtype total_capacity: int
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
         :paramtype labels: dict[str, any]
-        :keyword tags: A set of tags. A set of non-identifying attributes attached to this worker.
+        :keyword tags: A set of non-identifying attributes attached to this worker.
         :paramtype tags: dict[str, any]
         :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
          workers capacity.
@@ -2688,16 +2670,15 @@ class RuleEngineQueueSelector(QueueSelectorAttachment):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing the type of label selector
-     attachment.Constant filled by server.
+    :ivar kind: The type discriminator describing the type of label selector attachment. Required.
     :vartype kind: str
-    :ivar rule: Required. A rule of one of the following types:
+    :ivar rule: A rule of one of the following types:
     
      StaticRule:  A rule providing static rules that always return the same result, regardless of
      input.
      DirectMapRule:  A rule that return the same labels as the input labels.
      ExpressionRule: A rule providing inline expression rules.
-     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function. Required.
     :vartype rule: ~azure.communication.jobrouter.models.RouterRule
     """
 
@@ -2707,8 +2688,8 @@ class RuleEngineQueueSelector(QueueSelectorAttachment):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'rule': {'key': 'rule', 'type': 'RouterRule'},
+        "kind": {"key": "kind", "type": "str"},
+        "rule": {"key": "rule", "type": "RouterRule"},
     }
 
     def __init__(
@@ -2716,13 +2697,13 @@ class RuleEngineQueueSelector(QueueSelectorAttachment):
         **kwargs
     ):
         """
-        :keyword rule: Required. A rule of one of the following types:
+        :keyword rule: A rule of one of the following types:
         
          StaticRule:  A rule providing static rules that always return the same result, regardless of
          input.
          DirectMapRule:  A rule that return the same labels as the input labels.
          ExpressionRule: A rule providing inline expression rules.
-         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function. Required.
         :paramtype rule: ~azure.communication.jobrouter.models.RouterRule
         """
         super(RuleEngineQueueSelector, self).__init__(**kwargs)
@@ -2735,16 +2716,15 @@ class RuleEngineWorkerSelector(WorkerSelectorAttachment):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing the type of label selector
-     attachment.Constant filled by server.
+    :ivar kind: The type discriminator describing the type of label selector attachment. Required.
     :vartype kind: str
-    :ivar rule: Required. A rule of one of the following types:
+    :ivar rule: A rule of one of the following types:
     
      StaticRule:  A rule providing static rules that always return the same result, regardless of
      input.
      DirectMapRule:  A rule that return the same labels as the input labels.
      ExpressionRule: A rule providing inline expression rules.
-     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function. Required.
     :vartype rule: ~azure.communication.jobrouter.models.RouterRule
     """
 
@@ -2754,8 +2734,8 @@ class RuleEngineWorkerSelector(WorkerSelectorAttachment):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'rule': {'key': 'rule', 'type': 'RouterRule'},
+        "kind": {"key": "kind", "type": "str"},
+        "rule": {"key": "rule", "type": "RouterRule"},
     }
 
     def __init__(
@@ -2763,13 +2743,13 @@ class RuleEngineWorkerSelector(WorkerSelectorAttachment):
         **kwargs
     ):
         """
-        :keyword rule: Required. A rule of one of the following types:
+        :keyword rule: A rule of one of the following types:
         
          StaticRule:  A rule providing static rules that always return the same result, regardless of
          input.
          DirectMapRule:  A rule that return the same labels as the input labels.
          ExpressionRule: A rule providing inline expression rules.
-         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function. Required.
         :paramtype rule: ~azure.communication.jobrouter.models.RouterRule
         """
         super(RuleEngineWorkerSelector, self).__init__(**kwargs)
@@ -2803,10 +2783,10 @@ class ScoringRuleOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'batch_size': {'key': 'batchSize', 'type': 'int'},
-        'scoring_parameters': {'key': 'scoringParameters', 'type': '[str]'},
-        'allow_scoring_batch_of_workers': {'key': 'allowScoringBatchOfWorkers', 'type': 'bool'},
-        'descending_order': {'key': 'descendingOrder', 'type': 'bool'},
+        "batch_size": {"key": "batchSize", "type": "int"},
+        "scoring_parameters": {"key": "scoringParameters", "type": "[str]"},
+        "allow_scoring_batch_of_workers": {"key": "allowScoringBatchOfWorkers", "type": "bool"},
+        "descending_order": {"key": "descendingOrder", "type": "bool"},
     }
 
     def __init__(
@@ -2847,11 +2827,10 @@ class StaticQueueSelector(QueueSelectorAttachment):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing the type of label selector
-     attachment.Constant filled by server.
+    :ivar kind: The type discriminator describing the type of label selector attachment. Required.
     :vartype kind: str
-    :ivar label_selector: Required. Describes a condition that must be met against a set of labels
-     for queue selection.
+    :ivar label_selector: Describes a condition that must be met against a set of labels for queue
+     selection. Required.
     :vartype label_selector: ~azure.communication.jobrouter.models.QueueSelector
     """
 
@@ -2861,8 +2840,8 @@ class StaticQueueSelector(QueueSelectorAttachment):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'label_selector': {'key': 'labelSelector', 'type': 'QueueSelector'},
+        "kind": {"key": "kind", "type": "str"},
+        "label_selector": {"key": "labelSelector", "type": "QueueSelector"},
     }
 
     def __init__(
@@ -2870,8 +2849,8 @@ class StaticQueueSelector(QueueSelectorAttachment):
         **kwargs
     ):
         """
-        :keyword label_selector: Required. Describes a condition that must be met against a set of
-         labels for queue selection.
+        :keyword label_selector: Describes a condition that must be met against a set of labels for
+         queue selection. Required.
         :paramtype label_selector: ~azure.communication.jobrouter.models.QueueSelector
         """
         super(StaticQueueSelector, self).__init__(**kwargs)
@@ -2884,11 +2863,10 @@ class StaticRule(RouterRule):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing a sub-type of Rule.Constant filled by
-     server.
+    :ivar kind: The type discriminator describing a sub-type of Rule. Required.
     :vartype kind: str
     :ivar value: The static value this rule always returns.
-    :vartype value: any
+    :vartype value: JSON
     """
 
     _validation = {
@@ -2896,8 +2874,8 @@ class StaticRule(RouterRule):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'object'},
+        "kind": {"key": "kind", "type": "str"},
+        "value": {"key": "value", "type": "object"},
     }
 
     def __init__(
@@ -2906,7 +2884,7 @@ class StaticRule(RouterRule):
     ):
         """
         :keyword value: The static value this rule always returns.
-        :paramtype value: any
+        :paramtype value: JSON
         """
         super(StaticRule, self).__init__(**kwargs)
         self.kind = 'static-rule'  # type: str
@@ -2918,11 +2896,10 @@ class StaticWorkerSelector(WorkerSelectorAttachment):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing the type of label selector
-     attachment.Constant filled by server.
+    :ivar kind: The type discriminator describing the type of label selector attachment. Required.
     :vartype kind: str
-    :ivar label_selector: Required. Describes a condition that must be met against a set of labels
-     for worker selection.
+    :ivar label_selector: Describes a condition that must be met against a set of labels for worker
+     selection. Required.
     :vartype label_selector: ~azure.communication.jobrouter.models.WorkerSelector
     """
 
@@ -2932,8 +2909,8 @@ class StaticWorkerSelector(WorkerSelectorAttachment):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'label_selector': {'key': 'labelSelector', 'type': 'WorkerSelector'},
+        "kind": {"key": "kind", "type": "str"},
+        "label_selector": {"key": "labelSelector", "type": "WorkerSelector"},
     }
 
     def __init__(
@@ -2941,8 +2918,8 @@ class StaticWorkerSelector(WorkerSelectorAttachment):
         **kwargs
     ):
         """
-        :keyword label_selector: Required. Describes a condition that must be met against a set of
-         labels for worker selection.
+        :keyword label_selector: Describes a condition that must be met against a set of labels for
+         worker selection. Required.
         :paramtype label_selector: ~azure.communication.jobrouter.models.WorkerSelector
         """
         super(StaticWorkerSelector, self).__init__(**kwargs)
@@ -2955,11 +2932,10 @@ class WaitTimeExceptionTrigger(JobExceptionTrigger):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing a sub-type of ExceptionTrigger.Constant
-     filled by server.
+    :ivar kind: The type discriminator describing a sub-type of ExceptionTrigger. Required.
     :vartype kind: str
-    :ivar threshold: Required. Threshold for wait time for this trigger. Requires input conforming
-     to ISO8601 duration format.
+    :ivar threshold: Threshold for wait time for this trigger. Requires input conforming to ISO8601
+     duration format. Required.
     :vartype threshold: str
     """
 
@@ -2969,8 +2945,8 @@ class WaitTimeExceptionTrigger(JobExceptionTrigger):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'threshold': {'key': 'threshold', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
+        "threshold": {"key": "threshold", "type": "str"},
     }
 
     def __init__(
@@ -2978,8 +2954,8 @@ class WaitTimeExceptionTrigger(JobExceptionTrigger):
         **kwargs
     ):
         """
-        :keyword threshold: Required. Threshold for wait time for this trigger. Requires input
-         conforming to ISO8601 duration format.
+        :keyword threshold: Threshold for wait time for this trigger. Requires input conforming to
+         ISO8601 duration format. Required.
         :paramtype threshold: str
         """
         super(WaitTimeExceptionTrigger, self).__init__(**kwargs)
@@ -2992,10 +2968,9 @@ class WeightedAllocationQueueSelector(QueueSelectorAttachment):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing the type of label selector
-     attachment.Constant filled by server.
+    :ivar kind: The type discriminator describing the type of label selector attachment. Required.
     :vartype kind: str
-    :ivar allocations: Required. A collection of percentage based weighted allocations.
+    :ivar allocations: A collection of percentage based weighted allocations. Required.
     :vartype allocations: list[~azure.communication.jobrouter.models.QueueWeightedAllocation]
     """
 
@@ -3005,8 +2980,8 @@ class WeightedAllocationQueueSelector(QueueSelectorAttachment):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'allocations': {'key': 'allocations', 'type': '[QueueWeightedAllocation]'},
+        "kind": {"key": "kind", "type": "str"},
+        "allocations": {"key": "allocations", "type": "[QueueWeightedAllocation]"},
     }
 
     def __init__(
@@ -3014,7 +2989,7 @@ class WeightedAllocationQueueSelector(QueueSelectorAttachment):
         **kwargs
     ):
         """
-        :keyword allocations: Required. A collection of percentage based weighted allocations.
+        :keyword allocations: A collection of percentage based weighted allocations. Required.
         :paramtype allocations: list[~azure.communication.jobrouter.models.QueueWeightedAllocation]
         """
         super(WeightedAllocationQueueSelector, self).__init__(**kwargs)
@@ -3027,10 +3002,9 @@ class WeightedAllocationWorkerSelector(WorkerSelectorAttachment):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. The type discriminator describing the type of label selector
-     attachment.Constant filled by server.
+    :ivar kind: The type discriminator describing the type of label selector attachment. Required.
     :vartype kind: str
-    :ivar allocations: Required. A collection of percentage based weighted allocations.
+    :ivar allocations: A collection of percentage based weighted allocations. Required.
     :vartype allocations: list[~azure.communication.jobrouter.models.WorkerWeightedAllocation]
     """
 
@@ -3040,8 +3014,8 @@ class WeightedAllocationWorkerSelector(WorkerSelectorAttachment):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'allocations': {'key': 'allocations', 'type': '[WorkerWeightedAllocation]'},
+        "kind": {"key": "kind", "type": "str"},
+        "allocations": {"key": "allocations", "type": "[WorkerWeightedAllocation]"},
     }
 
     def __init__(
@@ -3049,7 +3023,7 @@ class WeightedAllocationWorkerSelector(WorkerSelectorAttachment):
         **kwargs
     ):
         """
-        :keyword allocations: Required. A collection of percentage based weighted allocations.
+        :keyword allocations: A collection of percentage based weighted allocations. Required.
         :paramtype allocations: list[~azure.communication.jobrouter.models.WorkerWeightedAllocation]
         """
         super(WeightedAllocationWorkerSelector, self).__init__(**kwargs)
@@ -3062,14 +3036,14 @@ class WorkerAssignment(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. The Id of the assignment.
+    :ivar id: The Id of the assignment. Required.
     :vartype id: str
-    :ivar job_id: Required. The Id of the Job assigned.
+    :ivar job_id: The Id of the Job assigned. Required.
     :vartype job_id: str
-    :ivar capacity_cost: Required. The amount of capacity this assignment has consumed on the
-     worker.
+    :ivar capacity_cost: The amount of capacity this assignment has consumed on the worker.
+     Required.
     :vartype capacity_cost: int
-    :ivar assign_time: Required. The assignment time of the job.
+    :ivar assign_time: The assignment time of the job. Required.
     :vartype assign_time: ~datetime.datetime
     """
 
@@ -3081,10 +3055,10 @@ class WorkerAssignment(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'job_id': {'key': 'jobId', 'type': 'str'},
-        'capacity_cost': {'key': 'capacityCost', 'type': 'int'},
-        'assign_time': {'key': 'assignTime', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "job_id": {"key": "jobId", "type": "str"},
+        "capacity_cost": {"key": "capacityCost", "type": "int"},
+        "assign_time": {"key": "assignTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -3092,14 +3066,14 @@ class WorkerAssignment(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword id: Required. The Id of the assignment.
+        :keyword id: The Id of the assignment. Required.
         :paramtype id: str
-        :keyword job_id: Required. The Id of the Job assigned.
+        :keyword job_id: The Id of the Job assigned. Required.
         :paramtype job_id: str
-        :keyword capacity_cost: Required. The amount of capacity this assignment has consumed on the
-         worker.
+        :keyword capacity_cost: The amount of capacity this assignment has consumed on the worker.
+         Required.
         :paramtype capacity_cost: int
-        :keyword assign_time: Required. The assignment time of the job.
+        :keyword assign_time: The assignment time of the job. Required.
         :paramtype assign_time: ~datetime.datetime
         """
         super(WorkerAssignment, self).__init__(**kwargs)
@@ -3128,8 +3102,8 @@ class WorkerCollection(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PagedRouterWorkerInternal]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PagedRouterWorkerInternal]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -3150,14 +3124,14 @@ class WorkerSelector(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar key: Required. The label key to query against.
+    :ivar key: The label key to query against. Required.
     :vartype key: str
-    :ivar label_operator: Required. Describes how the value of the label is compared to the value
-     defined on the label selector. Known values are: "equal", "notEqual", "lessThan",
-     "lessThanEqual", "greaterThan", "greaterThanEqual".
+    :ivar label_operator: Describes how the value of the label is compared to the value defined on
+     the label selector. Required. Known values are: "equal", "notEqual", "lessThan",
+     "lessThanEqual", "greaterThan", and "greaterThanEqual".
     :vartype label_operator: str or ~azure.communication.jobrouter.models.LabelOperator
     :ivar value: The value to compare against the actual label value with the given operator.
-    :vartype value: any
+    :vartype value: JSON
     :ivar ttl_seconds: Describes how long this label selector is valid in seconds.
     :vartype ttl_seconds: float
     :ivar expedite: Pushes the job to the front of the queue as long as this selector is active.
@@ -3165,16 +3139,16 @@ class WorkerSelector(msrest.serialization.Model):
     """
 
     _validation = {
-        'key': {'required': True, 'max_length': 500, 'min_length': 0},
+        'key': {'required': True, 'max_length': 500},
         'label_operator': {'required': True},
     }
 
     _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
-        'label_operator': {'key': 'labelOperator', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'object'},
-        'ttl_seconds': {'key': 'ttlSeconds', 'type': 'float'},
-        'expedite': {'key': 'expedite', 'type': 'bool'},
+        "key": {"key": "key", "type": "str"},
+        "label_operator": {"key": "labelOperator", "type": "str"},
+        "value": {"key": "value", "type": "object"},
+        "ttl_seconds": {"key": "ttlSeconds", "type": "float"},
+        "expedite": {"key": "expedite", "type": "bool"},
     }
 
     def __init__(
@@ -3182,14 +3156,14 @@ class WorkerSelector(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword key: Required. The label key to query against.
+        :keyword key: The label key to query against. Required.
         :paramtype key: str
-        :keyword label_operator: Required. Describes how the value of the label is compared to the
-         value defined on the label selector. Known values are: "equal", "notEqual", "lessThan",
-         "lessThanEqual", "greaterThan", "greaterThanEqual".
+        :keyword label_operator: Describes how the value of the label is compared to the value defined
+         on the label selector. Required. Known values are: "equal", "notEqual", "lessThan",
+         "lessThanEqual", "greaterThan", and "greaterThanEqual".
         :paramtype label_operator: str or ~azure.communication.jobrouter.models.LabelOperator
         :keyword value: The value to compare against the actual label value with the given operator.
-        :paramtype value: any
+        :paramtype value: JSON
         :keyword ttl_seconds: Describes how long this label selector is valid in seconds.
         :paramtype ttl_seconds: float
         :keyword expedite: Pushes the job to the front of the queue as long as this selector is active.
@@ -3208,10 +3182,10 @@ class WorkerWeightedAllocation(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar weight: Required. The percentage of this weight, expressed as a fraction of 1.
+    :ivar weight: The percentage of this weight, expressed as a fraction of 1. Required.
     :vartype weight: float
-    :ivar label_selectors: Required. A collection of label selectors that will be applied if this
-     allocation is selected.
+    :ivar label_selectors: A collection of label selectors that will be applied if this allocation
+     is selected. Required.
     :vartype label_selectors: list[~azure.communication.jobrouter.models.WorkerSelector]
     """
 
@@ -3221,8 +3195,8 @@ class WorkerWeightedAllocation(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'weight': {'key': 'weight', 'type': 'float'},
-        'label_selectors': {'key': 'labelSelectors', 'type': '[WorkerSelector]'},
+        "weight": {"key": "weight", "type": "float"},
+        "label_selectors": {"key": "labelSelectors", "type": "[WorkerSelector]"},
     }
 
     def __init__(
@@ -3230,10 +3204,10 @@ class WorkerWeightedAllocation(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword weight: Required. The percentage of this weight, expressed as a fraction of 1.
+        :keyword weight: The percentage of this weight, expressed as a fraction of 1. Required.
         :paramtype weight: float
-        :keyword label_selectors: Required. A collection of label selectors that will be applied if
-         this allocation is selected.
+        :keyword label_selectors: A collection of label selectors that will be applied if this
+         allocation is selected. Required.
         :paramtype label_selectors: list[~azure.communication.jobrouter.models.WorkerSelector]
         """
         super(WorkerWeightedAllocation, self).__init__(**kwargs)

@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import AcceptJobOfferResponse
+    from ._models_py3 import AcceptJobOfferResult
     from ._models_py3 import AzureFunctionRule
     from ._models_py3 import AzureFunctionRuleCredential
     from ._models_py3 import BestWorkerMode
@@ -73,7 +73,7 @@ try:
     from ._models_py3 import WorkerSelectorAttachment
     from ._models_py3 import WorkerWeightedAllocation
 except (SyntaxError, ImportError):
-    from ._models import AcceptJobOfferResponse  # type: ignore
+    from ._models import AcceptJobOfferResult  # type: ignore
     from ._models import AzureFunctionRule  # type: ignore
     from ._models import AzureFunctionRuleCredential  # type: ignore
     from ._models import BestWorkerMode  # type: ignore
@@ -139,20 +139,18 @@ except (SyntaxError, ImportError):
     from ._models import WorkerSelectorAttachment  # type: ignore
     from ._models import WorkerWeightedAllocation  # type: ignore
 
-from ._azure_communication_job_router_service_enums import (
-    JobStateSelector,
-    JobStatus,
-    LabelOperator,
-    PagedWorkerState,
-    RouterWorkerState,
-    ScoringRuleParameterSelector,
-    WorkerStateSelector,
-)
+from ._azure_communication_job_router_service_enums import JobStateSelector
+from ._azure_communication_job_router_service_enums import JobStatus
+from ._azure_communication_job_router_service_enums import LabelOperator
+from ._azure_communication_job_router_service_enums import PagedWorkerState
+from ._azure_communication_job_router_service_enums import RouterWorkerState
+from ._azure_communication_job_router_service_enums import ScoringRuleParameterSelector
+from ._azure_communication_job_router_service_enums import WorkerStateSelector
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 __all__ = [
-    'AcceptJobOfferResponse',
+    'AcceptJobOfferResult',
     'AzureFunctionRule',
     'AzureFunctionRuleCredential',
     'BestWorkerMode',
