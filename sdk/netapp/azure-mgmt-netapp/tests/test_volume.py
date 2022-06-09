@@ -249,6 +249,10 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
             time.sleep(30)
         wait_for_replication_status(self.client, "Mirrored", self.is_live)
 
+        # list replications
+        replications = self.client.volumes.list_replications(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
+        assert len(list(replications.value)) == 1
+
         # break replication
         self.client.volumes.begin_break_replication(TEST_REPL_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
         wait_for_replication_status(self.client, "Broken", self.is_live)
