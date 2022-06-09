@@ -1,3 +1,2 @@
 api-stub-generator==0.3.1
 pylint-guidelines-checker==0.0.3
-packaging==20.4

@@ -18,6 +18,7 @@ steps:
       source $(Agent.BuildDirectory)/venv/bin/activate
       mkdir -p $(Agent.BuildDirectory)/workdir
       
+      python -m pip install packaging==20.4 msrest aiohttp
       python -m pip install -r $(Build.SourcesDirectory)/eng/apiview_reqs.txt --index-url="https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
       python -m pip freeze
     displayName: Install API Stub Generator
