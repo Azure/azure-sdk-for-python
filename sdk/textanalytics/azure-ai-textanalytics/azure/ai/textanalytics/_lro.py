@@ -9,6 +9,7 @@ import json
 import datetime
 from typing import Any, Optional
 from urllib.parse import urlencode
+from msrest import Deserializer
 from azure.core.polling._poller import PollingReturnType
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling import LROPoller
@@ -146,7 +147,9 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
     def last_modified_on(self):
         if not self._current_body:
             return None
-        return self._current_body.last_update_date_time
+        return self._current_body.last_updated_date_time or Deserializer().deserialize_iso(
+                self._current_body.additional_properties["lastUpdateDateTime"]
+            )  # backwards compatibility
 
     @property
     def id(self):
@@ -338,7 +341,9 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
     def last_modified_on(self):
         if not self._current_body:
             return None
-        return self._current_body.last_update_date_time
+        return self._current_body.last_updated_date_time or Deserializer().deserialize_iso(
+                self._current_body.additional_properties["lastUpdateDateTime"]
+            )  # backwards compatibility
 
     @property
     def total_actions_count(self):

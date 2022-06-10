@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Removed the `FHIR` feature and related keyword argument and property: `fhir_version` and `fhir_bundle`. To access this beta feature, install the `5.2.0b4` version of the client library.
+
 ### Bugs Fixed
 
 ### Other Changes
