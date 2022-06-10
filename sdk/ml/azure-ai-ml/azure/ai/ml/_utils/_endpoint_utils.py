@@ -26,7 +26,7 @@ from azure.ai.ml.entities import BatchDeployment
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
 from azure.ai.ml.entities._assets._artifacts.code import Code
 
-from azure.ai.ml._operations.operation_orchestrator import OperationOrchestrator
+from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
 
 module_logger = logging.getLogger(__name__)
 initialize_logger_info(module_logger, terminator="")

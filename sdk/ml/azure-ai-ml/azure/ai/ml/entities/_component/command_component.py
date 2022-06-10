@@ -157,7 +157,7 @@ class CommandComponent(Component, ParameterizedCommand):
 
         # Distribution inherits from autorest generated class, use as_dist() to dump to json
         # Replace the name of $schema to schema.
-        component_schema_dict = self._get_schema().dump(self)
+        component_schema_dict = self._dump_for_validation()
         component_schema_dict.pop("base_path", None)
         return {**self._other_parameter, **component_schema_dict}
 
@@ -170,8 +170,11 @@ class CommandComponent(Component, ParameterizedCommand):
             return self.environment
 
     @classmethod
-    def _create_schema(cls, context) -> Union[Schema, PathAwareSchema]:
+    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return CommandComponentSchema(context=context)
+
+    def _customized_validate(self):
+        return self._validate_command()
 
     def _validate_command(self) -> ValidationResult:
         # command
@@ -185,13 +188,6 @@ class CommandComponent(Component, ParameterizedCommand):
                 error_msg = "Invalid data binding expression: {}".format(", ".join(invalid_expressions))
                 return _ValidationResultBuilder.from_single_message(error_msg, "command")
         return _ValidationResultBuilder.success()
-
-    def _validate(self, raise_error=False) -> ValidationResult:
-        """Validate the command component."""
-        validation_result = super()._validate()
-        validation_result.merge_with(self._validate_command())
-
-        return validation_result.try_raise(ErrorTarget.COMPONENT, raise_error=raise_error)
 
     def _is_valid_data_binding_expression(self, data_binding_expression: str) -> bool:
         current_obj = self

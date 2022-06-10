@@ -10,7 +10,7 @@ from typing import Dict, List, Optional, Union
 
 from os import PathLike
 
-from marshmallow import INCLUDE
+from marshmallow import INCLUDE, Schema
 
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from .base_node import BaseNode
@@ -46,6 +46,7 @@ from azure.ai.ml.entities._job.distribution import (
     PyTorchDistribution,
     DistributionConfiguration,
 )
+from ..._schema import PathAwareSchema
 from ..._schema.job.distribution import PyTorchDistributionSchema, TensorFlowDistributionSchema, MPIDistributionSchema
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorTarget
 from ..._utils._arm_id_utils import get_resource_name_from_arm_id_safe
@@ -441,10 +442,10 @@ class Command(BaseNode):
         return built_inputs
 
     @classmethod
-    def _get_schema(cls):
+    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         from azure.ai.ml._schema.pipeline import CommandSchema
 
-        return CommandSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
+        return CommandSchema(context=context)
 
     def __call__(self, *args, **kwargs) -> "Command":
         """Call Command as a function will return a new instance each time."""
@@ -460,6 +461,7 @@ class Command(BaseNode):
             for name, original_output in self.outputs.items():
                 # use setattr here to make sure owner of input won't change
                 setattr(node.outputs, name, original_output._data)
+            self._refine_optional_inputs_with_no_value(node, kwargs)
             # set default values: compute, environment_variables, outputs
             node._name = self.name
             node.compute = self.compute

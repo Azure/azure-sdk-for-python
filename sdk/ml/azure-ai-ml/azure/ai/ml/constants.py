@@ -43,6 +43,7 @@ DEFAULT_ARM_RETRY_INTERVAL = 60
 COMPONENT_TYPE = "type"
 TID_FMT = "&tid={}"
 AZUREML_PRIVATE_FEATURES_ENV_VAR = "AZURE_ML_CLI_PRIVATE_FEATURES_ENABLED"
+COMMON_RUNTIME_ENV_VAR = "AZUREML_COMPUTE_USE_COMMON_RUNTIME"
 ENDPOINT_DEPLOYMENT_START_MSG = "{}/#blade/HubsExtension/DeploymentDetailsBlade/overview/id/%2Fsubscriptions%2F{}%2FresourceGroups%2F{}%2Fproviders%2FMicrosoft.Resources%2Fdeployments%2F{}\n"
 AZUREML_LOCAL_ENDPOINTS_NOT_IMPLEMENTED_ERROR = "This operation for local endpoints is not supported yet."
 BATCH_JOB_NOT_SUPPORTED_ERROR_CODE = "BatchJobNotSupported"
@@ -95,11 +96,20 @@ API_URL_KEY = "api"
 ANONYMOUS_ENV_NAME = "CliV2AnonymousEnvironment"
 SKIP_VALIDATION_MESSAGE = "To skip this validation use the --skip-validation param"
 MLTABLE_SCHEMA_URL_FALLBACK = "https://azuremlschemasprod.azureedge.net/latest/MLTable.schema.json"
+INVOCATION_ZIP_FILE = "invocation.zip"
+INVOCATION_BAT_FILE = "Invocation.bat"
+INVOCATION_BASH_FILE = "Invocation.sh"
+AZUREML_RUN_SETUP_DIR = "azureml-setup"
+AZUREML_RUNS_DIR = "azureml_runs"
+EXECUTION_SERVICE_URL_KEY = "&fake="
+LOCAL_JOB_FAILURE_MSG = "Failed to start local executable job.\n Detailed message: {}"
 STORAGE_ACCOUNT_URLS = {
     "AzureBlob": "https://{}.blob.{}",
     "AzureDataLakeGen2": "https://{}.dfs.{}",
     "AzureFile": "https://{}.file.{}",
 }
+
+ANONYMOUS_COMPONENT_NAME = "azureml_anonymous"
 
 
 class SearchSpace:

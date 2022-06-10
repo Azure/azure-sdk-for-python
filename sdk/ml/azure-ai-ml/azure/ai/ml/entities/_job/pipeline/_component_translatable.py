@@ -133,7 +133,7 @@ class ComponentTranslatableMixin:
             input_variable["type"] = cls._find_source_input_output_type(input, pipeline_job_dict)
 
         elif isinstance(input, Input):
-            input_variable["type"] = input.type
+            input_variable = input._to_dict()
         elif isinstance(input, SweepDistribution):
             if isinstance(input, Choice):
                 input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(input.values[0])]
@@ -142,11 +142,10 @@ class ComponentTranslatableMixin:
             else:
                 input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[float]
 
-            input_variable["required"] = True
+            input_variable["optional"] = False
         elif type(input) in cls.PYTHON_SDK_TYPE_MAPPING.keys():
             input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(input)]
             input_variable["default"] = input
-            input_variable["required"] = False
         else:
             msg = "'{}' is not supported as component input, supported types are '{}'.".format(
                 type(input), cls.PYTHON_SDK_TYPE_MAPPING.keys()
@@ -163,7 +162,7 @@ class ComponentTranslatableMixin:
         input_variable = {}
 
         if isinstance(input, Input):
-            input_variable["type"] = input.type
+            input_variable = input._to_dict()
         elif isinstance(input, SweepDistribution):
             if isinstance(input, Choice):
                 input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(input.values[0])]
@@ -172,11 +171,10 @@ class ComponentTranslatableMixin:
             else:
                 input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[float]
 
-            input_variable["required"] = True
+            input_variable["optional"] = False
         else:
             input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(input)]
             input_variable["default"] = input
-            input_variable["required"] = False
         return ComponentInput(input_variable)
 
     @classmethod
@@ -204,12 +202,11 @@ class ComponentTranslatableMixin:
                 output_variable["type"] = cls._find_source_input_output_type(output, pipeline_job_dict)
 
             elif isinstance(output, Output):
-                output_variable["type"] = output.type
+                output_variable = output._to_dict()
 
             elif type(output) in cls.PYTHON_SDK_TYPE_MAPPING.keys():
                 output_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(output)]
                 output_variable["default"] = output
-                output_variable["required"] = False
             else:
                 msg = "'{}' is not supported as component output, supported types are '{}'.".format(
                     type(output), cls.PYTHON_SDK_TYPE_MAPPING.keys()

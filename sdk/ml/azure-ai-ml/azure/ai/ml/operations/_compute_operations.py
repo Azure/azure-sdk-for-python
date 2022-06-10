@@ -26,6 +26,12 @@ module_logger = logging.getLogger(__name__)
 
 
 class ComputeOperations(_ScopeDependentOperations):
+    """
+    ComputeOperations
+
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
+    """
+
     def __init__(
         self,
         operation_scope: OperationScope,
@@ -256,8 +262,7 @@ class ComputeOperations(_ScopeDependentOperations):
     def list_usage(self, *, location: str = None) -> Iterable[Usage]:
         """Gets the current usage information as well as limits for AML resources for given subscription
         and location.
-        :param location: The location for which resource usage is queried.
-                         If location not provided , defaults to workspace location
+        :param location: The location for which resource usage is queried. If location not provided , defaults to workspace location
         :type location: str
         :return: An iterator over current usage info
         :rtype: ~azure.core.paging.ItemPaged[Usage]

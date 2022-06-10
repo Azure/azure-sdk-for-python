@@ -11,7 +11,7 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
-from azure.ai.ml._operations.datastore_operations import DatastoreOperations
+from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import OperationScope, _ScopeDependentOperations
 from azure.ai.ml.entities._assets import Code

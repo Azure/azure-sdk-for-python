@@ -11,7 +11,7 @@ from azure.ai.ml.entities._data.mltable_metadata import MLTableMetadata
 from azure.core.paging import ItemPaged
 
 from azure.ai.ml.constants import AssetTypes, MLTABLE_SCHEMA_URL_FALLBACK
-from azure.ai.ml._operations import DatastoreOperations
+from azure.ai.ml.operations import DatastoreOperations
 from azure.ai.ml._restclient.v2022_05_01 import (
     AzureMachineLearningWorkspaces as ServiceClient052022,
 )

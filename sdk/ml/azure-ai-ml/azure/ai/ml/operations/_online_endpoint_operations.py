@@ -21,12 +21,12 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     RegenerateEndpointKeysRequest,
     KeyType,
 )
-from .operation_orchestrator import OperationOrchestrator
+from ._operation_orchestrator import OperationOrchestrator
 
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml._utils._endpoint_utils import polling_wait, post_and_validate_response
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
-from azure.ai.ml._operations._local_endpoint_helper import _LocalEndpointHelper
+from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
 from azure.ai.ml.constants import (
     KEY,
     AzureMLResourceType,
@@ -50,6 +50,12 @@ def _strip_zeroes_from_traffic(traffic: Dict[str, str]) -> Dict[str, str]:
 
 
 class OnlineEndpointOperations(_ScopeDependentOperations):
+    """
+    OnlineEndpointOperations
+
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
+    """
+
     def __init__(
         self,
         operation_scope: OperationScope,

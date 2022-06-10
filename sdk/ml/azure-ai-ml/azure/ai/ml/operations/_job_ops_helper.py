@@ -12,12 +12,12 @@ import subprocess
 
 from typing import Dict, Iterable, Optional, List, Union
 
-from azure.ai.ml._operations.datastore_operations import DatastoreOperations
-from azure.ai.ml._operations.run_operations import RunOperations
-from azure.ai.ml._operations.dataset_dataplane_operations import DatasetDataplaneOperations
-from azure.ai.ml._operations.model_dataplane_operations import ModelDataplaneOperations
+from azure.ai.ml.operations._datastore_operations import DatastoreOperations
+from azure.ai.ml.operations._run_operations import RunOperations
+from azure.ai.ml.operations._dataset_dataplane_operations import DatasetDataplaneOperations
+from azure.ai.ml.operations._model_dataplane_operations import ModelDataplaneOperations
 from azure.ai.ml._utils.utils import create_session_with_retry, download_text_from_url
-from azure.ai.ml._operations.run_history_constants import RunHistoryConstants, JobStatus
+from azure.ai.ml.operations._run_history_constants import RunHistoryConstants, JobStatus
 from azure.ai.ml._restclient.v2021_10_01.models import JobBaseData
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DataType, ModelType
 from azure.ai.ml.constants import GitProperties, JobType, JobLogPattern

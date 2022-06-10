@@ -17,7 +17,7 @@ from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
 )
 
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
-from azure.ai.ml._operations._local_endpoint_helper import _LocalEndpointHelper
+from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
 from azure.ai.ml.entities import BatchDeployment
 from azure.ai.ml._utils.utils import (
     _get_mfe_base_url_from_discovery_service,
@@ -29,7 +29,7 @@ from azure.ai.ml.constants import (
 )
 from azure.ai.ml._utils._endpoint_utils import polling_wait, upload_dependencies
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from .operation_orchestrator import OperationOrchestrator
+from ._operation_orchestrator import OperationOrchestrator
 
 from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
 
@@ -39,6 +39,12 @@ module_logger = logging.getLogger(__name__)
 
 
 class BatchDeploymentOperations(_ScopeDependentOperations):
+    """
+    BatchDeploymentOperations
+
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
+    """
+
     def __init__(
         self,
         operation_scope: OperationScope,

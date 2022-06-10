@@ -250,29 +250,18 @@ class BatchDeployment(Deployment):
         )
 
     @classmethod
-    def load(
-        cls,
-        path: Union[PathLike, str] = None,
-        params_override: list = None,
-        **kwargs,
-    ) -> "BatchDeployment":
-        params_override = params_override or []
-        # Endpoint names are case insensitive, but given the case sensitive nature of MFE the convention is to always use lowercase
-        BatchDeployment._update_params(params_override)
-        data = load_yaml(path)
-        return BatchDeployment.load_from_dict(data=data, path=path, params_override=params_override)
-
-    @classmethod
-    def load_from_dict(
+    def _load(
         cls,
         data: dict,
-        path: Union[PathLike, str] = None,
+        yaml_path: Union[PathLike, str] = None,
         params_override: list = None,
         **kwargs,
     ) -> "BatchDeployment":
         params_override = params_override or []
+        cls._update_params(params_override)
+
         context = {
-            BASE_PATH_CONTEXT_KEY: Path(path).parent if path else Path.cwd(),
+            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path.cwd(),
             PARAMS_OVERRIDE_KEY: params_override,
         }
         return load_from_dict(BatchDeploymentSchema, data, context, **kwargs)

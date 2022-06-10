@@ -87,11 +87,6 @@ class Endpoint(Resource):
         """
         return self._provisioning_state
 
-    @classmethod
-    @abstractmethod
-    def load(cls, path: Union[PathLike, str], params_override: list = None, **kwargs) -> "Endpoint":
-        pass
-
     @abstractmethod
     def dump(self, path: Union[PathLike, str]) -> None:
         pass

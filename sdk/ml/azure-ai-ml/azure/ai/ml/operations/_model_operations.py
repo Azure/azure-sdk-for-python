@@ -15,7 +15,7 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
-from azure.ai.ml._operations.datastore_operations import DatastoreOperations
+from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ModelVersionData, ListViewType
 from azure.ai.ml._utils._registry_utils import get_sas_uri_for_registry_asset, get_asset_body_for_registry_storage
@@ -41,6 +41,12 @@ module_logger = logging.getLogger(__name__)
 
 
 class ModelOperations(_ScopeDependentOperations):
+    """
+    ModelOperations
+
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
+    """
+
     def __init__(
         self,
         operation_scope: OperationScope,

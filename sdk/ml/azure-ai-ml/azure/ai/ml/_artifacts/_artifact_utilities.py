@@ -13,7 +13,7 @@ from azure.ai.ml._azure_environments import ENDPOINT_URLS, _get_cloud_details
 from azure.storage.blob import generate_blob_sas, BlobSasPermissions
 from azure.storage.filedatalake import generate_file_sas, FileSasPermissions
 from azure.ai.ml._ml_exceptions import ValidationException
-from azure.ai.ml._operations import DatastoreOperations
+from azure.ai.ml.operations import DatastoreOperations
 from azure.ai.ml._utils._storage_utils import get_storage_client
 from azure.ai.ml.entities import Environment
 from azure.ai.ml.entities._assets._artifacts.artifact import Artifact, ArtifactStorageInfo
