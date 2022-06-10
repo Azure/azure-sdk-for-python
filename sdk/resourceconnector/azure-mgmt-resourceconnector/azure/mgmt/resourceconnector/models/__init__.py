@@ -6,40 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import Appliance
-    from ._models_py3 import ApplianceCredentialKubeconfig
-    from ._models_py3 import ApplianceListCredentialResults
-    from ._models_py3 import ApplianceListResult
-    from ._models_py3 import ApplianceOperation
-    from ._models_py3 import ApplianceOperationsList
-    from ._models_py3 import AppliancePropertiesInfrastructureConfig
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import HybridConnectionConfig
-    from ._models_py3 import Identity
-    from ._models_py3 import PatchableAppliance
-    from ._models_py3 import Resource
-    from ._models_py3 import SystemData
-    from ._models_py3 import TrackedResource
-except (SyntaxError, ImportError):
-    from ._models import Appliance  # type: ignore
-    from ._models import ApplianceCredentialKubeconfig  # type: ignore
-    from ._models import ApplianceListCredentialResults  # type: ignore
-    from ._models import ApplianceListResult  # type: ignore
-    from ._models import ApplianceOperation  # type: ignore
-    from ._models import ApplianceOperationsList  # type: ignore
-    from ._models import AppliancePropertiesInfrastructureConfig  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import HybridConnectionConfig  # type: ignore
-    from ._models import Identity  # type: ignore
-    from ._models import PatchableAppliance  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import TrackedResource  # type: ignore
+from ._models_py3 import Appliance
+from ._models_py3 import ApplianceCredentialKubeconfig
+from ._models_py3 import ApplianceListCredentialResults
+from ._models_py3 import ApplianceListResult
+from ._models_py3 import ApplianceOperation
+from ._models_py3 import ApplianceOperationsList
+from ._models_py3 import AppliancePropertiesInfrastructureConfig
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import HybridConnectionConfig
+from ._models_py3 import Identity
+from ._models_py3 import PatchableAppliance
+from ._models_py3 import Resource
+from ._models_py3 import SystemData
+from ._models_py3 import TrackedResource
+
 
 from ._appliances_enums import (
     AccessProfileType,
