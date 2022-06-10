@@ -264,7 +264,9 @@ def lookup_swagger_readme(rest_readme_path: str) -> str:
         with open(readme, 'r') as file:
             content = file.read()
             if rest_readme_path in content:
+                _LOGGER.info(f"find swagger readme: {readme}")
                 return readme
+    _LOGGER.info(f"do not find swagger readme which contains {rest_readme_path}")
     return ""
 
 
