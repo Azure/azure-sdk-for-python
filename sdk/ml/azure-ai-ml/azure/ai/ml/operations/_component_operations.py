@@ -7,7 +7,9 @@ import types
 from pathlib import Path
 from typing import Dict, Iterable, Union
 
-from azure.ai.ml._operations import OperationOrchestrator, EnvironmentOperations, CodeOperations
+from azure.ai.ml.operations import EnvironmentOperations
+from ._operation_orchestrator import OperationOrchestrator
+from ._code_operations import CodeOperations
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerDetails, ListViewType
 from azure.ai.ml._scope_dependent_operations import _ScopeDependentOperations, OperationScope, OperationsContainer
@@ -17,7 +19,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 
 from azure.ai.ml._utils.utils import hash_dict
 
-from azure.ai.ml.constants import AzureMLResourceType
+from azure.ai.ml.constants import AzureMLResourceType, ANONYMOUS_COMPONENT_NAME
 from azure.ai.ml.entities import Component, CommandComponent, ParallelComponent, Environment, Asset
 
 from azure.ai.ml.entities._assets import Code
@@ -55,6 +57,12 @@ COMPONENT_CODE_PLACEHOLDER = "command_component: code_placeholder"
 
 
 class ComponentOperations(_ScopeDependentOperations):
+    """
+    ComponentOperations
+
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
+    """
+
     def __init__(
         self,
         operation_scope: OperationScope,
@@ -200,10 +208,8 @@ class ComponentOperations(_ScopeDependentOperations):
         if isinstance(component, types.FunctionType):
             component = self._refine_component(component)
 
-        # local validation
-        validation_result = component._validate(raise_error=raise_on_failure)
-
-        return validation_result.try_raise(ErrorTarget.COMPONENT, raise_error=raise_on_failure)
+        # local validation only for now
+        return component._validate(raise_error=raise_on_failure)
 
     @monitor_with_telemetry_mixin(logger, "Component.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, component: Union[Component, types.FunctionType], **kwargs) -> Component:
@@ -215,22 +221,12 @@ class ComponentOperations(_ScopeDependentOperations):
         # Update component when the input is a component function
         if isinstance(component, types.FunctionType):
             component = self._refine_component(component)
-        is_anonymous = kwargs.pop("is_anonymous", False)
 
-        # hide this as component won't fit its schema after upload_dependencies
-        # self.validate(component, raise_on_failure=True)
+        self.validate(component, raise_on_failure=True)
 
         # Create all dependent resources
         self._upload_dependencies(component)
-        if is_anonymous is True:
-            component._is_anonymous = True
-            # For anonymous component, we use code hash + yaml hash(if code is None) as component version
-            # so the same anonymous component(same interface and same code) won't be created again.
-            component.name = get_anonymous_component_name(component)
-            # Overwrite version to 1 to avoid create version auto increment component.
-            component.version = "1"
-        else:
-            component._is_anonymous = False
+        component._set_is_anonymous(kwargs.pop("is_anonymous", False))
 
         rest_component_resource = component._to_rest_object()
         try:
@@ -385,14 +381,3 @@ class ComponentOperations(_ScopeDependentOperations):
             )
         component = component_func.component
         return component
-
-
-def get_anonymous_component_name(component: Component) -> str:
-    """Return the name of anonymous component.
-
-    same anonymous component(same code and interface) will have same name.
-    """
-    component_interface_dict = component._to_dict()
-    # omit name since anonymous component's original name is random guid
-    # omit version since we'll overwrite it to 1 later
-    return hash_dict(component_interface_dict, keys_to_omit=["name", "id", "version"])

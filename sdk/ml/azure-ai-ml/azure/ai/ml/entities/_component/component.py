@@ -17,16 +17,17 @@ from azure.ai.ml.constants import (
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
     ComponentSource,
+    ANONYMOUS_COMPONENT_NAME,
 )
 from azure.ai.ml.constants import NodeType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, YamlTranslatableMixin, TelemetryMixin
-from azure.ai.ml._utils.utils import load_yaml, dump_yaml_to_file
+from azure.ai.ml._utils.utils import load_yaml, dump_yaml_to_file, hash_dict
 from azure.ai.ml.entities._util import find_type_in_override
 from azure.ai.ml._ml_exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml.entities._validation import ValidationResult, _ValidationResultBuilder
+from azure.ai.ml.entities._validation import ValidationResult, SchemaValidatableMixin
 
 
-class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin):
+class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin, SchemaValidatableMixin):
     """Base class for component version, used to define a component. Can't be instantiated directly.
 
     :param name: Name of the resource.
@@ -120,6 +121,26 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
         """
         return self._type
 
+    def _set_is_anonymous(self, is_anonymous: bool):
+        if is_anonymous is True:
+            self._is_anonymous = True
+            # For anonymous component, we use code hash + yaml hash as component version
+            # so the same anonymous component(same interface and same code) won't be created again.
+            self.name = ANONYMOUS_COMPONENT_NAME
+            self.version = self._get_anonymous_hash()
+        else:
+            self._is_anonymous = False
+
+    def _get_anonymous_hash(self) -> str:
+        """Return the name of anonymous component.
+
+        same anonymous component(same code and interface) will have same name.
+        """
+        component_interface_dict = self._to_dict()
+        # omit version since anonymous component's version is random guid
+        # omit name since name doesn't impact component's uniqueness
+        return hash_dict(component_interface_dict, keys_to_omit=["name", "id", "version"])
+
     @property
     def display_name(self) -> str:
         """Display name of the component.
@@ -190,15 +211,10 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
         dump_yaml_to_file(path, yaml_serialized, default_flow_style=False)
 
     @classmethod
-    def _create_schema(cls, context) -> Union[Schema, PathAwareSchema]:
-        from azure.ai.ml._schema.component import BaseComponentSchema
+    def _get_validation_error_target(cls) -> ErrorTarget:
+        return ErrorTarget.COMPONENT
 
-        return BaseComponentSchema(context=context)
-
-    def _get_schema(self) -> Union[Schema, PathAwareSchema]:
-        return self._create_schema(context={BASE_PATH_CONTEXT_KEY: self._base_path or "./"})
-
-    def _validate(self, raise_error=False) -> ValidationResult:
+    def _schema_validate(self) -> ValidationResult:
         """Validate the component.
 
         :raises: ValidationException
@@ -208,48 +224,9 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
             # The name of an anonymous component is an uuid generated based on its hash.
             # Can't change naming logic to avoid breaking previous component reuse, so hack here.
             self.name = "dummy_" + self.name.replace("-", "_")
-        result = _ValidationResultBuilder.from_validation_messages(self._get_schema().validate(self._to_dict()))
+        result = SchemaValidatableMixin._schema_validate(self)
         self.name = origin_name
-        return result.try_raise(ErrorTarget.COMPONENT, raise_error=raise_error)
-
-    @classmethod
-    def load(
-        cls,
-        path: Union[PathLike, str],
-        params_override: list = None,
-        **kwargs,
-    ) -> "Component":
-        """Construct a component object from a yaml file.
-
-        :param path: Path to a local file as the source.
-        :type path: str
-        :param params_override: Fields to overwrite on top of the yaml file. Format is [{"field1": "value1"}, {"field2": "value2"}]
-        :type params_override: list
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
-
-        :return: Loaded component object.
-        :rtype: Component
-        """
-        params_override = params_override or []
-        yaml_dict = load_yaml(path)
-        if yaml_dict is None:
-            msg = "Target yaml file is empty: {}"
-            raise ValidationException(
-                message=msg.format(path),
-                target=ErrorTarget.COMPONENT,
-                no_personal_data_message=msg.format(path),
-                error_category=ErrorCategory.USER_ERROR,
-            )
-        elif not isinstance(yaml_dict, dict):
-            msg = "Expect dict but get {} after parsing yaml file: {}"
-            raise ValidationException(
-                message=msg.format(type(yaml_dict), path),
-                target=ErrorTarget.COMPONENT,
-                no_personal_data_message=msg.format(type(yaml_dict), ""),
-                error_category=ErrorCategory.USER_ERROR,
-            )
-        return cls._load(data=yaml_dict, yaml_path=path, params_override=params_override, **kwargs)
+        return result
 
     @classmethod
     def _load(

@@ -176,30 +176,6 @@ class Job(Resource, RestTranslatableMixin, ComponentTranslatableMixin, Telemetry
         pass
 
     @classmethod
-    def load(
-        cls,
-        path: Union[PathLike, str],
-        params_override: list = None,
-        **kwargs,
-    ) -> "Job":
-        """Construct a job object from a yaml file.
-
-        :param cls: Indicates that this is a class method.
-        :type cls: class
-        :param path: Path to a local file as the source.
-        :type path: Union[PathLike, str]
-        :param params_override: Fields to overwrite on top of the yaml file. Format is [{"field1": "value1"}, {"field2": "value2"}], defaults to None
-        :type params_override: list, optional
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
-        :return: Loaded job object.
-        :rtype: Job
-        """
-        params_override = params_override or []
-        yaml_dict = load_yaml(path)
-        return cls._load(data=yaml_dict, yaml_path=path, params_override=params_override, **kwargs)
-
-    @classmethod
     def _load(
         cls,
         data: Dict = None,
@@ -216,7 +192,7 @@ class Job(Resource, RestTranslatableMixin, ComponentTranslatableMixin, Telemetry
         :param yaml_path: YAML Path, defaults to None
         :type yaml_path: Union[PathLike, str], optional
         :param params_override: Fields to overwrite on top of the yaml file. Format is [{"field1": "value1"}, {"field2": "value2"}], defaults to None
-        :type params_override: list, optional
+        :type params_override: List[Dict], optional
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         :raises Exception: An exception

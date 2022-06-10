@@ -8,6 +8,8 @@ from typing import Dict, List, Union
 from enum import Enum
 import re
 
+from marshmallow import Schema
+
 from .base_node import BaseNode
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     JobInput as RestJobInput,
@@ -46,6 +48,7 @@ from azure.ai.ml.entities._job.parallel.parallel_task import ParallelTask
 from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
 from azure.ai.ml.entities._job.parallel.parameterized_parallel import ParameterizedParallel
 from .._util import validate_attribute_type, convert_ordered_dict_to_dict, get_rest_dict
+from ..._schema import PathAwareSchema
 from ..._utils._arm_id_utils import get_resource_name_from_arm_id_safe
 
 module_logger = logging.getLogger(__name__)
@@ -413,10 +416,10 @@ class Parallel(BaseNode):
         return built_inputs
 
     @classmethod
-    def _get_schema(cls):
+    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         from azure.ai.ml._schema.pipeline import ParallelSchema
 
-        return ParallelSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
+        return ParallelSchema(context=context)
 
     def __call__(self, *args, **kwargs) -> "Parallel":
         """Call Parallel as a function will return a new instance each time."""
@@ -432,6 +435,7 @@ class Parallel(BaseNode):
             for name, original_output in self.outputs.items():
                 # use setattr here to make sure owner of input won't change
                 setattr(node.outputs, name, original_output._data)
+            self._refine_optional_inputs_with_no_value(node, kwargs)
             # set default values: compute, environment_variables, outputs
             node._name = self.name
             node.compute = self.compute

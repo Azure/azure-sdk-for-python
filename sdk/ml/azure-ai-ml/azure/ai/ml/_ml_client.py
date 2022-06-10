@@ -16,14 +16,12 @@ from azure.ai.ml.entities._builders.base_node import BaseNode
 
 from azure.ai.ml.constants import AzureMLResourceType
 from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
-from azure.ai.ml._operations import (
+from azure.ai.ml.operations import (
     BatchDeploymentOperations,
     BatchEndpointOperations,
-    CodeOperations,
     ComponentOperations,
     ComputeOperations,
     DataOperations,
-    DatasetOperations,
     DatastoreOperations,
     EnvironmentOperations,
     JobOperations,
@@ -31,11 +29,13 @@ from azure.ai.ml._operations import (
     OnlineDeploymentOperations,
     OnlineEndpointOperations,
     WorkspaceOperations,
-    _LocalDeploymentHelper,
-    _LocalEndpointHelper,
+    WorkspaceConnectionsOperations,
 )
+from azure.ai.ml.operations._code_operations import CodeOperations
+from azure.ai.ml.operations._dataset_operations import DatasetOperations
+from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
+from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
 
-from azure.ai.ml._operations.workspace_connections_operations import WorkspaceConnectionsOperations
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
 )
@@ -385,7 +385,7 @@ class MLClient(object):
 
     @property
     def connections(self) -> WorkspaceConnectionsOperations:
-        """A collection of workspace connections related operations
+        """A collection of workspace connection related operations
 
         :return: Workspace Connections operations
         :rtype: WorkspaceConnectionsOperations
@@ -421,7 +421,7 @@ class MLClient(object):
 
     @property
     def datasets(self) -> DatasetOperations:
-        """A collection of datasets related operations
+        """A collection of dataset related operations
 
         :return: Dataset operations
         :rtype: DatasetOperations

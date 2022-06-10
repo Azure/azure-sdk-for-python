@@ -86,30 +86,6 @@ class Model(Artifact):
             self.name = get_md5_string(_upload_hash)
 
     @classmethod
-    def load(
-        cls,
-        path: Union[PathLike, str],
-        params_override: list = None,
-        **kwargs,
-    ) -> "Model":
-        """Construct a model object from yaml file.
-
-        :param path: Path to a local file as the source.
-        :type path: str
-        :param params_override: Fields to overwrite on top of the yaml file. Format is [{"field1": "value1"}, {"field2": "value2"}]
-        :type params_override: list
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
-
-        :return: Constructed model object.
-        :rtype: Model
-        """
-        yaml_dict = load_yaml(path)
-        return cls._load(data=yaml_dict, yaml_path=path, params_override=params_override, **kwargs)
-
-        # For lack of bidirectional map in Python, defining the mapping in two ways in one dictionary
-
-    @classmethod
     def _load(
         cls,
         data: Dict = None,

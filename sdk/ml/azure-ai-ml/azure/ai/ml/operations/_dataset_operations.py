@@ -4,7 +4,7 @@
 import logging
 from typing import Dict, Iterable
 
-from azure.ai.ml._operations import DatastoreOperations
+from azure.ai.ml.operations import DatastoreOperations
 from azure.ai.ml._restclient.v2021_10_01 import AzureMachineLearningWorkspaces as ServiceClient102021
 from azure.ai.ml._utils._asset_utils import _create_or_update_autoincrement, _get_latest, _resolve_label_to_asset
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, get_datastore_arm_id
@@ -30,6 +30,12 @@ module_logger = logging.getLogger(__name__)
 
 
 class DatasetOperations(_ScopeDependentOperations):
+    """
+    DatasetOperations
+
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
+    """
+
     def __init__(
         self,
         operation_scope: OperationScope,

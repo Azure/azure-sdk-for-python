@@ -112,12 +112,6 @@ class WorkspaceConnection(Resource):
         """
         return self._metadata
 
-    @classmethod
-    def load(cls, path: Union[PathLike, str], **kwargs) -> "WorkspaceConnection":
-        params_override = kwargs.pop("params_override", None)
-        yaml_dict = load_yaml(path)
-        return cls._load(data=yaml_dict, yaml_path=path, params_override=params_override, **kwargs)
-
     def dump(self, path: Union[PathLike, str]) -> None:
         yaml_serialized = self._to_dict()
         dump_yaml_to_file(path, yaml_serialized, default_flow_style=False)

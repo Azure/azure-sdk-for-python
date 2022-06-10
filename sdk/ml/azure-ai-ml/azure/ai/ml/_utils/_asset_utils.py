@@ -55,7 +55,7 @@ from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, Error
 from azure.ai.ml._utils._exception_utils import EmptyDirectoryError
 
 if TYPE_CHECKING:
-    from azure.ai.ml._operations import (
+    from azure.ai.ml.operations import (
         DatasetOperations,
         DataOperations,
         ComponentOperations,

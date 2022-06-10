@@ -316,7 +316,7 @@ class _LocalDeploymentHelper(object):
         params_override = []
         for k, v in kwargs.items():
             params_override.append({k: v})
-        return OnlineDeployment.load_from_dict(data=deployment_json, params_override=params_override)
+        return OnlineDeployment._load(data=deployment_json, params_override=params_override)
 
     def _get_stubbed_endpoint_metadata(self, endpoint_name: str) -> dict:
         return json.dumps({"name": endpoint_name})

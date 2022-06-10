@@ -32,6 +32,7 @@ from azure.ai.ml.constants import (
     DEFAULT_ARTIFACT_STORE_OUTPUT_NAME,
     PipelineConstants,
     SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME,
+    COMMON_RUNTIME_ENV_VAR,
 )
 
 from azure.ai.ml.entities._job.job_errors import JobParsingError, PipelineChildJobError
@@ -44,7 +45,7 @@ from azure.ai.ml._artifacts._artifact_utilities import (
     download_artifact_from_aml_uri,
     aml_datastore_path_exists,
 )
-from azure.ai.ml._operations.run_history_constants import RunHistoryConstants
+from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml._restclient.v2022_02_01_preview import (
     AzureMachineLearningWorkspaces as ServiceClient022022Preview,
 )
@@ -100,20 +101,20 @@ from azure.ai.ml.entities._builders import Command, BaseNode, Sweep, Parallel
 from azure.ai.ml.entities._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remote_uri
 
-from .job_ops_helper import (
+from ._job_ops_helper import (
     get_git_properties,
     stream_logs_until_completion,
     get_job_output_uris_from_dataplane,
 )
-from .local_job_invoker import is_local_run, start_run_if_local
-from .operation_orchestrator import OperationOrchestrator, is_ARM_id_for_resource, is_registry_id_for_resource
-from .run_operations import RunOperations
-from .dataset_dataplane_operations import DatasetDataplaneOperations
-from .model_dataplane_operations import ModelDataplaneOperations
-from azure.ai.ml._operations.compute_operations import ComputeOperations
+from ._local_job_invoker import is_local_run, start_run_if_local
+from ._operation_orchestrator import OperationOrchestrator, is_ARM_id_for_resource, is_registry_id_for_resource
+from ._run_operations import RunOperations
+from ._dataset_dataplane_operations import DatasetDataplaneOperations
+from ._model_dataplane_operations import ModelDataplaneOperations
+from ._compute_operations import ComputeOperations
 
 if TYPE_CHECKING:
-    from azure.ai.ml._operations import DatastoreOperations
+    from azure.ai.ml.operations import DatastoreOperations
 
 from azure.ai.ml._telemetry import (
     AML_INTERNAL_LOGGER_NAMESPACE,
@@ -129,6 +130,12 @@ module_logger = logging.getLogger(__name__)
 
 
 class JobOperations(_ScopeDependentOperations):
+    """
+    JobOperations
+
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
+    """
+
     def __init__(
         self,
         operation_scope: OperationScope,
@@ -284,9 +291,13 @@ class JobOperations(_ScopeDependentOperations):
                 compute_name = compute.split("/")[-1]
             elif isinstance(compute, Compute):
                 compute_name = compute.name
+            elif isinstance(compute, str):
+                compute_name = compute
             else:
                 raise ValueError(
-                    "compute must be either an arm id of Compute or a Compute object but got {}".format(type(compute))
+                    "compute must be either an arm id of Compute, a Compute object or a compute name but got {}".format(
+                        type(compute)
+                    )
                 )
 
             if is_data_binding_expression(compute_name):
@@ -303,8 +314,7 @@ class JobOperations(_ScopeDependentOperations):
     @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.INTERNALCALL)
     def _validate(self, job: Job, raise_on_failure: bool = False) -> ValidationResult:
         """Validate a pipeline job.
-        Note that, different from component.validate, this method must be called after calling
-        self._resolve_arm_id_or_upload_dependencies(job) for now to avoid resolving compute for twice.
+        if there are inline defined entities, e.g. Component, Environment & Code, they won't be created.
 
         :param job: Job object to be validated.
         :type job: Job
@@ -315,6 +325,7 @@ class JobOperations(_ScopeDependentOperations):
         if not isinstance(job, PipelineJob):
             return _ValidationResultBuilder.success()
 
+        job._validate(raise_error=True)
         try:
             job.compute = self.try_get_compute_arm_id(job.compute)
             for node in job.jobs.values():
@@ -367,9 +378,13 @@ class JobOperations(_ScopeDependentOperations):
         if experiment_name is not None:
             job.experiment_name = experiment_name
 
+        if job.compute == LOCAL_COMPUTE_TARGET:
+            job.environment_variables[COMMON_RUNTIME_ENV_VAR] = "true"
+
+        self._validate(job, raise_on_failure=True)
+
         # Create all dependent resources
         self._resolve_arm_id_or_upload_dependencies(job)
-        self._validate(job, raise_on_failure=True)
 
         git_props = get_git_properties()
         # Do not add git props if they already exist in job properties.
@@ -952,11 +967,6 @@ class JobOperations(_ScopeDependentOperations):
 
     def _resolve_arm_id_for_pipeline_job(self, pipeline_job: "PipelineJob", resolver: Callable) -> Job:
         """Resolve arm_id for pipeline_job"""
-        # validate before resolve arm ids
-        # if pipeline_job has arm_id, it should be loaded from remote, then no validation is needed
-        if not pipeline_job.id:
-            pipeline_job._validate()
-
         # Get top-level job compute
         self._get_job_compute_id(pipeline_job, resolver)
 

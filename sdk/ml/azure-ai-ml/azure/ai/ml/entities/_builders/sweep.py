@@ -4,6 +4,9 @@
 import logging
 import uuid
 from typing import Dict, Union, List
+
+from marshmallow import Schema
+
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     JobInput as RestJobInput,
     JobOutput as RestJobOutput,
@@ -39,6 +42,7 @@ from azure.ai.ml.entities._job.sweep.sampling_algorithm import SamplingAlgorithm
 from azure.ai.ml.entities._job.job_limits import SweepJobLimits
 from .base_node import BaseNode
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from ..._schema import PathAwareSchema
 from ..._utils._arm_id_utils import get_resource_name_from_arm_id_safe
 
 module_logger = logging.getLogger(__name__)
@@ -229,10 +233,10 @@ class Sweep(ParameterizedSweep, BaseNode):
         return Sweep(**obj)
 
     @classmethod
-    def _get_schema(cls):
+    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         from azure.ai.ml._schema.pipeline.component_job import SweepSchema
 
-        return SweepSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
+        return SweepSchema(context=context)
 
     @classmethod
     def _get_origin_inputs_and_search_space(cls, built_inputs: Dict[str, PipelineInputBase]):

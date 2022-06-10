@@ -117,42 +117,20 @@ class Data(Artifact):
             self._path = Path(os.path.join(self._path, ""))
 
     @classmethod
-    def load(
-        cls,
-        path: Optional[Union[PathLike, str]],
-        params_override: Optional[list] = None,
-        **kwargs,
-    ) -> "Data":
-        """Construct a data object from yaml file.
-
-        :param path: Path to a local file as the source.
-        :type path: str
-        :param params_override: Fields to overwrite on top of the yaml file. Format is [{"field1": "value1"}, {"field2": "value2"}]
-        :type params_override: list
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
-
-        :return: Constructed data object.
-        :rtype: Data
-        """
-        yaml_dict = load_yaml(path)
-        return cls._load(yaml_data=yaml_dict, yaml_path=path, params_override=params_override, **kwargs)
-
-    @classmethod
     def _load(
         cls,
-        yaml_data: Optional[Dict] = None,
+        data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
         **kwargs,
     ) -> "Data":
-        yaml_data = yaml_data or {}
+        data = data or {}
         params_override = params_override or []
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        data_asset = Data._load_from_dict(yaml_data=yaml_data, context=context, **kwargs)
+        data_asset = Data._load_from_dict(yaml_data=data, context=context, **kwargs)
 
         return data_asset
 

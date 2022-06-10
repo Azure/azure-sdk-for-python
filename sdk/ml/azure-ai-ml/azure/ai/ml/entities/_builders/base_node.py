@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import logging
-import traceback
 import uuid
 from functools import wraps
 from abc import ABC, abstractmethod
@@ -24,9 +23,10 @@ from azure.ai.ml.entities._job._input_output_helpers import (
 )
 from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.entities import Component, Job, CommandComponent
-from azure.ai.ml.entities._inputs_outputs import Output
+from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorTarget, ErrorCategory
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
+from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
 
 module_logger = logging.getLogger(__name__)
 
@@ -57,7 +57,9 @@ def pipeline_node_decorator(func):
     return wrapper
 
 
-class BaseNode(RestTranslatableMixin, NodeIOMixin, TelemetryMixin, YamlTranslatableMixin, _AttrDict, ABC):
+class BaseNode(
+    RestTranslatableMixin, NodeIOMixin, TelemetryMixin, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, ABC
+):
     """Base class for node in pipeline, used for component version consumption. Can't be instantiated directly.
 
     :param type: Type of pipeline node
@@ -106,6 +108,16 @@ class BaseNode(RestTranslatableMixin, NodeIOMixin, TelemetryMixin, YamlTranslata
         self.experiment_name = experiment_name
         self.kwargs = kwargs
 
+        self._base_path = None  # if _base_path is not
+
+    def _set_base_path(self, base_path):
+        """
+        Set the base path for the node. Will be used for schema validation.
+        If not set, will use Path.cwd() as the base path
+        (default logic defined in SchemaValidatableMixin._base_path_for_validation).
+        """
+        self._base_path = base_path
+
     def _get_component_id(self) -> Union[str, Component]:
         """Return component id if possible."""
         if isinstance(self._component, Component) and self._component.id:
@@ -127,14 +139,17 @@ class BaseNode(RestTranslatableMixin, NodeIOMixin, TelemetryMixin, YamlTranslata
 
     def _to_dict(self) -> Dict:
         # return dict instead of OrderedDict in case it will be further used in rest request
-        return convert_ordered_dict_to_dict(self._get_schema().dump(self))
+        return convert_ordered_dict_to_dict(self._dump_for_validation())
 
     @classmethod
-    def _get_schema(cls):
-        """Return the schema for the class. Will be used for dump & validation."""
-        raise NotImplementedError()
+    def _get_validation_error_target(cls) -> ErrorTarget:
+        """Return the error target of this resource. Should be overridden by subclass.
+        Value should be in ErrorTarget enum.
+        """
+        return ErrorTarget.PIPELINE
 
-    def _validate_inputs(self):
+    def _validate_inputs(self, raise_error=True):
+        validation_result = self._create_empty_validation_result()
         # validate inputs
         if isinstance(self._component, Component):
             for key, meta in self._component.inputs.items():
@@ -144,42 +159,26 @@ class BaseNode(RestTranslatableMixin, NodeIOMixin, TelemetryMixin, YamlTranslata
                     and meta._optional is False  # and it's required
                     and meta.default is None  # and it does not have default
                 ):
-                    raise UserErrorException(f"Required input {key} for component {self.name} not provided.")
+                    validation_result.append_error(
+                        yaml_path=f"inputs.{key}",
+                        message=f"Required input {key} for component {self.name} not provided.",
+                    )
 
         inputs = self._build_inputs()
         for input_name, input_obj in inputs.items():
             if isinstance(input_obj, SweepDistribution):
-                msg = "Input {} of command {} is a SweepDistribution, please use command.sweep to transform the command into a sweep node."
-                raise ValidationException(
-                    message=msg.format(input_name, self.name),
-                    no_personal_data_message=msg.format("[input_name]", "[self.name]"),
-                    target=ErrorTarget.JOB,
+                validation_result.append_error(
+                    yaml_path=f"inputs.{input_name}",
+                    message=f"Input of command {self.name} is a SweepDistribution, "
+                    f"please use command.sweep to transform the command into a sweep node.",
                 )
+        return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
 
-    def _validate(self, raise_error: bool = False):
-        """Validate if provided inputs, run settings are valid for current component."""
-        self._validate_inputs()
-        # validate other attrs
-        try:
-            validation_errors = self._get_schema().validate(self._get_attr_dict())
-            for skip_field in self._get_skip_fields_in_schema_validation():
-                if skip_field in validation_errors:
-                    del validation_errors[skip_field]
-            if validation_errors:
-                raise ValidationError(f"Invalid attributes for node {self.name}: {validation_errors}")
-        except Exception as ex:
-            if raise_error:
-                raise ex
-            elif isinstance(ex, ValidationError):
-                module_logger.info(str(ex))
-            else:
-                module_logger.info(f"Met error when validate node {self.name}: {ex}\n{traceback.format_exc()}")
-
-    def _get_attr_dict(self) -> Dict:
-        base_attr_dict = self._to_dict()
-        user_setting_attr_dict = self._get_attrs()
-        base_attr_dict.update(user_setting_attr_dict)
-        return base_attr_dict
+    def _customized_validate(self) -> ValidationResult:
+        """Validate the resource with customized logic.
+        Override this method to add customized validation logic.
+        """
+        return self._validate_inputs(raise_error=False)
 
     @classmethod
     def _get_skip_fields_in_schema_validation(cls) -> List[str]:
@@ -297,3 +296,19 @@ class BaseNode(RestTranslatableMixin, NodeIOMixin, TelemetryMixin, YamlTranslata
     def _is_input_set(self, input_name: str) -> bool:
         built_inputs = self._build_inputs()
         return input_name in built_inputs and built_inputs[input_name] is not None
+
+    def _refine_optional_inputs_with_no_value(self, node, kwargs):
+        """
+        Refine optional inputs that have no default value and no value is provided when calling command/parallel function
+        This is to align with behavior of calling component to generate a pipeline node.
+        """
+        for key, value in node.inputs.items():
+            meta = value._data
+            if (
+                isinstance(meta, Input)
+                and meta._is_parameter_type is False
+                and meta.optional is True
+                and not meta.path
+                and key not in kwargs
+            ):
+                value._data = None

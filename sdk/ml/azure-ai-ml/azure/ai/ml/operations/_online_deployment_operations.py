@@ -19,7 +19,7 @@ from azure.ai.ml.constants import AzureMLResourceType, EndpointDeploymentLogCont
 from azure.ai.ml.entities import OnlineDeployment
 
 from ._local_deployment_helper import _LocalDeploymentHelper
-from .operation_orchestrator import OperationOrchestrator
+from ._operation_orchestrator import OperationOrchestrator
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait, upload_dependencies
 
@@ -32,6 +32,12 @@ module_logger = logging.getLogger(__name__)
 
 
 class OnlineDeploymentOperations(_ScopeDependentOperations):
+    """
+    OnlineDeploymentOperations
+
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
+    """
+
     def __init__(
         self,
         operation_scope: OperationScope,

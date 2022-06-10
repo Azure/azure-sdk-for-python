@@ -2,9 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import json
+import typing
 from collections import Counter
 from typing import Dict, Union, Optional
 
+from marshmallow import Schema
+
+from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline import PipelineJobSchema
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
@@ -48,9 +52,10 @@ from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._schedule.schedule import CronSchedule, RecurrenceSchedule, Schedule
 
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
 
 
-class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin):
+class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatableMixin):
     """
     Pipeline job. Please use @pipeline decorator to create a PipelineJob, not recommended instantiating it directly.
 
@@ -143,6 +148,9 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin):
 
         # TODO: check if we can merge validation logic to self._validate()
         for _, job_instance in self.jobs.items():
+            if isinstance(job_instance, BaseNode):
+                job_instance._set_base_path(self.base_path)
+
             if isinstance(job_instance, (Command, Sweep, Parallel)):
                 job_instance._validate_inputs()
                 binding_inputs = job_instance._build_inputs()
@@ -229,22 +237,32 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin):
                 job_sources.append(ComponentSource.SDK)
         return dict(Counter(job_types)), dict(Counter(job_sources))
 
-    def _validate(self, raise_error: bool = False) -> None:
+    @classmethod
+    def _get_validation_error_target(cls) -> ErrorTarget:
+        return ErrorTarget.PIPELINE
+
+    @classmethod
+    def _create_schema_for_validation(cls, context) -> typing.Union[PathAwareSchema, Schema]:
+        return PipelineJobSchema(context=context)
+
+    def _get_skip_fields_in_schema_validation(self) -> typing.List[str]:
+        # jobs validations are done in _customized_validate()
+        return ["jobs"]
+
+    def _customized_validate(self) -> ValidationResult:
         """Validate that all provided inputs and parameters are valid for current pipeline and components in it."""
-        # TODO: validate before submit
+        validation_result = self._create_empty_validation_result()
         for node_name, node in self.jobs.items():
             if isinstance(node, (Command, Sweep, Parallel)):
-                node._validate(raise_error=raise_error)
+                validation_result.merge_with(node._validate(), "jobs.{}".format(node_name))
             elif isinstance(node, AutoMLJob):
                 pass
             else:
-                msg = f"Not supported pipeline job type: {type(node)}"
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    target=ErrorTarget.PIPELINE,
-                    error_category=ErrorCategory.USER_ERROR,
+                validation_result.append_error(
+                    yaml_path="jobs.{}".format(node_name),
+                    message=f"Not supported pipeline job type: {type(node)}",
                 )
+        return validation_result
 
     def _remove_pipeline_input(self):
         """Remove None pipeline input.If not remove, it will pass "None" to backend."""
@@ -318,8 +336,6 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin):
         # Build the outputs to dict
         # example: {"eval_output": "${{jobs.eval.outputs.eval_output}}"}
         built_outputs = self._build_outputs()
-
-        self._validate()
 
         settings_dict = vars(self.settings) if self.settings else {}
         settings_dict = {key: val for key, val in settings_dict.items() if val is not None}
@@ -431,7 +447,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin):
         return job
 
     def _to_dict(self) -> Dict:
-        return PipelineJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return self._dump_for_validation()
 
     @classmethod
     def _component_items_from_path(cls, data: Dict):
