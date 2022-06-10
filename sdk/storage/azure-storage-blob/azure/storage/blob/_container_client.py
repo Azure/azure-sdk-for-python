@@ -844,7 +844,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             Specifies one or more additional datasets to include in the response.
             Options include: 'versions'.
 
-            .. versionadded:: 12.13.0
+            .. versionadded:: 12.14.0
                 This parameter was introduced in API version '2021-08-06'.
 
         :keyword int timeout:

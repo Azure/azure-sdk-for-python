@@ -1,10 +1,5 @@
 # Release History
 
-## 12.13.0 (Unreleased)
-
-### Features Added
-- Added support for `versions` as an option to `include` keyword for additional options in `find_blobs_by_tags()`.
-
 ## 12.13.0b1 (Unreleased)
 
 ### Features Added
