@@ -166,7 +166,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 )
 
         return await self._client.begin_analyze_receipt_async(  # type: ignore
-            file_stream=receipt, # type: ignore
+            file_stream=receipt,  # type: ignore
             content_type=content_type,
             include_text_details=include_field_elements,
             cls=kwargs.pop("cls", self._prebuilt_callback),

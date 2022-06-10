@@ -226,9 +226,9 @@ argument but defaults to the authority matching VS Code's "Azure: Cloud" setting
 
 ## Credential classes
 
-### Authenticate Azure hosted applications
+### Authenticate Azure-hosted applications
 
-|credential|usage
+|Credential|Usage
 |-|-
 |[DefaultAzureCredential][default_cred_ref]|simplified authentication to get started developing applications for the Azure cloud
 |[ChainedTokenCredential][chain_cred_ref]|define custom authentication flows composing multiple credentials
@@ -237,22 +237,24 @@ argument but defaults to the authority matching VS Code's "Azure: Cloud" setting
 
 ### Authenticate service principals
 
-|credential|usage
+|Credential|Usage
 |-|-
-|[ClientSecretCredential][client_secret_cred_ref]| authenticate a service principal using a secret
 |[CertificateCredential][cert_cred_ref]| authenticate a service principal using a certificate
+|[ClientAssertionCredential][client_assertion_cred_ref]|authenticate a service principal using a signed client assertion
+|[ClientSecretCredential][client_secret_cred_ref]| authenticate a service principal using a secret
 
 ### Authenticate users
 
-|credential|usage
+|Credential|Usage
 |-|-
-|[InteractiveBrowserCredential][interactive_cred_ref]|interactively authenticate a user with the default web browser
 |[DeviceCodeCredential][device_code_cred_ref]| interactively authenticate a user on a device with limited UI
+|[InteractiveBrowserCredential][interactive_cred_ref]|interactively authenticate a user with the default web browser
+|[OnBehalfOfCredential][obo_cred_ref]|propagates the delegated user identity and permissions through the request chain
 |[UsernamePasswordCredential][userpass_cred_ref]| authenticate a user with a username and password (does not support multi-factor authentication)
 
 ### Authenticate via development tools
 
-|credential|usage
+|Credential|Usage
 |-|-
 |[AzureCliCredential][cli_cred_ref]|authenticate as the user signed in to the Azure CLI
 |[VisualStudioCodeCredential][vscode_cred_ref]|authenticate as the user signed in to the Visual Studio Code Azure Account extension
@@ -376,12 +378,14 @@ additional questions or comments.
 [cert_cred_ref]: https://aka.ms/azsdk/python/identity/certificatecredential
 [chain_cred_ref]: https://aka.ms/azsdk/python/identity/chainedtokencredential
 [cli_cred_ref]: https://aka.ms/azsdk/python/identity/azclicredential
+[client_assertion_cred_ref]: https://aka.ms/azsdk/python/identity/clientassertioncredential
 [client_secret_cred_ref]: https://aka.ms/azsdk/python/identity/clientsecretcredential
 [default_cred_ref]: https://aka.ms/azsdk/python/identity/defaultazurecredential
 [device_code_cred_ref]: https://aka.ms/azsdk/python/identity/devicecodecredential
 [environment_cred_ref]: https://aka.ms/azsdk/python/identity/environmentcredential
 [interactive_cred_ref]: https://aka.ms/azsdk/python/identity/interactivebrowsercredential
 [managed_id_cred_ref]: https://aka.ms/azsdk/python/identity/managedidentitycredential
+[obo_cred_ref]: https://aka.ms/azsdk/python/identity/onbehalfofcredential
 [ref_docs]: https://aka.ms/azsdk/python/identity/docs
 [ref_docs_aio]: https://aka.ms/azsdk/python/identity/aio/docs
 [troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md
