@@ -150,9 +150,6 @@ def yaml_block(content: str, annotation: str = "", tag: str = "") -> str:
     return f"{annotation}" + f"``` yaml {tag}\n" + content + "```\n"
 
 
-
-
-
 def gen_package_name(origin_config: Dict[str, Any]) -> str:
     return Path(origin_config["output-folder"]).parts[-1]
 
@@ -217,8 +214,9 @@ def gen_dpg_config_multi_client(origin_config: Dict[str, Any]) -> str:
             f"\n### Tag: {tag}",
             f"$(tag) == '{tag}'",
         )
-    
+
     return add_config_title(readme_content)
+
 
 def gen_dpg_config(autorest_config: str) -> str:
     # remove useless lines
