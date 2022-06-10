@@ -1,8 +1,9 @@
+import os
 import re
+from typing import Any, List
 
 from common import IssueProcess, Common
-from typing import Any, List
-import os
+from utils import AUTO_CLOSE_LABEL, get_last_released_date
 
 # assignee dict which will be assigned to handle issues
 _PYTHON_OWNER = {'BigCat20196', 'msyyc', 'azure-sdk'}
@@ -27,6 +28,21 @@ class IssueProcessPython(IssueProcess):
     def get_edit_content(self) -> None:
         self.get_package_name()
         self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}\n{self.package_name}'
+
+    def auto_close(self) -> None:
+        if AUTO_CLOSE_LABEL in self.issue_package.labels_name:
+            return
+        last_version, last_time = get_last_released_date(self.package_name)
+        if last_time and last_time > self.created_time:
+            comment = f'Hi @{self.owner}, pypi link: https://pypi.org/project/{self.package_name}/{last_version}/'
+            self.issue_package.issue.create_comment(body=comment)
+            self.issue_package.issue.edit(state='closed')
+            self.issue_package.issue.add_to_labels('auto-closed')
+            self.log("has been closed!")
+
+    def run(self) -> None:
+        super().run()
+        self.auto_close()
 
 class Python(Common):
     def __init__(self, issues, assignee_token, language_owner):

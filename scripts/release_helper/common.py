@@ -51,6 +51,7 @@ class IssueProcess:
         self.request_repo_dict = request_repo_dict
         self.assignee = issue_package.issue.assignee.login if issue_package.issue.assignee else ''
         self.owner = issue_package.issue.user.login
+        self.created_time = issue_package.issue.created_at
         self.assignee_candidates = assignee_candidates
         self.language_owner = language_owner
         self.bot_advice = []
