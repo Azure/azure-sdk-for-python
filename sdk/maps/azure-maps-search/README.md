@@ -1,9 +1,9 @@
 # Azure Maps Search Package client library for Python
 
 This package contains a Python SDK for Azure Maps Services for Search.
-Read more about Azure Maps Services [here](https://docs.microsoft.com/azure/maps/overview)
+Read more about Azure Maps Services [here](https://docs.microsoft.com/en-us/azure/azure-maps/)
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-search) | [Package (Pypi)](https://pypi.org/project/azure-maps-search/) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-maps-search/1.0.0b5/index.html) | [Product documentation](https://docs.microsoft.com/azure/maps/)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-search) | [Package (Pypi)](https://pypi.org/project/azure-maps-search/) | [API reference documentation](https://docs.microsoft.com/en-us/rest/api/maps/search) | [Product documentation](https://docs.microsoft.com/en-us/azure/azure-maps/)
 
 ## _Disclaimer_
 

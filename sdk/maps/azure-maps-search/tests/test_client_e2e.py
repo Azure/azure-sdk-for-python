@@ -42,6 +42,7 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
             authentication_policy = self.get_credential(SearchClient))
         assert self.client is not None
 
+    @pytest.mark.live_test_only
     def test_fuzzy_search_poi_coordinates(self):
         result = self.client.fuzzy_search("Taipei 101", coordinates=LatLon(25.0338053, 121.5640089))
         assert len(result.results) > 0 and result.results[0].type == "POI"
