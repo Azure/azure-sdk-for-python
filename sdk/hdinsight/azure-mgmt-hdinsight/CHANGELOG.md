@@ -1,5 +1,28 @@
 # Release History
 
+## 10.0.0b1 (2022-06-10)
+
+**Features**
+
+  - Model CapabilitiesResult has a new parameter vmsize_filters
+  - Model CapabilitiesResult has a new parameter vmsizes
+
+**Breaking changes**
+
+  - Model Application no longer has parameter system_data
+  - Model ApplicationProperties no longer has parameter private_link_configurations
+  - Model Cluster no longer has parameter system_data
+  - Model Cluster no longer has parameter zones
+  - Model ClusterCreateParametersExtended no longer has parameter zones
+  - Model ClusterCreateProperties no longer has parameter private_link_configurations
+  - Model ClusterCreateRequestValidationParameters no longer has parameter zones
+  - Model ClusterGetProperties no longer has parameter private_endpoint_connections
+  - Model ClusterGetProperties no longer has parameter private_link_configurations
+  - Model VmSizeCompatibilityFilterV2 no longer has parameter compute_isolation_supported
+  - Model VmSizeCompatibilityFilterV2 no longer has parameter esp_applied
+  - Removed operation group PrivateEndpointConnectionsOperations
+  - Removed operation group PrivateLinkResourcesOperations
+
 ## 9.0.0 (2021-10-08)
 
 **Features**

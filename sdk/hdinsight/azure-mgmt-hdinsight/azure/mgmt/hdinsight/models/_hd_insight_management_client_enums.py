@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AsyncOperationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AsyncOperationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The async operation state.
     """
 
@@ -34,16 +19,7 @@ class AsyncOperationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
-
-    USER = "User"
-    APPLICATION = "Application"
-    MANAGED_IDENTITY = "ManagedIdentity"
-    KEY = "Key"
-
-class DaysOfWeek(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DaysOfWeek(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     MONDAY = "Monday"
     TUESDAY = "Tuesday"
@@ -53,13 +29,7 @@ class DaysOfWeek(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SATURDAY = "Saturday"
     SUNDAY = "Sunday"
 
-class DirectoryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The directory type.
-    """
-
-    ACTIVE_DIRECTORY = "ActiveDirectory"
-
-class FilterMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class FilterMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The filtering mode. Effectively this can enabling or disabling the VM sizes in a particular
     set.
     """
@@ -69,7 +39,7 @@ class FilterMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RECOMMEND = "Recommend"
     DEFAULT = "Default"
 
-class HDInsightClusterProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class HDInsightClusterProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The provisioning state, which only appears in the response.
     """
 
@@ -79,7 +49,7 @@ class HDInsightClusterProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta,
     CANCELED = "Canceled"
     DELETING = "Deleting"
 
-class JsonWebKeyEncryptionAlgorithm(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class JsonWebKeyEncryptionAlgorithm(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Algorithm identifier for encryption, default RSA-OAEP.
     """
 
@@ -87,58 +57,21 @@ class JsonWebKeyEncryptionAlgorithm(with_metaclass(_CaseInsensitiveEnumMeta, str
     RSA_OAEP256 = "RSA-OAEP-256"
     RSA1_5 = "RSA1_5"
 
-class OSType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OSType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of operating system.
     """
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
-class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state, which only appears in the response.
-    """
-
-    IN_PROGRESS = "InProgress"
-    UPDATING = "Updating"
-    FAILED = "Failed"
-    SUCCEEDED = "Succeeded"
-    CANCELED = "Canceled"
-    DELETING = "Deleting"
-
-class PrivateIPAllocationMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The method that private IP address is allocated.
-    """
-
-    DYNAMIC = "dynamic"
-    STATIC = "static"
-
-class PrivateLink(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateLink(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates whether or not private link is enabled.
     """
 
     DISABLED = "Disabled"
     ENABLED = "Enabled"
 
-class PrivateLinkConfigurationProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The private link configuration provisioning state, which only appears in the response.
-    """
-
-    IN_PROGRESS = "InProgress"
-    FAILED = "Failed"
-    SUCCEEDED = "Succeeded"
-    CANCELED = "Canceled"
-    DELETING = "Deleting"
-
-class PrivateLinkServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The concrete private link service connection.
-    """
-
-    APPROVED = "Approved"
-    REJECTED = "Rejected"
-    PENDING = "Pending"
-    REMOVED = "Removed"
-
-class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity used for the cluster. The type 'SystemAssigned, UserAssigned' includes
     both an implicitly created identity and a set of user assigned identities.
     """
@@ -148,18 +81,18 @@ class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     NONE = "None"
 
-class ResourceProviderConnection(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceProviderConnection(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The direction for the resource provider connection.
     """
 
     INBOUND = "Inbound"
     OUTBOUND = "Outbound"
 
-class RoleName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RoleName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     WORKERNODE = "workernode"
 
-class Tier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Tier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The cluster tier.
     """
 

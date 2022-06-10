@@ -15,8 +15,6 @@ from ._script_actions_operations import ScriptActionsOperations
 from ._script_execution_history_operations import ScriptExecutionHistoryOperations
 from ._operations import Operations
 from ._virtual_machines_operations import VirtualMachinesOperations
-from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
-from ._private_link_resources_operations import PrivateLinkResourcesOperations
 
 __all__ = [
     'ClustersOperations',
@@ -28,6 +26,4 @@ __all__ = [
     'ScriptExecutionHistoryOperations',
     'Operations',
     'VirtualMachinesOperations',
-    'PrivateEndpointConnectionsOperations',
-    'PrivateLinkResourcesOperations',
 ]
