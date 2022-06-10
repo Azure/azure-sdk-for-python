@@ -18,7 +18,7 @@ _LOGGER = logging.getLogger(__name__)
 _SDK_FOLDER_RE = re.compile(r"^(sdk/[\w-]+)/(azure[\w-]+)/", re.ASCII)
 
 DEFAULT_DEST_FOLDER = "./dist"
-
+_DPG_README = "README.md"
 
 def get_package_names(sdk_folder):
     files = get_add_diff_file_list(sdk_folder)
@@ -45,9 +45,13 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
 
     readme_file = str(Path(spec_folder, input_readme))
     global_conf = config["meta"]
-    local_conf = config["projects"][readme_file]
+    local_conf = config.get("projects", {}).get(readme_file, {})
 
-    cmd = ["autorest", input_readme]
+    if "resource-manager" in input_readme:
+        cmd = ["autorest", input_readme]
+    else:
+        # autorest for DPG will be executed in package folder like: sdk/deviceupdate/azure-iot-deviceupdate/swagger
+        cmd = ["autorest", _DPG_README]
     cmd += build_autorest_options(global_conf, local_conf)
 
     # metadata
@@ -248,14 +252,14 @@ def gen_dpg_config(autorest_config: str) -> str:
         readme_content = gen_dpg_config_single_client(origin_config)
 
     # output autorest configuration
-    swagger_readme = str(Path(swagger_folder, "README.md"))
+    swagger_readme = str(Path(swagger_folder, _DPG_README))
     with open(swagger_readme, "w") as file:
         file.write(readme_content)
     return swagger_readme
 
 
 def lookup_swagger_readme(rest_readme_path: str) -> str:
-    all_swagger_readme = glob(str(Path('sdk/*/*/swagger/README.md')))
+    all_swagger_readme = glob(str(Path(f'sdk/*/*/swagger/{_DPG_README}')))
     for readme in all_swagger_readme:
         with open(readme, 'r') as file:
             content = file.read()
@@ -264,7 +268,7 @@ def lookup_swagger_readme(rest_readme_path: str) -> str:
     return ""
 
 
-def gen_dpg(rest_readme_path: str, autorest_config: str):
+def gen_dpg(rest_readme_path: str, autorest_config: str) -> Dict[str, Any]:
     # generate or find swagger/README.md
     if autorest_config:
         swagger_readme = gen_dpg_config(autorest_config)
@@ -274,10 +278,12 @@ def gen_dpg(rest_readme_path: str, autorest_config: str):
         return
 
     # extract global config
-    global_config = read_config('.', CONFIG_FILE_DPG)["meta"]
+    global_config = read_config('.', CONFIG_FILE_DPG)
 
     # generate code
     current_path = os.getcwd()
     os.chdir(Path(swagger_readme).parent)
-    generate_code(Path(swagger_readme).parts[-1], global_config, {})
+    generate_code(_DPG_README, global_config["meta"], {})
     os.chdir(current_path)
+
+    return global_config
