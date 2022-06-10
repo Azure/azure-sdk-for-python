@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines
 import functools
-from typing import Any, Dict, List, Optional, Type, TypeVar, Union, TYPE_CHECKING
+from typing import Any, Dict, Optional, Type, TypeVar, Union, TYPE_CHECKING
 
 try:
     from urllib.parse import urlparse, quote, unquote
