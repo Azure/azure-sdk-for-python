@@ -9,15 +9,15 @@ interactions:
       Connection:
       - keep-alive
       Cookie:
-      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrGREuVomrELJFdkg3dc68PzQ4Qo31YBA_3WXP0sg0f8QVILrgPWKqhA06P-EayUNOcDngfVxv-q8z5y40PO-aU7qSnrqAOcym_kje-mRpj2pMGcg5YFzpuVeqwM0v81YQuDhiQgynEymwKz_FwZc5SSxDjew-POgKhApjJohMDA4gAA;
-        fpc=ArzbqUUFBP9IrlS3OitBi8s; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrWkVXidPcNE-hlXCUK5raO3uA3Q3-Bhl-QWfC4koWKE1g-LTqgWVqkzbTv8u47jqZmFwYUpPbz5GY7pW7oZl-PY5cDzjkUqG4tBSoNqhFAtut_aW2lPKlC-zKKPt6c1qu0ZAkM36pseKb5fljzTkRfGCnSumATqX7YEqfkd_d8UsgAA;
+        fpc=Ajz_alFk1qJGiWS1mT7n8Pk; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.27.1
     method: GET
-    uri: https://sanitized.microsoftonline.com/common/userrealm/SDKUser@acsauthtest.onmicrosoft.com?api-version=1.0
+    uri: https://sanitized.microsoftonline.com/common/userrealm/sanitized@test.onmicrosoft.com?api-version=1.0
   response:
     body:
-      string: '{"ver": "1.0", "account_type": "Managed", "domain_name": "acsauthtest.onmicrosoft.com",
+      string: '{"ver": "1.0", "account_type": "Managed", "domain_name": "sanitized",
         "cloud_instance_name": "microsoftonline.com", "cloud_audience_urn": "urn:federation:MicrosoftOnline"}'
     headers:
       cache-control:
@@ -29,7 +29,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Nov 2021 10:40:37 GMT
+      - Wed, 01 Jun 2022 08:16:08 GMT
       expires:
       - '-1'
       p3p:
@@ -37,7 +37,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - fpc=ArzbqUUFBP9IrlS3OitBi8s; expires=Thu, 02-Dec-2021 10:40:37 GMT; path=/;
+      - fpc=Ajz_alFk1qJGiWS1mT7n8Pk; expires=Fri, 01-Jul-2022 08:16:09 GMT; path=/;
         secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -46,12 +46,14 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ests-server:
-      - 2.1.12171.14 - NEULR1 ProdSlices
+      - 2.1.12794.7 - WEULR2 ProdSlices
+      x-xss-protection:
+      - '0'
     status:
       code: 200
       message: OK
 - request:
-    body: '{"token": "sanitized"}'
+    body: '{"token": "sanitized", "appId": "sanitized", "userId": "sanitized"}'
     headers:
       Accept:
       - application/json
@@ -60,27 +62,27 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '2079'
+      - '2178'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
     method: POST
-    uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2021-10-31-preview
+    uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2022-06-01
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-11-02T11:40:36.6069927+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2022-06-01T09:18:01.5338764+00:00"}'
     headers:
       api-supported-versions:
-      - 2021-03-31-preview1, 2021-10-31-preview
+      - 2021-10-31-preview, 2022-06-01
       content-length:
       - '818'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Nov 2021 10:40:38 GMT
+      - Wed, 01 Jun 2022 08:16:11 GMT
       ms-cv:
-      - AhjhEDpRCE2X8TkqOknigA.0
+      - sSJbviWhoUerhmwiNhEmrg.0
       request-context:
       - appId=
       strict-transport-security:
@@ -88,7 +90,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 414ms
+      - 1304ms
     status:
       code: 200
       message: OK
