@@ -5,23 +5,27 @@ from azure.confidentialledger.aio import (
     ConfidentialLedgerClient,
 )
 
+from .constants import USER_CERTIFICATE_THUMBPRINT
 from .testcase import ConfidentialLedgerPreparer, ConfidentialLedgerTestCase
 
 
 class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
-    def create_confidentialledger_client(self, endpoint, is_aad):
-        # The ACL instance should already have the potential AAD and cert users added as
-        # Administrators.
+    async def create_confidentialledger_client(self, endpoint, is_aad):
+        # The ACL instance should already have the potential AAD user added as an Administrator.
+        credential = self.get_credential(ConfidentialLedgerClient, is_async=True)
+        client = self.create_client_from_credential(
+            ConfidentialLedgerClient,
+            credential=credential,
+            ledger_uri=endpoint,
+            ledger_certificate_path=self.network_certificate_path,
+        )
 
-        if is_aad:
-            credential = self.get_credential(ConfidentialLedgerClient, is_async=True)
-            client = self.create_client_from_credential(
-                ConfidentialLedgerClient,
-                credential=credential,
-                ledger_uri=endpoint,
-                ledger_certificate_path=self.network_certificate_path,
+        if not is_aad:
+            # Add the certificate-based user.
+            await client.confidential_ledger.create_or_update_user(
+                USER_CERTIFICATE_THUMBPRINT, {"assignedRole": "Administrator"}
             )
-        else:
+
             credential = ConfidentialLedgerCertificateCredential(
                 certificate_path=self.user_certificate_path
             )
@@ -35,7 +39,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
 
     @ConfidentialLedgerPreparer()
     async def test_append_entry_flow_aad_user(self, confidentialledger_endpoint):
-        client = self.create_confidentialledger_client(
+        client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, is_aad=True
         )
         try:
@@ -45,7 +49,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
 
     @ConfidentialLedgerPreparer()
     async def test_append_entry_flow_cert_user(self, confidentialledger_endpoint):
-        client = self.create_confidentialledger_client(
+        client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, is_aad=False
         )
         try:
@@ -116,7 +120,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
     async def test_append_entry_flow_with_collection_id_aad_user(
         self, confidentialledger_endpoint
     ):
-        client = self.create_confidentialledger_client(
+        client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, is_aad=True
         )
         try:
@@ -128,7 +132,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
     async def test_append_entry_flow_with_collection_id_cert_user(
         self, confidentialledger_endpoint
     ):
-        client = self.create_confidentialledger_client(
+        client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, is_aad=False
         )
         try:
@@ -203,7 +207,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
 
     @ConfidentialLedgerPreparer()
     async def test_range_query_aad_user(self, confidentialledger_endpoint):
-        client = self.create_confidentialledger_client(
+        client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, is_aad=True
         )
         try:
@@ -213,7 +217,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
 
     @ConfidentialLedgerPreparer()
     async def test_range_query_cert_user(self, confidentialledger_endpoint):
-        client = self.create_confidentialledger_client(
+        client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, is_aad=False
         )
         try:
@@ -259,7 +263,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
 
     @ConfidentialLedgerPreparer()
     async def test_user_management_aad_user(self, confidentialledger_endpoint):
-        client = self.create_confidentialledger_client(
+        client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, is_aad=True
         )
         try:
@@ -269,7 +273,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
 
     @ConfidentialLedgerPreparer()
     async def test_user_management_cert_user(self, confidentialledger_endpoint):
-        client = self.create_confidentialledger_client(
+        client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, is_aad=False
         )
         try:
@@ -310,7 +314,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
 
     @ConfidentialLedgerPreparer()
     async def test_verification_methods_aad_user(self, confidentialledger_endpoint):
-        client = self.create_confidentialledger_client(
+        client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, is_aad=True
         )
         try:
@@ -320,7 +324,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
 
     @ConfidentialLedgerPreparer()
     async def test_verification_methods_cert_user(self, confidentialledger_endpoint):
-        client = self.create_confidentialledger_client(
+        client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, is_aad=False
         )
         try:
