@@ -83,7 +83,7 @@ jobs:
         export AZURESDK_BOT_TOKEN=$(azuresdk-github-pat)
         export STORAGE_CONN_STR=$(storage-conn-str)
         export STORAGE_ENDPOINT=$(storage-endpoint)
-        export PYTHON_TAG=@(PYTHON_TAG)
+        export PYTHON_TAG=$(PYTHON_TAG)
 
         # run
         cd azure-sdk-for-python
