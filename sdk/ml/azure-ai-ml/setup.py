@@ -80,7 +80,7 @@ setup(
         "pyjwt<=2.3.0",
         "azure-storage-blob<13.0.0,>=12.10.0",
         "azure-storage-file-share<13.0.0",
-		"azure-storage-file-datalake<=12.6.0",
+	"azure-storage-file-datalake<=12.6.0",
         "pydash<=4.9.0",
         "pathspec==0.9.*",
         "isodate",
