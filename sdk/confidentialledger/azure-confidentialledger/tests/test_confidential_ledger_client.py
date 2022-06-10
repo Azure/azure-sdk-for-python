@@ -12,7 +12,7 @@ from .testcase import ConfidentialLedgerPreparer, ConfidentialLedgerTestCase
 class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
     def create_confidentialledger_client(self, endpoint, is_aad):
         # The ACL instance should already have the potential AAD user added as an Administrator.
-        credential = self.get_credential(ConfidentialLedgerClient, is_async=True)
+        credential = self.get_credential(ConfidentialLedgerClient)
         client = self.create_client_from_credential(
             ConfidentialLedgerClient,
             credential=credential,
