@@ -1066,7 +1066,7 @@ class TestPipelineJobSchema:
         # check component of pipeline job is expected
         expected_components = {
             "hello_world_inline_commandjob_1": {
-                "code": "azureml:./",
+                "code": "./",
                 "command": "pip freeze && echo " "${{inputs.literal_input}}",
                 "description": "Train a model on the Iris " "dataset-1.",
                 "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
@@ -1097,7 +1097,7 @@ class TestPipelineJobSchema:
                 "version": "1",
             },
             "hello_world_inline_commandjob_3": {
-                "code": "azureml:./",
+                "code": "./",
                 "command": "pip freeze && echo ${{inputs.test1}}",
                 "description": "Train a model on the Iris dataset-1.",
                 "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",

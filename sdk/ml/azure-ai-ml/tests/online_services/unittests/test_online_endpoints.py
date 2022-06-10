@@ -112,6 +112,7 @@ location: centraluseuap
 name: myendpoint2
 auth_mode: Key
 identity:
+    type: user_assigned
     user_assigned_identities:
         - resource_id: ""
 """
