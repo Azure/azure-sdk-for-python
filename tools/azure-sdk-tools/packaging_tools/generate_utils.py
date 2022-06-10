@@ -78,23 +78,24 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
     _LOGGER.info(f"Saved metadata to {metadata_file_path}")
 
     # Check whether MANIFEST.in includes _meta.json
-    require_meta = "include _meta.json\n"
-    manifest_file = os.path.join(package_folder, "MANIFEST.in")
-    if not os.path.exists(manifest_file):
-        _LOGGER.info(f"MANIFEST.in doesn't exist: {manifest_file}")
-        return
+    if "resource-manager" in input_readme:
+        require_meta = "include _meta.json\n"
+        manifest_file = os.path.join(package_folder, "MANIFEST.in")
+        if not os.path.exists(manifest_file):
+            _LOGGER.info(f"MANIFEST.in doesn't exist: {manifest_file}")
+            return
 
-    includes = []
-    write_flag = False
-    with open(manifest_file, "r") as f:
-        includes = f.readlines()
-        if require_meta not in includes:
-            includes = [require_meta] + includes
-            write_flag = True
+        includes = []
+        write_flag = False
+        with open(manifest_file, "r") as f:
+            includes = f.readlines()
+            if require_meta not in includes:
+                includes = [require_meta] + includes
+                write_flag = True
 
-    if write_flag:
-        with open(manifest_file, "w") as f:
-            f.write("".join(includes))
+        if write_flag:
+            with open(manifest_file, "w") as f:
+                f.write("".join(includes))
 
 
 # find all the files of one folder, including files in subdirectory
