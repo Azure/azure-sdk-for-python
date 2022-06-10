@@ -10,7 +10,9 @@ from typing import List, Dict, Any
 from glob import glob
 import yaml
 
-from .swaggertosdk.autorest_tools import build_autorest_options
+from .swaggertosdk.autorest_tools import build_autorest_options, generate_code
+from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE_DPG, read_config
+
 
 _LOGGER = logging.getLogger(__name__)
 _SDK_FOLDER_RE = re.compile(r"^(sdk/[\w-]+)/(azure[\w-]+)/", re.ASCII)
@@ -226,6 +228,7 @@ def gen_dpg_config_multi_client(origin_config: Dict[str, Any]) -> str:
     return add_config_title(readme_content)
 
 
+# generate swagger/README.md and return relative path based on SDK repo root path
 def gen_dpg_config(autorest_config: str) -> str:
     # remove useless lines
     autorest_config = extract_yaml_content(autorest_config)
@@ -262,6 +265,7 @@ def lookup_swagger_readme(rest_readme_path: str) -> str:
 
 
 def gen_dpg(rest_readme_path: str, autorest_config: str):
+    # generate or find swagger/README.md
     if autorest_config:
         swagger_readme = gen_dpg_config(autorest_config)
     else:
@@ -270,5 +274,10 @@ def gen_dpg(rest_readme_path: str, autorest_config: str):
         return
 
     # extract global config
+    global_config = read_config('.', CONFIG_FILE_DPG)["meta"]
 
     # generate code
+    current_path = os.getcwd()
+    os.chdir(Path(swagger_readme).parent)
+    generate_code(Path(swagger_readme).parts[-1], global_config, {})
+    os.chdir(current_path)
