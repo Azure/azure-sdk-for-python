@@ -18,8 +18,7 @@ class TestCryptoExamples(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
-    async def test_encrypt_decrypt_async(self, **kwargs):
-        key_client = kwargs.pop("key_client")
+    async def test_encrypt_decrypt_async(self, key_client, **kwargs):
         set_bodiless_matcher()
         credential = self.get_credential(CryptographyClient, is_async=True)
         key_name = self.get_resource_name("crypto-test-encrypt-key")
@@ -63,8 +62,7 @@ class TestCryptoExamples(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
-    async def test_wrap_unwrap_async(self, **kwargs):
-        key_client = kwargs.pop("key_client")
+    async def test_wrap_unwrap_async(self, key_client, **kwargs):
         set_bodiless_matcher()
         credential = self.get_credential(CryptographyClient, is_async=True)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
@@ -93,8 +91,7 @@ class TestCryptoExamples(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
-    async def test_sign_verify_async(self, **kwargs):
-        key_client = kwargs.pop("key_client")
+    async def test_sign_verify_async(self, key_client, **kwargs):
         credential = self.get_credential(CryptographyClient, is_async=True)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = await key_client.create_rsa_key(key_name)

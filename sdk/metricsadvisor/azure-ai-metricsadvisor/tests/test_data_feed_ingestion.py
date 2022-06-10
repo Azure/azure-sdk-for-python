@@ -20,8 +20,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
-    def test_get_data_feed_ingestion_progress(self, **kwargs):
-        client = kwargs.pop("client")
+    def test_get_data_feed_ingestion_progress(self, client, **kwargs):
 
         ingestion = client.get_data_feed_ingestion_progress(
             data_feed_id=self.data_feed_id
@@ -32,8 +31,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
-    def test_list_data_feed_ingestion_status(self, **kwargs):
-        client = kwargs.pop("client")
+    def test_list_data_feed_ingestion_status(self, client, **kwargs):
 
         ingestions = client.list_data_feed_ingestion_status(
             data_feed_id=self.data_feed_id,
@@ -45,8 +43,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
-    def test_list_data_feed_ingest_status_skip(self, **kwargs):
-        client = kwargs.pop("client")
+    def test_list_data_feed_ingest_status_skip(self, client, **kwargs):
 
         ingestions = client.list_data_feed_ingestion_status(
             data_feed_id=self.data_feed_id,
@@ -67,8 +64,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
-    def test_refresh_data_feed_ingestion(self, **kwargs):
-        client = kwargs.pop("client")
+    def test_refresh_data_feed_ingestion(self, client, **kwargs):
         client.refresh_data_feed_ingestion(
             self.data_feed_id,
             start_time=datetime.datetime(2021, 10, 1, tzinfo=tzutc()),

@@ -22,8 +22,7 @@ class TestExamplesTests(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @KeyVaultBackupClientPreparer()
     @recorded_by_proxy
-    def test_example_backup_and_restore(self, **kwargs):
-        client = kwargs.pop("client")
+    def test_example_backup_and_restore(self, client, **kwargs):
         set_bodiless_matcher()
         backup_client = client
         container_uri = kwargs.pop("container_uri")
@@ -60,8 +59,7 @@ class TestExamplesTests(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @KeyVaultBackupClientPreparer()
     @recorded_by_proxy
-    def test_example_selective_key_restore(self, **kwargs):
-        client,**kwargs = kwargs.pop("client,**kwargs")
+    def test_example_selective_key_restore(self, client, **kwargs):
         set_bodiless_matcher()
         # create a key to selectively restore
         managed_hsm_url = kwargs.pop("managed_hsm_url")

@@ -33,8 +33,7 @@ class TestAccessControl(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @KeyVaultAccessControlClientPreparer()
     @recorded_by_proxy
-    def test_role_definitions(self, **kwargs):
-        client = kwargs.pop("client")
+    def test_role_definitions(self, client, **kwargs):
         set_bodiless_matcher()
         # list initial role definitions
         scope = KeyVaultRoleScope.GLOBAL
@@ -93,8 +92,7 @@ class TestAccessControl(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions)
     @KeyVaultAccessControlClientPreparer()
     @recorded_by_proxy
-    def test_role_assignment(self, **kwargs):
-        client = kwargs.pop("client")
+    def test_role_assignment(self, client, **kwargs):
         set_bodiless_matcher()
         scope = KeyVaultRoleScope.GLOBAL
         definitions = [d for d in client.list_role_definitions(scope)]

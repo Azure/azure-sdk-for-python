@@ -20,7 +20,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_list_document_statuses(self, **kwargs):
-                client = kwargs.pop("client")
+        client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         docs_count = 5
         target_language = "es"
@@ -40,7 +40,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_list_document_statuses_with_skip(self, **kwargs):
-                client = kwargs.pop("client")
+        client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         docs_count = 10
         skip = 2
@@ -62,7 +62,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_list_document_statuses_filter_by_status(self, **kwargs):
-                client = kwargs.pop("client")
+        client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         docs_count = 10
         target_language = "es"
@@ -88,7 +88,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_list_document_statuses_filter_by_ids(self, **kwargs):
-                client = kwargs.pop("client")
+        client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         docs_count = 5
         target_language = "es"
@@ -113,7 +113,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_list_document_statuses_order_by_creation_time_asc(self, **kwargs):
-                client = kwargs.pop("client")
+        client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         docs_count = 5
         target_language = "es"
@@ -135,7 +135,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_list_document_statuses_order_by_creation_time_desc(self, **kwargs):
-                client = kwargs.pop("client")
+        client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         docs_count = 5
         target_language = "es"
@@ -157,7 +157,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_list_document_statuses_mixed_filters(self, **kwargs):
-                client = kwargs.pop("client")
+        client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         docs_count = 10
         target_language = "es"

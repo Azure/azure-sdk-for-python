@@ -30,9 +30,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True)
     @recorded_by_proxy
-    def test_create_ad_config_whole_series_detection(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables")
+    def test_create_ad_config_whole_series_detection(self, client, variables):
         detection_config_name = self.create_random_name("testdetectionconfig")
         if self.is_live:
             variables["detection_config_name"] = detection_config_name
@@ -108,9 +106,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True)
     @recorded_by_proxy
-    def test_create_ad_conf_series_and_group_cond(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables")
+    def test_create_ad_conf_series_and_group_cond(self, client, variables):
         detection_config_name = self.create_random_name("testdetectionconfig")
         if self.is_live:
             variables["detection_config_name"] = detection_config_name
@@ -210,9 +206,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True)
     @recorded_by_proxy
-    def test_create_ad_conf_series_and_group_conds(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables")
+    def test_create_ad_conf_series_and_group_conds(self, client, variables):
         detection_config_name = self.create_random_name("testdetectionconfig")
         if self.is_live:
             variables["detection_config_name"] = detection_config_name
@@ -421,17 +415,14 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
-    def test_list_detection_configs(self, **kwargs):
-        client = kwargs.pop("client")
+    def test_list_detection_configs(self, client, **kwargs):
         configs = client.list_detection_configurations(metric_id=self.metric_id)
         assert len(list(configs)) > 0
 
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
-    def test_update_detection_config_with_model(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables")
+    def test_update_detection_config_with_model(self, client, variables):
         try:
             detection_config = client.get_detection_configuration(variables["detection_config_id"])
             update_name = "update" + str(uuid.uuid4())
@@ -537,9 +528,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
-    def test_update_detection_config_with_kwargs(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables")
+    def test_update_detection_config_with_kwargs(self, client, variables):
         try:
             change_threshold_condition = ChangeThresholdCondition(
                 anomaly_detector_direction="Both",
@@ -654,9 +643,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
-    def test_update_ad_conf_model_and_kwargs(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables")
+    def test_update_ad_conf_model_and_kwargs(self, client, variables):
         try:
             detection_config = client.get_detection_configuration(variables["detection_config_id"])
             change_threshold_condition = ChangeThresholdCondition(
@@ -772,9 +759,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
-    def test_update_ad_conf_by_reset_props(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables")
+    def test_update_ad_conf_by_reset_props(self, client, variables):
         try:
             update_name = "update" + str(uuid.uuid4())
             if self.is_live:

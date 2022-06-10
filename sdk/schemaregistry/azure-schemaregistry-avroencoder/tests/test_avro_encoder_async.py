@@ -233,7 +233,7 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy_async
     async def test_basic_sr_avro_encoder_with_request_options(self, **kwargs):
-                schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
+        schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
         schemaregistry_group = kwargs.pop("schemaregistry_group")
         sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register=True)

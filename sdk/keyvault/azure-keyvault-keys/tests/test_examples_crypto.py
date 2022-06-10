@@ -16,8 +16,7 @@ class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_encrypt_decrypt(self, **kwargs):
-        key_client = kwargs.pop("key_client")
+    def test_encrypt_decrypt(self, key_client, **kwargs):
         set_bodiless_matcher()
         credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-encrypt-key")
@@ -55,8 +54,7 @@ class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_wrap_unwrap(self, **kwargs):
-        key_client = kwargs.pop("key_client")
+    def test_wrap_unwrap(self, key_client, **kwargs):
         set_bodiless_matcher()
         credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
@@ -85,8 +83,7 @@ class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_sign_verify(self, **kwargs):
-        key_client = kwargs.pop("key_client")
+    def test_sign_verify(self, key_client, **kwargs):
         set_bodiless_matcher()
         credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-wrapping-key")

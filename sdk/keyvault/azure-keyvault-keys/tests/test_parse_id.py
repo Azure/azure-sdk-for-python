@@ -18,8 +18,7 @@ class TestParseId(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",only_vault)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_parse_key_id_with_version(self, **kwargs):
-        client = kwargs.pop("client")
+    def test_parse_key_id_with_version(self, client, **kwargs):
         key_name = self.get_resource_name("key")
         # create key
         created_key = client.create_rsa_key(key_name)

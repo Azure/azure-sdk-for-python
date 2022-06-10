@@ -22,7 +22,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
     async def test_list_translations(self, **kwargs):
-                client = kwargs.pop("client")
+        client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         # create some translations
         operations_count = 5
@@ -42,7 +42,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
     async def test_list_translations_with_skip(self, **kwargs):
-                client = kwargs.pop("client")
+        client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         # prepare data
         operations_count = 10
@@ -70,7 +70,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
     async def test_list_translations_filter_by_status(self, **kwargs):
-                client = kwargs.pop("client")
+        client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         operations_count = 5
         docs_per_operation = 1
@@ -98,7 +98,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
     async def test_list_translations_filter_by_ids(self, **kwargs):
-                client = kwargs.pop("client")
+        client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         operations_count = 3
         docs_per_operation = 2
@@ -142,8 +142,8 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     async def test_list_translations_filter_by_created_before(self, **kwargs):
         '''
-            NOTE: test is dependent on 'end' to be specific/same as time zone of the service! 
-                'end' must be timezone-aware!
+        NOTE: test is dependent on 'end' to be specific/same as time zone of the service! 
+        'end' must be timezone-aware!
         '''
         client = kwargs.pop("client")
         operations_count = 5
@@ -167,7 +167,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
     async def test_list_translations_order_by_creation_time_asc(self, **kwargs):
-                client = kwargs.pop("client")
+        client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         operations_count = 3
         docs_per_operation = 2
@@ -190,7 +190,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
     async def test_list_translations_order_by_creation_time_desc(self, **kwargs):
-                client = kwargs.pop("client")
+        client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         operations_count = 3
         docs_per_operation = 2

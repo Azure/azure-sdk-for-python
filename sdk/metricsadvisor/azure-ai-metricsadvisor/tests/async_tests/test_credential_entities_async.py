@@ -26,9 +26,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_create_datasource_sql_connection_string(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables")
+    async def test_create_datasource_sql_connection_string(self, client, variables):
         credential_name = self.create_random_name("testsqlcredential")
         if self.is_live:
             variables["credential_name"] = credential_name
@@ -54,9 +52,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_datasource_datalake_gen2_shared_key(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables")
+    async def test_datasource_datalake_gen2_shared_key(self, client, variables):
         credential_name = self.create_random_name("testdatalakecredential")
         if self.is_live:
             variables["credential_name"] = credential_name
@@ -82,9 +78,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_datasource_service_principal(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables")
+    async def test_datasource_service_principal(self, client, variables):
         credential_name = self.create_random_name("testserviceprincipalcredential")
         if self.is_live:
             variables["credential_name"] = credential_name
@@ -112,9 +106,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_datasource_service_principal_in_kv(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables")
+    async def test_datasource_service_principal_in_kv(self, client, variables):
         credential_name = self.create_random_name("testserviceprincipalcredential")
         if self.is_live:
             variables["credential_name"] = credential_name
@@ -145,9 +137,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_datasource_credentials(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables")
+    async def test_list_datasource_credentials(self, client, variables):
         credential_name = self.create_random_name("testsqlcredential")
         if self.is_live:
             variables["credential_name"] = credential_name
@@ -176,9 +166,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_update_datasource_sql_connection_string(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables")
+    async def test_update_datasource_sql_connection_string(self, client, variables):
         credential_name = self.create_random_name("testsqlcredential")
         if self.is_live:
             variables["credential_name"] = credential_name
@@ -205,9 +193,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_update_datasource_datalake_gen2_shared_key(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables")
+    async def test_update_datasource_datalake_gen2_shared_key(self, client, variables):
         credential_name = self.create_random_name("testdatalakecredential")
         if self.is_live:
             variables["credential_name"] = credential_name
@@ -234,9 +220,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_update_datasource_service_principal(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables")
+    async def test_update_datasource_service_principal(self, client, variables):
         credential_name = self.create_random_name("testserviceprincipalcredential")
         if self.is_live:
             variables["credential_name"] = credential_name
@@ -267,9 +251,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_update_datasource_service_principal_in_kv(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables")
+    async def test_update_datasource_service_principal_in_kv(self, client, variables):
         credential_name = self.create_random_name("testserviceprincipalcredential")
         if self.is_live:
             variables["credential_name"] = credential_name
