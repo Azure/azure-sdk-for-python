@@ -271,6 +271,7 @@ async def test_send_partition_async(connstr_receivers):
         await client.send_batch(batch)
         await client.send_event(EventData(b"Data"), partition_id="0")
 
+    time.sleep(5)
     partition_0 = receivers[0].receive_message_batch(timeout=5000)
     partition_1 = receivers[1].receive_message_batch(timeout=5000)
     assert len(partition_0) >= 2

@@ -6,12 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._text_analytics_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class DetectedLanguage(msrest.serialization.Model):
@@ -98,9 +100,9 @@ class DocumentEntities(msrest.serialization.Model):
         self,
         *,
         id: str,
-        entities: List["Entity"],
-        warnings: List["TextAnalyticsWarning"],
-        statistics: Optional["DocumentStatistics"] = None,
+        entities: List["_models.Entity"],
+        warnings: List["_models.TextAnalyticsWarning"],
+        statistics: Optional["_models.DocumentStatistics"] = None,
         **kwargs
     ):
         """
@@ -146,7 +148,7 @@ class DocumentError(msrest.serialization.Model):
         self,
         *,
         id: str,
-        error: "TextAnalyticsError",
+        error: "_models.TextAnalyticsError",
         **kwargs
     ):
         """
@@ -195,8 +197,8 @@ class DocumentKeyPhrases(msrest.serialization.Model):
         *,
         id: str,
         key_phrases: List[str],
-        warnings: List["TextAnalyticsWarning"],
-        statistics: Optional["DocumentStatistics"] = None,
+        warnings: List["_models.TextAnalyticsWarning"],
+        statistics: Optional["_models.DocumentStatistics"] = None,
         **kwargs
     ):
         """
@@ -251,9 +253,9 @@ class DocumentLanguage(msrest.serialization.Model):
         self,
         *,
         id: str,
-        detected_language: "DetectedLanguage",
-        warnings: List["TextAnalyticsWarning"],
-        statistics: Optional["DocumentStatistics"] = None,
+        detected_language: "_models.DetectedLanguage",
+        warnings: List["_models.TextAnalyticsWarning"],
+        statistics: Optional["_models.DocumentStatistics"] = None,
         **kwargs
     ):
         """
@@ -307,9 +309,9 @@ class DocumentLinkedEntities(msrest.serialization.Model):
         self,
         *,
         id: str,
-        entities: List["LinkedEntity"],
-        warnings: List["TextAnalyticsWarning"],
-        statistics: Optional["DocumentStatistics"] = None,
+        entities: List["_models.LinkedEntity"],
+        warnings: List["_models.TextAnalyticsWarning"],
+        statistics: Optional["_models.DocumentStatistics"] = None,
         **kwargs
     ):
         """
@@ -338,7 +340,7 @@ class DocumentSentiment(msrest.serialization.Model):
     :ivar id: Required. Unique, non-empty document identifier.
     :vartype id: str
     :ivar sentiment: Required. Predicted sentiment for document (Negative, Neutral, Positive, or
-     Mixed). Possible values include: "positive", "neutral", "negative", "mixed".
+     Mixed). Known values are: "positive", "neutral", "negative", "mixed".
     :vartype sentiment: str or ~azure.ai.textanalytics.v3_0.models.DocumentSentimentValue
     :ivar statistics: if showStats=true was specified in the request this field will contain
      information about the document payload.
@@ -374,18 +376,18 @@ class DocumentSentiment(msrest.serialization.Model):
         self,
         *,
         id: str,
-        sentiment: Union[str, "DocumentSentimentValue"],
-        confidence_scores: "SentimentConfidenceScorePerLabel",
-        sentences: List["SentenceSentiment"],
-        warnings: List["TextAnalyticsWarning"],
-        statistics: Optional["DocumentStatistics"] = None,
+        sentiment: Union[str, "_models.DocumentSentimentValue"],
+        confidence_scores: "_models.SentimentConfidenceScorePerLabel",
+        sentences: List["_models.SentenceSentiment"],
+        warnings: List["_models.TextAnalyticsWarning"],
+        statistics: Optional["_models.DocumentStatistics"] = None,
         **kwargs
     ):
         """
         :keyword id: Required. Unique, non-empty document identifier.
         :paramtype id: str
         :keyword sentiment: Required. Predicted sentiment for document (Negative, Neutral, Positive, or
-         Mixed). Possible values include: "positive", "neutral", "negative", "mixed".
+         Mixed). Known values are: "positive", "neutral", "negative", "mixed".
         :paramtype sentiment: str or ~azure.ai.textanalytics.v3_0.models.DocumentSentimentValue
         :keyword statistics: if showStats=true was specified in the request this field will contain
          information about the document payload.
@@ -479,10 +481,10 @@ class EntitiesResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        documents: List["DocumentEntities"],
-        errors: List["DocumentError"],
+        documents: List["_models.DocumentEntities"],
+        errors: List["_models.DocumentError"],
         model_version: str,
-        statistics: Optional["RequestStatistics"] = None,
+        statistics: Optional["_models.RequestStatistics"] = None,
         **kwargs
     ):
         """
@@ -605,10 +607,10 @@ class EntityLinkingResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        documents: List["DocumentLinkedEntities"],
-        errors: List["DocumentError"],
+        documents: List["_models.DocumentLinkedEntities"],
+        errors: List["_models.DocumentError"],
         model_version: str,
-        statistics: Optional["RequestStatistics"] = None,
+        statistics: Optional["_models.RequestStatistics"] = None,
         **kwargs
     ):
         """
@@ -649,7 +651,7 @@ class ErrorResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: "TextAnalyticsError",
+        error: "_models.TextAnalyticsError",
         **kwargs
     ):
         """
@@ -665,7 +667,7 @@ class InnerError(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Required. Error code. Possible values include: "invalidParameterValue",
+    :ivar code: Required. Error code. Known values are: "invalidParameterValue",
      "invalidRequestBodyFormat", "emptyRequest", "missingInputRecords", "invalidDocument",
      "modelVersionIncorrect", "invalidDocumentBatch", "unsupportedLanguageCode",
      "invalidCountryHint".
@@ -696,15 +698,15 @@ class InnerError(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        code: Union[str, "InnerErrorCodeValue"],
+        code: Union[str, "_models.InnerErrorCodeValue"],
         message: str,
         details: Optional[Dict[str, str]] = None,
         target: Optional[str] = None,
-        innererror: Optional["InnerError"] = None,
+        innererror: Optional["_models.InnerError"] = None,
         **kwargs
     ):
         """
-        :keyword code: Required. Error code. Possible values include: "invalidParameterValue",
+        :keyword code: Required. Error code. Known values are: "invalidParameterValue",
          "invalidRequestBodyFormat", "emptyRequest", "missingInputRecords", "invalidDocument",
          "modelVersionIncorrect", "invalidDocumentBatch", "unsupportedLanguageCode",
          "invalidCountryHint".
@@ -758,10 +760,10 @@ class KeyPhraseResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        documents: List["DocumentKeyPhrases"],
-        errors: List["DocumentError"],
+        documents: List["_models.DocumentKeyPhrases"],
+        errors: List["_models.DocumentError"],
         model_version: str,
-        statistics: Optional["RequestStatistics"] = None,
+        statistics: Optional["_models.RequestStatistics"] = None,
         **kwargs
     ):
         """
@@ -802,7 +804,7 @@ class LanguageBatchInput(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        documents: List["LanguageInput"],
+        documents: List["_models.LanguageInput"],
         **kwargs
     ):
         """
@@ -891,10 +893,10 @@ class LanguageResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        documents: List["DocumentLanguage"],
-        errors: List["DocumentError"],
+        documents: List["_models.DocumentLanguage"],
+        errors: List["_models.DocumentError"],
         model_version: str,
-        statistics: Optional["RequestStatistics"] = None,
+        statistics: Optional["_models.RequestStatistics"] = None,
         **kwargs
     ):
         """
@@ -955,7 +957,7 @@ class LinkedEntity(msrest.serialization.Model):
         self,
         *,
         name: str,
-        matches: List["Match"],
+        matches: List["_models.Match"],
         language: str,
         url: str,
         data_source: str,
@@ -1063,7 +1065,7 @@ class MultiLanguageBatchInput(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        documents: List["MultiLanguageInput"],
+        documents: List["_models.MultiLanguageInput"],
         **kwargs
     ):
         """
@@ -1190,7 +1192,7 @@ class SentenceSentiment(msrest.serialization.Model):
 
     :ivar text: Required. The sentence text.
     :vartype text: str
-    :ivar sentiment: Required. The predicted Sentiment for the sentence. Possible values include:
+    :ivar sentiment: Required. The predicted Sentiment for the sentence. Known values are:
      "positive", "neutral", "negative".
     :vartype sentiment: str or ~azure.ai.textanalytics.v3_0.models.SentenceSentimentValue
     :ivar confidence_scores: Required. The sentiment confidence score between 0 and 1 for the
@@ -1223,8 +1225,8 @@ class SentenceSentiment(msrest.serialization.Model):
         self,
         *,
         text: str,
-        sentiment: Union[str, "SentenceSentimentValue"],
-        confidence_scores: "SentimentConfidenceScorePerLabel",
+        sentiment: Union[str, "_models.SentenceSentimentValue"],
+        confidence_scores: "_models.SentimentConfidenceScorePerLabel",
         offset: int,
         length: int,
         **kwargs
@@ -1232,8 +1234,8 @@ class SentenceSentiment(msrest.serialization.Model):
         """
         :keyword text: Required. The sentence text.
         :paramtype text: str
-        :keyword sentiment: Required. The predicted Sentiment for the sentence. Possible values
-         include: "positive", "neutral", "negative".
+        :keyword sentiment: Required. The predicted Sentiment for the sentence. Known values are:
+         "positive", "neutral", "negative".
         :paramtype sentiment: str or ~azure.ai.textanalytics.v3_0.models.SentenceSentimentValue
         :keyword confidence_scores: Required. The sentiment confidence score between 0 and 1 for the
          sentence for all classes.
@@ -1331,10 +1333,10 @@ class SentimentResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        documents: List["DocumentSentiment"],
-        errors: List["DocumentError"],
+        documents: List["_models.DocumentSentiment"],
+        errors: List["_models.DocumentError"],
         model_version: str,
-        statistics: Optional["RequestStatistics"] = None,
+        statistics: Optional["_models.RequestStatistics"] = None,
         **kwargs
     ):
         """
@@ -1360,7 +1362,7 @@ class TextAnalyticsError(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Required. Error code. Possible values include: "invalidRequest", "invalidArgument",
+    :ivar code: Required. Error code. Known values are: "invalidRequest", "invalidArgument",
      "internalServerError", "serviceUnavailable".
     :vartype code: str or ~azure.ai.textanalytics.v3_0.models.ErrorCodeValue
     :ivar message: Required. Error message.
@@ -1389,16 +1391,16 @@ class TextAnalyticsError(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        code: Union[str, "ErrorCodeValue"],
+        code: Union[str, "_models.ErrorCodeValue"],
         message: str,
         target: Optional[str] = None,
-        innererror: Optional["InnerError"] = None,
-        details: Optional[List["TextAnalyticsError"]] = None,
+        innererror: Optional["_models.InnerError"] = None,
+        details: Optional[List["_models.TextAnalyticsError"]] = None,
         **kwargs
     ):
         """
-        :keyword code: Required. Error code. Possible values include: "invalidRequest",
-         "invalidArgument", "internalServerError", "serviceUnavailable".
+        :keyword code: Required. Error code. Known values are: "invalidRequest", "invalidArgument",
+         "internalServerError", "serviceUnavailable".
         :paramtype code: str or ~azure.ai.textanalytics.v3_0.models.ErrorCodeValue
         :keyword message: Required. Error message.
         :paramtype message: str
@@ -1422,8 +1424,7 @@ class TextAnalyticsWarning(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Required. Error code. Possible values include: "LongWordsInDocument",
-     "DocumentTruncated".
+    :ivar code: Required. Error code. Known values are: "LongWordsInDocument", "DocumentTruncated".
     :vartype code: str or ~azure.ai.textanalytics.v3_0.models.WarningCodeValue
     :ivar message: Required. Warning message.
     :vartype message: str
@@ -1445,13 +1446,13 @@ class TextAnalyticsWarning(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        code: Union[str, "WarningCodeValue"],
+        code: Union[str, "_models.WarningCodeValue"],
         message: str,
         target_ref: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword code: Required. Error code. Possible values include: "LongWordsInDocument",
+        :keyword code: Required. Error code. Known values are: "LongWordsInDocument",
          "DocumentTruncated".
         :paramtype code: str or ~azure.ai.textanalytics.v3_0.models.WarningCodeValue
         :keyword message: Required. Warning message.

@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import AppConfigurationManagementClientConfiguration
@@ -26,23 +27,26 @@ class AppConfigurationManagementClient:
 
     :ivar configuration_stores: ConfigurationStoresOperations operations
     :vartype configuration_stores:
-     app_configuration_management_client.aio.operations.ConfigurationStoresOperations
+     azure.mgmt.appconfiguration.aio.operations.ConfigurationStoresOperations
     :ivar operations: Operations operations
-    :vartype operations: app_configuration_management_client.aio.operations.Operations
+    :vartype operations: azure.mgmt.appconfiguration.aio.operations.Operations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections:
-     app_configuration_management_client.aio.operations.PrivateEndpointConnectionsOperations
+     azure.mgmt.appconfiguration.aio.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
-     app_configuration_management_client.aio.operations.PrivateLinkResourcesOperations
+     azure.mgmt.appconfiguration.aio.operations.PrivateLinkResourcesOperations
     :ivar key_values: KeyValuesOperations operations
-    :vartype key_values: app_configuration_management_client.aio.operations.KeyValuesOperations
+    :vartype key_values: azure.mgmt.appconfiguration.aio.operations.KeyValuesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The Microsoft Azure subscription ID.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2022-05-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """

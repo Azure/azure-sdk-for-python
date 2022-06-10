@@ -1,14 +1,9 @@
 # Release History
 
-## 12.8.1 (Unreleased)
+## 12.9.0b1 (Unreleased)
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added support for `file_change_time` to `start_copy_from_url` API
 
 ## 12.8.0 (2022-05-09)
 
