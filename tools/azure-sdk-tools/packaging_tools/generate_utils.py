@@ -6,7 +6,7 @@ import re
 from azure_devtools.ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
 from subprocess import check_call
-from typing import List, Union
+from typing import List, Dict, Any
 from glob import glob
 import yaml
 
@@ -141,42 +141,107 @@ def extract_yaml_content(autorest_config: str) -> str:
     return '\n'.join(content[num[0] + 1: num[1]])
 
 
-def add_yaml_title(content: str, annotation: str = "", tag: str = "") -> str:
-    if annotation:
-        annotation = f"{annotation}\n\n"
-    return f"# autorest configuration for Python\n\n{annotation}" + f"``` yaml {tag}\n" + content + "```\n"
+def add_config_title(content: str) -> str:
+    return f"# autorest configuration for Python\n\n{content}"
 
 
-def generate_dpg_config(autorest_config: str) -> str:
+def yaml_block(content: str, annotation: str = "", tag: str = "") -> str:
+    annotation = f"{annotation}\n\n" if annotation else annotation
+    return f"{annotation}" + f"``` yaml {tag}\n" + content + "```\n"
+
+
+
+
+
+def gen_package_name(origin_config: Dict[str, Any]) -> str:
+    return Path(origin_config["output-folder"]).parts[-1]
+
+
+def gen_basic_config(origin_config: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        "package-name": gen_package_name(origin_config),
+        "license-header": "MICROSOFT_MIT_NO_VERSION",
+        "clear-output-folder": True,
+        "no-namespace-folders": True,
+        "version-tolerant": True,
+        "package-version": origin_config.get("package-version", "1.0.0b1"),
+        "require": ["../../../../../azure-rest-api-specs/" + line for line in origin_config["require"]],
+    }
+
+
+def gen_general_output_folder(package_name: str) -> str:
+    return "../" + package_name.replace('-', '/')
+
+
+def gen_general_namespace(package_name: str) -> str:
+    return package_name.replace('-', '.')
+
+
+def gen_dpg_config_single_client(origin_config: Dict[str, Any]) -> str:
+    package_name = Path(origin_config["output-folder"]).parts[-1]
+    readme_config = gen_basic_config(origin_config)
+    readme_config.update({
+        "output-folder": gen_general_output_folder(package_name),
+        "namespace": gen_general_namespace(package_name),
+    })
+    readme_content = yaml_block(yaml.safe_dump(readme_config), "### Settings")
+    return add_config_title(readme_content)
+
+
+def gen_tag_config(origin_config: Dict[str, Any]) -> Dict[str, Any]:
+    tag_config = {}
+    package_name = gen_package_name(origin_config)
+    for tag in origin_config["batch"]:
+        tag_name = tag["tag"]
+        extra_part = tag_name.split("-")[-1]
+        tag_config[tag_name] = {
+            "namespace": gen_general_namespace(package_name) + f".{extra_part}",
+            "output-folder": gen_general_output_folder(package_name) + f"/{extra_part}"
+        }
+
+    return tag_config
+
+
+def gen_dpg_config_multi_client(origin_config: Dict[str, Any]) -> str:
+    # generate config
+    basic_config = gen_basic_config(origin_config)
+    batch_config = {"batch": origin_config["batch"]}
+    tag_config = gen_tag_config(origin_config)
+
+    # convert to string
+    readme_content = yaml_block(yaml.dump(basic_config), "### Settings")
+    readme_content += yaml_block(yaml.dump(batch_config), "\n### Python multi-client")
+    for tag, value in tag_config.items():
+        readme_content += yaml_block(
+            yaml.dump(value),
+            f"\n### Tag: {tag}",
+            f"$(tag) == '{tag}'",
+        )
+    
+    return add_config_title(readme_content)
+
+def gen_dpg_config(autorest_config: str) -> str:
     # remove useless lines
     autorest_config = extract_yaml_content(autorest_config)
-    _LOGGER.info(f"autoresConfig after remove useles lines:\n{autorest_config}")
+    _LOGGER.info(f"autorestConfig after remove useless lines:\n{autorest_config}")
 
     # make dir if not exist
     origin_config = yaml.safe_load(autorest_config)
-    _LOGGER.info(f"autoresConfig: {origin_config}")
+    _LOGGER.info(f"autorestConfig: {origin_config}")
     swagger_folder = str(Path(origin_config["output-folder"], "swagger"))
     if not os.path.exists(swagger_folder):
         os.makedirs(swagger_folder)
 
     # generate autorest configuration
-    package_name = Path(origin_config["output-folder"]).parts[-1]
-    readme_content = {
-        "package-name": package_name,
-        "license-header": "MICROSOFT_MIT_NO_VERSION",
-        "clear-output-folder": True,
-        "no-namespace-folders": True,
-        "version-tolerant": True,
-        "package-version": "1.0.0b1",
-        "require": ["../../../../../azure-rest-api-specs/" + line for line in origin_config["require"]],
-        "output-folder": "../" + package_name.replace('-', '/'),
-        "namespace": package_name.replace('-', '.')
-    }
+    if "batch:" in autorest_config:
+        readme_content = gen_dpg_config_multi_client(origin_config)
+    else:
+        readme_content = gen_dpg_config_single_client(origin_config)
 
     # output autorest configuration
     swagger_readme = str(Path(swagger_folder, "README.md"))
     with open(swagger_readme, "w") as file:
-        file.write(add_yaml_title(yaml.safe_dump(readme_content)))
+        file.write(readme_content)
     return swagger_readme
 
 
@@ -190,9 +255,9 @@ def lookup_swagger_readme(rest_readme_path: str) -> str:
     return ""
 
 
-def generate_dpg(rest_readme_path: str, autorest_config: str):
+def gen_dpg(rest_readme_path: str, autorest_config: str):
     if autorest_config:
-        swagger_readme = generate_dpg_config(autorest_config)
+        swagger_readme = gen_dpg_config(autorest_config)
     else:
         swagger_readme = lookup_swagger_readme(rest_readme_path)
     if not swagger_readme:
