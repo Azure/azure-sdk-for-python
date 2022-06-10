@@ -199,10 +199,18 @@ def gen_tag_config(origin_config: Dict[str, Any]) -> Dict[str, Any]:
     return tag_config
 
 
+def gen_batch_config(origin_config: Dict[str, Any]) -> Dict[str, Any]:
+    batch_config = []
+    for item in origin_config["batch"]:
+        for _, value in item.items():
+            batch_config.append({value: True})
+    return {"batch": batch_config}
+
+
 def gen_dpg_config_multi_client(origin_config: Dict[str, Any]) -> str:
     # generate config
     basic_config = gen_basic_config(origin_config)
-    batch_config = {"batch": origin_config["batch"]}
+    batch_config = gen_batch_config(origin_config)
     tag_config = gen_tag_config(origin_config)
 
     # convert to string
@@ -212,7 +220,7 @@ def gen_dpg_config_multi_client(origin_config: Dict[str, Any]) -> str:
         readme_content += yaml_block(
             yaml.dump(value),
             f"\n### Tag: {tag}",
-            f"$(tag) == '{tag}'",
+            f"$({tag})",
         )
 
     return add_config_title(readme_content)
