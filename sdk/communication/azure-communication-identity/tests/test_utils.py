@@ -1,11 +1,11 @@
 import unittest
 from datetime import datetime
-from azure.communication.chat._shared.utils import create_access_token
-from azure.communication.chat._shared.utils import get_current_utc_as_int
+from azure.communication.identity._shared.utils import create_access_token
+from azure.communication.identity._shared.utils import get_current_utc_as_int
 import dateutil.tz
 import base64
 
-from azure.communication.chat._shared.utils import(
+from azure.communication.identity._shared.utils import(
     _convert_datetime_to_utc_int
 )
 

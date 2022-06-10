@@ -9,15 +9,15 @@ interactions:
       Connection:
       - keep-alive
       Cookie:
-      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrsTYhpuLPncLzgE2N3CF_fO9CWbc6cq_SRrW1NsbfPHS89Bs2mhXbay7nvhJtxRfvNt56AmnWAZle2NTaCRe97jb9lu6yUntTHrzTas_iTGFDzSCw-vvHZ64m36O3xHo32WIz_K041hjPgQqlhABsHv2VuJ2Delc0lAeL0NrkJp4gAA;
-        fpc=AiNv3mAB4dNFrUS7SUW3hYg; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevr3_JSgWYKa9GGE0jfVxqDDGCxnUkVmu-PVuuXNW4Q0Y86vgihqXCOT5sdjJXAm2jEdEClp0F5DDO9T8CkykylOrlKEXaNj9HZpT7HgpL73yNKH3S4Gg_CTuQViJtA07BRYxDdILJCA1UtzTMhGV1iTvpOXliPPIOUD5JUaxvOAfggAA;
+        fpc=AuOCdxhUm7tDj3Zylfv69UA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.27.1
     method: GET
-    uri: https://sanitized.microsoftonline.com/common/userrealm/SDKUser@acsauthtest.onmicrosoft.com?api-version=1.0
+    uri: https://sanitized.microsoftonline.com/common/userrealm/sanitized@test.onmicrosoft.com?api-version=1.0
   response:
     body:
-      string: '{"ver": "1.0", "account_type": "Managed", "domain_name": "acsauthtest.onmicrosoft.com",
+      string: '{"ver": "1.0", "account_type": "Managed", "domain_name": "sanitized",
         "cloud_instance_name": "microsoftonline.com", "cloud_audience_urn": "urn:federation:MicrosoftOnline"}'
     headers:
       cache-control:
@@ -29,7 +29,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Nov 2021 10:40:39 GMT
+      - Wed, 01 Jun 2022 08:16:15 GMT
       expires:
       - '-1'
       p3p:
@@ -37,7 +37,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - fpc=AiNv3mAB4dNFrUS7SUW3hYg; expires=Thu, 02-Dec-2021 10:40:40 GMT; path=/;
+      - fpc=AuOCdxhUm7tDj3Zylfv69UA; expires=Fri, 01-Jul-2022 08:16:15 GMT; path=/;
         secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -46,12 +46,14 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ests-server:
-      - 2.1.12171.14 - NEULR2 ProdSlices
+      - 2.1.12794.7 - WEULR2 ProdSlices
+      x-xss-protection:
+      - '0'
     status:
       code: 200
       message: OK
 - request:
-    body: '{"token": "sanitized"}'
+    body: '{"token": "sanitized", "appId": "sanitized", "userId": "sanitized"}'
     headers:
       Accept:
       - application/json
@@ -60,40 +62,41 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '2057'
+      - '2149'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 02 Nov 2021 10:40:40 GMT
+      - Wed, 01 Jun 2022 08:16:15 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2021-10-31-preview
+    uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2022-06-01
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-11-02T11:40:39.5722374+00:00"}'
+      string: '{"error": {"code": "ValidationError", "message": "Provided UserId has
+        invalid format.", "target": "userId"}}'
     headers:
       api-supported-versions:
-      - 2021-03-31-preview1, 2021-10-31-preview
-      content-length:
-      - '818'
+      - 2021-10-31-preview, 2022-06-01
       content-type:
-      - application/json; charset=utf-8
+      - application/json
       date:
-      - Tue, 02 Nov 2021 10:40:40 GMT
+      - Wed, 01 Jun 2022 08:16:14 GMT
       ms-cv:
-      - vzhIMlW19U+dH0WVYSr0tg.0
+      - UokDH88fMUyLAiP9V2oBGQ.0
       request-context:
       - appId=
       strict-transport-security:
       - max-age=2592000
+      transfer-encoding:
+      - chunked
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 474ms
+      - 114ms
     status:
-      code: 200
-      message: OK
+      code: 400
+      message: Bad Request
 version: 1
