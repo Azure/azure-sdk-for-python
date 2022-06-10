@@ -19,7 +19,8 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def generate(
-    config_path, sdk_folder, project_pattern, readme, restapi_git_folder, autorest_bin=None, force_generation=False
+        config_path, sdk_folder, project_pattern, readme, restapi_git_folder, autorest_bin=None, force_generation=False,
+        python_tag=None
 ):
 
     sdk_folder = Path(sdk_folder).expanduser()
