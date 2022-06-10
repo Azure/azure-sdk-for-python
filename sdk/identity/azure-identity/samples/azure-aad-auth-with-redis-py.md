@@ -3,7 +3,7 @@
 ### Table of contents
 
 - [Authenticate with Azure AD - Hello World](#authenticate-with-azure-ad-hello-world)
-- [Authenticate with Azure AD - Handle Reauthentication](#authenticate-with-azure-ad-handle-reauthentication)
+- [Authenticate with Azure AD - Handle Re-authentication](#authenticate-with-azure-ad-handle-re-authentication)
 
 #### Samples guidance
 
