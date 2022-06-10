@@ -24,18 +24,9 @@ class IssueProcessPython(IssueProcess):
         self.package_name = pattern_package.search(contents).group().split(':')[-1].strip()
         print(f'*** package_name: {self.package_name}')
 
-    def edit_issue_body(self) -> None:
+    def get_edit_content(self) -> None:
         self.get_package_name()
-        issue_body_list = [i for i in self.issue_package.issue.body.split("\n") if i]
-        issue_body_list.insert(0, f'\n{self.readme_link.replace("/readme.md", "")}')
-        issue_body_list.insert(1, self.package_name)
-        issue_body_up = ''
-        # solve format problems
-        for raw in issue_body_list:
-            if raw == '---\r' or raw == '---':
-                issue_body_up += '\n'
-            issue_body_up += raw + '\n'
-        self.issue_package.issue.edit(body=issue_body_up)
+        self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}\n{self.package_name}'
 
 class Python(Common):
     def __init__(self, issues, assignee_token, language_owner):

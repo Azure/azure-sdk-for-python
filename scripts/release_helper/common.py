@@ -57,6 +57,7 @@ class IssueProcess:
         self.target_readme_tag = ''
         self.readme_link = ''
         self.default_readme_tag = ''
+        self.edit_content = ''
         self.package_name = ''
         self.target_date = ''
         self.date_from_target = 0
@@ -139,9 +140,13 @@ class IssueProcess:
         pattern_tag = re.compile(r'tag: package-[\w+-.]+')
         self.default_readme_tag = pattern_tag.search(contents).group().split(':')[-1].strip()
 
+    def get_edit_content(self) -> None:
+        self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}'
+
     def edit_issue_body(self) -> None:
+        self.get_edit_content()
         issue_body_list = [i for i in self.issue_package.issue.body.split("\n") if i]
-        issue_body_list.insert(0, f'\n{self.readme_link.replace("/readme.md", "")}')
+        issue_body_list.insert(0, self.edit_content)
         issue_body_up = ''
         # solve format problems
         for raw in issue_body_list:
