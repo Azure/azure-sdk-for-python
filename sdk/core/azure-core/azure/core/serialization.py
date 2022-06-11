@@ -237,8 +237,6 @@ class _MyMutableMapping(MutableMapping):
 
     def __init__(self, data: typing.Dict[str, typing.Any]) -> None:
         self._data = copy.deepcopy(data)
-        self._serialized_data = {}
-        self._deserialized_data = {}
 
     def __contains__(self, key: str) -> bool:
         return key in self._data
@@ -248,8 +246,6 @@ class _MyMutableMapping(MutableMapping):
 
     def __setitem__(self, key: str, value: typing.Any) -> None:
         self._data.__setitem__(key, value)
-        self._serialized_data[key] = _UNSET
-        self._deserialized_data[key] = _UNSET
 
     def __delitem__(self, key: str) -> None:
         self._data.__delitem__(key)
@@ -323,7 +319,7 @@ class _MyMutableMapping(MutableMapping):
 def _is_model(obj: typing.Any) -> bool:
     return getattr(obj, "_is_model", False)
 
-def _serialize_call(o):
+def _serialize(o):
     if isinstance(o, (bytes, bytearray)):
         return _serialize_bytes(o)
     try:
@@ -383,15 +379,6 @@ class Model(_MyMutableMapping):
                 self._attr_to_rest_field[k]._rest_name: v for k, v in kwargs.items()
             })
 
-    def __getitem__(self, key: str) -> typing.Any:
-        serialized_item = self._serialized_data.get(key, _UNSET)
-        if serialized_item is _UNSET:
-            self._serialized_data[key] = _serialize_call(self._data.__getitem__(key))
-        if serialized_item is not self._serialized_data[key]:
-            # we want self._data to always have the last accessed version of the value
-            self._data.__setitem__(key, self._serialized_data[key])
-        return self._serialized_data[key]
-
     def copy(self):
         return Model(self.__dict__)
 
@@ -446,16 +433,13 @@ class _RestField:
     def __get__(self, obj: Model, type=None):
         # by this point, type and rest_name will have a value bc we default
         # them in __new__ of the Model class
-        deserialized_item = obj._deserialized_data.get(self._rest_name, _UNSET)
-        if deserialized_item is _UNSET:
-            obj._deserialized_data[self._rest_name] = typing.cast(typing.Callable, self._type)(obj._data.get(self._rest_name))
-        if obj._data.get(self._rest_name) is not obj._deserialized_data[self._rest_name]:
-            # we want self._data to always have the last accessed version of the value
-            obj._data.__setitem__(self._rest_name, obj._deserialized_data[self._rest_name])
-        return obj._deserialized_data[self._rest_name]
+        item = obj.get(self._rest_name)
+        return item if self._is_model else self._type(item)
 
     def __set__(self, obj: Model, value) -> None:
-        obj.__setitem__(self._rest_name, value)
+        if self._is_model and not _is_model(value):
+            obj.__setitem__(self._rest_name, self._type(value))
+        obj.__setitem__(self._rest_name, _serialize(value))
 
     def __delete__(self, obj) -> None:
         obj.__delitem__(self._rest_name)

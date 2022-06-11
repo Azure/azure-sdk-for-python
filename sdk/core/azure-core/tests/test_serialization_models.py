@@ -925,7 +925,7 @@ def test_deserialization_callback_override():
     assert model_with_callback.prop == ["1.3", "2.4", "3.5"]
     # since the deserialize function is not roundtrippable, once we deserialize
     # the serialized version is the same
-    assert model_with_callback['prop'] == ["1.3", "2.4", "3.5"]
+    assert model_with_callback['prop'] == [1.3, 2.4, 3.5]
 
 def test_deserialization_callback_override_parent():
 
@@ -965,7 +965,7 @@ def test_deserialization_callback_override_parent():
 
     child_model = ChildWithCallback(prop=[1, 1, 2, 3])
     assert child_model.prop == set(["1", "1", "2", "3"])
-    assert child_model['prop'] == set(["1", "1", "2", "3"])
+    assert child_model['prop'] == [1, 1, 2, 3]
 
 def test_inheritance_basic():
     def _callback(obj):
@@ -1076,7 +1076,7 @@ def test_inheritance_4_levels():
 
     b = ParentB(prop=3.4, bcd_prop=[ParentB(prop=4.3)])
     assert b.prop == "3.4"
-    assert b['prop'] == "3.4"  # deserialization callback is not roundtrippable, once deserialized it stays that way
+    assert b['prop'] == 3.4
     assert b.bcd_prop == [ParentB(prop=4.3)]
     assert b.bcd_prop
     assert b.bcd_prop[0].prop == "4.3"
@@ -1611,11 +1611,21 @@ class Z(Model):
 def test_nested_update():
     serialized_datetime = "9999-12-31T23:59:59.999Z"
     parsed_datetime = isodate.parse_datetime(serialized_datetime)
-    x = X({"y": {"z": serialized_datetime}})
-    with pytest.raises(AttributeError):
-        x["y"].z
-    assert x.y.z == x["y"].z == parsed_datetime
-    assert x.y["z"] == x["y"]["z"] == serialized_datetime
+    x = X({"y": {"z": {"zval": serialized_datetime}}})
+    assert (
+        x.y.z.zval ==
+        x["y"].z.zval ==
+        x.y["z"].zval ==
+        x["y"]["z"].zval ==
+        parsed_datetime
+    )
+    assert (
+        x.y.z["zval"] ==
+        x.y["z"]["zval"] ==
+        x["y"].z["zval"] ==
+        x["y"]["z"]["zval"] ==
+        serialized_datetime
+    )
 
 
 def test_deserialization_is():
