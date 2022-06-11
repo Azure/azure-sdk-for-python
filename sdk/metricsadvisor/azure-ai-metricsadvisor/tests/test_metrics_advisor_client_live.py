@@ -60,8 +60,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
-    def test_list_metric_dimension_values(self, **kwargs):
-        client = kwargs.pop("client")
+    def test_list_metric_dimension_values(self, client, **kwargs):
         results = list(client.list_metric_dimension_values(
             metric_id=self.metric_id,
             dimension_name="region",

@@ -35,7 +35,7 @@ class SecretsClientPreparer(AzureRecordedTestCase):
                 kwargs.update({"logging_enable": False})
             client = self.create_client(self.azure_keyvault_url, **kwargs, api_version=api_version)
             with client:
-                fn(test_class, client)
+                fn(test_class, client=client)
 
         return _preparer
 

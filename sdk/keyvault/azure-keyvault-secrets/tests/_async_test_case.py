@@ -28,7 +28,7 @@ class AsyncSecretsClientPreparer(AzureRecordedTestCase):
             if not self.is_logging_enabled:
                 kwargs.update({"logging_enable": False})
             client = self.create_client(self.azure_keyvault_url, api_version=api_version, **kwargs)
-            await fn(test_class, client)
+            await fn(test_class, client=client)
 
         return _preparer
 

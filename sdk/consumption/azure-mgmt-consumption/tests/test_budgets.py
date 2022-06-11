@@ -33,8 +33,8 @@ class TestMgmtConsumption(AzureMgmtRecordedTestCase):
             "amount": '100',
             "timeGrain": "Monthly",
             "timePeriod": {
-                "startDate": "2022-01-01T00:00:00Z",
-                "endDate": "2022-10-31T00:00:00Z"
+                "startDate": "2023-06-01T00:00:00Z",
+                "endDate": "2024-04-30T00:00:00Z"
             }
         }
         self.consumption_client.budgets.create_or_update(SCOPE, BUDGET_NAME, BODY)

@@ -88,13 +88,17 @@ class TestMgmtRelayNamespace(AzureMgmtRecordedTestCase):
         regenratePrimarykeyauthorizationrule = self.relay_client.namespaces.regenerate_keys(resource_group_name, namespace_name,authoRule_name,{
             "key_type": 'PrimaryKey'
         })
-        assert listkeysauthorizationrule.primary_key !=regenratePrimarykeyauthorizationrule.primary_key
+        # recordings sanitize the value of `primary_key` so this comparison will fail in playback
+        if self.is_live:
+            assert listkeysauthorizationrule.primary_key !=regenratePrimarykeyauthorizationrule.primary_key
 
         # regenerate Keys for authorizationrule - Primary
         regenrateSecondarykeyauthorizationrule = self.relay_client.namespaces.regenerate_keys(resource_group_name,namespace_name,authoRule_name, {
             "key_type": 'SecondaryKey'
         })
-        assert listkeysauthorizationrule.secondary_key != regenrateSecondarykeyauthorizationrule.secondary_key
+        # recordings sanitize the value of `secondary_key` so this comparison will fail in playback
+        if self.is_live:
+            assert listkeysauthorizationrule.secondary_key != regenrateSecondarykeyauthorizationrule.secondary_key
 
         # delete the authorizationrule
         self.relay_client.namespaces.delete_authorization_rule(resource_group_name, namespace_name, authoRule_name)
