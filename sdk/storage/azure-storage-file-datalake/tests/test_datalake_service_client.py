@@ -321,3 +321,10 @@ class DatalakeServiceTest(StorageTestCase):
         # Assert
         received_props = self.dsc.get_service_properties()
         self._assert_cors_equal(received_props['cors'], cors)
+
+    def test_connectionstring_without_secondary(self):
+        test_conn_str = "DefaultEndpointsProtocol=https;AccountName=foo;AccountKey=bar"
+        client = DataLakeServiceClient.from_connection_string(test_conn_str)
+        assert client.url == 'https://foo.dfs.core.windows.net/'
+        assert client.primary_hostname == 'foo.dfs.core.windows.net'
+        assert not client.secondary_hostname
