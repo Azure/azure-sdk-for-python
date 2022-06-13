@@ -7,6 +7,7 @@ from azure.ai.ml.operations import ComputeOperations
 from azure.identity import DefaultAzureCredential
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import Compute, AmlCompute, ComputeInstance, IdentityConfiguration, UserAssignedIdentity
+from azure.ai.ml import load_compute
 
 
 @pytest.fixture
@@ -38,7 +39,7 @@ class TestComputeOperation:
             "azure.ai.ml.entities.Compute._from_rest_object",
             return_value=ComputeInstance(name="name", resource_id="test_resource_id"),
         )
-        compute = Compute.load("./tests/test_configs/compute/compute-ci-unit.yaml")
+        compute = load_compute("./tests/test_configs/compute/compute-ci-unit.yaml")
 
         mock_compute_operation.begin_create_or_update(compute=compute)
         mock_compute_operation._operation.begin_create_or_update.assert_called_once()
@@ -47,7 +48,7 @@ class TestComputeOperation:
         self, randstr: Callable[[], str], mock_compute_operation: ComputeOperations, mocker: MockFixture
     ) -> None:
         mocker.patch("azure.ai.ml._restclient.v2021_10_01.workspaces.get", return_value=funny())
-        compute = Compute.load("./tests/test_configs/compute/compute-aml.yaml")
+        compute = load_compute("./tests/test_configs/compute/compute-aml.yaml")
         mock_compute_operation.begin_create_or_update(compute=compute)
         mock_compute_operation._operation.begin_create_or_update.assert_called_once()
 
