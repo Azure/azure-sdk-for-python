@@ -2,7 +2,7 @@ import os
 import re
 from typing import Any, List
 
-from common import IssueProcess, Common
+from common import IssueProcess, Common, get_origin_link_and_tag
 from utils import AUTO_CLOSE_LABEL, get_last_released_date, record_release
 
 # assignee dict which will be assigned to handle issues
@@ -20,7 +20,17 @@ _FILE_OUT = 'published_issues_python.csv'
 
 class IssueProcessPython(IssueProcess):
 
+    def init_readme_link(self) -> None:
+        issue_body_list = self.get_issue_body()
+
+        # Get the origin link and readme tag in issue body
+        origin_link, self.target_readme_tag = get_origin_link_and_tag(issue_body_list)
+
+        # get readme_link
+        self.get_readme_link(origin_link)
+
     def get_package_name(self) -> None:
+        self.init_readme_link()
         pattern_resource_manager = re.compile(r'/specification/([\w-]+/)+resource-manager')
         readme_python_path = pattern_resource_manager.search(self.readme_link).group() + '/readme.python.md'
         contents = str(self.issue_package.rest_repo.get_contents(readme_python_path).decoded_content)
@@ -44,12 +54,8 @@ class IssueProcessPython(IssueProcess):
             record_release(self.package_name, self.issue_package.issue, _FILE_OUT)
 
     def run(self) -> None:
-        # common part(don't change the order)
-        self.auto_assign()  # necessary flow
-        self.auto_parse()  # necessary flow
         self.get_package_name()
-        self.get_target_date()
-        self.auto_bot_advice()  # make sure this is the last step
+        super().run()
         self.auto_close()
 
     def __repr__(self):
