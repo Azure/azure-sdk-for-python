@@ -11,7 +11,12 @@ import unittest
 from azure.core.exceptions import HttpResponseError
 
 
-from azure.storage.filedatalake.aio import DataLakeServiceClient
+from azure.storage.filedatalake.aio import (
+    DataLakeServiceClient,
+    FileSystemClient,
+    DataLakeFileClient,
+    DataLakeDirectoryClient
+)
 from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCase
 from settings.testcase import DataLakePreparer
 
@@ -321,5 +326,20 @@ class DatalakeServiceTest(StorageTestCase):
         test_conn_str = "DefaultEndpointsProtocol=https;AccountName=foo;AccountKey=bar"
         client = DataLakeServiceClient.from_connection_string(test_conn_str)
         assert client.url == 'https://foo.dfs.core.windows.net/'
+        assert client.primary_hostname == 'foo.dfs.core.windows.net'
+        assert not client.secondary_hostname
+
+        client = FileSystemClient.from_connection_string(test_conn_str, "fsname")
+        assert client.url == 'https://foo.dfs.core.windows.net/fsname'
+        assert client.primary_hostname == 'foo.dfs.core.windows.net'
+        assert not client.secondary_hostname
+
+        client = DataLakeFileClient.from_connection_string(test_conn_str, "fsname", "fpath")
+        assert client.url == 'https://foo.dfs.core.windows.net/fsname/fpath'
+        assert client.primary_hostname == 'foo.dfs.core.windows.net'
+        assert not client.secondary_hostname
+
+        client = DataLakeDirectoryClient.from_connection_string(test_conn_str, "fsname", "dname")
+        assert client.url == 'https://foo.dfs.core.windows.net/fsname/dname'
         assert client.primary_hostname == 'foo.dfs.core.windows.net'
         assert not client.secondary_hostname
