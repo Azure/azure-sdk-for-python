@@ -33,5 +33,5 @@ extends:
     - name: azure-mgmt-maps
       safeName: azuremgmtmaps
     - name: azure-maps-search
-      safeName: azureaitranslationdocument
+      safeName: azuremapssearch
 
