@@ -1105,11 +1105,12 @@ def test_model_dict_comparisons():
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
 
-    outer = Outer(inner=Inner(prop="hello"))
-    assert outer.inner.prop == outer["inner"].prop == outer.inner["prop"] == outer["inner"]["prop"] == "hello"
-    assert outer.inner == outer["inner"] == {"prop": "hello"}
-    assert outer == {"inner": {"prop": "hello"}}
-
+    def _tests(outer):
+        assert outer.inner.prop == outer["inner"].prop == outer.inner["prop"] == outer["inner"]["prop"] == "hello"
+        assert outer.inner == outer["inner"] == {"prop": "hello"}
+        assert outer == {"inner": {"prop": "hello"}}
+    _tests(Outer(inner=Inner(prop="hello")))
+    _tests(Outer({"inner": {"prop": "hello"}}))
 
 def test_model_dict_comparisons_list():
     class Inner(Model):
@@ -1149,11 +1150,63 @@ def test_model_dict_comparisons_list():
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
 
+    def _tests(outer):
+        assert outer.inner[0].prop == outer["inner"][0].prop == outer.inner[0]["prop"] == outer["inner"][0]["prop"] == "hello"
+        assert outer.inner == outer["inner"] == [{"prop": "hello"}]
+        assert outer == {"inner": [{"prop": "hello"}]}
 
-    outer = Outer(inner=[Inner(prop="hello")])
-    assert outer.inner[0].prop == outer["inner"][0].prop == outer.inner[0]["prop"] == outer["inner"][0]["prop"] == "hello"
-    assert outer.inner == outer["inner"] == [{"prop": "hello"}]
-    assert outer == {"inner": [{"prop": "hello"}]}
+    _tests(Outer(inner=[Inner(prop="hello")]))
+    _tests(Outer({"inner": [{"prop": "hello"}]}))
+
+def test_model_dict_comparisons_dict():
+    class Inner(Model):
+        prop: str = rest_field()
+
+        @overload
+        def __init__(
+            self,
+            *,
+            prop: str,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+
+    class Outer(Model):
+        inner: Dict[str, Inner] = rest_field()
+
+        @overload
+        def __init__(
+            self,
+            *,
+            inner: Dict[str, Inner],
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    def _tests(outer):
+        assert outer.inner["key"].prop == outer["inner"]["key"].prop == outer.inner["key"]["prop"] == outer["inner"]["key"]["prop"] == "hello"
+        assert outer.inner == outer["inner"] == {"key": {"prop": "hello"}}
+        with pytest.raises(AttributeError):
+            outer.inner.key
+        assert outer.inner["key"] == outer["inner"]["key"] == {"prop": "hello"}
+        assert outer == {"inner": {"key": {"prop": "hello"}}}
+
+    _tests(Outer(inner={"key": Inner(prop="hello")}))
+    _tests(Outer({"inner": {"key": {"prop": "hello"}}}))
+
 
 def test_inheritance_4_levels():
     a = ParentA(prop=3.4)
@@ -1664,8 +1717,8 @@ def test_nested_deserialization():
     serialized_datetime = "9999-12-31T23:59:59.999Z"
 
     model = BaseModel({"innerModel": {"datetimeField": serialized_datetime}})
-    assert model.inner_model["datetimeField"] == serialized_datetime
-    assert model.inner_model.datetime_field == isodate.parse_datetime(serialized_datetime)
+    assert model.inner_model["datetimeField"] == model["innerModel"]["datetimeField"] == serialized_datetime
+    assert model.inner_model.datetime_field == model["innerModel"].datetime_field == isodate.parse_datetime(serialized_datetime)
 
     new_serialized_datetime = "2022-12-31T23:59:59.999Z"
     model.inner_model.datetime_field = isodate.parse_datetime(new_serialized_datetime)
@@ -1786,13 +1839,12 @@ def test_serialization_initialization_and_setting():
     assert z["zval"] == serialized_datetime
 
     # pass in dict
-    z = Z({"zval": serialized_datetime}) # interesting red squiggly, does this mean we want a from_dict?
+    z = Z({"zval": serialized_datetime})
     assert z.zval == parsed_datetime
     assert z["zval"] == serialized_datetime
 
     # assert setting
     serialized_datetime = "2022-12-31T23:59:59.999000Z"
-    parsed_datetime = isodate.parse_datetime(serialized_datetime)
     z.zval = isodate.parse_datetime(serialized_datetime)
     assert z["zval"] == serialized_datetime
 
@@ -1818,3 +1870,35 @@ def test_copy_of_input():
     raw.append(4)
     assert m.data == [1, 2, 3]
 
+def test_inner_model_custom_serializer():
+    class InnerModel(Model):
+        prop: str = rest_field(type=lambda x: x[::-1])
+
+        @overload
+        def __init__(self, *, prop: str):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    class OuterModel(Model):
+        innie: InnerModel = rest_field()
+
+        @overload
+        def __init__(self, *, innie: InnerModel):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    outer = OuterModel({"innie": {"prop": "hello"}})
+    assert outer.innie["prop"] == outer["innie"]["prop"] == "hello"
+    assert outer.innie.prop == outer["innie"].prop == "olleh"
