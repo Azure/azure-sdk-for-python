@@ -3,10 +3,11 @@
 ## 1.0.0b3 (2022-06-09)
 
 ### Features Added
-- Added RelatedFiles and DownloadHandler to Update
-- Updated various model that reference update to include not only UpdateId but also update Description and FriendlyName
+
+- Added `relatedFiles` and `downloadHandler` to `Update`
+- Updated various model that reference update to include not only `updateId` but also update `description` and `friendlyName`
 - Removed device tag concept
-- Allow to filter by deployment status in the GetDevicesAsync method
+- Allow to filter by deployment status in the `list_devices` method
 - Added ability to update device class friendly name
 - Added ability to delete device class
 - Added device class subgroups to groups
