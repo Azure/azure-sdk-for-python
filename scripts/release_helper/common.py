@@ -314,7 +314,7 @@ class Common:
             file_out.write('| issue | author | package | assignee | bot advice | created date of issue | target release date | date from target |\n')
             file_out.write('| ------ | ------ | ------ | ------ | ------ | ------ | ------ | :-----: |\n')
             for item in self.result:
-                print(f'**** item: {item}')
+                print(f'**** item: {dict(item)}')
                 try:
                     item_status = Common.output_md(item)
                     file_out.write(item_status)

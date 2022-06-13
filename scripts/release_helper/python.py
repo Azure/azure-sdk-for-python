@@ -29,7 +29,6 @@ class IssueProcessPython(IssueProcess):
         print(f'*** package_name: {self.package_name}')
 
     def get_edit_content(self) -> None:
-        self.get_package_name()
         self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}\n{self.package_name}'
 
     def auto_close(self) -> None:
@@ -45,6 +44,7 @@ class IssueProcessPython(IssueProcess):
             record_release(self.package_name, self.issue_package.issue, _FILE_OUT)
 
     def run(self) -> None:
+        self.get_package_name()
         super().run()
         self.auto_close()
 
