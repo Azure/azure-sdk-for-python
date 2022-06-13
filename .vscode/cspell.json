@@ -428,7 +428,7 @@
       ]
     },
     {
-      "filename": "sdk/loadtestservice/azure-analytics-loadtestservice/azure/analytics/loadtestservice/*.py",
+      "filename": "sdk/loadtestservice/azure-analytics-loadtestservice/azure/analytics/loadtestservice/**",
       "words":[
         "vusers"
       ]
