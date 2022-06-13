@@ -58,10 +58,6 @@ class IssueProcessPython(IssueProcess):
         super().run()
         self.auto_close()
 
-    def __repr__(self):
-        return self.issue_package.issue.number, self.package_name
-
-
 class Python(Common):
     def __init__(self, issues, assignee_token, language_owner):
         super(Python, self).__init__(issues, assignee_token, language_owner)
