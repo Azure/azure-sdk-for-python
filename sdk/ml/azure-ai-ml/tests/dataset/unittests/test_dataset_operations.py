@@ -1,5 +1,5 @@
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.operations.dataset_operations import DatasetOperations, DatastoreOperations
+from azure.ai.ml.operations._dataset_operations import DatasetOperations, DatastoreOperations
 from azure.ai.ml.constants import OrderString
 from azure.core.paging import ItemPaged
 from azure.ai.ml.entities._assets import Dataset
@@ -79,7 +79,7 @@ class TestDatasetOperations:
                 container_name="containerName",
             ),
         ) as mock_thing, patch(
-            "azure.ai.ml.operations.dataset_operations.Dataset._from_rest_object",
+            "azure.ai.ml.operations._dataset_operations.Dataset._from_rest_object",
             return_value=Dataset(),
         ):
             data = Dataset.load(path=data_path)
@@ -112,12 +112,12 @@ class TestDatasetOperations:
         dataset = Dataset.load(path=data_path)
 
         with patch(
-            "azure.ai.ml.operations.dataset_operations._check_and_upload_path",
+            "azure.ai.ml.operations._dataset_operations._check_and_upload_path",
             return_value=(dataset, "indicatorfile.txt"),
-        ), patch("azure.ai.ml.operations.dataset_operations.Dataset._from_rest_object", return_value=dataset), patch(
-            "azure.ai.ml.operations.dataset_operations._get_default_datastore_info", return_value=None
+        ), patch("azure.ai.ml.operations._dataset_operations.Dataset._from_rest_object", return_value=dataset), patch(
+            "azure.ai.ml.operations._dataset_operations._get_default_datastore_info", return_value=None
         ), patch(
-            "azure.ai.ml.operations.dataset_operations._update_metadata", return_value=None
+            "azure.ai.ml.operations._dataset_operations._update_metadata", return_value=None
         ) as mock_update:
             dataset.version = None
             mock_dataset_operations.create_or_update(dataset)
