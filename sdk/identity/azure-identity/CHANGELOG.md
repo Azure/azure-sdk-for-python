@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Environmnet credential added supports for the cert password    ([#24652](https://github.com/Azure/azure-sdk-for-python/issues/24652))
+
 ### Breaking Changes
 
 ### Bugs Fixed
