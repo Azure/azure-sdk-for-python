@@ -5,8 +5,9 @@ from pathlib import Path
 
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.operations import CodeOperations, DatastoreOperations
-from azure.ai.ml.entities._assets import Code
+from azure.ai.ml.operations import DatastoreOperations
+from azure.ai.ml.operations._code_operations import CodeOperations
+from azure.ai.ml.entities._load_functions import load_code
 
 
 @pytest.fixture()
@@ -53,10 +54,10 @@ class TestCodeOperations:
             "azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore",
             return_value=ArtifactStorageInfo(code_name, "3", "path", "datastore_id", "containerName"),
         ), patch(
-            "azure.ai.ml.operations.code_operations.Code._from_rest_object",
+            "azure.ai.ml.operations._code_operations.Code._from_rest_object",
             return_value=None,
         ):
-            code = Code.load(path=p)
+            code = load_code(path=p)
             mock_code_operation.create_or_update(code)
         mock_code_operation._version_operation.create_or_update.assert_called_once()
         assert "version='3'" in str(mock_code_operation._version_operation.create_or_update.call_args)
@@ -68,7 +69,7 @@ class TestCodeOperations:
     ) -> None:
         mock_code_operation._container_operation.get.return_value = None
         with patch(
-            "azure.ai.ml.operations.code_operations.Code._from_rest_object",
+            "azure.ai.ml.operations._code_operations.Code._from_rest_object",
             return_value=None,
         ):
             mock_code_operation.get(name=randstr(), version="1")
