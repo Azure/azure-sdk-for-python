@@ -44,8 +44,12 @@ class IssueProcessPython(IssueProcess):
             record_release(self.package_name, self.issue_package.issue, _FILE_OUT)
 
     def run(self) -> None:
+        # common part(don't change the order)
+        self.auto_assign()  # necessary flow
+        self.auto_parse()  # necessary flow
         self.get_package_name()
-        super().run()
+        self.get_target_date()
+        self.auto_bot_advice()  # make sure this is the last step
         self.auto_close()
 
     def __repr__(self):
