@@ -1902,3 +1902,131 @@ def test_inner_model_custom_serializer():
     outer = OuterModel({"innie": {"prop": "hello"}})
     assert outer.innie["prop"] == outer["innie"]["prop"] == "hello"
     assert outer.innie.prop == outer["innie"].prop == "olleh"
+
+def test_default_value():
+    class MyModel(Model):
+        prop_default_str: str = rest_field(name="propDefaultStr", default="hello")
+        prop_optional_str: Optional[str] = rest_field(name="propOptionalStr", default=None)
+        prop_default_int: int = rest_field(name="propDefaultInt", default=1)
+        prop_optional_int: Optional[int] = rest_field(name="propOptionalInt", default=None)
+
+        @overload
+        def __init__(
+            self,
+            *,
+            prop_default_str: str = "hello",
+            prop_optional_str: Optional[str] = "propOptionalStr",
+            prop_default_int: int = 1,
+            prop_optional_int: Optional[int] = None,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    my_model = MyModel()
+    assert my_model.prop_default_str == my_model["propDefaultStr"] == "hello"
+    assert my_model.prop_optional_str is my_model["propOptionalStr"] is None
+    assert my_model.prop_default_int == my_model["propDefaultInt"] == 1
+    assert my_model.prop_optional_int is my_model["propOptionalInt"] is None
+    assert my_model == {
+        "propDefaultStr": "hello",
+        "propOptionalStr": None,
+        "propDefaultInt": 1,
+        "propOptionalInt": None
+    }
+
+    my_model = MyModel(prop_default_str="goodbye")
+    assert my_model.prop_default_str == my_model["propDefaultStr"] == "goodbye"
+    assert my_model.prop_optional_str is my_model["propOptionalStr"] is None
+    assert my_model.prop_default_int == my_model["propDefaultInt"] == 1
+    assert my_model.prop_optional_int is my_model["propOptionalInt"] is None
+    assert my_model == {
+        "propDefaultStr": "goodbye",
+        "propOptionalStr": None,
+        "propDefaultInt": 1,
+        "propOptionalInt": None
+    }
+
+    my_model = MyModel(prop_optional_int=4)
+    assert my_model.prop_default_str == my_model["propDefaultStr"] == "hello"
+    assert my_model.prop_optional_str is my_model["propOptionalStr"] is None
+    assert my_model.prop_default_int == my_model["propDefaultInt"] == 1
+    assert my_model.prop_optional_int == my_model["propOptionalInt"] == 4
+    assert my_model == {
+        "propDefaultStr": "hello",
+        "propOptionalStr": None,
+        "propDefaultInt": 1,
+        "propOptionalInt": 4
+    }
+
+    my_model = MyModel({"propDefaultInt": 5})
+    assert my_model.prop_default_str == my_model["propDefaultStr"] == "hello"
+    assert my_model.prop_optional_str is my_model["propOptionalStr"] is None
+    assert my_model.prop_default_int == my_model["propDefaultInt"] == 5
+    assert my_model.prop_optional_int is my_model["propOptionalInt"] is None
+    assert my_model == {
+        "propDefaultStr": "hello",
+        "propOptionalStr": None,
+        "propDefaultInt": 5,
+        "propOptionalInt": None
+    }
+
+
+
+
+##### REWRITE BODY COMPLEX INTO THIS FILE #####
+
+def test_complex_basic():
+    ColorLiteral = Literal["cyan", "Magenta", "YELLOW", "blacK"]
+    class Basic(Model):
+        id: Optional[int] = rest_field(default=None)
+        name: Optional[str] = rest_field(default=None)
+        color: Optional[ColorLiteral] = rest_field(default=None)
+
+        @overload
+        def __init__(
+            self,
+            *,
+            id: Optional[int] = None,
+            name: Optional[str] = None,
+            color: Optional[ColorLiteral] = None,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    basic = Basic(id=2, name='abc', color="Magenta")
+    assert basic == {"id": 2, "name": "abc", "color": "Magenta"}
+
+def test_complex_boolean_wrapper():
+    class BooleanWrapper(Model):
+        field_true: bool = rest_field(default=None)
+        field_false: bool = rest_field(default=None)
+
+        @overload
+        def __init__(
+            self,
+            *,
+            field_true: Optional[bool] = None,
+            field_false: Optional[bool] = None,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    assert BooleanWrapper(field_true=True, field_false=False) == {"field_true": True, "field_false": False}

@@ -358,13 +358,16 @@ class Model(_MyMutableMapping):
             raise TypeError(f"{class_name}.__init__() takes 2 positional arguments but {len(args) + 1} were given")
         if "_data" in kwargs:
             raise TypeError(f"{class_name}.__init__() got some positional-only arguments passed as keyword arguments: '_data'")
+        dict_to_pass = {
+            rest_field._rest_name: rest_field._default
+            for rest_field in self._attr_to_rest_field.values()
+            if rest_field._default is not _UNSET
+        }
         if args:
-            super().__init__(
-                {
-                    k: _create_value(_get_rest_field(self._attr_to_rest_field, k), v)
-                    for k, v in args[0].items()
-                }
-            )
+            dict_to_pass.update({
+                k: _create_value(_get_rest_field(self._attr_to_rest_field, k), v)
+                for k, v in args[0].items()
+            })
         else:
             non_attr_kwargs = [k for k in kwargs if k not in self._attr_to_rest_field]
             if non_attr_kwargs:
@@ -372,9 +375,10 @@ class Model(_MyMutableMapping):
                 raise TypeError(
                     f"{class_name}.__init__() got an unexpected keyword argument '{non_attr_kwargs[0]}'"
                 )
-            super().__init__({
+            dict_to_pass.update({
                 self._attr_to_rest_field[k]._rest_name: _serialize(v) for k, v in kwargs.items()
             })
+        super().__init__(dict_to_pass)
 
     def copy(self):
         return Model(self.__dict__)
@@ -406,7 +410,8 @@ class _RestField:
         name: typing.Optional[str] = None,
         type: typing.Optional[typing.Callable] = None,
         is_discriminator: bool = False,
-        readonly: bool = False
+        readonly: bool = False,
+        default: typing.Any = _UNSET,
     ):
         self._type_input = type
         self._rest_name_input = name
@@ -414,6 +419,7 @@ class _RestField:
         self._is_discriminator = is_discriminator
         self._readonly = readonly
         self._is_model = False
+        self._default = default
 
     @property
     def _rest_name(self) -> str:
@@ -557,8 +563,14 @@ class _RestField:
             _DESERIALIZE_MAPPING.get(annotation, lambda x: x)
         )
 
-def rest_field(*, name: typing.Optional[str] = None, type: typing.Optional[typing.Callable] = None, readonly: bool = False) -> typing.Any:
-    return _RestField(name=name, type=type, readonly=readonly)
+def rest_field(
+    *,
+    name: typing.Optional[str] = None,
+    type: typing.Optional[typing.Callable] = None,
+    readonly: bool = False,
+    default: typing.Any = _UNSET,
+) -> typing.Any:
+    return _RestField(name=name, type=type, readonly=readonly, default=default)
 
 def rest_discriminator(*, name: typing.Optional[str] = None, type: typing.Optional[typing.Callable] = None) -> typing.Any:
     return _RestField(name=name, type=type, is_discriminator=True)
