@@ -1,5 +1,25 @@
 # Release History
 
+## 10.2.0 (2022-06-13)
+
+**Features**
+
+  - Added operation group ChannelsOperations
+  - Added operation group DomainEventSubscriptionsOperations
+  - Added operation group DomainTopicEventSubscriptionsOperations
+  - Added operation group PartnerConfigurationsOperations
+  - Added operation group PartnerNamespacesOperations
+  - Added operation group PartnerRegistrationsOperations
+  - Added operation group PartnerTopicEventSubscriptionsOperations
+  - Added operation group PartnerTopicsOperations
+  - Added operation group TopicEventSubscriptionsOperations
+  - Added operation group VerifiedPartnersOperations
+  - Model Domain has a new parameter data_residency_boundary
+  - Model DomainUpdateParameters has a new parameter data_residency_boundary
+  - Model Operation has a new parameter is_data_action
+  - Model Topic has a new parameter data_residency_boundary
+  - Model TopicUpdateParameters has a new parameter data_residency_boundary
+
 ## 10.2.0b2 (2022-05-30)
 
 **Breaking changes**
