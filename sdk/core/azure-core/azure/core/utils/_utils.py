@@ -6,7 +6,8 @@
 # --------------------------------------------------------------------------
 from cgitb import lookup
 import datetime
-from typing import Any, Dict, ItemsView, Iterator, KeysView, List, MutableMapping, Optional, Sequence, Tuple, Union, ValuesView
+from email.generator import Generator
+from typing import Any, Dict, ItemsView, Iterator, KeysView, List, Mapping, MutableMapping, Optional, Sequence, Tuple, Union, ValuesView
 
 
 class _FixedOffset(datetime.tzinfo):
@@ -88,103 +89,59 @@ def case_insensitive_dict(*args: Any, **kwargs: Any) -> MutableMapping:
     :return: A case-insensitive mutable mapping object.
     :rtype: ~collections.abc.MutableMapping
     """
-
-    # Rational is I don't want to re-implement this, but I don't want
-    # to assume "requests" or "aiohttp" are installed either.
-    # So I use the one from "requests" or the one from "aiohttp" ("multidict")
-    # If one day this library is used in an HTTP context without "requests" nor "aiohttp" installed,
-    # we can add "multidict" as a dependency or re-implement our own.
-    # try:
-    #     from requests.structures import CaseInsensitiveDict
-
-    #     return CaseInsensitiveDict(*args, **kwargs)
-    # except ImportError:
-    #     pass
-    # try:
-    #     # multidict is installed by aiohttp
-    #     from multidict import CIMultiDict
-
-    #     if len(kwargs) == 0 and len(args) == 1 and (not args[0]):
-    #         return CIMultiDict()    # in case of case_insensitive_dict(None), we don't want to raise exception
-    #     return CIMultiDict(*args, **kwargs)
-    # except ImportError:
-    #     raise ValueError(
-    #         "Neither 'requests' or 'multidict' are installed and no case-insensitive dict impl have been found"
-    #     )
     return CaseInsensitiveDict(*args, **kwargs)
 
-class CaseInsensitiveDict(MutableMapping[str, str]):
+class CaseInsensitiveDict(MutableMapping):
     """
-    Case insensitive dictionary implementation
+    NOTE: This implementation is heavily inspired from the case insensitive dictionary from the requests library. Thank you !!
+    Case insensitive dictionary implementation.
+    The keys are expected to be strings and will be stored in lower case.
+    case_insensitive_dict = CaseInsensitiveDict()
+    case_insensitive_dict['Key'] = 'some_value'
+    case_insensitive_dict['key'] == 'some_value' #True
     """
-    def __init__(
-        self,
-        headers:Optional[ Union[ "CaseInsensitiveDict", Dict[str, str], Sequence[Tuple[str, str]] ] ] = None,
-        **kwargs: Any) -> None:
-        if headers is None:
+    def __init__(self, data = None, **kwargs: Any) -> None:
+        if data is None:
             self._store = {}
         
-        self.update(headers, **kwargs)
+        self.update(data, **kwargs)
 
 
     def copy(self) -> "CaseInsensitiveDict":
-        return CaseInsensitiveDict(self)
+        return CaseInsensitiveDict(self._store.values())
 
     def __getitem__(self, key: str) -> Any:
-
-        if key.lower() not in self._store:
-            raise KeyError(key)
-        
-        items = [str(val) for _, val in self._store[key.lower()]]
-
-        if items:
-            return ', '.join(items)
+        return self._store[key.lower()]
 
     def __setitem__(self, key: str, value: str) -> None:
         """
-        Set the header `key` to `value`, removing any duplicate enteries. Retains insertion order
+        Set the `key` to `value`. The original key will be stored with the value
         """
-        lookup_key = key.lower()
-        
-        if lookup_key not in self._store:
-            self._store[lookup_key] = [(key, value)]
-        else:
-            found_indexes = [idx for idx, (item_key, _) in enumerate(self._store[lookup_key])]
+        self._store[key.lower()] = (key, value)
 
-            for idx in reversed(found_indexes[1:]):
-                del self._store[lookup_key][idx]
-
-            if found_indexes:
-                idx = found_indexes[0]
-                self._store[lookup_key][idx] = (key, value)
-            
-            else:
-                self._store[lookup_key].append((key, value))
+    def __getitem__(self, key: str) -> Any:
+        return self._store[key.lower()][1]
 
     def __delitem__(self, key: str) -> None:
-        lookup_key = key.lower()
+        del self._store[key.lower()]
 
-        if lookup_key not in self._store:
-            raise KeyError(key)
-
-        del self._store[lookup_key]
-
-    def __iter__(self) -> Iterator[Any]:
-        return iter(self.keys())
+    def __iter__(self) -> Generator[str]:
+        return (key for key, val in self._store.values())
 
     def __len__(self) -> int:
         return len(self._store)
 
     def __eq__(self, other: Any) -> bool:
-        try:
-            other_headers = CaseInsensitiveDict(other)
-        except ValueError:
-            return False
+        if isinstance(other, Mapping):
+            other = CaseInsensitiveDict(other)
+        else:
+            return NotImplemented
 
-        # return sorted(self.multi_items()) == sorted(other_headers.multi_items())
+        return dict((lower_case_key, val) for lower_case_key, (key, val) in self._store.items()) == dict((lower_case_key, val) for lower_case_key, (key, val) in other.items())
 
     def __repr__(self) -> str:
         return str(dict(self.items()))
+
 
         
 
