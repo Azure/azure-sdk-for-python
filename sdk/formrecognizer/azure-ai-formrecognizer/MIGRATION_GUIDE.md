@@ -1,6 +1,8 @@
 # Guide for migrating azure-ai-formrecognizer to version 3.2.x from versions 3.1.x and below
 
-This guide is intended to assist in the migration to `azure-ai-formrecognizer (3.2.x)` from versions `3.1.x` and below. It will focus on side-by-side comparisons for similar operations between versions. Please note that version `3.2.0b1` will be used for comparison with `3.1.2`.
+This guide is intended to assist in the migration to `azure-ai-formrecognizer (3.2.x)` from versions `3.1.x` and below. It will focus on side-by-side comparisons for similar operations between versions. Please note that version `3.2.0b1` will be used for comparison with `3.1.2`. 
+
+> NOTE: Please read the [CHANGELOG][changelog] to see important changes that have occurred since version `3.2.0b1` of the SDK.
 
 Familiarity with `azure-ai-formrecognizer (3.1.x and below)` package is assumed. For those new to the Azure Form Recognizer client library for Python please refer to the [README][readme] rather than this guide.
 
@@ -666,6 +668,7 @@ Differences between the versions:
 
 For additional samples please take a look at the [Form Recognizer Samples][samples_readme] for more guidance.
 
+[changelog]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/CHANGELOG.md
 [readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md
 [samples_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/README.md
 [fr_labeling_tool]: https://aka.ms/azsdk/formrecognizer/formrecognizerstudio

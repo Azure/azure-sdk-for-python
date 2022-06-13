@@ -5,7 +5,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from abc import ABC
+from typing import TYPE_CHECKING
+
 from azure.core.pipeline.transport import HttpRequest
+
+from ._configuration import TextAnalyticsClientConfiguration
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from msrest import Deserializer, Serializer
+
+    from azure.core import PipelineClient
 
 def _convert_request(request, files=None):
     data = request.content if not files else None
@@ -13,3 +24,10 @@ def _convert_request(request, files=None):
     if files:
         request.set_formdata_body(files)
     return request
+
+class MixinABC(ABC):
+    """DO NOT use this class. It is for internal typing use only."""
+    _client: "PipelineClient"
+    _config: TextAnalyticsClientConfiguration
+    _serialize: "Serializer"
+    _deserialize: "Deserializer"

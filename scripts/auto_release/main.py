@@ -132,7 +132,6 @@ class CodegenTestPR:
 
     def __init__(self):
         self.issue_link = os.getenv('ISSUE_LINK')
-        self.usr_token = os.getenv('USR_TOKEN')
         self.pipeline_link = os.getenv('PIPELINE_LINK')
         self.bot_token = os.getenv('AZURESDK_BOT_TOKEN')
         self.spec_readme = os.getenv('SPEC_README', '')
@@ -179,6 +178,9 @@ class CodegenTestPR:
             'specFolder': self.spec_repo,
             'relatedReadmeMdFiles': [str(self.readme_local_folder())]
         }
+        # if Python tag exists
+        if os.getenv('PYTHON_TAG'):
+            input_data['python_tag'] = os.getenv('PYTHON_TAG')
 
         self.autorest_result = str(Path(os.getenv('TEMP_FOLDER')) / 'temp.json')
         with open(self.autorest_result, 'w') as file:
@@ -446,7 +448,7 @@ class CodegenTestPR:
         self.run_test_proc()
 
     def create_pr_proc(self):
-        api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=self.usr_token)
+        api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=self.bot_token)
         pr_title = "[AutoRelease] {}(Do not merge)".format(self.new_branch)
         pr_head = "{}:{}".format(os.getenv('USR_NAME'), self.new_branch)
         pr_base = 'main'

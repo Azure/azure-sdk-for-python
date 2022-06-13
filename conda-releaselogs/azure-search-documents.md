@@ -1,5 +1,11 @@
 # Azure Cognitive Search client library for Python (conda)
 
+## 2022.06.01
+
+### Packages included
+
+- azure-search-documents-11.2.2
+
 ## 2022.03.01
 
 ### Packages included

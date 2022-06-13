@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ContentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Content type for upload
     """
 
@@ -26,7 +25,7 @@ class ContentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Content Type 'application/json'.
     APPLICATION_JSON = "application/json"
 
-class FieldValueType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class FieldValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Semantic data type of the field value.
     """
 
@@ -39,14 +38,14 @@ class FieldValueType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ARRAY = "array"
     OBJECT = "object"
 
-class Language(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Language(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Language code
     """
 
     EN = "en"
     ES = "es"
 
-class LengthUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The unit used by the width, height and boundingBox properties. For images, the unit is "pixel".
     For PDF, the unit is "inch".
     """
@@ -54,7 +53,7 @@ class LengthUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PIXEL = "pixel"
     INCH = "inch"
 
-class ModelStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ModelStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the model.
     """
 
@@ -62,7 +61,7 @@ class ModelStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     READY = "ready"
     INVALID = "invalid"
 
-class OperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the queued operation.
     """
 
@@ -71,7 +70,7 @@ class OperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "succeeded"
     FAILED = "failed"
 
-class TrainStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TrainStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the training operation.
     """
 

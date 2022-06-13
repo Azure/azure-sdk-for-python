@@ -165,7 +165,7 @@ def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
     if retry_mode == RetryMode.Fixed:
         backoff_value = backoff_factor
     else:
-        backoff_value = backoff_factor * (2 ** retried_times)
+        backoff_value = backoff_factor * (2**retried_times)
     return min(backoff_max, backoff_value)
 
 
@@ -264,11 +264,12 @@ class EventhubAzureSasTokenCredential(object):
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+
     CredentialTypes = Union[
         AzureSasCredential,
         AzureNamedKeyCredential,
         EventHubSharedKeyCredential,
-        TokenCredential
+        TokenCredential,
     ]
 
 

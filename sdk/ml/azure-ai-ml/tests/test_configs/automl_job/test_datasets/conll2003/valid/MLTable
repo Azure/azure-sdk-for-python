@@ -1,0 +1,4 @@
+paths:
+  - file: https://automlsamplenotebookdata.blob.core.windows.net/automl-sample-nlp-data/text-ner_valid.txt
+transformations:
+  - take: 1

@@ -94,12 +94,14 @@ IGNORED_SAMPLES = {
     ],
     "azure-eventhub-checkpointstoretable": ["receive_events_using_checkpoint_store.py"],
     "azure-servicebus": [
+        "connection_to_custom_endpoint_address.py",
         "mgmt_queue.py",
         "mgmt_rule.py",
         "mgmt_subscription.py",
         "mgmt_topic.py",
         "proxy.py",
         "receive_deferred_message_queue.py",
+        "connection_to_custom_endpoint_address_async.py",
         "mgmt_queue_async.py",
         "mgmt_rule_async.py",
         "mgmt_subscription_async.py",
@@ -145,6 +147,8 @@ IGNORED_SAMPLES = {
         "sample_multi_category_classify_async.py",
         "sample_recognize_custom_entities_async.py",
         "sample_single_category_classify_async.py",
+        "sample_extract_summary.py",
+        "sample_extract_summary_async.py",
     ]
 }
 

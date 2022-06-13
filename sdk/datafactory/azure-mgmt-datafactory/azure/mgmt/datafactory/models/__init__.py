@@ -290,6 +290,8 @@ from ._models_py3 import GetSsisObjectMetadataRequest
 from ._models_py3 import GitHubAccessTokenRequest
 from ._models_py3 import GitHubAccessTokenResponse
 from ._models_py3 import GitHubClientSecret
+from ._models_py3 import GlobalParameterListResponse
+from ._models_py3 import GlobalParameterResource
 from ._models_py3 import GlobalParameterSpecification
 from ._models_py3 import GoogleAdWordsLinkedService
 from ._models_py3 import GoogleAdWordsObjectDataset
@@ -509,6 +511,7 @@ from ._models_py3 import PrivateLinkConnectionState
 from ._models_py3 import PrivateLinkResource
 from ._models_py3 import PrivateLinkResourceProperties
 from ._models_py3 import PrivateLinkResourcesWrapper
+from ._models_py3 import PurviewConfiguration
 from ._models_py3 import QueryDataFlowDebugSessionsResponse
 from ._models_py3 import QuickBooksLinkedService
 from ._models_py3 import QuickBooksObjectDataset
@@ -1105,6 +1108,8 @@ __all__ = [
     'GitHubAccessTokenRequest',
     'GitHubAccessTokenResponse',
     'GitHubClientSecret',
+    'GlobalParameterListResponse',
+    'GlobalParameterResource',
     'GlobalParameterSpecification',
     'GoogleAdWordsLinkedService',
     'GoogleAdWordsObjectDataset',
@@ -1324,6 +1329,7 @@ __all__ = [
     'PrivateLinkResource',
     'PrivateLinkResourceProperties',
     'PrivateLinkResourcesWrapper',
+    'PurviewConfiguration',
     'QueryDataFlowDebugSessionsResponse',
     'QuickBooksLinkedService',
     'QuickBooksObjectDataset',
