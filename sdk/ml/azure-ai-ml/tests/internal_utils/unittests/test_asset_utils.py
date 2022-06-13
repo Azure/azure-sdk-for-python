@@ -1,6 +1,7 @@
 import pytest
 import os
 from pathlib import Path
+from typing import Callable
 
 from azure.ai.ml._utils._asset_utils import (
     get_ignore_file,
@@ -84,7 +85,7 @@ class TestAssetUtils:
         gitignore_upload_paths = []
         no_ignore_upload_paths = []
 
-        for root, dirs, files in os.walk(source_path):
+        for root, dirs, files in os.walk(source_path, followlinks=True):
             amlignore_upload_paths += list(
                 traverse_directory(root, files, source_path, prefix, ignore_file=amlignore_file)
             )
@@ -104,9 +105,53 @@ class TestAssetUtils:
         prefix = source_path.name + "/"
         upload_paths = []
 
-        for root, dirs, files in os.walk(source_path):
+        for root, dirs, files in os.walk(source_path, followlinks=True):
             upload_paths += list(traverse_directory(root, files, source_path, prefix))
 
         for local_path, remote_path in upload_paths:
             remote_path = remote_path.split("/", 2)[-1]  # strip LocalUpload/<asset id> prefix
+            if remote_path.startswith("link_file_"):  # ignore symlinks because their remote and local paths will differ
+                continue
             assert remote_path in local_path
+
+    def test_symlinks_included_in_hash(self, randstr: Callable[[], str], tmp_path: Path) -> None:
+        """Confirm that changes in the original file are respected when the symlink is hashed"""
+
+        # create target file
+        target_file_name = tmp_path / f"target_file_{randstr}.txt"
+        target_file_name.write_text("some text")
+
+        # create symlink
+        link_file_name = tmp_path / f"link_file_{randstr}.txt"
+        os.symlink(target_file_name, link_file_name)
+        assert os.path.islink(link_file_name)
+
+        # hash symlink, update original file, hash symlink again and compare hashes
+        original_hash = get_object_hash(path=link_file_name, ignore_file=no_ignore_file)
+        target_file_name.write_text("some more text")
+        updated_hash = get_object_hash(path=link_file_name, ignore_file=no_ignore_file)
+        assert original_hash != updated_hash
+
+    def test_symlink_upload_paths(self, randstr: Callable[[], str], storage_test_directory: str) -> None:
+        """Confirm that symlink name is preserved for upload to storage, but that target file's path is uploaded
+
+        e.g given a file ./dir/foo/bar.txt with a symlink ./other_dir/bar_link.txt, we want to upload the contents of ./dir/food/bar.txt at path ./other_dir/bar_link.txt in the remote storage.
+        """
+        source_path = Path(storage_test_directory).resolve()
+        prefix = source_path.name + "/"
+        upload_paths_list = []
+        randstr = randstr()
+
+        target_file_name = os.path.join(os.path.abspath(storage_test_directory), f"target_file_{randstr}.txt")
+        link_file_name = os.path.join(os.path.abspath(storage_test_directory), f"link_file_{randstr}.txt")
+        os.symlink(target_file_name, link_file_name)
+        assert os.path.islink(link_file_name)
+
+        for root, _, files in os.walk(source_path, followlinks=True):
+            upload_paths_list += list(traverse_directory(root, files, source_path, prefix))
+
+        local_paths = [i for i, _ in upload_paths_list]
+        remote_paths = [j for _, j in upload_paths_list]
+
+        assert target_file_name in local_paths
+        assert f"storage/link_file_{randstr}.txt" in remote_paths  # remote file names are relative
