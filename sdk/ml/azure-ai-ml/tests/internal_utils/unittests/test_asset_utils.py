@@ -85,7 +85,7 @@ class TestAssetUtils:
         gitignore_upload_paths = []
         no_ignore_upload_paths = []
 
-        for root, dirs, files in os.walk(source_path, followlinks=True):
+        for root, _, files in os.walk(source_path, followlinks=True):
             amlignore_upload_paths += list(
                 traverse_directory(root, files, source_path, prefix, ignore_file=amlignore_file)
             )
@@ -118,11 +118,11 @@ class TestAssetUtils:
         """Confirm that changes in the original file are respected when the symlink is hashed"""
 
         # create target file
-        target_file_name = tmp_path / f"target_file_{randstr}.txt"
+        target_file_name = tmp_path / f"target_file_{randstr()}.txt"
         target_file_name.write_text("some text")
 
         # create symlink
-        link_file_name = tmp_path / f"link_file_{randstr}.txt"
+        link_file_name = tmp_path / f"link_file_{randstr()}.txt"
         os.symlink(target_file_name, link_file_name)
         assert os.path.islink(link_file_name)
 
