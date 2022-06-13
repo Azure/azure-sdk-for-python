@@ -139,6 +139,11 @@ class AzureJSONEncoder(JSONEncoder):
     """A JSON encoder that's capable of serializing datetime objects and bytes."""
 
     def default(self, o):  # pylint: disable=too-many-return-statements
+        if _is_model(o):
+            dict_model = dict(o)
+            for readonly_property in o._readonly_properties:
+                dict_model.pop(readonly_property, None)
+            return dict_model
         if isinstance(o, (bytes, bytearray)):
             return base64.b64encode(o).decode()
         try:
@@ -356,8 +361,6 @@ class Model(_MyMutableMapping):
         class_name = self.__class__.__name__
         if len(args) > 1:
             raise TypeError(f"{class_name}.__init__() takes 2 positional arguments but {len(args) + 1} were given")
-        if "_data" in kwargs:
-            raise TypeError(f"{class_name}.__init__() got some positional-only arguments passed as keyword arguments: '_data'")
         dict_to_pass = {
             rest_field._rest_name: rest_field._default
             for rest_field in self._attr_to_rest_field.values()
@@ -437,7 +440,7 @@ class _RestField:
         # by this point, type and rest_name will have a value bc we default
         # them in __new__ of the Model class
         item = obj.get(self._rest_name)
-        return item if _is_model(item) else self._type(item)
+        return item if _is_model(item) else self._type(_serialize(item))
 
     def __set__(self, obj: Model, value) -> None:
         if self._is_model and not _is_model(value):
@@ -502,6 +505,8 @@ class _RestField:
                     value_deserializer: typing.Callable,
                     obj: typing.Dict[typing.Any, typing.Any]
                 ):
+                    if obj is None:
+                        return obj
                     return {
                         key_deserializer(k): value_deserializer(v)
                         for k, v in obj.items()
@@ -520,6 +525,8 @@ class _RestField:
                         entry_deserializers: typing.List[typing.Callable],
                         obj
                     ):
+                        if obj is None:
+                            return obj
                         return type(obj)(
                             deserializer(entry)
                             for entry, deserializer in zip(obj, entry_deserializers)
@@ -537,6 +544,8 @@ class _RestField:
                     deserializer: typing.Callable,
                     obj,
                 ):
+                    if obj is None:
+                        return obj
                     return type(obj)(
                         deserializer(entry) for entry in obj
                     )
@@ -552,6 +561,8 @@ class _RestField:
             deserializer_from_mapping,
             obj,
         ):
+            if obj is None:
+                return obj
             try:
                 return annotation(obj)
             except Exception:

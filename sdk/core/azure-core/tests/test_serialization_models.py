@@ -6,8 +6,9 @@ import json
 import datetime
 from typing import Any, List, Literal, Dict, Mapping, Sequence, Set, Tuple, Optional, Union, overload
 import pytest
+import base64
 import isodate
-from azure.core.serialization import Model, rest_field, rest_discriminator
+from azure.core.serialization import AzureJSONEncoder, Model, rest_field, rest_discriminator
 
 class BasicResource(Model):
     platform_update_domain_count: int = rest_field(name="platformUpdateDomainCount")  # How many times the platform update domain has been counted
@@ -1976,17 +1977,68 @@ def test_default_value():
         "propOptionalInt": None
     }
 
+def test_pass_models_in_dict():
+    class Inner(Model):
+        str_property: str = rest_field(name="strProperty")
 
+        @overload
+        def __init__(
+            self,
+            *,
+            str_property: str,
+        ):
+            ...
 
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    class Outer(Model):
+        inner_property: Inner = rest_field(name="innerProperty")
+
+        @overload
+        def __init__(
+            self,
+            *,
+            inner_property: Inner,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    def _tests(model: Outer):
+        assert (
+            {"innerProperty": {"strProperty": "hello"}} ==
+            {"innerProperty": Inner(str_property="hello")} ==
+            {"innerProperty": Inner({"strProperty": "hello"})} ==
+            Outer(inner_property=Inner(str_property="hello")) ==
+            Outer(inner_property=Inner({"strProperty": "hello"})) ==
+            Outer({"innerProperty": {"strProperty": "hello"}}) ==
+            Outer({"innerProperty": Inner(str_property="hello")}) ==
+            Outer({"innerProperty": Inner({"strProperty": "hello"})}) ==
+            model
+        )
+    _tests(Outer(inner_property=Inner(str_property="hello")))
+    _tests(Outer(inner_property=Inner({"strProperty": "hello"})))
+    _tests(Outer({"innerProperty": {"strProperty": "hello"}}))
+    _tests(Outer({"innerProperty": Inner(str_property="hello")}))
+    _tests(Outer({"innerProperty": Inner({"strProperty": "hello"})}))
 
 ##### REWRITE BODY COMPLEX INTO THIS FILE #####
 
 def test_complex_basic():
-    ColorLiteral = Literal["cyan", "Magenta", "YELLOW", "blacK"]
     class Basic(Model):
         id: Optional[int] = rest_field(default=None)
         name: Optional[str] = rest_field(default=None)
-        color: Optional[ColorLiteral] = rest_field(default=None)
+        color: Optional[Literal["cyan", "Magenta", "YELLOW", "blacK"]] = rest_field(default=None)
 
         @overload
         def __init__(
@@ -1994,7 +2046,7 @@ def test_complex_basic():
             *,
             id: Optional[int] = None,
             name: Optional[str] = None,
-            color: Optional[ColorLiteral] = None,
+            color: Optional[Literal["cyan", "Magenta", "YELLOW", "blacK"]] = None,
         ):
             ...
 
@@ -2008,10 +2060,23 @@ def test_complex_basic():
     basic = Basic(id=2, name='abc', color="Magenta")
     assert basic == {"id": 2, "name": "abc", "color": "Magenta"}
 
+    basic.id = 3
+    basic.name = "new_name"
+    basic.color = "blacK"
+
+    assert basic == {"id": 3, "name": "new_name", "color": "blacK"}
+
+    basic["id"] = 4
+    basic["name"] = "newest_name"
+    basic["color"] = "YELLOW"
+
+    assert basic == {"id": 4, "name": "newest_name", "color": "YELLOW"}
+
+
 def test_complex_boolean_wrapper():
     class BooleanWrapper(Model):
-        field_true: bool = rest_field(default=None)
-        field_false: bool = rest_field(default=None)
+        field_true: Optional[bool] = rest_field(default=None)
+        field_false: Optional[bool] = rest_field(default=None)
 
         @overload
         def __init__(
@@ -2029,4 +2094,372 @@ def test_complex_boolean_wrapper():
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
 
-    assert BooleanWrapper(field_true=True, field_false=False) == {"field_true": True, "field_false": False}
+    bool_model = BooleanWrapper(field_true=True, field_false=False)
+    assert bool_model == {"field_true": True, "field_false": False}
+    bool_model.field_true = False
+    bool_model.field_false = True
+    assert bool_model == {"field_true": False, "field_false": True}
+
+    bool_model["field_true"] = True
+    bool_model["field_false"] = False
+    assert bool_model == {"field_true": True, "field_false": False}
+
+
+def test_complex_byte_wrapper():
+    class ByteWrapper(Model):
+        field: Optional[bytes] = rest_field(default=None)
+
+        @overload
+        def __init__(
+            self,
+            *,
+            field: Optional[bytes] = None,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    byte_string = b'\xff\xfe\xfd\xfc\x00\xfa\xf9\xf8\xf7\xf6'
+    mod = ByteWrapper(field=byte_string)
+    decoded = base64.b64encode(byte_string).decode()
+
+    def _tests(mod: ByteWrapper):
+        assert mod == {"field": decoded}
+        assert mod.field == mod["field"] == decoded
+
+    _tests(mod)
+    mod.field = byte_string
+    _tests(mod)  # test after setting to byte string
+
+    mod["field"] = byte_string
+    assert mod["field"] == byte_string
+    assert mod.field == decoded
+
+def test_complex_byte_array_wrapper():
+    class ByteArrayWrapper(Model):
+        field: Optional[bytearray] = rest_field(default=None)
+
+        @overload
+        def __init__(
+            self,
+            *,
+            field: Optional[bytearray] = None,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    byte_array = bytearray([0x0FF, 0x0FE, 0x0FD, 0x0FC, 0x000, 0x0FA, 0x0F9, 0x0F8, 0x0F7, 0x0F6])
+    decoded = base64.b64encode(byte_array).decode()
+    def _tests(model: ByteArrayWrapper):
+        assert model == {"field": decoded}
+        assert model.field == model["field"] == decoded
+    _tests(ByteArrayWrapper(field=byte_array))
+    _tests(ByteArrayWrapper({"field": decoded}))
+
+def test_complex_datetimerfc1123_wrapper():
+    class Datetimerfc1123Wrapper(Model):
+        field: Optional[datetime.datetime] = rest_field(default=None)
+        now: Optional[datetime.datetime] = rest_field(default=None)
+
+        @overload
+        def __init__(
+            self,
+            *,
+            field: Optional[datetime.datetime] = None,
+            now: Optional[datetime.datetime] = None,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    field = "0001-01-01T00:00:00Z"
+    now = "2015-05-18T11:38:00Z"
+
+    def _tests(model: Datetimerfc1123Wrapper):
+        assert model == {"field": field, "now": now}
+
+        assert model.field == isodate.parse_datetime(field)
+        assert model.now == isodate.parse_datetime(now)
+
+        model["field"] = isodate.parse_datetime(field)
+        model["now"] = isodate.parse_datetime(now)
+
+        assert model["field"] == isodate.parse_datetime(field)
+        assert model["now"] == isodate.parse_datetime(now)
+
+    _tests(Datetimerfc1123Wrapper(field=isodate.parse_datetime(field), now=isodate.parse_datetime(now)))
+    _tests(Datetimerfc1123Wrapper({"field": field, "now": now}))
+
+
+def test_complex_datetime_wrapper():
+    class DatetimeWrapper(Model):
+        field: datetime.datetime = rest_field(default=None)
+        now: datetime.datetime = rest_field(default=None)
+
+        @overload
+        def __init__(
+            self,
+            *,
+            field: Optional[datetime.datetime] = None,
+            now: Optional[datetime.datetime] = None,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    field = "0001-01-01T00:00:00Z"
+    now = "2015-05-18T18:38:00Z"
+    def _tests(model: DatetimeWrapper):
+        assert model["field"] == field
+        assert model["now"] == now
+        assert model.field == isodate.parse_datetime(field)
+        assert model.now == isodate.parse_datetime(now)
+    _tests(DatetimeWrapper(field=isodate.parse_datetime(field), now=isodate.parse_datetime(now)))
+    _tests(DatetimeWrapper({"field": field, "now": now}))
+
+
+def test_complex_date_wrapper():
+    class DateWrapper(Model):
+        field: datetime.date = rest_field(default=None)
+        leap: datetime.date = rest_field(default=None)
+
+        @overload
+        def __init__(
+            self,
+            *,
+            field: Optional[datetime.date] = None,
+            leap: Optional[datetime.date] = None,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    field = "0001-01-01"
+    leap = "2016-02-29"
+
+    def _tests(model: DateWrapper):
+        assert model.field == isodate.parse_date(field)
+        assert model["field"] == field
+
+        assert model.leap == isodate.parse_date(leap)
+        assert model["leap"] == leap
+
+        model.field = isodate.parse_date(leap)
+        assert model.field == isodate.parse_date(leap)
+        assert model["field"] == leap
+
+        model["field"] = field
+        assert model.field == isodate.parse_date(field)
+        assert model["field"] == field
+
+    _tests(DateWrapper({"field": field, "leap": leap}))
+    _tests(DateWrapper(field=isodate.parse_date(field), leap=isodate.parse_date(leap)))
+
+class DictionaryWrapper(Model):
+    default_program: Dict[str, str] = rest_field(name="defaultProgram", default=None)
+
+    @overload
+    def __init__(
+        self,
+        *,
+        default_program: Optional[Dict[str, str]] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any], /):
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+default_program = {'txt':'notepad', 'bmp':'mspaint', 'xls':'excel', 'exe':'', '': None}
+
+@pytest.mark.parametrize("model", [DictionaryWrapper({"defaultProgram": default_program}), DictionaryWrapper(default_program=default_program)])
+def test_complex_dictionary_wrapper(model: DictionaryWrapper):
+    assert model == {"defaultProgram": default_program}
+    assert model.default_program == model["defaultProgram"] == default_program
+
+@pytest.mark.parametrize("model", [DictionaryWrapper({"defaultProgram": {}}), DictionaryWrapper(default_program={})])
+def test_complex_dictionary_wrapper_empty(model: DictionaryWrapper):
+    assert model == {"defaultProgram": {}}
+    assert model.default_program == model["defaultProgram"] == {}
+
+@pytest.mark.parametrize("model", [DictionaryWrapper({"defaultProgram": None}), DictionaryWrapper(default_program=None)])
+def test_complex_dictionary_wrapper_none(model: DictionaryWrapper):
+    assert model == {"defaultProgram": None}
+    assert model.default_program is None
+
+class ArrayWrapper(Model):
+    array: Optional[List[str]] = rest_field(default=None)
+
+    @overload
+    def __init__(
+        self,
+        *,
+        array: Optional[List[str]] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any], /):
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+array_value = ["1, 2, 3, 4", "", None, "&S#$(*Y", "The quick brown fox jumps over the lazy dog"]
+
+@pytest.mark.parametrize("model", [ArrayWrapper(array=array_value), ArrayWrapper({"array": array_value})])
+def test_complex_array_wrapper(model: ArrayWrapper):
+    assert model == {"array": array_value}
+    assert model.array == model["array"] == array_value
+
+    model.array = None
+    assert model.array is model["array"] is None
+
+    model["array"] = [1, 2, 3, 4, 5]
+    assert model.array == ["1", "2", "3", "4", "5"]
+    assert model["array"] == [1, 2, 3, 4, 5]
+
+@pytest.mark.parametrize("model", [ArrayWrapper(array=[]), ArrayWrapper({"array": []})])
+def test_complex_array_wrapper_empty(model: ArrayWrapper):
+    assert model == {"array": []}
+    assert model.array == model["array"] == []
+
+    model.array = ["bonjour"]
+    assert model.array == model["array"] == ["bonjour"]
+
+@pytest.mark.parametrize("model", [ArrayWrapper(array=None), ArrayWrapper({"array": None})])
+def test_complex_array_wrapper_none(model: ArrayWrapper):
+    assert model == {"array": None}
+    assert model.array is model["array"] is None
+
+    model.array = ["bonjour"]
+    assert model.array == model["array"] == ["bonjour"]
+
+class PetComplex(Model):
+    id: Optional[int] = rest_field(default=None)
+    name: Optional[str] = rest_field(default=None)
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[int] = None,
+        name: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any], /):
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+class DogComplex(PetComplex):
+    food: Optional[str] = rest_field(default=None)
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[int] = None,
+        name: Optional[str] = None,
+        food: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any], /):
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class CatComplex(PetComplex):
+    color: Optional[str] = rest_field(default=None)
+    hates: Optional[List[DogComplex]] = rest_field(default=None)
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[int] = None,
+        name: Optional[str] = None,
+        food: Optional[str] = None,
+        color: Optional[str] = None,
+        hates: Optional[List[DogComplex]] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any], /):
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+@pytest.mark.parametrize(
+    "model",
+    [
+        CatComplex(id=2, name="Siameeee", hates=[
+            DogComplex(id=1, name="Potato", food="tomato"),
+            DogComplex(id=-1, name="Tomato", food="french fries")
+        ]),
+        CatComplex(id=2, name="Siameeee", hates=[
+            DogComplex(id=1, name="Potato", food="tomato"),
+            {"id": -1, "name": "Tomato", "food": "french fries"},
+        ]),
+        CatComplex(id=2, name="Siameeee", hates=[
+            {"id": 1, "name": "Potato", "food": "tomato"},
+            {"id": -1, "name": "Tomato", "food": "french fries"},
+        ]),
+    ]
+)
+def test_complex_inheritance(model: CatComplex):
+    assert model.id == model["id"] == 2
+    assert model.name == model["name"] == "Siameeee"
+    assert model.hates
+    assert model.hates[1] == model["hates"][1] == {"id": -1, "name": "Tomato", "food": "french fries"}
+    model["breed"] = "persian"
+    model["color"] = "green"
+    with pytest.raises(AttributeError):
+        model.breed
+    assert model == {
+        'id': 2,
+        'name': "Siameeee",
+        'color': "green",
+        'breed': "persian",
+        'hates': [DogComplex(id=1, name="Potato", food="tomato"),
+                DogComplex(id=-1, name="Tomato", food="french fries")]
+        }
+
