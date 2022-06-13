@@ -16,7 +16,7 @@ from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.utils import case_insensitive_dict
 from azure.core.paging import ItemPaged
-from .._vendor import _format_url_section
+from ..._vendor import _format_url_section
 from ._operations import TestOperations as TestOperationsGenerated, JSON, ClsType
 
 _SERIALIZER = Serializer()
