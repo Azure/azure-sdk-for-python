@@ -11,13 +11,13 @@ import pytest
 from azure.core.polling import LROPoller
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.ai.ml.operations import (
-    CodeOperations,
     DatastoreOperations,
     BatchEndpointOperations,
     EnvironmentOperations,
     ModelOperations,
     WorkspaceOperations,
 )
+from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.identity import DefaultAzureCredential
 from azure.ai.ml._restclient.v2022_05_01.models import (
     BatchEndpointData,
@@ -30,7 +30,7 @@ from azure.ai.ml.constants import (
 )
 
 from pytest_mock import MockFixture
-from azure.ai.ml.entities._assets import Data
+from azure.ai.ml import load_batch_endpoint
 
 
 @pytest.fixture()
@@ -161,7 +161,7 @@ class TestBatchEndpointOperations:
         mocker: MockFixture,
     ) -> None:
         mocker.patch(
-            "azure.ai.ml.operations.batch_endpoint_operations.BatchEndpointOperations._get_workspace_location",
+            "azure.ai.ml.operations._batch_endpoint_operations.BatchEndpointOperations._get_workspace_location",
             return_value="xxx",
         )
         mock_create_or_update_batch_endpoint = mocker.patch.object(
@@ -169,7 +169,7 @@ class TestBatchEndpointOperations:
         )
         mock_batch_endpoint_operations._credentials = Mock(spec_set=DefaultAzureCredential)
 
-        online_endpoint = BatchEndpoint.load(create_yaml_happy_path)
+        online_endpoint = load_batch_endpoint(create_yaml_happy_path)
         online_endpoint.name = rand_compute_name()
         mock_batch_endpoint_operations.begin_create_or_update(endpoint=online_endpoint)
         mock_create_or_update_batch_endpoint.assert_called_once()
@@ -241,7 +241,7 @@ class TestBatchEndpointOperations:
             return mock_response
 
         mocker.patch(
-            "azure.ai.ml.operations.batch_endpoint_operations.BatchEndpointOperations._validate_deployment_name",
+            "azure.ai.ml.operations._batch_endpoint_operations.BatchEndpointOperations._validate_deployment_name",
             return_value="xxxxxx",
         )
 
@@ -272,7 +272,7 @@ class TestBatchEndpointOperations:
         self, mock_batch_endpoint_operations: BatchEndpointOperations, mocker: MockFixture
     ) -> None:
         mocker.patch(
-            "azure.ai.ml.operations.batch_endpoint_operations._get_mfe_base_url_from_discovery_service",
+            "azure.ai.ml.operations._batch_endpoint_operations._get_mfe_base_url_from_discovery_service",
             return_value="https://some-url.com",
         )
         mockresponse = Mock()
@@ -287,7 +287,7 @@ class TestBatchEndpointOperations:
         self, mock_batch_endpoint_operations: BatchEndpointOperations, mocker: MockFixture
     ) -> None:
         mocker.patch(
-            "azure.ai.ml.operations.batch_endpoint_operations._get_mfe_base_url_from_discovery_service",
+            "azure.ai.ml.operations._batch_endpoint_operations._get_mfe_base_url_from_discovery_service",
             return_value="https://some-url.com",
         )
         mockresponse = Mock()

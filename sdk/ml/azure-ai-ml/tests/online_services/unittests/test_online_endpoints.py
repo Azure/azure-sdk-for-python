@@ -9,14 +9,14 @@ import pytest
 from azure.core.polling import LROPoller
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.ai.ml.operations import (
-    CodeOperations,
     DatastoreOperations,
     OnlineEndpointOperations,
     EnvironmentOperations,
     ModelOperations,
     WorkspaceOperations,
 )
-from azure.ai.ml.operations.online_endpoint_operations import _strip_zeroes_from_traffic
+from azure.ai.ml.operations._code_operations import CodeOperations
+from azure.ai.ml.operations._online_endpoint_operations import _strip_zeroes_from_traffic
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.ml._restclient.v2021_10_01.models import (
@@ -39,6 +39,7 @@ from azure.ai.ml.constants import (
 from azure.ai.ml.entities import (
     OnlineEndpoint,
 )
+from azure.ai.ml import load_online_endpoint
 
 from pytest_mock import MockFixture
 
@@ -306,7 +307,7 @@ class TestOnlineEndpointsOperations:
         mocker: MockFixture,
     ) -> None:
         mocker.patch(
-            "azure.ai.ml.operations.online_endpoint_operations.OnlineEndpointOperations._get_workspace_location",
+            "azure.ai.ml.operations._online_endpoint_operations.OnlineEndpointOperations._get_workspace_location",
             return_value="xxx",
         )
         mock_create_or_update_online_endpoint = mocker.patch.object(
@@ -314,7 +315,7 @@ class TestOnlineEndpointsOperations:
         )
         mock_online_endpoint_operations._credentials = Mock(spec_set=DefaultAzureCredential)
 
-        online_endpoint = OnlineEndpoint.load(create_yaml_happy_path)
+        online_endpoint = load_online_endpoint(create_yaml_happy_path)
         online_endpoint.name = rand_compute_name()
         mock_online_endpoint_operations.begin_create_or_update(endpoint=online_endpoint)
         mock_create_or_update_online_endpoint.assert_called_once()
@@ -327,16 +328,16 @@ class TestOnlineEndpointsOperations:
         mocker: MockFixture,
     ) -> None:
         mocker.patch(
-            "azure.ai.ml.operations.operation_orchestrator.OperationOrchestrator._get_code_asset_arm_id",
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator._get_code_asset_arm_id",
             return_value="xxx",
         )
         mocker.patch(
-            "azure.ai.ml.operations.online_endpoint_operations.OnlineEndpointOperations._get_workspace_location",
+            "azure.ai.ml.operations._online_endpoint_operations.OnlineEndpointOperations._get_workspace_location",
             return_value="xxx",
         )
 
         mock_online_endpoint_operations._credentials = Mock(spec_set=DefaultAzureCredential)
-        online_endpoint = OnlineEndpoint.load(create_yaml_happy_path)
+        online_endpoint = load_online_endpoint(create_yaml_happy_path)
         # try an endpoint name that is too long
         with pytest.raises(Exception):
             online_endpoint.name = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
@@ -360,14 +361,14 @@ class TestOnlineEndpointsOperations:
         mocker: MockFixture,
     ) -> None:
         mocker.patch(
-            "azure.ai.ml.operations.operation_orchestrator.OperationOrchestrator._get_code_asset_arm_id",
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator._get_code_asset_arm_id",
             return_value="xxx",
         )
         mocker.patch(
-            "azure.ai.ml.operations.online_endpoint_operations.OnlineEndpointOperations._get_workspace_location",
+            "azure.ai.ml.operations._online_endpoint_operations.OnlineEndpointOperations._get_workspace_location",
             return_value="xxx",
         )
-        online_endpoint = OnlineEndpoint.load(create_yaml_happy_path)
+        online_endpoint = load_online_endpoint(create_yaml_happy_path)
         online_endpoint.name = rand_compute_name()
         http_err = HttpResponseError()
         http_err.status_code = HttpResponseStatusCode.NOT_FOUND
@@ -375,7 +376,7 @@ class TestOnlineEndpointsOperations:
         mock_online_endpoint_operations.begin_create_or_update(endpoint=online_endpoint)
 
     def test_online_create_without_entity_type(self, create_yaml_without_identity_type: str) -> None:
-        online_endpoint = OnlineEndpoint.load(create_yaml_without_identity_type)
+        online_endpoint = load_online_endpoint(create_yaml_without_identity_type)
         with pytest.raises(Exception):
             mock_online_endpoint_operations.begin_create(endpoint=online_endpoint)
 

@@ -18,6 +18,7 @@ from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.constants import (
     AzureMLResourceType,
 )
+from azure.ai.ml import load_online_deployment
 
 from pytest_mock import MockFixture
 
@@ -145,13 +146,13 @@ class TestOnlineDeploymentOperations:
         mocker: MockFixture,
     ) -> None:
         mocker.patch(
-            "azure.ai.ml.operations.online_deployment_operations.OnlineDeploymentOperations._get_workspace_location",
+            "azure.ai.ml.operations._online_deployment_operations.OnlineDeploymentOperations._get_workspace_location",
             return_value="xxx",
         )
         mock_create_or_update_online_deployment = mocker.patch.object(
             OnlineDeploymentOperations, "begin_create_or_update", autospec=True
         )
-        online_deployment = OnlineDeployment.load(blue_online_k8s_deployment_yaml)
+        online_deployment = load_online_deployment(blue_online_k8s_deployment_yaml)
         online_deployment.name = rand_compute_name()
         assert online_deployment.instance_type
         mock_online_deployment_operations.begin_create_or_update(deployment=online_deployment)
