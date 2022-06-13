@@ -47,6 +47,10 @@ setup(
         "Programming Language :: Python :: 3.10",
         "License :: OSI Approved :: MIT License",
     ],
+    include_package_data=True,
+    package_data={
+        "pytyped": ["py.typed"],
+    },
     zip_safe=False,
     packages=find_packages(
         exclude=[
