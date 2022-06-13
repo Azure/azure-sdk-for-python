@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0b6 (Unreleased)
+## 1.0.0b7 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b6 (2022-06-10)
 
 ### Features Added
 - Implement log exporter using experimental OT logging sdk
@@ -15,10 +25,6 @@
 ### Breaking Changes
 - Update to OpenTelemetry api/sdk 1.12.0rc1
     ([#24619](https://github.com/Azure/azure-sdk-for-python/pull/24619))
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0b5 (2021-10-05)
 
