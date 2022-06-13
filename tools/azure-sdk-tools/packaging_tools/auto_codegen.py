@@ -18,7 +18,7 @@ def main(generate_input, generate_output):
     spec_folder = data["specFolder"]
     sdk_folder = "."
     result = {}
-    python_tag = data.get('python_tag') if data.get('python_tag') else None
+    python_tag = data.get('python_tag')
     package_total = set()
     for input_readme in data["relatedReadmeMdFiles"]:
         relative_path_readme = str(Path(spec_folder, input_readme))
