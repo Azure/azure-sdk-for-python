@@ -167,18 +167,18 @@ class TestWorkspaceOperation:
         mock_workspace_operation._operation.begin_update.assert_called()
 
     def test_delete_no_wait(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
-        mocker.patch("azure.ai.ml.operations.workspace_operations.delete_resource_by_arm_id", return_value=None)
+        mocker.patch("azure.ai.ml.operations._workspace_operations.delete_resource_by_arm_id", return_value=None)
         mock_workspace_operation.begin_delete("randstr", delete_dependent_resources=True, no_wait=True)
         mock_workspace_operation._operation.begin_delete.assert_called_once()
 
     def test_delete_wait(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
-        mocker.patch("azure.ai.ml.operations.workspace_operations.delete_resource_by_arm_id", return_value=None)
+        mocker.patch("azure.ai.ml.operations._workspace_operations.delete_resource_by_arm_id", return_value=None)
         mocker.patch("azure.ai.ml._utils._azureml_polling.polling_wait", return_value=LROPoller)
         mock_workspace_operation.begin_delete("randstr", delete_dependent_resources=True, no_wait=False)
         mock_workspace_operation._operation.begin_delete.assert_called_once()
 
     def test_delete_wait_exception(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
-        patch("azure.ai.ml.operations.workspace_operations.delete_resource_by_arm_id", return_value=None)
+        patch("azure.ai.ml.operations._workspace_operations.delete_resource_by_arm_id", return_value=None)
         patch("azure.ai.ml._utils._azureml_polling.polling_wait", side_effect=Exception)
         with pytest.raises(Exception):
             mock_workspace_operation.begin_delete("randstr", delete_dependent_resources=True, no_wait=False)
@@ -201,15 +201,15 @@ class TestWorkspaceOperation:
     def test_populate_arm_paramaters(
         self, mock_workspace_operation: WorkspaceOperations, randstr: Callable[[], str], mocker: MockFixture
     ) -> None:
-        mocker.patch("azure.ai.ml.operations.workspace_operations.get_resource_group_location", return_value=randstr)
+        mocker.patch("azure.ai.ml.operations._workspace_operations.get_resource_group_location", return_value=randstr)
         mock_workspace_operation._populate_arm_paramaters(workspace=Workspace(name="name"))
 
     def test_populate_arm_paramaters_other_branches(
         self, mock_workspace_operation: WorkspaceOperations, randstr: Callable[[], str], mocker: MockFixture
     ) -> None:
-        mocker.patch("azure.ai.ml.operations.workspace_operations.get_resource_group_location", return_value=randstr)
+        mocker.patch("azure.ai.ml.operations._workspace_operations.get_resource_group_location", return_value=randstr)
         mocker.patch(
-            "azure.ai.ml.operations.workspace_operations.get_resource_and_group_name",
+            "azure.ai.ml.operations._workspace_operations.get_resource_and_group_name",
             return_value=("resource_name", "group_name"),
         )
         ws = Workspace(name="name")

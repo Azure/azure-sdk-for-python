@@ -8,6 +8,7 @@ from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionCategory
 from azure.ai.ml.entities import WorkspaceConnection
 from azure.ai.ml.entities._workspace.connections.credentials import PatTokenCredentials
+from azure.ai.ml import load_workspace_connection
 
 
 @pytest.fixture
@@ -68,7 +69,7 @@ class TestWorkspaceConnectionsOperation:
             name="dummy_connection",
             metadata=None,
         )
-        workspace_connection = WorkspaceConnection.load(
+        workspace_connection = load_workspace_connection(
             path="./tests/test_configs/workspace_connection/python_feed_pat.yaml"
         )
         mock_workspace_connection_operation.create_or_update(workspace_connection=workspace_connection)
