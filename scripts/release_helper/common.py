@@ -278,7 +278,6 @@ class IssueProcess:
     def run(self) -> None:
         # common part(don't change the order)
         self.auto_assign()  # necessary flow
-        self.init_readme_link()
         self.auto_parse()  # necessary flow
         self.get_target_date()
         self.auto_bot_advice()  # make sure this is the last step
