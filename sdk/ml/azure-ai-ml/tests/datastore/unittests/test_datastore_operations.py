@@ -4,6 +4,7 @@ import pytest
 from unittest.mock import Mock, patch
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.operations import DatastoreOperations
+from azure.ai.ml import load_datastore
 
 
 @pytest.fixture
@@ -58,7 +59,7 @@ class TestDatastoreOperations:
         ],
     )
     def test_create(self, mock_from_rest, mock_datastore_operation: DatastoreOperations, path) -> None:
-        ds = Datastore.load(f"./tests/test_configs/datastore/{path}")
+        ds = load_datastore(f"./tests/test_configs/datastore/{path}")
         mock_datastore_operation.create_or_update(ds)
         mock_datastore_operation._operation.create_or_update.assert_called_once()
 
