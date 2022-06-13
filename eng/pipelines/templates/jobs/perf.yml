@@ -82,7 +82,6 @@ jobs:
 
     - script: >-
         dotnet run -- run
-        --no-sync
         --languages python
         --services "${{ parameters.services }}"
         --package-versions "${{ parameters.packageVersions }}"
