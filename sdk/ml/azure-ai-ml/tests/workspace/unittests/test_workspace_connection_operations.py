@@ -3,7 +3,7 @@ from typing import Callable
 
 import pytest
 from unittest.mock import Mock, patch
-from azure.ai.ml._operations import WorkspaceConnectionsOperations
+from azure.ai.ml.operations import WorkspaceConnectionsOperations
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionCategory
 from azure.ai.ml.entities import WorkspaceConnection

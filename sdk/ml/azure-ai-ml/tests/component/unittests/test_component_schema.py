@@ -8,7 +8,7 @@ import pytest
 from marshmallow import ValidationError
 
 from azure.ai.ml import MLClient
-from azure.ai.ml._operations.component_operations import (
+from azure.ai.ml.operations.component_operations import (
     COMPONENT_PLACEHOLDER,
     COMPONENT_CODE_PLACEHOLDER,
     get_anonymous_component_name,
@@ -66,7 +66,7 @@ def load_component_entity_from_yaml(
 
     # change internal assets into arm id
     with mock.patch(
-        "azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id",
+        "azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id",
         side_effect=mock_get_asset_arm_id,
     ):
         mock_machinelearning_client.components._upload_dependencies(internal_representation)

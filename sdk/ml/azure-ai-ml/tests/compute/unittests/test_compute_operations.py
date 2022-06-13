@@ -3,7 +3,7 @@ import pytest
 import vcr
 from pytest_mock import MockFixture
 from unittest.mock import Mock
-from azure.ai.ml._operations import ComputeOperations
+from azure.ai.ml.operations import ComputeOperations
 from azure.identity import DefaultAzureCredential
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import Compute, AmlCompute, ComputeInstance, IdentityConfiguration, UserAssignedIdentity

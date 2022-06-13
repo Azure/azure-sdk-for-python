@@ -3,7 +3,7 @@ from azure.ai.ml.entities._datastore.datastore import Datastore
 import pytest
 from unittest.mock import Mock, patch
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml._operations import DatastoreOperations
+from azure.ai.ml.operations import DatastoreOperations
 
 
 @pytest.fixture

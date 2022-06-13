@@ -3,7 +3,7 @@ from typing import Callable
 from unittest.mock import Mock, patch
 
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
-from azure.ai.ml._operations import ComponentOperations
+from azure.ai.ml.operations import ComponentOperations
 from azure.ai.ml._scope_dependent_operations import OperationScope
 
 
@@ -41,7 +41,7 @@ class TestComponentOperation:
         )
 
         with patch.object(ComponentOperations, "_upload_dependencies") as mock_thing, patch(
-            "azure.ai.ml._operations.component_operations.Component._from_rest_object",
+            "azure.ai.ml.operations.component_operations.Component._from_rest_object",
             return_value=ParallelComponent(),
         ):
             mock_component_operation.create_or_update(component)
@@ -76,7 +76,7 @@ class TestComponentOperation:
         )
         assert component._auto_increment_version
         with patch.object(ComponentOperations, "_upload_dependencies") as mock_thing, patch(
-            "azure.ai.ml._operations.component_operations.Component._from_rest_object",
+            "azure.ai.ml.operations.component_operations.Component._from_rest_object",
             return_value=component,
         ):
             mock_component_operation.create_or_update(component)
@@ -102,7 +102,7 @@ class TestComponentOperation:
         mock_component_operation._container_operation.list.assert_called_once()
 
     def test_get(self, mock_component_operation: ComponentOperations) -> None:
-        with patch("azure.ai.ml._operations.component_operations.Component") as mock_component_entity:
+        with patch("azure.ai.ml.operations.component_operations.Component") as mock_component_entity:
             mock_component_operation.get("mock_component", "1")
 
         mock_component_operation._version_operation.get.assert_called_once()

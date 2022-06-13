@@ -203,11 +203,11 @@ class TestPipelineJobSchema:
 
         # "Upload" the dependencies so that the dataset serialization behavior can be verified
         mocker.patch(
-            "azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id",
+            "azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id",
             return_value="xxx",
         )
         mocker.patch(
-            "azure.ai.ml._operations.job_operations._upload_and_generate_remote_uri",
+            "azure.ai.ml.operations.job_operations._upload_and_generate_remote_uri",
             return_value="yyy",
         )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
@@ -251,7 +251,7 @@ class TestPipelineJobSchema:
 
         # "Upload" the depedencies so that the dataset serialization behavior can be verified
         mocker.patch(
-            "azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id",
+            "azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id",
             return_value="xxx",
         )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
@@ -305,7 +305,7 @@ class TestPipelineJobSchema:
 
         # "Upload" the depedencies so that the dataset serialization behavior can be verified
         mocker.patch(
-            "azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id",
+            "azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id",
             return_value="xxx",
         )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
@@ -375,11 +375,11 @@ class TestPipelineJobSchema:
 
         # Convert to REST object and check that all outputs were correctly turned into REST format
         mocker.patch(
-            "azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id",
+            "azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id",
             return_value="xxx",
         )
         mocker.patch(
-            "azure.ai.ml._operations.job_operations._upload_and_generate_remote_uri",
+            "azure.ai.ml.operations.job_operations._upload_and_generate_remote_uri",
             return_value="yyy",
         )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
@@ -606,7 +606,7 @@ class TestPipelineJobSchema:
             return "xxx"
 
         mocker.patch(
-            "azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id",
+            "azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id",
             side_effect=mock_get_asset_arm_id,
         )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(pipeline_job)
@@ -666,7 +666,7 @@ class TestPipelineJobSchema:
             return "xxx"
 
         mocker.patch(
-            "azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id",
+            "azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id",
             side_effect=mock_get_asset_arm_id,
         )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(pipeline_job)
@@ -717,7 +717,7 @@ class TestPipelineJobSchema:
 
         # "Upload" the dependencies so that the dataset serialization behavior can be verified
         mocker.patch(
-            "azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id",
+            "azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id",
             return_value="xxx",
         )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
@@ -800,7 +800,7 @@ class TestPipelineJobSchema:
 
         # "Upload" the dependencies so that the dataset serialization behavior can be verified
         mocker.patch(
-            "azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id",
+            "azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id",
             return_value="xxx",
         )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
@@ -927,7 +927,7 @@ class TestPipelineJobSchema:
     ) -> None:
         # "Upload" the dependencies so that the dataset serialization behavior can be verified
         mocker.patch(
-            "azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id",
+            "azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id",
             return_value="xxx",
         )
 
@@ -1047,7 +1047,7 @@ class TestPipelineJobSchema:
     def test_job_defaults(self, mocker: MockFixture):
         pipeline_job = Job.load(path="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_e2e.yml")
         mocker.patch(
-            "azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id",
+            "azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id",
             return_value="xxx",
         )
         rest_job = pipeline_job._to_rest_object()
@@ -1278,8 +1278,8 @@ class TestPipelineJobSchema:
         with open(test_path) as f:
             original_dict = yaml.safe_load(f)
 
-        mocker.patch("azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
-        mocker.patch("azure.ai.ml._operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch("azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch("azure.ai.ml.operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(pipeline)
 
         pipeline_dict = pipeline._to_dict()

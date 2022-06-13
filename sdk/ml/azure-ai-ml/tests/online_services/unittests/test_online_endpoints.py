@@ -8,7 +8,7 @@ import pytest
 
 from azure.core.polling import LROPoller
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from azure.ai.ml._operations import (
+from azure.ai.ml.operations import (
     CodeOperations,
     DatastoreOperations,
     OnlineEndpointOperations,
@@ -16,7 +16,7 @@ from azure.ai.ml._operations import (
     ModelOperations,
     WorkspaceOperations,
 )
-from azure.ai.ml._operations.online_endpoint_operations import _strip_zeroes_from_traffic
+from azure.ai.ml.operations.online_endpoint_operations import _strip_zeroes_from_traffic
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.ml._restclient.v2021_10_01.models import (
@@ -306,7 +306,7 @@ class TestOnlineEndpointsOperations:
         mocker: MockFixture,
     ) -> None:
         mocker.patch(
-            "azure.ai.ml._operations.online_endpoint_operations.OnlineEndpointOperations._get_workspace_location",
+            "azure.ai.ml.operations.online_endpoint_operations.OnlineEndpointOperations._get_workspace_location",
             return_value="xxx",
         )
         mock_create_or_update_online_endpoint = mocker.patch.object(
@@ -327,11 +327,11 @@ class TestOnlineEndpointsOperations:
         mocker: MockFixture,
     ) -> None:
         mocker.patch(
-            "azure.ai.ml._operations.operation_orchestrator.OperationOrchestrator._get_code_asset_arm_id",
+            "azure.ai.ml.operations.operation_orchestrator.OperationOrchestrator._get_code_asset_arm_id",
             return_value="xxx",
         )
         mocker.patch(
-            "azure.ai.ml._operations.online_endpoint_operations.OnlineEndpointOperations._get_workspace_location",
+            "azure.ai.ml.operations.online_endpoint_operations.OnlineEndpointOperations._get_workspace_location",
             return_value="xxx",
         )
 
@@ -360,11 +360,11 @@ class TestOnlineEndpointsOperations:
         mocker: MockFixture,
     ) -> None:
         mocker.patch(
-            "azure.ai.ml._operations.operation_orchestrator.OperationOrchestrator._get_code_asset_arm_id",
+            "azure.ai.ml.operations.operation_orchestrator.OperationOrchestrator._get_code_asset_arm_id",
             return_value="xxx",
         )
         mocker.patch(
-            "azure.ai.ml._operations.online_endpoint_operations.OnlineEndpointOperations._get_workspace_location",
+            "azure.ai.ml.operations.online_endpoint_operations.OnlineEndpointOperations._get_workspace_location",
             return_value="xxx",
         )
         online_endpoint = OnlineEndpoint.load(create_yaml_happy_path)

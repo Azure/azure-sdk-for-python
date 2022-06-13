@@ -49,8 +49,8 @@ class TestPipelineJobEntity:
         node = next(iter(job.jobs.values()))
         assert isinstance(node, RegressionJob)
 
-        mocker.patch("azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
-        mocker.patch("azure.ai.ml._operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch("azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch("azure.ai.ml.operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
@@ -85,8 +85,8 @@ class TestPipelineJobEntity:
         assert isinstance(job, PipelineJob)
         node = next(iter(job.jobs.values()))
         assert isinstance(node, ClassificationJob)
-        mocker.patch("azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
-        mocker.patch("azure.ai.ml._operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch("azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch("azure.ai.ml.operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
@@ -115,8 +115,8 @@ class TestPipelineJobEntity:
         assert isinstance(job, PipelineJob)
         node = next(iter(job.jobs.values()))
         assert isinstance(node, ForecastingJob)
-        mocker.patch("azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
-        mocker.patch("azure.ai.ml._operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch("azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch("azure.ai.ml.operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
@@ -197,8 +197,8 @@ class TestPipelineJobEntity:
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/automl_regression_with_command_node.yml"
         pipeline: PipelineJob = Job.load(path=test_path)
 
-        mocker.patch("azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
-        mocker.patch("azure.ai.ml._operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch("azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch("azure.ai.ml.operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(pipeline)
 
         pipeline_dict = pipeline._to_rest_object().as_dict()
@@ -248,8 +248,8 @@ class TestPipelineJobEntity:
         assert isinstance(job, PipelineJob)
         node = next(iter(job.jobs.values()))
         assert isinstance(node, TextClassificationJob)
-        mocker.patch("azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
-        mocker.patch("azure.ai.ml._operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch("azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch("azure.ai.ml.operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
@@ -280,8 +280,8 @@ class TestPipelineJobEntity:
         assert isinstance(job, PipelineJob)
         node = next(iter(job.jobs.values()))
         assert isinstance(node, TextClassificationMultilabelJob)
-        mocker.patch("azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
-        mocker.patch("azure.ai.ml._operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch("azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch("azure.ai.ml.operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
@@ -309,8 +309,8 @@ class TestPipelineJobEntity:
         assert isinstance(job, PipelineJob)
         node = next(iter(job.jobs.values()))
         assert isinstance(node, TextNerJob)
-        mocker.patch("azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
-        mocker.patch("azure.ai.ml._operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch("azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch("azure.ai.ml.operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
@@ -338,8 +338,8 @@ class TestPipelineJobEntity:
         assert isinstance(job, PipelineJob)
         node = next(iter(job.jobs.values()))
         assert isinstance(node, ImageClassificationJob)
-        mocker.patch("azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
-        mocker.patch("azure.ai.ml._operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch("azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch("azure.ai.ml.operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
@@ -395,8 +395,8 @@ class TestPipelineJobEntity:
         assert isinstance(job, PipelineJob)
         node = next(iter(job.jobs.values()))
         assert isinstance(node, ImageClassificationMultilabelJob)
-        mocker.patch("azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
-        mocker.patch("azure.ai.ml._operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch("azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch("azure.ai.ml.operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
@@ -452,8 +452,8 @@ class TestPipelineJobEntity:
         assert isinstance(job, PipelineJob)
         node = next(iter(job.jobs.values()))
         assert isinstance(node, ImageObjectDetectionJob)
-        mocker.patch("azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
-        mocker.patch("azure.ai.ml._operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch("azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch("azure.ai.ml.operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
@@ -512,8 +512,8 @@ class TestPipelineJobEntity:
         assert isinstance(job, PipelineJob)
         node = next(iter(job.jobs.values()))
         assert isinstance(node, ImageInstanceSegmentationJob)
-        mocker.patch("azure.ai.ml._operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
-        mocker.patch("azure.ai.ml._operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch("azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch("azure.ai.ml.operations.job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()

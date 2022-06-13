@@ -10,7 +10,7 @@ import pytest
 
 from azure.core.polling import LROPoller
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from azure.ai.ml._operations import (
+from azure.ai.ml.operations import (
     CodeOperations,
     DatastoreOperations,
     BatchEndpointOperations,
@@ -161,7 +161,7 @@ class TestBatchEndpointOperations:
         mocker: MockFixture,
     ) -> None:
         mocker.patch(
-            "azure.ai.ml._operations.batch_endpoint_operations.BatchEndpointOperations._get_workspace_location",
+            "azure.ai.ml.operations.batch_endpoint_operations.BatchEndpointOperations._get_workspace_location",
             return_value="xxx",
         )
         mock_create_or_update_batch_endpoint = mocker.patch.object(
@@ -241,7 +241,7 @@ class TestBatchEndpointOperations:
             return mock_response
 
         mocker.patch(
-            "azure.ai.ml._operations.batch_endpoint_operations.BatchEndpointOperations._validate_deployment_name",
+            "azure.ai.ml.operations.batch_endpoint_operations.BatchEndpointOperations._validate_deployment_name",
             return_value="xxxxxx",
         )
 
@@ -272,7 +272,7 @@ class TestBatchEndpointOperations:
         self, mock_batch_endpoint_operations: BatchEndpointOperations, mocker: MockFixture
     ) -> None:
         mocker.patch(
-            "azure.ai.ml._operations.batch_endpoint_operations._get_mfe_base_url_from_discovery_service",
+            "azure.ai.ml.operations.batch_endpoint_operations._get_mfe_base_url_from_discovery_service",
             return_value="https://some-url.com",
         )
         mockresponse = Mock()
@@ -287,7 +287,7 @@ class TestBatchEndpointOperations:
         self, mock_batch_endpoint_operations: BatchEndpointOperations, mocker: MockFixture
     ) -> None:
         mocker.patch(
-            "azure.ai.ml._operations.batch_endpoint_operations._get_mfe_base_url_from_discovery_service",
+            "azure.ai.ml.operations.batch_endpoint_operations._get_mfe_base_url_from_discovery_service",
             return_value="https://some-url.com",
         )
         mockresponse = Mock()

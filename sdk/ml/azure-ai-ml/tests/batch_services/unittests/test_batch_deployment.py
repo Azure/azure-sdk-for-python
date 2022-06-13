@@ -6,7 +6,7 @@ from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
 import pytest
 
 from azure.core.polling import LROPoller
-from azure.ai.ml._operations import (
+from azure.ai.ml.operations import (
     BatchDeploymentOperations,
     WorkspaceOperations,
 )
@@ -87,7 +87,7 @@ class TestBatchDeploymentOperations:
         mocker: MockFixture,
     ) -> None:
         mocker.patch(
-            "azure.ai.ml._operations.batch_deployment_operations.BatchDeploymentOperations._get_workspace_location",
+            "azure.ai.ml.operations.batch_deployment_operations.BatchDeploymentOperations._get_workspace_location",
             return_value="xxx",
         )
         mock_create_or_update_batch_deployment = mocker.patch.object(
@@ -106,7 +106,7 @@ class TestBatchDeploymentOperations:
         self, mock_batch_deployment_operations: BatchDeploymentOperations, mocker: MockFixture
     ) -> None:
         mocker.patch(
-            "azure.ai.ml._operations.batch_deployment_operations._get_mfe_base_url_from_discovery_service",
+            "azure.ai.ml.operations.batch_deployment_operations._get_mfe_base_url_from_discovery_service",
             return_value="https://somebatch-url.com",
         )
         mockresponse = Mock()

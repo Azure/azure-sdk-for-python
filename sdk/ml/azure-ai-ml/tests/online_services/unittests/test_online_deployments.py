@@ -10,7 +10,7 @@ from azure.ai.ml.entities._deployment.online_deployment import (
 import pytest
 
 from azure.core.polling import LROPoller
-from azure.ai.ml._operations import (
+from azure.ai.ml.operations import (
     OnlineDeploymentOperations,
     WorkspaceOperations,
 )
@@ -145,7 +145,7 @@ class TestOnlineDeploymentOperations:
         mocker: MockFixture,
     ) -> None:
         mocker.patch(
-            "azure.ai.ml._operations.online_deployment_operations.OnlineDeploymentOperations._get_workspace_location",
+            "azure.ai.ml.operations.online_deployment_operations.OnlineDeploymentOperations._get_workspace_location",
             return_value="xxx",
         )
         mock_create_or_update_online_deployment = mocker.patch.object(

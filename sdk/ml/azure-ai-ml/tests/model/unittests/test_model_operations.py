@@ -3,7 +3,7 @@ from typing import Callable, Iterable
 from unittest.mock import Mock, patch
 import pytest
 
-from azure.ai.ml._operations import DatastoreOperations, ModelOperations
+from azure.ai.ml.operations import DatastoreOperations, ModelOperations
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.entities._assets import Model
@@ -68,7 +68,7 @@ version: 3"""
                 container_name="containerName",
             ),
         ) as mock_upload, patch(
-            "azure.ai.ml._operations.model_operations.Model._from_rest_object",
+            "azure.ai.ml.operations.model_operations.Model._from_rest_object",
             return_value=Model(),
         ):
             model = Model.load(path=p)
@@ -110,12 +110,12 @@ path: ./model.pkl"""
         model.version = None
 
         with patch(
-            "azure.ai.ml._operations.model_operations._check_and_upload_path",
+            "azure.ai.ml.operations.model_operations._check_and_upload_path",
             return_value=(model, "indicatorfile.txt"),
-        ), patch("azure.ai.ml._operations.model_operations.Model._from_rest_object", return_value=model), patch(
-            "azure.ai.ml._operations.model_operations._get_default_datastore_info", return_value=None
+        ), patch("azure.ai.ml.operations.model_operations.Model._from_rest_object", return_value=model), patch(
+            "azure.ai.ml.operations.model_operations._get_default_datastore_info", return_value=None
         ), patch(
-            "azure.ai.ml._operations.model_operations._update_metadata", return_value=None
+            "azure.ai.ml.operations.model_operations._update_metadata", return_value=None
         ) as mock_update:
             mock_model_operation.create_or_update(model)
             mock_model_operation._model_versions_operation.create_or_update.assert_called_once()
@@ -136,7 +136,7 @@ path: ./model.pkl"""
     def test_get_name_and_version(self, mock_model_operation: ModelOperations, randstr: Callable[[], str]) -> None:
         mock_model_operation._model_container_operation.get.return_value = None
         with patch(
-            "azure.ai.ml._operations.model_operations.Model._from_rest_object",
+            "azure.ai.ml.operations.model_operations.Model._from_rest_object",
             return_value=None,
         ):
             mock_model_operation.get(name=randstr(), version="1")

@@ -3,7 +3,7 @@ import requests
 from pathlib import Path
 from azure.ai.ml._utils._data_utils import read_local_mltable_metadata_contents, read_remote_mltable_metadata_contents
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml._operations import CodeOperations, DatastoreOperations
+from azure.ai.ml.operations import CodeOperations, DatastoreOperations
 from unittest.mock import Mock, patch
 from collections import OrderedDict
 

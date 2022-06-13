@@ -1,5 +1,5 @@
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml._operations.data_operations import DataOperations, DatastoreOperations
+from azure.ai.ml.operations.data_operations import DataOperations, DatastoreOperations
 from azure.ai.ml.constants import OrderString
 from azure.core.paging import ItemPaged
 from azure.ai.ml.entities._assets import Data
@@ -84,7 +84,7 @@ class TestDataOperations:
                 container_name="containerName",
             ),
         ) as mock_thing, patch(
-            "azure.ai.ml._operations.data_operations.Data._from_rest_object",
+            "azure.ai.ml.operations.data_operations.Data._from_rest_object",
             return_value=None,
         ):
             data = Data.load(path=data_path)

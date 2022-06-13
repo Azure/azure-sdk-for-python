@@ -14,7 +14,7 @@ from .test_vcr_utils import before_record_cb, vcr_header_filters
 from azure.identity import DefaultAzureCredential
 from azure.ai.ml import MLClient
 from azure.core.exceptions import HttpResponseError
-from azure.ai.ml._operations import (
+from azure.ai.ml.operations import (
     CodeOperations,
     DatastoreOperations,
     EnvironmentOperations,
@@ -22,8 +22,8 @@ from azure.ai.ml._operations import (
     RunOperations,
     WorkspaceOperations,
 )
-from azure.ai.ml._operations.job_ops_helper import get_git_properties
-from azure.ai.ml._operations.run_history_constants import RunHistoryConstants
+from azure.ai.ml.operations._job_ops_helper import get_git_properties
+from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.constants import AzureMLResourceType, AZUREML_PRIVATE_FEATURES_ENV_VAR
 from azure.ai.ml.entities._job.command_job import CommandJob
