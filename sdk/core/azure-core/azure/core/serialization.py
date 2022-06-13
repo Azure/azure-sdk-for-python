@@ -256,13 +256,6 @@ class _MyMutableMapping(MutableMapping):
     def __len__(self) -> int:
         return self._data.__len__()
 
-    def __eq__(self, other: typing.Any) -> bool:
-        try:
-            other_model = _MyMutableMapping(other)
-        except ValueError:
-            return False
-        return self._data == other_model._data
-
     def __ne__(self, other: typing.Any) -> bool:
         return not self.__eq__(other)
 
@@ -316,6 +309,16 @@ class _MyMutableMapping(MutableMapping):
             self._data.setdefault(key)
         self._data.setdefault(key, default)
 
+    def __eq__(self, other: typing.Any) -> bool:
+        try:
+            other_model = self.__class__(other)
+        except ValueError:
+            return False
+        return self._data == other_model._data
+
+    def __repr__(self) -> str:
+        return str(self._data)
+
 def _is_model(obj: typing.Any) -> bool:
     return getattr(obj, "_is_model", False)
 
@@ -344,7 +347,7 @@ def _get_rest_field(attr_to_rest_field: typing.Dict[str, "_RestField"], rest_nam
 
 def _create_value(rest_field: typing.Optional["_RestField"], value: typing.Any) -> typing.Any:
     if not (rest_field and rest_field._is_model):
-        return value
+        return _serialize(value)
     return rest_field._type(value)
 
 class Model(_MyMutableMapping):
@@ -356,12 +359,6 @@ class Model(_MyMutableMapping):
         if "_data" in kwargs:
             raise TypeError(f"{class_name}.__init__() got some positional-only arguments passed as keyword arguments: '_data'")
         if args:
-            # rest_names = [rf._rest_name for rf in self._attr_to_rest_field.values()]
-            # non_rest_entries = [a for a in args[0] if a not in rest_names and a in self._attr_to_rest_field]
-            # if non_rest_entries:
-            #     raise TypeError(
-            #         f"{class_name}.__init__() got the following unexpected entries: '{', '.join(non_rest_entries)}'"
-            #     )
             super().__init__(
                 {
                     k: _create_value(_get_rest_field(self._attr_to_rest_field, k), v)
@@ -376,7 +373,7 @@ class Model(_MyMutableMapping):
                     f"{class_name}.__init__() got an unexpected keyword argument '{non_attr_kwargs[0]}'"
                 )
             super().__init__({
-                self._attr_to_rest_field[k]._rest_name: v for k, v in kwargs.items()
+                self._attr_to_rest_field[k]._rest_name: _serialize(v) for k, v in kwargs.items()
             })
 
     def copy(self):
@@ -434,7 +431,7 @@ class _RestField:
         # by this point, type and rest_name will have a value bc we default
         # them in __new__ of the Model class
         item = obj.get(self._rest_name)
-        return item if self._is_model else self._type(item)
+        return item if _is_model(item) else self._type(item)
 
     def __set__(self, obj: Model, value) -> None:
         if self._is_model and not _is_model(value):
