@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 from azure.ai.ml import MLClient
-from azure.ai.ml.operations.component_operations import COMPONENT_PLACEHOLDER
+from azure.ai.ml.operations._component_operations import COMPONENT_PLACEHOLDER
 from azure.ai.ml._restclient.v2021_10_01.models import ComponentVersionData
 from azure.ai.ml._schema.component.parallel_component import ParallelComponentSchema
 from azure.ai.ml._utils._arm_id_utils import PROVIDER_RESOURCE_ID_WITH_VERSION
@@ -53,7 +53,7 @@ def load_component_entity_from_yaml(
 
     # change internal assets into arm id
     with mock.patch(
-        "azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id",
+        "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
         side_effect=mock_get_asset_arm_id,
     ):
         mock_machinelearning_client.components._upload_dependencies(internal_representation)

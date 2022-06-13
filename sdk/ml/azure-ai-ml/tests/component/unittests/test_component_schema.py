@@ -1,3 +1,4 @@
+from typing import Union
 from unittest import mock
 
 import json
@@ -7,11 +8,10 @@ from pathlib import Path
 import pytest
 from marshmallow import ValidationError
 
-from azure.ai.ml import MLClient
-from azure.ai.ml.operations.component_operations import (
+from azure.ai.ml import MLClient, load_component
+from azure.ai.ml.operations._component_operations import (
     COMPONENT_PLACEHOLDER,
     COMPONENT_CODE_PLACEHOLDER,
-    get_anonymous_component_name,
 )
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 from azure.ai.ml._schema.component.command_component import CommandComponentSchema
@@ -23,7 +23,7 @@ from azure.ai.ml.constants import (
     InputOutputModes,
     LegacyAssetTypes,
 )
-from azure.ai.ml.entities import CommandComponent
+from azure.ai.ml.entities import CommandComponent, Environment
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
 
@@ -66,7 +66,7 @@ def load_component_entity_from_yaml(
 
     # change internal assets into arm id
     with mock.patch(
-        "azure.ai.ml.operations.OperationOrchestrator.get_asset_arm_id",
+        "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
         side_effect=mock_get_asset_arm_id,
     ):
         mock_machinelearning_client.components._upload_dependencies(internal_representation)
@@ -241,7 +241,7 @@ class TestCommandComponent:
 
     def test_command_component_str(self):
         test_path = "./tests/test_configs/components/helloworld_component.yml"
-        component_entity = CommandComponent.load(path=test_path)
+        component_entity = load_component(path=test_path)
         component_str = str(component_entity)
         assert component_entity.name in component_str
         assert component_entity.version in component_str
@@ -250,17 +250,17 @@ class TestCommandComponent:
         # scenario 1: same component interface, same code
         test_path1 = "./tests/test_configs/components/basic_component_code_local_path.yml"
         component_entity1 = load_component_entity_from_yaml(test_path1, mock_machinelearning_client, is_anonymous=True)
-        component_name1 = get_anonymous_component_name(component_entity1)
+        component_name1 = component_entity1._get_anonymous_hash()
         component_entity2 = load_component_entity_from_yaml(test_path1, mock_machinelearning_client, is_anonymous=True)
-        component_name2 = get_anonymous_component_name(component_entity2)
+        component_name2 = component_entity2._get_anonymous_hash()
         assert component_name1 == component_name2
 
         # scenario 2: same component, no code
         test_path2 = "./tests/test_configs/components/helloworld_component.yml"
         component_entity1 = load_component_entity_from_yaml(test_path2, mock_machinelearning_client, is_anonymous=True)
-        component_name1 = get_anonymous_component_name(component_entity1)
+        component_name1 = component_entity1._get_anonymous_hash()
         component_entity2 = load_component_entity_from_yaml(test_path2, mock_machinelearning_client, is_anonymous=True)
-        component_name2 = get_anonymous_component_name(component_entity2)
+        component_name2 = component_entity2._get_anonymous_hash()
         assert component_name1 == component_name2
 
         # scenario 3: same component interface, different code
@@ -275,14 +275,14 @@ class TestCommandComponent:
             is_anonymous=True,
             fields_to_override=data1,
         )
-        component_name1 = get_anonymous_component_name(component_entity1)
+        component_name1 = component_entity1._get_anonymous_hash()
         component_entity2 = load_component_entity_from_yaml(
             test_path1,
             mock_machinelearning_client,
             is_anonymous=True,
             fields_to_override=data2,
         )
-        component_name2 = get_anonymous_component_name(component_entity2)
+        component_name2 = component_entity2._get_anonymous_hash()
         assert component_name1 != component_name2
 
         # scenario 4: different component interface, same code
@@ -295,14 +295,14 @@ class TestCommandComponent:
             is_anonymous=True,
             fields_to_override=data1,
         )
-        component_name1 = get_anonymous_component_name(component_entity1)
+        component_name1 = component_entity1._get_anonymous_hash()
         component_entity2 = load_component_entity_from_yaml(
             test_path1,
             mock_machinelearning_client,
             is_anonymous=True,
             fields_to_override=data2,
         )
-        component_name2 = get_anonymous_component_name(component_entity2)
+        component_name2 = component_entity2._get_anonymous_hash()
         assert component_name1 != component_name2
 
     def test_component_name_validate(self):
@@ -320,14 +320,14 @@ class TestCommandComponent:
         for invalid_name in invalid_component_names:
             params_override = [{"name": invalid_name}]
             with pytest.raises(ValidationError) as e:
-                CommandComponent.load(path=test_path, params_override=params_override)
+                load_component(path=test_path, params_override=params_override)
             err_msg = "Component name should only contain lower letter, number, underscore"
             assert err_msg in str(e.value)
 
         valid_component_names = ["n", "name", "n_a_m_e", "name_1"]
         for valid_name in valid_component_names:
             params_override = [{"name": valid_name}]
-            CommandComponent.load(path=test_path, params_override=params_override)
+            load_component(path=test_path, params_override=params_override)
 
     def test_component_input_name_validate(self):
         yaml_files = [
@@ -339,7 +339,7 @@ class TestCommandComponent:
         ]
         for yaml_file in yaml_files:
             with pytest.raises(ValidationException, match="is not a valid parameter name"):
-                CommandComponent.load(path=yaml_file)
+                load_component(path=yaml_file)
 
     def test_component_output_name_validate(self):
         yaml_files = [
@@ -351,4 +351,69 @@ class TestCommandComponent:
         ]
         for yaml_file in yaml_files:
             with pytest.raises(ValidationException, match="is not a valid parameter name"):
-                CommandComponent.load(path=yaml_file)
+                load_component(path=yaml_file)
+
+    @pytest.mark.parametrize(
+        "expected_location,asset_object",
+        [
+            (
+                "code",
+                Code(name="AzureML-Code", version="1"),
+            ),
+            (
+                "environment",
+                Environment(name="AzureML-Minimal", version="1"),
+            ),
+        ],
+    )
+    def test_component_validate_versioned_asset_dependencies(
+        self,
+        expected_location: str,
+        asset_object: Union[Code, Environment],
+    ) -> None:
+        component_path = "./tests/test_configs/components/helloworld_component.yml"
+        component = load_component(path=component_path)
+        assert component._validate().passed is True, json.dumps(component._to_dict(), indent=2)
+
+        def _check_validation_result(new_asset, should_fail=False) -> None:
+            setattr(component, expected_location, new_asset)
+            validation_result = component._validate()
+            if should_fail:
+                assert validation_result.passed is False and expected_location in validation_result.messages, (
+                    f"field {expected_location} with value {str(new_asset)} should be invalid, "
+                    f"but validation message is {json.dumps(validation_result._to_dict(), indent=2)}"
+                )
+            else:
+                assert validation_result.passed, (
+                    f"field {expected_location} with value {str(new_asset)} should be valid, "
+                    f"but met unexpected error: {json.dumps(validation_result._to_dict(), indent=2)}"
+                )
+
+        # object
+        # _check_validation_result(asset_object)
+        # versioned
+        _check_validation_result("azureml:{}:1".format(asset_object.name))
+        # labelled
+        _check_validation_result("{}@latest".format(asset_object.name))
+
+        # invalid. default version is allowed for environment
+        if expected_location not in ["environment"]:
+            _check_validation_result("{}".format(asset_object.name), True)
+
+        if expected_location in ["code"]:
+            # non-existent path
+            _check_validation_result("/tmp/non-existent-path", True)
+            # existent path
+            _check_validation_result("../python")
+
+    def test_component_validate_multiple_invalid_fields(self) -> None:
+        component_path = "./tests/test_configs/components/helloworld_component.yml"
+        component: CommandComponent = load_component(path=component_path)
+        component.name = None
+        component.command += " & echo ${{inputs.non_existent}} & echo ${{outputs.non_existent}}"
+        validation_result = component._validate()
+        assert validation_result.passed is False
+        assert validation_result.messages == {
+            "name": "Missing data for required field.",
+            "command": "Invalid data binding expression: inputs.non_existent, outputs.non_existent",
+        }

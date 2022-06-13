@@ -59,7 +59,7 @@ def data_operations(mocker: MockFixture) -> Mock:
 
 @pytest.fixture
 def component_operations(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml.operations.component_operations.ComponentOperations")
+    return mocker.patch("azure.ai.ml.operations._component_operations.ComponentOperations")
 
 
 @pytest.fixture

@@ -6,13 +6,15 @@ from azure.ai.ml.entities import Component, ParallelComponent
 from azure.ai.ml.entities._job.pipeline._exceptions import UnexpectedKeywordError
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
+from azure.ai.ml import load_component
+
 
 @pytest.mark.unittest
 class TestParallelComponentEntity:
     def test_component_load(self):
         # code is specified in yaml, value is respected
         component_yaml = "./tests/test_configs/components/basic_parallel_component_score.yml"
-        parallel_component = Component.load(
+        parallel_component = load_component(
             path=component_yaml,
         )
         assert parallel_component.task.get("type") == "function"
@@ -63,7 +65,7 @@ class TestParallelComponentEntity:
         )
 
         yaml_path = "./tests/test_configs/components/basic_parallel_component_score.yml"
-        yaml_component = Component.load(path=yaml_path)
+        yaml_component = load_component(path=yaml_path)
         yaml_component_dict = yaml_component._to_rest_object().as_dict()
         yaml_component_dict = pydash.omit(
             yaml_component_dict,
@@ -102,18 +104,18 @@ class TestParallelComponentEntity:
             "task": {
                 "append_row_to": "${{outputs.scoring_summary}}",
                 "args": "--label ${{inputs.label}} --model ${{inputs.model}} " "--output ${{outputs.scored_result}}",
-                "code": "azureml:./src",
+                "code": "azureml:../python",
                 "entry_script": "score.py",
                 "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
                 "type": "function",
             },
         }
         yaml_path = "./tests/test_configs/components/helloworld_parallel.yml"
-        yaml_component_version = Component.load(path=yaml_path)
+        yaml_component_version = load_component(path=yaml_path)
         pipeline_input = PipelineInput(name="pipeline_input", owner="pipeline", meta=None)
         yaml_component = yaml_component_version(component_in_number=10, component_in_path=pipeline_input)
 
         yaml_component._component = "fake_component"
         rest_yaml_component = yaml_component._to_rest_object()
 
-        assert expected_rest_component == rest_yaml_component
+        assert rest_yaml_component == expected_rest_component
