@@ -7,7 +7,7 @@
 # pylint: disable=invalid-overridden-method
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Dict,
+    Union, Optional, Any, Dict, List, Tuple,
     TYPE_CHECKING
 )
 
@@ -515,6 +515,23 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
+        :keyword str owner:
+            The owner of the file or directory.
+        :keyword str group:
+            The owning group of the file or directory.
+        :keyword str acl:
+            Sets POSIX access control rights on files and directories. The value is a
+            comma-separated list of access control entries. Each access control entry (ACE) consists of a
+            scope, a type, a user or group identifier, and permissions in the format
+            "[scope:][type]:[id]:[permissions]".
+        :keyword str lease_id:
+            Proposed lease ID, in a GUID string format. The DataLake service returns
+            400 (Invalid request) if the proposed lease ID is not in the correct format.
+        :keyword int lease_duration:
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change.
         :keyword str permissions:
             Optional and only valid if Hierarchical Namespace
             is enabled for the account. Sets POSIX access permissions for the file
@@ -633,6 +650,32 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
+        :keyword str owner:
+            The owner of the file or directory.
+        :keyword str group:
+            The owning group of the file or directory.
+        :keyword str acl:
+            Sets POSIX access control rights on files and directories. The value is a
+            comma-separated list of access control entries. Each access control entry (ACE) consists of a
+            scope, a type, a user or group identifier, and permissions in the format
+            "[scope:][type]:[id]:[permissions]".
+        :keyword str lease_id:
+            Proposed lease ID, in a GUID string format. The DataLake service returns
+            400 (Invalid request) if the proposed lease ID is not in the correct format.
+        :keyword int lease_duration:
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change.
+        :keyword expiry_options:
+            Indicates mode of the expiry time.
+            Possible values include: 'NeverExpire', 'RelativeToNow', 'Absolute'"
+        :paramtype expiry_options: Literal["NeverExpire", "RelativeToNow", "Absolute"]
+        :keyword expires_on:
+            The time to set the file to expiry.
+            When expiry_options is RelativeTo*, expires_on should be an int in milliseconds.
+            If the type of expires_on is datetime, it should be in UTC time.
+        :paramtype expires_on: datetime or int
         :keyword str permissions:
             Optional and only valid if Hierarchical Namespace
             is enabled for the account. Sets POSIX access permissions for the file
@@ -720,73 +763,6 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         file_client = self.get_file_client(file)
         await file_client.delete_file(**kwargs)
         return file_client
-
-    # TODO: Temporarily removing this for GA release.
-    # @distributed_trace_async
-    # async def delete_files(self, *files, **kwargs):
-    #     # type: (...) -> AsyncIterator[AsyncHttpResponse]
-    #     """Marks the specified files or empty directories for deletion.
-
-    #     The files/empty directories are later deleted during garbage collection.
-
-    #     If a delete retention policy is enabled for the service, then this operation soft deletes the
-    #     files/empty directories and retains the files or snapshots for specified number of days.
-    #     After specified number of days, files' data is removed from the service during garbage collection.
-    #     Soft deleted files/empty directories are accessible through :func:`list_deleted_paths()`.
-
-    #     :param files:
-    #         The files/empty directories to delete. This can be a single file/empty directory, or multiple values can
-    #         be supplied, where each value is either the name of the file/directory (str) or
-    #         FileProperties/DirectoryProperties.
-
-    #         .. note::
-    #             When the file/dir type is dict, here's a list of keys, value rules.
-
-    #             blob name:
-    #                 key: 'name', value type: str
-    #             if the file modified or not:
-    #                 key: 'if_modified_since', 'if_unmodified_since', value type: datetime
-    #             etag:
-    #                 key: 'etag', value type: str
-    #             match the etag or not:
-    #                 key: 'match_condition', value type: MatchConditions
-    #             lease:
-    #                 key: 'lease_id', value type: Union[str, LeaseClient]
-    #             timeout for subrequest:
-    #                 key: 'timeout', value type: int
-
-    #     :type files: list[str], list[dict],
-    #         or list[Union[~azure.storage.filedatalake.FileProperties, ~azure.storage.filedatalake.DirectoryProperties]
-    #     :keyword ~datetime.datetime if_modified_since:
-    #         A DateTime value. Azure expects the date value passed in to be UTC.
-    #         If timezone is included, any non-UTC datetimes will be converted to UTC.
-    #         If a date is passed in without timezone info, it is assumed to be UTC.
-    #         Specify this header to perform the operation only
-    #         if the resource has been modified since the specified time.
-    #     :keyword ~datetime.datetime if_unmodified_since:
-    #         A DateTime value. Azure expects the date value passed in to be UTC.
-    #         If timezone is included, any non-UTC datetimes will be converted to UTC.
-    #         If a date is passed in without timezone info, it is assumed to be UTC.
-    #         Specify this header to perform the operation only if
-    #         the resource has not been modified since the specified date/time.
-    #     :keyword bool raise_on_any_failure:
-    #         This is a boolean param which defaults to True. When this is set, an exception
-    #         is raised even if there is a single operation failure.
-    #     :keyword int timeout:
-    #         The timeout parameter is expressed in seconds.
-    #     :return: An iterator of responses, one for each blob in order
-    #     :rtype: AsyncIterator[~azure.core.pipeline.transport.AsyncHttpResponse]
-
-    #     .. admonition:: Example:
-
-    #         .. literalinclude:: ../samples/datalake_samples_file_system_async.py
-    #             :start-after: [START batch_delete_files_or_empty_directories]
-    #             :end-before: [END batch_delete_files_or_empty_directories]
-    #             :language: python
-    #             :dedent: 4
-    #             :caption: Deleting multiple files or empty directories.
-    #     """
-    #     return await self._container_client.delete_blobs(*files, **kwargs)
 
     @distributed_trace_async
     async def _undelete_path(self, deleted_path_name, deletion_id, **kwargs):

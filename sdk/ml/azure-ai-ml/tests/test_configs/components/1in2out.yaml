@@ -1,0 +1,18 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+name: one_in_two_out
+display_name: One In Two Out (Split)
+version: 0.0.1
+type: command
+inputs:
+  input1:
+    type: uri_folder
+outputs:
+  output1:
+    type: uri_folder
+  output2:
+    type: uri_folder
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+command: >-
+  echo ${{inputs.input1}} &&
+  echo ${{outputs.output1}} &&
+  echo ${{outputs.output2}}

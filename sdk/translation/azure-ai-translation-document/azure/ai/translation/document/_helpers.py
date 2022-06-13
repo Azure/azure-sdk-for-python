@@ -40,12 +40,12 @@ def get_translation_input(args, kwargs, continuation_token):
             target_url = kwargs.pop("target_url", None)
             if not target_url:
                 target_url = args[1]
-            target_language_code = kwargs.pop("target_language_code", None)
-            if not target_language_code:
-                target_language_code = args[2]
+            target_language = kwargs.pop("target_language", None)
+            if not target_language:
+                target_language = args[2]
 
             # Additional kwargs
-            source_language_code = kwargs.pop("source_language_code", None)
+            source_language = kwargs.pop("source_language", None)
             prefix = kwargs.pop("prefix", None)
             suffix = kwargs.pop("suffix", None)
             storage_type = kwargs.pop("storage_type", None)
@@ -60,12 +60,12 @@ def get_translation_input(args, kwargs, continuation_token):
                             prefix=prefix,
                             suffix=suffix
                         ),
-                        language=source_language_code,
+                        language=source_language,
                     ),
                     targets=[
                         _TargetInput(
                             target_url=target_url,
-                            language=target_language_code,
+                            language=target_language,
                             glossaries=[g._to_generated() for g in glossaries]  # pylint: disable=protected-access
                             if glossaries else None,
                             category=category_id,
@@ -77,7 +77,7 @@ def get_translation_input(args, kwargs, continuation_token):
         except (AttributeError, TypeError, IndexError):
             raise ValueError(
                 "Pass 'inputs' for multiple inputs or 'source_url', 'target_url', "
-                "and 'target_language_code' for a single input."
+                "and 'target_language' for a single input."
             )
 
     return request

@@ -10,7 +10,17 @@ import platform
 import datetime
 import calendar
 import logging
-from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable, Tuple, Mapping
+from typing import (
+    TYPE_CHECKING,
+    Type,
+    Optional,
+    Dict,
+    Union,
+    Any,
+    Iterable,
+    Tuple,
+    Mapping,
+)
 
 import six
 
@@ -20,7 +30,7 @@ from uamqp.message import MessageHeader
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind, Link
 
-from .amqp import AmqpAnnotatedMessage
+from .amqp import AmqpAnnotatedMessage, AmqpMessageHeader
 from ._version import VERSION
 from ._constants import (
     PROP_PARTITION_KEY_AMQP_SYMBOL,
@@ -112,6 +122,28 @@ def create_properties(user_agent=None):
     return properties
 
 
+def set_event_partition_key(event, partition_key):
+    # type: (Union[AmqpAnnotatedMessage, EventData], Optional[Union[bytes, str]]) -> None
+    if not partition_key:
+        return
+
+    try:
+        raw_message = event.raw_amqp_message  # type: ignore
+    except AttributeError:
+        raw_message = event
+
+    annotations = raw_message.annotations
+    if annotations is None:
+        annotations = dict()
+    annotations[
+        PROP_PARTITION_KEY_AMQP_SYMBOL
+    ] = partition_key  # pylint:disable=protected-access
+    if not raw_message.header:
+        raw_message.header = AmqpMessageHeader(header=True)
+    else:
+        raw_message.header.durable = True
+
+
 def set_message_partition_key(message, partition_key):
     # type: (Message, Optional[Union[bytes, str]]) -> None
     """Set the partition key as an annotation on a uamqp message.
@@ -173,9 +205,7 @@ def trace_message(event, parent_span=None):
 
 def get_event_links(events):
     # pylint:disable=isinstance-second-argument-not-valid-type
-    trace_events = (
-        events if isinstance(events, Iterable) else (events,)
-    )
+    trace_events = events if isinstance(events, Iterable) else (events,)
     links = []
     try:
         for event in trace_events:  # type: ignore
@@ -311,14 +341,18 @@ def decode_with_recurse(data, encoding="UTF-8"):
         return data
     if isinstance(data, six.binary_type):
         return data.decode(encoding)
-    if isinstance(data, Mapping): # pylint:disable=isinstance-second-argument-not-valid-type
+    if isinstance(
+        data, Mapping
+    ):  # pylint:disable=isinstance-second-argument-not-valid-type
         decoded_mapping = {}
         for k, v in data.items():
             decoded_key = decode_with_recurse(k, encoding)
             decoded_val = decode_with_recurse(v, encoding)
             decoded_mapping[decoded_key] = decoded_val
         return decoded_mapping
-    if isinstance(data, Iterable): # pylint:disable=isinstance-second-argument-not-valid-type
+    if isinstance(
+        data, Iterable
+    ):  # pylint:disable=isinstance-second-argument-not-valid-type
         decoded_list = []
         for d in data:
             decoded_list.append(decode_with_recurse(d, encoding))

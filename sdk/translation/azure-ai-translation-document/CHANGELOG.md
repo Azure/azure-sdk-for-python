@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 (Unreleased)
+## 1.0.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,18 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0 (2022-06-07)
+
+### Breaking Changes
+
+- Changed: `begin_translation` parameter `target_language_code` has been renamed to `target_language`.
+- Changed: `begin_translation` keyword-only argument `source_language_code` has been renamed to `source_language`.
+- Changed: `DocumentTranslationInput` keyword-only argument and property `source_language_code` has been renamed to `source_language`.
+- Changed: `TranslationTarget` keyword-only argument and property `language_code` has been renamed to `language`.
+- Changed: `TranslationStatus` property `documents_not_yet_started_count` has been renamed to `documents_not_started_count`.
+- Removed: `results_per_page` keyword-only argument from `list_translation_statuses` and `list_document_statuses`.
+
 
 ## 1.0.0b6 (2022-02-08)
 

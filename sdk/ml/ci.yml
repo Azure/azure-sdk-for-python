@@ -11,8 +11,6 @@ trigger:
     include:
     - sdk/ml/
     - scripts/
-    # eng/common code changes trigger template pipeline for basic checking.
-    - eng/common/
 
 pr:
   branches:
@@ -25,11 +23,9 @@ pr:
   paths:
     include:
     - sdk/ml/
-    # eng/common code changes trigger template pipeline for basic checking.
-    - eng/common/
 
 extends:
-  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+  template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: ml
     ValidateFormatting: true

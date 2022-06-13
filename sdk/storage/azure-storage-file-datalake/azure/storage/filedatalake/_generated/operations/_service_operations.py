@@ -16,6 +16,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
@@ -35,15 +36,18 @@ def build_list_file_systems_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    resource = kwargs.pop('resource', "account")  # type: str
-    version = kwargs.pop('version', "2021-06-08")  # type: str
-    prefix = kwargs.pop('prefix', None)  # type: Optional[str]
-    continuation = kwargs.pop('continuation', None)  # type: Optional[str]
-    max_results = kwargs.pop('max_results', None)  # type: Optional[int]
-    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
-    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    resource = kwargs.pop('resource', _params.pop('resource', "account"))  # type: str
+    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-06-08"))  # type: str
+    prefix = kwargs.pop('prefix', _params.pop('prefix', None))  # type: Optional[str]
+    continuation = kwargs.pop('continuation', _params.pop('continuation', None))  # type: Optional[str]
+    max_results = kwargs.pop('max_results', _params.pop('maxResults', None))  # type: Optional[int]
+    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
+    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
@@ -53,29 +57,27 @@ def build_list_file_systems_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['resource'] = _SERIALIZER.query("resource", resource, 'str')
+    _params['resource'] = _SERIALIZER.query("resource", resource, 'str')
     if prefix is not None:
-        _query_parameters['prefix'] = _SERIALIZER.query("prefix", prefix, 'str')
+        _params['prefix'] = _SERIALIZER.query("prefix", prefix, 'str')
     if continuation is not None:
-        _query_parameters['continuation'] = _SERIALIZER.query("continuation", continuation, 'str')
+        _params['continuation'] = _SERIALIZER.query("continuation", continuation, 'str')
     if max_results is not None:
-        _query_parameters['maxResults'] = _SERIALIZER.query("max_results", max_results, 'int', minimum=1)
+        _params['maxResults'] = _SERIALIZER.query("max_results", max_results, 'int', minimum=1)
     if timeout is not None:
-        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if request_id_parameter is not None:
-        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         **kwargs
     )
 
@@ -93,11 +95,11 @@ class ServiceOperations(object):
     models = _models
 
     def __init__(self, *args, **kwargs):
-        args = list(args)
-        self._client = args.pop(0) if args else kwargs.pop("client")
-        self._config = args.pop(0) if args else kwargs.pop("config")
-        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
-        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
 
     @distributed_trace
@@ -110,7 +112,7 @@ class ServiceOperations(object):
         timeout=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.FileSystemList"]
+        # type: (...) -> Iterable[_models.FileSystemList]
         """List FileSystems.
 
         List filesystems and their properties in given account.
@@ -145,13 +147,16 @@ class ServiceOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.models.FileSystemList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        resource = kwargs.pop('resource', "account")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FileSystemList"]
+        resource = kwargs.pop('resource', _params.pop('resource', "account"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.FileSystemList]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -165,9 +170,11 @@ class ServiceOperations(object):
                     request_id_parameter=request_id_parameter,
                     timeout=timeout,
                     template_url=self.list_file_systems.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -181,9 +188,11 @@ class ServiceOperations(object):
                     request_id_parameter=request_id_parameter,
                     timeout=timeout,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
