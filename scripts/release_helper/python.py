@@ -47,7 +47,7 @@ class IssueProcessPython(IssueProcess):
     def run(self) -> None:
         super().run()
         self.auto_close()
-            
+
 
 class Python(Common):
     def __init__(self, issues, assignee_token, language_owner):
