@@ -1,6 +1,6 @@
 import datetime
 import logging
-from typing import List
+from typing import List, Any
 
 from bs4 import BeautifulSoup
 from github.Issue import Issue
@@ -32,7 +32,8 @@ def get_origin_link_and_tag(issue_body_list: List[str]) -> (str, str):
         link = link.replace('[', "").replace(']', "").replace('(', "").replace(')', "")
     return link, readme_tag
 
-def get_last_released_date(package_name):
+
+def get_last_released_date(package_name: str) -> (str, str):
     pypi_link = f'https://pypi.org/project/{package_name}/#history'
     res = requests.get(pypi_link)
     soup = BeautifulSoup(res.text, 'html.parser')
@@ -47,6 +48,20 @@ def get_last_released_date(package_name):
     last_version_date = datetime.datetime.strptime(last_version_date_str, '%Y-%m-%dT%H:%M:%S')
     return last_version, last_version_date
 
+
+def record_release(package_name: str, issue_info: Any, file: str) -> None:
+    created_at = issue_info.created_at.strftime('%Y-%m-%d')
+    closed_at = issue_info.closed_at.strftime('%Y-%m-%d')
+    assignee = issue_info.assignee.login
+    link = issue_info.html_url
+    closed_issue_info = f'{package_name},{assignee},{created_at},{closed_at},{link}\n'
+    with open(file, 'r') as file_read:
+        lines = file_read.readlines()
+    with open(file, 'w') as file_write:
+        lines.insert(1, closed_issue_info)
+        file_write.writelines(lines)
+
+
 class IssuePackage:
     issue = None  # origin issue instance
     rest_repo = None  # repo instance: Azure/azure-rest-api-specs
@@ -54,6 +69,5 @@ class IssuePackage:
 
     def __init__(self, issue: Issue, rest_repo: Repository):
         self.issue = issue
-        self.issue_num =
         self.rest_repo = rest_repo
         self.labels_name = {label.name for label in issue.labels}

@@ -3,7 +3,7 @@ import re
 from typing import Any, List
 
 from common import IssueProcess, Common
-from utils import AUTO_CLOSE_LABEL, get_last_released_date
+from utils import AUTO_CLOSE_LABEL, get_last_released_date, record_release
 
 # assignee dict which will be assigned to handle issues
 _PYTHON_OWNER = {'BigCat20196', 'msyyc', 'azure-sdk'}
@@ -13,6 +13,9 @@ _ASSIGNEE_TOKEN_PYTHON = {
     'BigCat20196': os.getenv('PYTHON_BIGCAT_TOKEN'),
     'msyyc': os.getenv('PYTHON_MSYYC_TOKEN'),
 }
+
+# record published issues
+_FILE_OUT = 'published_issues_python.csv'
 
 
 class IssueProcessPython(IssueProcess):
@@ -39,10 +42,12 @@ class IssueProcessPython(IssueProcess):
             self.issue_package.issue.edit(state='closed')
             self.issue_package.issue.add_to_labels('auto-closed')
             self.log("has been closed!")
+            record_release(self.package_name, self.issue_package.issue, _FILE_OUT)
 
     def run(self) -> None:
         super().run()
         self.auto_close()
+            
 
 class Python(Common):
     def __init__(self, issues, assignee_token, language_owner):
