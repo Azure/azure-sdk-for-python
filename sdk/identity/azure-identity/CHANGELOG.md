@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Environment credential added supports for the cert password    ([#24652](https://github.com/Azure/azure-sdk-for-python/issues/24652))
+- Environment credential added `AZURE_CLIENT_CERTIFICATE_PASSWORD` supports for the cert password    ([#24652](https://github.com/Azure/azure-sdk-for-python/issues/24652))
 
 ### Breaking Changes
 
