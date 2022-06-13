@@ -7,13 +7,13 @@ from typing import Dict
 import pytest
 import vcr
 from .test_vcr_utils import before_record_cb
-from azure.ai.ml.operations.job_ops_helper import (
+from azure.ai.ml.operations._job_ops_helper import (
     list_logs,
     stream_logs_until_completion,
     _incremental_print,
     _get_sorted_filtered_logs,
 )
-from azure.ai.ml.operations.run_operations import RunOperations
+from azure.ai.ml.operations._run_operations import RunOperations
 from azure.ai.ml._restclient.runhistory.models import RunDetails, RunDetailsWarning
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from mock import mock_open, patch
