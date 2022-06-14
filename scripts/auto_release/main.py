@@ -9,8 +9,8 @@ from pathlib import Path
 from functools import wraps
 from typing import List, Any, Dict
 from packaging.version import Version
-from ghapi.all import GhApi
-from azure.storage.blob import BlobServiceClient, ContainerClient
+# from ghapi.all import GhApi
+# from azure.storage.blob import BlobServiceClient, ContainerClient
 from util import add_certificate
 
 _LOG = logging.getLogger()
@@ -256,12 +256,28 @@ class CodegenTestPR:
 
         modify_file(sdk_readme, edit_sdk_readme)
 
+    @staticmethod
+    def get_need_mgmt_core():
+        template_path = Path('../../tools/azure-sdk-tools/packaging_tools/templates/setup.py')
+        with open(template_path, 'r') as fr:
+            content = fr.readlines()
+            for line in content:
+                if 'msrest' in line:
+                    target_msrest = line.strip().strip(',')
+                    yield target_msrest
+                if 'azure-mgmt-core' in line:
+                    target_mgmt_core = line.strip().strip(',')
+                    yield target_mgmt_core
+
     def check_sdk_setup(self):
         def edit_sdk_setup(content: List[str]):
+            target_msrest, target_mgmt_core = self.get_need_mgmt_core()
+            msrest_pattern = re.compile('msrest>=\d\.\d[1-2]\.\d[1-2]')
+            mgmt_core_pattern = re.compile('azure-mgmt-core>=\d\.\d\.\d,<\d\.\d\.\d')
             for i in range(0, len(content)):
-                content[i] = content[i].replace('msrestazure>=0.4.32,<2.0.0', 'azure-mgmt-core>=1.3.0,<2.0.0')
-                content[i] = content[i].replace('azure-mgmt-core>=1.2.0,<2.0.0', 'azure-mgmt-core>=1.3.0,<2.0.0')
-                content[i] = content[i].replace('msrest>=0.5.0', 'msrest>=0.6.21')
+                content[i] = content[i].replace('msrestazure>=0.4.32,<2.0.0', target_mgmt_core)
+                content[i] = re.sub(mgmt_core_pattern, target_mgmt_core, content[i])
+                content[i] = re.sub(msrest_pattern, target_msrest, content[i])
 
         modify_file(str(Path(self.sdk_code_path()) / 'setup.py'), edit_sdk_setup)
 
@@ -561,5 +577,6 @@ if __name__ == '__main__':
     logging.basicConfig()
     main_logger.setLevel(logging.INFO)
 
-    instance = CodegenTestPR()
-    instance.run()
+    CodegenTestPR.get_need_mgmt_core()
+    # instance = CodegenTestPR()
+    # instance.run()
