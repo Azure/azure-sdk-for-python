@@ -6,7 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from __future__ import annotations
+
 import logging
 import time
 from typing import Any, IO, Callable, ClassVar, List, Optional, Union
@@ -33,15 +33,15 @@ def patch_sdk():
     """
 
 
-class GetLedgerEntryPollingMethod(PollingMethod):
-    """Polling method for GetLedgerEntry requests.
+class StatePollingMethod(PollingMethod):
+    """Polling method for methods returning responses containing a 'state' field; the polling
+    completes when 'state' becomes a desired value.
     """
 
-    _ready_state: ClassVar[str] = "Ready"
-
-    def __init__(self, operation: Callable[[], JSON], polling_interval: float = 0.5):
+    def __init__(self, operation: Callable[[], JSON], desired_state: str, polling_interval_s: float = 0.5):
         self._operation = operation
-        self._polling_interval = polling_interval
+        self._desired_state = desired_state
+        self._polling_interval_s = polling_interval_s
 
     def initialize(self, client, initial_response, deserialization_callback):
         self._evaluate_response(initial_response)
@@ -49,7 +49,7 @@ class GetLedgerEntryPollingMethod(PollingMethod):
 
     def _evaluate_response(self, response: JSON) -> None:
         self._status = (
-            "finished" if response["state"] == GetLedgerEntryPollingMethod._ready_state
+            "finished" if response["state"] == self._desired_state
             else "polling"
         )
         self._latest_response = response
@@ -61,7 +61,7 @@ class GetLedgerEntryPollingMethod(PollingMethod):
                 self._evaluate_response(response)
 
                 if not self.finished():
-                    time.sleep(self._polling_interval)
+                    time.sleep(self._polling_interval_s)
         except Exception as e:
             self._status = "failed"
             logger.warning(str(e))
