@@ -264,10 +264,10 @@ class CodegenTestPR:
             content = fr.readlines()
             for line in content:
                 if 'msrest>' in line:
-                    target_msrest = line.strip().strip(',')
+                    target_msrest = line.strip().strip(',').strip('\'')
                     yield target_msrest
                 if 'azure-mgmt-core' in line:
-                    target_mgmt_core = line.strip().strip(',')
+                    target_mgmt_core = line.strip().strip(',').strip('\'')
                     yield target_mgmt_core
 
     def check_sdk_setup(self):
