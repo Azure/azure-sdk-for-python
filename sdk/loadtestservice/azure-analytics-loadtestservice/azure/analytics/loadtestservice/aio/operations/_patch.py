@@ -62,6 +62,9 @@ class TestOperations(TestOperationsGenerated):
     """
     for performing the operations on test
     """
+    def __init__(self, *args, **kwargs):
+        super(TestOperations, self).__init__(*args, **kwargs)
+
     def upload_test_file(
         self,
         test_id,
