@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Removed the Extractive Text Summarization feature and related models: `ExtractSummaryAction`, `ExtractSummaryResult`, and `SummarySentence`. To access this beta feature, install the `5.2.0b4` version of the client library.
+
 ### Bugs Fixed
 
 ### Other Changes
