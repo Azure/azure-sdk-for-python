@@ -296,6 +296,9 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if options.get("maxIntegratedCacheStaleness"):
         headers[http_constants.HttpHeaders.DedicatedGatewayCacheStaleness] = options["maxIntegratedCacheStaleness"]
+    
+    if options.get("autoUpgradePolicy"):
+        headers[http_constants.HttpHeaders.AutoscaleSettings] = options["autoUpgradePolicy"]
 
     return headers
 
@@ -673,3 +676,12 @@ def validate_cache_staleness_value(max_integrated_cache_staleness):
     int(max_integrated_cache_staleness)  # Will throw error if data type cant be converted to int
     if max_integrated_cache_staleness <= 0:
         raise ValueError("Parameter 'max_integrated_cache_staleness_in_ms' can only be a positive integer.")
+
+def autoscale_header(auto_scale):
+    max_throughput = auto_scale.auto_scale_max_throughput
+    increment_percentage = auto_scale.auto_upgrade_throughput_max_increment_percentage
+
+    auto_scale_params = {"maxThroughput": max_throughput, "autoUpgradePolicy": {"throughputPolicy": {"incrementPercentage": increment_percentage}}}
+    auto_scale_header = json.dumps(auto_scale_params)
+
+    return auto_scale_header
