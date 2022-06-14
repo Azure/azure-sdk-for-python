@@ -7,7 +7,6 @@ import base64
 import functools
 import json
 from typing import Optional, Any
-from msrest import Deserializer
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling import AsyncLROPoller
 from azure.core.polling.base_polling import OperationFailed, BadStatus
@@ -121,9 +120,7 @@ class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
     def last_modified_on(self):
         if not self._current_body:
             return None
-        return self._current_body.last_updated_date_time or Deserializer().deserialize_iso(
-                self._current_body.additional_properties["lastUpdateDateTime"]
-            )  # backwards compatibility
+        return self._current_body.last_update_date_time
 
     @property
     def id(self):
@@ -310,9 +307,7 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
     def last_modified_on(self):
         if not self._current_body:
             return None
-        return self._current_body.last_updated_date_time or Deserializer().deserialize_iso(
-                self._current_body.additional_properties["lastUpdateDateTime"]
-            )  # backwards compatibility
+        return self._current_body.last_update_date_time
 
     @property
     def total_actions_count(self):
