@@ -126,7 +126,7 @@ def create_container(db, id):
 
     try:
         container = db.create_container(
-            id= id+"_container_unique_keys",
+            id=id+"_container_unique_keys",
             partition_key=partition_key,
             unique_key_policy={'uniqueKeys': [{'paths': ['/field1/field2', '/field3']}]}
         )
@@ -181,6 +181,18 @@ def create_container(db, id):
     except exceptions.CosmosResourceExistsError:
         print('A container with id \'_container_analytical_store\' already exists')
 
+    print("\n2.8 Create Container - With auto scale setting")
+
+    try:
+        container = db.create_container(
+            id=id+"_container_auto_scale_setting",
+            partition_key=partition_key,
+            auto_scale_setting=AutoScale(5000, 0)
+        )
+        print('Container with id \'{0}\' created'.format(container.id))
+
+    except exceptions.CosmosResourceExistsError:
+        print('A container with id \'{0}\' already exists'.format(coll['id']))
 
 
 def manage_provisioned_throughput(db, id):
