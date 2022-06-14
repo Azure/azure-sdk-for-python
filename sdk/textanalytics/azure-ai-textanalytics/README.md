@@ -8,7 +8,6 @@ The Azure Cognitive Service for Language is a cloud-based service that provides 
 - Key Phrase Extraction
 - Multiple Analysis
 - Healthcare Entities Analysis
-- Extractive Text Summarization
 - Custom Named Entity Recognition
 - Custom Text Classification
 
@@ -235,7 +234,6 @@ The following section provides several code snippets covering some of the most c
 - [Detect Language](#detect-language "Detect language")
 - [Healthcare Entities Analysis](#healthcare-entities-analysis "Healthcare Entities Analysis")
 - [Multiple Analysis](#multiple-analysis "Multiple analysis")
-- [Extractive Summarization][extract_summary_sample]
 - [Custom Entity Recognition][recognize_custom_entities_sample]
 - [Custom Single Category Classification][single_category_classify_sample]
 - [Custom Multi Category Classification][multi_category_classify_sample]
@@ -515,7 +513,6 @@ Note: The Healthcare Entities Analysis service is only available in the Standard
 - Linked Entity Recognition
 - Key Phrase Extraction
 - Sentiment Analysis
-- Extractive Summarization (see sample [here][extract_summary_sample])
 - Custom Entity Recognition (see sample [here][recognize_custom_entities_sample])
 - Custom Single Category Classification (see sample [here][single_category_classify_sample])
 - Custom Multi Category Classification (see sample [here][multi_category_classify_sample])
@@ -648,7 +645,6 @@ Common scenarios
 - Detect language: [sample_detect_language.py][detect_language_sample] ([async version][detect_language_sample_async])
 - Healthcare Entities Analysis: [sample_analyze_healthcare_entities.py][analyze_healthcare_entities_sample] ([async version][analyze_healthcare_entities_sample_async])
 - Multiple Analysis: [sample_analyze_actions.py][analyze_sample] ([async version][analyze_sample_async])
-- Extractive text summarization: [sample_extract_summary.py][extract_summary_sample] ([async version][extract_summary_sample_async])
 - Custom Entity Recognition: [sample_recognize_custom_entities.py][recognize_custom_entities_sample] ([async_version][recognize_custom_entities_sample_async])
 - Custom Single Classification: [sample_single_category_classify.py][single_category_classify_sample] ([async_version][single_category_classify_sample_async])
 - Custom Multi Classification: [sample_multi_category_classify.py][multi_category_classify_sample] ([async_version][multi_category_classify_sample_async])
@@ -747,8 +743,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [analyze_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_actions_async.py
 [opinion_mining_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_sentiment_with_opinion_mining.py
 [opinion_mining_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_with_opinion_mining_async.py
-[extract_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_extract_summary.py
-[extract_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_extract_summary_async.py
 [recognize_custom_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_custom_entities.py
 [recognize_custom_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_custom_entities_async.py
 [single_category_classify_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_single_category_classify.py

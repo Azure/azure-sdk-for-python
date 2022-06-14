@@ -147,8 +147,6 @@ IGNORED_SAMPLES = {
         "sample_multi_category_classify_async.py",
         "sample_recognize_custom_entities_async.py",
         "sample_single_category_classify_async.py",
-        "sample_extract_summary.py",
-        "sample_extract_summary_async.py",
     ]
 }
 
