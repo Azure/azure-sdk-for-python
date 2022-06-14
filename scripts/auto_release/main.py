@@ -9,8 +9,8 @@ from pathlib import Path
 from functools import wraps
 from typing import List, Any, Dict
 from packaging.version import Version
-# from ghapi.all import GhApi
-# from azure.storage.blob import BlobServiceClient, ContainerClient
+from ghapi.all import GhApi
+from azure.storage.blob import BlobServiceClient, ContainerClient
 from util import add_certificate
 
 _LOG = logging.getLogger()
@@ -577,6 +577,5 @@ if __name__ == '__main__':
     logging.basicConfig()
     main_logger.setLevel(logging.INFO)
 
-    CodegenTestPR.get_need_mgmt_core()
-    # instance = CodegenTestPR()
-    # instance.run()
+    instance = CodegenTestPR()
+    instance.run()
