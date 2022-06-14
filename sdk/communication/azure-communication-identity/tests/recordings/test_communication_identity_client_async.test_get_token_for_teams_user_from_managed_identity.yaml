@@ -9,15 +9,15 @@ interactions:
       Connection:
       - keep-alive
       Cookie:
-      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrjYbd8G8MLd29SURYj6Nn30M8xCPPUcUVXpJICHBjb3KiZfvUZtynHinoOx1WDiCimv5rnWb5aluZly3d7f5Da8sc6DMi2OEAKGsOh5t_KIIkI4p4OklARZn-1e8PavgNb3T4FrLc2A5BnGLhQSkdgP5LqDz7Pp2WfYCulECfWP8gAA;
-        fpc=AiKB7Lzp9jdEnWnATXCqmno; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevrd0hQokX0-3pkdXxwOWP9pxnLrIxpw88Yo6QiBV5HkUjEuOHu5Lp6dNGECpN-JB5PSWXqcOVLsTFUSqYyHhtEus5M2JDzHLc27e-sc8_Xq20_-7pYzsH7fOCjqekK96QFxjQH9crAJeSOQgU_W3LlHWKA7gqOtp891AZ63gTrlkAgAA;
+        fpc=AnADcw5aHgpKm-xWDi-B_ds; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.27.1
     method: GET
-    uri: https://sanitized.microsoftonline.com/common/userrealm/SDKUser@acsauthtest.onmicrosoft.com?api-version=1.0
+    uri: https://sanitized.microsoftonline.com/common/userrealm/sanitized@test.onmicrosoft.com?api-version=1.0
   response:
     body:
-      string: '{"ver": "1.0", "account_type": "Managed", "domain_name": "acsauthtest.onmicrosoft.com",
+      string: '{"ver": "1.0", "account_type": "Managed", "domain_name": "sanitized",
         "cloud_instance_name": "microsoftonline.com", "cloud_audience_urn": "urn:federation:MicrosoftOnline"}'
     headers:
       cache-control:
@@ -29,7 +29,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Nov 2021 10:40:54 GMT
+      - Wed, 01 Jun 2022 08:16:29 GMT
       expires:
       - '-1'
       p3p:
@@ -37,7 +37,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - fpc=AiKB7Lzp9jdEnWnATXCqmno; expires=Thu, 02-Dec-2021 10:40:55 GMT; path=/;
+      - fpc=AnADcw5aHgpKm-xWDi-B_ds; expires=Fri, 01-Jul-2022 08:16:29 GMT; path=/;
         secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -46,38 +46,40 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ests-server:
-      - 2.1.12171.14 - WEULR1 ProdSlices
+      - 2.1.12794.7 - NEULR1 ProdSlices
+      x-xss-protection:
+      - '0'
     status:
       code: 200
       message: OK
 - request:
-    body: '{"token": "sanitized"}'
+    body: '{"token": "sanitized", "appId": "sanitized", "userId": "sanitized"}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '2057'
+      - '2178'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
     method: POST
-    uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2021-10-31-preview
+    uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2022-06-01
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-11-02T11:40:54.5598223+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2022-06-01T09:25:43.1377945+00:00"}'
     headers:
-      api-supported-versions: 2021-03-31-preview1, 2021-10-31-preview
+      api-supported-versions: 2021-10-31-preview, 2022-06-01
       content-length: '818'
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Nov 2021 10:40:56 GMT
-      ms-cv: V2lv1AoJTkWyGY5ruQtUEg.0
+      date: Wed, 01 Jun 2022 08:16:29 GMT
+      ms-cv: yvQ1iZZSB0ugpg7nx65eLg.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 392ms
+      x-processing-time: 231ms
     status:
       code: 200
       message: OK
-    url: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2021-10-31-preview
+    url: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2022-06-01
 version: 1

@@ -1,14 +1,14 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-04-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "969",
+        "Content-Length": "834",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -74,65 +74,57 @@
               "modelVersion": "latest",
               "stringIndexType": "UnicodeCodePoint"
             }
-          },
-          {
-            "taskName": "5",
-            "kind": "ExtractiveSummarization",
-            "parameters": {
-              "modelVersion": "latest",
-              "stringIndexType": "UnicodeCodePoint"
-            }
           }
         ]
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "3e6ad7b6-9156-407c-9ca5-3bef7c671fa4",
+        "apim-request-id": "665659b4-ac70-4d90-91f8-96c1dba991fb",
         "Content-Length": "0",
-        "Date": "Thu, 12 May 2022 22:45:39 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/94d40b47-f70d-48ad-9054-3797b222def2?api-version=2022-04-01-preview",
+        "Date": "Thu, 09 Jun 2022 17:41:45 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/2defaba1-8fc7-4156-86b2-bbb4fbac3ecb?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "518"
+        "x-envoy-upstream-service-time": "321"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/94d40b47-f70d-48ad-9054-3797b222def2?api-version=2022-04-01-preview\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/2defaba1-8fc7-4156-86b2-bbb4fbac3ecb?api-version=2022-05-01\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "d39ccca6-9edb-4e1a-a273-38cd3cab0c49",
-        "Content-Length": "3041",
+        "apim-request-id": "ced5982d-6428-407c-9205-54750f406468",
+        "Content-Length": "2417",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 12 May 2022 22:45:45 GMT",
+        "Date": "Thu, 09 Jun 2022 17:41:51 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "222"
+        "x-envoy-upstream-service-time": "162"
       },
       "ResponseBody": {
-        "jobId": "94d40b47-f70d-48ad-9054-3797b222def2",
-        "lastUpdateDateTime": "2022-05-12T22:45:44Z",
-        "createdDateTime": "2022-05-12T22:45:40Z",
-        "expirationDateTime": "2022-05-13T22:45:40Z",
+        "jobId": "2defaba1-8fc7-4156-86b2-bbb4fbac3ecb",
+        "lastUpdatedDateTime": "2022-06-09T17:41:49Z",
+        "createdDateTime": "2022-06-09T17:41:45Z",
+        "expirationDateTime": "2022-06-10T17:41:45Z",
         "status": "running",
         "errors": [],
         "tasks": {
-          "completed": 4,
+          "completed": 3,
           "failed": 0,
           "inProgress": 2,
-          "total": 6,
+          "total": 5,
           "items": [
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-05-12T22:45:42.6505159Z",
+              "lastUpdateDateTime": "2022-06-09T17:41:48.4556236Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -176,312 +168,6 @@
                       "transactionsCount": 1
                     },
                     "entities": [],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            },
-            {
-              "kind": "KeyPhraseExtractionLROResults",
-              "taskName": "1",
-              "lastUpdateDateTime": "2022-05-12T22:45:43.7926578Z",
-              "status": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 4,
-                  "validDocumentsCount": 4,
-                  "erroneousDocumentsCount": 0,
-                  "transactionsCount": 4
-                },
-                "documents": [
-                  {
-                    "id": "56",
-                    "keyPhrases": [],
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "0",
-                    "keyPhrases": [],
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "19",
-                    "keyPhrases": [],
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "1",
-                    "keyPhrases": [],
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            },
-            {
-              "kind": "EntityLinkingLROResults",
-              "taskName": "3",
-              "lastUpdateDateTime": "2022-05-12T22:45:42.5749462Z",
-              "status": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 4,
-                  "validDocumentsCount": 4,
-                  "erroneousDocumentsCount": 0,
-                  "transactionsCount": 4
-                },
-                "documents": [
-                  {
-                    "id": "56",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "0",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "19",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "1",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            },
-            {
-              "kind": "ExtractiveSummarizationLROResults",
-              "taskName": "5",
-              "lastUpdateDateTime": "2022-05-12T22:45:44.792522Z",
-              "status": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 4,
-                  "validDocumentsCount": 4,
-                  "erroneousDocumentsCount": 0,
-                  "transactionsCount": 4
-                },
-                "documents": [
-                  {
-                    "id": "56",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "sentences": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "0",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "sentences": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "19",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "sentences": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "1",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "sentences": [],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-08-01"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/94d40b47-f70d-48ad-9054-3797b222def2?api-version=2022-04-01-preview\u0026showStats=True",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "727ac1ce-cf2a-4b32-9d12-c7383c91d2c0",
-        "Content-Length": "5362",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 12 May 2022 22:45:51 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "336"
-      },
-      "ResponseBody": {
-        "jobId": "94d40b47-f70d-48ad-9054-3797b222def2",
-        "lastUpdateDateTime": "2022-05-12T22:45:49Z",
-        "createdDateTime": "2022-05-12T22:45:40Z",
-        "expirationDateTime": "2022-05-13T22:45:40Z",
-        "status": "succeeded",
-        "errors": [],
-        "tasks": {
-          "completed": 6,
-          "failed": 0,
-          "inProgress": 0,
-          "total": 6,
-          "items": [
-            {
-              "kind": "EntityRecognitionLROResults",
-              "taskName": "0",
-              "lastUpdateDateTime": "2022-05-12T22:45:42.6505159Z",
-              "status": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 4,
-                  "validDocumentsCount": 4,
-                  "erroneousDocumentsCount": 0,
-                  "transactionsCount": 4
-                },
-                "documents": [
-                  {
-                    "id": "56",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "0",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "19",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "1",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            },
-            {
-              "kind": "KeyPhraseExtractionLROResults",
-              "taskName": "1",
-              "lastUpdateDateTime": "2022-05-12T22:45:43.7926578Z",
-              "status": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 4,
-                  "validDocumentsCount": 4,
-                  "erroneousDocumentsCount": 0,
-                  "transactionsCount": 4
-                },
-                "documents": [
-                  {
-                    "id": "56",
-                    "keyPhrases": [],
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "0",
-                    "keyPhrases": [],
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "19",
-                    "keyPhrases": [],
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "1",
-                    "keyPhrases": [],
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
                     "warnings": []
                   }
                 ],
@@ -492,7 +178,7 @@
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-05-12T22:45:49.9042181Z",
+              "lastUpdateDateTime": "2022-06-09T17:41:47.5217276Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -550,7 +236,263 @@
             {
               "kind": "EntityLinkingLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-05-12T22:45:42.5749462Z",
+              "lastUpdateDateTime": "2022-06-09T17:41:49.97045Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 4,
+                  "validDocumentsCount": 4,
+                  "erroneousDocumentsCount": 0,
+                  "transactionsCount": 4
+                },
+                "documents": [
+                  {
+                    "id": "56",
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "0",
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "19",
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "1",
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/2defaba1-8fc7-4156-86b2-bbb4fbac3ecb?api-version=2022-05-01\u0026showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "0ff00da7-65cf-4b84-a6f3-4bda034f8bb1",
+        "Content-Length": "4664",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 09 Jun 2022 17:41:56 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "255"
+      },
+      "ResponseBody": {
+        "jobId": "2defaba1-8fc7-4156-86b2-bbb4fbac3ecb",
+        "lastUpdatedDateTime": "2022-06-09T17:41:53Z",
+        "createdDateTime": "2022-06-09T17:41:45Z",
+        "expirationDateTime": "2022-06-10T17:41:45Z",
+        "status": "succeeded",
+        "errors": [],
+        "tasks": {
+          "completed": 5,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 5,
+          "items": [
+            {
+              "kind": "EntityRecognitionLROResults",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-06-09T17:41:48.4556236Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 4,
+                  "validDocumentsCount": 4,
+                  "erroneousDocumentsCount": 0,
+                  "transactionsCount": 4
+                },
+                "documents": [
+                  {
+                    "id": "56",
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "0",
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "19",
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "1",
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            },
+            {
+              "kind": "KeyPhraseExtractionLROResults",
+              "taskName": "1",
+              "lastUpdateDateTime": "2022-06-09T17:41:53.6650063Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 4,
+                  "validDocumentsCount": 4,
+                  "erroneousDocumentsCount": 0,
+                  "transactionsCount": 4
+                },
+                "documents": [
+                  {
+                    "id": "56",
+                    "keyPhrases": [],
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "0",
+                    "keyPhrases": [],
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "19",
+                    "keyPhrases": [],
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "1",
+                    "keyPhrases": [],
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            },
+            {
+              "kind": "PiiEntityRecognitionLROResults",
+              "taskName": "2",
+              "lastUpdateDateTime": "2022-06-09T17:41:47.5217276Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 4,
+                  "validDocumentsCount": 4,
+                  "erroneousDocumentsCount": 0,
+                  "transactionsCount": 4
+                },
+                "documents": [
+                  {
+                    "redactedText": ":)",
+                    "id": "56",
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "redactedText": ":(",
+                    "id": "0",
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "redactedText": ":P",
+                    "id": "19",
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "redactedText": ":D",
+                    "id": "1",
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-01-15"
+              }
+            },
+            {
+              "kind": "EntityLinkingLROResults",
+              "taskName": "3",
+              "lastUpdateDateTime": "2022-06-09T17:41:49.97045Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -604,7 +546,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-05-12T22:45:48.8065741Z",
+              "lastUpdateDateTime": "2022-06-09T17:41:53.704706Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -725,60 +667,6 @@
                 ],
                 "errors": [],
                 "modelVersion": "2020-04-01"
-              }
-            },
-            {
-              "kind": "ExtractiveSummarizationLROResults",
-              "taskName": "5",
-              "lastUpdateDateTime": "2022-05-12T22:45:44.792522Z",
-              "status": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 4,
-                  "validDocumentsCount": 4,
-                  "erroneousDocumentsCount": 0,
-                  "transactionsCount": 4
-                },
-                "documents": [
-                  {
-                    "id": "56",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "sentences": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "0",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "sentences": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "19",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "sentences": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "1",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "sentences": [],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-08-01"
               }
             }
           ]
