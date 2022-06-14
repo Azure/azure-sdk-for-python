@@ -9,31 +9,31 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 02 Nov 2021 10:41:01 GMT
+      - Wed, 01 Jun 2022 08:16:37 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/identities?api-version=2021-10-31-preview
+    uri: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
   response:
     body:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
-        2021-03-31-preview1, 2021-10-31-preview
+        2021-10-31-preview, 2021-11-01, 2022-06-01
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Nov 2021 10:41:02 GMT
-      ms-cv: cWq73Md+S0KeJPPfXUyFaw.0
+      date: Wed, 01 Jun 2022 08:16:36 GMT
+      ms-cv: 4R6b2QbzP06pHueyx/juRw.2.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 101ms
+      x-processing-time: 87ms
     status:
       code: 201
       message: Created
-    url: https://sanitized.communication.azure.com/identities?api-version=2021-10-31-preview
+    url: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
 - request:
     body: '{}'
     headers:
@@ -44,28 +44,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 02 Nov 2021 10:41:02 GMT
+      - Wed, 01 Jun 2022 08:16:37 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-10-31-preview
+    uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2022-06-01
   response:
     body:
       string: '{"error": {"code": "ValidationError", "message": "Scopes: The Scopes
         field is required.", "target": "Scopes"}}'
     headers:
       content-type: application/json
-      date: Tue, 02 Nov 2021 10:41:02 GMT
-      ms-cv: xwtS1CtvGUW/DZC29U8UtQ.0
+      date: Wed, 01 Jun 2022 08:16:37 GMT
+      ms-cv: MiY2wPJ8yUWL3IHtuJ1Mpw.2.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 16ms
+      x-processing-time: 30ms
     status:
       code: 400
       message: Bad Request
-    url: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-10-31-preview
+    url: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2022-06-01
 version: 1

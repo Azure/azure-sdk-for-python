@@ -46,17 +46,31 @@ class BodyReplacerProcessor(RecordingProcessor):
 
     def process_response(self, response):
         if is_text_payload(response) and response['body']['string']:
-            response['body'] = self._replace_keys(response['body']['string'])
+            response['body']['string'] = self._replace_keys(response['body']['string'])
 
         return response
 
     def _replace_keys(self, body):
+        def _replace_recursively(obj):
+            if isinstance(obj, dict):
+                for key in obj:
+                    value = obj[key]
+                    if key in self._keys:
+                        obj[key] = self._replacement
+                    elif key == 'iceServers':
+                        _replace_recursively(value[0])
+                    elif key == 'urls':
+                        obj[key][0] = "turn.skype.com"
+                    else:
+                        _replace_recursively(value)
+            elif isinstance(obj, list):
+                for i in obj:
+                    _replace_recursively(i)
+
         import json
         try:
             body = json.loads(body)
-            for key in self._keys:
-                if key in body:
-                    body[key] = self._replacement
+            _replace_recursively(body)
 
         except (KeyError, ValueError):
             return body
@@ -72,9 +86,10 @@ class CommunicationTestCase(AzureTestCase):
     def setUp(self):
         super(CommunicationTestCase, self).setUp()
         if self.is_playback():
-            self.connection_str = "endpoint=https://sanitized/;accesskey=fake==="
+            self.connection_str = "endpoint=https://sanitized.communication.azure.com/;accesskey=fake==="
         else:
-            self.connection_str = os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING')
+            self.connection_str = os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING') or \
+                                  os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
             endpoint, _ = parse_connection_str(self.connection_str)
             self._resource_name = endpoint.split(".")[0]
             self.scrubber.register_name_pair(self._resource_name, "sanitized")

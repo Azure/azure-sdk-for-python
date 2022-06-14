@@ -4,8 +4,11 @@
 # license information.
 # -------------------------------------------------------------------------
 import os
-
-from azure.core.pipeline.policies import HttpLoggingPolicy, HeadersPolicy 
+from typing import (  # pylint: disable=unused-import
+    cast,
+    Tuple,
+)
+from azure.core.pipeline.policies import HttpLoggingPolicy, HeadersPolicy
 
 def create_token_credential():
     # type: () -> FakeTokenCredential or DefaultAzureCredential
@@ -42,3 +45,30 @@ def get_header_policy(**kwargs):
         header_policy.add_header("x-ms-useragent", useragent)
 
     return header_policy
+
+def parse_connection_str(conn_str):
+    # type: (str) -> Tuple[str, str, str, str]
+    if conn_str is None:
+        raise ValueError(
+            "Connection string is undefined."
+        )
+    endpoint = None
+    shared_access_key = None
+    for element in conn_str.split(";"):
+        key, _, value = element.partition("=")
+        if key.lower() == "endpoint":
+            endpoint = value.rstrip("/")
+        elif key.lower() == "accesskey":
+            shared_access_key = value
+    if not all([endpoint, shared_access_key]):
+        raise ValueError(
+            "Invalid connection string. You can get the connection string from your resource page in the Azure Portal. "
+            "The format should be as follows: endpoint=https://<ResourceUrl>/;accesskey=<KeyValue>"
+        )
+    left_slash_pos = cast(str, endpoint).find("//")
+    if left_slash_pos != -1:
+        host = cast(str, endpoint)[left_slash_pos + 2:]
+    else:
+        host = str(endpoint)
+
+    return host, str(shared_access_key)

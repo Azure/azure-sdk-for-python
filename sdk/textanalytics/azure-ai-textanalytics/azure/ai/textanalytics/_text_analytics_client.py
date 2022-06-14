@@ -9,6 +9,7 @@ from typing import (
     Any,
     List,
     Dict,
+    cast,
     TYPE_CHECKING
 )
 from functools import partial
@@ -57,8 +58,6 @@ from ._models import (
     ExtractKeyPhrasesAction,
     AnalyzeSentimentAction,
     AnalyzeHealthcareEntitiesResult,
-    ExtractSummaryAction,
-    ExtractSummaryResult,
     RecognizeCustomEntitiesAction,
     RecognizeCustomEntitiesResult,
     SingleCategoryClassifyAction,
@@ -72,6 +71,25 @@ from ._check import is_language_api, string_index_type_compatibility
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+
+AnalyzeActionsResponse = AnalyzeActionsLROPoller[
+    ItemPaged[
+        List[
+            Union[
+                RecognizeEntitiesResult,
+                RecognizeLinkedEntitiesResult,
+                RecognizePiiEntitiesResult,
+                ExtractKeyPhrasesResult,
+                AnalyzeSentimentResult,
+                RecognizeCustomEntitiesResult,
+                SingleCategoryClassifyResult,
+                MultiCategoryClassifyResult,
+                AnalyzeHealthcareEntitiesResult,
+                DocumentError,
+            ]
+        ]
+    ]
+]
 
 
 class TextAnalyticsClient(TextAnalyticsClientBase):
@@ -205,27 +223,33 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         try:
             if is_language_api(self._api_version):
                 models = self._client.models(api_version=self._api_version)
-                return self._client.analyze_text(
-                    body=models.AnalyzeTextLanguageDetectionInput(
-                        analysis_input={"documents": docs},
-                        parameters=models.LanguageDetectionTaskParameters(
-                            logging_opt_out=disable_service_logs,
-                            model_version=model_version
-                        )
-                    ),
-                    show_stats=show_stats,
-                    cls=kwargs.pop("cls", language_result),
-                    **kwargs
+                return cast(
+                    List[Union[DetectLanguageResult, DocumentError]],
+                    self._client.analyze_text(
+                        body=models.AnalyzeTextLanguageDetectionInput(
+                            analysis_input={"documents": docs},
+                            parameters=models.LanguageDetectionTaskParameters(
+                                logging_opt_out=disable_service_logs,
+                                model_version=model_version
+                            )
+                        ),
+                        show_stats=show_stats,
+                        cls=kwargs.pop("cls", language_result),
+                        **kwargs
+                    )
                 )
 
             # api_versions 3.0, 3.1
-            return self._client.languages(
-                documents=docs,
-                model_version=model_version,
-                show_stats=show_stats,
-                logging_opt_out=disable_service_logs,
-                cls=kwargs.pop("cls", language_result),
-                **kwargs
+            return cast(
+                List[Union[DetectLanguageResult, DocumentError]],
+                self._client.languages(
+                    documents=docs,
+                    model_version=model_version,
+                    show_stats=show_stats,
+                    logging_opt_out=disable_service_logs,
+                    cls=kwargs.pop("cls", language_result),
+                    **kwargs
+                )
             )
         except HttpResponseError as error:
             return process_http_response_error(error)
@@ -307,29 +331,35 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         try:
             if is_language_api(self._api_version):
                 models = self._client.models(api_version=self._api_version)
-                return self._client.analyze_text(
-                    body=models.AnalyzeTextEntityRecognitionInput(
-                        analysis_input={"documents": docs},
-                        parameters=models.EntitiesTaskParameters(
-                            logging_opt_out=disable_service_logs,
-                            model_version=model_version,
-                            string_index_type=string_index_type_compatibility(string_index_type)
-                        )
-                    ),
-                    show_stats=show_stats,
-                    cls=kwargs.pop("cls", entities_result),
-                    **kwargs
+                return cast(
+                    List[Union[RecognizeEntitiesResult, DocumentError]],
+                    self._client.analyze_text(
+                        body=models.AnalyzeTextEntityRecognitionInput(
+                            analysis_input={"documents": docs},
+                            parameters=models.EntitiesTaskParameters(
+                                logging_opt_out=disable_service_logs,
+                                model_version=model_version,
+                                string_index_type=string_index_type_compatibility(string_index_type)
+                            )
+                        ),
+                        show_stats=show_stats,
+                        cls=kwargs.pop("cls", entities_result),
+                        **kwargs
+                    )
                 )
 
             # api_versions 3.0, 3.1
-            return self._client.entities_recognition_general(
-                documents=docs,
-                model_version=model_version,
-                show_stats=show_stats,
-                string_index_type=string_index_type,
-                logging_opt_out=disable_service_logs,
-                cls=kwargs.pop("cls", entities_result),
-                **kwargs,
+            return cast(
+                List[Union[RecognizeEntitiesResult, DocumentError]],
+                self._client.entities_recognition_general(
+                    documents=docs,
+                    model_version=model_version,
+                    show_stats=show_stats,
+                    string_index_type=string_index_type,
+                    logging_opt_out=disable_service_logs,
+                    cls=kwargs.pop("cls", entities_result),
+                    **kwargs,
+                )
             )
         except HttpResponseError as error:
             return process_http_response_error(error)
@@ -420,33 +450,39 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         try:
             if is_language_api(self._api_version):
                 models = self._client.models(api_version=self._api_version)
-                return self._client.analyze_text(
-                    body=models.AnalyzeTextPiiEntitiesRecognitionInput(
-                        analysis_input={"documents": docs},
-                        parameters=models.PiiTaskParameters(
-                            logging_opt_out=disable_service_logs,
-                            model_version=model_version,
-                            domain=domain_filter,
-                            pii_categories=categories_filter,
-                            string_index_type=string_index_type_compatibility(string_index_type)
-                        )
-                    ),
-                    show_stats=show_stats,
-                    cls=kwargs.pop("cls", pii_entities_result),
-                    **kwargs
+                return cast(
+                    List[Union[RecognizePiiEntitiesResult, DocumentError]],
+                    self._client.analyze_text(
+                        body=models.AnalyzeTextPiiEntitiesRecognitionInput(
+                            analysis_input={"documents": docs},
+                            parameters=models.PiiTaskParameters(
+                                logging_opt_out=disable_service_logs,
+                                model_version=model_version,
+                                domain=domain_filter,
+                                pii_categories=categories_filter,
+                                string_index_type=string_index_type_compatibility(string_index_type)
+                            )
+                        ),
+                        show_stats=show_stats,
+                        cls=kwargs.pop("cls", pii_entities_result),
+                        **kwargs
+                    )
                 )
 
             # api_versions 3.0, 3.1
-            return self._client.entities_recognition_pii(
-                documents=docs,
-                model_version=model_version,
-                show_stats=show_stats,
-                domain=domain_filter,
-                pii_categories=categories_filter,
-                logging_opt_out=disable_service_logs,
-                string_index_type=string_index_type,
-                cls=kwargs.pop("cls", pii_entities_result),
-                **kwargs
+            return cast(
+                List[Union[RecognizePiiEntitiesResult, DocumentError]],
+                self._client.entities_recognition_pii(
+                    documents=docs,
+                    model_version=model_version,
+                    show_stats=show_stats,
+                    domain=domain_filter,
+                    pii_categories=categories_filter,
+                    logging_opt_out=disable_service_logs,
+                    string_index_type=string_index_type,
+                    cls=kwargs.pop("cls", pii_entities_result),
+                    **kwargs
+                )
             )
         except HttpResponseError as error:
             return process_http_response_error(error)
@@ -529,29 +565,35 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         try:
             if is_language_api(self._api_version):
                 models = self._client.models(api_version=self._api_version)
-                return self._client.analyze_text(
-                    body=models.AnalyzeTextEntityLinkingInput(
-                        analysis_input={"documents": docs},
-                        parameters=models.EntityLinkingTaskParameters(
-                            logging_opt_out=disable_service_logs,
-                            model_version=model_version,
-                            string_index_type=string_index_type_compatibility(string_index_type)
-                        )
-                    ),
+                return cast(
+                    List[Union[RecognizeLinkedEntitiesResult, DocumentError]],
+                    self._client.analyze_text(
+                        body=models.AnalyzeTextEntityLinkingInput(
+                            analysis_input={"documents": docs},
+                            parameters=models.EntityLinkingTaskParameters(
+                                logging_opt_out=disable_service_logs,
+                                model_version=model_version,
+                                string_index_type=string_index_type_compatibility(string_index_type)
+                            )
+                        ),
+                        show_stats=show_stats,
+                        cls=kwargs.pop("cls", linked_entities_result),
+                        **kwargs
+                    )
+                )
+
+            # api_versions 3.0, 3.1
+            return cast(
+                List[Union[RecognizeLinkedEntitiesResult, DocumentError]],
+                self._client.entities_linking(
+                    documents=docs,
+                    logging_opt_out=disable_service_logs,
+                    model_version=model_version,
+                    string_index_type=string_index_type,
                     show_stats=show_stats,
                     cls=kwargs.pop("cls", linked_entities_result),
                     **kwargs
                 )
-
-            # api_versions 3.0, 3.1
-            return self._client.entities_linking(
-                documents=docs,
-                logging_opt_out=disable_service_logs,
-                model_version=model_version,
-                string_index_type=string_index_type,
-                show_stats=show_stats,
-                cls=kwargs.pop("cls", linked_entities_result),
-                **kwargs
             )
         except HttpResponseError as error:
             return process_http_response_error(error)
@@ -576,7 +618,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     @validate_multiapi_args(
         version_method_added="v3.1",
-        args_mapping={"2022-04-01-preview": ["display_name", "fhir_version"]}
+        args_mapping={"2022-05-01": ["display_name", "fhir_version"]}
     )
     def begin_analyze_healthcare_entities(
         self,
@@ -671,15 +713,20 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     doc_id_order, pipeline_response, None, {}, show_stats=show_stats
                 )
 
-            return AnalyzeHealthcareEntitiesLROPoller.from_continuation_token(
-                polling_method=AnalyzeHealthcareEntitiesLROPollingMethod(
-                    text_analytics_client=self._client,
-                    timeout=polling_interval,
-                    **kwargs
-                ),
-                client=self._client._client,  # pylint: disable=protected-access
-                deserialization_callback=get_result_from_cont_token,
-                continuation_token=continuation_token
+            return cast(
+                AnalyzeHealthcareEntitiesLROPoller[
+                    ItemPaged[Union[AnalyzeHealthcareEntitiesResult, DocumentError]]
+                ],
+                AnalyzeHealthcareEntitiesLROPoller.from_continuation_token(
+                    polling_method=AnalyzeHealthcareEntitiesLROPollingMethod(
+                        text_analytics_client=self._client,
+                        timeout=polling_interval,
+                        **kwargs
+                    ),
+                    client=self._client._client,  # pylint: disable=protected-access
+                    deserialization_callback=get_result_from_cont_token,
+                    continuation_token=continuation_token
+                )
             )
 
         docs = _validate_input(documents, "language", language)
@@ -697,28 +744,61 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 docs = models.MultiLanguageAnalysisInput(
                     documents=_validate_input(documents, "language", language)
                 )
-                return self._client.begin_analyze_text_submit_job(  # type: ignore
-                    body=models.AnalyzeTextJobsInput(
-                        analysis_input=docs,
-                        display_name=display_name,
-                        tasks=[
-                            models.HealthcareLROTask(
-                                task_name="0",
-                                parameters=models.HealthcareTaskParameters(
-                                    model_version=model_version,
-                                    logging_opt_out=disable_service_logs,
-                                    string_index_type=string_index_type_compatibility(string_index_type),
-                                    fhir_version=fhir_version,
+                return cast(
+                    AnalyzeHealthcareEntitiesLROPoller[
+                        ItemPaged[Union[AnalyzeHealthcareEntitiesResult, DocumentError]]
+                    ],
+                    self._client.begin_analyze_text_submit_job(  # type: ignore
+                        body=models.AnalyzeTextJobsInput(
+                            analysis_input=docs,
+                            display_name=display_name,
+                            tasks=[
+                                models.HealthcareLROTask(
+                                    task_name="0",
+                                    parameters=models.HealthcareTaskParameters(
+                                        model_version=model_version,
+                                        logging_opt_out=disable_service_logs,
+                                        string_index_type=string_index_type_compatibility(string_index_type),
+                                        fhir_version=fhir_version,
+                                    )
                                 )
-                            )
-                        ]
-                    ),
+                            ]
+                        ),
+                        cls=my_cls,
+                        polling=AnalyzeHealthcareEntitiesLROPollingMethod(
+                            text_analytics_client=self._client,
+                            timeout=polling_interval,
+                            show_stats=show_stats,
+                            doc_id_order=doc_id_order,
+                            lro_algorithms=[
+                                TextAnalyticsOperationResourcePolling(
+                                    show_stats=show_stats,
+                                )
+                            ],
+                            **kwargs
+                        ),
+                        continuation_token=continuation_token,
+                        poller_cls=AnalyzeHealthcareEntitiesLROPoller,
+                        **kwargs
+                    )
+                )
+
+            # v3.1
+            return cast(
+                AnalyzeHealthcareEntitiesLROPoller[
+                    ItemPaged[Union[AnalyzeHealthcareEntitiesResult, DocumentError]]
+                ],
+                self._client.begin_health(
+                    docs,
+                    model_version=model_version,
+                    string_index_type=string_index_type,
+                    logging_opt_out=disable_service_logs,
                     cls=my_cls,
                     polling=AnalyzeHealthcareEntitiesLROPollingMethod(
                         text_analytics_client=self._client,
                         timeout=polling_interval,
-                        show_stats=show_stats,
                         doc_id_order=doc_id_order,
+                        show_stats=show_stats,
                         lro_algorithms=[
                             TextAnalyticsOperationResourcePolling(
                                 show_stats=show_stats,
@@ -727,31 +807,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                         **kwargs
                     ),
                     continuation_token=continuation_token,
-                    poller_cls=AnalyzeHealthcareEntitiesLROPoller,
                     **kwargs
                 )
-
-            # v3.1
-            return self._client.begin_health(
-                docs,
-                model_version=model_version,
-                string_index_type=string_index_type,
-                logging_opt_out=disable_service_logs,
-                cls=my_cls,
-                polling=AnalyzeHealthcareEntitiesLROPollingMethod(
-                    text_analytics_client=self._client,
-                    timeout=polling_interval,
-                    doc_id_order=doc_id_order,
-                    show_stats=show_stats,
-                    lro_algorithms=[
-                        TextAnalyticsOperationResourcePolling(
-                            show_stats=show_stats,
-                        )
-                    ],
-                    **kwargs
-                ),
-                continuation_token=continuation_token,
-                **kwargs
             )
         except HttpResponseError as error:
             return process_http_response_error(error)
@@ -829,27 +886,33 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         try:
             if is_language_api(self._api_version):
                 models = self._client.models(api_version=self._api_version)
-                return self._client.analyze_text(
-                    body=models.AnalyzeTextKeyPhraseExtractionInput(
-                        analysis_input={"documents": docs},
-                        parameters=models.KeyPhraseTaskParameters(
-                            logging_opt_out=disable_service_logs,
-                            model_version=model_version,
-                        )
-                    ),
-                    show_stats=show_stats,
-                    cls=kwargs.pop("cls", key_phrases_result),
-                    **kwargs
+                return cast(
+                    List[Union[ExtractKeyPhrasesResult, DocumentError]],
+                    self._client.analyze_text(
+                        body=models.AnalyzeTextKeyPhraseExtractionInput(
+                            analysis_input={"documents": docs},
+                            parameters=models.KeyPhraseTaskParameters(
+                                logging_opt_out=disable_service_logs,
+                                model_version=model_version,
+                            )
+                        ),
+                        show_stats=show_stats,
+                        cls=kwargs.pop("cls", key_phrases_result),
+                        **kwargs
+                    )
                 )
 
             # api_versions 3.0, 3.1
-            return self._client.key_phrases(
-                documents=docs,
-                model_version=model_version,
-                show_stats=show_stats,
-                logging_opt_out=disable_service_logs,
-                cls=kwargs.pop("cls", key_phrases_result),
-                **kwargs
+            return cast(
+                List[Union[ExtractKeyPhrasesResult, DocumentError]],
+                self._client.key_phrases(
+                    documents=docs,
+                    model_version=model_version,
+                    show_stats=show_stats,
+                    logging_opt_out=disable_service_logs,
+                    cls=kwargs.pop("cls", key_phrases_result),
+                    **kwargs
+                )
             )
         except HttpResponseError as error:
             return process_http_response_error(error)
@@ -938,31 +1001,37 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         try:
             if is_language_api(self._api_version):
                 models = self._client.models(api_version=self._api_version)
-                return self._client.analyze_text(
-                    body=models.AnalyzeTextSentimentAnalysisInput(
-                        analysis_input={"documents": docs},
-                        parameters=models.SentimentAnalysisTaskParameters(
-                            logging_opt_out=disable_service_logs,
-                            model_version=model_version,
-                            string_index_type=string_index_type_compatibility(string_index_type),
-                            opinion_mining=show_opinion_mining,
-                        )
-                    ),
+                return cast(
+                    List[Union[AnalyzeSentimentResult, DocumentError]],
+                    self._client.analyze_text(
+                        body=models.AnalyzeTextSentimentAnalysisInput(
+                            analysis_input={"documents": docs},
+                            parameters=models.SentimentAnalysisTaskParameters(
+                                logging_opt_out=disable_service_logs,
+                                model_version=model_version,
+                                string_index_type=string_index_type_compatibility(string_index_type),
+                                opinion_mining=show_opinion_mining,
+                            )
+                        ),
+                        show_stats=show_stats,
+                        cls=kwargs.pop("cls", sentiment_result),
+                        **kwargs
+                    )
+                )
+
+            # api_versions 3.0, 3.1
+            return cast(
+                List[Union[AnalyzeSentimentResult, DocumentError]],
+                self._client.sentiment(
+                    documents=docs,
+                    logging_opt_out=disable_service_logs,
+                    model_version=model_version,
+                    string_index_type=string_index_type,
+                    opinion_mining=show_opinion_mining,
                     show_stats=show_stats,
                     cls=kwargs.pop("cls", sentiment_result),
                     **kwargs
                 )
-
-            # api_versions 3.0, 3.1
-            return self._client.sentiment(
-                documents=docs,
-                logging_opt_out=disable_service_logs,
-                model_version=model_version,
-                string_index_type=string_index_type,
-                opinion_mining=show_opinion_mining,
-                show_stats=show_stats,
-                cls=kwargs.pop("cls", sentiment_result),
-                **kwargs
             )
         except HttpResponseError as error:
             return process_http_response_error(error)
@@ -1000,7 +1069,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 RecognizePiiEntitiesAction,
                 ExtractKeyPhrasesAction,
                 AnalyzeSentimentAction,
-                ExtractSummaryAction,
                 RecognizeCustomEntitiesAction,
                 SingleCategoryClassifyAction,
                 MultiCategoryClassifyAction,
@@ -1017,7 +1085,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     RecognizePiiEntitiesResult,
                     ExtractKeyPhrasesResult,
                     AnalyzeSentimentResult,
-                    ExtractSummaryResult,
                     RecognizeCustomEntitiesResult,
                     SingleCategoryClassifyResult,
                     MultiCategoryClassifyResult,
@@ -1048,7 +1115,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             The action results will be in the same order of the input actions.
         :type actions:
             list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
-            RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or ExtractSummaryAction or
+            RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or
             RecognizeCustomEntitiesAction or SingleCategoryClassifyAction or
             MultiCategoryClassifyAction or AnalyzeHealthcareEntitiesAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
@@ -1078,7 +1145,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :rtype:
             ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
             list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
-            ExtractKeyPhrasesResult or AnalyzeSentimentResult or ExtractSummaryAction or RecognizeCustomEntitiesResult
+            ExtractKeyPhrasesResult or AnalyzeSentimentResult or RecognizeCustomEntitiesResult
             or SingleCategoryClassifyResult or MultiCategoryClassifyResult or AnalyzeHealthcareEntitiesResult or
             DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
@@ -1086,9 +1153,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         .. versionadded:: v3.1
             The *begin_analyze_actions* client method.
         .. versionadded:: 2022-04-01-preview
-            The *ExtractSummaryAction*, *RecognizeCustomEntitiesAction*, *SingleCategoryClassifyAction*,
+            The *RecognizeCustomEntitiesAction*, *SingleCategoryClassifyAction*,
             *MultiCategoryClassifyAction*, and *AnalyzeHealthcareEntitiesAction* input options and the
-            corresponding *ExtractSummaryResult*, *RecognizeCustomEntitiesResult*, *SingleCategoryClassifyResult*,
+            corresponding *RecognizeCustomEntitiesResult*, *SingleCategoryClassifyResult*,
             *MultiCategoryClassifyResult*, and *AnalyzeHealthcareEntitiesResult* result objects
 
         .. admonition:: Example:
@@ -1118,14 +1185,17 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     doc_id_order, task_id_order, pipeline_response, None, {}, show_stats=show_stats
                 )
 
-            return AnalyzeActionsLROPoller.from_continuation_token(
-                polling_method=AnalyzeActionsLROPollingMethod(
-                    timeout=polling_interval,
-                    **kwargs
-                ),
-                client=self._client._client,  # pylint: disable=protected-access
-                deserialization_callback=get_result_from_cont_token,
-                continuation_token=continuation_token
+            return cast(
+                AnalyzeActionsResponse,
+                AnalyzeActionsLROPoller.from_continuation_token(
+                    polling_method=AnalyzeActionsLROPollingMethod(
+                        timeout=polling_interval,
+                        **kwargs
+                    ),
+                    client=self._client._client,  # pylint: disable=protected-access
+                    deserialization_callback=get_result_from_cont_token,
+                    continuation_token=continuation_token
+                )
             )
 
         models = self._client.models(api_version=self._api_version)
@@ -1147,35 +1217,38 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         try:
             if is_language_api(self._api_version):
-                return self._client.begin_analyze_text_submit_job(
-                    body=models.AnalyzeTextJobsInput(
-                        analysis_input=docs,
-                        display_name=display_name,
-                        tasks=generated_tasks
-                    ),
-                    cls=kwargs.pop(
-                        "cls",
-                        partial(
-                            self._analyze_result_callback,
-                            doc_id_order,
-                            task_order,
-                            show_stats=show_stats,
+                return cast(
+                    AnalyzeActionsResponse,
+                    self._client.begin_analyze_text_submit_job(
+                        body=models.AnalyzeTextJobsInput(
+                            analysis_input=docs,
+                            display_name=display_name,
+                            tasks=generated_tasks
                         ),
-                    ),
-                    polling=AnalyzeActionsLROPollingMethod(
-                        timeout=polling_interval,
-                        show_stats=show_stats,
-                        doc_id_order=doc_id_order,
-                        task_id_order=task_order,
-                        lro_algorithms=[
-                            TextAnalyticsOperationResourcePolling(
+                        cls=kwargs.pop(
+                            "cls",
+                            partial(
+                                self._analyze_result_callback,
+                                doc_id_order,
+                                task_order,
                                 show_stats=show_stats,
-                            )
-                        ],
+                            ),
+                        ),
+                        polling=AnalyzeActionsLROPollingMethod(
+                            timeout=polling_interval,
+                            show_stats=show_stats,
+                            doc_id_order=doc_id_order,
+                            task_id_order=task_order,
+                            lro_algorithms=[
+                                TextAnalyticsOperationResourcePolling(
+                                    show_stats=show_stats,
+                                )
+                            ],
+                            **kwargs
+                        ),
+                        continuation_token=continuation_token,
                         **kwargs
-                    ),
-                    continuation_token=continuation_token,
-                    **kwargs
+                    )
                 )
 
             # v3.1
@@ -1200,51 +1273,38 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     a for a in generated_tasks
                     if _determine_action_type(a) == _AnalyzeActionsType.ANALYZE_SENTIMENT
                 ],
-                extractive_summarization_tasks=[
-                    a for a in generated_tasks
-                    if _determine_action_type(a) == _AnalyzeActionsType.EXTRACT_SUMMARY
-                ],
-                custom_entity_recognition_tasks=[
-                    a for a in generated_tasks
-                    if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES
-                ],
-                custom_single_classification_tasks=[
-                    a for a in generated_tasks
-                    if _determine_action_type(a) == _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY
-                ],
-                custom_multi_classification_tasks=[
-                    a for a in generated_tasks
-                    if _determine_action_type(a) == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY
-                ],
             )
             analyze_body = models.AnalyzeBatchInput(
                 display_name=display_name, tasks=analyze_tasks, analysis_input=docs
             )
-            return self._client.begin_analyze(
-                body=analyze_body,
-                cls=kwargs.pop(
-                    "cls",
-                    partial(
-                        self._analyze_result_callback,
-                        doc_id_order,
-                        task_order,
-                        show_stats=show_stats,
-                    ),
-                ),
-                polling=AnalyzeActionsLROPollingMethod(
-                    timeout=polling_interval,
-                    show_stats=show_stats,
-                    doc_id_order=doc_id_order,
-                    task_id_order=task_order,
-                    lro_algorithms=[
-                        TextAnalyticsOperationResourcePolling(
+            return cast(
+                AnalyzeActionsResponse,
+                self._client.begin_analyze(
+                    body=analyze_body,
+                    cls=kwargs.pop(
+                        "cls",
+                        partial(
+                            self._analyze_result_callback,
+                            doc_id_order,
+                            task_order,
                             show_stats=show_stats,
-                        )
-                    ],
+                        ),
+                    ),
+                    polling=AnalyzeActionsLROPollingMethod(
+                        timeout=polling_interval,
+                        show_stats=show_stats,
+                        doc_id_order=doc_id_order,
+                        task_id_order=task_order,
+                        lro_algorithms=[
+                            TextAnalyticsOperationResourcePolling(
+                                show_stats=show_stats,
+                            )
+                        ],
+                        **kwargs
+                    ),
+                    continuation_token=continuation_token,
                     **kwargs
-                ),
-                continuation_token=continuation_token,
-                **kwargs
+                )
             )
         except HttpResponseError as error:
             return process_http_response_error(error)
