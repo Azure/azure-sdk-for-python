@@ -141,8 +141,6 @@ IGNORED_SAMPLES = {
     "azure-ai-textanalytics": [
         "sample_analyze_healthcare_entities_with_cancellation.py",
         "sample_analyze_healthcare_entities_with_cancellation_async.py",
-        "sample_extract_summary.py",
-        "sample_extract_summary_async.py",
     ]
 }
 

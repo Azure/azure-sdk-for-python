@@ -69,20 +69,21 @@ jobs:
 
         # import env variable
         export AZURE_TEST_RUN_LIVE=true
-        export TENANT_ID=$(ENV_TENANT_ID)
-        export CLIENT_ID=$(ENV_CLIENT_ID)
-        export CLIENT_SECRET=$(ENV_CLIENT_SECRET)
-        export SUBSCRIPTION_ID=$(ENV_SUBSCRIPTION_ID)
-        export AZURE_TENANT_ID=$(ENV_TENANT_ID)
-        export AZURE_CLIENT_ID=$(ENV_CLIENT_ID)
-        export AZURE_CLIENT_SECRET=$(ENV_CLIENT_SECRET)
-        export AZURE_SUBSCRIPTION_ID=$(ENV_SUBSCRIPTION_ID)
+        export TENANT_ID=$(ENV-TENANT-ID)
+        export CLIENT_ID=$(ENV-CLIENT-ID)
+        export CLIENT_SECRET=$(ENV-CLIENT-SECRET)
+        export SUBSCRIPTION_ID=$(ENV-SUBSCRIPTION-ID)
+        export AZURE_TENANT_ID=$(ENV-TENANT-ID)
+        export AZURE_CLIENT_ID=$(ENV-CLIENT-ID)
+        export AZURE_CLIENT_SECRET=$(ENV-CLIENT-SECRET)
+        export AZURE_SUBSCRIPTION_ID=$(ENV-SUBSCRIPTION-ID)
         export ISSUE_LINK=$(ISSUE_LINK)
         export BASE_BRANCH=$(BASE_BRANCH)
         export SCRIPT_PATH=$script_path
         export AZURESDK_BOT_TOKEN=$(azuresdk-github-pat)
         export STORAGE_CONN_STR=$(storage-conn-str)
         export STORAGE_ENDPOINT=$(storage-endpoint)
+        export PYTHON_TAG=$(PYTHON_TAG)
 
         # run
         cd azure-sdk-for-python

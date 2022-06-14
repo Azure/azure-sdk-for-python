@@ -32,7 +32,6 @@ from ._models import (
     RecognizePiiEntitiesResult,
     PiiEntity,
     AnalyzeHealthcareEntitiesResult,
-    ExtractSummaryResult,
     _AnalyzeActionsType,
     RecognizeCustomEntitiesResult,
     ClassifyDocumentResult,
@@ -263,15 +262,6 @@ def healthcare_result(
 
 
 @prepare_result
-def summary_result(
-    summary, results, *args, **kwargs
-):  # pylint: disable=unused-argument
-    return ExtractSummaryResult._from_generated(  # pylint: disable=protected-access
-        summary
-    )
-
-
-@prepare_result
 def custom_entities_result(
     custom_entities, results, *args, **kwargs
 ):  # pylint: disable=unused-argument
@@ -314,8 +304,6 @@ def _get_deserialization_callback_from_task_type(task_type):  # pylint: disable=
         return linked_entities_result
     if task_type == _AnalyzeActionsType.ANALYZE_SENTIMENT:
         return sentiment_result
-    if task_type == _AnalyzeActionsType.EXTRACT_SUMMARY:
-        return summary_result
     if task_type == _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES:
         return custom_entities_result
     if task_type == _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY:
