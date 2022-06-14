@@ -68,9 +68,10 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         append_result_sub_ledger_id = append_result["collectionId"]
         append_result_transaction_id = append_result["transactionId"]
 
-        await client.confidential_ledger.wait_until_durable(
+        poller = await client.confidential_ledger.begin_wait_for_commit(
             transaction_id=append_result_transaction_id
         )
+        await poller.wait()
 
         transaction_status = await client.confidential_ledger.get_transaction_status(
             transaction_id=append_result_transaction_id
@@ -80,9 +81,10 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         )
         self.assertEqual(transaction_status["state"], "Committed")
 
-        receipt = await client.confidential_ledger.get_receipt(
+        poller = await client.confidential_ledger.begin_get_receipt(
             transaction_id=append_result_transaction_id
         )
+        receipt = await poller.result()
         self.assertEqual(receipt["transactionId"], append_result_transaction_id)
         self.assertTrue(receipt["receipt"])
 
@@ -96,18 +98,20 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         self.assertEqual(latest_entry["contents"], entry_contents)
         self.assertEqual(latest_entry["collectionId"], append_result_sub_ledger_id)
 
-        await client.confidential_ledger.post_ledger_entry_and_wait_for_commit(
+        poller = await client.confidential_ledger.begin_post_ledger_entry(
             {"contents": "Test entry 2 from Python SDK"}
         )
+        await poller.wait()
 
         latest_entry = await client.confidential_ledger.get_current_ledger_entry()
         self.assertNotEqual(latest_entry["transactionId"], append_result_transaction_id)
         self.assertNotEqual(latest_entry["contents"], entry_contents)
         self.assertEqual(latest_entry["collectionId"], append_result_sub_ledger_id)
 
-        original_entry = await client.confidential_ledger.get_ledger_entry(
+        poller = await client.confidential_ledger.begin_get_ledger_entry(
             transaction_id=append_result_transaction_id
         )
+        original_entry = await poller.wait()
         self.assertEqual(
             original_entry["entry"]["transactionId"], append_result_transaction_id
         )
@@ -153,9 +157,10 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         append_result_sub_ledger_id = append_result["collectionId"]
         append_result_transaction_id = append_result["transactionId"]
 
-        await client.confidential_ledger.wait_until_durable(
+        poller = await client.confidential_ledger.begin_wait_for_commit(
             transaction_id=append_result_transaction_id
         )
+        await poller.wait()
 
         transaction_status = await client.confidential_ledger.get_transaction_status(
             transaction_id=append_result_transaction_id
@@ -163,9 +168,10 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         self.assertIsNotNone(transaction_status)
         self.assertEqual(transaction_status["state"], "Committed")
 
-        receipt = await client.confidential_ledger.get_receipt(
+        poller = await client.confidential_ledger.begin_get_receipt(
             transaction_id=append_result_transaction_id
         )
+        receipt = await poller.result()
         self.assertEqual(receipt["transactionId"], append_result_transaction_id)
         self.assertTrue(receipt["receipt"])
 
@@ -181,10 +187,11 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         self.assertEqual(latest_entry["contents"], entry_contents)
         self.assertEqual(latest_entry["collectionId"], append_result_sub_ledger_id)
 
-        await client.confidential_ledger.post_ledger_entry_and_wait_for_commit(
+        poller = await client.confidential_ledger.begin_post_ledger_entry(
             {"contents": f"Test entry 2 from Python SDK. Collection: {collection_id}"},
             collection_id=collection_id,
         )
+        await poller.wait()
 
         latest_entry = await client.confidential_ledger.get_current_ledger_entry(
             collection_id=collection_id
@@ -193,10 +200,11 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         self.assertNotEqual(latest_entry["contents"], entry_contents)
         self.assertEqual(latest_entry["collectionId"], collection_id)
 
-        original_entry = await client.confidential_ledger.get_ledger_entry(
+        poller = await client.confidential_ledger.begin_get_ledger_entry(
             transaction_id=append_result_transaction_id,
             collection_id=collection_id,
         )
+        original_entry = await poller.wait()
         self.assertEqual(
             original_entry["entry"]["transactionId"], append_result_transaction_id
         )
