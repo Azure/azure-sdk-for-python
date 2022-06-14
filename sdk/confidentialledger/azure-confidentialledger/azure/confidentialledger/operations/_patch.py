@@ -72,7 +72,7 @@ class StatePollingMethod(PollingMethod):
         return self._status
 
     def finished(self) -> bool:
-        return self.status in {"finished", "failed"}
+        return self.status() in {"finished", "failed"}
 
     def resource(self):
         if self._deserialization_callback:
@@ -89,7 +89,7 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
         def operation() -> JSON:
-            return super().get_ledger_entry(
+            return super(ConfidentialLedgerOperations, self).get_ledger_entry(
                 transaction_id, collection_id=collection_id, **kwargs
             )
 
@@ -111,7 +111,9 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
         def operation() -> JSON:
-            return super().get_receipt(transaction_id=transaction_id, **kwargs)
+            return super(ConfidentialLedgerOperations, self).get_receipt(
+                transaction_id=transaction_id, **kwargs
+            )
 
         initial_response = operation()
 
@@ -170,7 +172,7 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         deserialization_callback = lambda x: x if post_result is None else post_result
 
         def operation() -> JSON:
-            return super().get_transaction_status(
+            return super(ConfidentialLedgerOperations, self).get_transaction_status(
                 transaction_id=transaction_id, **kwargs
             )
 
@@ -178,7 +180,7 @@ class ConfidentialLedgerOperations(GeneratedOperations):
 
         if polling is True:
             polling_method = cast(
-                PollingMethod, StatePollingMethod(operation, "Ready", lro_delay)
+                PollingMethod, StatePollingMethod(operation, "Committed", lro_delay)
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())

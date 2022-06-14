@@ -111,7 +111,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         poller = await client.confidential_ledger.begin_get_ledger_entry(
             transaction_id=append_result_transaction_id
         )
-        original_entry = await poller.wait()
+        original_entry = await poller.result()
         self.assertEqual(
             original_entry["entry"]["transactionId"], append_result_transaction_id
         )
@@ -204,7 +204,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             transaction_id=append_result_transaction_id,
             collection_id=collection_id,
         )
-        original_entry = await poller.wait()
+        original_entry = await poller.result()
         self.assertEqual(
             original_entry["entry"]["transactionId"], append_result_transaction_id
         )

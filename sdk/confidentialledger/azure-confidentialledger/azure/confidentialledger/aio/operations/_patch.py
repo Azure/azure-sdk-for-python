@@ -63,7 +63,7 @@ class StatePollingMethod(AsyncPollingMethod):
                 self._evaluate_response(response)
 
                 if not self.finished():
-                    asyncio.sleep.sleep(self._polling_interval_s)
+                    await asyncio.sleep(self._polling_interval_s)
         except Exception:
             self._status = "failed"
             raise
@@ -72,7 +72,7 @@ class StatePollingMethod(AsyncPollingMethod):
         return self._status
 
     def finished(self) -> bool:
-        return self.status in {"finished", "failed"}
+        return self.status() in {"finished", "failed"}
 
     def resource(self):
         if self._deserialization_callback:
@@ -89,11 +89,11 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
         async def operation() -> JSON:
-            return await super().get_ledger_entry(
+            return await super(ConfidentialLedgerOperations, self).get_ledger_entry(
                 transaction_id, collection_id=collection_id, **kwargs
             )
 
-        initial_response = operation()
+        initial_response = await operation()
 
         if polling is True:
             polling_method = cast(
@@ -113,9 +113,11 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
         async def operation() -> JSON:
-            return await super().get_receipt(transaction_id=transaction_id, **kwargs)
+            return await super(ConfidentialLedgerOperations, self).get_receipt(
+                transaction_id=transaction_id, **kwargs
+            )
 
-        initial_response = operation()
+        initial_response = await operation()
 
         if polling is True:
             polling_method = cast(
@@ -152,7 +154,7 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         kwargs["polling"] = polling
         kwargs["polling_interval"] = lro_delay
         kwargs["_post_ledger_entry_response"] = post_result
-        return self.begin_wait_for_commit(transaction_id, **kwargs)
+        return await self.begin_wait_for_commit(transaction_id, **kwargs)
 
     async def begin_wait_for_commit(
         self,
@@ -172,15 +174,16 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         deserialization_callback = lambda x: x if post_result is None else post_result
 
         async def operation() -> JSON:
-            return await super().get_transaction_status(
-                transaction_id=transaction_id, **kwargs
-            )
+            return await super(
+                ConfidentialLedgerOperations, self
+            ).get_transaction_status(transaction_id=transaction_id, **kwargs)
 
-        initial_response = operation()
+        initial_response = await operation()
 
         if polling is True:
             polling_method = cast(
-                AsyncPollingMethod, StatePollingMethod(operation, "Ready", lro_delay)
+                AsyncPollingMethod,
+                StatePollingMethod(operation, "Committed", lro_delay),
             )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
