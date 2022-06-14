@@ -45,6 +45,10 @@ class AmqpTransport(ABC):
     PLATFORM_SYMBOL = None
     USER_AGENT_SYMBOL = None
 
+    # errors
+    AMQP_LINK_ERROR = None
+    LINK_STOLEN_CONDITION = None
+
     @abstractmethod
     def to_outgoing_amqp_message(self, annotated_message):
         """
@@ -65,6 +69,7 @@ class AmqpTransport(ABC):
         Creates and returns the link properties.
         :param bytes timeout_symbol: The timeout symbol.
         :param int timeout: The timeout to set as value.
+        :rtype: dict
         """
 
     @abstractmethod
@@ -82,7 +87,6 @@ class AmqpTransport(ABC):
         :keyword str client_name: Required.
         :keyword dict link_properties: Required.
         :keyword properties: Required.
-        :keyword config: Optional. Client configuration.
         """
 
     @abstractmethod
@@ -108,4 +112,44 @@ class AmqpTransport(ABC):
         :param message: The message to update.
         :param str partition_key: The partition key value.
         :rtype: None
+        """
+
+    @abstractmethod
+    def create_source(self, source, offset, filter):
+        """
+        Creates and returns the Source.
+
+        :param str source: Required.
+        :param int offset: Required.
+        :param bytes filter: Required.
+        """
+    
+    @abstractmethod
+    def create_receive_client(self, *, config, **kwargs):
+        """
+        Creates and returns the receive client.
+        :param ~azure.eventhub._configuration.Configuration config: The configuration.
+
+        :keyword Source source: Required. The source.
+        :keyword JWTTokenAuth auth: Required.
+        :keyword int idle_timeout: Required.
+        :keyword network_trace: Required.
+        :keyword retry_policy: Required.
+        :keyword str client_name: Required.
+        :keyword dict link_properties: Required.
+        :keyword properties: Required.
+        :keyword link_credit: Required. The prefetch.
+        :keyword keep_alive_interval: Required. Missing in pyamqp.
+        :keyword desired_capabilities: Required.
+        :keyword streaming_receive: Required.
+        :keyword message_received_callback: Required.
+        :keyword timeout: Required.
+        """
+    
+    @abstractmethod
+    def open_receive_client(self, *, handler, client):
+        """
+        Opens the receive client.
+        :param ReceiveClient handler: The receive client.
+        :param ~azure.eventhub.EventHubConsumerClient client: The consumer client.
         """

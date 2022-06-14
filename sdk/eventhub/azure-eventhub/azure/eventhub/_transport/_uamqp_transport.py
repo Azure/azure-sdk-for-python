@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import time
+from tkinter import W
 from typing import TYPE_CHECKING, Optional
 
 from uamqp import (
@@ -12,12 +13,15 @@ from uamqp import (
     Message,
     types,
     SendClient,
+    ReceiveClient,
+    Source,
+    utils,
 )
 from uamqp.message import (
     MessageHeader,
     MessageProperties,
 )
-from uamqp.errors import ErrorPolicy, ErrorAction
+from uamqp.errors import ErrorPolicy, ErrorAction, LinkDetach
 
 from ._base import AmqpTransport, TransportMessageBase
 from ..amqp._constants import AmqpMessageBodyType
@@ -103,6 +107,10 @@ class UamqpTransport(AmqpTransport):
     PLATFORM_SYMBOL = types.AMQPSymbol("platform")
     USER_AGENT_SYMBOL = types.AMQPSymbol("user-agent")
 
+    # define errors and conditions
+    AMQP_LINK_ERROR = LinkDetach
+    LINK_STOLEN_CONDITION = constants.ErrorCodes.LinkStolen
+
     def to_outgoing_amqp_message(self, annotated_message):
         """
         Converts an AmqpAnnotatedMessage into an Amqp Transport Message.
@@ -167,15 +175,12 @@ class UamqpTransport(AmqpTransport):
         """
         return ErrorPolicy(max_retries=retry_total, on_error=_error_handler)
 
-    def create_link_properties(self, timeout_symbol, timeout):
+    def create_link_properties(self, link_properties):
         """
         Creates and returns the link properties.
-        :param bytes timeout_symbol: The timeout symbol.
-        :param int timeout: The timeout to set as value.
+        :param dict[bytes, int] link_properties: The dict of symbols and corresponding values.
         """
-        return {
-            types.AMQPSymbol(timeout_symbol): types.AMQPLong(timeout)
-        }
+        return {types.AMQPSymbol(symbol): types.AMQPLong(value) for (symbol, value) in link_properties.items()}
 
     def create_send_client(self, *, config, **kwargs): # pylint:disable=unused-argument
         """
@@ -262,3 +267,75 @@ class UamqpTransport(AmqpTransport):
             header.durable = True
             message.annotations = annotations
             message.header = header
+
+    def create_source(self, source, offset, filter):
+        """
+        Creates and returns the Source.
+
+        :param str source: Required.
+        :param int offset: Required.
+        :param bytes filter: Required.
+        """
+        source = Source(source)
+        if offset is not None:
+            source.set_filter(filter)
+        return source
+
+    def create_receive_client(self, *, config, **kwargs):
+        """
+        Creates and returns the receive client.
+        :param ~azure.eventhub._configuration.Configuration config: The configuration.
+
+        :keyword str source: Required. The source.
+        :keyword str offset: Required.
+        :keyword str offset_inclusive: Required.
+        :keyword JWTTokenAuth auth: Required.
+        :keyword int idle_timeout: Required.
+        :keyword network_trace: Required.
+        :keyword retry_policy: Required.
+        :keyword str client_name: Required.
+        :keyword dict link_properties: Required.
+        :keyword properties: Required.
+        :keyword link_credit: Required. The prefetch.
+        :keyword keep_alive_interval: Required. Missing in pyamqp.
+        :keyword desired_capabilities: Required.
+        :keyword streaming_receive: Required.
+        :keyword message_received_callback: Required.
+        :keyword timeout: Required.
+        """
+
+        source = kwargs.pop("source")
+        symbol_array = kwargs.pop("desired_capabilities")
+        desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array)) if symbol_array else None
+        retry_policy = kwargs.pop("retry_policy")
+        network_trace = kwargs.pop("network_trace")
+        link_credit = kwargs.pop("link_credit")
+        streaming_receive = kwargs.pop("streaming_receive")
+        message_received_callback = kwargs.pop("message_received_callback")
+
+        client = ReceiveClient(
+            source,
+            debug=network_trace,  # pylint:disable=protected-access
+            error_policy=retry_policy,
+            desired_capabilities=desired_capabilities,
+            prefetch=link_credit,
+            receive_settle_mode=constants.ReceiverSettleMode.ReceiveAndDelete,
+            auto_complete=False,
+            **kwargs
+        )
+
+        client._streaming_receive = streaming_receive
+        client._message_received_callback = (message_received_callback)
+        return client
+
+    def open_receive_client(self, *, handler, client, auth):
+        """
+        Opens the receive client and returns ready status.
+        :param ReceiveClient handler: The receive client.
+        :param ~azure.eventhub.EventHubConsumerClient client: The consumer client.
+        :param auth: Auth.
+        :rtype: bool
+        """
+        handler.open(connection=client._conn_manager.get_connection(
+            client._address.hostname, auth
+        ))

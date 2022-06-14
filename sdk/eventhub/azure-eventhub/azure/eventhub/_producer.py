@@ -113,7 +113,7 @@ class EventHubProducer(
         self._outcome = None  # type: Optional[constants.MessageSendResult]
         self._condition = None  # type: Optional[Exception]
         self._lock = threading.Lock()
-        self._link_properties = self._amqp_transport.create_link_properties(TIMEOUT_SYMBOL, int(self._timeout * 1000))
+        self._link_properties = self._amqp_transport.create_link_properties({TIMEOUT_SYMBOL: int(self._timeout * 1000)})
 
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
@@ -130,7 +130,7 @@ class EventHubProducer(
             properties=create_properties(
                 self._client._config.user_agent, amqp_transport=self._amqp_transport    # pylint: disable=protected-access
             ),
-            msg_timeout=self._timeout * 1000,
+            msg_timeout=self._timeout * 1000,   # extra passed in to pyamqp, but not used. should be used?
         )
 
     def _open_with_retry(self):
