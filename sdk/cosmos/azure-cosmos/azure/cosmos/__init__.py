@@ -27,6 +27,7 @@ from .database import DatabaseProxy
 from .user import UserProxy
 from .scripts import ScriptsProxy
 from .offer import Offer
+from .auto_scale import AutoScale
 from .documents import (
     ConsistencyLevel,
     DataType,
@@ -62,5 +63,6 @@ __all__ = (
     "TriggerOperation",
     "TriggerType",
     "ConnectionRetryPolicy",
+    "AutoScale",
 )
 __version__ = VERSION
