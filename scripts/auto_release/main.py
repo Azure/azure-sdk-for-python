@@ -263,7 +263,7 @@ class CodegenTestPR:
         with open(template_path, 'r') as fr:
             content = fr.readlines()
             for line in content:
-                if 'msrest' in line:
+                if 'msrest>' in line:
                     target_msrest = line.strip().strip(',')
                     yield target_msrest
                 if 'azure-mgmt-core' in line:
