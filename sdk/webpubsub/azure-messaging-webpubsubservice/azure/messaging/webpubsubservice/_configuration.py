@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
@@ -15,35 +15,34 @@ from ._version import VERSION
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
-
     from azure.core.credentials import TokenCredential
 
 
-class WebPubSubServiceClientConfiguration(Configuration):
+class WebPubSubServiceClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for WebPubSubServiceClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param hub: Target hub name, which should start with alphabetic characters and only contain alpha-numeric characters or underscore.
+    :param hub: Target hub name, which should start with alphabetic characters and only contain
+     alpha-numeric characters or underscore.
     :type hub: str
     :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2021-10-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(
         self,
-        hub,  # type: str
-        endpoint,  # type: str
-        credential,  # type: "TokenCredential"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        hub: str,
+        endpoint: str,
+        credential: "TokenCredential",
+        **kwargs: Any
+    ) -> None:
         super(WebPubSubServiceClientConfiguration, self).__init__(**kwargs)
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 

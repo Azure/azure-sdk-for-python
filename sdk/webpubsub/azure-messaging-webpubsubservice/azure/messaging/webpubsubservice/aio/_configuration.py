@@ -18,19 +18,21 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class WebPubSubServiceClientConfiguration(Configuration):
+class WebPubSubServiceClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for WebPubSubServiceClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param hub: Target hub name, which should start with alphabetic characters and only contain alpha-numeric characters or underscore.
+    :param hub: Target hub name, which should start with alphabetic characters and only contain
+     alpha-numeric characters or underscore.
     :type hub: str
     :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2021-10-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

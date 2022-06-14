@@ -1,4 +1,6 @@
 include *.md
-include LICENSE
 include azure/__init__.py
+include azure/batch/__init__.py
+include LICENSE
 recursive-include tests *.py
+recursive-include samples *.py *.md

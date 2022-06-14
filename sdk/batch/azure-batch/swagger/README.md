@@ -5,19 +5,21 @@
 ### Settings
 
 ```yaml
-input-file: E:\dev\git\Batch-Service2\src\xstore\watask\Client\Swagger\Track2\data-plane\Microsoft.Batch\preview\2022-06-01.preview\BatchService.json
-output-folder: ../azure/batch/batchservice
-namespace: azure.batch.batchservice
-package-name: azure-batch-batchservice
+input-file: E:\dev\git\Batch-Service2\src\xstore\watask\Client\Swagger\DataPlane\Microsoft.Batch\stable\2022-01-01.15.0\BatchService.json
+output-folder: ../azure/batch
+namespace: azure-batch
+package-name: azure-batch
 license-header: MICROSOFT_MIT_NO_VERSION
 clear-output-folder: true
 no-namespace-folders: true
 python: true
 title: BatchServiceClient
 version-tolerant: true
-package-version: 1.0.0b1
-add-credential: true
-credential-scopes: https://batch.core.windows.net//.default
-models-mode: msrest
+api-version: 2022-01-01.15.0
+package-version: 8.0.0
+add-credential: false
+#credential-scopes: https://batch.core.windows.net/.default
+# security: AADToken
+#security-scopes: https://batch.core.windows.net/.default
 combine-operation-files: false
 ```

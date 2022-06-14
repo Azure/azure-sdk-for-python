@@ -1,4 +1,8 @@
--e ../../../tools/azure-sdk-tools
--e ../azure-mgmt-batch
--e ../../identity/azure-identity
 -e ../../../tools/azure-devtools
+-e ../../../tools/azure-sdk-tools
+../../core/azure-core
+../../identity/azure-identity
+../../nspkg/azure-messaging-nspkg
+-e ../azure-mgmt-batch
+aiohttp>=3.0
+typing_extensions>=3.7.2
