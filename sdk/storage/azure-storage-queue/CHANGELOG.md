@@ -1,6 +1,6 @@
 # Release History
 
-## 12.4.0b1 (Unreleased)
+## 12.4.0b1 (2022-06-15)
 
 ### Features Added
 - Introduced version 2.0 of client-side encryption for Queue messages which utilizes AES-GCM-256 encryption.
