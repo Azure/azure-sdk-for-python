@@ -37,7 +37,7 @@ class SearchClient(object):
         self._search_client = SearchClientGen(
             credential,
             **kwargs
-        ).search
+        )
 
 
     @distributed_trace
@@ -439,12 +439,79 @@ class SearchClient(object):
         return SearchAddressResult(result.summary, result.results)
 
 
+    @overload
+    def search_point_of_interest(
+        self,
+        query,  # type: str
+        coordinates, # type: "LatLon"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "SearchAddressResult"
+        """**Get POI by Name**
+        `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-poi-category>`_
+
+        Points of Interest (POI) Search allows you to request POI results by name.  Search supports
+        additional query parameters such as language and filtering results by area of interest driven
+        by country or bounding box.  Endpoint will return only POI results matching the query string.
+        Response includes POI details such as address, coordinate location and category.
+
+        :param query: The POI name to search for (e.g., "statue of liberty", "starbucks"), must be
+         properly URL encoded.
+        :type query: str
+        :param coordinates: coordinates
+        :type coordinates: ~azure.maps.search._models.LatLon
+        :return: SearchAddressResult, or the result of cls(response)
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """         
+        coordinates = LatLon() if not coordinates else coordinates
+
+        result = self._search_client.search_point_of_interest(
+            query,
+            lat=coordinates.lat,
+            lon=coordinates.lon,
+            **kwargs
+        )
+        return SearchAddressResult(result.summary, result.results)
+ 
+   
+    @overload
+    def search_point_of_interest(
+        self,
+        query,  # type: str
+        country_filter, # type list[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "SearchAddressResult"
+        """**Get POI by Name**
+        `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-poi-category>`_
+
+        Points of Interest (POI) Search allows you to request POI results by name.  Search supports
+        additional query parameters such as language and filtering results by area of interest driven
+        by country or bounding box.  Endpoint will return only POI results matching the query string.
+        Response includes POI details such as address, coordinate location and category.
+        
+        :param query: The POI name to search for (e.g., "statue of liberty", "starbucks"), must be
+         properly URL encoded.
+        :type query: str
+        :keyword list[int] category_filter: A comma-separated list of category set IDs which could be used to
+         restrict the result to specific Points of Interest categories. 
+        :keyword list[int] country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
+        :return: SearchAddressResult, or the result of cls(response)
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """         
+
+        result = self._search_client.search_point_of_interest(
+            query,
+            country_filter=country_filter,
+            **kwargs
+        )
+        return SearchAddressResult(result.summary, result.results)
+
+
     @distributed_trace
     def search_point_of_interest(
         self,
         query,  # type: str
-        coordinates=None, # type: "LatLon"
-        country_filter=None, # type list[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
