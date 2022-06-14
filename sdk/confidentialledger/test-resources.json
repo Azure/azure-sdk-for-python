@@ -11,6 +11,20 @@
       "minLength": 3,
       "maxLength": 24
     },
+    "resourceGroup": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "Resource Group containing the application."
+      }
+    },
+    "subscriptionId": {
+      "type": "string",
+      "defaultValue": "[subscription().subscriptionId]",
+      "metadata": {
+        "description": "Id of the subscription containing the application."
+      }
+    },
     "tenantId": {
       "type": "string",
       "defaultValue": "72f988bf-86f1-41af-91ab-2d7cd011db47",
@@ -67,21 +81,29 @@
     }
   ],
   "outputs": {
-    "AZURE_TENANT_ID": {
+    "CONFIDENTIALLEDGER_SUBSCRIPTION_ID": {
+      "type": "string",
+      "value": "[parameters('subscriptionId')]"
+    },
+    "CONFIDENTIALLEDGER_TENANT_ID": {
       "type": "string",
       "value": "[parameters('tenantId')]"
     },
-    "AZURE_CLIENT_ID": {
+    "CONFIDENTIALLEDGER_CLIENT_ID": {
       "type": "string",
       "value": "[parameters('testApplicationId')]"
     },
-    "AZURE_CLIENT_SECRET": {
+    "CONFIDENTIALLEDGER_CLIENT_SECRET": {
       "type": "string",
       "value": "[parameters('testApplicationSecret')]"
     },
-    "AZURE_CONFIDENTIALLEDGER_URL": {
+    "CONFIDENTIALLEDGER_ENDPOINT": {
       "type": "string",
       "value": "[variables('azureConfidentialLedgerUrl')]"
+    },
+    "CONFIDENTIALLEDGER_GROUP": {
+      "type": "string",
+      "value": "[parameters('resourceGroup')]"
     }
   }
 }
