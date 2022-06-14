@@ -28,7 +28,7 @@ import warnings
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
-from ._base import build_options, autoscale_header
+from ._base import build_options, auto_scale_header
 from .container import ContainerProxy
 from .offer import ThroughputProperties
 from .http_constants import StatusCodes
@@ -158,7 +158,7 @@ class DatabaseProxy(object):
         offer_throughput=None,  # type: Optional[int]
         unique_key_policy=None,  # type: Optional[Dict[str, Any]]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
-        auto_scale_header=None,  # type: Optional[AutoScale]
+        auto_scale_setting=None,  # type: Optional[AutoScale]
         **kwargs  # type: Any
     ):
         # type: (...) -> ContainerProxy
@@ -235,10 +235,10 @@ class DatabaseProxy(object):
             request_options["populateQueryMetrics"] = populate_query_metrics
         if offer_throughput is not None:
             request_options["offerThroughput"] = offer_throughput
-            
-        if auto_scale_header is not None:
-            auto_scale_header = autoscale_header(auto_scale=auto_scale_header)
-            request_options["autoUpgradePolicy"] = auto_scale_header
+
+        if auto_scale_setting is not None:
+            auto_scale_setting = auto_scale_header(auto_scale=auto_scale_setting)
+            request_options["autoUpgradePolicy"] = auto_scale_setting
 
         data = self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
@@ -260,6 +260,7 @@ class DatabaseProxy(object):
         offer_throughput=None,  # type: Optional[int]
         unique_key_policy=None,  # type: Optional[Dict[str, Any]]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
+        auto_scale_setting=None,  # type: Optional[AutoScale]
         **kwargs  # type: Any
     ):
         # type: (...) -> ContainerProxy
@@ -309,7 +310,8 @@ class DatabaseProxy(object):
                 offer_throughput=offer_throughput,
                 unique_key_policy=unique_key_policy,
                 conflict_resolution_policy=conflict_resolution_policy,
-                analytical_storage_ttl=analytical_storage_ttl
+                analytical_storage_ttl=analytical_storage_ttl,
+                auto_scale_setting=auto_scale_setting,
             )
 
     @distributed_trace
