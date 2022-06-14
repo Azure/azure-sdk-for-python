@@ -6,8 +6,12 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+from __future__ import annotations
+import logging
 import time
-from typing import Any, IO, List, Optional, Union
+from typing import Any, IO, Callable, ClassVar, List, Optional, Union
+
+from azure.core.polling import PollingMethod, LROPoller
 
 from azure.confidentialledger.operations._operations import (
     ConfidentialLedgerOperations as GeneratedOperations,
@@ -18,6 +22,7 @@ __all__: List[str] = [
     "ConfidentialLedgerOperations"
 ]  # Add all objects you want publicly available to users at this package level
 
+logger = logging.getLogger(__name__)
 
 def patch_sdk():
     """Do not remove from this file.
@@ -26,6 +31,53 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+
+
+class GetLedgerEntryPollingMethod(PollingMethod):
+    """Polling method for GetLedgerEntry requests.
+    """
+
+    _ready_state: ClassVar[str] = "Ready"
+
+    def __init__(self, operation: Callable[[], JSON], polling_interval: float = 0.5):
+        self._operation = operation
+        self._polling_interval = polling_interval
+
+    def initialize(self, client, initial_response, deserialization_callback):
+        self._evaluate_response(initial_response)
+        self._deserialization_callback = deserialization_callback
+
+    def _evaluate_response(self, response: JSON) -> None:
+        self._status = (
+            "finished" if response["state"] == GetLedgerEntryPollingMethod._ready_state
+            else "polling"
+        )
+        self._latest_response = response
+
+    def run(self) -> None:
+        try:
+            while not self.finished():
+                response = self._operation()
+                self._evaluate_response(response)
+
+                if not self.finished():
+                    time.sleep(self._polling_interval)
+        except Exception as e:
+            self._status = "failed"
+            logger.warning(str(e))
+            raise
+
+    def status(self) -> str:
+        return self._status
+
+    def finished(self) -> bool:
+        return self.status in {"finished", "failed"}
+
+    def resource(self):
+        if self._deserialization_callback:
+            return self._deserialization_callback(self._latest_response)
+
+        return self._latest_response
 
 
 class ConfidentialLedgerOperations(GeneratedOperations):
