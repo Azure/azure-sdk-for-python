@@ -258,7 +258,8 @@ class CodegenTestPR:
 
     @staticmethod
     def get_need_mgmt_core():
-        template_path = Path('../../tools/azure-sdk-tools/packaging_tools/templates/setup.py')
+        print("***", os.getcwd())
+        template_path = Path('tools/azure-sdk-tools/packaging_tools/templates/setup.py')
         with open(template_path, 'r') as fr:
             content = fr.readlines()
             for line in content:
@@ -330,7 +331,6 @@ class CodegenTestPR:
         return next_version
 
     def get_autorest_result(self) -> Dict[Any, Any]:
-        print("***", os.getcwd())
         with open(self.autorest_result, 'r') as file_in:
             content = json.load(file_in)
         return content
