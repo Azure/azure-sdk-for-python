@@ -1,0 +1,13 @@
+{
+    "batchItems": [
+        {
+            "query": "?query=atm&lat=47.639769&lon=-122.128362&radius=5000&limit=5"
+        },
+        {
+            "query": "?query=Statue Of Liberty&limit=2"
+        },
+        {
+            "query": "?query=Starbucks&lat=47.639769&lon=-122.128362&radius=5000"
+        }
+    ]
+}
