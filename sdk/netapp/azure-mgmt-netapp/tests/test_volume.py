@@ -251,7 +251,7 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
 
         # list replications
         replications = self.client.volumes.list_replications(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
-        assert len(list(replications.value)) == 1
+        assert len(list(replications)) == 1
 
         # break replication
         self.client.volumes.begin_break_replication(TEST_REPL_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
