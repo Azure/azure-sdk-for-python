@@ -272,6 +272,7 @@ class CodegenTestPR:
 
     def check_sdk_setup(self):
         def edit_sdk_setup(content: List[str]):
+            print("**** get_need_mgmt_core: ", list(self.get_need_mgmt_core()))
             target_msrest, target_mgmt_core = list(self.get_need_mgmt_core())
             msrest_pattern = re.compile('msrest>=\d\.\d[1-2]\.\d[1-2]')
             mgmt_core_pattern = re.compile('azure-mgmt-core>=\d\.\d\.\d,<\d\.\d\.\d')
