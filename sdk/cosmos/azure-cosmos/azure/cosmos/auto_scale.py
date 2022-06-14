@@ -20,7 +20,6 @@
 # SOFTWARE.
 
 class AutoScale(object):
-    def __init__(self, auto_scale_max_throughput, auto_upgrade_throughput_max_increment_percentage):
+    def __init__(self, auto_scale_max_throughput, auto_upgrade_throughput_max_increment_percentage=0):
         self.auto_scale_max_throughput = auto_scale_max_throughput
         self.auto_upgrade_throughput_max_increment_percentage = auto_upgrade_throughput_max_increment_percentage
-        auto_upgrade_throughput_max_increment_percentage = 0
