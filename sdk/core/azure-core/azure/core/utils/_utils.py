@@ -6,8 +6,7 @@
 # --------------------------------------------------------------------------
 from cgitb import lookup
 import datetime
-from email.generator import Generator
-from typing import Any, Dict, ItemsView, Iterable, Iterator, KeysView, List, Mapping, MutableMapping, Optional, Sequence, Tuple, Union, ValuesView
+from typing import Any, Iterable, Mapping, MutableMapping
 
 
 class _FixedOffset(datetime.tzinfo):
