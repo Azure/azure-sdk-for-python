@@ -28,6 +28,7 @@ enable-xml: true
 vanilla: true
 clear-output-folder: true
 python: true
+version-tolerant: false
 ```
 
 ### Remove x-ms-pageable
