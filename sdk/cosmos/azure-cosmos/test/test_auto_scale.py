@@ -66,16 +66,13 @@ class AutoScaleTest(unittest.TestCase):
         created_container = self.created_database.create_container(
             id='container_with_auto_scale_setting',
             partition_key=PartitionKey(path="/id"),
-            auto_scale_setting=AutoScale(5000)
+            auto_scale_setting=AutoScale(5000,0)
 
         )
         created_container_properties = created_container.get_throughput()
         #Testing the input values of the max_throughput
         self.assertEqual(
             created_container_properties.properties['content']['offerAutopilotSettings']['maxThroughput'], 5000)
-
-        self.assertNotEqual(
-            created_container_properties.properties['content']['offerAutopilotSettings']['maxThroughput'], 1000)
 
         self.created_database.delete_container(created_container)
         # Testing the incorrect passing of an input value of the max_throughput to verify negative behavior
@@ -86,24 +83,20 @@ class AutoScaleTest(unittest.TestCase):
                 auto_scale_setting=AutoScale(200, 0)
 
             )
-            self.created_database.delete_container(created_container)
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, http_constants.StatusCodes.BAD_REQUEST)
 
 
-    def test_auto_scale_max_increment_percentage(self):
+    def test_auto_scale_increment_percentage(self):
         created_container = self.created_database.create_container(
             id='container_with_auto_scale_setting',
             partition_key=PartitionKey(path="/id"),
-            auto_scale_setting=AutoScale(5000,0)
+            auto_scale_setting=AutoScale(5000,1)
 
         )
         created_container_properties = created_container.get_throughput()
         #Testing the input values of the max_increment_percentage
         self.assertEqual(
-            created_container_properties.properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy']['incrementPercent'], 0)
-
-        self.assertNotEqual(
             created_container_properties.properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy']['incrementPercent'], 1)
 
         self.created_database.delete_container(created_container)
@@ -112,9 +105,22 @@ class AutoScaleTest(unittest.TestCase):
             created_container = self.created_database.create_container(
                 id='container_with_wrong_auto_scale_setting',
                 partition_key=PartitionKey(path="/id"),
-                auto_scale_setting=AutoScale(5000, 25)
+                auto_scale_setting=AutoScale(5000, -25)
 
             )
             self.created_database.delete_container(created_container)
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, http_constants.StatusCodes.BAD_REQUEST)
+
+
+    def test_auto_scale_setting(self):
+        #Testing for wrong attributes for the auto_scale_setting in the created container
+        try:
+            created_container = self.created_database.create_container(
+                id='container_with_wrong_auto_scale_setting',
+                partition_key=PartitionKey(path="/id"),
+                auto_scale_setting="wrong setting"
+
+            )
+        except AttributeError:
+            pass
