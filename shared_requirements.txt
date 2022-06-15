@@ -312,8 +312,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-media msrest>=0.6.21
 #override azure-mgmt-media azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-containerservice azure-mgmt-core>=1.3.0,<2.0.0
-#override azure-mgmt-resource azure-mgmt-core>=1.3.0,<2.0.0
-#override azure-mgmt-containerinstance msrest>=0.6.21
+#override azure-mgmt-resource azure-mgmt-core>=1.3.1,<2.0.0#override azure-mgmt-containerinstance msrest>=0.6.21
 #override azure-mgmt-containerinstance azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-cognitiveservices msrest>=0.6.21
 #override azure-mgmt-cognitiveservices azure-mgmt-core>=1.3.0,<2.0.0

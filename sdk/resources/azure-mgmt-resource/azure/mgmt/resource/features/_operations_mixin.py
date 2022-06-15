@@ -11,6 +11,8 @@
 from msrest import Serializer, Deserializer
 from typing import TYPE_CHECKING
 
+from . import models as _models
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Iterable
@@ -24,7 +26,7 @@ class FeatureClientOperationsMixin(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.OperationListResult"]
+        # type: (...) -> Iterable[_models.OperationListResult]
         """Lists all of the available Microsoft.Features REST API operations.
 
         :keyword callable cls: A custom type or function that will be passed the direct response

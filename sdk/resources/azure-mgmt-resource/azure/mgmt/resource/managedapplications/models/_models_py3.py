@@ -6,12 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._application_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class Resource(msrest.serialization.Model):
@@ -112,8 +114,8 @@ class GenericResource(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         managed_by: Optional[str] = None,
-        sku: Optional["Sku"] = None,
-        identity: Optional["Identity"] = None,
+        sku: Optional["_models.Sku"] = None,
+        identity: Optional["_models.Identity"] = None,
         **kwargs
     ):
         """
@@ -171,7 +173,7 @@ class Application(GenericResource):
     :vartype parameters: any
     :ivar outputs: Name and value pairs that define the managed application outputs.
     :vartype outputs: any
-    :ivar provisioning_state: The managed application provisioning state. Possible values include:
+    :ivar provisioning_state: The managed application provisioning state. Known values are:
      "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
      "Failed", "Succeeded", "Updating".
     :vartype provisioning_state: str or
@@ -214,9 +216,9 @@ class Application(GenericResource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         managed_by: Optional[str] = None,
-        sku: Optional["Sku"] = None,
-        identity: Optional["Identity"] = None,
-        plan: Optional["Plan"] = None,
+        sku: Optional["_models.Sku"] = None,
+        identity: Optional["_models.Identity"] = None,
+        plan: Optional["_models.Plan"] = None,
         application_definition_id: Optional[str] = None,
         parameters: Optional[Any] = None,
         **kwargs
@@ -263,8 +265,7 @@ class ApplicationArtifact(msrest.serialization.Model):
     :vartype name: str
     :ivar uri: The managed application artifact blob uri.
     :vartype uri: str
-    :ivar type: The managed application artifact type. Possible values include: "Template",
-     "Custom".
+    :ivar type: The managed application artifact type. Known values are: "Template", "Custom".
     :vartype type: str or ~azure.mgmt.resource.managedapplications.models.ApplicationArtifactType
     """
 
@@ -279,7 +280,7 @@ class ApplicationArtifact(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         uri: Optional[str] = None,
-        type: Optional[Union[str, "ApplicationArtifactType"]] = None,
+        type: Optional[Union[str, "_models.ApplicationArtifactType"]] = None,
         **kwargs
     ):
         """
@@ -287,8 +288,7 @@ class ApplicationArtifact(msrest.serialization.Model):
         :paramtype name: str
         :keyword uri: The managed application artifact blob uri.
         :paramtype uri: str
-        :keyword type: The managed application artifact type. Possible values include: "Template",
-         "Custom".
+        :keyword type: The managed application artifact type. Known values are: "Template", "Custom".
         :paramtype type: str or ~azure.mgmt.resource.managedapplications.models.ApplicationArtifactType
         """
         super(ApplicationArtifact, self).__init__(**kwargs)
@@ -320,7 +320,7 @@ class ApplicationDefinition(GenericResource):
     :vartype sku: ~azure.mgmt.resource.managedapplications.models.Sku
     :ivar identity: The identity of the resource.
     :vartype identity: ~azure.mgmt.resource.managedapplications.models.Identity
-    :ivar lock_level: Required. The managed application lock level. Possible values include:
+    :ivar lock_level: Required. The managed application lock level. Known values are:
      "CanNotDelete", "ReadOnly", "None".
     :vartype lock_level: str or
      ~azure.mgmt.resource.managedapplications.models.ApplicationLockLevel
@@ -378,16 +378,16 @@ class ApplicationDefinition(GenericResource):
     def __init__(
         self,
         *,
-        lock_level: Union[str, "ApplicationLockLevel"],
-        authorizations: List["ApplicationProviderAuthorization"],
+        lock_level: Union[str, "_models.ApplicationLockLevel"],
+        authorizations: List["_models.ApplicationProviderAuthorization"],
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         managed_by: Optional[str] = None,
-        sku: Optional["Sku"] = None,
-        identity: Optional["Identity"] = None,
+        sku: Optional["_models.Sku"] = None,
+        identity: Optional["_models.Identity"] = None,
         display_name: Optional[str] = None,
         is_enabled: Optional[str] = None,
-        artifacts: Optional[List["ApplicationArtifact"]] = None,
+        artifacts: Optional[List["_models.ApplicationArtifact"]] = None,
         description: Optional[str] = None,
         package_file_uri: Optional[str] = None,
         main_template: Optional[Any] = None,
@@ -405,7 +405,7 @@ class ApplicationDefinition(GenericResource):
         :paramtype sku: ~azure.mgmt.resource.managedapplications.models.Sku
         :keyword identity: The identity of the resource.
         :paramtype identity: ~azure.mgmt.resource.managedapplications.models.Identity
-        :keyword lock_level: Required. The managed application lock level. Possible values include:
+        :keyword lock_level: Required. The managed application lock level. Known values are:
          "CanNotDelete", "ReadOnly", "None".
         :paramtype lock_level: str or
          ~azure.mgmt.resource.managedapplications.models.ApplicationLockLevel
@@ -461,7 +461,7 @@ class ApplicationDefinitionListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ApplicationDefinition"]] = None,
+        value: Optional[List["_models.ApplicationDefinition"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -493,7 +493,7 @@ class ApplicationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Application"]] = None,
+        value: Optional[List["_models.Application"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -543,7 +543,7 @@ class ApplicationPatchable(GenericResource):
     :vartype parameters: any
     :ivar outputs: Name and value pairs that define the managed application outputs.
     :vartype outputs: any
-    :ivar provisioning_state: The managed application provisioning state. Possible values include:
+    :ivar provisioning_state: The managed application provisioning state. Known values are:
      "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
      "Failed", "Succeeded", "Updating".
     :vartype provisioning_state: str or
@@ -583,9 +583,9 @@ class ApplicationPatchable(GenericResource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         managed_by: Optional[str] = None,
-        sku: Optional["Sku"] = None,
-        identity: Optional["Identity"] = None,
-        plan: Optional["PlanPatchable"] = None,
+        sku: Optional["_models.Sku"] = None,
+        identity: Optional["_models.Identity"] = None,
+        plan: Optional["_models.PlanPatchable"] = None,
         kind: Optional[str] = None,
         managed_resource_group_id: Optional[str] = None,
         application_definition_id: Optional[str] = None,
@@ -772,7 +772,7 @@ class Operation(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         **kwargs
     ):
         """
@@ -842,7 +842,7 @@ class OperationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Operation"]] = None,
+        value: Optional[List["_models.Operation"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):

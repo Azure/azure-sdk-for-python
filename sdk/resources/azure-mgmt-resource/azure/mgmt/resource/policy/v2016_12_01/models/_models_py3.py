@@ -6,11 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._policy_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class PolicyAssignment(msrest.serialization.Model):
@@ -107,7 +109,7 @@ class PolicyAssignmentListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PolicyAssignment"]] = None,
+        value: Optional[List["_models.PolicyAssignment"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -132,10 +134,10 @@ class PolicyDefinition(msrest.serialization.Model):
     :ivar name: The name of the policy definition.
     :vartype name: str
     :ivar policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
-     and Custom. Possible values include: "NotSpecified", "BuiltIn", "Custom".
+     and Custom. Known values are: "NotSpecified", "BuiltIn", "Custom".
     :vartype policy_type: str or ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyType
     :ivar mode: The policy definition mode. Possible values are NotSpecified, Indexed, and All.
-     Possible values include: "NotSpecified", "Indexed", "All".
+     Known values are: "NotSpecified", "Indexed", "All".
     :vartype mode: str or ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyMode
     :ivar display_name: The display name of the policy definition.
     :vartype display_name: str
@@ -169,8 +171,8 @@ class PolicyDefinition(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        policy_type: Optional[Union[str, "PolicyType"]] = None,
-        mode: Optional[Union[str, "PolicyMode"]] = None,
+        policy_type: Optional[Union[str, "_models.PolicyType"]] = None,
+        mode: Optional[Union[str, "_models.PolicyMode"]] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         policy_rule: Optional[Any] = None,
@@ -180,10 +182,10 @@ class PolicyDefinition(msrest.serialization.Model):
     ):
         """
         :keyword policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
-         and Custom. Possible values include: "NotSpecified", "BuiltIn", "Custom".
+         and Custom. Known values are: "NotSpecified", "BuiltIn", "Custom".
         :paramtype policy_type: str or ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyType
         :keyword mode: The policy definition mode. Possible values are NotSpecified, Indexed, and All.
-         Possible values include: "NotSpecified", "Indexed", "All".
+         Known values are: "NotSpecified", "Indexed", "All".
         :paramtype mode: str or ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyMode
         :keyword display_name: The display name of the policy definition.
         :paramtype display_name: str
@@ -225,7 +227,7 @@ class PolicyDefinitionListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PolicyDefinition"]] = None,
+        value: Optional[List["_models.PolicyDefinition"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):

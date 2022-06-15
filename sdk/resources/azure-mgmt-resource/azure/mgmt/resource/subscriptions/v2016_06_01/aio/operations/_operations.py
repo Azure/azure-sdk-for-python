@@ -15,41 +15,41 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._operations import build_check_resource_name_request, build_operations_list_request, build_subscriptions_check_zone_peers_request, build_subscriptions_get_request, build_subscriptions_list_locations_request, build_subscriptions_list_request, build_tenants_list_request
+from .._vendor import MixinABC
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class Operations:
-    """Operations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.resource.subscriptions.v2016_06_01.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.resource.subscriptions.v2016_06_01.aio.SubscriptionClient`'s
+        :attr:`operations` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def list(
         self,
         **kwargs: Any
-    ) -> AsyncIterable["_models.OperationListResult"]:
+    ) -> AsyncIterable[_models.OperationListResult]:
         """Lists all of the available Microsoft.Resources REST API operations.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -58,30 +58,37 @@ class Operations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.subscriptions.v2016_06_01.models.OperationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2016-06-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-06-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.OperationListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
                 request = build_operations_list_request(
                     api_version=api_version,
                     template_url=self.list.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
                 request = build_operations_list_request(
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -114,33 +121,31 @@ class Operations:
         )
     list.metadata = {'url': "/providers/Microsoft.Resources/operations"}  # type: ignore
 class SubscriptionsOperations:
-    """SubscriptionsOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.resource.subscriptions.v2016_06_01.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.resource.subscriptions.v2016_06_01.aio.SubscriptionClient`'s
+        :attr:`subscriptions` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def list_locations(
         self,
         subscription_id: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.LocationListResult"]:
+    ) -> AsyncIterable[_models.LocationListResult]:
         """Gets all available geo-locations.
 
         This operation provides all the locations that are available for resource providers; however,
@@ -154,13 +159,16 @@ class SubscriptionsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.subscriptions.v2016_06_01.models.LocationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2016-06-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LocationListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-06-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.LocationListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -168,18 +176,22 @@ class SubscriptionsOperations:
                     subscription_id=subscription_id,
                     api_version=api_version,
                     template_url=self.list_locations.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
                 request = build_subscriptions_list_locations_request(
                     subscription_id=subscription_id,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -217,7 +229,7 @@ class SubscriptionsOperations:
         self,
         subscription_id: str,
         **kwargs: Any
-    ) -> "_models.Subscription":
+    ) -> _models.Subscription:
         """Gets details about a specified subscription.
 
         :param subscription_id: The ID of the target subscription.
@@ -227,24 +239,29 @@ class SubscriptionsOperations:
         :rtype: ~azure.mgmt.resource.subscriptions.v2016_06_01.models.Subscription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Subscription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2016-06-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-06-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Subscription]
 
         
         request = build_subscriptions_get_request(
             subscription_id=subscription_id,
             api_version=api_version,
             template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -269,7 +286,7 @@ class SubscriptionsOperations:
     def list(
         self,
         **kwargs: Any
-    ) -> AsyncIterable["_models.SubscriptionListResult"]:
+    ) -> AsyncIterable[_models.SubscriptionListResult]:
         """Gets all subscriptions for a tenant.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -279,30 +296,37 @@ class SubscriptionsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.subscriptions.v2016_06_01.models.SubscriptionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2016-06-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SubscriptionListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-06-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SubscriptionListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
                 request = build_subscriptions_list_request(
                     api_version=api_version,
                     template_url=self.list.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
                 request = build_subscriptions_list_request(
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -339,9 +363,9 @@ class SubscriptionsOperations:
     async def check_zone_peers(
         self,
         subscription_id: str,
-        parameters: "_models.CheckZonePeersRequest",
+        parameters: _models.CheckZonePeersRequest,
         **kwargs: Any
-    ) -> "_models.CheckZonePeersResult":
+    ) -> _models.CheckZonePeersResult:
         """Compares a subscriptions logical zone mapping.
 
         :param subscription_id: The ID of the target subscription.
@@ -353,14 +377,17 @@ class SubscriptionsOperations:
         :rtype: ~azure.mgmt.resource.subscriptions.v2016_06_01.models.CheckZonePeersResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckZonePeersResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2016-06-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-06-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CheckZonePeersResult]
 
         _json = self._serialize.body(parameters, 'CheckZonePeersRequest')
 
@@ -370,11 +397,13 @@ class SubscriptionsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.check_zone_peers.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -396,32 +425,30 @@ class SubscriptionsOperations:
     check_zone_peers.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/checkZonePeers/"}  # type: ignore
 
 class TenantsOperations:
-    """TenantsOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.resource.subscriptions.v2016_06_01.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.resource.subscriptions.v2016_06_01.aio.SubscriptionClient`'s
+        :attr:`tenants` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def list(
         self,
         **kwargs: Any
-    ) -> AsyncIterable["_models.TenantListResult"]:
+    ) -> AsyncIterable[_models.TenantListResult]:
         """Gets the tenants for your account.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -430,30 +457,37 @@ class TenantsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.subscriptions.v2016_06_01.models.TenantListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2016-06-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TenantListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-06-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.TenantListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
                 request = build_tenants_list_request(
                     api_version=api_version,
                     template_url=self.list.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
                 request = build_tenants_list_request(
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -485,14 +519,14 @@ class TenantsOperations:
             get_next, extract_data
         )
     list.metadata = {'url': "/tenants"}  # type: ignore
-class SubscriptionClientOperationsMixin:
+class SubscriptionClientOperationsMixin(MixinABC):
 
     @distributed_trace_async
     async def check_resource_name(
         self,
-        resource_name_definition: Optional["_models.ResourceName"] = None,
+        resource_name_definition: Optional[_models.ResourceName] = None,
         **kwargs: Any
-    ) -> "_models.CheckResourceNameResult":
+    ) -> _models.CheckResourceNameResult:
         """Checks resource name validity.
 
         A resource name is valid if it is not a reserved word, does not contains a reserved word and
@@ -507,14 +541,17 @@ class SubscriptionClientOperationsMixin:
         :rtype: ~azure.mgmt.resource.subscriptions.v2016_06_01.models.CheckResourceNameResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckResourceNameResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2016-06-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-06-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CheckResourceNameResult]
 
         if resource_name_definition is not None:
             _json = self._serialize.body(resource_name_definition, 'ResourceName')
@@ -526,11 +563,13 @@ class SubscriptionClientOperationsMixin:
             content_type=content_type,
             json=_json,
             template_url=self.check_resource_name.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs

@@ -15,6 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
@@ -24,26 +25,24 @@ T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class PolicyAssignmentsOperations:
-    """PolicyAssignmentsOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.resource.policy.v2018_03_01.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.resource.policy.v2018_03_01.aio.PolicyClient`'s
+        :attr:`policy_assignments` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def delete(
@@ -51,7 +50,7 @@ class PolicyAssignmentsOperations:
         scope: str,
         policy_assignment_name: str,
         **kwargs: Any
-    ) -> Optional["_models.PolicyAssignment"]:
+    ) -> Optional[_models.PolicyAssignment]:
         """Deletes a policy assignment.
 
         This operation deletes a policy assignment, given its name and the scope it was created in. The
@@ -71,13 +70,16 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignment or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PolicyAssignment"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.PolicyAssignment]]
 
         
         request = build_policy_assignments_delete_request(
@@ -85,11 +87,13 @@ class PolicyAssignmentsOperations:
             policy_assignment_name=policy_assignment_name,
             api_version=api_version,
             template_url=self.delete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -118,9 +122,9 @@ class PolicyAssignmentsOperations:
         self,
         scope: str,
         policy_assignment_name: str,
-        parameters: "_models.PolicyAssignment",
+        parameters: _models.PolicyAssignment,
         **kwargs: Any
-    ) -> "_models.PolicyAssignment":
+    ) -> _models.PolicyAssignment:
         """Creates or updates a policy assignment.
 
         This operation creates or updates a policy assignment with the given scope and name. Policy
@@ -142,14 +146,17 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyAssignment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicyAssignment]
 
         _json = self._serialize.body(parameters, 'PolicyAssignment')
 
@@ -160,11 +167,13 @@ class PolicyAssignmentsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.create.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -192,7 +201,7 @@ class PolicyAssignmentsOperations:
         scope: str,
         policy_assignment_name: str,
         **kwargs: Any
-    ) -> "_models.PolicyAssignment":
+    ) -> _models.PolicyAssignment:
         """Retrieves a policy assignment.
 
         This operation retrieves a single policy assignment, given its name and the scope it was
@@ -211,13 +220,16 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyAssignment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicyAssignment]
 
         
         request = build_policy_assignments_get_request(
@@ -225,11 +237,13 @@ class PolicyAssignmentsOperations:
             policy_assignment_name=policy_assignment_name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -257,7 +271,7 @@ class PolicyAssignmentsOperations:
         resource_group_name: str,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PolicyAssignmentListResult"]:
+    ) -> AsyncIterable[_models.PolicyAssignmentListResult]:
         """Retrieves all policy assignments that apply to a resource group.
 
         This operation retrieves the list of all policy assignments associated with the given resource
@@ -284,13 +298,16 @@ class PolicyAssignmentsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyAssignmentListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicyAssignmentListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -300,9 +317,11 @@ class PolicyAssignmentsOperations:
                     api_version=api_version,
                     filter=filter,
                     template_url=self.list_for_resource_group.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -310,9 +329,11 @@ class PolicyAssignmentsOperations:
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -356,7 +377,7 @@ class PolicyAssignmentsOperations:
         resource_name: str,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PolicyAssignmentListResult"]:
+    ) -> AsyncIterable[_models.PolicyAssignmentListResult]:
         """Retrieves all policy assignments that apply to a resource.
 
         This operation retrieves the list of all policy assignments associated with the specified
@@ -405,13 +426,16 @@ class PolicyAssignmentsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyAssignmentListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicyAssignmentListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -425,9 +449,11 @@ class PolicyAssignmentsOperations:
                     api_version=api_version,
                     filter=filter,
                     template_url=self.list_for_resource.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -439,9 +465,11 @@ class PolicyAssignmentsOperations:
                     resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -480,7 +508,7 @@ class PolicyAssignmentsOperations:
         self,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PolicyAssignmentListResult"]:
+    ) -> AsyncIterable[_models.PolicyAssignmentListResult]:
         """Retrieves all policy assignments that apply to a subscription.
 
         This operation retrieves the list of all policy assignments associated with the given
@@ -505,13 +533,16 @@ class PolicyAssignmentsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyAssignmentListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicyAssignmentListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -520,18 +551,22 @@ class PolicyAssignmentsOperations:
                     api_version=api_version,
                     filter=filter,
                     template_url=self.list.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
                 request = build_policy_assignments_list_request(
                     subscription_id=self._config.subscription_id,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -570,7 +605,7 @@ class PolicyAssignmentsOperations:
         self,
         policy_assignment_id: str,
         **kwargs: Any
-    ) -> Optional["_models.PolicyAssignment"]:
+    ) -> Optional[_models.PolicyAssignment]:
         """Deletes a policy assignment.
 
         This operation deletes the policy with the given ID. Policy assignment IDs have this format:
@@ -589,24 +624,29 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignment or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PolicyAssignment"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.PolicyAssignment]]
 
         
         request = build_policy_assignments_delete_by_id_request(
             policy_assignment_id=policy_assignment_id,
             api_version=api_version,
             template_url=self.delete_by_id.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -634,9 +674,9 @@ class PolicyAssignmentsOperations:
     async def create_by_id(
         self,
         policy_assignment_id: str,
-        parameters: "_models.PolicyAssignment",
+        parameters: _models.PolicyAssignment,
         **kwargs: Any
-    ) -> "_models.PolicyAssignment":
+    ) -> _models.PolicyAssignment:
         """Creates or updates a policy assignment.
 
         This operation creates or updates the policy assignment with the given ID. Policy assignments
@@ -660,14 +700,17 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyAssignment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicyAssignment]
 
         _json = self._serialize.body(parameters, 'PolicyAssignment')
 
@@ -677,11 +720,13 @@ class PolicyAssignmentsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.create_by_id.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -708,7 +753,7 @@ class PolicyAssignmentsOperations:
         self,
         policy_assignment_id: str,
         **kwargs: Any
-    ) -> "_models.PolicyAssignment":
+    ) -> _models.PolicyAssignment:
         """Retrieves the policy assignment with the given ID.
 
         The operation retrieves the policy assignment with the given ID. Policy assignment IDs have
@@ -728,24 +773,29 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyAssignment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicyAssignment]
 
         
         request = build_policy_assignments_get_by_id_request(
             policy_assignment_id=policy_assignment_id,
             api_version=api_version,
             template_url=self.get_by_id.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -767,34 +817,32 @@ class PolicyAssignmentsOperations:
     get_by_id.metadata = {'url': "/{policyAssignmentId}"}  # type: ignore
 
 class PolicyDefinitionsOperations:
-    """PolicyDefinitionsOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.resource.policy.v2018_03_01.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.resource.policy.v2018_03_01.aio.PolicyClient`'s
+        :attr:`policy_definitions` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def create_or_update(
         self,
         policy_definition_name: str,
-        parameters: "_models.PolicyDefinition",
+        parameters: _models.PolicyDefinition,
         **kwargs: Any
-    ) -> "_models.PolicyDefinition":
+    ) -> _models.PolicyDefinition:
         """Creates or updates a policy definition in a subscription.
 
         This operation creates or updates a policy definition in the given subscription with the given
@@ -809,14 +857,17 @@ class PolicyDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicyDefinition]
 
         _json = self._serialize.body(parameters, 'PolicyDefinition')
 
@@ -827,11 +878,13 @@ class PolicyDefinitionsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.create_or_update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -869,13 +922,16 @@ class PolicyDefinitionsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_policy_definitions_delete_request(
@@ -883,11 +939,13 @@ class PolicyDefinitionsOperations:
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.delete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -909,7 +967,7 @@ class PolicyDefinitionsOperations:
         self,
         policy_definition_name: str,
         **kwargs: Any
-    ) -> "_models.PolicyDefinition":
+    ) -> _models.PolicyDefinition:
         """Retrieves a policy definition in a subscription.
 
         This operation retrieves the policy definition in the given subscription with the given name.
@@ -921,13 +979,16 @@ class PolicyDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicyDefinition]
 
         
         request = build_policy_definitions_get_request(
@@ -935,11 +996,13 @@ class PolicyDefinitionsOperations:
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -965,7 +1028,7 @@ class PolicyDefinitionsOperations:
         self,
         policy_definition_name: str,
         **kwargs: Any
-    ) -> "_models.PolicyDefinition":
+    ) -> _models.PolicyDefinition:
         """Retrieves a built-in policy definition.
 
         This operation retrieves the built-in policy definition with the given name.
@@ -977,24 +1040,29 @@ class PolicyDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicyDefinition]
 
         
         request = build_policy_definitions_get_built_in_request(
             policy_definition_name=policy_definition_name,
             api_version=api_version,
             template_url=self.get_built_in.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1020,9 +1088,9 @@ class PolicyDefinitionsOperations:
         self,
         policy_definition_name: str,
         management_group_id: str,
-        parameters: "_models.PolicyDefinition",
+        parameters: _models.PolicyDefinition,
         **kwargs: Any
-    ) -> "_models.PolicyDefinition":
+    ) -> _models.PolicyDefinition:
         """Creates or updates a policy definition in a management group.
 
         This operation creates or updates a policy definition in the given management group with the
@@ -1039,14 +1107,17 @@ class PolicyDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicyDefinition]
 
         _json = self._serialize.body(parameters, 'PolicyDefinition')
 
@@ -1057,11 +1128,13 @@ class PolicyDefinitionsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.create_or_update_at_management_group.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1102,13 +1175,16 @@ class PolicyDefinitionsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_policy_definitions_delete_at_management_group_request(
@@ -1116,11 +1192,13 @@ class PolicyDefinitionsOperations:
             management_group_id=management_group_id,
             api_version=api_version,
             template_url=self.delete_at_management_group.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1143,7 +1221,7 @@ class PolicyDefinitionsOperations:
         policy_definition_name: str,
         management_group_id: str,
         **kwargs: Any
-    ) -> "_models.PolicyDefinition":
+    ) -> _models.PolicyDefinition:
         """Retrieve a policy definition in a management group.
 
         This operation retrieves the policy definition in the given management group with the given
@@ -1158,13 +1236,16 @@ class PolicyDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicyDefinition]
 
         
         request = build_policy_definitions_get_at_management_group_request(
@@ -1172,11 +1253,13 @@ class PolicyDefinitionsOperations:
             management_group_id=management_group_id,
             api_version=api_version,
             template_url=self.get_at_management_group.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1201,7 +1284,7 @@ class PolicyDefinitionsOperations:
     def list(
         self,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PolicyDefinitionListResult"]:
+    ) -> AsyncIterable[_models.PolicyDefinitionListResult]:
         """Retrieves policy definitions in a subscription.
 
         This operation retrieves a list of all the policy definitions in a given subscription.
@@ -1213,13 +1296,16 @@ class PolicyDefinitionsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2018_03_01.models.PolicyDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyDefinitionListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicyDefinitionListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -1227,18 +1313,22 @@ class PolicyDefinitionsOperations:
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
                 request = build_policy_definitions_list_request(
                     subscription_id=self._config.subscription_id,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -1275,7 +1365,7 @@ class PolicyDefinitionsOperations:
     def list_built_in(
         self,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PolicyDefinitionListResult"]:
+    ) -> AsyncIterable[_models.PolicyDefinitionListResult]:
         """Retrieve built-in policy definitions.
 
         This operation retrieves a list of all the built-in policy definitions.
@@ -1287,30 +1377,37 @@ class PolicyDefinitionsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2018_03_01.models.PolicyDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyDefinitionListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicyDefinitionListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
                 request = build_policy_definitions_list_built_in_request(
                     api_version=api_version,
                     template_url=self.list_built_in.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
                 request = build_policy_definitions_list_built_in_request(
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -1348,7 +1445,7 @@ class PolicyDefinitionsOperations:
         self,
         management_group_id: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PolicyDefinitionListResult"]:
+    ) -> AsyncIterable[_models.PolicyDefinitionListResult]:
         """Retrieve policy definitions in a management group.
 
         This operation retrieves a list of all the policy definitions in a given management group.
@@ -1362,13 +1459,16 @@ class PolicyDefinitionsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2018_03_01.models.PolicyDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyDefinitionListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicyDefinitionListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -1376,18 +1476,22 @@ class PolicyDefinitionsOperations:
                     management_group_id=management_group_id,
                     api_version=api_version,
                     template_url=self.list_by_management_group.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
                 request = build_policy_definitions_list_by_management_group_request(
                     management_group_id=management_group_id,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -1420,34 +1524,32 @@ class PolicyDefinitionsOperations:
         )
     list_by_management_group.metadata = {'url': "/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policyDefinitions"}  # type: ignore
 class PolicySetDefinitionsOperations:
-    """PolicySetDefinitionsOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.resource.policy.v2018_03_01.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.resource.policy.v2018_03_01.aio.PolicyClient`'s
+        :attr:`policy_set_definitions` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def create_or_update(
         self,
         policy_set_definition_name: str,
-        parameters: "_models.PolicySetDefinition",
+        parameters: _models.PolicySetDefinition,
         **kwargs: Any
-    ) -> "_models.PolicySetDefinition":
+    ) -> _models.PolicySetDefinition:
         """Creates or updates a policy set definition.
 
         This operation creates or updates a policy set definition in the given subscription with the
@@ -1462,14 +1564,17 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2018_03_01.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicySetDefinition]
 
         _json = self._serialize.body(parameters, 'PolicySetDefinition')
 
@@ -1480,11 +1585,13 @@ class PolicySetDefinitionsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.create_or_update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1527,13 +1634,16 @@ class PolicySetDefinitionsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_policy_set_definitions_delete_request(
@@ -1541,11 +1651,13 @@ class PolicySetDefinitionsOperations:
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.delete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1568,7 +1680,7 @@ class PolicySetDefinitionsOperations:
         self,
         policy_set_definition_name: str,
         **kwargs: Any
-    ) -> "_models.PolicySetDefinition":
+    ) -> _models.PolicySetDefinition:
         """Retrieves a policy set definition.
 
         This operation retrieves the policy set definition in the given subscription with the given
@@ -1581,13 +1693,16 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2018_03_01.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicySetDefinition]
 
         
         request = build_policy_set_definitions_get_request(
@@ -1595,11 +1710,13 @@ class PolicySetDefinitionsOperations:
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1626,7 +1743,7 @@ class PolicySetDefinitionsOperations:
         self,
         policy_set_definition_name: str,
         **kwargs: Any
-    ) -> "_models.PolicySetDefinition":
+    ) -> _models.PolicySetDefinition:
         """Retrieves a built in policy set definition.
 
         This operation retrieves the built-in policy set definition with the given name.
@@ -1638,24 +1755,29 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2018_03_01.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicySetDefinition]
 
         
         request = build_policy_set_definitions_get_built_in_request(
             policy_set_definition_name=policy_set_definition_name,
             api_version=api_version,
             template_url=self.get_built_in.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1681,7 +1803,7 @@ class PolicySetDefinitionsOperations:
     def list(
         self,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PolicySetDefinitionListResult"]:
+    ) -> AsyncIterable[_models.PolicySetDefinitionListResult]:
         """Retrieves the policy set definitions for a subscription.
 
         This operation retrieves a list of all the policy set definitions in the given subscription.
@@ -1693,13 +1815,16 @@ class PolicySetDefinitionsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2018_03_01.models.PolicySetDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinitionListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicySetDefinitionListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -1707,18 +1832,22 @@ class PolicySetDefinitionsOperations:
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
                 request = build_policy_set_definitions_list_request(
                     subscription_id=self._config.subscription_id,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -1756,7 +1885,7 @@ class PolicySetDefinitionsOperations:
     def list_built_in(
         self,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PolicySetDefinitionListResult"]:
+    ) -> AsyncIterable[_models.PolicySetDefinitionListResult]:
         """Retrieves built-in policy set definitions.
 
         This operation retrieves a list of all the built-in policy set definitions.
@@ -1768,30 +1897,37 @@ class PolicySetDefinitionsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2018_03_01.models.PolicySetDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinitionListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicySetDefinitionListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
                 request = build_policy_set_definitions_list_built_in_request(
                     api_version=api_version,
                     template_url=self.list_built_in.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
                 request = build_policy_set_definitions_list_built_in_request(
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -1830,9 +1966,9 @@ class PolicySetDefinitionsOperations:
         self,
         policy_set_definition_name: str,
         management_group_id: str,
-        parameters: "_models.PolicySetDefinition",
+        parameters: _models.PolicySetDefinition,
         **kwargs: Any
-    ) -> "_models.PolicySetDefinition":
+    ) -> _models.PolicySetDefinition:
         """Creates or updates a policy set definition.
 
         This operation creates or updates a policy set definition in the given management group with
@@ -1849,14 +1985,17 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2018_03_01.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicySetDefinition]
 
         _json = self._serialize.body(parameters, 'PolicySetDefinition')
 
@@ -1867,11 +2006,13 @@ class PolicySetDefinitionsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.create_or_update_at_management_group.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1918,13 +2059,16 @@ class PolicySetDefinitionsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_policy_set_definitions_delete_at_management_group_request(
@@ -1932,11 +2076,13 @@ class PolicySetDefinitionsOperations:
             management_group_id=management_group_id,
             api_version=api_version,
             template_url=self.delete_at_management_group.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1960,7 +2106,7 @@ class PolicySetDefinitionsOperations:
         policy_set_definition_name: str,
         management_group_id: str,
         **kwargs: Any
-    ) -> "_models.PolicySetDefinition":
+    ) -> _models.PolicySetDefinition:
         """Retrieves a policy set definition.
 
         This operation retrieves the policy set definition in the given management group with the given
@@ -1975,13 +2121,16 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2018_03_01.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicySetDefinition]
 
         
         request = build_policy_set_definitions_get_at_management_group_request(
@@ -1989,11 +2138,13 @@ class PolicySetDefinitionsOperations:
             management_group_id=management_group_id,
             api_version=api_version,
             template_url=self.get_at_management_group.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -2020,7 +2171,7 @@ class PolicySetDefinitionsOperations:
         self,
         management_group_id: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PolicySetDefinitionListResult"]:
+    ) -> AsyncIterable[_models.PolicySetDefinitionListResult]:
         """Retrieves all policy set definitions in management group.
 
         This operation retrieves a list of all the a policy set definition in the given management
@@ -2035,13 +2186,16 @@ class PolicySetDefinitionsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2018_03_01.models.PolicySetDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2018-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinitionListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PolicySetDefinitionListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -2049,18 +2203,22 @@ class PolicySetDefinitionsOperations:
                     management_group_id=management_group_id,
                     api_version=api_version,
                     template_url=self.list_by_management_group.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
                 request = build_policy_set_definitions_list_by_management_group_request(
                     management_group_id=management_group_id,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 

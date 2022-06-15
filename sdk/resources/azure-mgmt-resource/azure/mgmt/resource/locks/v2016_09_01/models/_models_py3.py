@@ -6,11 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, Union
+from typing import List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._management_lock_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ManagementLockListResult(msrest.serialization.Model):
@@ -30,7 +32,7 @@ class ManagementLockListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ManagementLockObject"]] = None,
+        value: Optional[List["_models.ManagementLockObject"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -61,7 +63,7 @@ class ManagementLockObject(msrest.serialization.Model):
     :ivar level: Required. The level of the lock. Possible values are: NotSpecified, CanNotDelete,
      ReadOnly. CanNotDelete means authorized users are able to read and modify the resources, but
      not delete. ReadOnly means authorized users can only read from a resource, but they can't
-     modify or delete it. Possible values include: "NotSpecified", "CanNotDelete", "ReadOnly".
+     modify or delete it. Known values are: "NotSpecified", "CanNotDelete", "ReadOnly".
     :vartype level: str or ~azure.mgmt.resource.locks.v2016_09_01.models.LockLevel
     :ivar notes: Notes about the lock. Maximum of 512 characters.
     :vartype notes: str
@@ -88,17 +90,16 @@ class ManagementLockObject(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        level: Union[str, "LockLevel"],
+        level: Union[str, "_models.LockLevel"],
         notes: Optional[str] = None,
-        owners: Optional[List["ManagementLockOwner"]] = None,
+        owners: Optional[List["_models.ManagementLockOwner"]] = None,
         **kwargs
     ):
         """
         :keyword level: Required. The level of the lock. Possible values are: NotSpecified,
          CanNotDelete, ReadOnly. CanNotDelete means authorized users are able to read and modify the
          resources, but not delete. ReadOnly means authorized users can only read from a resource, but
-         they can't modify or delete it. Possible values include: "NotSpecified", "CanNotDelete",
-         "ReadOnly".
+         they can't modify or delete it. Known values are: "NotSpecified", "CanNotDelete", "ReadOnly".
         :paramtype level: str or ~azure.mgmt.resource.locks.v2016_09_01.models.LockLevel
         :keyword notes: Notes about the lock. Maximum of 512 characters.
         :paramtype notes: str
@@ -157,7 +158,7 @@ class Operation(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         **kwargs
     ):
         """
@@ -227,7 +228,7 @@ class OperationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Operation"]] = None,
+        value: Optional[List["_models.Operation"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):

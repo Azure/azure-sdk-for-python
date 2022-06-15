@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class EnforcementMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EnforcementMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The policy assignment enforcement mode. Possible values are Default and DoNotEnforce.
     """
 
@@ -20,7 +19,7 @@ class EnforcementMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: The policy effect is not enforced during resource creation or update.
     DO_NOT_ENFORCE = "DoNotEnforce"
 
-class PolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of policy definition. Possible values are NotSpecified, BuiltIn, and Custom.
     """
 
@@ -28,7 +27,7 @@ class PolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     BUILT_IN = "BuiltIn"
     CUSTOM = "Custom"
 
-class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The identity type.
     """
 

@@ -6,11 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, Union
+from typing import List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._management_lock_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ManagementLockListResult(msrest.serialization.Model):
@@ -30,7 +32,7 @@ class ManagementLockListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ManagementLockObject"]] = None,
+        value: Optional[List["_models.ManagementLockObject"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -56,7 +58,7 @@ class ManagementLockObject(msrest.serialization.Model):
     :vartype type: str
     :ivar name: The name of the lock.
     :vartype name: str
-    :ivar level: The lock level of the management lock. Possible values include: "NotSpecified",
+    :ivar level: The lock level of the management lock. Known values are: "NotSpecified",
      "CanNotDelete", "ReadOnly".
     :vartype level: str or ~azure.mgmt.resource.locks.v2015_01_01.models.LockLevel
     :ivar notes: The notes of the management lock.
@@ -80,14 +82,14 @@ class ManagementLockObject(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        level: Optional[Union[str, "LockLevel"]] = None,
+        level: Optional[Union[str, "_models.LockLevel"]] = None,
         notes: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword name: The name of the lock.
         :paramtype name: str
-        :keyword level: The lock level of the management lock. Possible values include: "NotSpecified",
+        :keyword level: The lock level of the management lock. Known values are: "NotSpecified",
          "CanNotDelete", "ReadOnly".
         :paramtype level: str or ~azure.mgmt.resource.locks.v2015_01_01.models.LockLevel
         :keyword notes: The notes of the management lock.

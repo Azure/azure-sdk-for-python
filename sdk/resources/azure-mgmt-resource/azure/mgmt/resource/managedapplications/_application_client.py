@@ -58,8 +58,12 @@ class ApplicationClient(ApplicationClientOperationsMixin):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.applications = ApplicationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.application_definitions = ApplicationDefinitionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.applications = ApplicationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.application_definitions = ApplicationDefinitionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(

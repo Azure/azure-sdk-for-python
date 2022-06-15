@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class EnforcementMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EnforcementMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The policy assignment enforcement mode. Possible values are Default and DoNotEnforce.
     """
 
@@ -20,7 +19,7 @@ class EnforcementMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: The policy effect is not enforced during resource creation or update.
     DO_NOT_ENFORCE = "DoNotEnforce"
 
-class ParameterType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The data type of the parameter.
     """
 
@@ -32,7 +31,7 @@ class ParameterType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FLOAT = "Float"
     DATE_TIME = "DateTime"
 
-class PolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of policy definition. Possible values are NotSpecified, BuiltIn, Custom, and Static.
     """
 
@@ -41,7 +40,7 @@ class PolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CUSTOM = "Custom"
     STATIC = "Static"
 
-class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The identity type. This is the only required field when adding a system assigned identity to a
     resource.
     """

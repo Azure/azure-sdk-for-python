@@ -13,13 +13,15 @@ from typing import Any, AsyncIterable
 
 from azure.core.async_paging import AsyncItemPaged
 
+from .. import models as _models
+
 
 class FeatureClientOperationsMixin(object):
 
     def list_operations(
         self,
         **kwargs: Any
-    ) -> AsyncIterable["_models.OperationListResult"]:
+    ) -> AsyncIterable[_models.OperationListResult]:
         """Lists all of the available Microsoft.Features REST API operations.
 
         :keyword callable cls: A custom type or function that will be passed the direct response

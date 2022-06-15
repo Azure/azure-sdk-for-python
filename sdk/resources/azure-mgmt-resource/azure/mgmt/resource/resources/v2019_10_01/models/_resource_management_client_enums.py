@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AliasPatternType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AliasPatternType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of alias pattern
     """
 
@@ -20,7 +19,7 @@ class AliasPatternType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Extract is the only allowed value.
     EXTRACT = "Extract"
 
-class AliasType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AliasType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the alias.
     """
 
@@ -31,7 +30,7 @@ class AliasType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Alias value is secret.
     MASK = "Mask"
 
-class ChangeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of change that will be made to the resource when the deployment is executed.
     """
 
@@ -54,7 +53,7 @@ class ChangeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: deployment is executed. The properties of the resource will change.
     MODIFY = "Modify"
 
-class DeploymentMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DeploymentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode that is used to deploy resources. This value can be either Incremental or Complete. In
     Incremental mode, resources are deployed without deleting existing resources that are not
     included in the template. In Complete mode, resources are deployed and existing resources in
@@ -65,7 +64,7 @@ class DeploymentMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     INCREMENTAL = "Incremental"
     COMPLETE = "Complete"
 
-class OnErrorDeploymentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OnErrorDeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The deployment on error behavior type. Possible values are LastSuccessful and
     SpecificDeployment.
     """
@@ -73,7 +72,7 @@ class OnErrorDeploymentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     LAST_SUCCESSFUL = "LastSuccessful"
     SPECIFIC_DEPLOYMENT = "SpecificDeployment"
 
-class PropertyChangeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PropertyChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of property change.
     """
 
@@ -89,7 +88,7 @@ class PropertyChangeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: The property is an array and contains nested changes.
     ARRAY = "Array"
 
-class ProvisioningOperation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The name of the current provisioning operation.
     """
 
@@ -115,7 +114,7 @@ class ProvisioningOperation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: deployment.
     DEPLOYMENT_CLEANUP = "DeploymentCleanup"
 
-class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The identity type.
     """
 
@@ -124,7 +123,7 @@ class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     NONE = "None"
 
-class TagsPatchOperation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TagsPatchOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation type for the patch API.
     """
 
@@ -136,7 +135,7 @@ class TagsPatchOperation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: The 'delete' option allows selectively deleting tags based on given names or name/value pairs.
     DELETE = "Delete"
 
-class WhatIfResultFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class WhatIfResultFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The format of the What-If results
     """
 

@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class PolicyMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PolicyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The policy definition mode. Possible values are NotSpecified, Indexed, and All.
     """
 
@@ -19,7 +18,7 @@ class PolicyMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     INDEXED = "Indexed"
     ALL = "All"
 
-class PolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of policy definition. Possible values are NotSpecified, BuiltIn, and Custom.
     """
 
@@ -27,7 +26,7 @@ class PolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     BUILT_IN = "BuiltIn"
     CUSTOM = "Custom"
 
-class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The identity type.
     """
 

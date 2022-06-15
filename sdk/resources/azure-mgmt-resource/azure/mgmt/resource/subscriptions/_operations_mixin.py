@@ -11,6 +11,8 @@
 from msrest import Serializer, Deserializer
 from typing import TYPE_CHECKING
 
+from . import models as _models
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Optional
@@ -20,10 +22,10 @@ class SubscriptionClientOperationsMixin(object):
 
     def check_resource_name(
         self,
-        resource_name_definition=None,  # type: Optional["_models.ResourceName"]
+        resource_name_definition=None,  # type: Optional[_models.ResourceName]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.CheckResourceNameResult"
+        # type: (...) -> _models.CheckResourceNameResult
         """Checks resource name validity.
 
         A resource name is valid if it is not a reserved word, does not contains a reserved word and

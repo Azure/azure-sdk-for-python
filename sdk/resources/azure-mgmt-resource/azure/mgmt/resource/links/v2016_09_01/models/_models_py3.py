@@ -6,9 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional
+from typing import List, Optional, TYPE_CHECKING
 
 import msrest.serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class Operation(msrest.serialization.Model):
@@ -29,7 +33,7 @@ class Operation(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         **kwargs
     ):
         """
@@ -106,7 +110,7 @@ class OperationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Operation"]] = None,
+        value: Optional[List["_models.Operation"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -152,7 +156,7 @@ class ResourceLink(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        properties: Optional["ResourceLinkProperties"] = None,
+        properties: Optional["_models.ResourceLinkProperties"] = None,
         **kwargs
     ):
         """
@@ -268,7 +272,7 @@ class ResourceLinkResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["ResourceLink"],
+        value: List["_models.ResourceLink"],
         **kwargs
     ):
         """

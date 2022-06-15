@@ -56,7 +56,9 @@ class DeploymentScriptsClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.deployment_scripts = DeploymentScriptsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.deployment_scripts = DeploymentScriptsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(

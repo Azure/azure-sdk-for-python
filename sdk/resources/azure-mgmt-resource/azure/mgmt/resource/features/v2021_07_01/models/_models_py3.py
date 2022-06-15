@@ -6,12 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._feature_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AuthorizationProfile(msrest.serialization.Model):
@@ -88,7 +90,7 @@ class ErrorDefinition(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        details: Optional[List["ErrorDefinition"]] = None,
+        details: Optional[List["_models.ErrorDefinition"]] = None,
         **kwargs
     ):
         """
@@ -115,7 +117,7 @@ class ErrorResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["ErrorDefinition"] = None,
+        error: Optional["_models.ErrorDefinition"] = None,
         **kwargs
     ):
         """
@@ -143,7 +145,7 @@ class FeatureOperationsListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["FeatureResult"]] = None,
+        value: Optional[List["_models.FeatureResult"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -207,7 +209,7 @@ class FeatureResult(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        properties: Optional["FeatureProperties"] = None,
+        properties: Optional["_models.FeatureProperties"] = None,
         id: Optional[str] = None,
         type: Optional[str] = None,
         **kwargs
@@ -247,7 +249,7 @@ class Operation(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         **kwargs
     ):
         """
@@ -317,7 +319,7 @@ class OperationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Operation"]] = None,
+        value: Optional[List["_models.Operation"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -401,7 +403,7 @@ class SubscriptionFeatureRegistration(ProxyResource):
     def __init__(
         self,
         *,
-        properties: Optional["SubscriptionFeatureRegistrationProperties"] = None,
+        properties: Optional["_models.SubscriptionFeatureRegistrationProperties"] = None,
         **kwargs
     ):
         """
@@ -432,7 +434,7 @@ class SubscriptionFeatureRegistrationList(msrest.serialization.Model):
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["SubscriptionFeatureRegistration"]] = None,
+        value: Optional[List["_models.SubscriptionFeatureRegistration"]] = None,
         **kwargs
     ):
         """
@@ -463,7 +465,7 @@ class SubscriptionFeatureRegistrationProperties(msrest.serialization.Model):
     :vartype display_name: str
     :ivar provider_namespace: The providerNamespace.
     :vartype provider_namespace: str
-    :ivar state: The state. Possible values include: "NotSpecified", "NotRegistered", "Pending",
+    :ivar state: The state. Known values are: "NotSpecified", "NotRegistered", "Pending",
      "Registering", "Registered", "Unregistering", "Unregistered".
     :vartype state: str or
      ~azure.mgmt.resource.features.v2021_07_01.models.SubscriptionFeatureRegistrationState
@@ -478,7 +480,7 @@ class SubscriptionFeatureRegistrationProperties(msrest.serialization.Model):
     :vartype registration_date: ~datetime.datetime
     :ivar documentation_link: The feature documentation link.
     :vartype documentation_link: str
-    :ivar approval_type: The feature approval type. Possible values include: "NotSpecified",
+    :ivar approval_type: The feature approval type. Known values are: "NotSpecified",
      "ApprovalRequired", "AutoApproval".
     :vartype approval_type: str or
      ~azure.mgmt.resource.features.v2021_07_01.models.SubscriptionFeatureRegistrationApprovalType
@@ -522,15 +524,15 @@ class SubscriptionFeatureRegistrationProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        state: Optional[Union[str, "SubscriptionFeatureRegistrationState"]] = None,
-        authorization_profile: Optional["AuthorizationProfile"] = None,
+        state: Optional[Union[str, "_models.SubscriptionFeatureRegistrationState"]] = None,
+        authorization_profile: Optional["_models.AuthorizationProfile"] = None,
         metadata: Optional[Dict[str, str]] = None,
         should_feature_display_in_portal: Optional[bool] = False,
         description: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword state: The state. Possible values include: "NotSpecified", "NotRegistered", "Pending",
+        :keyword state: The state. Known values are: "NotSpecified", "NotRegistered", "Pending",
          "Registering", "Registered", "Unregistering", "Unregistered".
         :paramtype state: str or
          ~azure.mgmt.resource.features.v2021_07_01.models.SubscriptionFeatureRegistrationState
