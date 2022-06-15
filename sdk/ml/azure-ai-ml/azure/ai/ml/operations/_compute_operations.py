@@ -2,12 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import json
 import logging
 import time
 from typing import Any, Dict, Iterable
 
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError
 from azure.core.polling import LROPoller
 from azure.ai.ml._restclient.v2021_10_01 import AzureMachineLearningWorkspaces as ServiceClient102021
 from azure.ai.ml._scope_dependent_operations import OperationScope, _ScopeDependentOperations
@@ -27,6 +26,12 @@ module_logger = logging.getLogger(__name__)
 
 
 class ComputeOperations(_ScopeDependentOperations):
+    """
+    ComputeOperations
+
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
+    """
+
     def __init__(
         self,
         operation_scope: OperationScope,
@@ -72,20 +77,11 @@ class ComputeOperations(_ScopeDependentOperations):
         :rtype: Compute
         """
 
-        response, rest_obj = self._operation.get(
+        rest_obj = self._operation.get(
             self._operation_scope.resource_group_name,
             self._workspace_name,
             name,
-            cls=get_http_response_and_deserialized_from_pipeline_response,
         )
-        # TODO: Remove warning logging after 05/31/2022 (Task 1776012)
-        response_json = json.loads(response.internal_response.text)
-        xds_error_code = "XDSRestartRequired"
-        warnings = response_json["properties"].get("warnings", [])
-        xds_warning = next((warning for warning in warnings if warning["code"] == xds_error_code), None)
-        if xds_warning:
-            logging.critical(xds_warning["message"])
-
         return Compute._from_rest_object(rest_obj)
 
     @monitor_with_activity(logger, "Compute.ListNodes", ActivityType.PUBLICAPI)
@@ -266,8 +262,7 @@ class ComputeOperations(_ScopeDependentOperations):
     def list_usage(self, *, location: str = None) -> Iterable[Usage]:
         """Gets the current usage information as well as limits for AML resources for given subscription
         and location.
-        :param location: The location for which resource usage is queried.
-                         If location not provided , defaults to workspace location
+        :param location: The location for which resource usage is queried. If location not provided , defaults to workspace location
         :type location: str
         :return: An iterator over current usage info
         :rtype: ~azure.core.paging.ItemPaged[Usage]

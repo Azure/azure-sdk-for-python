@@ -7,7 +7,9 @@ import types
 from pathlib import Path
 from typing import Dict, Iterable, Union
 
-from azure.ai.ml._operations import OperationOrchestrator, EnvironmentOperations, CodeOperations
+from azure.ai.ml.operations import EnvironmentOperations
+from ._operation_orchestrator import OperationOrchestrator
+from ._code_operations import CodeOperations
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerDetails, ListViewType
 from azure.ai.ml._scope_dependent_operations import _ScopeDependentOperations, OperationScope, OperationsContainer
@@ -17,7 +19,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 
 from azure.ai.ml._utils.utils import hash_dict
 
-from azure.ai.ml.constants import AzureMLResourceType
+from azure.ai.ml.constants import AzureMLResourceType, ANONYMOUS_COMPONENT_NAME
 from azure.ai.ml.entities import Component, CommandComponent, ParallelComponent, Environment, Asset
 
 from azure.ai.ml.entities._assets import Code
@@ -29,7 +31,6 @@ from azure.ai.ml._utils._asset_utils import (
 )
 from azure.ai.ml._utils._arm_id_utils import (
     is_ARM_id_for_resource,
-    is_arm_id_or_arm_string_or_object,
     is_registry_id_for_resource,
 )
 
@@ -56,6 +57,12 @@ COMPONENT_CODE_PLACEHOLDER = "command_component: code_placeholder"
 
 
 class ComponentOperations(_ScopeDependentOperations):
+    """
+    ComponentOperations
+
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
+    """
+
     def __init__(
         self,
         operation_scope: OperationScope,
@@ -183,20 +190,6 @@ class ComponentOperations(_ScopeDependentOperations):
         component = Component._from_rest_object(result)
         return component
 
-    def _validate_code(self, code: str, base_path, validation_result: ValidationResult) -> None:
-        if code is None:
-            return
-        if isinstance(code, str):
-            try:
-                # check if the code is an arm id or arm string
-                is_arm_id_or_arm_string_or_object(code, AzureMLResourceType.CODE)
-                return
-            except ValidationException:
-                # if not, assume that it is a valid local path
-                code = Code(base_path=base_path, path=code)
-
-        validation_result._merge_with(self._code_operations._validate(code), "code")
-
     @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.PUBLICAPI)
     def validate(
         self, component: Union[Component, types.FunctionType], raise_on_failure: bool = False, **kwargs
@@ -204,7 +197,7 @@ class ComponentOperations(_ScopeDependentOperations):
         """validate a specified component.
         if there are inline defined entities, e.g. Environment, Code, they won't be created.
 
-        :param component: The component object or a dsl component function that generates component object
+        :param component: The component object or a mldesigner component function that generates component object
         :type component: Union[Component, types.FunctionType]
         :param raise_on_failure: whether to raise exception on validation error
         :type raise_on_failure: bool
@@ -215,55 +208,27 @@ class ComponentOperations(_ScopeDependentOperations):
         if isinstance(component, types.FunctionType):
             component = self._refine_component(component)
 
-        # local validation
-        validation_result = component._validate(raise_error=raise_on_failure)
-        # TODO 1788520: below logic should be moved to ComponentSchema as they do not involve remote calls
-        if isinstance(component, (CommandComponent, ParallelComponent)):
-            # code
-            self._validate_code(component.code, component.base_path, validation_result)
-            # environment
-            if component.environment:
-                try:
-                    is_arm_id_or_arm_string_or_object(component.environment, AzureMLResourceType.ENVIRONMENT)
-                except ValidationException as e:
-                    validation_result._append_validation_exception(e, "environment")
-
-        if raise_on_failure and validation_result.passed is False:
-            raise ValidationException(
-                message=validation_result._single_message,
-                no_personal_data_message=validation_result._single_message,
-                target=ErrorTarget.COMPONENT,
-                error_category=ErrorCategory.USER_ERROR,
-            )
-        return validation_result
+        # local validation only for now
+        return component._validate(raise_error=raise_on_failure)
 
     @monitor_with_telemetry_mixin(logger, "Component.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, component: Union[Component, types.FunctionType], **kwargs) -> Component:
         """Create or update a specified component. if there're inline defined entities, e.g. Environment, Code, they'll be created together with the component.
 
-        :param component: The component object or a dsl component function that generates component object
+        :param component: The component object or a mldesigner component function that generates component object
         :type component: Union[Component, types.FunctionType]
         """
         # Update component when the input is a component function
         if isinstance(component, types.FunctionType):
             component = self._refine_component(component)
-        is_anonymous = kwargs.pop("is_anonymous", False)
 
-        # hide this as component won't fit its schema after upload_dependencies
-        # self.validate(component, raise_on_failure=True)
+        component._set_is_anonymous(kwargs.pop("is_anonymous", False))
+        self.validate(component, raise_on_failure=True)
 
         # Create all dependent resources
         self._upload_dependencies(component)
-        if is_anonymous is True:
-            component._is_anonymous = True
-            # For anonymous component, we use code hash + yaml hash(if code is None) as component version
-            # so the same anonymous component(same interface and same code) won't be created again.
-            component.name = get_anonymous_component_name(component)
-            # Overwrite version to 1 to avoid create version auto increment component.
-            component.version = "1"
-        else:
-            component._is_anonymous = False
 
+        component._update_anonymous_hash()
         rest_component_resource = component._to_rest_object()
         try:
             if self._registry_name:
@@ -302,7 +267,7 @@ class ComponentOperations(_ScopeDependentOperations):
         else:
             return Component._from_rest_object(result)
 
-    @monitor_with_activity(logger, "Component.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Component.Archive", ActivityType.PUBLICAPI)
     def archive(self, name: str, version: str = None, label: str = None) -> None:
         """
         Archive a component.
@@ -323,7 +288,7 @@ class ComponentOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    @monitor_with_activity(logger, "Component.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Component.Restore", ActivityType.PUBLICAPI)
     def restore(self, name: str, version: str = None, label: str = None) -> None:
         """
         Restore an archived component.
@@ -388,7 +353,7 @@ class ComponentOperations(_ScopeDependentOperations):
                     component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
                 )
         # elif isinstance(component, ParallelComponent):
-        #     # TODO: xiaoran need to clarify if there is azureMLResource in ParallelComponent
+        #     # TODO: need to clarify if there is azureMLResource in ParallelComponent
         #     pass
         else:
             msg = f"Non supported component type: {type(component)}"
@@ -408,7 +373,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :rtype: Component
         """
         if not hasattr(component_func, "_is_mldesigner_component") or not component_func._is_mldesigner_component:
-            msg = "Function must be a dsl component function： {!r}"
+            msg = "Function must be a mldesigner component function： {!r}"
             raise ValidationException(
                 message=msg.format(component_func),
                 no_personal_data_message=msg.format("component"),
@@ -417,14 +382,3 @@ class ComponentOperations(_ScopeDependentOperations):
             )
         component = component_func.component
         return component
-
-
-def get_anonymous_component_name(component: Component) -> str:
-    """Return the name of anonymous component.
-
-    same anonymous component(same code and interface) will have same name.
-    """
-    component_interface_dict = component._to_dict()
-    # omit name since anonymous component's original name is random guid
-    # omit version since we'll overwrite it to 1 later
-    return hash_dict(component_interface_dict, keys_to_omit=["name", "id", "version"])

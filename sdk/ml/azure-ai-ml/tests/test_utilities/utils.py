@@ -2,6 +2,7 @@ import copy
 import pydash
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import Job, PipelineJob
+from azure.ai.ml import load_job
 
 
 def write_script(script_path: str, content: str) -> str:
@@ -64,7 +65,7 @@ def prepare_dsl_curated(
     """
     if omit_fields is None:
         omit_fields = []
-    pipeline_from_yaml = Job.load(path=job_yaml)
+    pipeline_from_yaml = load_job(path=job_yaml)
     if in_rest:
         dsl_pipeline_job_dict = pipeline._to_rest_object().as_dict()
         pipeline_job_dict = pipeline_from_yaml._to_rest_object().as_dict()

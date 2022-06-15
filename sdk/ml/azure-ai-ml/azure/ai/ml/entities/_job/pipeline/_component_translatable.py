@@ -25,7 +25,7 @@ class ComponentTranslatableMixin:
     def _find_source_input_output_type(cls, input: str, pipeline_job_dict: dict):
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
         from azure.ai.ml.entities import CommandJob, ParallelJob
-        from azure.ai.ml.entities._builders import Command, Parallel
+        from azure.ai.ml.entities._builders import Command, Parallel, Sweep
 
         pipeline_job_inputs = pipeline_job_dict.get("inputs", {})
         pipeline_job_outputs = pipeline_job_dict.get("outputs", {})
@@ -77,7 +77,7 @@ class ComponentTranslatableMixin:
                     )
                 _input_job_name, _io_type, _name = m.groups()
                 _input_job = jobs_dict[_input_job_name]
-                if isinstance(_input_job, (Command, Parallel)):
+                if isinstance(_input_job, (Command, Parallel, Sweep)):
                     # If source is Command, get type from io builder
                     _source = _input_job[_io_type][_name]
                     try:
@@ -133,7 +133,7 @@ class ComponentTranslatableMixin:
             input_variable["type"] = cls._find_source_input_output_type(input, pipeline_job_dict)
 
         elif isinstance(input, Input):
-            input_variable["type"] = input.type
+            input_variable = input._to_dict()
         elif isinstance(input, SweepDistribution):
             if isinstance(input, Choice):
                 input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(input.values[0])]
@@ -142,11 +142,10 @@ class ComponentTranslatableMixin:
             else:
                 input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[float]
 
-            input_variable["required"] = True
+            input_variable["optional"] = False
         elif type(input) in cls.PYTHON_SDK_TYPE_MAPPING.keys():
             input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(input)]
             input_variable["default"] = input
-            input_variable["required"] = False
         else:
             msg = "'{}' is not supported as component input, supported types are '{}'.".format(
                 type(input), cls.PYTHON_SDK_TYPE_MAPPING.keys()
@@ -163,7 +162,7 @@ class ComponentTranslatableMixin:
         input_variable = {}
 
         if isinstance(input, Input):
-            input_variable["type"] = input.type
+            input_variable = input._to_dict()
         elif isinstance(input, SweepDistribution):
             if isinstance(input, Choice):
                 input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(input.values[0])]
@@ -172,11 +171,10 @@ class ComponentTranslatableMixin:
             else:
                 input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[float]
 
-            input_variable["required"] = True
+            input_variable["optional"] = False
         else:
             input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(input)]
             input_variable["default"] = input
-            input_variable["required"] = False
         return ComponentInput(input_variable)
 
     @classmethod
@@ -204,12 +202,11 @@ class ComponentTranslatableMixin:
                 output_variable["type"] = cls._find_source_input_output_type(output, pipeline_job_dict)
 
             elif isinstance(output, Output):
-                output_variable["type"] = output.type
+                output_variable = output._to_dict()
 
             elif type(output) in cls.PYTHON_SDK_TYPE_MAPPING.keys():
                 output_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(output)]
                 output_variable["default"] = output
-                output_variable["required"] = False
             else:
                 msg = "'{}' is not supported as component output, supported types are '{}'.".format(
                     type(output), cls.PYTHON_SDK_TYPE_MAPPING.keys()

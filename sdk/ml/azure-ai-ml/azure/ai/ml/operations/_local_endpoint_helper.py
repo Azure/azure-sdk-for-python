@@ -113,7 +113,7 @@ class _LocalEndpointHelper(object):
                 containers.remove(container)
             else:
                 endpoints.append(
-                    OnlineEndpoint.load_from_dict(
+                    OnlineEndpoint._load(
                         data=endpoint_json,
                         params_override=[{"location": LocalEndpointConstants.ENDPOINT_STATE_LOCATION}],
                     )
@@ -175,4 +175,4 @@ class _LocalEndpointHelper(object):
         params_override = []
         for k, v in kwargs.items():
             params_override.append({k: v})
-        return OnlineEndpoint.load_from_dict(data=endpoint_json, params_override=params_override)
+        return OnlineEndpoint._load(data=endpoint_json, params_override=params_override)

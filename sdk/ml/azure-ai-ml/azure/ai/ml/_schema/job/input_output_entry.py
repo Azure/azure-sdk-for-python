@@ -35,15 +35,7 @@ class InputSchema(metaclass=PatchedSchemaMeta):
             AssetTypes.TRITON_MODEL,
         ]
     )
-    path = UnionField(
-        [
-            ArmVersionedStr(azureml_type=AzureMLResourceType.DATASET),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.MODEL),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.DATA),
-            fields.URL(),  # For a remote path
-            fields.Str(),  # For a local path
-        ],
-    )
+    path = UnionField([ArmVersionedStr(), fields.Str()])
 
     @post_load
     def make(self, data, **kwargs):

@@ -110,19 +110,19 @@ class BatchEndpoint(Endpoint):
         return BatchEndpointSchema(context=context).dump(self)  # type: ignore
 
     @classmethod
-    def load(
+    def _load(
         cls,
-        path: Union[PathLike, str] = None,
+        data: dict,
+        yaml_path: Union[PathLike, str] = None,
         params_override: list = None,
         **kwargs,
-    ) -> "Endpoint":
+    ) -> "BatchEndpoint":
         params_override = params_override or []
         context = {
-            BASE_PATH_CONTEXT_KEY: Path(path).parent if path else Path.cwd(),
+            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path.cwd(),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        yaml_dict = load_yaml(path)
-        return load_from_dict(BatchEndpointSchema, yaml_dict, context)
+        return load_from_dict(BatchEndpointSchema, data, context)
 
     def _to_dict(self) -> Dict:
         return BatchEndpointSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
