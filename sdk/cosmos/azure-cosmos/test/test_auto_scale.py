@@ -70,7 +70,7 @@ class AutoScaleTest(unittest.TestCase):
 
         )
         created_container_properties = created_container.get_throughput()
-        #Testing the input values of the max_throughput
+        # Testing the input values of the max_throughput
         self.assertEqual(
             created_container_properties.properties['content']['offerAutopilotSettings']['maxThroughput'], 5000)
 
@@ -95,7 +95,7 @@ class AutoScaleTest(unittest.TestCase):
 
         )
         created_container_properties = created_container.get_throughput()
-        #Testing the input values of the max_increment_percentage
+        # Testing the input values of the max_increment_percentage
         self.assertEqual(
             created_container_properties.properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy']['incrementPercent'], 1)
 
@@ -114,7 +114,7 @@ class AutoScaleTest(unittest.TestCase):
 
 
     def test_auto_scale_setting(self):
-        #Testing for wrong attributes for the auto_scale_setting in the created container
+        # Testing for wrong attributes for the auto_scale_setting in the created container
         try:
             created_container = self.created_database.create_container(
                 id='container_with_wrong_auto_scale_setting',
