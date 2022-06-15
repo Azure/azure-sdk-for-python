@@ -56,18 +56,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "445beb77-dc12-4930-8c04-c230e58ff869",
+        "apim-request-id": "374b913f-2ae4-408a-85ec-efde94d2ddd9",
         "Content-Length": "0",
-        "Date": "Thu, 09 Jun 2022 17:12:24 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/61a45d03-db17-46e6-9bf0-b759bb7056a9?api-version=2022-05-01",
+        "Date": "Thu, 09 Jun 2022 22:01:48 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/e87b77fc-3fec-47b4-9338-d0f219f88ed9?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "245"
+        "x-envoy-upstream-service-time": "446"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/61a45d03-db17-46e6-9bf0-b759bb7056a9?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/e87b77fc-3fec-47b4-9338-d0f219f88ed9?api-version=2022-05-01\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -78,19 +78,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "484e5567-7f81-4514-9319-08954002eca7",
-        "Content-Length": "3704",
+        "apim-request-id": "28650259-901e-4ef1-848f-4ca4bb71e70b",
+        "Content-Length": "3705",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:12:29 GMT",
+        "Date": "Thu, 09 Jun 2022 22:01:54 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "108"
+        "x-envoy-upstream-service-time": "149"
       },
       "ResponseBody": {
-        "jobId": "61a45d03-db17-46e6-9bf0-b759bb7056a9",
-        "lastUpdatedDateTime": "2022-06-09T17:12:24Z",
-        "createdDateTime": "2022-06-09T17:12:24Z",
-        "expirationDateTime": "2022-06-10T17:12:24Z",
+        "jobId": "e87b77fc-3fec-47b4-9338-d0f219f88ed9",
+        "lastUpdatedDateTime": "2022-06-09T22:01:50Z",
+        "createdDateTime": "2022-06-09T22:01:49Z",
+        "expirationDateTime": "2022-06-10T22:01:49Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -102,7 +102,7 @@
             {
               "kind": "CustomSingleLabelClassificationLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-09T17:12:24.8268662Z",
+              "lastUpdateDateTime": "2022-06-09T22:01:50.1185336Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -147,7 +147,7 @@
             {
               "kind": "CustomMultiLabelClassificationLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-06-09T17:12:24.7403656Z",
+              "lastUpdateDateTime": "2022-06-09T22:01:50.1850609Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -187,7 +187,7 @@
             {
               "kind": "CustomEntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-06-09T17:12:24.805869Z",
+              "lastUpdateDateTime": "2022-06-09T22:01:49.8887865Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
