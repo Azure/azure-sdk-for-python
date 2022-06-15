@@ -1,0 +1,35 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-analytics-loadtestservice/1.0.0b1 Python/3.9.8 (Windows-10-10.0.19044)
+    method: GET
+    uri: https://eccdc9b7-7603-402b-879d-bde2b637db56.eus.cnt-prod.loadtesting.azure.com/testruns/sortAndFilter?maxPageSize=50&api-version=2022-06-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '0'
+      date:
+      - Wed, 15 Jun 2022 08:40:23 GMT
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      www-authenticate:
+      - 'Bearer error="invalid_token", error_description="S2S17000: SAL was unable
+        to validate the protocol. Validation failure: ''BearerReadAccessTokenFailed''"'
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 401
+      message: Unauthorized
+version: 1

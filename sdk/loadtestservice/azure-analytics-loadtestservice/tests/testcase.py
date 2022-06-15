@@ -25,5 +25,5 @@ class LoadtestserviceTest(AzureTestCase):
 LoadtestservicePowerShellPreparer = functools.partial(
     PowerShellPreparer,
     "loadtestservice",
-    loadtestservice_endpoint="https://eccdc9b7-7603-402b-879d-bde2b637db56.eus.cnt-prod.loadtesting.azure.com"
+    loadtestservice_endpoint="https://fake.loadtesting.azure.com"
 )
