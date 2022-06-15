@@ -396,7 +396,7 @@ class CodegenTestPR:
                 if new_line in content[i]:
                     return
                 if f'azure-mgmt-{self.package_name} {dependency_name}' in content[i]:
-                    content[i] = new_line
+                    content[i] = new_line + '\n'
                     return
             prefix = '' if '\n' in content[-1] else '\n'
             content.append(prefix + new_line + '\n')
