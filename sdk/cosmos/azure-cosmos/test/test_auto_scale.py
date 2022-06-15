@@ -66,7 +66,7 @@ class AutoScaleTest(unittest.TestCase):
         created_container = self.created_database.create_container(
             id='container_with_auto_scale_setting',
             partition_key=PartitionKey(path="/id"),
-            auto_scale_setting=AutoScale(5000,0)
+            auto_scale_setting=AutoScale(5000, 0)
 
         )
         created_container_properties = created_container.get_throughput()
@@ -75,6 +75,7 @@ class AutoScaleTest(unittest.TestCase):
             created_container_properties.properties['content']['offerAutopilotSettings']['maxThroughput'], 5000)
 
         self.created_database.delete_container(created_container)
+
         # Testing the incorrect passing of an input value of the max_throughput to verify negative behavior
         try:
             created_container = self.created_database.create_container(
@@ -91,15 +92,17 @@ class AutoScaleTest(unittest.TestCase):
         created_container = self.created_database.create_container(
             id='container_with_auto_scale_setting',
             partition_key=PartitionKey(path="/id"),
-            auto_scale_setting=AutoScale(5000,1)
+            auto_scale_setting=AutoScale(5000, 1)
 
         )
         created_container_properties = created_container.get_throughput()
         # Testing the input values of the max_increment_percentage
         self.assertEqual(
-            created_container_properties.properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy']['incrementPercent'], 1)
+            created_container_properties.properties['content']['offerAutopilotSettings']['autoUpgradePolicy']
+            ['throughputPolicy']['incrementPercent'], 1)
 
         self.created_database.delete_container(created_container)
+
         # Testing the incorrect passing of an input value of the max_increment_percentage to verify negative behavior
         try:
             created_container = self.created_database.create_container(
@@ -123,4 +126,15 @@ class AutoScaleTest(unittest.TestCase):
 
             )
         except AttributeError:
+            pass
+
+        # Testing for empty required positional arguments for the auto_scale_setting in the created container
+        try:
+            created_container = self.created_database.create_container(
+                id='container_with_wrong_auto_scale_setting',
+                partition_key=PartitionKey(path="/id"),
+                auto_scale_setting=AutoScale()
+
+            )
+        except TypeError:
             pass
