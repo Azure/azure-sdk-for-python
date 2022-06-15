@@ -170,7 +170,7 @@ class FileTest(StorageTestCase):
         creation_time = file_properties['creation_time']
         creation_time = creation_time.replace(tzinfo=None)  # Strip timezone info to be able to compare
         self.assertIsNotNone(file_properties)
-        self.assertAlmostEqual(expiry_time, creation_time + timedelta(days=1), delta=timedelta(seconds=1))
+        self.assertAlmostEqual(expiry_time, creation_time + timedelta(days=1), delta=timedelta(seconds=60))
 
     @DataLakePreparer()
     async def test_create_file_absolute_expiry_async(self, datalake_storage_account_name, datalake_storage_account_key):
