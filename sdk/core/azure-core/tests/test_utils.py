@@ -40,3 +40,21 @@ def test_case_insensitive_dict_initialization():
         assert d['platformUpdateDomainCount'] == d['platformupdatedomaincount'] == d['PLATFORMUPDATEDOMAINCOUNT'] == 5
         assert d['platformFaultDomainCount'] == d['platformfaultdomaincount'] == d['PLATFORMFAULTDOMAINCOUNT'] == 3
         assert d['virtualMachines'] == d['virtualmachines'] == d['VIRTUALMACHINES'] == []
+
+def test_case_insensitive_dict_cant_compare():
+    my_dict = case_insensitive_dict({"accept": "application/json"})
+    assert my_dict != "accept"
+
+def test_case_insensitive_dict_lowerkey_items():
+    my_dict = case_insensitive_dict({"accept": "application/json"})
+    assert list(my_dict.lowerkey_items()) == [("accept","application/json")]
+
+@pytest.mark.parametrize("other, expected", (
+    ({"PLATFORMUPDATEDOMAINCOUNT": 5}, True),
+    ({}, False),
+    (None, False),
+))
+def test_case_insensitive_dict_equality(other, expected):
+    my_dict = case_insensitive_dict({"platformUpdateDomainCount": 5})
+    result = my_dict == other
+    assert result == expected
