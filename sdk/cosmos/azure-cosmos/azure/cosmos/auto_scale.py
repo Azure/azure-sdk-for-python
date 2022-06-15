@@ -20,6 +20,14 @@
 # SOFTWARE.
 
 class AutoScale(object):
-    def __init__(self, auto_scale_max_throughput, auto_upgrade_throughput_max_increment_percentage=0):
+    """Represents the auto-scale throughput properties in an Azure Cosmos DB SQL API container.
+
+   :param auto_scale_max_throughput is the max autoscale throughput, it should have valid throughput
+   values between 1000 and 1000000 inclusive in increments of 1000
+
+   :param auto_upgrade_throughput_increment_percent is the auto upgrade max throughput increment percentage
+   default value is 0 the increment percent should be greater than or equal to zero
+    """
+    def __init__(self, auto_scale_max_throughput, auto_upgrade_throughput_increment_percent=0):
         self.auto_scale_max_throughput = auto_scale_max_throughput
-        self.auto_upgrade_throughput_max_increment_percentage = auto_upgrade_throughput_max_increment_percentage
+        self.auto_upgrade_throughput_increment_percent = auto_upgrade_throughput_increment_percent
