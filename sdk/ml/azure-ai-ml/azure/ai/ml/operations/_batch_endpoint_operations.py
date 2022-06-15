@@ -50,14 +50,14 @@ from azure.ai.ml.constants import (
 from azure.ai.ml.entities import BatchEndpoint
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 
-from .operation_orchestrator import OperationOrchestrator
+from ._operation_orchestrator import OperationOrchestrator
 
 from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
 from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remote_uri
 
 if TYPE_CHECKING:
-    from azure.ai.ml._operations import DatastoreOperations
+    from azure.ai.ml.operations import DatastoreOperations
 
 logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
 logger.propagate = False
@@ -65,6 +65,12 @@ module_logger = logging.getLogger(__name__)
 
 
 class BatchEndpointOperations(_ScopeDependentOperations):
+    """
+    BatchEndpointOperations
+
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
+    """
+
     def __init__(
         self,
         operation_scope: OperationScope,

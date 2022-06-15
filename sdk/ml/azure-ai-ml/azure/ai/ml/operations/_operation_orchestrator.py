@@ -36,6 +36,7 @@ from azure.ai.ml.constants import (
     HTTPS_PREFIX,
     MLFLOW_URI_REGEX_FORMAT,
     JOB_URI_REGEX_FORMAT,
+    REGISTRY_ASSET_ID,
 )
 from azure.ai.ml._restclient.v2021_10_01.models import UriReference
 import re
@@ -84,7 +85,7 @@ class OperationOrchestrator(object):
         register_asset: bool = True,
         sub_workspace_resource: bool = True,
     ) -> Optional[Union[str, Asset]]:
-        """This method converts AzureML Id to ARM Id. Or if the given asset is entity object, it tries to register/upload the asset based on register_asset and aszureml_type.
+        """This method converts AzureML Id to ARM Id. Or if the given asset is entity object, it tries to register/upload the asset based on register_asset and azureml_type.
 
         :param asset: The asset to resolve/register. It can be a ARM id or a entity's object.
         :type asset: Optional[Union[str, Asset]]
@@ -128,14 +129,23 @@ class OperationOrchestrator(object):
                         no_personal_data_message=msg.format("", azureml_type),
                         error_category=ErrorCategory.USER_ERROR,
                     )
-                return VERSIONED_RESOURCE_ID_FORMAT.format(
-                    self._operation_scope.subscription_id,
-                    self._operation_scope.resource_group_name,
-                    AZUREML_RESOURCE_PROVIDER,
-                    self._operation_scope.workspace_name,
-                    azureml_type,
-                    name,
-                    version,
+                return (
+                    REGISTRY_ASSET_ID.format(
+                        self._operation_scope.registry_name,
+                        azureml_type,
+                        name,
+                        version,
+                    )
+                    if self._operation_scope.registry_name
+                    else VERSIONED_RESOURCE_ID_FORMAT.format(
+                        self._operation_scope.subscription_id,
+                        self._operation_scope.resource_group_name,
+                        AZUREML_RESOURCE_PROVIDER,
+                        self._operation_scope.workspace_name,
+                        azureml_type,
+                        name,
+                        version,
+                    )
                 )
             else:
                 msg = "Unsupported azureml type {} for asset: {}"
@@ -286,10 +296,10 @@ class OperationOrchestrator(object):
         )
 
     def resolve_azureml_id(self, arm_id: str = None, **kwargs) -> str:
-        """Thie function converts ARM id to name or name:version AzureML id. It parses the ARM id and matches the
-        subscription Id, resource group name and worksapce_name.
+        """This function converts ARM id to name or name:version AzureML id. It parses the ARM id and matches the
+        subscription Id, resource group name and workspace_name.
 
-        TODO: It is detable whether this method should be in operation_orchestrator.
+        TODO: It is debatable whether this method should be in operation_orchestrator.
 
         :param arm_id: entity's ARM id, defaults to None
         :type arm_id: str, optional

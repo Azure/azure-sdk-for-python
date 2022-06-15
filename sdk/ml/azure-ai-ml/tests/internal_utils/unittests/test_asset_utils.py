@@ -1,6 +1,7 @@
 import pytest
 import os
 from pathlib import Path
+from typing import Callable
 
 from azure.ai.ml._utils._asset_utils import (
     get_ignore_file,
@@ -84,7 +85,7 @@ class TestAssetUtils:
         gitignore_upload_paths = []
         no_ignore_upload_paths = []
 
-        for root, dirs, files in os.walk(source_path):
+        for root, _, files in os.walk(source_path, followlinks=True):
             amlignore_upload_paths += list(
                 traverse_directory(root, files, source_path, prefix, ignore_file=amlignore_file)
             )
@@ -104,9 +105,11 @@ class TestAssetUtils:
         prefix = source_path.name + "/"
         upload_paths = []
 
-        for root, dirs, files in os.walk(source_path):
+        for root, dirs, files in os.walk(source_path, followlinks=True):
             upload_paths += list(traverse_directory(root, files, source_path, prefix))
 
         for local_path, remote_path in upload_paths:
             remote_path = remote_path.split("/", 2)[-1]  # strip LocalUpload/<asset id> prefix
+            if remote_path.startswith("link_file_"):  # ignore symlinks because their remote and local paths will differ
+                continue
             assert remote_path in local_path
