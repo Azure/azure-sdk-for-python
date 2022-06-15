@@ -222,12 +222,13 @@ class ComponentOperations(_ScopeDependentOperations):
         if isinstance(component, types.FunctionType):
             component = self._refine_component(component)
 
+        component._set_is_anonymous(kwargs.pop("is_anonymous", False))
         self.validate(component, raise_on_failure=True)
 
         # Create all dependent resources
         self._upload_dependencies(component)
-        component._set_is_anonymous(kwargs.pop("is_anonymous", False))
 
+        component._update_anonymous_hash()
         rest_component_resource = component._to_rest_object()
         try:
             if self._registry_name:

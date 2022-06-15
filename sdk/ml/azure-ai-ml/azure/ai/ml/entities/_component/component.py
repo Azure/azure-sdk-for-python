@@ -122,14 +122,20 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
         return self._type
 
     def _set_is_anonymous(self, is_anonymous: bool):
+        """Mark this component as anonymous and overwrite component name to ANONYMOUS_COMPONENT_NAME."""
         if is_anonymous is True:
             self._is_anonymous = True
-            # For anonymous component, we use code hash + yaml hash as component version
-            # so the same anonymous component(same interface and same code) won't be created again.
             self.name = ANONYMOUS_COMPONENT_NAME
-            self.version = self._get_anonymous_hash()
         else:
             self._is_anonymous = False
+
+    def _update_anonymous_hash(self):
+        """For anonymous component, we use code hash + yaml hash as component version
+        so the same anonymous component(same interface and same code) won't be created again.
+        Should be called before _to_rest_object.
+        """
+        if self._is_anonymous:
+            self.version = self._get_anonymous_hash()
 
     def _get_anonymous_hash(self) -> str:
         """Return the name of anonymous component.

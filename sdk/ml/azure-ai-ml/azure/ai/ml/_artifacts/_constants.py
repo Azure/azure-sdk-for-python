@@ -30,5 +30,3 @@ INVALID_MLTABLE_METADATA_SCHEMA_ERROR = (
     "{jsonSchemaErrorPath}{jsonSchemaMessage}\n{invalidMLTableMsg}:\n{invalidSchemaSnippet}"
 )
 BLOB_DATASTORE_IS_HDI_FOLDER_KEY = "hdi_isfolder"
-BLOB_STORAGE_CLIENT_NAME = "BlobStorageClient"
-GEN2_STORAGE_CLIENT_NAME = "Gen2StorageClient"

@@ -565,7 +565,7 @@ def get_all_data_binding_expressions(
     if isinstance(binding_prefix, str):
         binding_prefix = [binding_prefix]
     if isinstance(value, str):
-        target_regex = r"\$\{\{\s*(" + "\\.".join(binding_prefix) + r"\S*)\s*\}\}"
+        target_regex = r"\$\{\{\s*(" + "\\.".join(binding_prefix) + r"\S*?)\s*\}\}"
         if is_singular:
             target_regex = "^" + target_regex + "$"
         return re.findall(target_regex, value)
