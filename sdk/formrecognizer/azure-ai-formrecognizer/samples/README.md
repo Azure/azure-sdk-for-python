@@ -28,7 +28,7 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 |----------------|-------------|
 |[sample_authentication.py][sample_auth] and [sample_authentication_async.py][sample_auth_async]|Authenticate the client|
 |[sample_analyze_layout.py][sample_analyze_layout] and [sample_analyze_layout_async.py][sample_analyze_layout_async]|Extract text, selection marks, and table structures in a document|
-|[sample_analyze_general_documents.py][sample_analyze_general_documents] and [sample_analyze_general_documents_async.py][sample_analyze_general_documents_async]|Analyze document key-value pairs, entities, tables, and selection marks using a prebuilt model|
+|[sample_analyze_general_documents.py][sample_analyze_general_documents] and [sample_analyze_general_documents_async.py][sample_analyze_general_documents_async]|Analyze document key-value pairs, tables, and selection marks using a prebuilt model|
 |[sample_analyze_read.py][sample_analyze_read] and [sample_analyze_read_async.py][sample_analyze_read_async]|Read document elements, such as pages and detected languages|
 |[sample_analyze_invoices.py][sample_analyze_invoices] and [sample_analyze_invoices_async.py][sample_analyze_invoices_async]|Analyze document text, selection marks, tables, and pre-trained fields and values pertaining to English invoices using a prebuilt model|
 |[sample_analyze_business_cards.py][sample_analyze_business_cards] and [sample_analyze_business_cards_async.py][sample_analyze_business_cards_async]|Analyze document text and pre-trained fields and values pertaining to English business cards using a prebuilt model|

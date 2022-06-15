@@ -6,7 +6,7 @@ import os
 import pytest
 import platform
 import functools
-
+import json
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics.aio import TextAnalyticsClient
@@ -772,15 +772,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         await client.analyze_sentiment(["please don't fail"])
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
-    @recorded_by_proxy_async
-    async def test_string_index_type_explicit_fails_v3(self, client):
-        with pytest.raises(ValueError) as excinfo:
-            await client.analyze_sentiment(["this should fail"], string_index_type="UnicodeCodePoint")
-        assert "'string_index_type' is only available for API version V3_1 and up" in str(excinfo.value)
-
-    @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy_async
     async def test_default_string_index_type_is_UnicodeCodePoint(self, client):
         def callback(response):
@@ -792,20 +784,45 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy_async
-    async def test_explicit_set_string_index_type(self, client):
+    async def test_default_string_index_type_UnicodeCodePoint_body_param(self, client):
         def callback(response):
-            assert response.http_request.query["stringIndexType"] == "TextElements_v8"
+            assert json.loads(response.http_request.body)['parameters']["stringIndexType"] == "UnicodeCodePoint"
 
         res = await client.analyze_sentiment(
             documents=["Hello world"],
-            string_index_type="TextElements_v8",
             raw_response_hook=callback
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
+    @recorded_by_proxy_async
+    async def test_explicit_set_string_index_type(self, client):
+        def callback(response):
+            assert response.http_request.query["stringIndexType"] == "TextElement_v8"
+
+        res = await client.analyze_sentiment(
+            documents=["Hello world"],
+            string_index_type="TextElement_v8",
+            raw_response_hook=callback
+        )
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
+    @recorded_by_proxy_async
+    async def test_explicit_set_string_index_type_body_param(self, client):
+        def callback(response):
+            assert json.loads(response.http_request.body)['parameters']["stringIndexType"] == "TextElements_v8"
+
+        res = await client.analyze_sentiment(
+            documents=["Hello world"],
+            string_index_type="TextElement_v8",
+            raw_response_hook=callback
+        )
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy_async
     async def test_disable_service_logs(self, client):
         def callback(resp):
@@ -815,3 +832,36 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             disable_service_logs=True,
             raw_response_hook=callback,
         )
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
+    @recorded_by_proxy_async
+    async def test_disable_service_logs_body_param(self, client):
+        def callback(resp):
+            assert json.loads(resp.http_request.body)['parameters']['loggingOptOut']
+        await client.analyze_sentiment(
+            documents=["Test for logging disable"],
+            disable_service_logs=True,
+            raw_response_hook=callback,
+        )
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.0"})
+    async def test_sentiment_multiapi_validate_args_v3_0(self, **kwargs):
+        client = kwargs.pop("client")
+
+        with pytest.raises(ValueError) as e:
+            res = await client.analyze_sentiment(["I'm tired"], string_index_type="UnicodeCodePoint")
+        assert str(e.value) == "'string_index_type' is only available for API version v3.1 and up.\n"
+
+        with pytest.raises(ValueError) as e:
+            res = await client.analyze_sentiment(["I'm tired"], show_opinion_mining=True)
+        assert str(e.value) == "'show_opinion_mining' is only available for API version v3.1 and up.\n"
+
+        with pytest.raises(ValueError) as e:
+            res = await client.analyze_sentiment(["I'm tired"], disable_service_logs=True)
+        assert str(e.value) == "'disable_service_logs' is only available for API version v3.1 and up.\n"
+
+        with pytest.raises(ValueError) as e:
+            res = await client.analyze_sentiment(["I'm tired"], show_opinion_mining=True, disable_service_logs=True, string_index_type="UnicodeCodePoint")
+        assert str(e.value) == "'show_opinion_mining' is only available for API version v3.1 and up.\n'disable_service_logs' is only available for API version v3.1 and up.\n'string_index_type' is only available for API version v3.1 and up.\n"

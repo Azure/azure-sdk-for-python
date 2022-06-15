@@ -1,0 +1,27 @@
+type: pipeline
+
+# name: microsoft.samples.PipelineJobSampleToDefineScope #follow up on schema validation error
+name: simplePipelineJobWithFileInlineComps
+description: The hello world pipeline job with file inline components
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: azureml:cpu-cluster
+
+inputs:
+  # examples of inputs that take values such as int, string, etc.
+  job_in_number: 10
+  job_in_path:
+    path: ../data
+    mode: ro_mount
+
+jobs:
+  hello_world_component_inline_file:
+    type: command
+    inputs:
+      component_in_number: ${{parent.inputs.job_in_number}}
+      component_in_path: ${{parent.inputs.job_in_path}}
+    compute: azureml:cpu-cluster
+
+    component: file:../components/helloworld_component.yml

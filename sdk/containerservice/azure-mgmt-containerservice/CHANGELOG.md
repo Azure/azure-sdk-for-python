@@ -1,5 +1,54 @@
 # Release History
 
+## 20.0.0 (2022-06-09)
+
+**Features**
+
+  - Model AzureKeyVaultKms has a new parameter key_vault_network_access
+  - Model AzureKeyVaultKms has a new parameter key_vault_resource_id
+  - Model ManagedCluster has a new parameter workload_auto_scaler_profile
+  - Model ManagedClusterSecurityProfile has a new parameter defender
+  - Model ManagedClusterStorageProfile has a new parameter blob_csi_driver
+
+**Breaking changes**
+
+  - Model ManagedClusterSecurityProfile no longer has parameter azure_defender
+
+## 19.1.0 (2022-05-13)
+
+**Features**
+
+  - Added operation group TrustedAccessRoleBindingsOperations
+  - Added operation group TrustedAccessRolesOperations
+  - Model AgentPool has a new parameter enable_custom_ca_trust
+  - Model ContainerServiceNetworkProfile has a new parameter network_plugin_mode
+  - Model ManagedCluster has a new parameter storage_profile
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter enable_vnet_integration
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter subnet_id
+  - Model ManagedClusterAgentPoolProfile has a new parameter enable_custom_ca_trust
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter enable_custom_ca_trust
+  - Model NetworkProfileForSnapshot has a new parameter network_plugin_mode
+
+## 19.0.0 (2022-04-15)
+
+**Features**
+
+  - Added operation ManagedClustersOperations.begin_rotate_service_account_signing_keys
+  - Model AgentPool has a new parameter current_orchestrator_version
+  - Model ManagedCluster has a new parameter creation_data
+  - Model ManagedCluster has a new parameter ingress_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter current_orchestrator_version
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter current_orchestrator_version
+  - Model ManagedClusterHTTPProxyConfig has a new parameter effective_no_proxy
+  - Model ManagedClusterSecurityProfile has a new parameter workload_identity
+
+**Breaking changes**
+
+  - Model Resource no longer has parameter location
+  - Model Resource no longer has parameter tags
+  - Operation AgentPoolsOperations.begin_delete has a new parameter ignore_pod_disruption_budget
+  - Operation ManagedClustersOperations.begin_delete has a new parameter ignore_pod_disruption_budget
+
 ## 18.0.0 (2022-03-23)
 
 **Features**

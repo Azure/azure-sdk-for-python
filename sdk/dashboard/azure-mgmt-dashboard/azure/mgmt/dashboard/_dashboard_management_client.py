@@ -33,7 +33,7 @@ class DashboardManagementClient:
     :param subscription_id: Gets subscription credentials which uniquely identify Microsoft Azure
      subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is ''.
+    :param base_url: Service URL. Default value is 'https://management.azure.com'.
     :type base_url: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -43,7 +43,7 @@ class DashboardManagementClient:
         self,
         credential: "TokenCredential",
         subscription_id: str,
-        base_url: str = "",
+        base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
         self._config = DashboardManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)

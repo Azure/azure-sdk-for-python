@@ -1,8 +1,28 @@
 # Release History
 
-## 12.12.0b1 (Unreleased)
+## 12.13.0b1 (2022-06-15)
 
 ### Features Added
+- Added support for service version 2021-08-06.
+
+## 12.12.0 (2022-05-09)
+
+### Features Added
+- Stable release of features from 12.12.0b1.
+- Added support for progress tracking to `upload_blob()` and `download_blob()` via a new optional callback,`progress_hook`.
+
+### Bugs Fixed
+- Fixed a bug in `BlobClient.from_blob_url()` such that users will receive a more helpful error
+message if they pass an incorrect URL without a full `/container/blob` path.
+- Fixed a bug, introduced in the previous beta release, that caused Authentication errors when attempting to use
+an Account SAS with certain service level operations.
+
+## 12.12.0b1 (2022-04-14)
+
+### Features Added
+- Added support for service version 2021-06-08.
+- Added a new paginated method for listing page ranges, `list_page_ranges()`. This replaces `get_page_ranges()` which has been deprecated.
+- Added support for copying source blob tags with `start_copy_from_url()` by specifying `"COPY"` for the `tags` keyword.
 
 ## 12.11.0 (2022-03-29)
 

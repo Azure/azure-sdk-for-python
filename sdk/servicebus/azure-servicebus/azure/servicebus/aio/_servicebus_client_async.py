@@ -35,7 +35,7 @@ NextAvailableSessionType = Literal[ServiceBusSessionFilter.NEXT_AVAILABLE]
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusClient(object):
+class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-keyword
     """The ServiceBusClient class defines a high level interface for
     getting ServiceBusSender and ServiceBusReceiver.
 
@@ -69,6 +69,14 @@ class ServiceBusClient(object):
     :keyword retry_mode: The delay behavior between retry attempts. Supported values are "fixed" or "exponential",
      where default is "exponential".
     :paramtype retry_mode: str
+    :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+     the Service Bus service, allowing network requests to be routed through any application gateways or
+     other paths needed for the host environment. Default is None.
+     The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+     If port is not specified in the custom_endpoint_address, by default port 443 will be used.
+    :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+     authenticate the identity of the connection endpoint.
+     Default is None in which case `certifi.where()` will be used.
 
     .. admonition:: Example:
 
@@ -115,6 +123,9 @@ class ServiceBusClient(object):
         # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library
         self._connection_sharing = False
         self._handlers = WeakSet()  # type: WeakSet
+
+        self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
+        self._connection_verify = kwargs.get("connection_verify")
 
     async def __aenter__(self):
         if self._connection_sharing:
@@ -165,6 +176,14 @@ class ServiceBusClient(object):
         :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
          where default is 'exponential'.
         :paramtype retry_mode: str
+        :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+         the Service Bus service, allowing network requests to be routed through any application gateways or
+         other paths needed for the host environment. Default is None.
+         The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+         If port is not specified in the custom_endpoint_address, by default port 443 will be used.
+        :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+         authenticate the identity of the connection endpoint.
+         Default is None in which case `certifi.where()` will be used.
         :rtype: ~azure.servicebus.aio.ServiceBusClient
 
         .. admonition:: Example:
@@ -253,6 +272,8 @@ class ServiceBusClient(object):
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify,
             **kwargs
         )
         self._handlers.add(handler)
@@ -361,6 +382,8 @@ class ServiceBusClient(object):
             max_wait_time=max_wait_time,
             auto_lock_renewer=auto_lock_renewer,
             prefetch_count=prefetch_count,
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify,
             **kwargs
         )
         self._handlers.add(handler)
@@ -402,6 +425,8 @@ class ServiceBusClient(object):
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify,
             **kwargs
         )
         self._handlers.add(handler)
@@ -510,6 +535,8 @@ class ServiceBusClient(object):
                 max_wait_time=max_wait_time,
                 auto_lock_renewer=auto_lock_renewer,
                 prefetch_count=prefetch_count,
+                custom_endpoint_address=self._custom_endpoint_address,
+                connection_verify=self._connection_verify,
                 **kwargs
             )
         except ValueError:
@@ -537,6 +564,8 @@ class ServiceBusClient(object):
                 max_wait_time=max_wait_time,
                 auto_lock_renewer=auto_lock_renewer,
                 prefetch_count=prefetch_count,
+                custom_endpoint_address=self._custom_endpoint_address,
+                connection_verify=self._connection_verify,
                 **kwargs
             )
         self._handlers.add(handler)

@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
+from typing import Any, Dict, TypeVar, TYPE_CHECKING
 
 from azure.core import MatchConditions
 
@@ -14,6 +15,9 @@ from ._generated.models import (
     SourceLeaseAccessConditions,
     DestinationLeaseAccessConditions,
     CopyFileSmbInfo)
+
+if TYPE_CHECKING:
+    ShareLeaseClient = TypeVar("ShareLeaseClient")
 
 
 _SUPPORTED_API_VERSIONS = [
@@ -27,12 +31,13 @@ _SUPPORTED_API_VERSIONS = [
     '2020-08-04',
     '2020-10-02',
     '2021-02-12',
-    '2021-04-10'
+    '2021-04-10',
+    '2021-06-08'
 ]
 
 
 def _get_match_headers(kwargs, match_param, etag_param):
-    # type: (str) -> Tuple(Dict[str, Any], Optional[str], Optional[str])
+    # type: (Dict[str, Any], str, str) -> Tuple(Optional[str], Optional[str])
     # TODO: extract this method to shared folder also add some comments, so that share, datalake and blob can use it.
     if_match = None
     if_none_match = None
@@ -104,6 +109,7 @@ def get_smb_properties(kwargs):
     file_attributes = kwargs.pop('file_attributes', None)
     file_creation_time = kwargs.pop('file_creation_time', None)
     file_last_write_time = kwargs.pop('file_last_write_time', None)
+    file_change_time = kwargs.pop('file_change_time', None)
 
     file_permission_copy_mode = None
     file_permission = _get_file_permission(file_permission, file_permission_key, None)
@@ -129,6 +135,7 @@ def get_smb_properties(kwargs):
             file_attributes=file_attributes,
             file_creation_time=_datetime_to_str(file_creation_time),
             file_last_write_time=_datetime_to_str(file_last_write_time),
+            file_change_time=_datetime_to_str(file_change_time),
             set_archive_attribute=set_archive_attribute
         )
 
@@ -142,6 +149,7 @@ def get_rename_smb_properties(kwargs):
     file_attributes = kwargs.pop('file_attributes', None)
     file_creation_time = kwargs.pop('file_creation_time', None)
     file_last_write_time = kwargs.pop('file_last_write_time', None)
+    file_change_time = kwargs.pop('file_change_time', None)
 
     file_permission = _get_file_permission(file_permission, file_permission_key, None)
 
@@ -150,8 +158,9 @@ def get_rename_smb_properties(kwargs):
         'file_permission_key': file_permission_key,
         'copy_file_smb_info': CopyFileSmbInfo(
             file_attributes=file_attributes,
-            file_creation_time=_datetime_to_str(file_creation_time) if file_creation_time else None,
-            file_last_write_time=_datetime_to_str(file_last_write_time) if file_last_write_time else None
+            file_creation_time=_datetime_to_str(file_creation_time),
+            file_last_write_time=_datetime_to_str(file_last_write_time),
+            file_change_time=_datetime_to_str(file_change_time)
         )}
 
 

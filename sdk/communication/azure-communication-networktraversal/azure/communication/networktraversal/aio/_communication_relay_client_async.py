@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from azure.communication.networktraversal import RouteType
 
 
-class CommunicationRelayClient:
+class CommunicationRelayClient: # pylint: disable=client-accepts-api-version-keyword
     """Azure Communication Services Network Traversal client.
 
     :param str endpoint:

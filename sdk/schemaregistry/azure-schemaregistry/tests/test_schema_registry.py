@@ -54,12 +54,16 @@ class TestSchemaRegistry(AzureRecordedTestCase):
 
         assert returned_schema.properties.id == schema_properties.id
         assert returned_schema.properties.format == "Avro"
+        assert returned_schema.properties.group_name == schemaregistry_group
+        assert returned_schema.properties.name == name
         assert returned_schema.definition == schema_str
 
         returned_schema_properties = client.get_schema_properties(schemaregistry_group, name, schema_str, format, logging_enable=True)
 
         assert returned_schema_properties.id == schema_properties.id
         assert returned_schema_properties.format == "Avro"
+        assert returned_schema.properties.group_name == schemaregistry_group
+        assert returned_schema.properties.name == name
 
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy
@@ -80,6 +84,8 @@ class TestSchemaRegistry(AzureRecordedTestCase):
 
         assert new_schema_properties.id is not None
         assert new_schema_properties.format == "Avro"
+        assert new_schema_properties.group_name == schemaregistry_group
+        assert new_schema_properties.name == name
 
         new_schema = client.get_schema(schema_id=new_schema_properties.id)
 
@@ -87,6 +93,8 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         assert new_schema.properties.id == new_schema_properties.id
         assert new_schema.definition == schema_str_new
         assert new_schema.properties.format == "Avro"
+        assert new_schema.properties.group_name == schemaregistry_group
+        assert new_schema.properties.name == name
 
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy
@@ -115,17 +123,22 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         with pytest.raises(ClientAuthenticationError):
             client.register_schema(schemaregistry_group, name, schema_str, format)
 
-    @pytest.mark.skip('test proxy/CI gives HttpResponseError, live test pipeline gives ServiceRequestError')
+    @pytest.mark.skip("Figure out why live_test_only mark not working for non-live mode")
+    @pytest.mark.live_test_only
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy
     def test_schema_negative_wrong_endpoint(self, **kwargs):
         schemaregistry_group = kwargs.pop("schemaregistry_group")
-        client = self.create_client(fully_qualified_namespace="nonexist.servicebus.windows.net")
+        client = self.create_client(fully_qualified_namespace="fake.servicebus.windows.net")
         name = self.get_resource_name('test-schema-nonexist')
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         format = "Avro"
-        with pytest.raises(ServiceRequestError):
+        # accepting both errors for now due to: https://github.com/Azure/azure-sdk-tools/issues/2907
+        with pytest.raises((ServiceRequestError, HttpResponseError)) as exc_info:
             client.register_schema(schemaregistry_group, name, schema_str, format)
+        if exc_info.type is HttpResponseError:
+            response_content = json.loads(exc_info.value.response.content)
+            assert "Name does not resolve" in response_content["Message"]
 
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy

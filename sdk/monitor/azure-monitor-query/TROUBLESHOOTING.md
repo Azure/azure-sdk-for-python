@@ -164,9 +164,8 @@ client.query_workspace(
 
 ### Troubleshooting partially successful logs query requests
 
-By default, if the execution of a Kusto query resulted in a partially successful response, the Azure Monitor Query
-client library will throw an exception to indicate to the user that the query was not fully successful. The data and
-the error can be accessed using the `partial_data` and `partial_error` fields.
+If the execution of a Kusto query resulted in a partially successful response, the Azure Monitor Query
+client library will return `partial_data` and `partial_error` indicating that the query was not fully successful.
 
 ```python
 response = client.query_workspace("{workspaceId}", "{kusto-query-string}", timespan="{timespan}")

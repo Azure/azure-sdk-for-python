@@ -1,7 +1,7 @@
 # Azure Document Translation client library for Python
 
-Azure Cognitive Services Document Translation is a cloud service that translates documents to and from 90 languages
-and dialects while preserving document structure and data format. Use the client library for Document Translation to:
+Azure Cognitive Services Document Translation is a cloud service that can be used to translate multiple and complex documents across languages and dialects while preserving original document structure and data format.
+Use the client library for Document Translation to:
 
 * Translate numerous, large files from an Azure Blob Storage container to a target container in your language of choice.
 * Check the translation status and progress of each document in the translation operation.
@@ -24,7 +24,7 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 Install the Azure Document Translation client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-translation-document --pre
+pip install azure-ai-translation-document
 ```
 
 > Note: This version of the client library defaults to the v1.0 version of the service
@@ -136,7 +136,7 @@ The client provides operations for:
 
  - Creating a translation operation to translate documents in your source container(s) and write results to you target container(s).
  - Checking the status of individual documents in the translation operation and monitoring each document's progress.
- - Enumerating all past and current translations operations.
+ - Enumerating all past and current translation operations.
  - Identifying supported glossary and document formats.
 
 ### Translation Input
@@ -150,7 +150,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.translation.document import DocumentTranslationClient
 
 document_translation_client = DocumentTranslationClient("<endpoint>", AzureKeyCredential("<api_key>"))
-poller = document_translation_client.begin_translation("<sas_url_to_source>", "<sas_url_to_target>", "<target_language_code>")
+poller = document_translation_client.begin_translation("<sas_url_to_source>", "<sas_url_to_target>", "<target_language>")
 ```
 
 2) Or multiple different sources can be provided each with their own targets.
@@ -163,22 +163,22 @@ my_input = [
     DocumentTranslationInput(
         source_url="<sas_url_to_source_A>",
         targets=[
-            TranslationTarget(target_url="<sas_url_to_target_fr>", language_code="fr"),
-            TranslationTarget(target_url="<sas_url_to_target_de>", language_code="de")
+            TranslationTarget(target_url="<sas_url_to_target_fr>", language="fr"),
+            TranslationTarget(target_url="<sas_url_to_target_de>", language="de")
         ]
     ),
     DocumentTranslationInput(
         source_url="<sas_url_to_source_B>",
         targets=[
-            TranslationTarget(target_url="<sas_url_to_target_fr>", language_code="fr"),
-            TranslationTarget(target_url="<sas_url_to_target_de>", language_code="de")
+            TranslationTarget(target_url="<sas_url_to_target_fr>", language="fr"),
+            TranslationTarget(target_url="<sas_url_to_target_de>", language="de")
         ]
     ),
     DocumentTranslationInput(
         source_url="<sas_url_to_source_C>",
         targets=[
-            TranslationTarget(target_url="<sas_url_to_target_fr>", language_code="fr"),
-            TranslationTarget(target_url="<sas_url_to_target_de>", language_code="de")
+            TranslationTarget(target_url="<sas_url_to_target_fr>", language="fr"),
+            TranslationTarget(target_url="<sas_url_to_target_de>", language="de")
         ]
     )
 ]
@@ -270,14 +270,14 @@ poller = document_translation_client.begin_translation(
         DocumentTranslationInput(
             source_url=source_container_sas_url_en,
             targets=[
-                TranslationTarget(target_url=target_container_sas_url_es, language_code="es"),
-                TranslationTarget(target_url=target_container_sas_url_fr, language_code="fr"),
+                TranslationTarget(target_url=target_container_sas_url_es, language="es"),
+                TranslationTarget(target_url=target_container_sas_url_fr, language="fr"),
             ],
         ),
         DocumentTranslationInput(
             source_url=source_container_sas_url_de,
             targets=[
-                TranslationTarget(target_url=target_container_sas_url_ar, language_code="ar"),
+                TranslationTarget(target_url=target_container_sas_url_ar, language="ar"),
             ],
         )
     ]
@@ -459,7 +459,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [managed_identity]: https://aka.ms/azsdk/documenttranslation/managed-identity
-[sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
+[sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/sdk/azure-sdk-logging
 
 [samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples
 [sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_authentication.py

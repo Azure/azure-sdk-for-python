@@ -6,7 +6,7 @@ import os
 import pytest
 import platform
 import functools
-
+import json
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer
@@ -623,15 +623,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
                 assert entity.bing_entity_search_api_id  # this checks if it's None and if it's empty
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
-    @recorded_by_proxy
-    def test_string_index_type_explicit_fails_v3(self, client):
-        with pytest.raises(ValueError) as excinfo:
-            client.recognize_linked_entities(["this should fail"], string_index_type="UnicodeCodePoint")
-        assert "'string_index_type' is only available for API version V3_1 and up" in str(excinfo.value)
-
-    @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy
     def test_default_string_index_type_is_UnicodeCodePoint(self, client):
         def callback(response):
@@ -643,20 +635,45 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy
-    def test_explicit_set_string_index_type(self, client):
+    def test_default_string_index_type_UnicodeCodePoint_body_param(self, client):
         def callback(response):
-            assert response.http_request.query["stringIndexType"] == "TextElements_v8"
+            assert json.loads(response.http_request.body)['parameters']["stringIndexType"] == "UnicodeCodePoint"
 
         res = client.recognize_linked_entities(
             documents=["Hello world"],
-            string_index_type="TextElements_v8",
             raw_response_hook=callback
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
+    @recorded_by_proxy
+    def test_explicit_set_string_index_type(self, client):
+        def callback(response):
+            assert response.http_request.query["stringIndexType"] == "TextElement_v8"
+
+        res = client.recognize_linked_entities(
+            documents=["Hello world"],
+            string_index_type="TextElement_v8",
+            raw_response_hook=callback
+        )
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
+    @recorded_by_proxy
+    def test_explicit_set_string_index_type_body_param(self, client):
+        def callback(response):
+            assert json.loads(response.http_request.body)['parameters']["stringIndexType"] == "TextElements_v8"
+
+        res = client.recognize_linked_entities(
+            documents=["Hello world"],
+            string_index_type="TextElement_v8",
+            raw_response_hook=callback
+        )
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy
     def test_disable_service_logs(self, client):
         def callback(resp):
@@ -666,3 +683,32 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
             disable_service_logs=True,
             raw_response_hook=callback,
         )
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
+    @recorded_by_proxy
+    def test_disable_service_logs_body_param(self, client):
+        def callback(resp):
+            assert json.loads(resp.http_request.body)['parameters']['loggingOptOut']
+        client.recognize_linked_entities(
+            documents=["Test for logging disable"],
+            disable_service_logs=True,
+            raw_response_hook=callback,
+        )
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.0"})
+    def test_linked_entities_multiapi_validate_args_v3_0(self, **kwargs):
+        client = kwargs.pop("client")
+
+        with pytest.raises(ValueError) as e:
+            res = client.recognize_linked_entities(["I'm tired"], string_index_type="UnicodeCodePoint")
+        assert str(e.value) == "'string_index_type' is only available for API version v3.1 and up.\n"
+
+        with pytest.raises(ValueError) as e:
+            res = client.recognize_linked_entities(["I'm tired"], disable_service_logs=True)
+        assert str(e.value) == "'disable_service_logs' is only available for API version v3.1 and up.\n"
+
+        with pytest.raises(ValueError) as e:
+            res = client.recognize_linked_entities(["I'm tired"], string_index_type="UnicodeCodePoint", disable_service_logs=True)
+        assert str(e.value) == "'string_index_type' is only available for API version v3.1 and up.\n'disable_service_logs' is only available for API version v3.1 and up.\n"

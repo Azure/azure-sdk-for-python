@@ -8,20 +8,9 @@ import pytest
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
-
 from testcase import GlobalConversationAccountPreparer
 from asynctestcase import AsyncConversationTest
-
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
-from azure.ai.language.conversations.models import (
-    CustomConversationalTaskResult,
-    ConversationTargetIntentResult,
-    OrchestratorPrediction,
-    CustomConversationalTask,
-    ConversationAnalysisOptions,
-    CustomConversationTaskParameters,
-    TextConversationItem
-)
 
 class OrchestrationAppConvResponseAsyncTests(AsyncConversationTest):
 
@@ -33,43 +22,49 @@ class OrchestrationAppConvResponseAsyncTests(AsyncConversationTest):
         async with client:
             query = "Send an email to Carol about the tomorrow's demo"
             result = await client.analyze_conversation(
-                task=CustomConversationalTask(
-                    analysis_input=ConversationAnalysisOptions(
-                        conversation_item=TextConversationItem(
-                            id=1,
-                            participant_id=1,
-                            text=query
-                        )
-                    ),
-                    parameters=CustomConversationTaskParameters(
-                        project_name=orch_project_name,
-                        deployment_name=orch_deployment_name
-                    )
-                )
+                task={
+                    "kind": "Conversation",
+                    "analysisInput": {
+                        "conversationItem": {
+                            "participantId": "1",
+                            "id": "1",
+                            "modality": "text",
+                            "language": "en",
+                            "text": query
+                        },
+                        "isLoggingEnabled": False
+                    },
+                    "parameters": {
+                        "projectName": orch_project_name,
+                        "deploymentName": orch_deployment_name,
+                        "verbose": True
+                    }
+                }
             )
         
             # assert - main object
             top_project = "EmailIntent"
             assert not result is None
-            assert isinstance(result, CustomConversationalTaskResult)
-            assert result.results.query == query
+            assert result["kind"] == "ConversationResult"
+            assert result["result"]["query"] == query
+            
             # assert - prediction type
-            assert isinstance(result.results.prediction, OrchestratorPrediction)
-            assert result.results.prediction.project_kind == "workflow"
+            assert result["result"]["prediction"]["projectKind"] == "Orchestration"
+            
             # assert - top matching project
-            assert result.results.prediction.top_intent == top_project
-            top_intent_object = result.results.prediction.intents[top_project]
-            assert isinstance(top_intent_object, ConversationTargetIntentResult)
-            assert top_intent_object.target_kind == "conversation"
+            assert result["result"]["prediction"]["topIntent"] == top_project
+            top_intent_object = result["result"]["prediction"]["intents"][top_project]
+            assert top_intent_object["targetProjectKind"] == "Conversation"
+            
             # assert intent and entities
-            conversation_result = top_intent_object.result.prediction
-            assert conversation_result.top_intent == 'SendEmail'
-            assert len(conversation_result.intents) > 0
-            assert conversation_result.intents[0].category == 'SendEmail'
-            assert conversation_result.intents[0].confidence > 0
+            conversation_result = top_intent_object["result"]["prediction"]
+            assert conversation_result["topIntent"] == 'Setup'
+            assert len(conversation_result["intents"]) > 0
+            assert conversation_result["intents"][0]["category"] == 'Setup'
+            assert conversation_result["intents"][0]["confidenceScore"] > 0
+            
             # assert - entities
-            assert len(conversation_result.entities) > 0
-            assert conversation_result.entities[0].category == 'ContactName'
-            assert conversation_result.entities[0].text == 'Carol'
-            assert conversation_result.entities[0].confidence > 0
-
+            assert len(conversation_result["entities"]) > 0
+            assert conversation_result["entities"][0]["category"] == 'Contact'
+            assert conversation_result["entities"][0]["text"] == 'Carol'
+            assert conversation_result["entities"][0]["confidenceScore"] > 0

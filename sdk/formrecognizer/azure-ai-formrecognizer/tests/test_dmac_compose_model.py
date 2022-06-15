@@ -9,7 +9,7 @@ import uuid
 import functools
 from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentModel
-from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import GetOperationResponse, ModelInfo
+from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
@@ -18,9 +18,6 @@ from preparers import FormRecognizerPreparer
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
 class TestTraining(FormRecognizerTest):
-
-    def teardown(self):
-        self.sleep(4)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()

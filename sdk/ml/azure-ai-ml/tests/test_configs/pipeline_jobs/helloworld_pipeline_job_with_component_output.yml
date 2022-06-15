@@ -1,0 +1,94 @@
+type: pipeline
+
+
+name: simplePipelineJobWithComponentOutput
+description: The hello world pipeline job with component output
+tags:
+  owner: sdkteam
+  tag: tagvalue
+
+compute: azureml:cpu-cluster
+
+inputs:
+  # examples of inputs that take values such as int, string, etc.
+  job_in_number: 10
+  job_in_path:
+    path: ../data
+    mode: ro_mount
+
+outputs:
+  job_out_path_1:
+    mode: rw_mount
+  job_out_path_2:
+    mode: upload
+
+settings:
+  default_datastore: azureml:workspaceblobstore
+
+jobs:
+  hello_world_component_1:
+    type: command
+    compute: azureml:cpu-cluster
+    inputs:
+      component_in_number: ${{parent.inputs.job_in_number}}
+      component_in_path:
+        path: ../data
+        mode: ro_mount
+    outputs:
+      component_out_path_1:
+        mode: mount
+
+    component: ../components/helloworld_component_with_input_and_output.yml
+
+  hello_world_component_2:
+    type: command
+    compute: azureml:cpu-cluster
+    inputs:
+      component_in_number: ${{parent.inputs.job_in_number}}
+      component_in_path:
+        type: uri_file
+        path: https://web.stanford.edu/class/archive/cs/cs109/cs109.1166/stuff/titanic.csv
+    outputs:
+      component_out_path_1:
+        mode: mount
+
+    component: ../components/helloworld_component_with_input_and_output.yml
+
+  merge_component_outputs:
+    type: command
+    compute: azureml:cpu-cluster
+    inputs:
+      component_in_number: ${{parent.inputs.job_in_number}}
+      component_in_path_1: ${{parent.jobs.hello_world_component_1.outputs.component_out_path_1}}
+      component_in_path_2: ${{parent.jobs.hello_world_component_2.outputs.component_out_path_1}}
+    outputs:
+      component_out_path_1: ${{parent.outputs.job_out_path_1}}
+      component_out_path_2: ${{parent.outputs.job_out_path_2}}
+
+    component:
+      command: >-
+        echo Hello World &&
+        echo ${{inputs.component_in_number}} &&
+        mkdir -p ${{outputs.component_out_path_1}} &&
+        mkdir -p ${{outputs.component_out_path_2}} &&
+        cp -p -r ${{inputs.component_in_path_1}} ${{outputs.component_out_path_1}} &&
+        cp -p -r ${{inputs.component_in_path_2}} ${{outputs.component_out_path_2}}
+      environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+      code: ./
+      inputs:
+        component_in_number:
+          description: A number
+          type: number
+          default: 10.99
+        component_in_path_1:
+          description: A path
+          type: uri_folder
+        component_in_path_2:
+          description: A path
+          type: uri_folder
+
+      outputs:
+        component_out_path_1:
+          type: uri_folder
+        component_out_path_2:
+          type: uri_folder

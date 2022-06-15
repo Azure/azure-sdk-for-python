@@ -25,11 +25,22 @@
 import base64
 from hashlib import sha256
 import hmac
+import warnings
 import urllib.parse
 from . import http_constants
 
 
 def GetAuthorizationHeader(
+        cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers
+):
+    warnings.warn("This method has been deprecated and will be removed from the SDK in a future release.",
+                  DeprecationWarning)
+
+    return _get_authorization_header(
+        cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers)
+
+
+def _get_authorization_header(
         cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers
 ):
     """Gets the authorization header.
@@ -41,7 +52,7 @@ def GetAuthorizationHeader(
     :param str resource_type:
     :param dict headers:
     :return: The authorization headers.
-    :rtype: dict
+    :rtype: str
     """
     # In the AuthorizationToken generation logic, lower casing of ResourceID is required
     # as rest of the fields are lower cased. Lower casing should not be done for named
