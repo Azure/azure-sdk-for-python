@@ -1192,8 +1192,7 @@ class DocumentError(DictMixin):
             + ExtractKeyPhrasesResult().keys()
             + AnalyzeHealthcareEntitiesResult().keys()
             + RecognizeCustomEntitiesResult().keys()
-            + SingleCategoryClassifyResult().keys()
-            + MultiCategoryClassifyResult().keys()
+            + ClassifyDocumentResult().keys()
         )
         result_attrs = result_set.difference(DocumentError().keys())
         if attr in result_attrs:
@@ -2318,8 +2317,8 @@ class MultiCategoryClassifyAction(DictMixin):
         )
 
 
-class MultiCategoryClassifyResult(DictMixin):
-    """MultiCategoryClassifyResult is a result object which contains
+class ClassifyDocumentResult(DictMixin):
+    """ClassifyDocumentResult is a result object which contains
     the classifications for a particular document.
 
     :ivar str id: Unique, non-empty document identifier.
@@ -2345,7 +2344,7 @@ class MultiCategoryClassifyResult(DictMixin):
         self.is_error = False
 
     def __repr__(self):
-        return "MultiCategoryClassifyResult(id={}, classifications={}, warnings={}, statistics={}, " \
+        return "ClassifyDocumentResult(id={}, classifications={}, warnings={}, statistics={}, " \
                "is_error={})".format(
                 self.id,
                 repr(self.classifications),
@@ -2429,62 +2428,6 @@ class SingleCategoryClassifyAction(DictMixin):
                 deployment_name=self.deployment_name,
                 logging_opt_out=self.disable_service_logs,
             )
-        )
-
-
-class SingleCategoryClassifyResult(DictMixin):
-    """SingleCategoryClassifyResult is a result object which contains
-    the classification for a particular document.
-
-    :ivar str id: Unique, non-empty document identifier.
-    :ivar classification: Recognized classification results in the document.
-    :vartype classification: ~azure.ai.textanalytics.ClassificationCategory
-    :ivar warnings: Warnings encountered while processing document.
-    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=True` was specified in the request this
-        field will contain information about the document payload.
-    :vartype statistics: ~azure.ai.textanalytics.TextDocumentStatistics
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a SingleCategoryClassifyResult.
-    """
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        self.id = kwargs.get('id', None)
-        self.classification = kwargs.get('classification', None)
-        self.warnings = kwargs.get('warnings', [])
-        self.statistics = kwargs.get('statistics', None)
-        self.is_error = False
-
-    def __repr__(self):
-        return "SingleCategoryClassifyResult(id={}, classification={}, warnings={}, statistics={}, " \
-               "is_error={})".format(
-                self.id,
-                repr(self.classification),
-                repr(self.warnings),
-                repr(self.statistics),
-                self.is_error,
-            )[
-                :1024
-            ]
-
-    @classmethod
-    def _from_generated(cls, result):
-        return cls(
-            id=result.id,
-            classification=
-            ClassificationCategory._from_generated(result.class_property),  # pylint: disable=protected-access
-            warnings=[
-                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
-                    w
-                )
-                for w in result.warnings
-            ],
-            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
-                result.statistics
-            ),
         )
 
 

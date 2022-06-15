@@ -36,8 +36,7 @@ from azure.ai.textanalytics import (
     SingleCategoryClassifyAction,
     MultiCategoryClassifyAction,
     RecognizeCustomEntitiesAction,
-    SingleCategoryClassifyResult,
-    MultiCategoryClassifyResult,
+    ClassifyDocumentResult,
     RecognizeCustomEntitiesResult,
     AnalyzeHealthcareEntitiesAction
 )
@@ -961,8 +960,9 @@ class TestAnalyze(TextAnalyticsTest):
                 assert not result.is_error
                 assert not result.warnings
                 assert result.statistics
-                assert result.classification.category
-                assert result.classification.confidence_score
+                for classification in result.classifications:
+                    assert classification.category
+                    assert classification.confidence_score
 
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
@@ -1093,8 +1093,8 @@ class TestAnalyze(TextAnalyticsTest):
 
         document_results = list(response)
         assert len(document_results) == 2
-        assert isinstance(document_results[0][0], SingleCategoryClassifyResult)
-        assert isinstance(document_results[0][1], MultiCategoryClassifyResult)
+        assert isinstance(document_results[0][0], ClassifyDocumentResult)
+        assert isinstance(document_results[0][1], ClassifyDocumentResult)
         assert isinstance(document_results[0][2], RecognizeCustomEntitiesResult)
         assert document_results[1][0].is_error
         assert document_results[1][1].is_error

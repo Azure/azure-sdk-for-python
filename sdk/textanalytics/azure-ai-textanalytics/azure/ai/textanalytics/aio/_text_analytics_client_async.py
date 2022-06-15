@@ -47,9 +47,8 @@ from .._models import (
     RecognizeCustomEntitiesAction,
     RecognizeCustomEntitiesResult,
     SingleCategoryClassifyAction,
-    SingleCategoryClassifyResult,
     MultiCategoryClassifyAction,
-    MultiCategoryClassifyResult,
+    ClassifyDocumentResult,
     AnalyzeHealthcareEntitiesAction
 )
 from .._check import is_language_api, string_index_type_compatibility
@@ -75,8 +74,7 @@ AsyncAnalyzeActionsResponse = AsyncAnalyzeActionsLROPoller[
                 ExtractKeyPhrasesResult,
                 AnalyzeSentimentResult,
                 RecognizeCustomEntitiesResult,
-                SingleCategoryClassifyResult,
-                MultiCategoryClassifyResult,
+                ClassifyDocumentResult,
                 AnalyzeHealthcareEntitiesResult,
                 DocumentError,
             ]
@@ -1075,8 +1073,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     ExtractKeyPhrasesResult,
                     AnalyzeSentimentResult,
                     RecognizeCustomEntitiesResult,
-                    SingleCategoryClassifyResult,
-                    MultiCategoryClassifyResult,
+                    ClassifyDocumentResult,
                     AnalyzeHealthcareEntitiesResult,
                     DocumentError,
                 ]
@@ -1135,8 +1132,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             ~azure.ai.textanalytics.aio.AsyncAnalyzeActionsLROPoller[~azure.core.async_paging.AsyncItemPaged[
             list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
             ExtractKeyPhrasesResult or AnalyzeSentimentResult or RecognizeCustomEntitiesResult
-            or SingleCategoryClassifyResult or MultiCategoryClassifyResult or AnalyzeHealthcareEntitiesResult or
-            DocumentError]]]
+            or ClassifyDocumentResult or AnalyzeHealthcareEntitiesResult or DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -1144,8 +1140,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. versionadded:: 2022-04-01-preview
             The *RecognizeCustomEntitiesAction*, *SingleCategoryClassifyAction*,
             *MultiCategoryClassifyAction*, and *AnalyzeHealthcareEntitiesAction* input options and the
-            corresponding *RecognizeCustomEntitiesResult*, *SingleCategoryClassifyResult*,
-            *MultiCategoryClassifyResult*, and *AnalyzeHealthcareEntitiesResult* result objects
+            corresponding *RecognizeCustomEntitiesResult*, *ClassifyDocumentResult*,
+            and *AnalyzeHealthcareEntitiesResult* result objects
 
         .. admonition:: Example:
 
