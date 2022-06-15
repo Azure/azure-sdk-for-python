@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._test_base_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AnalysisResultListResult(msrest.serialization.Model):
@@ -20,8 +22,8 @@ class AnalysisResultListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of Analysis Results.
-    :type value: list[~test_base.models.AnalysisResultSingletonResource]
+    :ivar value: The list of Analysis Results.
+    :vartype value: list[~azure.mgmt.testbase.models.AnalysisResultSingletonResource]
     :ivar next_link: Link to the next set of results. Not empty if value contains incomplete list
      of results.
     :vartype next_link: str
@@ -39,9 +41,13 @@ class AnalysisResultListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["AnalysisResultSingletonResource"]] = None,
+        value: Optional[List["_models.AnalysisResultSingletonResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Analysis Results.
+        :paramtype value: list[~azure.mgmt.testbase.models.AnalysisResultSingletonResource]
+        """
         super(AnalysisResultListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -76,6 +82,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -111,6 +119,8 @@ class ProxyResource(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
 
 
@@ -126,14 +136,13 @@ class AnalysisResultSingletonResource(ProxyResource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system metadata relating to this resource.
-    :vartype system_data: ~test_base.models.SystemData
-    :param grade: The grade of the test. Possible values include: "None", "NotAvailable", "Pass",
-     "Fail".
-    :type grade: str or ~test_base.models.Grade
-    :param analysis_result_type: Type of the Analysis Result.Constant filled by server.  Possible
-     values include: "ScriptExecution", "Reliability", "CPUUtilization", "MemoryUtilization",
-     "CPURegression", "MemoryRegression", "TestAnalysis".
-    :type analysis_result_type: str or ~test_base.models.AnalysisResultType
+    :vartype system_data: ~azure.mgmt.testbase.models.SystemData
+    :ivar grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass", "Fail".
+    :vartype grade: str or ~azure.mgmt.testbase.models.Grade
+    :ivar analysis_result_type: Type of the Analysis Result.Constant filled by server. Known values
+     are: "ScriptExecution", "Reliability", "CPUUtilization", "MemoryUtilization", "CPURegression",
+     "MemoryRegression", "TestAnalysis".
+    :vartype analysis_result_type: str or ~azure.mgmt.testbase.models.AnalysisResultType
     """
 
     _validation = {
@@ -155,9 +164,14 @@ class AnalysisResultSingletonResource(ProxyResource):
     def __init__(
         self,
         *,
-        grade: Optional[Union[str, "Grade"]] = None,
+        grade: Optional[Union[str, "_models.Grade"]] = None,
         **kwargs
     ):
+        """
+        :keyword grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass",
+         "Fail".
+        :paramtype grade: str or ~azure.mgmt.testbase.models.Grade
+        """
         super(AnalysisResultSingletonResource, self).__init__(**kwargs)
         self.system_data = None
         self.grade = grade
@@ -172,13 +186,12 @@ class AnalysisResultSingletonResourceProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param grade: The grade of the test. Possible values include: "None", "NotAvailable", "Pass",
-     "Fail".
-    :type grade: str or ~test_base.models.Grade
-    :param analysis_result_type: Required. Type of the Analysis Result.Constant filled by server.
-     Possible values include: "ScriptExecution", "Reliability", "CPUUtilization",
-     "MemoryUtilization", "CPURegression", "MemoryRegression", "TestAnalysis".
-    :type analysis_result_type: str or ~test_base.models.AnalysisResultType
+    :ivar grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass", "Fail".
+    :vartype grade: str or ~azure.mgmt.testbase.models.Grade
+    :ivar analysis_result_type: Required. Type of the Analysis Result.Constant filled by server.
+     Known values are: "ScriptExecution", "Reliability", "CPUUtilization", "MemoryUtilization",
+     "CPURegression", "MemoryRegression", "TestAnalysis".
+    :vartype analysis_result_type: str or ~azure.mgmt.testbase.models.AnalysisResultType
     """
 
     _validation = {
@@ -197,9 +210,14 @@ class AnalysisResultSingletonResourceProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        grade: Optional[Union[str, "Grade"]] = None,
+        grade: Optional[Union[str, "_models.Grade"]] = None,
         **kwargs
     ):
+        """
+        :keyword grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass",
+         "Fail".
+        :paramtype grade: str or ~azure.mgmt.testbase.models.Grade
+        """
         super(AnalysisResultSingletonResourceProperties, self).__init__(**kwargs)
         self.grade = grade
         self.analysis_result_type = None  # type: Optional[str]
@@ -210,8 +228,8 @@ class AvailableOSListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of available OSs.
-    :type value: list[~test_base.models.AvailableOSResource]
+    :ivar value: The list of available OSs.
+    :vartype value: list[~azure.mgmt.testbase.models.AvailableOSResource]
     :ivar next_link: Link to the next set of results. Not empty if value contains incomplete list
      of results.
     :vartype next_link: str
@@ -229,9 +247,13 @@ class AvailableOSListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["AvailableOSResource"]] = None,
+        value: Optional[List["_models.AvailableOSResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of available OSs.
+        :paramtype value: list[~azure.mgmt.testbase.models.AvailableOSResource]
+        """
         super(AvailableOSListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -249,19 +271,19 @@ class AvailableOSResource(ProxyResource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system metadata relating to this resource.
-    :vartype system_data: ~test_base.models.SystemData
-    :param os_id: The Id of an Available OS of a Test Base Account.
-    :type os_id: str
-    :param os_name: The name of an Available OS of a Test Base Account.
-    :type os_name: str
-    :param os_version: The version of an Available OS of a Test Base Account.
-    :type os_version: str
-    :param insider_channel: The insider channel of an Available OS of a Test Base Account.
-    :type insider_channel: str
-    :param os_update_type: The OS update type of an Available OS of a Test Base Account.
-    :type os_update_type: str
-    :param os_platform: The Platform of an Available OS of a Test Base Account.
-    :type os_platform: str
+    :vartype system_data: ~azure.mgmt.testbase.models.SystemData
+    :ivar os_id: The Id of an Available OS of a Test Base Account.
+    :vartype os_id: str
+    :ivar os_name: The name of an Available OS of a Test Base Account.
+    :vartype os_name: str
+    :ivar os_version: The version of an Available OS of a Test Base Account.
+    :vartype os_version: str
+    :ivar insider_channel: The insider channel of an Available OS of a Test Base Account.
+    :vartype insider_channel: str
+    :ivar os_update_type: The OS update type of an Available OS of a Test Base Account.
+    :vartype os_update_type: str
+    :ivar os_platform: The Platform of an Available OS of a Test Base Account.
+    :vartype os_platform: str
     """
 
     _validation = {
@@ -295,6 +317,20 @@ class AvailableOSResource(ProxyResource):
         os_platform: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword os_id: The Id of an Available OS of a Test Base Account.
+        :paramtype os_id: str
+        :keyword os_name: The name of an Available OS of a Test Base Account.
+        :paramtype os_name: str
+        :keyword os_version: The version of an Available OS of a Test Base Account.
+        :paramtype os_version: str
+        :keyword insider_channel: The insider channel of an Available OS of a Test Base Account.
+        :paramtype insider_channel: str
+        :keyword os_update_type: The OS update type of an Available OS of a Test Base Account.
+        :paramtype os_update_type: str
+        :keyword os_platform: The Platform of an Available OS of a Test Base Account.
+        :paramtype os_platform: str
+        """
         super(AvailableOSResource, self).__init__(**kwargs)
         self.system_data = None
         self.os_id = os_id
@@ -305,17 +341,604 @@ class AvailableOSResource(ProxyResource):
         self.os_platform = os_platform
 
 
+class BillingHubExecutionUsageDetail(msrest.serialization.Model):
+    """BillingHubExecutionUsageDetail.
+
+    :ivar application_name:
+    :vartype application_name: str
+    :ivar application_version:
+    :vartype application_version: str
+    :ivar execution_request_id:
+    :vartype execution_request_id: str
+    :ivar sku:
+    :vartype sku: str
+    :ivar meter_id:
+    :vartype meter_id: str
+    :ivar start_time_stamp:
+    :vartype start_time_stamp: ~datetime.datetime
+    :ivar end_time_stamp:
+    :vartype end_time_stamp: ~datetime.datetime
+    :ivar os_build:
+    :vartype os_build: str
+    :ivar release:
+    :vartype release: str
+    :ivar test_type:
+    :vartype test_type: str
+    :ivar update_type:
+    :vartype update_type: str
+    :ivar used_free_hours:
+    :vartype used_free_hours: float
+    :ivar used_billable_hours:
+    :vartype used_billable_hours: float
+    :ivar billed_charges:
+    :vartype billed_charges: float
+    """
+
+    _attribute_map = {
+        'application_name': {'key': 'applicationName', 'type': 'str'},
+        'application_version': {'key': 'applicationVersion', 'type': 'str'},
+        'execution_request_id': {'key': 'executionRequestId', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'str'},
+        'meter_id': {'key': 'meterId', 'type': 'str'},
+        'start_time_stamp': {'key': 'startTimeStamp', 'type': 'iso-8601'},
+        'end_time_stamp': {'key': 'endTimeStamp', 'type': 'iso-8601'},
+        'os_build': {'key': 'osBuild', 'type': 'str'},
+        'release': {'key': 'release', 'type': 'str'},
+        'test_type': {'key': 'testType', 'type': 'str'},
+        'update_type': {'key': 'updateType', 'type': 'str'},
+        'used_free_hours': {'key': 'usedFreeHours', 'type': 'float'},
+        'used_billable_hours': {'key': 'usedBillableHours', 'type': 'float'},
+        'billed_charges': {'key': 'billedCharges', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        *,
+        application_name: Optional[str] = None,
+        application_version: Optional[str] = None,
+        execution_request_id: Optional[str] = None,
+        sku: Optional[str] = None,
+        meter_id: Optional[str] = None,
+        start_time_stamp: Optional[datetime.datetime] = None,
+        end_time_stamp: Optional[datetime.datetime] = None,
+        os_build: Optional[str] = None,
+        release: Optional[str] = None,
+        test_type: Optional[str] = None,
+        update_type: Optional[str] = None,
+        used_free_hours: Optional[float] = None,
+        used_billable_hours: Optional[float] = None,
+        billed_charges: Optional[float] = None,
+        **kwargs
+    ):
+        """
+        :keyword application_name:
+        :paramtype application_name: str
+        :keyword application_version:
+        :paramtype application_version: str
+        :keyword execution_request_id:
+        :paramtype execution_request_id: str
+        :keyword sku:
+        :paramtype sku: str
+        :keyword meter_id:
+        :paramtype meter_id: str
+        :keyword start_time_stamp:
+        :paramtype start_time_stamp: ~datetime.datetime
+        :keyword end_time_stamp:
+        :paramtype end_time_stamp: ~datetime.datetime
+        :keyword os_build:
+        :paramtype os_build: str
+        :keyword release:
+        :paramtype release: str
+        :keyword test_type:
+        :paramtype test_type: str
+        :keyword update_type:
+        :paramtype update_type: str
+        :keyword used_free_hours:
+        :paramtype used_free_hours: float
+        :keyword used_billable_hours:
+        :paramtype used_billable_hours: float
+        :keyword billed_charges:
+        :paramtype billed_charges: float
+        """
+        super(BillingHubExecutionUsageDetail, self).__init__(**kwargs)
+        self.application_name = application_name
+        self.application_version = application_version
+        self.execution_request_id = execution_request_id
+        self.sku = sku
+        self.meter_id = meter_id
+        self.start_time_stamp = start_time_stamp
+        self.end_time_stamp = end_time_stamp
+        self.os_build = os_build
+        self.release = release
+        self.test_type = test_type
+        self.update_type = update_type
+        self.used_free_hours = used_free_hours
+        self.used_billable_hours = used_billable_hours
+        self.billed_charges = billed_charges
+
+
+class BillingHubFreeHourIncrementEntry(msrest.serialization.Model):
+    """BillingHubFreeHourIncrementEntry.
+
+    :ivar create_time_stamp:
+    :vartype create_time_stamp: ~datetime.datetime
+    :ivar expiration_time_stamp:
+    :vartype expiration_time_stamp: ~datetime.datetime
+    :ivar incremental_free_hours:
+    :vartype incremental_free_hours: float
+    :ivar remaining_free_hours:
+    :vartype remaining_free_hours: float
+    """
+
+    _attribute_map = {
+        'create_time_stamp': {'key': 'createTimeStamp', 'type': 'iso-8601'},
+        'expiration_time_stamp': {'key': 'expirationTimeStamp', 'type': 'iso-8601'},
+        'incremental_free_hours': {'key': 'incrementalFreeHours', 'type': 'float'},
+        'remaining_free_hours': {'key': 'remainingFreeHours', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        *,
+        create_time_stamp: Optional[datetime.datetime] = None,
+        expiration_time_stamp: Optional[datetime.datetime] = None,
+        incremental_free_hours: Optional[float] = None,
+        remaining_free_hours: Optional[float] = None,
+        **kwargs
+    ):
+        """
+        :keyword create_time_stamp:
+        :paramtype create_time_stamp: ~datetime.datetime
+        :keyword expiration_time_stamp:
+        :paramtype expiration_time_stamp: ~datetime.datetime
+        :keyword incremental_free_hours:
+        :paramtype incremental_free_hours: float
+        :keyword remaining_free_hours:
+        :paramtype remaining_free_hours: float
+        """
+        super(BillingHubFreeHourIncrementEntry, self).__init__(**kwargs)
+        self.create_time_stamp = create_time_stamp
+        self.expiration_time_stamp = expiration_time_stamp
+        self.incremental_free_hours = incremental_free_hours
+        self.remaining_free_hours = remaining_free_hours
+
+
+class BillingHubGetFreeHourBalanceResponse(msrest.serialization.Model):
+    """BillingHubGetFreeHourBalanceResponse.
+
+    :ivar total_remaining_free_hours:
+    :vartype total_remaining_free_hours: float
+    :ivar increment_entries:
+    :vartype increment_entries: list[~azure.mgmt.testbase.models.BillingHubFreeHourIncrementEntry]
+    """
+
+    _attribute_map = {
+        'total_remaining_free_hours': {'key': 'totalRemainingFreeHours', 'type': 'float'},
+        'increment_entries': {'key': 'incrementEntries', 'type': '[BillingHubFreeHourIncrementEntry]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        total_remaining_free_hours: Optional[float] = None,
+        increment_entries: Optional[List["_models.BillingHubFreeHourIncrementEntry"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword total_remaining_free_hours:
+        :paramtype total_remaining_free_hours: float
+        :keyword increment_entries:
+        :paramtype increment_entries:
+         list[~azure.mgmt.testbase.models.BillingHubFreeHourIncrementEntry]
+        """
+        super(BillingHubGetFreeHourBalanceResponse, self).__init__(**kwargs)
+        self.total_remaining_free_hours = total_remaining_free_hours
+        self.increment_entries = increment_entries
+
+
+class BillingHubGetUsageRequest(msrest.serialization.Model):
+    """BillingHubGetUsageRequest.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar start_time_stamp: Required.
+    :vartype start_time_stamp: ~datetime.datetime
+    :ivar end_time_stamp: Required.
+    :vartype end_time_stamp: ~datetime.datetime
+    :ivar page_size:
+    :vartype page_size: int
+    :ivar page_index:
+    :vartype page_index: int
+    """
+
+    _validation = {
+        'start_time_stamp': {'required': True},
+        'end_time_stamp': {'required': True},
+    }
+
+    _attribute_map = {
+        'start_time_stamp': {'key': 'startTimeStamp', 'type': 'iso-8601'},
+        'end_time_stamp': {'key': 'endTimeStamp', 'type': 'iso-8601'},
+        'page_size': {'key': 'pageSize', 'type': 'int'},
+        'page_index': {'key': 'pageIndex', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        *,
+        start_time_stamp: datetime.datetime,
+        end_time_stamp: datetime.datetime,
+        page_size: Optional[int] = None,
+        page_index: Optional[int] = None,
+        **kwargs
+    ):
+        """
+        :keyword start_time_stamp: Required.
+        :paramtype start_time_stamp: ~datetime.datetime
+        :keyword end_time_stamp: Required.
+        :paramtype end_time_stamp: ~datetime.datetime
+        :keyword page_size:
+        :paramtype page_size: int
+        :keyword page_index:
+        :paramtype page_index: int
+        """
+        super(BillingHubGetUsageRequest, self).__init__(**kwargs)
+        self.start_time_stamp = start_time_stamp
+        self.end_time_stamp = end_time_stamp
+        self.page_size = page_size
+        self.page_index = page_index
+
+
+class BillingHubGetUsageResponse(msrest.serialization.Model):
+    """BillingHubGetUsageResponse.
+
+    :ivar total_used_free_hours:
+    :vartype total_used_free_hours: float
+    :ivar total_used_billable_hours:
+    :vartype total_used_billable_hours: float
+    :ivar total_charges:
+    :vartype total_charges: float
+    :ivar package_usage_entries:
+    :vartype package_usage_entries: list[~azure.mgmt.testbase.models.BillingHubPackageUsage]
+    :ivar next_request:
+    :vartype next_request: ~azure.mgmt.testbase.models.BillingHubGetUsageRequest
+    """
+
+    _attribute_map = {
+        'total_used_free_hours': {'key': 'totalUsedFreeHours', 'type': 'float'},
+        'total_used_billable_hours': {'key': 'totalUsedBillableHours', 'type': 'float'},
+        'total_charges': {'key': 'totalCharges', 'type': 'float'},
+        'package_usage_entries': {'key': 'packageUsageEntries', 'type': '[BillingHubPackageUsage]'},
+        'next_request': {'key': 'nextRequest', 'type': 'BillingHubGetUsageRequest'},
+    }
+
+    def __init__(
+        self,
+        *,
+        total_used_free_hours: Optional[float] = None,
+        total_used_billable_hours: Optional[float] = None,
+        total_charges: Optional[float] = None,
+        package_usage_entries: Optional[List["_models.BillingHubPackageUsage"]] = None,
+        next_request: Optional["_models.BillingHubGetUsageRequest"] = None,
+        **kwargs
+    ):
+        """
+        :keyword total_used_free_hours:
+        :paramtype total_used_free_hours: float
+        :keyword total_used_billable_hours:
+        :paramtype total_used_billable_hours: float
+        :keyword total_charges:
+        :paramtype total_charges: float
+        :keyword package_usage_entries:
+        :paramtype package_usage_entries: list[~azure.mgmt.testbase.models.BillingHubPackageUsage]
+        :keyword next_request:
+        :paramtype next_request: ~azure.mgmt.testbase.models.BillingHubGetUsageRequest
+        """
+        super(BillingHubGetUsageResponse, self).__init__(**kwargs)
+        self.total_used_free_hours = total_used_free_hours
+        self.total_used_billable_hours = total_used_billable_hours
+        self.total_charges = total_charges
+        self.package_usage_entries = package_usage_entries
+        self.next_request = next_request
+
+
+class BillingHubPackageUsage(msrest.serialization.Model):
+    """BillingHubPackageUsage.
+
+    :ivar application_name:
+    :vartype application_name: str
+    :ivar application_version:
+    :vartype application_version: str
+    :ivar azure_resource_uri:
+    :vartype azure_resource_uri: str
+    :ivar total_used_free_hours:
+    :vartype total_used_free_hours: float
+    :ivar total_used_billable_hours:
+    :vartype total_used_billable_hours: float
+    :ivar total_charges:
+    :vartype total_charges: float
+    :ivar usage_entries_grouped_by_update_type:
+    :vartype usage_entries_grouped_by_update_type:
+     list[~azure.mgmt.testbase.models.BillingHubUsageGroupedByUpdateType]
+    """
+
+    _attribute_map = {
+        'application_name': {'key': 'applicationName', 'type': 'str'},
+        'application_version': {'key': 'applicationVersion', 'type': 'str'},
+        'azure_resource_uri': {'key': 'azureResourceUri', 'type': 'str'},
+        'total_used_free_hours': {'key': 'totalUsedFreeHours', 'type': 'float'},
+        'total_used_billable_hours': {'key': 'totalUsedBillableHours', 'type': 'float'},
+        'total_charges': {'key': 'totalCharges', 'type': 'float'},
+        'usage_entries_grouped_by_update_type': {'key': 'usageEntriesGroupedByUpdateType', 'type': '[BillingHubUsageGroupedByUpdateType]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        application_name: Optional[str] = None,
+        application_version: Optional[str] = None,
+        azure_resource_uri: Optional[str] = None,
+        total_used_free_hours: Optional[float] = None,
+        total_used_billable_hours: Optional[float] = None,
+        total_charges: Optional[float] = None,
+        usage_entries_grouped_by_update_type: Optional[List["_models.BillingHubUsageGroupedByUpdateType"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword application_name:
+        :paramtype application_name: str
+        :keyword application_version:
+        :paramtype application_version: str
+        :keyword azure_resource_uri:
+        :paramtype azure_resource_uri: str
+        :keyword total_used_free_hours:
+        :paramtype total_used_free_hours: float
+        :keyword total_used_billable_hours:
+        :paramtype total_used_billable_hours: float
+        :keyword total_charges:
+        :paramtype total_charges: float
+        :keyword usage_entries_grouped_by_update_type:
+        :paramtype usage_entries_grouped_by_update_type:
+         list[~azure.mgmt.testbase.models.BillingHubUsageGroupedByUpdateType]
+        """
+        super(BillingHubPackageUsage, self).__init__(**kwargs)
+        self.application_name = application_name
+        self.application_version = application_version
+        self.azure_resource_uri = azure_resource_uri
+        self.total_used_free_hours = total_used_free_hours
+        self.total_used_billable_hours = total_used_billable_hours
+        self.total_charges = total_charges
+        self.usage_entries_grouped_by_update_type = usage_entries_grouped_by_update_type
+
+
+class BillingHubUsage(msrest.serialization.Model):
+    """BillingHubUsage.
+
+    :ivar application_name:
+    :vartype application_name: str
+    :ivar application_version:
+    :vartype application_version: str
+    :ivar azure_resource_uri:
+    :vartype azure_resource_uri: str
+    :ivar total_used_free_hours:
+    :vartype total_used_free_hours: float
+    :ivar total_used_billable_hours:
+    :vartype total_used_billable_hours: float
+    :ivar total_charges:
+    :vartype total_charges: float
+    :ivar usage_groups:
+    :vartype usage_groups: list[~azure.mgmt.testbase.models.BillingHubUsageGroup]
+    """
+
+    _attribute_map = {
+        'application_name': {'key': 'applicationName', 'type': 'str'},
+        'application_version': {'key': 'applicationVersion', 'type': 'str'},
+        'azure_resource_uri': {'key': 'azureResourceUri', 'type': 'str'},
+        'total_used_free_hours': {'key': 'totalUsedFreeHours', 'type': 'float'},
+        'total_used_billable_hours': {'key': 'totalUsedBillableHours', 'type': 'float'},
+        'total_charges': {'key': 'totalCharges', 'type': 'float'},
+        'usage_groups': {'key': 'usageGroups', 'type': '[BillingHubUsageGroup]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        application_name: Optional[str] = None,
+        application_version: Optional[str] = None,
+        azure_resource_uri: Optional[str] = None,
+        total_used_free_hours: Optional[float] = None,
+        total_used_billable_hours: Optional[float] = None,
+        total_charges: Optional[float] = None,
+        usage_groups: Optional[List["_models.BillingHubUsageGroup"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword application_name:
+        :paramtype application_name: str
+        :keyword application_version:
+        :paramtype application_version: str
+        :keyword azure_resource_uri:
+        :paramtype azure_resource_uri: str
+        :keyword total_used_free_hours:
+        :paramtype total_used_free_hours: float
+        :keyword total_used_billable_hours:
+        :paramtype total_used_billable_hours: float
+        :keyword total_charges:
+        :paramtype total_charges: float
+        :keyword usage_groups:
+        :paramtype usage_groups: list[~azure.mgmt.testbase.models.BillingHubUsageGroup]
+        """
+        super(BillingHubUsage, self).__init__(**kwargs)
+        self.application_name = application_name
+        self.application_version = application_version
+        self.azure_resource_uri = azure_resource_uri
+        self.total_used_free_hours = total_used_free_hours
+        self.total_used_billable_hours = total_used_billable_hours
+        self.total_charges = total_charges
+        self.usage_groups = usage_groups
+
+
+class BillingHubUsageGroup(msrest.serialization.Model):
+    """BillingHubUsageGroup.
+
+    :ivar total_used_free_hours:
+    :vartype total_used_free_hours: float
+    :ivar total_used_billable_hours:
+    :vartype total_used_billable_hours: float
+    :ivar total_charges:
+    :vartype total_charges: float
+    :ivar release_build_revision:
+    :vartype release_build_revision: long
+    :ivar release_build_number:
+    :vartype release_build_number: long
+    :ivar release_build_date:
+    :vartype release_build_date: ~datetime.datetime
+    :ivar os_build:
+    :vartype os_build: str
+    :ivar release:
+    :vartype release: str
+    :ivar test_type:
+    :vartype test_type: str
+    :ivar product_family:
+    :vartype product_family: str
+    :ivar execution_usage_details:
+    :vartype execution_usage_details:
+     list[~azure.mgmt.testbase.models.BillingHubExecutionUsageDetail]
+    """
+
+    _attribute_map = {
+        'total_used_free_hours': {'key': 'totalUsedFreeHours', 'type': 'float'},
+        'total_used_billable_hours': {'key': 'totalUsedBillableHours', 'type': 'float'},
+        'total_charges': {'key': 'totalCharges', 'type': 'float'},
+        'release_build_revision': {'key': 'releaseBuildRevision', 'type': 'long'},
+        'release_build_number': {'key': 'releaseBuildNumber', 'type': 'long'},
+        'release_build_date': {'key': 'releaseBuildDate', 'type': 'iso-8601'},
+        'os_build': {'key': 'osBuild', 'type': 'str'},
+        'release': {'key': 'release', 'type': 'str'},
+        'test_type': {'key': 'testType', 'type': 'str'},
+        'product_family': {'key': 'productFamily', 'type': 'str'},
+        'execution_usage_details': {'key': 'executionUsageDetails', 'type': '[BillingHubExecutionUsageDetail]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        total_used_free_hours: Optional[float] = None,
+        total_used_billable_hours: Optional[float] = None,
+        total_charges: Optional[float] = None,
+        release_build_revision: Optional[int] = None,
+        release_build_number: Optional[int] = None,
+        release_build_date: Optional[datetime.datetime] = None,
+        os_build: Optional[str] = None,
+        release: Optional[str] = None,
+        test_type: Optional[str] = None,
+        product_family: Optional[str] = None,
+        execution_usage_details: Optional[List["_models.BillingHubExecutionUsageDetail"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword total_used_free_hours:
+        :paramtype total_used_free_hours: float
+        :keyword total_used_billable_hours:
+        :paramtype total_used_billable_hours: float
+        :keyword total_charges:
+        :paramtype total_charges: float
+        :keyword release_build_revision:
+        :paramtype release_build_revision: long
+        :keyword release_build_number:
+        :paramtype release_build_number: long
+        :keyword release_build_date:
+        :paramtype release_build_date: ~datetime.datetime
+        :keyword os_build:
+        :paramtype os_build: str
+        :keyword release:
+        :paramtype release: str
+        :keyword test_type:
+        :paramtype test_type: str
+        :keyword product_family:
+        :paramtype product_family: str
+        :keyword execution_usage_details:
+        :paramtype execution_usage_details:
+         list[~azure.mgmt.testbase.models.BillingHubExecutionUsageDetail]
+        """
+        super(BillingHubUsageGroup, self).__init__(**kwargs)
+        self.total_used_free_hours = total_used_free_hours
+        self.total_used_billable_hours = total_used_billable_hours
+        self.total_charges = total_charges
+        self.release_build_revision = release_build_revision
+        self.release_build_number = release_build_number
+        self.release_build_date = release_build_date
+        self.os_build = os_build
+        self.release = release
+        self.test_type = test_type
+        self.product_family = product_family
+        self.execution_usage_details = execution_usage_details
+
+
+class BillingHubUsageGroupedByUpdateType(msrest.serialization.Model):
+    """BillingHubUsageGroupedByUpdateType.
+
+    :ivar update_type:
+    :vartype update_type: str
+    :ivar total_used_free_hours:
+    :vartype total_used_free_hours: float
+    :ivar total_used_billable_hours:
+    :vartype total_used_billable_hours: float
+    :ivar total_charges:
+    :vartype total_charges: float
+    :ivar usage_groups:
+    :vartype usage_groups: list[~azure.mgmt.testbase.models.BillingHubUsageGroup]
+    """
+
+    _attribute_map = {
+        'update_type': {'key': 'updateType', 'type': 'str'},
+        'total_used_free_hours': {'key': 'totalUsedFreeHours', 'type': 'float'},
+        'total_used_billable_hours': {'key': 'totalUsedBillableHours', 'type': 'float'},
+        'total_charges': {'key': 'totalCharges', 'type': 'float'},
+        'usage_groups': {'key': 'usageGroups', 'type': '[BillingHubUsageGroup]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        update_type: Optional[str] = None,
+        total_used_free_hours: Optional[float] = None,
+        total_used_billable_hours: Optional[float] = None,
+        total_charges: Optional[float] = None,
+        usage_groups: Optional[List["_models.BillingHubUsageGroup"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword update_type:
+        :paramtype update_type: str
+        :keyword total_used_free_hours:
+        :paramtype total_used_free_hours: float
+        :keyword total_used_billable_hours:
+        :paramtype total_used_billable_hours: float
+        :keyword total_charges:
+        :paramtype total_charges: float
+        :keyword usage_groups:
+        :paramtype usage_groups: list[~azure.mgmt.testbase.models.BillingHubUsageGroup]
+        """
+        super(BillingHubUsageGroupedByUpdateType, self).__init__(**kwargs)
+        self.update_type = update_type
+        self.total_used_free_hours = total_used_free_hours
+        self.total_used_billable_hours = total_used_billable_hours
+        self.total_charges = total_charges
+        self.usage_groups = usage_groups
+
+
 class CheckNameAvailabilityResult(msrest.serialization.Model):
     """Description of a Check Name availability response properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param name_available: Value indicating the availability of the name: true if the name is
+    :ivar name_available: Value indicating the availability of the name: true if the name is
      available; otherwise, false.
-    :type name_available: bool
-    :param reason: The reason for unavailability of a name. Required if nameAvailable == false.
-     Possible values include: "Invalid", "AlreadyExists".
-    :type reason: str or ~test_base.models.Reason
+    :vartype name_available: bool
+    :ivar reason: The reason for unavailability of a name. Required if nameAvailable == false.
+     Known values are: "Invalid", "AlreadyExists".
+    :vartype reason: str or ~azure.mgmt.testbase.models.Reason
     :ivar message: The detailed info regarding the reason associated with the name. Required if
      nameAvailable == false.
     :vartype message: str
@@ -335,9 +958,17 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
         self,
         *,
         name_available: Optional[bool] = None,
-        reason: Optional[Union[str, "Reason"]] = None,
+        reason: Optional[Union[str, "_models.Reason"]] = None,
         **kwargs
     ):
+        """
+        :keyword name_available: Value indicating the availability of the name: true if the name is
+         available; otherwise, false.
+        :paramtype name_available: bool
+        :keyword reason: The reason for unavailability of a name. Required if nameAvailable == false.
+         Known values are: "Invalid", "AlreadyExists".
+        :paramtype reason: str or ~azure.mgmt.testbase.models.Reason
+        """
         super(CheckNameAvailabilityResult, self).__init__(**kwargs)
         self.name_available = name_available
         self.reason = reason
@@ -349,28 +980,28 @@ class Command(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the command.
-    :type name: str
-    :param action: Required. The action of the command. Possible values include: "Install",
-     "Launch", "Close", "Uninstall", "Custom".
-    :type action: str or ~test_base.models.Action
-    :param content_type: Required. The type of command content. Possible values include: "Inline",
-     "File", "Path".
-    :type content_type: str or ~test_base.models.ContentType
-    :param content: Required. The content of the command. The content depends on source type.
-    :type content: str
-    :param run_elevated: Specifies whether to run the command as administrator.
-    :type run_elevated: bool
-    :param restart_after: Specifies whether to restart the VM after the command executed.
-    :type restart_after: bool
-    :param max_run_time: Specifies the max run time of the command.
-    :type max_run_time: int
-    :param run_as_interactive: Specifies whether to run the command in interactive mode.
-    :type run_as_interactive: bool
-    :param always_run: Specifies whether to run the command even if a previous command is failed.
-    :type always_run: bool
-    :param apply_update_before: Specifies whether to apply update before the command.
-    :type apply_update_before: bool
+    :ivar name: Required. The name of the command.
+    :vartype name: str
+    :ivar action: Required. The action of the command. Known values are: "Install", "Launch",
+     "Close", "Uninstall", "Custom".
+    :vartype action: str or ~azure.mgmt.testbase.models.Action
+    :ivar content_type: Required. The type of command content. Known values are: "Inline", "File",
+     "Path".
+    :vartype content_type: str or ~azure.mgmt.testbase.models.ContentType
+    :ivar content: Required. The content of the command. The content depends on source type.
+    :vartype content: str
+    :ivar run_elevated: Specifies whether to run the command as administrator.
+    :vartype run_elevated: bool
+    :ivar restart_after: Specifies whether to restart the VM after the command executed.
+    :vartype restart_after: bool
+    :ivar max_run_time: Specifies the max run time of the command.
+    :vartype max_run_time: int
+    :ivar run_as_interactive: Specifies whether to run the command in interactive mode.
+    :vartype run_as_interactive: bool
+    :ivar always_run: Specifies whether to run the command even if a previous command is failed.
+    :vartype always_run: bool
+    :ivar apply_update_before: Specifies whether to apply update before the command.
+    :vartype apply_update_before: bool
     """
 
     _validation = {
@@ -397,8 +1028,8 @@ class Command(msrest.serialization.Model):
         self,
         *,
         name: str,
-        action: Union[str, "Action"],
-        content_type: Union[str, "ContentType"],
+        action: Union[str, "_models.Action"],
+        content_type: Union[str, "_models.ContentType"],
         content: str,
         run_elevated: Optional[bool] = None,
         restart_after: Optional[bool] = None,
@@ -408,6 +1039,30 @@ class Command(msrest.serialization.Model):
         apply_update_before: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the command.
+        :paramtype name: str
+        :keyword action: Required. The action of the command. Known values are: "Install", "Launch",
+         "Close", "Uninstall", "Custom".
+        :paramtype action: str or ~azure.mgmt.testbase.models.Action
+        :keyword content_type: Required. The type of command content. Known values are: "Inline",
+         "File", "Path".
+        :paramtype content_type: str or ~azure.mgmt.testbase.models.ContentType
+        :keyword content: Required. The content of the command. The content depends on source type.
+        :paramtype content: str
+        :keyword run_elevated: Specifies whether to run the command as administrator.
+        :paramtype run_elevated: bool
+        :keyword restart_after: Specifies whether to restart the VM after the command executed.
+        :paramtype restart_after: bool
+        :keyword max_run_time: Specifies the max run time of the command.
+        :paramtype max_run_time: int
+        :keyword run_as_interactive: Specifies whether to run the command in interactive mode.
+        :paramtype run_as_interactive: bool
+        :keyword always_run: Specifies whether to run the command even if a previous command is failed.
+        :paramtype always_run: bool
+        :keyword apply_update_before: Specifies whether to apply update before the command.
+        :paramtype apply_update_before: bool
+        """
         super(Command, self).__init__(**kwargs)
         self.name = name
         self.action = action
@@ -426,15 +1081,14 @@ class CPURegressionResultSingletonResourceProperties(AnalysisResultSingletonReso
 
     All required parameters must be populated in order to send to Azure.
 
-    :param grade: The grade of the test. Possible values include: "None", "NotAvailable", "Pass",
-     "Fail".
-    :type grade: str or ~test_base.models.Grade
-    :param analysis_result_type: Required. Type of the Analysis Result.Constant filled by server.
-     Possible values include: "ScriptExecution", "Reliability", "CPUUtilization",
-     "MemoryUtilization", "CPURegression", "MemoryRegression", "TestAnalysis".
-    :type analysis_result_type: str or ~test_base.models.AnalysisResultType
-    :param cpu_regression_results: The result array data.
-    :type cpu_regression_results: list[~test_base.models.RegressionResult]
+    :ivar grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass", "Fail".
+    :vartype grade: str or ~azure.mgmt.testbase.models.Grade
+    :ivar analysis_result_type: Required. Type of the Analysis Result.Constant filled by server.
+     Known values are: "ScriptExecution", "Reliability", "CPUUtilization", "MemoryUtilization",
+     "CPURegression", "MemoryRegression", "TestAnalysis".
+    :vartype analysis_result_type: str or ~azure.mgmt.testbase.models.AnalysisResultType
+    :ivar cpu_regression_results: The result array data.
+    :vartype cpu_regression_results: list[~azure.mgmt.testbase.models.RegressionResult]
     """
 
     _validation = {
@@ -450,10 +1104,17 @@ class CPURegressionResultSingletonResourceProperties(AnalysisResultSingletonReso
     def __init__(
         self,
         *,
-        grade: Optional[Union[str, "Grade"]] = None,
-        cpu_regression_results: Optional[List["RegressionResult"]] = None,
+        grade: Optional[Union[str, "_models.Grade"]] = None,
+        cpu_regression_results: Optional[List["_models.RegressionResult"]] = None,
         **kwargs
     ):
+        """
+        :keyword grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass",
+         "Fail".
+        :paramtype grade: str or ~azure.mgmt.testbase.models.Grade
+        :keyword cpu_regression_results: The result array data.
+        :paramtype cpu_regression_results: list[~azure.mgmt.testbase.models.RegressionResult]
+        """
         super(CPURegressionResultSingletonResourceProperties, self).__init__(grade=grade, **kwargs)
         self.analysis_result_type = 'CPURegression'  # type: str
         self.cpu_regression_results = cpu_regression_results
@@ -464,15 +1125,14 @@ class CPUUtilizationResultSingletonResourceProperties(AnalysisResultSingletonRes
 
     All required parameters must be populated in order to send to Azure.
 
-    :param grade: The grade of the test. Possible values include: "None", "NotAvailable", "Pass",
-     "Fail".
-    :type grade: str or ~test_base.models.Grade
-    :param analysis_result_type: Required. Type of the Analysis Result.Constant filled by server.
-     Possible values include: "ScriptExecution", "Reliability", "CPUUtilization",
-     "MemoryUtilization", "CPURegression", "MemoryRegression", "TestAnalysis".
-    :type analysis_result_type: str or ~test_base.models.AnalysisResultType
-    :param cpu_utilization_results: The result array data.
-    :type cpu_utilization_results: list[~test_base.models.UtilizationResult]
+    :ivar grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass", "Fail".
+    :vartype grade: str or ~azure.mgmt.testbase.models.Grade
+    :ivar analysis_result_type: Required. Type of the Analysis Result.Constant filled by server.
+     Known values are: "ScriptExecution", "Reliability", "CPUUtilization", "MemoryUtilization",
+     "CPURegression", "MemoryRegression", "TestAnalysis".
+    :vartype analysis_result_type: str or ~azure.mgmt.testbase.models.AnalysisResultType
+    :ivar cpu_utilization_results: The result array data.
+    :vartype cpu_utilization_results: list[~azure.mgmt.testbase.models.UtilizationResult]
     """
 
     _validation = {
@@ -488,10 +1148,17 @@ class CPUUtilizationResultSingletonResourceProperties(AnalysisResultSingletonRes
     def __init__(
         self,
         *,
-        grade: Optional[Union[str, "Grade"]] = None,
-        cpu_utilization_results: Optional[List["UtilizationResult"]] = None,
+        grade: Optional[Union[str, "_models.Grade"]] = None,
+        cpu_utilization_results: Optional[List["_models.UtilizationResult"]] = None,
         **kwargs
     ):
+        """
+        :keyword grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass",
+         "Fail".
+        :paramtype grade: str or ~azure.mgmt.testbase.models.Grade
+        :keyword cpu_utilization_results: The result array data.
+        :paramtype cpu_utilization_results: list[~azure.mgmt.testbase.models.UtilizationResult]
+        """
         super(CPUUtilizationResultSingletonResourceProperties, self).__init__(grade=grade, **kwargs)
         self.analysis_result_type = 'CPUUtilization'  # type: str
         self.cpu_utilization_results = cpu_utilization_results
@@ -502,8 +1169,8 @@ class CustomerEventListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of Test Base Customer Events.
-    :type value: list[~test_base.models.CustomerEventResource]
+    :ivar value: The list of Test Base Customer Events.
+    :vartype value: list[~azure.mgmt.testbase.models.CustomerEventResource]
     :ivar next_link: Link to the next set of results. Not empty if value contains incomplete list
      of results.
     :vartype next_link: str
@@ -521,9 +1188,13 @@ class CustomerEventListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["CustomerEventResource"]] = None,
+        value: Optional[List["_models.CustomerEventResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Test Base Customer Events.
+        :paramtype value: list[~azure.mgmt.testbase.models.CustomerEventResource]
+        """
         super(CustomerEventListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -541,11 +1212,11 @@ class CustomerEventResource(ProxyResource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system metadata relating to this resource.
-    :vartype system_data: ~test_base.models.SystemData
-    :param event_name: The name of the event subscribed to.
-    :type event_name: str
-    :param receivers: The notification event receivers.
-    :type receivers: list[~test_base.models.NotificationEventReceiver]
+    :vartype system_data: ~azure.mgmt.testbase.models.SystemData
+    :ivar event_name: The name of the event subscribed to.
+    :vartype event_name: str
+    :ivar receivers: The notification event receivers.
+    :vartype receivers: list[~azure.mgmt.testbase.models.NotificationEventReceiver]
     """
 
     _validation = {
@@ -568,9 +1239,15 @@ class CustomerEventResource(ProxyResource):
         self,
         *,
         event_name: Optional[str] = None,
-        receivers: Optional[List["NotificationEventReceiver"]] = None,
+        receivers: Optional[List["_models.NotificationEventReceiver"]] = None,
         **kwargs
     ):
+        """
+        :keyword event_name: The name of the event subscribed to.
+        :paramtype event_name: str
+        :keyword receivers: The notification event receivers.
+        :paramtype receivers: list[~azure.mgmt.testbase.models.NotificationEventReceiver]
+        """
         super(CustomerEventResource, self).__init__(**kwargs)
         self.system_data = None
         self.event_name = event_name
@@ -580,8 +1257,8 @@ class CustomerEventResource(ProxyResource):
 class DistributionGroupListReceiverValue(msrest.serialization.Model):
     """The user object receiver value.
 
-    :param distribution_groups: The list of distribution groups.
-    :type distribution_groups: list[str]
+    :ivar distribution_groups: The list of distribution groups.
+    :vartype distribution_groups: list[str]
     """
 
     _attribute_map = {
@@ -594,6 +1271,10 @@ class DistributionGroupListReceiverValue(msrest.serialization.Model):
         distribution_groups: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword distribution_groups: The list of distribution groups.
+        :paramtype distribution_groups: list[str]
+        """
         super(DistributionGroupListReceiverValue, self).__init__(**kwargs)
         self.distribution_groups = distribution_groups
 
@@ -623,6 +1304,8 @@ class DownloadURLResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DownloadURLResponse, self).__init__(**kwargs)
         self.download_url = None
         self.expiration_time = None
@@ -633,8 +1316,8 @@ class EmailEventListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of email events.
-    :type value: list[~test_base.models.EmailEventResource]
+    :ivar value: The list of email events.
+    :vartype value: list[~azure.mgmt.testbase.models.EmailEventResource]
     :ivar next_link: Link to the next set of results. Not empty if value contains incomplete list
      of results.
     :vartype next_link: str
@@ -652,9 +1335,13 @@ class EmailEventListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["EmailEventResource"]] = None,
+        value: Optional[List["_models.EmailEventResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of email events.
+        :paramtype value: list[~azure.mgmt.testbase.models.EmailEventResource]
+        """
         super(EmailEventListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -672,13 +1359,13 @@ class EmailEventResource(ProxyResource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system metadata relating to this resource.
-    :vartype system_data: ~test_base.models.SystemData
-    :param event_id: The identifier of the email event.
-    :type event_id: str
-    :param event_name: The name of the email event.
-    :type event_name: str
-    :param display_name: The display name of the email event.
-    :type display_name: str
+    :vartype system_data: ~azure.mgmt.testbase.models.SystemData
+    :ivar event_id: The identifier of the email event.
+    :vartype event_id: str
+    :ivar event_name: The name of the email event.
+    :vartype event_name: str
+    :ivar display_name: The display name of the email event.
+    :vartype display_name: str
     """
 
     _validation = {
@@ -706,6 +1393,14 @@ class EmailEventResource(ProxyResource):
         display_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword event_id: The identifier of the email event.
+        :paramtype event_id: str
+        :keyword event_name: The name of the email event.
+        :paramtype event_name: str
+        :keyword display_name: The display name of the email event.
+        :paramtype display_name: str
+        """
         super(EmailEventResource, self).__init__(**kwargs)
         self.system_data = None
         self.event_id = event_id
@@ -725,7 +1420,7 @@ class ErrorDefinition(msrest.serialization.Model):
     :ivar target: The target of the particular error.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~test_base.models.ErrorDefinition]
+    :vartype details: list[~azure.mgmt.testbase.models.ErrorDefinition]
     """
 
     _validation = {
@@ -746,6 +1441,8 @@ class ErrorDefinition(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDefinition, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -756,8 +1453,8 @@ class ErrorDefinition(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """The error response send when an operation fails.
 
-    :param error: The error details.
-    :type error: ~test_base.models.ErrorDefinition
+    :ivar error: The error details.
+    :vartype error: ~azure.mgmt.testbase.models.ErrorDefinition
     """
 
     _attribute_map = {
@@ -767,9 +1464,13 @@ class ErrorResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["ErrorDefinition"] = None,
+        error: Optional["_models.ErrorDefinition"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error details.
+        :paramtype error: ~azure.mgmt.testbase.models.ErrorDefinition
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -779,8 +1480,8 @@ class FavoriteProcessListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of favorite processes for a package.
-    :type value: list[~test_base.models.FavoriteProcessResource]
+    :ivar value: The list of favorite processes for a package.
+    :vartype value: list[~azure.mgmt.testbase.models.FavoriteProcessResource]
     :ivar next_link: Link to the next set of results. Not empty if value contains incomplete list
      of results.
     :vartype next_link: str
@@ -798,9 +1499,13 @@ class FavoriteProcessListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["FavoriteProcessResource"]] = None,
+        value: Optional[List["_models.FavoriteProcessResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of favorite processes for a package.
+        :paramtype value: list[~azure.mgmt.testbase.models.FavoriteProcessResource]
+        """
         super(FavoriteProcessListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -818,11 +1523,11 @@ class FavoriteProcessResource(ProxyResource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system metadata relating to this resource.
-    :vartype system_data: ~test_base.models.SystemData
-    :param actual_process_name: The actual name of the favorite process. It will be equal to
+    :vartype system_data: ~azure.mgmt.testbase.models.SystemData
+    :ivar actual_process_name: The actual name of the favorite process. It will be equal to
      resource name except for the scenario that the process name contains characters that are not
      allowed in the resource name.
-    :type actual_process_name: str
+    :vartype actual_process_name: str
     """
 
     _validation = {
@@ -846,6 +1551,12 @@ class FavoriteProcessResource(ProxyResource):
         actual_process_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword actual_process_name: The actual name of the favorite process. It will be equal to
+         resource name except for the scenario that the process name contains characters that are not
+         allowed in the resource name.
+        :paramtype actual_process_name: str
+        """
         super(FavoriteProcessResource, self).__init__(**kwargs)
         self.system_data = None
         self.actual_process_name = actual_process_name
@@ -877,6 +1588,8 @@ class FileUploadURLResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(FileUploadURLResponse, self).__init__(**kwargs)
         self.upload_url = None
         self.blob_path = None
@@ -887,8 +1600,8 @@ class FlightingRingListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of flighting rings.
-    :type value: list[~test_base.models.FlightingRingResource]
+    :ivar value: The list of flighting rings.
+    :vartype value: list[~azure.mgmt.testbase.models.FlightingRingResource]
     :ivar next_link: Link to the next set of results. Not empty if value contains incomplete list
      of results.
     :vartype next_link: str
@@ -906,9 +1619,13 @@ class FlightingRingListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["FlightingRingResource"]] = None,
+        value: Optional[List["_models.FlightingRingResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of flighting rings.
+        :paramtype value: list[~azure.mgmt.testbase.models.FlightingRingResource]
+        """
         super(FlightingRingListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -926,9 +1643,9 @@ class FlightingRingResource(ProxyResource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system metadata relating to this resource.
-    :vartype system_data: ~test_base.models.SystemData
-    :param actual_flighting_ring_name: The actual name of a flighting ring of a Test Base Account.
-    :type actual_flighting_ring_name: str
+    :vartype system_data: ~azure.mgmt.testbase.models.SystemData
+    :ivar actual_flighting_ring_name: The actual name of a flighting ring of a Test Base Account.
+    :vartype actual_flighting_ring_name: str
     """
 
     _validation = {
@@ -952,6 +1669,11 @@ class FlightingRingResource(ProxyResource):
         actual_flighting_ring_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword actual_flighting_ring_name: The actual name of a flighting ring of a Test Base
+         Account.
+        :paramtype actual_flighting_ring_name: str
+        """
         super(FlightingRingResource, self).__init__(**kwargs)
         self.system_data = None
         self.actual_flighting_ring_name = actual_flighting_ring_name
@@ -960,8 +1682,8 @@ class FlightingRingResource(ProxyResource):
 class GetFileUploadURLParameters(msrest.serialization.Model):
     """The parameters supplied to the Test Base Account GetFileUploadURL action.
 
-    :param blob_name: The custom file name of the uploaded blob.
-    :type blob_name: str
+    :ivar blob_name: The custom file name of the uploaded blob.
+    :vartype blob_name: str
     """
 
     _attribute_map = {
@@ -974,6 +1696,10 @@ class GetFileUploadURLParameters(msrest.serialization.Model):
         blob_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword blob_name: The custom file name of the uploaded blob.
+        :paramtype blob_name: str
+        """
         super(GetFileUploadURLParameters, self).__init__(**kwargs)
         self.blob_name = blob_name
 
@@ -981,15 +1707,15 @@ class GetFileUploadURLParameters(msrest.serialization.Model):
 class IdentifiedFailure(msrest.serialization.Model):
     """The failure identified.
 
-    :param failure_id: The Failure Id.
-    :type failure_id: str
-    :param category: The category of the failure. Possible values include: "None", "Unidentified",
+    :ivar failure_id: The Failure Id.
+    :vartype failure_id: str
+    :ivar category: The category of the failure. Known values are: "None", "Unidentified",
      "Package", "OSUpdate", "Infrastructure".
-    :type category: str or ~test_base.models.Category
-    :param error_message: Message that shows information about the failure.
-    :type error_message: str
-    :param guidance: Guidance that shows what the customer needs to do for this failure.
-    :type guidance: str
+    :vartype category: str or ~azure.mgmt.testbase.models.Category
+    :ivar error_message: Message that shows information about the failure.
+    :vartype error_message: str
+    :ivar guidance: Guidance that shows what the customer needs to do for this failure.
+    :vartype guidance: str
     """
 
     _attribute_map = {
@@ -1003,11 +1729,22 @@ class IdentifiedFailure(msrest.serialization.Model):
         self,
         *,
         failure_id: Optional[str] = None,
-        category: Optional[Union[str, "Category"]] = None,
+        category: Optional[Union[str, "_models.Category"]] = None,
         error_message: Optional[str] = None,
         guidance: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword failure_id: The Failure Id.
+        :paramtype failure_id: str
+        :keyword category: The category of the failure. Known values are: "None", "Unidentified",
+         "Package", "OSUpdate", "Infrastructure".
+        :paramtype category: str or ~azure.mgmt.testbase.models.Category
+        :keyword error_message: Message that shows information about the failure.
+        :paramtype error_message: str
+        :keyword guidance: Guidance that shows what the customer needs to do for this failure.
+        :paramtype guidance: str
+        """
         super(IdentifiedFailure, self).__init__(**kwargs)
         self.failure_id = failure_id
         self.category = category
@@ -1020,15 +1757,14 @@ class MemoryRegressionResultSingletonResourceProperties(AnalysisResultSingletonR
 
     All required parameters must be populated in order to send to Azure.
 
-    :param grade: The grade of the test. Possible values include: "None", "NotAvailable", "Pass",
-     "Fail".
-    :type grade: str or ~test_base.models.Grade
-    :param analysis_result_type: Required. Type of the Analysis Result.Constant filled by server.
-     Possible values include: "ScriptExecution", "Reliability", "CPUUtilization",
-     "MemoryUtilization", "CPURegression", "MemoryRegression", "TestAnalysis".
-    :type analysis_result_type: str or ~test_base.models.AnalysisResultType
-    :param memory_regression_results: The result array data.
-    :type memory_regression_results: list[~test_base.models.RegressionResult]
+    :ivar grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass", "Fail".
+    :vartype grade: str or ~azure.mgmt.testbase.models.Grade
+    :ivar analysis_result_type: Required. Type of the Analysis Result.Constant filled by server.
+     Known values are: "ScriptExecution", "Reliability", "CPUUtilization", "MemoryUtilization",
+     "CPURegression", "MemoryRegression", "TestAnalysis".
+    :vartype analysis_result_type: str or ~azure.mgmt.testbase.models.AnalysisResultType
+    :ivar memory_regression_results: The result array data.
+    :vartype memory_regression_results: list[~azure.mgmt.testbase.models.RegressionResult]
     """
 
     _validation = {
@@ -1044,10 +1780,17 @@ class MemoryRegressionResultSingletonResourceProperties(AnalysisResultSingletonR
     def __init__(
         self,
         *,
-        grade: Optional[Union[str, "Grade"]] = None,
-        memory_regression_results: Optional[List["RegressionResult"]] = None,
+        grade: Optional[Union[str, "_models.Grade"]] = None,
+        memory_regression_results: Optional[List["_models.RegressionResult"]] = None,
         **kwargs
     ):
+        """
+        :keyword grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass",
+         "Fail".
+        :paramtype grade: str or ~azure.mgmt.testbase.models.Grade
+        :keyword memory_regression_results: The result array data.
+        :paramtype memory_regression_results: list[~azure.mgmt.testbase.models.RegressionResult]
+        """
         super(MemoryRegressionResultSingletonResourceProperties, self).__init__(grade=grade, **kwargs)
         self.analysis_result_type = 'MemoryRegression'  # type: str
         self.memory_regression_results = memory_regression_results
@@ -1058,15 +1801,14 @@ class MemoryUtilizationResultSingletonResourceProperties(AnalysisResultSingleton
 
     All required parameters must be populated in order to send to Azure.
 
-    :param grade: The grade of the test. Possible values include: "None", "NotAvailable", "Pass",
-     "Fail".
-    :type grade: str or ~test_base.models.Grade
-    :param analysis_result_type: Required. Type of the Analysis Result.Constant filled by server.
-     Possible values include: "ScriptExecution", "Reliability", "CPUUtilization",
-     "MemoryUtilization", "CPURegression", "MemoryRegression", "TestAnalysis".
-    :type analysis_result_type: str or ~test_base.models.AnalysisResultType
-    :param memory_utilization_results: The result array data.
-    :type memory_utilization_results: list[~test_base.models.UtilizationResult]
+    :ivar grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass", "Fail".
+    :vartype grade: str or ~azure.mgmt.testbase.models.Grade
+    :ivar analysis_result_type: Required. Type of the Analysis Result.Constant filled by server.
+     Known values are: "ScriptExecution", "Reliability", "CPUUtilization", "MemoryUtilization",
+     "CPURegression", "MemoryRegression", "TestAnalysis".
+    :vartype analysis_result_type: str or ~azure.mgmt.testbase.models.AnalysisResultType
+    :ivar memory_utilization_results: The result array data.
+    :vartype memory_utilization_results: list[~azure.mgmt.testbase.models.UtilizationResult]
     """
 
     _validation = {
@@ -1082,10 +1824,17 @@ class MemoryUtilizationResultSingletonResourceProperties(AnalysisResultSingleton
     def __init__(
         self,
         *,
-        grade: Optional[Union[str, "Grade"]] = None,
-        memory_utilization_results: Optional[List["UtilizationResult"]] = None,
+        grade: Optional[Union[str, "_models.Grade"]] = None,
+        memory_utilization_results: Optional[List["_models.UtilizationResult"]] = None,
         **kwargs
     ):
+        """
+        :keyword grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass",
+         "Fail".
+        :paramtype grade: str or ~azure.mgmt.testbase.models.Grade
+        :keyword memory_utilization_results: The result array data.
+        :paramtype memory_utilization_results: list[~azure.mgmt.testbase.models.UtilizationResult]
+        """
         super(MemoryUtilizationResultSingletonResourceProperties, self).__init__(grade=grade, **kwargs)
         self.analysis_result_type = 'MemoryUtilization'  # type: str
         self.memory_utilization_results = memory_utilization_results
@@ -1094,10 +1843,10 @@ class MemoryUtilizationResultSingletonResourceProperties(AnalysisResultSingleton
 class NotificationEventReceiver(msrest.serialization.Model):
     """A notification event receivers.
 
-    :param receiver_type: The type of the notification event receiver.
-    :type receiver_type: str
-    :param receiver_value: The notification event receiver value.
-    :type receiver_value: ~test_base.models.NotificationReceiverValue
+    :ivar receiver_type: The type of the notification event receiver.
+    :vartype receiver_type: str
+    :ivar receiver_value: The notification event receiver value.
+    :vartype receiver_value: ~azure.mgmt.testbase.models.NotificationReceiverValue
     """
 
     _attribute_map = {
@@ -1109,9 +1858,15 @@ class NotificationEventReceiver(msrest.serialization.Model):
         self,
         *,
         receiver_type: Optional[str] = None,
-        receiver_value: Optional["NotificationReceiverValue"] = None,
+        receiver_value: Optional["_models.NotificationReceiverValue"] = None,
         **kwargs
     ):
+        """
+        :keyword receiver_type: The type of the notification event receiver.
+        :paramtype receiver_type: str
+        :keyword receiver_value: The notification event receiver value.
+        :paramtype receiver_value: ~azure.mgmt.testbase.models.NotificationReceiverValue
+        """
         super(NotificationEventReceiver, self).__init__(**kwargs)
         self.receiver_type = receiver_type
         self.receiver_value = receiver_value
@@ -1120,13 +1875,13 @@ class NotificationEventReceiver(msrest.serialization.Model):
 class NotificationReceiverValue(msrest.serialization.Model):
     """A notification event receiver value.
 
-    :param user_object_receiver_value: The user object receiver value.
-    :type user_object_receiver_value: ~test_base.models.UserObjectReceiverValue
-    :param subscription_receiver_value: The user object receiver value.
-    :type subscription_receiver_value: ~test_base.models.SubscriptionReceiverValue
-    :param distribution_group_list_receiver_value: The user object receiver value.
-    :type distribution_group_list_receiver_value:
-     ~test_base.models.DistributionGroupListReceiverValue
+    :ivar user_object_receiver_value: The user object receiver value.
+    :vartype user_object_receiver_value: ~azure.mgmt.testbase.models.UserObjectReceiverValue
+    :ivar subscription_receiver_value: The user object receiver value.
+    :vartype subscription_receiver_value: ~azure.mgmt.testbase.models.SubscriptionReceiverValue
+    :ivar distribution_group_list_receiver_value: The user object receiver value.
+    :vartype distribution_group_list_receiver_value:
+     ~azure.mgmt.testbase.models.DistributionGroupListReceiverValue
     """
 
     _attribute_map = {
@@ -1138,11 +1893,20 @@ class NotificationReceiverValue(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        user_object_receiver_value: Optional["UserObjectReceiverValue"] = None,
-        subscription_receiver_value: Optional["SubscriptionReceiverValue"] = None,
-        distribution_group_list_receiver_value: Optional["DistributionGroupListReceiverValue"] = None,
+        user_object_receiver_value: Optional["_models.UserObjectReceiverValue"] = None,
+        subscription_receiver_value: Optional["_models.SubscriptionReceiverValue"] = None,
+        distribution_group_list_receiver_value: Optional["_models.DistributionGroupListReceiverValue"] = None,
         **kwargs
     ):
+        """
+        :keyword user_object_receiver_value: The user object receiver value.
+        :paramtype user_object_receiver_value: ~azure.mgmt.testbase.models.UserObjectReceiverValue
+        :keyword subscription_receiver_value: The user object receiver value.
+        :paramtype subscription_receiver_value: ~azure.mgmt.testbase.models.SubscriptionReceiverValue
+        :keyword distribution_group_list_receiver_value: The user object receiver value.
+        :paramtype distribution_group_list_receiver_value:
+         ~azure.mgmt.testbase.models.DistributionGroupListReceiverValue
+        """
         super(NotificationReceiverValue, self).__init__(**kwargs)
         self.user_object_receiver_value = user_object_receiver_value
         self.subscription_receiver_value = subscription_receiver_value
@@ -1160,10 +1924,10 @@ class Operation(msrest.serialization.Model):
     :vartype is_data_action: bool
     :ivar origin: Origin of the operation.
     :vartype origin: str
-    :param display: The object that describes the operation.
-    :type display: ~test_base.models.OperationDisplay
-    :param properties: Extra properties of the operation.
-    :type properties: any
+    :ivar display: The object that describes the operation.
+    :vartype display: ~azure.mgmt.testbase.models.OperationDisplay
+    :ivar properties: Extra properties of the operation.
+    :vartype properties: any
     """
 
     _validation = {
@@ -1183,10 +1947,16 @@ class Operation(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         properties: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword display: The object that describes the operation.
+        :paramtype display: ~azure.mgmt.testbase.models.OperationDisplay
+        :keyword properties: Extra properties of the operation.
+        :paramtype properties: any
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.is_data_action = None
@@ -1228,6 +1998,8 @@ class OperationDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.operation = None
@@ -1240,8 +2012,8 @@ class OperationListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: List of operations supported by the Test Base resource provider.
-    :type value: list[~test_base.models.Operation]
+    :ivar value: List of operations supported by the Test Base resource provider.
+    :vartype value: list[~azure.mgmt.testbase.models.Operation]
     :ivar next_link: URL to get the next set of operation list results if there are any.
     :vartype next_link: str
     """
@@ -1258,9 +2030,13 @@ class OperationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Operation"]] = None,
+        value: Optional[List["_models.Operation"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of operations supported by the Test Base resource provider.
+        :paramtype value: list[~azure.mgmt.testbase.models.Operation]
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -1271,8 +2047,8 @@ class OSUpdateListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of OS Updates.
-    :type value: list[~test_base.models.OSUpdateResource]
+    :ivar value: The list of OS Updates.
+    :vartype value: list[~azure.mgmt.testbase.models.OSUpdateResource]
     :ivar next_link: Link to the next set of results. Not empty if value contains incomplete list
      of results.
     :vartype next_link: str
@@ -1290,9 +2066,13 @@ class OSUpdateListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["OSUpdateResource"]] = None,
+        value: Optional[List["_models.OSUpdateResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of OS Updates.
+        :paramtype value: list[~azure.mgmt.testbase.models.OSUpdateResource]
+        """
         super(OSUpdateListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -1310,22 +2090,22 @@ class OSUpdateResource(ProxyResource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system metadata relating to this resource.
-    :vartype system_data: ~test_base.models.SystemData
-    :param os_name: The name of the OS.
-    :type os_name: str
-    :param release: The name of tested release.
-    :type release: str
-    :param flighting_ring: The flighting ring, only for release of feature updates.
-    :type flighting_ring: str
-    :param build_version: The build version of the tested release (OS update).
-    :type build_version: str
-    :param build_revision: The build revision of the tested release (OS update).
-    :type build_revision: str
-    :param type_properties_type: The type of this release (OS update). Possible values include:
+    :vartype system_data: ~azure.mgmt.testbase.models.SystemData
+    :ivar os_name: The name of the OS.
+    :vartype os_name: str
+    :ivar release: The name of tested release.
+    :vartype release: str
+    :ivar flighting_ring: The flighting ring, only for release of feature updates.
+    :vartype flighting_ring: str
+    :ivar build_version: The build version of the tested release (OS update).
+    :vartype build_version: str
+    :ivar build_revision: The build revision of the tested release (OS update).
+    :vartype build_revision: str
+    :ivar type_properties_type: The type of this release (OS update). Known values are:
      "SecurityUpdate", "FeatureUpdate".
-    :type type_properties_type: str or ~test_base.models.Type
-    :param release_version_date: The release version date the tested release (OS update).
-    :type release_version_date: ~datetime.datetime
+    :vartype type_properties_type: str or ~azure.mgmt.testbase.models.Type
+    :ivar release_version_date: The release version date the tested release (OS update).
+    :vartype release_version_date: ~datetime.datetime
     """
 
     _validation = {
@@ -1357,10 +2137,27 @@ class OSUpdateResource(ProxyResource):
         flighting_ring: Optional[str] = None,
         build_version: Optional[str] = None,
         build_revision: Optional[str] = None,
-        type_properties_type: Optional[Union[str, "Type"]] = None,
+        type_properties_type: Optional[Union[str, "_models.Type"]] = None,
         release_version_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword os_name: The name of the OS.
+        :paramtype os_name: str
+        :keyword release: The name of tested release.
+        :paramtype release: str
+        :keyword flighting_ring: The flighting ring, only for release of feature updates.
+        :paramtype flighting_ring: str
+        :keyword build_version: The build version of the tested release (OS update).
+        :paramtype build_version: str
+        :keyword build_revision: The build revision of the tested release (OS update).
+        :paramtype build_revision: str
+        :keyword type_properties_type: The type of this release (OS update). Known values are:
+         "SecurityUpdate", "FeatureUpdate".
+        :paramtype type_properties_type: str or ~azure.mgmt.testbase.models.Type
+        :keyword release_version_date: The release version date the tested release (OS update).
+        :paramtype release_version_date: ~datetime.datetime
+        """
         super(OSUpdateResource, self).__init__(**kwargs)
         self.system_data = None
         self.os_name = os_name
@@ -1375,20 +2172,19 @@ class OSUpdateResource(ProxyResource):
 class OSUpdatesTestSummary(msrest.serialization.Model):
     """The summary of some tests.
 
-    :param execution_status: The status of the last test. Possible values include: "None",
-     "InProgress", "Processing", "Completed", "NotExecuted", "Incomplete", "Failed", "Succeeded".
-    :type execution_status: str or ~test_base.models.ExecutionStatus
-    :param test_status: The status of last test. Possible values include: "None",
+    :ivar execution_status: The status of the last test. Known values are: "None", "InProgress",
+     "Processing", "Completed", "NotExecuted", "Incomplete", "Failed", "Succeeded".
+    :vartype execution_status: str or ~azure.mgmt.testbase.models.ExecutionStatus
+    :ivar test_status: The status of last test. Known values are: "None",
      "TestExecutionInProgress", "DataProcessing", "TestFailure", "UpdateFailure",
      "TestAndUpdateFailure", "InfrastructureFailure", "Completed".
-    :type test_status: str or ~test_base.models.TestStatus
-    :param grade: The grade of last test. Possible values include: "None", "NotAvailable", "Pass",
-     "Fail".
-    :type grade: str or ~test_base.models.Grade
-    :param test_run_time: The run time of the last test.
-    :type test_run_time: str
-    :param os_update_test_summaries: Detailed summary for each OS update.
-    :type os_update_test_summaries: list[~test_base.models.OSUpdateTestSummary]
+    :vartype test_status: str or ~azure.mgmt.testbase.models.TestStatus
+    :ivar grade: The grade of last test. Known values are: "None", "NotAvailable", "Pass", "Fail".
+    :vartype grade: str or ~azure.mgmt.testbase.models.Grade
+    :ivar test_run_time: The run time of the last test.
+    :vartype test_run_time: str
+    :ivar os_update_test_summaries: Detailed summary for each OS update.
+    :vartype os_update_test_summaries: list[~azure.mgmt.testbase.models.OSUpdateTestSummary]
     """
 
     _attribute_map = {
@@ -1402,13 +2198,29 @@ class OSUpdatesTestSummary(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        execution_status: Optional[Union[str, "ExecutionStatus"]] = None,
-        test_status: Optional[Union[str, "TestStatus"]] = None,
-        grade: Optional[Union[str, "Grade"]] = None,
+        execution_status: Optional[Union[str, "_models.ExecutionStatus"]] = None,
+        test_status: Optional[Union[str, "_models.TestStatus"]] = None,
+        grade: Optional[Union[str, "_models.Grade"]] = None,
         test_run_time: Optional[str] = None,
-        os_update_test_summaries: Optional[List["OSUpdateTestSummary"]] = None,
+        os_update_test_summaries: Optional[List["_models.OSUpdateTestSummary"]] = None,
         **kwargs
     ):
+        """
+        :keyword execution_status: The status of the last test. Known values are: "None", "InProgress",
+         "Processing", "Completed", "NotExecuted", "Incomplete", "Failed", "Succeeded".
+        :paramtype execution_status: str or ~azure.mgmt.testbase.models.ExecutionStatus
+        :keyword test_status: The status of last test. Known values are: "None",
+         "TestExecutionInProgress", "DataProcessing", "TestFailure", "UpdateFailure",
+         "TestAndUpdateFailure", "InfrastructureFailure", "Completed".
+        :paramtype test_status: str or ~azure.mgmt.testbase.models.TestStatus
+        :keyword grade: The grade of last test. Known values are: "None", "NotAvailable", "Pass",
+         "Fail".
+        :paramtype grade: str or ~azure.mgmt.testbase.models.Grade
+        :keyword test_run_time: The run time of the last test.
+        :paramtype test_run_time: str
+        :keyword os_update_test_summaries: Detailed summary for each OS update.
+        :paramtype os_update_test_summaries: list[~azure.mgmt.testbase.models.OSUpdateTestSummary]
+        """
         super(OSUpdatesTestSummary, self).__init__(**kwargs)
         self.execution_status = execution_status
         self.test_status = test_status
@@ -1420,32 +2232,31 @@ class OSUpdatesTestSummary(msrest.serialization.Model):
 class OSUpdateTestSummary(msrest.serialization.Model):
     """The summary of a test.
 
-    :param os_name: The operating system name. e.g. Windows 10 1809.
-    :type os_name: str
-    :param release_name: The name of the tested release (OS update).
-    :type release_name: str
-    :param build_version: The build version of the tested release (OS update).
-    :type build_version: str
-    :param build_revision: The build revision of the tested release (OS update).
-    :type build_revision: str
-    :param release_version_date: The release version date.
-    :type release_version_date: ~datetime.datetime
-    :param flighting_ring: The flighting ring, only for release of feature updates.
-    :type flighting_ring: str
-    :param execution_status: The execution status of the test. Possible values include: "None",
+    :ivar os_name: The operating system name. e.g. Windows 10 1809.
+    :vartype os_name: str
+    :ivar release_name: The name of the tested release (OS update).
+    :vartype release_name: str
+    :ivar build_version: The build version of the tested release (OS update).
+    :vartype build_version: str
+    :ivar build_revision: The build revision of the tested release (OS update).
+    :vartype build_revision: str
+    :ivar release_version_date: The release version date.
+    :vartype release_version_date: ~datetime.datetime
+    :ivar flighting_ring: The flighting ring, only for release of feature updates.
+    :vartype flighting_ring: str
+    :ivar execution_status: The execution status of the test. Known values are: "None",
      "InProgress", "Processing", "Completed", "NotExecuted", "Incomplete", "Failed", "Succeeded".
-    :type execution_status: str or ~test_base.models.ExecutionStatus
-    :param test_status: The status of the test. Possible values include: "None",
-     "TestExecutionInProgress", "DataProcessing", "TestFailure", "UpdateFailure",
-     "TestAndUpdateFailure", "InfrastructureFailure", "Completed".
-    :type test_status: str or ~test_base.models.TestStatus
-    :param grade: The grade of the test. Possible values include: "None", "NotAvailable", "Pass",
-     "Fail".
-    :type grade: str or ~test_base.models.Grade
-    :param test_run_time: The run time of the test.
-    :type test_run_time: str
-    :param test_type: The test type of the package.
-    :type test_type: str
+    :vartype execution_status: str or ~azure.mgmt.testbase.models.ExecutionStatus
+    :ivar test_status: The status of the test. Known values are: "None", "TestExecutionInProgress",
+     "DataProcessing", "TestFailure", "UpdateFailure", "TestAndUpdateFailure",
+     "InfrastructureFailure", "Completed".
+    :vartype test_status: str or ~azure.mgmt.testbase.models.TestStatus
+    :ivar grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass", "Fail".
+    :vartype grade: str or ~azure.mgmt.testbase.models.Grade
+    :ivar test_run_time: The run time of the test.
+    :vartype test_run_time: str
+    :ivar test_type: The test type of the package.
+    :vartype test_type: str
     """
 
     _attribute_map = {
@@ -1471,13 +2282,41 @@ class OSUpdateTestSummary(msrest.serialization.Model):
         build_revision: Optional[str] = None,
         release_version_date: Optional[datetime.datetime] = None,
         flighting_ring: Optional[str] = None,
-        execution_status: Optional[Union[str, "ExecutionStatus"]] = None,
-        test_status: Optional[Union[str, "TestStatus"]] = None,
-        grade: Optional[Union[str, "Grade"]] = None,
+        execution_status: Optional[Union[str, "_models.ExecutionStatus"]] = None,
+        test_status: Optional[Union[str, "_models.TestStatus"]] = None,
+        grade: Optional[Union[str, "_models.Grade"]] = None,
         test_run_time: Optional[str] = None,
         test_type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword os_name: The operating system name. e.g. Windows 10 1809.
+        :paramtype os_name: str
+        :keyword release_name: The name of the tested release (OS update).
+        :paramtype release_name: str
+        :keyword build_version: The build version of the tested release (OS update).
+        :paramtype build_version: str
+        :keyword build_revision: The build revision of the tested release (OS update).
+        :paramtype build_revision: str
+        :keyword release_version_date: The release version date.
+        :paramtype release_version_date: ~datetime.datetime
+        :keyword flighting_ring: The flighting ring, only for release of feature updates.
+        :paramtype flighting_ring: str
+        :keyword execution_status: The execution status of the test. Known values are: "None",
+         "InProgress", "Processing", "Completed", "NotExecuted", "Incomplete", "Failed", "Succeeded".
+        :paramtype execution_status: str or ~azure.mgmt.testbase.models.ExecutionStatus
+        :keyword test_status: The status of the test. Known values are: "None",
+         "TestExecutionInProgress", "DataProcessing", "TestFailure", "UpdateFailure",
+         "TestAndUpdateFailure", "InfrastructureFailure", "Completed".
+        :paramtype test_status: str or ~azure.mgmt.testbase.models.TestStatus
+        :keyword grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass",
+         "Fail".
+        :paramtype grade: str or ~azure.mgmt.testbase.models.Grade
+        :keyword test_run_time: The run time of the test.
+        :paramtype test_run_time: str
+        :keyword test_type: The test type of the package.
+        :paramtype test_type: str
+        """
         super(OSUpdateTestSummary, self).__init__(**kwargs)
         self.os_name = os_name
         self.release_name = release_name
@@ -1497,21 +2336,20 @@ class PackageCheckNameAvailabilityParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Resource name to verify.
-    :type name: str
-    :param application_name: Required. Application name to verify.
-    :type application_name: str
-    :param version: Required. Version name to verify.
-    :type version: str
-    :param type: Required. fully qualified resource type which includes provider namespace.
-    :type type: str
+    :ivar name: Required. Resource name to verify.
+    :vartype name: str
+    :ivar application_name: Required. Application name to verify.
+    :vartype application_name: str
+    :ivar version: Required. Version name to verify.
+    :vartype version: str
+    :ivar type: fully qualified resource type which includes provider namespace.
+    :vartype type: str
     """
 
     _validation = {
         'name': {'required': True},
         'application_name': {'required': True},
         'version': {'required': True},
-        'type': {'required': True},
     }
 
     _attribute_map = {
@@ -1527,9 +2365,19 @@ class PackageCheckNameAvailabilityParameters(msrest.serialization.Model):
         name: str,
         application_name: str,
         version: str,
-        type: str,
+        type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. Resource name to verify.
+        :paramtype name: str
+        :keyword application_name: Required. Application name to verify.
+        :paramtype application_name: str
+        :keyword version: Required. Version name to verify.
+        :paramtype version: str
+        :keyword type: fully qualified resource type which includes provider namespace.
+        :paramtype type: str
+        """
         super(PackageCheckNameAvailabilityParameters, self).__init__(**kwargs)
         self.name = name
         self.application_name = application_name
@@ -1542,8 +2390,8 @@ class PackageListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of Test Base Packages.
-    :type value: list[~test_base.models.PackageResource]
+    :ivar value: The list of Test Base Packages.
+    :vartype value: list[~azure.mgmt.testbase.models.PackageResource]
     :ivar next_link: Link to the next set of results. Not empty if value contains incomplete list
      of results.
     :vartype next_link: str
@@ -1561,9 +2409,13 @@ class PackageListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PackageResource"]] = None,
+        value: Optional[List["_models.PackageResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Test Base Packages.
+        :paramtype value: list[~azure.mgmt.testbase.models.PackageResource]
+        """
         super(PackageListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -1582,10 +2434,10 @@ class TrackedResource(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     :ivar etag: Resource Etag.
     :vartype etag: str
     """
@@ -1614,6 +2466,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -1633,43 +2491,43 @@ class PackageResource(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     :ivar etag: Resource Etag.
     :vartype etag: str
     :ivar system_data: The system metadata relating to this resource.
-    :vartype system_data: ~test_base.models.SystemData
-    :ivar provisioning_state: The provisioning state of the resource. Possible values include:
+    :vartype system_data: ~azure.mgmt.testbase.models.SystemData
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
      "Succeeded", "Failed", "Cancelled", "Creating", "Deleting", "Updating".
-    :vartype provisioning_state: str or ~test_base.models.ProvisioningState
-    :param application_name: Application name.
-    :type application_name: str
-    :param version: Application version.
-    :type version: str
+    :vartype provisioning_state: str or ~azure.mgmt.testbase.models.ProvisioningState
+    :ivar application_name: Application name.
+    :vartype application_name: str
+    :ivar version: Application version.
+    :vartype version: str
     :ivar test_types: OOB, functional or both. Mapped to the data in 'tests' property.
-    :vartype test_types: list[str or ~test_base.models.TestType]
-    :param target_os_list: Specifies the target OSs of specific OS Update types.
-    :type target_os_list: list[~test_base.models.TargetOSInfo]
-    :ivar package_status: The status of the package. Possible values include: "Unknown",
-     "Registered", "Ready", "Error", "ValidatingPackage", "PreValidationCheckPass", "Deleted",
+    :vartype test_types: list[str or ~azure.mgmt.testbase.models.TestType]
+    :ivar target_os_list: Specifies the target OSs of specific OS Update types.
+    :vartype target_os_list: list[~azure.mgmt.testbase.models.TargetOSInfo]
+    :ivar package_status: The status of the package. Known values are: "Unknown", "Registered",
+     "Ready", "Error", "ValidatingPackage", "PreValidationCheckPass", "Deleted",
      "ValidationLongerThanUsual", "VerifyingPackage".
-    :vartype package_status: str or ~test_base.models.PackageStatus
+    :vartype package_status: str or ~azure.mgmt.testbase.models.PackageStatus
     :ivar last_modified_time: The UTC timestamp when the package was last modified.
     :vartype last_modified_time: ~datetime.datetime
-    :param flighting_ring: The flighting ring for feature update.
-    :type flighting_ring: str
+    :ivar flighting_ring: The flighting ring for feature update.
+    :vartype flighting_ring: str
     :ivar is_enabled: Flag showing that whether the package is enabled. It doesn't schedule test
      for package which is not enabled.
     :vartype is_enabled: bool
-    :param blob_path: The file path of the package.
-    :type blob_path: str
+    :ivar blob_path: The file path of the package.
+    :vartype blob_path: str
     :ivar validation_results: The validation results. There's validation on package when it's
      created or updated.
-    :vartype validation_results: list[~test_base.models.PackageValidationResult]
-    :param tests: The detailed test information.
-    :type tests: list[~test_base.models.Test]
+    :vartype validation_results: list[~azure.mgmt.testbase.models.PackageValidationResult]
+    :ivar tests: The detailed test information.
+    :vartype tests: list[~azure.mgmt.testbase.models.Test]
     """
 
     _validation = {
@@ -1716,12 +2574,30 @@ class PackageResource(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         application_name: Optional[str] = None,
         version: Optional[str] = None,
-        target_os_list: Optional[List["TargetOSInfo"]] = None,
+        target_os_list: Optional[List["_models.TargetOSInfo"]] = None,
         flighting_ring: Optional[str] = None,
         blob_path: Optional[str] = None,
-        tests: Optional[List["Test"]] = None,
+        tests: Optional[List["_models.Test"]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword application_name: Application name.
+        :paramtype application_name: str
+        :keyword version: Application version.
+        :paramtype version: str
+        :keyword target_os_list: Specifies the target OSs of specific OS Update types.
+        :paramtype target_os_list: list[~azure.mgmt.testbase.models.TargetOSInfo]
+        :keyword flighting_ring: The flighting ring for feature update.
+        :paramtype flighting_ring: str
+        :keyword blob_path: The file path of the package.
+        :paramtype blob_path: str
+        :keyword tests: The detailed test information.
+        :paramtype tests: list[~azure.mgmt.testbase.models.Test]
+        """
         super(PackageResource, self).__init__(tags=tags, location=location, **kwargs)
         self.system_data = None
         self.provisioning_state = None
@@ -1738,22 +2614,86 @@ class PackageResource(TrackedResource):
         self.tests = tests
 
 
+class PackageRunTestParameters(msrest.serialization.Model):
+    """The parameters supplied to the Test Base Package to start a Test Run.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar test_type: Required. The type of the test. Known values are: "OutOfBoxTest",
+     "FunctionalTest".
+    :vartype test_type: str or ~azure.mgmt.testbase.models.TestType
+    :ivar os_update_type: Specifies the OS update type to test against. Known values are:
+     "SecurityUpdate", "FeatureUpdate".
+    :vartype os_update_type: str or ~azure.mgmt.testbase.models.OsUpdateType
+    :ivar os_name: Required. The operating system name. e.g. Windows 10 1809.
+    :vartype os_name: str
+    :ivar release_name: The name of the tested release (OS update).
+    :vartype release_name: str
+    :ivar flighting_ring: The flighting ring, only for release of feature updates.
+    :vartype flighting_ring: str
+    """
+
+    _validation = {
+        'test_type': {'required': True},
+        'os_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'test_type': {'key': 'testType', 'type': 'str'},
+        'os_update_type': {'key': 'osUpdateType', 'type': 'str'},
+        'os_name': {'key': 'osName', 'type': 'str'},
+        'release_name': {'key': 'releaseName', 'type': 'str'},
+        'flighting_ring': {'key': 'flightingRing', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        test_type: Union[str, "_models.TestType"],
+        os_name: str,
+        os_update_type: Optional[Union[str, "_models.OsUpdateType"]] = None,
+        release_name: Optional[str] = None,
+        flighting_ring: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword test_type: Required. The type of the test. Known values are: "OutOfBoxTest",
+         "FunctionalTest".
+        :paramtype test_type: str or ~azure.mgmt.testbase.models.TestType
+        :keyword os_update_type: Specifies the OS update type to test against. Known values are:
+         "SecurityUpdate", "FeatureUpdate".
+        :paramtype os_update_type: str or ~azure.mgmt.testbase.models.OsUpdateType
+        :keyword os_name: Required. The operating system name. e.g. Windows 10 1809.
+        :paramtype os_name: str
+        :keyword release_name: The name of the tested release (OS update).
+        :paramtype release_name: str
+        :keyword flighting_ring: The flighting ring, only for release of feature updates.
+        :paramtype flighting_ring: str
+        """
+        super(PackageRunTestParameters, self).__init__(**kwargs)
+        self.test_type = test_type
+        self.os_update_type = os_update_type
+        self.os_name = os_name
+        self.release_name = release_name
+        self.flighting_ring = flighting_ring
+
+
 class PackageUpdateParameters(msrest.serialization.Model):
     """Parameters supplied to update a Test Base Package.
 
-    :param tags: A set of tags. The tags of the Package.
-    :type tags: dict[str, str]
-    :param target_os_list: Specifies the target OSs of specific OS Update types.
-    :type target_os_list: list[~test_base.models.TargetOSInfo]
-    :param flighting_ring: The flighting ring for feature update.
-    :type flighting_ring: str
-    :param is_enabled: Specifies whether the package is enabled. It doesn't schedule test for
+    :ivar tags: A set of tags. The tags of the Package.
+    :vartype tags: dict[str, str]
+    :ivar target_os_list: Specifies the target OSs of specific OS Update types.
+    :vartype target_os_list: list[~azure.mgmt.testbase.models.TargetOSInfo]
+    :ivar flighting_ring: The flighting ring for feature update.
+    :vartype flighting_ring: str
+    :ivar is_enabled: Specifies whether the package is enabled. It doesn't schedule test for
      package which is not enabled.
-    :type is_enabled: bool
-    :param blob_path: The file name of the package.
-    :type blob_path: str
-    :param tests: The detailed test information.
-    :type tests: list[~test_base.models.Test]
+    :vartype is_enabled: bool
+    :ivar blob_path: The file name of the package.
+    :vartype blob_path: str
+    :ivar tests: The detailed test information.
+    :vartype tests: list[~azure.mgmt.testbase.models.Test]
     """
 
     _attribute_map = {
@@ -1769,13 +2709,28 @@ class PackageUpdateParameters(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        target_os_list: Optional[List["TargetOSInfo"]] = None,
+        target_os_list: Optional[List["_models.TargetOSInfo"]] = None,
         flighting_ring: Optional[str] = None,
         is_enabled: Optional[bool] = None,
         blob_path: Optional[str] = None,
-        tests: Optional[List["Test"]] = None,
+        tests: Optional[List["_models.Test"]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. The tags of the Package.
+        :paramtype tags: dict[str, str]
+        :keyword target_os_list: Specifies the target OSs of specific OS Update types.
+        :paramtype target_os_list: list[~azure.mgmt.testbase.models.TargetOSInfo]
+        :keyword flighting_ring: The flighting ring for feature update.
+        :paramtype flighting_ring: str
+        :keyword is_enabled: Specifies whether the package is enabled. It doesn't schedule test for
+         package which is not enabled.
+        :paramtype is_enabled: bool
+        :keyword blob_path: The file name of the package.
+        :paramtype blob_path: str
+        :keyword tests: The detailed test information.
+        :paramtype tests: list[~azure.mgmt.testbase.models.Test]
+        """
         super(PackageUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
         self.target_os_list = target_os_list
@@ -1814,6 +2769,8 @@ class PackageValidationResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PackageValidationResult, self).__init__(**kwargs)
         self.validation_name = None
         self.is_valid = None
@@ -1823,18 +2780,16 @@ class PackageValidationResult(msrest.serialization.Model):
 class RegressionResult(msrest.serialization.Model):
     """The regression result.
 
-    :param file_name: FileName of the binary being analyzed.
-    :type file_name: str
-    :param grade: The grade of the test. Possible values include: "None", "NotAvailable", "Pass",
-     "Fail".
-    :type grade: str or ~test_base.models.Grade
-    :param details: Message that facilitates debugging a particular regression, if any was
-     inferred.
-    :type details: str
-    :param diff: Difference between the two datasets being analyzed.
-    :type diff: float
-    :param is_regressed: Indicates if a regression was inferred.
-    :type is_regressed: bool
+    :ivar file_name: FileName of the binary being analyzed.
+    :vartype file_name: str
+    :ivar grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass", "Fail".
+    :vartype grade: str or ~azure.mgmt.testbase.models.Grade
+    :ivar details: Message that facilitates debugging a particular regression, if any was inferred.
+    :vartype details: str
+    :ivar diff: Difference between the two datasets being analyzed.
+    :vartype diff: float
+    :ivar is_regressed: Indicates if a regression was inferred.
+    :vartype is_regressed: bool
     """
 
     _attribute_map = {
@@ -1849,12 +2804,26 @@ class RegressionResult(msrest.serialization.Model):
         self,
         *,
         file_name: Optional[str] = None,
-        grade: Optional[Union[str, "Grade"]] = None,
+        grade: Optional[Union[str, "_models.Grade"]] = None,
         details: Optional[str] = None,
         diff: Optional[float] = None,
         is_regressed: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword file_name: FileName of the binary being analyzed.
+        :paramtype file_name: str
+        :keyword grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass",
+         "Fail".
+        :paramtype grade: str or ~azure.mgmt.testbase.models.Grade
+        :keyword details: Message that facilitates debugging a particular regression, if any was
+         inferred.
+        :paramtype details: str
+        :keyword diff: Difference between the two datasets being analyzed.
+        :paramtype diff: float
+        :keyword is_regressed: Indicates if a regression was inferred.
+        :paramtype is_regressed: bool
+        """
         super(RegressionResult, self).__init__(**kwargs)
         self.file_name = file_name
         self.grade = grade
@@ -1866,10 +2835,10 @@ class RegressionResult(msrest.serialization.Model):
 class RegressionTestDetails(msrest.serialization.Model):
     """The details of a regression test.
 
-    :param diff: Difference between the two datasets being analyzed.
-    :type diff: float
-    :param is_regressed: Indicates if a regression was inferred.
-    :type is_regressed: bool
+    :ivar diff: Difference between the two datasets being analyzed.
+    :vartype diff: float
+    :ivar is_regressed: Indicates if a regression was inferred.
+    :vartype is_regressed: bool
     """
 
     _attribute_map = {
@@ -1884,6 +2853,12 @@ class RegressionTestDetails(msrest.serialization.Model):
         is_regressed: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword diff: Difference between the two datasets being analyzed.
+        :paramtype diff: float
+        :keyword is_regressed: Indicates if a regression was inferred.
+        :paramtype is_regressed: bool
+        """
         super(RegressionTestDetails, self).__init__(**kwargs)
         self.diff = diff
         self.is_regressed = is_regressed
@@ -1892,27 +2867,27 @@ class RegressionTestDetails(msrest.serialization.Model):
 class ReliabilityResult(msrest.serialization.Model):
     """The Reliability Result.
 
-    :param file_name: File name.
-    :type file_name: str
-    :param launch_count: Count of number of launches.
-    :type launch_count: int
-    :param crash_count: Count of number of crashes.
-    :type crash_count: int
-    :param hang_count: Count of number of hangs.
-    :type hang_count: int
-    :param regression_grade: The regression grade. Possible values include: "None", "NotAvailable",
-     "Pass", "Fail".
-    :type regression_grade: str or ~test_base.models.Grade
-    :param crash_regression_grade: The statistic regression grade for crash signal. Possible values
-     include: "None", "NotAvailable", "Pass", "Fail".
-    :type crash_regression_grade: str or ~test_base.models.Grade
-    :param crash_regression_test_details: Details related to the crash regression analysis.
-    :type crash_regression_test_details: ~test_base.models.RegressionTestDetails
-    :param hang_regression_grade: The statistic regression grade for hang signal. Possible values
-     include: "None", "NotAvailable", "Pass", "Fail".
-    :type hang_regression_grade: str or ~test_base.models.Grade
-    :param hang_regression_test_details: Details related to the hang regression analysis.
-    :type hang_regression_test_details: ~test_base.models.RegressionTestDetails
+    :ivar file_name: File name.
+    :vartype file_name: str
+    :ivar launch_count: Count of number of launches.
+    :vartype launch_count: int
+    :ivar crash_count: Count of number of crashes.
+    :vartype crash_count: int
+    :ivar hang_count: Count of number of hangs.
+    :vartype hang_count: int
+    :ivar regression_grade: The regression grade. Known values are: "None", "NotAvailable", "Pass",
+     "Fail".
+    :vartype regression_grade: str or ~azure.mgmt.testbase.models.Grade
+    :ivar crash_regression_grade: The statistic regression grade for crash signal. Known values
+     are: "None", "NotAvailable", "Pass", "Fail".
+    :vartype crash_regression_grade: str or ~azure.mgmt.testbase.models.Grade
+    :ivar crash_regression_test_details: Details related to the crash regression analysis.
+    :vartype crash_regression_test_details: ~azure.mgmt.testbase.models.RegressionTestDetails
+    :ivar hang_regression_grade: The statistic regression grade for hang signal. Known values are:
+     "None", "NotAvailable", "Pass", "Fail".
+    :vartype hang_regression_grade: str or ~azure.mgmt.testbase.models.Grade
+    :ivar hang_regression_test_details: Details related to the hang regression analysis.
+    :vartype hang_regression_test_details: ~azure.mgmt.testbase.models.RegressionTestDetails
     """
 
     _attribute_map = {
@@ -1934,13 +2909,36 @@ class ReliabilityResult(msrest.serialization.Model):
         launch_count: Optional[int] = None,
         crash_count: Optional[int] = None,
         hang_count: Optional[int] = None,
-        regression_grade: Optional[Union[str, "Grade"]] = None,
-        crash_regression_grade: Optional[Union[str, "Grade"]] = None,
-        crash_regression_test_details: Optional["RegressionTestDetails"] = None,
-        hang_regression_grade: Optional[Union[str, "Grade"]] = None,
-        hang_regression_test_details: Optional["RegressionTestDetails"] = None,
+        regression_grade: Optional[Union[str, "_models.Grade"]] = None,
+        crash_regression_grade: Optional[Union[str, "_models.Grade"]] = None,
+        crash_regression_test_details: Optional["_models.RegressionTestDetails"] = None,
+        hang_regression_grade: Optional[Union[str, "_models.Grade"]] = None,
+        hang_regression_test_details: Optional["_models.RegressionTestDetails"] = None,
         **kwargs
     ):
+        """
+        :keyword file_name: File name.
+        :paramtype file_name: str
+        :keyword launch_count: Count of number of launches.
+        :paramtype launch_count: int
+        :keyword crash_count: Count of number of crashes.
+        :paramtype crash_count: int
+        :keyword hang_count: Count of number of hangs.
+        :paramtype hang_count: int
+        :keyword regression_grade: The regression grade. Known values are: "None", "NotAvailable",
+         "Pass", "Fail".
+        :paramtype regression_grade: str or ~azure.mgmt.testbase.models.Grade
+        :keyword crash_regression_grade: The statistic regression grade for crash signal. Known values
+         are: "None", "NotAvailable", "Pass", "Fail".
+        :paramtype crash_regression_grade: str or ~azure.mgmt.testbase.models.Grade
+        :keyword crash_regression_test_details: Details related to the crash regression analysis.
+        :paramtype crash_regression_test_details: ~azure.mgmt.testbase.models.RegressionTestDetails
+        :keyword hang_regression_grade: The statistic regression grade for hang signal. Known values
+         are: "None", "NotAvailable", "Pass", "Fail".
+        :paramtype hang_regression_grade: str or ~azure.mgmt.testbase.models.Grade
+        :keyword hang_regression_test_details: Details related to the hang regression analysis.
+        :paramtype hang_regression_test_details: ~azure.mgmt.testbase.models.RegressionTestDetails
+        """
         super(ReliabilityResult, self).__init__(**kwargs)
         self.file_name = file_name
         self.launch_count = launch_count
@@ -1958,15 +2956,14 @@ class ReliabilityResultSingletonResourceProperties(AnalysisResultSingletonResour
 
     All required parameters must be populated in order to send to Azure.
 
-    :param grade: The grade of the test. Possible values include: "None", "NotAvailable", "Pass",
-     "Fail".
-    :type grade: str or ~test_base.models.Grade
-    :param analysis_result_type: Required. Type of the Analysis Result.Constant filled by server.
-     Possible values include: "ScriptExecution", "Reliability", "CPUUtilization",
-     "MemoryUtilization", "CPURegression", "MemoryRegression", "TestAnalysis".
-    :type analysis_result_type: str or ~test_base.models.AnalysisResultType
-    :param reliability_results: The result array data.
-    :type reliability_results: list[~test_base.models.ReliabilityResult]
+    :ivar grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass", "Fail".
+    :vartype grade: str or ~azure.mgmt.testbase.models.Grade
+    :ivar analysis_result_type: Required. Type of the Analysis Result.Constant filled by server.
+     Known values are: "ScriptExecution", "Reliability", "CPUUtilization", "MemoryUtilization",
+     "CPURegression", "MemoryRegression", "TestAnalysis".
+    :vartype analysis_result_type: str or ~azure.mgmt.testbase.models.AnalysisResultType
+    :ivar reliability_results: The result array data.
+    :vartype reliability_results: list[~azure.mgmt.testbase.models.ReliabilityResult]
     """
 
     _validation = {
@@ -1982,10 +2979,17 @@ class ReliabilityResultSingletonResourceProperties(AnalysisResultSingletonResour
     def __init__(
         self,
         *,
-        grade: Optional[Union[str, "Grade"]] = None,
-        reliability_results: Optional[List["ReliabilityResult"]] = None,
+        grade: Optional[Union[str, "_models.Grade"]] = None,
+        reliability_results: Optional[List["_models.ReliabilityResult"]] = None,
         **kwargs
     ):
+        """
+        :keyword grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass",
+         "Fail".
+        :paramtype grade: str or ~azure.mgmt.testbase.models.Grade
+        :keyword reliability_results: The result array data.
+        :paramtype reliability_results: list[~azure.mgmt.testbase.models.ReliabilityResult]
+        """
         super(ReliabilityResultSingletonResourceProperties, self).__init__(grade=grade, **kwargs)
         self.analysis_result_type = 'Reliability'  # type: str
         self.reliability_results = reliability_results
@@ -1994,16 +2998,20 @@ class ReliabilityResultSingletonResourceProperties(AnalysisResultSingletonResour
 class ScriptExecutionResult(msrest.serialization.Model):
     """The Script Execution Result.
 
-    :param script_name: Name of script.
-    :type script_name: str
-    :param start_time: Start time of script execution.
-    :type start_time: ~datetime.datetime
-    :param end_time: End time of script execution.
-    :type end_time: ~datetime.datetime
-    :param exit_code: Exit code.
-    :type exit_code: int
-    :param timed_out: Whether the script execution is timed out.
-    :type timed_out: bool
+    :ivar script_name: Name of script.
+    :vartype script_name: str
+    :ivar start_time: Start time of script execution.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: End time of script execution.
+    :vartype end_time: ~datetime.datetime
+    :ivar exit_code: Exit code.
+    :vartype exit_code: int
+    :ivar timed_out: Whether the script execution is timed out.
+    :vartype timed_out: bool
+    :ivar stdout_log_file_name: The stdout log file name.
+    :vartype stdout_log_file_name: str
+    :ivar stderr_log_file_name: The stderr log file name.
+    :vartype stderr_log_file_name: str
     """
 
     _attribute_map = {
@@ -2012,6 +3020,8 @@ class ScriptExecutionResult(msrest.serialization.Model):
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'exit_code': {'key': 'exitCode', 'type': 'int'},
         'timed_out': {'key': 'timedOut', 'type': 'bool'},
+        'stdout_log_file_name': {'key': 'stdoutLogFileName', 'type': 'str'},
+        'stderr_log_file_name': {'key': 'stderrLogFileName', 'type': 'str'},
     }
 
     def __init__(
@@ -2022,14 +3032,34 @@ class ScriptExecutionResult(msrest.serialization.Model):
         end_time: Optional[datetime.datetime] = None,
         exit_code: Optional[int] = None,
         timed_out: Optional[bool] = None,
+        stdout_log_file_name: Optional[str] = None,
+        stderr_log_file_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword script_name: Name of script.
+        :paramtype script_name: str
+        :keyword start_time: Start time of script execution.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: End time of script execution.
+        :paramtype end_time: ~datetime.datetime
+        :keyword exit_code: Exit code.
+        :paramtype exit_code: int
+        :keyword timed_out: Whether the script execution is timed out.
+        :paramtype timed_out: bool
+        :keyword stdout_log_file_name: The stdout log file name.
+        :paramtype stdout_log_file_name: str
+        :keyword stderr_log_file_name: The stderr log file name.
+        :paramtype stderr_log_file_name: str
+        """
         super(ScriptExecutionResult, self).__init__(**kwargs)
         self.script_name = script_name
         self.start_time = start_time
         self.end_time = end_time
         self.exit_code = exit_code
         self.timed_out = timed_out
+        self.stdout_log_file_name = stdout_log_file_name
+        self.stderr_log_file_name = stderr_log_file_name
 
 
 class ScriptExecutionResultSingletonResourceProperties(AnalysisResultSingletonResourceProperties):
@@ -2037,15 +3067,14 @@ class ScriptExecutionResultSingletonResourceProperties(AnalysisResultSingletonRe
 
     All required parameters must be populated in order to send to Azure.
 
-    :param grade: The grade of the test. Possible values include: "None", "NotAvailable", "Pass",
-     "Fail".
-    :type grade: str or ~test_base.models.Grade
-    :param analysis_result_type: Required. Type of the Analysis Result.Constant filled by server.
-     Possible values include: "ScriptExecution", "Reliability", "CPUUtilization",
-     "MemoryUtilization", "CPURegression", "MemoryRegression", "TestAnalysis".
-    :type analysis_result_type: str or ~test_base.models.AnalysisResultType
-    :param script_execution_results: The result array data.
-    :type script_execution_results: list[~test_base.models.ScriptExecutionResult]
+    :ivar grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass", "Fail".
+    :vartype grade: str or ~azure.mgmt.testbase.models.Grade
+    :ivar analysis_result_type: Required. Type of the Analysis Result.Constant filled by server.
+     Known values are: "ScriptExecution", "Reliability", "CPUUtilization", "MemoryUtilization",
+     "CPURegression", "MemoryRegression", "TestAnalysis".
+    :vartype analysis_result_type: str or ~azure.mgmt.testbase.models.AnalysisResultType
+    :ivar script_execution_results: The result array data.
+    :vartype script_execution_results: list[~azure.mgmt.testbase.models.ScriptExecutionResult]
     """
 
     _validation = {
@@ -2061,10 +3090,17 @@ class ScriptExecutionResultSingletonResourceProperties(AnalysisResultSingletonRe
     def __init__(
         self,
         *,
-        grade: Optional[Union[str, "Grade"]] = None,
-        script_execution_results: Optional[List["ScriptExecutionResult"]] = None,
+        grade: Optional[Union[str, "_models.Grade"]] = None,
+        script_execution_results: Optional[List["_models.ScriptExecutionResult"]] = None,
         **kwargs
     ):
+        """
+        :keyword grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass",
+         "Fail".
+        :paramtype grade: str or ~azure.mgmt.testbase.models.Grade
+        :keyword script_execution_results: The result array data.
+        :paramtype script_execution_results: list[~azure.mgmt.testbase.models.ScriptExecutionResult]
+        """
         super(ScriptExecutionResultSingletonResourceProperties, self).__init__(grade=grade, **kwargs)
         self.analysis_result_type = 'ScriptExecution'  # type: str
         self.script_execution_results = script_execution_results
@@ -2073,12 +3109,12 @@ class ScriptExecutionResultSingletonResourceProperties(AnalysisResultSingletonRe
 class SubscriptionReceiverValue(msrest.serialization.Model):
     """The subscription role receiver value.
 
-    :param subscription_id: The subscription id of the notification receiver.
-    :type subscription_id: str
-    :param subscription_name: The subscription name of the notification receiver.
-    :type subscription_name: str
-    :param role: The role of the notification receiver.
-    :type role: str
+    :ivar subscription_id: The subscription id of the notification receiver.
+    :vartype subscription_id: str
+    :ivar subscription_name: The subscription name of the notification receiver.
+    :vartype subscription_name: str
+    :ivar role: The role of the notification receiver.
+    :vartype role: str
     """
 
     _attribute_map = {
@@ -2095,6 +3131,14 @@ class SubscriptionReceiverValue(msrest.serialization.Model):
         role: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword subscription_id: The subscription id of the notification receiver.
+        :paramtype subscription_id: str
+        :keyword subscription_name: The subscription name of the notification receiver.
+        :paramtype subscription_name: str
+        :keyword role: The role of the notification receiver.
+        :paramtype role: str
+        """
         super(SubscriptionReceiverValue, self).__init__(**kwargs)
         self.subscription_id = subscription_id
         self.subscription_name = subscription_name
@@ -2104,20 +3148,20 @@ class SubscriptionReceiverValue(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~test_base.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~test_base.models.CreatedByType
-    :param last_modified_at: The type of identity that last modified the resource.
-    :type last_modified_at: ~datetime.datetime
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.testbase.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.testbase.models.CreatedByType
+    :ivar last_modified_at: The type of identity that last modified the resource.
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -2133,13 +3177,29 @@ class SystemData(msrest.serialization.Model):
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.testbase.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.testbase.models.CreatedByType
+        :keyword last_modified_at: The type of identity that last modified the resource.
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -2154,11 +3214,13 @@ class TargetOSInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param os_update_type: Required. Specifies the OS update type to test against, e.g., 'Security
+    :ivar os_update_type: Required. Specifies the OS update type to test against, e.g., 'Security
      updates' or 'Feature updates'.
-    :type os_update_type: str
-    :param target_o_ss: Required. Specifies the target OSs to be tested.
-    :type target_o_ss: list[str]
+    :vartype os_update_type: str
+    :ivar target_o_ss: Required. Specifies the target OSs to be tested.
+    :vartype target_o_ss: list[str]
+    :ivar baseline_o_ss: Specifies the baseline OSs to be tested.
+    :vartype baseline_o_ss: list[str]
     """
 
     _validation = {
@@ -2169,6 +3231,7 @@ class TargetOSInfo(msrest.serialization.Model):
     _attribute_map = {
         'os_update_type': {'key': 'osUpdateType', 'type': 'str'},
         'target_o_ss': {'key': 'targetOSs', 'type': '[str]'},
+        'baseline_o_ss': {'key': 'baselineOSs', 'type': '[str]'},
     }
 
     def __init__(
@@ -2176,11 +3239,22 @@ class TargetOSInfo(msrest.serialization.Model):
         *,
         os_update_type: str,
         target_o_ss: List[str],
+        baseline_o_ss: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword os_update_type: Required. Specifies the OS update type to test against, e.g.,
+         'Security updates' or 'Feature updates'.
+        :paramtype os_update_type: str
+        :keyword target_o_ss: Required. Specifies the target OSs to be tested.
+        :paramtype target_o_ss: list[str]
+        :keyword baseline_o_ss: Specifies the baseline OSs to be tested.
+        :paramtype baseline_o_ss: list[str]
+        """
         super(TargetOSInfo, self).__init__(**kwargs)
         self.os_update_type = os_update_type
         self.target_o_ss = target_o_ss
+        self.baseline_o_ss = baseline_o_ss
 
 
 class Test(msrest.serialization.Model):
@@ -2190,28 +3264,31 @@ class Test(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param test_type: Required. The type of the test. Possible values include: "OutOfBoxTest",
+    :ivar test_type: Required. The type of the test. Known values are: "OutOfBoxTest",
      "FunctionalTest".
-    :type test_type: str or ~test_base.models.TestType
-    :ivar validation_run_status: The status of the validation run of the package. Possible values
-     include: "Unknown", "Pending", "Passed", "Failed".
-    :vartype validation_run_status: str or ~test_base.models.ValidationRunStatus
-    :param is_active: Indicates if this test is active.It doesn't schedule test for not active
-     Test.
-    :type is_active: bool
-    :param commands: Required. The commands used in the test.
-    :type commands: list[~test_base.models.Command]
+    :vartype test_type: str or ~azure.mgmt.testbase.models.TestType
+    :ivar validation_run_status: The status of the validation run of the package. Known values are:
+     "Unknown", "Pending", "Passed", "Failed".
+    :vartype validation_run_status: str or ~azure.mgmt.testbase.models.ValidationRunStatus
+    :ivar validation_result_id: Resource identifier of the validation test result.
+    :vartype validation_result_id: str
+    :ivar is_active: Indicates if this test is active.It doesn't schedule test for not active Test.
+    :vartype is_active: bool
+    :ivar commands: Required. The commands used in the test.
+    :vartype commands: list[~azure.mgmt.testbase.models.Command]
     """
 
     _validation = {
         'test_type': {'required': True},
         'validation_run_status': {'readonly': True},
+        'validation_result_id': {'readonly': True},
         'commands': {'required': True},
     }
 
     _attribute_map = {
         'test_type': {'key': 'testType', 'type': 'str'},
         'validation_run_status': {'key': 'validationRunStatus', 'type': 'str'},
+        'validation_result_id': {'key': 'validationResultId', 'type': 'str'},
         'is_active': {'key': 'isActive', 'type': 'bool'},
         'commands': {'key': 'commands', 'type': '[Command]'},
     }
@@ -2219,14 +3296,25 @@ class Test(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        test_type: Union[str, "TestType"],
-        commands: List["Command"],
+        test_type: Union[str, "_models.TestType"],
+        commands: List["_models.Command"],
         is_active: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword test_type: Required. The type of the test. Known values are: "OutOfBoxTest",
+         "FunctionalTest".
+        :paramtype test_type: str or ~azure.mgmt.testbase.models.TestType
+        :keyword is_active: Indicates if this test is active.It doesn't schedule test for not active
+         Test.
+        :paramtype is_active: bool
+        :keyword commands: Required. The commands used in the test.
+        :paramtype commands: list[~azure.mgmt.testbase.models.Command]
+        """
         super(Test, self).__init__(**kwargs)
         self.test_type = test_type
         self.validation_run_status = None
+        self.validation_result_id = None
         self.is_active = is_active
         self.commands = commands
 
@@ -2234,13 +3322,13 @@ class Test(msrest.serialization.Model):
 class TestAnalysisResult(msrest.serialization.Model):
     """The test analysis result.
 
-    :param blob_data: The data to provide more failure analysis information.
-    :type blob_data: str
-    :param test_analysis_status: The status of the analysis. Possible values include: "None",
-     "Analyzing", "Completed", "Failed".
-    :type test_analysis_status: str or ~test_base.models.TestAnalysisStatus
-    :param identified_failures: The array of identified failures.
-    :type identified_failures: list[~test_base.models.IdentifiedFailure]
+    :ivar blob_data: The data to provide more failure analysis information.
+    :vartype blob_data: str
+    :ivar test_analysis_status: The status of the analysis. Known values are: "None", "Analyzing",
+     "Completed", "Failed".
+    :vartype test_analysis_status: str or ~azure.mgmt.testbase.models.TestAnalysisStatus
+    :ivar identified_failures: The array of identified failures.
+    :vartype identified_failures: list[~azure.mgmt.testbase.models.IdentifiedFailure]
     """
 
     _attribute_map = {
@@ -2253,10 +3341,19 @@ class TestAnalysisResult(msrest.serialization.Model):
         self,
         *,
         blob_data: Optional[str] = None,
-        test_analysis_status: Optional[Union[str, "TestAnalysisStatus"]] = None,
-        identified_failures: Optional[List["IdentifiedFailure"]] = None,
+        test_analysis_status: Optional[Union[str, "_models.TestAnalysisStatus"]] = None,
+        identified_failures: Optional[List["_models.IdentifiedFailure"]] = None,
         **kwargs
     ):
+        """
+        :keyword blob_data: The data to provide more failure analysis information.
+        :paramtype blob_data: str
+        :keyword test_analysis_status: The status of the analysis. Known values are: "None",
+         "Analyzing", "Completed", "Failed".
+        :paramtype test_analysis_status: str or ~azure.mgmt.testbase.models.TestAnalysisStatus
+        :keyword identified_failures: The array of identified failures.
+        :paramtype identified_failures: list[~azure.mgmt.testbase.models.IdentifiedFailure]
+        """
         super(TestAnalysisResult, self).__init__(**kwargs)
         self.blob_data = blob_data
         self.test_analysis_status = test_analysis_status
@@ -2268,15 +3365,14 @@ class TestAnalysisResultSingletonResourceProperties(AnalysisResultSingletonResou
 
     All required parameters must be populated in order to send to Azure.
 
-    :param grade: The grade of the test. Possible values include: "None", "NotAvailable", "Pass",
-     "Fail".
-    :type grade: str or ~test_base.models.Grade
-    :param analysis_result_type: Required. Type of the Analysis Result.Constant filled by server.
-     Possible values include: "ScriptExecution", "Reliability", "CPUUtilization",
-     "MemoryUtilization", "CPURegression", "MemoryRegression", "TestAnalysis".
-    :type analysis_result_type: str or ~test_base.models.AnalysisResultType
-    :param test_analysis_result: The result of test analysis.
-    :type test_analysis_result: ~test_base.models.TestAnalysisResult
+    :ivar grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass", "Fail".
+    :vartype grade: str or ~azure.mgmt.testbase.models.Grade
+    :ivar analysis_result_type: Required. Type of the Analysis Result.Constant filled by server.
+     Known values are: "ScriptExecution", "Reliability", "CPUUtilization", "MemoryUtilization",
+     "CPURegression", "MemoryRegression", "TestAnalysis".
+    :vartype analysis_result_type: str or ~azure.mgmt.testbase.models.AnalysisResultType
+    :ivar test_analysis_result: The result of test analysis.
+    :vartype test_analysis_result: ~azure.mgmt.testbase.models.TestAnalysisResult
     """
 
     _validation = {
@@ -2292,10 +3388,17 @@ class TestAnalysisResultSingletonResourceProperties(AnalysisResultSingletonResou
     def __init__(
         self,
         *,
-        grade: Optional[Union[str, "Grade"]] = None,
-        test_analysis_result: Optional["TestAnalysisResult"] = None,
+        grade: Optional[Union[str, "_models.Grade"]] = None,
+        test_analysis_result: Optional["_models.TestAnalysisResult"] = None,
         **kwargs
     ):
+        """
+        :keyword grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass",
+         "Fail".
+        :paramtype grade: str or ~azure.mgmt.testbase.models.Grade
+        :keyword test_analysis_result: The result of test analysis.
+        :paramtype test_analysis_result: ~azure.mgmt.testbase.models.TestAnalysisResult
+        """
         super(TestAnalysisResultSingletonResourceProperties, self).__init__(grade=grade, **kwargs)
         self.analysis_result_type = 'TestAnalysis'  # type: str
         self.test_analysis_result = test_analysis_result
@@ -2306,8 +3409,8 @@ class TestBaseAccountListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of Test Base Accounts.
-    :type value: list[~test_base.models.TestBaseAccountResource]
+    :ivar value: The list of Test Base Accounts.
+    :vartype value: list[~azure.mgmt.testbase.models.TestBaseAccountResource]
     :ivar next_link: Link to the next set of results. Not empty if value contains incomplete list
      of results.
     :vartype next_link: str
@@ -2325,9 +3428,13 @@ class TestBaseAccountListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["TestBaseAccountResource"]] = None,
+        value: Optional[List["_models.TestBaseAccountResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Test Base Accounts.
+        :paramtype value: list[~azure.mgmt.testbase.models.TestBaseAccountResource]
+        """
         super(TestBaseAccountListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -2346,19 +3453,19 @@ class TestBaseAccountResource(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     :ivar etag: Resource Etag.
     :vartype etag: str
     :ivar system_data: The system metadata relating to this resource.
-    :vartype system_data: ~test_base.models.SystemData
-    :ivar provisioning_state: The provisioning state of the resource. Possible values include:
+    :vartype system_data: ~azure.mgmt.testbase.models.SystemData
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
      "Succeeded", "Failed", "Cancelled", "Creating", "Deleting", "Updating".
-    :vartype provisioning_state: str or ~test_base.models.ProvisioningState
-    :param sku: The SKU of the Test Base Account.
-    :type sku: ~test_base.models.TestBaseAccountSKU
+    :vartype provisioning_state: str or ~azure.mgmt.testbase.models.ProvisioningState
+    :ivar sku: The SKU of the Test Base Account.
+    :vartype sku: ~azure.mgmt.testbase.models.TestBaseAccountSKU
     :ivar access_level: The access level of the Test Base Account.
     :vartype access_level: str
     """
@@ -2392,9 +3499,17 @@ class TestBaseAccountResource(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["TestBaseAccountSKU"] = None,
+        sku: Optional["_models.TestBaseAccountSKU"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword sku: The SKU of the Test Base Account.
+        :paramtype sku: ~azure.mgmt.testbase.models.TestBaseAccountSKU
+        """
         super(TestBaseAccountResource, self).__init__(tags=tags, location=location, **kwargs)
         self.system_data = None
         self.provisioning_state = None
@@ -2409,17 +3524,17 @@ class TestBaseAccountSKU(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param resource_type: The type of resource the SKU applies to.
-    :type resource_type: str
-    :param name: Required. The name of the SKU. This is typically a letter + number code, such as
-     B0 or S0.
-    :type name: str
-    :param tier: Required. The tier of this particular SKU. Possible values include: "Standard".
-    :type tier: str or ~test_base.models.Tier
+    :ivar resource_type: The type of resource the SKU applies to.
+    :vartype resource_type: str
+    :ivar name: Required. The name of the SKU. This is typically a letter + number code, such as B0
+     or S0.
+    :vartype name: str
+    :ivar tier: Required. The tier of this particular SKU. Known values are: "Standard".
+    :vartype tier: str or ~azure.mgmt.testbase.models.Tier
     :ivar capabilities: The capabilities of a SKU.
-    :vartype capabilities: list[~test_base.models.TestBaseAccountSKUCapability]
-    :param locations: The locations that the SKU is available.
-    :type locations: list[str]
+    :vartype capabilities: list[~azure.mgmt.testbase.models.TestBaseAccountSKUCapability]
+    :ivar locations: The locations that the SKU is available.
+    :vartype locations: list[str]
     """
 
     _validation = {
@@ -2440,11 +3555,22 @@ class TestBaseAccountSKU(msrest.serialization.Model):
         self,
         *,
         name: str,
-        tier: Union[str, "Tier"],
+        tier: Union[str, "_models.Tier"],
         resource_type: Optional[str] = None,
         locations: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword resource_type: The type of resource the SKU applies to.
+        :paramtype resource_type: str
+        :keyword name: Required. The name of the SKU. This is typically a letter + number code, such as
+         B0 or S0.
+        :paramtype name: str
+        :keyword tier: Required. The tier of this particular SKU. Known values are: "Standard".
+        :paramtype tier: str or ~azure.mgmt.testbase.models.Tier
+        :keyword locations: The locations that the SKU is available.
+        :paramtype locations: list[str]
+        """
         super(TestBaseAccountSKU, self).__init__(**kwargs)
         self.resource_type = resource_type
         self.name = name
@@ -2458,10 +3584,10 @@ class TestBaseAccountSKUCapability(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. An invariant to describe the feature, such as 'SLA'.
-    :type name: str
-    :param value: Required. An invariant if the feature is measured by quantity, such as 99.9%.
-    :type value: str
+    :ivar name: Required. An invariant to describe the feature, such as 'SLA'.
+    :vartype name: str
+    :ivar value: Required. An invariant if the feature is measured by quantity, such as 99.9%.
+    :vartype value: str
     """
 
     _validation = {
@@ -2481,6 +3607,12 @@ class TestBaseAccountSKUCapability(msrest.serialization.Model):
         value: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. An invariant to describe the feature, such as 'SLA'.
+        :paramtype name: str
+        :keyword value: Required. An invariant if the feature is measured by quantity, such as 99.9%.
+        :paramtype value: str
+        """
         super(TestBaseAccountSKUCapability, self).__init__(**kwargs)
         self.name = name
         self.value = value
@@ -2491,8 +3623,8 @@ class TestBaseAccountSKUListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of Test Base Account SKUs.
-    :type value: list[~test_base.models.TestBaseAccountSKU]
+    :ivar value: The list of Test Base Account SKUs.
+    :vartype value: list[~azure.mgmt.testbase.models.TestBaseAccountSKU]
     :ivar next_link: Link to the next set of results. Not empty if value contains incomplete list
      of results.
     :vartype next_link: str
@@ -2510,9 +3642,13 @@ class TestBaseAccountSKUListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["TestBaseAccountSKU"]] = None,
+        value: Optional[List["_models.TestBaseAccountSKU"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Test Base Account SKUs.
+        :paramtype value: list[~azure.mgmt.testbase.models.TestBaseAccountSKU]
+        """
         super(TestBaseAccountSKUListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -2521,10 +3657,10 @@ class TestBaseAccountSKUListResult(msrest.serialization.Model):
 class TestBaseAccountUpdateParameters(msrest.serialization.Model):
     """Parameters supplied to update a Test Base Account.
 
-    :param tags: A set of tags. The tags of the Test Base Account.
-    :type tags: dict[str, str]
-    :param sku: The SKU of the Test Base Account.
-    :type sku: ~test_base.models.TestBaseAccountSKU
+    :ivar tags: A set of tags. The tags of the Test Base Account.
+    :vartype tags: dict[str, str]
+    :ivar sku: The SKU of the Test Base Account.
+    :vartype sku: ~azure.mgmt.testbase.models.TestBaseAccountSKU
     """
 
     _attribute_map = {
@@ -2536,9 +3672,15 @@ class TestBaseAccountUpdateParameters(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["TestBaseAccountSKU"] = None,
+        sku: Optional["_models.TestBaseAccountSKU"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. The tags of the Test Base Account.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The SKU of the Test Base Account.
+        :paramtype sku: ~azure.mgmt.testbase.models.TestBaseAccountSKU
+        """
         super(TestBaseAccountUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
         self.sku = sku
@@ -2547,18 +3689,18 @@ class TestBaseAccountUpdateParameters(msrest.serialization.Model):
 class TestBaseAccountUsageData(msrest.serialization.Model):
     """The usage data of a Test Base Account.
 
-    :param id: Fully qualified ARM resource id.
-    :type id: str
-    :param name: Localizable String object containing the name and a localized value.
-    :type name: ~test_base.models.TestBaseAccountUsageName
-    :param unit: Representing the units of the usage quota. Possible values are: Count, Bytes,
+    :ivar id: Fully qualified ARM resource id.
+    :vartype id: str
+    :ivar name: Localizable String object containing the name and a localized value.
+    :vartype name: ~azure.mgmt.testbase.models.TestBaseAccountUsageName
+    :ivar unit: Representing the units of the usage quota. Possible values are: Count, Bytes,
      Seconds, Percent, CountPerSecond, BytesPerSecond.
-    :type unit: str
-    :param limit: The maximum permitted value for the usage quota. If there is no limit, this value
+    :vartype unit: str
+    :ivar limit: The maximum permitted value for the usage quota. If there is no limit, this value
      will be -1.
-    :type limit: long
-    :param current_value: Current value for the usage quota.
-    :type current_value: long
+    :vartype limit: long
+    :ivar current_value: Current value for the usage quota.
+    :vartype current_value: long
     """
 
     _attribute_map = {
@@ -2573,12 +3715,26 @@ class TestBaseAccountUsageData(msrest.serialization.Model):
         self,
         *,
         id: Optional[str] = None,
-        name: Optional["TestBaseAccountUsageName"] = None,
+        name: Optional["_models.TestBaseAccountUsageName"] = None,
         unit: Optional[str] = None,
         limit: Optional[int] = None,
         current_value: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword id: Fully qualified ARM resource id.
+        :paramtype id: str
+        :keyword name: Localizable String object containing the name and a localized value.
+        :paramtype name: ~azure.mgmt.testbase.models.TestBaseAccountUsageName
+        :keyword unit: Representing the units of the usage quota. Possible values are: Count, Bytes,
+         Seconds, Percent, CountPerSecond, BytesPerSecond.
+        :paramtype unit: str
+        :keyword limit: The maximum permitted value for the usage quota. If there is no limit, this
+         value will be -1.
+        :paramtype limit: long
+        :keyword current_value: Current value for the usage quota.
+        :paramtype current_value: long
+        """
         super(TestBaseAccountUsageData, self).__init__(**kwargs)
         self.id = id
         self.name = name
@@ -2592,8 +3748,8 @@ class TestBaseAccountUsageDataList(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of Test Base Account usage data.
-    :type value: list[~test_base.models.TestBaseAccountUsageData]
+    :ivar value: The list of Test Base Account usage data.
+    :vartype value: list[~azure.mgmt.testbase.models.TestBaseAccountUsageData]
     :ivar next_link: Link to the next set of results. Not empty if value contains incomplete list
      of results.
     :vartype next_link: str
@@ -2611,9 +3767,13 @@ class TestBaseAccountUsageDataList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["TestBaseAccountUsageData"]] = None,
+        value: Optional[List["_models.TestBaseAccountUsageData"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Test Base Account usage data.
+        :paramtype value: list[~azure.mgmt.testbase.models.TestBaseAccountUsageData]
+        """
         super(TestBaseAccountUsageDataList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -2622,10 +3782,10 @@ class TestBaseAccountUsageDataList(msrest.serialization.Model):
 class TestBaseAccountUsageName(msrest.serialization.Model):
     """Localizable String object containing the name and a localized value.
 
-    :param value: The identifier of the usage.
-    :type value: str
-    :param localized_value: Localized name of the usage.
-    :type localized_value: str
+    :ivar value: The identifier of the usage.
+    :vartype value: str
+    :ivar localized_value: Localized name of the usage.
+    :vartype localized_value: str
     """
 
     _attribute_map = {
@@ -2640,6 +3800,12 @@ class TestBaseAccountUsageName(msrest.serialization.Model):
         localized_value: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The identifier of the usage.
+        :paramtype value: str
+        :keyword localized_value: Localized name of the usage.
+        :paramtype localized_value: str
+        """
         super(TestBaseAccountUsageName, self).__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
@@ -2648,14 +3814,14 @@ class TestBaseAccountUsageName(msrest.serialization.Model):
 class TestResultAnalysisSummary(msrest.serialization.Model):
     """The summary of a Test Analysis Result.
 
-    :param name: Metric name.
-    :type name: str
-    :param analysis_status: The analysis status. Possible values include: "None", "Completed",
+    :ivar name: Metric name.
+    :vartype name: str
+    :ivar analysis_status: The analysis status. Known values are: "None", "Completed",
      "InProgress", "Failed", "Succeeded", "Available", "NotAvailable".
-    :type analysis_status: str or ~test_base.models.AnalysisStatus
-    :param grade: The grade of the test result. Possible values include: "None", "NotAvailable",
-     "Pass", "Fail".
-    :type grade: str or ~test_base.models.Grade
+    :vartype analysis_status: str or ~azure.mgmt.testbase.models.AnalysisStatus
+    :ivar grade: The grade of the test result. Known values are: "None", "NotAvailable", "Pass",
+     "Fail".
+    :vartype grade: str or ~azure.mgmt.testbase.models.Grade
     """
 
     _attribute_map = {
@@ -2668,14 +3834,55 @@ class TestResultAnalysisSummary(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        analysis_status: Optional[Union[str, "AnalysisStatus"]] = None,
-        grade: Optional[Union[str, "Grade"]] = None,
+        analysis_status: Optional[Union[str, "_models.AnalysisStatus"]] = None,
+        grade: Optional[Union[str, "_models.Grade"]] = None,
         **kwargs
     ):
+        """
+        :keyword name: Metric name.
+        :paramtype name: str
+        :keyword analysis_status: The analysis status. Known values are: "None", "Completed",
+         "InProgress", "Failed", "Succeeded", "Available", "NotAvailable".
+        :paramtype analysis_status: str or ~azure.mgmt.testbase.models.AnalysisStatus
+        :keyword grade: The grade of the test result. Known values are: "None", "NotAvailable", "Pass",
+         "Fail".
+        :paramtype grade: str or ~azure.mgmt.testbase.models.Grade
+        """
         super(TestResultAnalysisSummary, self).__init__(**kwargs)
         self.name = name
         self.analysis_status = analysis_status
         self.grade = grade
+
+
+class TestResultConsoleLogDownloadURLParameters(msrest.serialization.Model):
+    """Parameters body to pass for getting the download URL of the test execution console log file.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar log_file_name: Required. The log file name corresponding to the download URL.
+    :vartype log_file_name: str
+    """
+
+    _validation = {
+        'log_file_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'log_file_name': {'key': 'logFileName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        log_file_name: str,
+        **kwargs
+    ):
+        """
+        :keyword log_file_name: Required. The log file name corresponding to the download URL.
+        :paramtype log_file_name: str
+        """
+        super(TestResultConsoleLogDownloadURLParameters, self).__init__(**kwargs)
+        self.log_file_name = log_file_name
 
 
 class TestResultListResult(msrest.serialization.Model):
@@ -2683,8 +3890,8 @@ class TestResultListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of Test Results.
-    :type value: list[~test_base.models.TestResultResource]
+    :ivar value: The list of Test Results.
+    :vartype value: list[~azure.mgmt.testbase.models.TestResultResource]
     :ivar next_link: Link to the next set of results. Not empty if value contains incomplete list
      of results.
     :vartype next_link: str
@@ -2702,9 +3909,13 @@ class TestResultListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["TestResultResource"]] = None,
+        value: Optional[List["_models.TestResultResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Test Results.
+        :paramtype value: list[~azure.mgmt.testbase.models.TestResultResource]
+        """
         super(TestResultListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -2722,51 +3933,54 @@ class TestResultResource(ProxyResource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system metadata relating to this resource.
-    :vartype system_data: ~test_base.models.SystemData
-    :param baseline_test_result_id: Azure Id of the baseline test result.
-    :type baseline_test_result_id: str
-    :param package_id: Resource Id of the package.
-    :type package_id: str
-    :param application_name: Application name.
-    :type application_name: str
-    :param application_version: Application version.
-    :type application_version: str
-    :param os_name: The operating system name, e.g. Windows 10 1809.
-    :type os_name: str
-    :param release_name: The name of the tested release (OS update).
-    :type release_name: str
-    :param release_version_date: The release version date of the tested release.
-    :type release_version_date: ~datetime.datetime
-    :param flighting_ring: The flighting ring, only for release of feature updates.
-    :type flighting_ring: str
-    :param build_version: The build version of the tested release (OS update).
-    :type build_version: str
-    :param build_revision: The build revision of the tested release (OS update).
-    :type build_revision: str
-    :param test_type: Test type. E.g. 'Out of box test' or 'Functional test'.
-    :type test_type: str
-    :param test_run_time: The run time of the test.
-    :type test_run_time: str
-    :param is_download_data_available: Whether download data is available.
-    :type is_download_data_available: bool
-    :param is_video_available: Whether video data is available.
-    :type is_video_available: bool
-    :param execution_status: The execution status of the test. Possible values include: "None",
+    :vartype system_data: ~azure.mgmt.testbase.models.SystemData
+    :ivar baseline_test_result_id: Azure Id of the baseline test result.
+    :vartype baseline_test_result_id: str
+    :ivar package_id: Resource Id of the package.
+    :vartype package_id: str
+    :ivar application_name: Application name.
+    :vartype application_name: str
+    :ivar application_version: Application version.
+    :vartype application_version: str
+    :ivar os_name: The operating system name, e.g. Windows 10 1809.
+    :vartype os_name: str
+    :ivar release_name: The name of the tested release (OS update).
+    :vartype release_name: str
+    :ivar release_version_date: The release version date of the tested release.
+    :vartype release_version_date: ~datetime.datetime
+    :ivar flighting_ring: The flighting ring, only for release of feature updates.
+    :vartype flighting_ring: str
+    :ivar build_version: The build version of the tested release (OS update).
+    :vartype build_version: str
+    :ivar build_revision: The build revision of the tested release (OS update).
+    :vartype build_revision: str
+    :ivar test_type: Test type. E.g. 'Out of box test' or 'Functional test'.
+    :vartype test_type: str
+    :ivar test_run_time: The run time of the test.
+    :vartype test_run_time: str
+    :ivar is_download_data_available: Whether download data is available.
+    :vartype is_download_data_available: bool
+    :ivar is_video_available: Whether video data is available.
+    :vartype is_video_available: bool
+    :ivar execution_status: The execution status of the test. Known values are: "None",
      "InProgress", "Processing", "Completed", "NotExecuted", "Incomplete", "Failed", "Succeeded".
-    :type execution_status: str or ~test_base.models.ExecutionStatus
-    :param test_status: The status of the test. Possible values include: "None",
-     "TestExecutionInProgress", "DataProcessing", "TestFailure", "UpdateFailure",
-     "TestAndUpdateFailure", "InfrastructureFailure", "Completed".
-    :type test_status: str or ~test_base.models.TestStatus
-    :param grade: The grade of the test. Possible values include: "None", "NotAvailable", "Pass",
-     "Fail".
-    :type grade: str or ~test_base.models.Grade
-    :param kb_number: KB number.
-    :type kb_number: str
-    :param package_version: The version of the Windows update package.
-    :type package_version: str
-    :param analysis_summaries: List of analysis summaries.
-    :type analysis_summaries: list[~test_base.models.TestResultAnalysisSummary]
+    :vartype execution_status: str or ~azure.mgmt.testbase.models.ExecutionStatus
+    :ivar test_status: The status of the test. Known values are: "None", "TestExecutionInProgress",
+     "DataProcessing", "TestFailure", "UpdateFailure", "TestAndUpdateFailure",
+     "InfrastructureFailure", "Completed".
+    :vartype test_status: str or ~azure.mgmt.testbase.models.TestStatus
+    :ivar grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass", "Fail".
+    :vartype grade: str or ~azure.mgmt.testbase.models.Grade
+    :ivar kb_number: KB number.
+    :vartype kb_number: str
+    :ivar interop_media_type: Interop media type.
+    :vartype interop_media_type: str
+    :ivar interop_media_version: Interop media version.
+    :vartype interop_media_version: str
+    :ivar package_version: The version of the Windows update package.
+    :vartype package_version: str
+    :ivar analysis_summaries: List of analysis summaries.
+    :vartype analysis_summaries: list[~azure.mgmt.testbase.models.TestResultAnalysisSummary]
     """
 
     _validation = {
@@ -2799,6 +4013,8 @@ class TestResultResource(ProxyResource):
         'test_status': {'key': 'properties.testStatus', 'type': 'str'},
         'grade': {'key': 'properties.grade', 'type': 'str'},
         'kb_number': {'key': 'properties.kbNumber', 'type': 'str'},
+        'interop_media_type': {'key': 'properties.interopMediaType', 'type': 'str'},
+        'interop_media_version': {'key': 'properties.interopMediaVersion', 'type': 'str'},
         'package_version': {'key': 'properties.packageVersion', 'type': 'str'},
         'analysis_summaries': {'key': 'properties.analysisSummaries', 'type': '[TestResultAnalysisSummary]'},
     }
@@ -2820,14 +4036,66 @@ class TestResultResource(ProxyResource):
         test_run_time: Optional[str] = None,
         is_download_data_available: Optional[bool] = None,
         is_video_available: Optional[bool] = None,
-        execution_status: Optional[Union[str, "ExecutionStatus"]] = None,
-        test_status: Optional[Union[str, "TestStatus"]] = None,
-        grade: Optional[Union[str, "Grade"]] = None,
+        execution_status: Optional[Union[str, "_models.ExecutionStatus"]] = None,
+        test_status: Optional[Union[str, "_models.TestStatus"]] = None,
+        grade: Optional[Union[str, "_models.Grade"]] = None,
         kb_number: Optional[str] = None,
+        interop_media_type: Optional[str] = None,
+        interop_media_version: Optional[str] = None,
         package_version: Optional[str] = None,
-        analysis_summaries: Optional[List["TestResultAnalysisSummary"]] = None,
+        analysis_summaries: Optional[List["_models.TestResultAnalysisSummary"]] = None,
         **kwargs
     ):
+        """
+        :keyword baseline_test_result_id: Azure Id of the baseline test result.
+        :paramtype baseline_test_result_id: str
+        :keyword package_id: Resource Id of the package.
+        :paramtype package_id: str
+        :keyword application_name: Application name.
+        :paramtype application_name: str
+        :keyword application_version: Application version.
+        :paramtype application_version: str
+        :keyword os_name: The operating system name, e.g. Windows 10 1809.
+        :paramtype os_name: str
+        :keyword release_name: The name of the tested release (OS update).
+        :paramtype release_name: str
+        :keyword release_version_date: The release version date of the tested release.
+        :paramtype release_version_date: ~datetime.datetime
+        :keyword flighting_ring: The flighting ring, only for release of feature updates.
+        :paramtype flighting_ring: str
+        :keyword build_version: The build version of the tested release (OS update).
+        :paramtype build_version: str
+        :keyword build_revision: The build revision of the tested release (OS update).
+        :paramtype build_revision: str
+        :keyword test_type: Test type. E.g. 'Out of box test' or 'Functional test'.
+        :paramtype test_type: str
+        :keyword test_run_time: The run time of the test.
+        :paramtype test_run_time: str
+        :keyword is_download_data_available: Whether download data is available.
+        :paramtype is_download_data_available: bool
+        :keyword is_video_available: Whether video data is available.
+        :paramtype is_video_available: bool
+        :keyword execution_status: The execution status of the test. Known values are: "None",
+         "InProgress", "Processing", "Completed", "NotExecuted", "Incomplete", "Failed", "Succeeded".
+        :paramtype execution_status: str or ~azure.mgmt.testbase.models.ExecutionStatus
+        :keyword test_status: The status of the test. Known values are: "None",
+         "TestExecutionInProgress", "DataProcessing", "TestFailure", "UpdateFailure",
+         "TestAndUpdateFailure", "InfrastructureFailure", "Completed".
+        :paramtype test_status: str or ~azure.mgmt.testbase.models.TestStatus
+        :keyword grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass",
+         "Fail".
+        :paramtype grade: str or ~azure.mgmt.testbase.models.Grade
+        :keyword kb_number: KB number.
+        :paramtype kb_number: str
+        :keyword interop_media_type: Interop media type.
+        :paramtype interop_media_type: str
+        :keyword interop_media_version: Interop media version.
+        :paramtype interop_media_version: str
+        :keyword package_version: The version of the Windows update package.
+        :paramtype package_version: str
+        :keyword analysis_summaries: List of analysis summaries.
+        :paramtype analysis_summaries: list[~azure.mgmt.testbase.models.TestResultAnalysisSummary]
+        """
         super(TestResultResource, self).__init__(**kwargs)
         self.system_data = None
         self.baseline_test_result_id = baseline_test_result_id
@@ -2848,6 +4116,8 @@ class TestResultResource(ProxyResource):
         self.test_status = test_status
         self.grade = grade
         self.kb_number = kb_number
+        self.interop_media_type = interop_media_type
+        self.interop_media_version = interop_media_version
         self.package_version = package_version
         self.analysis_summaries = analysis_summaries
 
@@ -2857,8 +4127,8 @@ class TestSummaryListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of Test Summaries.
-    :type value: list[~test_base.models.TestSummaryResource]
+    :ivar value: The list of Test Summaries.
+    :vartype value: list[~azure.mgmt.testbase.models.TestSummaryResource]
     :ivar next_link: Link to the next set of results. Not empty if value contains incomplete list
      of results.
     :vartype next_link: str
@@ -2876,9 +4146,13 @@ class TestSummaryListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["TestSummaryResource"]] = None,
+        value: Optional[List["_models.TestSummaryResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Test Summaries.
+        :paramtype value: list[~azure.mgmt.testbase.models.TestSummaryResource]
+        """
         super(TestSummaryListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -2896,32 +4170,32 @@ class TestSummaryResource(ProxyResource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system metadata relating to this resource.
-    :vartype system_data: ~test_base.models.SystemData
-    :param test_summary_id: The Id of the current Test Summary.
-    :type test_summary_id: str
-    :param package_id: The Azure resource Id of package.
-    :type package_id: str
-    :param application_name: Application name.
-    :type application_name: str
-    :param application_version: Application version.
-    :type application_version: str
-    :param execution_status: The execution status of last test. Possible values include: "None",
+    :vartype system_data: ~azure.mgmt.testbase.models.SystemData
+    :ivar test_summary_id: The Id of the current Test Summary.
+    :vartype test_summary_id: str
+    :ivar package_id: The Azure resource Id of package.
+    :vartype package_id: str
+    :ivar application_name: Application name.
+    :vartype application_name: str
+    :ivar application_version: Application version.
+    :vartype application_version: str
+    :ivar execution_status: The execution status of last test. Known values are: "None",
      "InProgress", "Processing", "Completed", "NotExecuted", "Incomplete", "Failed", "Succeeded".
-    :type execution_status: str or ~test_base.models.ExecutionStatus
-    :param test_status: The status of last test. Possible values include: "None",
+    :vartype execution_status: str or ~azure.mgmt.testbase.models.ExecutionStatus
+    :ivar test_status: The status of last test. Known values are: "None",
      "TestExecutionInProgress", "DataProcessing", "TestFailure", "UpdateFailure",
      "TestAndUpdateFailure", "InfrastructureFailure", "Completed".
-    :type test_status: str or ~test_base.models.TestStatus
-    :param grade: The grade of the test. Possible values include: "None", "NotAvailable", "Pass",
-     "Fail".
-    :type grade: str or ~test_base.models.Grade
-    :param test_run_time: The run time of the last test.
-    :type test_run_time: str
-    :param feature_updates_test_summary: The result summary of tests triggered by feature updates.
-    :type feature_updates_test_summary: ~test_base.models.OSUpdatesTestSummary
-    :param security_updates_test_summary: The result summary of tests triggered by security
-     updates.
-    :type security_updates_test_summary: ~test_base.models.OSUpdatesTestSummary
+    :vartype test_status: str or ~azure.mgmt.testbase.models.TestStatus
+    :ivar grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass", "Fail".
+    :vartype grade: str or ~azure.mgmt.testbase.models.Grade
+    :ivar test_run_time: The run time of the last test.
+    :vartype test_run_time: str
+    :ivar feature_updates_test_summary: The result summary of tests triggered by feature updates.
+    :vartype feature_updates_test_summary: ~azure.mgmt.testbase.models.OSUpdatesTestSummary
+    :ivar security_updates_test_summary: The result summary of tests triggered by security updates.
+    :vartype security_updates_test_summary: ~azure.mgmt.testbase.models.OSUpdatesTestSummary
+    :ivar package_tags: The tags of Package resource that are associated with the testSummary.
+    :vartype package_tags: dict[str, str]
     """
 
     _validation = {
@@ -2946,6 +4220,7 @@ class TestSummaryResource(ProxyResource):
         'test_run_time': {'key': 'properties.testRunTime', 'type': 'str'},
         'feature_updates_test_summary': {'key': 'properties.featureUpdatesTestSummary', 'type': 'OSUpdatesTestSummary'},
         'security_updates_test_summary': {'key': 'properties.securityUpdatesTestSummary', 'type': 'OSUpdatesTestSummary'},
+        'package_tags': {'key': 'properties.packageTags', 'type': '{str}'},
     }
 
     def __init__(
@@ -2955,14 +4230,45 @@ class TestSummaryResource(ProxyResource):
         package_id: Optional[str] = None,
         application_name: Optional[str] = None,
         application_version: Optional[str] = None,
-        execution_status: Optional[Union[str, "ExecutionStatus"]] = None,
-        test_status: Optional[Union[str, "TestStatus"]] = None,
-        grade: Optional[Union[str, "Grade"]] = None,
+        execution_status: Optional[Union[str, "_models.ExecutionStatus"]] = None,
+        test_status: Optional[Union[str, "_models.TestStatus"]] = None,
+        grade: Optional[Union[str, "_models.Grade"]] = None,
         test_run_time: Optional[str] = None,
-        feature_updates_test_summary: Optional["OSUpdatesTestSummary"] = None,
-        security_updates_test_summary: Optional["OSUpdatesTestSummary"] = None,
+        feature_updates_test_summary: Optional["_models.OSUpdatesTestSummary"] = None,
+        security_updates_test_summary: Optional["_models.OSUpdatesTestSummary"] = None,
+        package_tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword test_summary_id: The Id of the current Test Summary.
+        :paramtype test_summary_id: str
+        :keyword package_id: The Azure resource Id of package.
+        :paramtype package_id: str
+        :keyword application_name: Application name.
+        :paramtype application_name: str
+        :keyword application_version: Application version.
+        :paramtype application_version: str
+        :keyword execution_status: The execution status of last test. Known values are: "None",
+         "InProgress", "Processing", "Completed", "NotExecuted", "Incomplete", "Failed", "Succeeded".
+        :paramtype execution_status: str or ~azure.mgmt.testbase.models.ExecutionStatus
+        :keyword test_status: The status of last test. Known values are: "None",
+         "TestExecutionInProgress", "DataProcessing", "TestFailure", "UpdateFailure",
+         "TestAndUpdateFailure", "InfrastructureFailure", "Completed".
+        :paramtype test_status: str or ~azure.mgmt.testbase.models.TestStatus
+        :keyword grade: The grade of the test. Known values are: "None", "NotAvailable", "Pass",
+         "Fail".
+        :paramtype grade: str or ~azure.mgmt.testbase.models.Grade
+        :keyword test_run_time: The run time of the last test.
+        :paramtype test_run_time: str
+        :keyword feature_updates_test_summary: The result summary of tests triggered by feature
+         updates.
+        :paramtype feature_updates_test_summary: ~azure.mgmt.testbase.models.OSUpdatesTestSummary
+        :keyword security_updates_test_summary: The result summary of tests triggered by security
+         updates.
+        :paramtype security_updates_test_summary: ~azure.mgmt.testbase.models.OSUpdatesTestSummary
+        :keyword package_tags: The tags of Package resource that are associated with the testSummary.
+        :paramtype package_tags: dict[str, str]
+        """
         super(TestSummaryResource, self).__init__(**kwargs)
         self.system_data = None
         self.test_summary_id = test_summary_id
@@ -2975,6 +4281,7 @@ class TestSummaryResource(ProxyResource):
         self.test_run_time = test_run_time
         self.feature_updates_test_summary = feature_updates_test_summary
         self.security_updates_test_summary = security_updates_test_summary
+        self.package_tags = package_tags
 
 
 class TestTypeListResult(msrest.serialization.Model):
@@ -2982,8 +4289,8 @@ class TestTypeListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of test types.
-    :type value: list[~test_base.models.TestTypeResource]
+    :ivar value: The list of test types.
+    :vartype value: list[~azure.mgmt.testbase.models.TestTypeResource]
     :ivar next_link: Link to the next set of results. Not empty if value contains incomplete list
      of results.
     :vartype next_link: str
@@ -3001,9 +4308,13 @@ class TestTypeListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["TestTypeResource"]] = None,
+        value: Optional[List["_models.TestTypeResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of test types.
+        :paramtype value: list[~azure.mgmt.testbase.models.TestTypeResource]
+        """
         super(TestTypeListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -3021,9 +4332,9 @@ class TestTypeResource(ProxyResource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system metadata relating to this resource.
-    :vartype system_data: ~test_base.models.SystemData
-    :param actual_test_type_name: The actual name of a test type of a Test Base Account.
-    :type actual_test_type_name: str
+    :vartype system_data: ~azure.mgmt.testbase.models.SystemData
+    :ivar actual_test_type_name: The actual name of a test type of a Test Base Account.
+    :vartype actual_test_type_name: str
     """
 
     _validation = {
@@ -3047,6 +4358,10 @@ class TestTypeResource(ProxyResource):
         actual_test_type_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword actual_test_type_name: The actual name of a test type of a Test Base Account.
+        :paramtype actual_test_type_name: str
+        """
         super(TestTypeResource, self).__init__(**kwargs)
         self.system_data = None
         self.actual_test_type_name = actual_test_type_name
@@ -3055,8 +4370,8 @@ class TestTypeResource(ProxyResource):
 class UserObjectReceiverValue(msrest.serialization.Model):
     """The user object receiver value.
 
-    :param user_object_ids: user object ids.
-    :type user_object_ids: list[str]
+    :ivar user_object_ids: user object ids.
+    :vartype user_object_ids: list[str]
     """
 
     _attribute_map = {
@@ -3069,6 +4384,10 @@ class UserObjectReceiverValue(msrest.serialization.Model):
         user_object_ids: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword user_object_ids: user object ids.
+        :paramtype user_object_ids: list[str]
+        """
         super(UserObjectReceiverValue, self).__init__(**kwargs)
         self.user_object_ids = user_object_ids
 
@@ -3076,10 +4395,10 @@ class UserObjectReceiverValue(msrest.serialization.Model):
 class UtilizationBound(msrest.serialization.Model):
     """The bound of a utilization result.
 
-    :param percentile: The percentile of the bound.
-    :type percentile: float
-    :param value: The value of the bound.
-    :type value: float
+    :ivar percentile: The percentile of the bound.
+    :vartype percentile: float
+    :ivar value: The value of the bound.
+    :vartype value: float
     """
 
     _attribute_map = {
@@ -3094,6 +4413,12 @@ class UtilizationBound(msrest.serialization.Model):
         value: Optional[float] = None,
         **kwargs
     ):
+        """
+        :keyword percentile: The percentile of the bound.
+        :paramtype percentile: float
+        :keyword value: The value of the bound.
+        :paramtype value: float
+        """
         super(UtilizationBound, self).__init__(**kwargs)
         self.percentile = percentile
         self.value = value
@@ -3102,10 +4427,10 @@ class UtilizationBound(msrest.serialization.Model):
 class UtilizationEntry(msrest.serialization.Model):
     """The utilization entry.
 
-    :param timestamp: The timestamp.
-    :type timestamp: ~datetime.datetime
-    :param value: The value.
-    :type value: float
+    :ivar timestamp: The timestamp.
+    :vartype timestamp: ~datetime.datetime
+    :ivar value: The value.
+    :vartype value: float
     """
 
     _attribute_map = {
@@ -3120,6 +4445,12 @@ class UtilizationEntry(msrest.serialization.Model):
         value: Optional[float] = None,
         **kwargs
     ):
+        """
+        :keyword timestamp: The timestamp.
+        :paramtype timestamp: ~datetime.datetime
+        :keyword value: The value.
+        :paramtype value: float
+        """
         super(UtilizationEntry, self).__init__(**kwargs)
         self.timestamp = timestamp
         self.value = value
@@ -3128,14 +4459,14 @@ class UtilizationEntry(msrest.serialization.Model):
 class UtilizationResult(msrest.serialization.Model):
     """The Utilization Result.
 
-    :param process: Process name, or '_total' for all processes.
-    :type process: str
-    :param upper_bound: Upper bound.
-    :type upper_bound: ~test_base.models.UtilizationBound
-    :param lower_bound: Lower bound.
-    :type lower_bound: ~test_base.models.UtilizationBound
-    :param utilization: Utilization data.
-    :type utilization: list[~test_base.models.UtilizationEntry]
+    :ivar process: Process name, or '_total' for all processes.
+    :vartype process: str
+    :ivar upper_bound: Upper bound.
+    :vartype upper_bound: ~azure.mgmt.testbase.models.UtilizationBound
+    :ivar lower_bound: Lower bound.
+    :vartype lower_bound: ~azure.mgmt.testbase.models.UtilizationBound
+    :ivar utilization: Utilization data.
+    :vartype utilization: list[~azure.mgmt.testbase.models.UtilizationEntry]
     """
 
     _attribute_map = {
@@ -3149,11 +4480,21 @@ class UtilizationResult(msrest.serialization.Model):
         self,
         *,
         process: Optional[str] = None,
-        upper_bound: Optional["UtilizationBound"] = None,
-        lower_bound: Optional["UtilizationBound"] = None,
-        utilization: Optional[List["UtilizationEntry"]] = None,
+        upper_bound: Optional["_models.UtilizationBound"] = None,
+        lower_bound: Optional["_models.UtilizationBound"] = None,
+        utilization: Optional[List["_models.UtilizationEntry"]] = None,
         **kwargs
     ):
+        """
+        :keyword process: Process name, or '_total' for all processes.
+        :paramtype process: str
+        :keyword upper_bound: Upper bound.
+        :paramtype upper_bound: ~azure.mgmt.testbase.models.UtilizationBound
+        :keyword lower_bound: Lower bound.
+        :paramtype lower_bound: ~azure.mgmt.testbase.models.UtilizationBound
+        :keyword utilization: Utilization data.
+        :paramtype utilization: list[~azure.mgmt.testbase.models.UtilizationEntry]
+        """
         super(UtilizationResult, self).__init__(**kwargs)
         self.process = process
         self.upper_bound = upper_bound

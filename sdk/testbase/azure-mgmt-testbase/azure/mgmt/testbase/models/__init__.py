@@ -6,158 +6,93 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AnalysisResultListResult
-    from ._models_py3 import AnalysisResultSingletonResource
-    from ._models_py3 import AnalysisResultSingletonResourceProperties
-    from ._models_py3 import AvailableOSListResult
-    from ._models_py3 import AvailableOSResource
-    from ._models_py3 import CPURegressionResultSingletonResourceProperties
-    from ._models_py3 import CPUUtilizationResultSingletonResourceProperties
-    from ._models_py3 import CheckNameAvailabilityResult
-    from ._models_py3 import Command
-    from ._models_py3 import CustomerEventListResult
-    from ._models_py3 import CustomerEventResource
-    from ._models_py3 import DistributionGroupListReceiverValue
-    from ._models_py3 import DownloadURLResponse
-    from ._models_py3 import EmailEventListResult
-    from ._models_py3 import EmailEventResource
-    from ._models_py3 import ErrorDefinition
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import FavoriteProcessListResult
-    from ._models_py3 import FavoriteProcessResource
-    from ._models_py3 import FileUploadURLResponse
-    from ._models_py3 import FlightingRingListResult
-    from ._models_py3 import FlightingRingResource
-    from ._models_py3 import GetFileUploadURLParameters
-    from ._models_py3 import IdentifiedFailure
-    from ._models_py3 import MemoryRegressionResultSingletonResourceProperties
-    from ._models_py3 import MemoryUtilizationResultSingletonResourceProperties
-    from ._models_py3 import NotificationEventReceiver
-    from ._models_py3 import NotificationReceiverValue
-    from ._models_py3 import OSUpdateListResult
-    from ._models_py3 import OSUpdateResource
-    from ._models_py3 import OSUpdateTestSummary
-    from ._models_py3 import OSUpdatesTestSummary
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import PackageCheckNameAvailabilityParameters
-    from ._models_py3 import PackageListResult
-    from ._models_py3 import PackageResource
-    from ._models_py3 import PackageUpdateParameters
-    from ._models_py3 import PackageValidationResult
-    from ._models_py3 import ProxyResource
-    from ._models_py3 import RegressionResult
-    from ._models_py3 import RegressionTestDetails
-    from ._models_py3 import ReliabilityResult
-    from ._models_py3 import ReliabilityResultSingletonResourceProperties
-    from ._models_py3 import Resource
-    from ._models_py3 import ScriptExecutionResult
-    from ._models_py3 import ScriptExecutionResultSingletonResourceProperties
-    from ._models_py3 import SubscriptionReceiverValue
-    from ._models_py3 import SystemData
-    from ._models_py3 import TargetOSInfo
-    from ._models_py3 import Test
-    from ._models_py3 import TestAnalysisResult
-    from ._models_py3 import TestAnalysisResultSingletonResourceProperties
-    from ._models_py3 import TestBaseAccountListResult
-    from ._models_py3 import TestBaseAccountResource
-    from ._models_py3 import TestBaseAccountSKU
-    from ._models_py3 import TestBaseAccountSKUCapability
-    from ._models_py3 import TestBaseAccountSKUListResult
-    from ._models_py3 import TestBaseAccountUpdateParameters
-    from ._models_py3 import TestBaseAccountUsageData
-    from ._models_py3 import TestBaseAccountUsageDataList
-    from ._models_py3 import TestBaseAccountUsageName
-    from ._models_py3 import TestResultAnalysisSummary
-    from ._models_py3 import TestResultListResult
-    from ._models_py3 import TestResultResource
-    from ._models_py3 import TestSummaryListResult
-    from ._models_py3 import TestSummaryResource
-    from ._models_py3 import TestTypeListResult
-    from ._models_py3 import TestTypeResource
-    from ._models_py3 import TrackedResource
-    from ._models_py3 import UserObjectReceiverValue
-    from ._models_py3 import UtilizationBound
-    from ._models_py3 import UtilizationEntry
-    from ._models_py3 import UtilizationResult
-except (SyntaxError, ImportError):
-    from ._models import AnalysisResultListResult  # type: ignore
-    from ._models import AnalysisResultSingletonResource  # type: ignore
-    from ._models import AnalysisResultSingletonResourceProperties  # type: ignore
-    from ._models import AvailableOSListResult  # type: ignore
-    from ._models import AvailableOSResource  # type: ignore
-    from ._models import CPURegressionResultSingletonResourceProperties  # type: ignore
-    from ._models import CPUUtilizationResultSingletonResourceProperties  # type: ignore
-    from ._models import CheckNameAvailabilityResult  # type: ignore
-    from ._models import Command  # type: ignore
-    from ._models import CustomerEventListResult  # type: ignore
-    from ._models import CustomerEventResource  # type: ignore
-    from ._models import DistributionGroupListReceiverValue  # type: ignore
-    from ._models import DownloadURLResponse  # type: ignore
-    from ._models import EmailEventListResult  # type: ignore
-    from ._models import EmailEventResource  # type: ignore
-    from ._models import ErrorDefinition  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import FavoriteProcessListResult  # type: ignore
-    from ._models import FavoriteProcessResource  # type: ignore
-    from ._models import FileUploadURLResponse  # type: ignore
-    from ._models import FlightingRingListResult  # type: ignore
-    from ._models import FlightingRingResource  # type: ignore
-    from ._models import GetFileUploadURLParameters  # type: ignore
-    from ._models import IdentifiedFailure  # type: ignore
-    from ._models import MemoryRegressionResultSingletonResourceProperties  # type: ignore
-    from ._models import MemoryUtilizationResultSingletonResourceProperties  # type: ignore
-    from ._models import NotificationEventReceiver  # type: ignore
-    from ._models import NotificationReceiverValue  # type: ignore
-    from ._models import OSUpdateListResult  # type: ignore
-    from ._models import OSUpdateResource  # type: ignore
-    from ._models import OSUpdateTestSummary  # type: ignore
-    from ._models import OSUpdatesTestSummary  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import PackageCheckNameAvailabilityParameters  # type: ignore
-    from ._models import PackageListResult  # type: ignore
-    from ._models import PackageResource  # type: ignore
-    from ._models import PackageUpdateParameters  # type: ignore
-    from ._models import PackageValidationResult  # type: ignore
-    from ._models import ProxyResource  # type: ignore
-    from ._models import RegressionResult  # type: ignore
-    from ._models import RegressionTestDetails  # type: ignore
-    from ._models import ReliabilityResult  # type: ignore
-    from ._models import ReliabilityResultSingletonResourceProperties  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ScriptExecutionResult  # type: ignore
-    from ._models import ScriptExecutionResultSingletonResourceProperties  # type: ignore
-    from ._models import SubscriptionReceiverValue  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import TargetOSInfo  # type: ignore
-    from ._models import Test  # type: ignore
-    from ._models import TestAnalysisResult  # type: ignore
-    from ._models import TestAnalysisResultSingletonResourceProperties  # type: ignore
-    from ._models import TestBaseAccountListResult  # type: ignore
-    from ._models import TestBaseAccountResource  # type: ignore
-    from ._models import TestBaseAccountSKU  # type: ignore
-    from ._models import TestBaseAccountSKUCapability  # type: ignore
-    from ._models import TestBaseAccountSKUListResult  # type: ignore
-    from ._models import TestBaseAccountUpdateParameters  # type: ignore
-    from ._models import TestBaseAccountUsageData  # type: ignore
-    from ._models import TestBaseAccountUsageDataList  # type: ignore
-    from ._models import TestBaseAccountUsageName  # type: ignore
-    from ._models import TestResultAnalysisSummary  # type: ignore
-    from ._models import TestResultListResult  # type: ignore
-    from ._models import TestResultResource  # type: ignore
-    from ._models import TestSummaryListResult  # type: ignore
-    from ._models import TestSummaryResource  # type: ignore
-    from ._models import TestTypeListResult  # type: ignore
-    from ._models import TestTypeResource  # type: ignore
-    from ._models import TrackedResource  # type: ignore
-    from ._models import UserObjectReceiverValue  # type: ignore
-    from ._models import UtilizationBound  # type: ignore
-    from ._models import UtilizationEntry  # type: ignore
-    from ._models import UtilizationResult  # type: ignore
+from ._models_py3 import AnalysisResultListResult
+from ._models_py3 import AnalysisResultSingletonResource
+from ._models_py3 import AnalysisResultSingletonResourceProperties
+from ._models_py3 import AvailableOSListResult
+from ._models_py3 import AvailableOSResource
+from ._models_py3 import BillingHubExecutionUsageDetail
+from ._models_py3 import BillingHubFreeHourIncrementEntry
+from ._models_py3 import BillingHubGetFreeHourBalanceResponse
+from ._models_py3 import BillingHubGetUsageRequest
+from ._models_py3 import BillingHubGetUsageResponse
+from ._models_py3 import BillingHubPackageUsage
+from ._models_py3 import BillingHubUsage
+from ._models_py3 import BillingHubUsageGroup
+from ._models_py3 import BillingHubUsageGroupedByUpdateType
+from ._models_py3 import CPURegressionResultSingletonResourceProperties
+from ._models_py3 import CPUUtilizationResultSingletonResourceProperties
+from ._models_py3 import CheckNameAvailabilityResult
+from ._models_py3 import Command
+from ._models_py3 import CustomerEventListResult
+from ._models_py3 import CustomerEventResource
+from ._models_py3 import DistributionGroupListReceiverValue
+from ._models_py3 import DownloadURLResponse
+from ._models_py3 import EmailEventListResult
+from ._models_py3 import EmailEventResource
+from ._models_py3 import ErrorDefinition
+from ._models_py3 import ErrorResponse
+from ._models_py3 import FavoriteProcessListResult
+from ._models_py3 import FavoriteProcessResource
+from ._models_py3 import FileUploadURLResponse
+from ._models_py3 import FlightingRingListResult
+from ._models_py3 import FlightingRingResource
+from ._models_py3 import GetFileUploadURLParameters
+from ._models_py3 import IdentifiedFailure
+from ._models_py3 import MemoryRegressionResultSingletonResourceProperties
+from ._models_py3 import MemoryUtilizationResultSingletonResourceProperties
+from ._models_py3 import NotificationEventReceiver
+from ._models_py3 import NotificationReceiverValue
+from ._models_py3 import OSUpdateListResult
+from ._models_py3 import OSUpdateResource
+from ._models_py3 import OSUpdateTestSummary
+from ._models_py3 import OSUpdatesTestSummary
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import PackageCheckNameAvailabilityParameters
+from ._models_py3 import PackageListResult
+from ._models_py3 import PackageResource
+from ._models_py3 import PackageRunTestParameters
+from ._models_py3 import PackageUpdateParameters
+from ._models_py3 import PackageValidationResult
+from ._models_py3 import ProxyResource
+from ._models_py3 import RegressionResult
+from ._models_py3 import RegressionTestDetails
+from ._models_py3 import ReliabilityResult
+from ._models_py3 import ReliabilityResultSingletonResourceProperties
+from ._models_py3 import Resource
+from ._models_py3 import ScriptExecutionResult
+from ._models_py3 import ScriptExecutionResultSingletonResourceProperties
+from ._models_py3 import SubscriptionReceiverValue
+from ._models_py3 import SystemData
+from ._models_py3 import TargetOSInfo
+from ._models_py3 import Test
+from ._models_py3 import TestAnalysisResult
+from ._models_py3 import TestAnalysisResultSingletonResourceProperties
+from ._models_py3 import TestBaseAccountListResult
+from ._models_py3 import TestBaseAccountResource
+from ._models_py3 import TestBaseAccountSKU
+from ._models_py3 import TestBaseAccountSKUCapability
+from ._models_py3 import TestBaseAccountSKUListResult
+from ._models_py3 import TestBaseAccountUpdateParameters
+from ._models_py3 import TestBaseAccountUsageData
+from ._models_py3 import TestBaseAccountUsageDataList
+from ._models_py3 import TestBaseAccountUsageName
+from ._models_py3 import TestResultAnalysisSummary
+from ._models_py3 import TestResultConsoleLogDownloadURLParameters
+from ._models_py3 import TestResultListResult
+from ._models_py3 import TestResultResource
+from ._models_py3 import TestSummaryListResult
+from ._models_py3 import TestSummaryResource
+from ._models_py3 import TestTypeListResult
+from ._models_py3 import TestTypeResource
+from ._models_py3 import TrackedResource
+from ._models_py3 import UserObjectReceiverValue
+from ._models_py3 import UtilizationBound
+from ._models_py3 import UtilizationEntry
+from ._models_py3 import UtilizationResult
+
 
 from ._test_base_enums import (
     Action,
@@ -180,13 +115,24 @@ from ._test_base_enums import (
     Type,
     ValidationRunStatus,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'AnalysisResultListResult',
     'AnalysisResultSingletonResource',
     'AnalysisResultSingletonResourceProperties',
     'AvailableOSListResult',
     'AvailableOSResource',
+    'BillingHubExecutionUsageDetail',
+    'BillingHubFreeHourIncrementEntry',
+    'BillingHubGetFreeHourBalanceResponse',
+    'BillingHubGetUsageRequest',
+    'BillingHubGetUsageResponse',
+    'BillingHubPackageUsage',
+    'BillingHubUsage',
+    'BillingHubUsageGroup',
+    'BillingHubUsageGroupedByUpdateType',
     'CPURegressionResultSingletonResourceProperties',
     'CPUUtilizationResultSingletonResourceProperties',
     'CheckNameAvailabilityResult',
@@ -220,6 +166,7 @@ __all__ = [
     'PackageCheckNameAvailabilityParameters',
     'PackageListResult',
     'PackageResource',
+    'PackageRunTestParameters',
     'PackageUpdateParameters',
     'PackageValidationResult',
     'ProxyResource',
@@ -246,6 +193,7 @@ __all__ = [
     'TestBaseAccountUsageDataList',
     'TestBaseAccountUsageName',
     'TestResultAnalysisSummary',
+    'TestResultConsoleLogDownloadURLParameters',
     'TestResultListResult',
     'TestResultResource',
     'TestSummaryListResult',
@@ -277,3 +225,5 @@ __all__ = [
     'Type',
     'ValidationRunStatus',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
