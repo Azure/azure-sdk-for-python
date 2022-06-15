@@ -52,9 +52,8 @@ from ._models import (
     RecognizeCustomEntitiesAction,
     RecognizeCustomEntitiesResult,
     SingleCategoryClassifyAction,
-    SingleCategoryClassifyResult,
     MultiCategoryClassifyAction,
-    MultiCategoryClassifyResult,
+    ClassifyDocumentResult,
     ClassificationCategory,
     AnalyzeHealthcareEntitiesAction,
 )
@@ -111,9 +110,8 @@ __all__ = [
     "RecognizeCustomEntitiesAction",
     "RecognizeCustomEntitiesResult",
     "SingleCategoryClassifyAction",
-    "SingleCategoryClassifyResult",
     "MultiCategoryClassifyAction",
-    "MultiCategoryClassifyResult",
+    "ClassifyDocumentResult",
     "ClassificationCategory",
     "AnalyzeHealthcareEntitiesAction",
 ]
