@@ -33,8 +33,8 @@ async def send_single_message(sender):
 async def main():
     servicebus_client = ServiceBusClient.from_connection_string(
     conn_str=CONNECTION_STR, 
-    # custom_endpoint_address=CUSTOM_ENDPOINT_ADDRESS, 
-    # connection_verify=CUSTOM_CA_BUNDLE_PATH
+    custom_endpoint_address=CUSTOM_ENDPOINT_ADDRESS, 
+    connection_verify=CUSTOM_CA_BUNDLE_PATH
     )
     async with servicebus_client:
         sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
