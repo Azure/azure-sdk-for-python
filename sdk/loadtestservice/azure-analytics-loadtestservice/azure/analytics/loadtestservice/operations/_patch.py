@@ -9,8 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from typing import List, cast
 from msrest import Serializer
-from azure.core.exceptions import ClientAuthenticationError,\
-    HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error, SerializationError, DeserializationError
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.rest import HttpRequest
 from azure.core.utils import case_insensitive_dict
 from .._vendor import _format_url_section
