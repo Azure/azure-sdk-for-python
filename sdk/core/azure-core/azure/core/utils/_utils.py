@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from cgitb import lookup
 import datetime
 from typing import Any, Iterable, Mapping, MutableMapping
 
