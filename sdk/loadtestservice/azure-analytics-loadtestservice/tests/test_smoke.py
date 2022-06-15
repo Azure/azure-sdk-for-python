@@ -20,6 +20,3 @@ class LoadtestserviceSmokeTest(LoadtestserviceTest):
         client = self.create_client(endpoint=loadtestservice_endpoint)
         result = client.test_run.list_test_runs_search()
         assert result is not None
-
-
-
