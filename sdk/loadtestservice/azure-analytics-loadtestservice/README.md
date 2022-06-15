@@ -55,7 +55,7 @@ Use the returned token credential to authenticate the client:
         print('service responds error: {}'.format(e.response.json()))
 
 ```
-## Key Concepts
+## Key concepts
 Azure Load Testing Preview is a fully managed load-testing service that enables you to generate high-scale load. The service simulates traffic for your applications, regardless of where they're hosted. Developers, testers, and quality assurance (QA) engineers can use it to optimize application performance, scalability, or capacity.
 
 ## Troubleshootings

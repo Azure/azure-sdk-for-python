@@ -9,11 +9,16 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-analytics-loadtestservice/1.0.0b1 Python/3.9.8 (Windows-10-10.0.19044)
+=======
+      - azsdk-python-analytics-loadtestservice/1.0.0b1 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+>>>>>>> 8e27ba70fb75a6ba8a1ecc0fb984b99c9267f6c5
     method: GET
     uri: https://eccdc9b7-7603-402b-879d-bde2b637db56.eus.cnt-prod.loadtesting.azure.com/loadtests/sortAndFilter?maxPageSize=50&api-version=2022-06-01-preview
   response:
     body:
+<<<<<<< HEAD
       string: ''
     headers:
       connection:
@@ -32,4 +37,27 @@ interactions:
     status:
       code: 401
       message: Unauthorized
+=======
+      string: '{"value":[],"nextLink":null}'
+    headers:
+      api-supported-versions:
+      - 2021-07-01-preview, 2022-04-15-preview, 2022-06-01-preview
+      connection:
+      - keep-alive
+      content-length:
+      - '28'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 15 Jun 2022 09:14:39 GMT
+      mise-correlation-id:
+      - c21d9d24-6b36-4e9e-a6c7-d0968a15a6ef
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+>>>>>>> 8e27ba70fb75a6ba8a1ecc0fb984b99c9267f6c5
 version: 1
