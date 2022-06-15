@@ -36,23 +36,6 @@ TEST_BLOB_PREFIX = 'encryptionv2_blob'
 MiB = 1024 * 1024
 
 
-class NoOpKeyWrapper:
-    def __init__(self, kid='local:key1'):
-        self.kid = kid
-
-    def wrap_key(self, key, algorithm='A256KW'):
-        return key
-
-    def unwrap_key(self, key, algorithm):
-        return key
-
-    def get_key_wrap_algorithm(self):
-        return 'None'
-
-    def get_kid(self):
-        return self.kid
-
-
 class StorageBlobEncryptionV2Test(StorageTestCase):
     # --Helpers-----------------------------------------------------------------
     def _setup(self, storage_account_name, key):
@@ -789,48 +772,4 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         data = blob.download_blob(max_concurrency=5).readall()
 
         # Assert
-        self.assertEqual(content, data)
-
-    @BlobPreparer()
-    def test_cross_plat(self, storage_account_name, storage_account_key):
-        bsc = BlobServiceClient(
-            self.account_url('xclientdev3', "blob"),
-            credential='umna8S2gHqrKNxKb5jXqZO3W4yu/hzU1Q3sqvjEDSwRZcfmQ5WbkdiRUyfqnE6cgOVN7dv9JRDStMummu7tLKg==')
-
-        # Upload
-        # content = b'abcde' * 4 * MiB
-        # plaintext = bsc.get_blob_client('clientsideencryptionv2crossplat', 'python_plaintext_1')
-        # plaintext.upload_blob(content, overwrite=True, max_concurrency=2)
-        #
-        # encrypted = bsc.get_blob_client('clientsideencryptionv2crossplat', 'python_encrypted_1')
-        # encrypted.require_encryption = True
-        # encrypted.key_encryption_key = NoOpKeyWrapper()
-        # encrypted.encryption_version = '2.0'
-        # encrypted.upload_blob(content, overwrite=True, max_concurrency=2)
-        #
-        # data = encrypted.download_blob(max_concurrency=2).readall()
-
-        # Download
-        # Java
-        # plaintext = bsc.get_blob_client('clientsideencryptionv2crossplat', 'java_plaintext_1')
-        # content = plaintext.download_blob(max_concurrency=2).readall()
-        #
-        # encrypted = bsc.get_blob_client('clientsideencryptionv2crossplat', 'java_encrypted_1')
-        # encrypted.require_encryption = True
-        # encrypted.key_encryption_key = NoOpKeyWrapper()
-        # encrypted.encryption_version = '2.0'
-        #
-        # data = encrypted.download_blob(max_concurrency=2).readall()
-        # self.assertEqual(content, data)
-
-        # .NET
-        plaintext = bsc.get_blob_client('clientsideencryptionv2crossplat', 'dotnet/net6.0/PartitionedUpload-plaintext-1dbb429d')
-        content = plaintext.download_blob(max_concurrency=2).readall()
-
-        encrypted = bsc.get_blob_client('clientsideencryptionv2crossplat', 'dotnet/net6.0/PartitionedUpload-encrypted-1dbb429d')
-        encrypted.require_encryption = True
-        encrypted.key_encryption_key = NoOpKeyWrapper('.NET Test Key')
-        encrypted.encryption_version = '2.0'
-
-        data = encrypted.download_blob(max_concurrency=2).readall()
         self.assertEqual(content, data)
