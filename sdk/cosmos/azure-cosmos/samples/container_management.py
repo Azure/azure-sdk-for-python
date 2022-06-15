@@ -187,7 +187,7 @@ def create_container(db, id):
         container = db.create_container(
             id=id+"_container_auto_scale_setting",
             partition_key=partition_key,
-            auto_scale_setting=AutoScale(5000, 0)
+            auto_scale_setting=AutoScale(auto_scale_max_throughput=5000, auto_upgrade_throughput_increment_percent=0)
         )
         print('Container with id \'{0}\' created'.format(container.id))
 
