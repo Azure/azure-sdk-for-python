@@ -1,5 +1,15 @@
 ## Release History
 
+### 12.0.0b5 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+
 ### 12.0.0b4 (2022-06-15)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
