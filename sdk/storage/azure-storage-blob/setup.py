@@ -55,7 +55,7 @@ setup(
     author_email='ascl@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob',
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         'Programming Language :: Python',
         "Programming Language :: Python :: 3 :: Only",
         'Programming Language :: Python :: 3',
