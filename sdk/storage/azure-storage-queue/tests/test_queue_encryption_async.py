@@ -3,12 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import os
 import unittest
 import pytest
-import asyncio
 import six
 from base64 import (
     b64decode,
+    b64encode,
 )
 from json import (
     loads,
@@ -23,17 +24,15 @@ from cryptography.hazmat.primitives.ciphers.modes import CBC
 from cryptography.hazmat.primitives.padding import PKCS7
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.queue._shared.encryption import (
     _ERROR_OBJECT_INVALID,
-    _GCM_REGION_DATA_LENGTH,
     _GCM_NONCE_LENGTH,
     _GCM_TAG_LENGTH,
-    _EncryptedRegionInfo,
+    _dict_to_encryption_data,
     _EncryptionAgent,
-    _EncryptionAlgorithm,
     _EncryptionData,
+    _validate_and_unwrap_cek,
     _WrappedContentKey,
 )
 from azure.core.pipeline.transport import AioHttpTransport
@@ -653,6 +652,48 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
 
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_encryption_v2_v1_downgrade(self, storage_account_name, storage_account_key):
+        # Arrange
+        kek = KeyWrapper('key1')
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key,
+            requires_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+        queue = await self._create_queue(qsc)
+        await queue.send_message('Hello World Encrypted!')
+
+        queue.require_encryption = False
+        queue.key_encryption_key = None  # Message will not be decrypted
+        message = await queue.receive_message()
+        content = loads(message.content)
+
+        # Modify metadata to look like V1
+        encryption_data = content['EncryptionData']
+        encryption_data['EncryptionAgent']['Protocol'] = '1.0'
+        encryption_data['EncryptionAgent']['EncryptionAlgorithm'] = 'AES_CBC_256'
+        iv = b64encode(os.urandom(16))
+        encryption_data['ContentEncryptionIV'] = iv.decode('utf-8')
+        content['EncryptionData'] = encryption_data
+
+        message.content = dumps(content)
+
+        # Act / Assert
+        # Update without encryption
+        await queue.update_message(message)
+
+        # Re-enable encryption for receive
+        queue.require_encryption = True
+        queue.key_encryption_key = kek
+
+        with self.assertRaises(HttpResponseError) as e:
+            await queue.receive_message()
+
+        assert 'Decryption failed.' in str(e.exception)
+
+    @QueuePreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_validate_encryption_v2(self, storage_account_name, storage_account_key):
         # Arrange
         kek = KeyWrapper('key1')
@@ -672,47 +713,21 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         message = (await queue.receive_message()).content
         message = loads(message)
 
-        encryption_data = message['EncryptionData']
-        self.assertIsNotNone(encryption_data)
-
-        wrapped_content_key = encryption_data['WrappedContentKey']
-        wrapped_content_key = _WrappedContentKey(
-            wrapped_content_key['Algorithm'],
-            b64decode(wrapped_content_key['EncryptedKey'].encode(encoding='utf-8')),
-            wrapped_content_key['KeyId'])
-        self.assertEqual(kek.get_key_wrap_algorithm(), wrapped_content_key.algorithm)
-        self.assertEqual(kek.get_kid(), wrapped_content_key.key_id)
-
-        encryption_agent = encryption_data['EncryptionAgent']
-        encryption_agent = _EncryptionAgent(
-            encryption_agent['EncryptionAlgorithm'],
-            encryption_agent['Protocol'])
-        self.assertEqual(_EncryptionAlgorithm.AES_GCM_256, encryption_agent.encryption_algorithm)
+        encryption_data = _dict_to_encryption_data(message['EncryptionData'])
+        encryption_agent = encryption_data.encryption_agent
         self.assertEqual('2.0', encryption_agent.protocol)
+        self.assertEqual('AES_GCM_256', encryption_agent.encryption_algorithm)
 
-        encrypted_region_info = encryption_data['EncryptedRegionInfo']
-        encrypted_region_info = _EncryptedRegionInfo(
-            encrypted_region_info['DataLength'],
-            encrypted_region_info['NonceLength'],
-            _GCM_TAG_LENGTH)
-        self.assertEqual(_GCM_REGION_DATA_LENGTH, encrypted_region_info.data_length)
+        encrypted_region_info = encryption_data.encrypted_region_info
         self.assertEqual(_GCM_NONCE_LENGTH, encrypted_region_info.nonce_length)
         self.assertEqual(_GCM_TAG_LENGTH, encrypted_region_info.tag_length)
 
-        encryption_data = _EncryptionData(
-            None,
-            encrypted_region_info,
-            encryption_agent,
-            wrapped_content_key,
-            {'EncryptionLibrary': VERSION})
+        content_encryption_key = _validate_and_unwrap_cek(encryption_data, kek, None)
+
+        nonce_length = encrypted_region_info.nonce_length
 
         message = message['EncryptedMessageContents']
         message = _decode_base64_to_bytes(message)
-        content_encryption_key = kek.unwrap_key(
-            encryption_data.wrapped_content_key.encrypted_key,
-            encryption_data.wrapped_content_key.algorithm)
-
-        nonce_length = encryption_data.encrypted_region_info.nonce_length
 
         # First bytes are the nonce
         nonce = message[:nonce_length]
@@ -725,6 +740,7 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
 
         # Assert
         self.assertEqual(content, decrypted_data)
+
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

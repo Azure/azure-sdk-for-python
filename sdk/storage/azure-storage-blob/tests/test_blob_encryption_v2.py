@@ -4,8 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import base64
+import os
 import pytest
-from json import loads
+from json import dumps, loads
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
@@ -283,6 +285,62 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
 
         # Assert
         self.assertEqual(content, data)
+
+    @BlobPreparer()
+    def test_encryption_v2_v1_downgrade(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'Hello World Encrypted!'
+
+        # Upload blob with encryption V2
+        blob.upload_blob(content, overwrite=True)
+
+        # Modify metadata to look like V1
+        metadata = blob.get_blob_properties().metadata
+        encryption_data = loads(metadata['encryptiondata'])
+        encryption_data['EncryptionAgent']['Protocol'] = '1.0'
+        encryption_data['EncryptionAgent']['EncryptionAlgorithm'] = 'AES_CBC_256'
+        iv = base64.b64encode(os.urandom(16))
+        encryption_data['ContentEncryptionIV'] = iv.decode('utf-8')
+        metadata = {'encryptiondata': dumps(encryption_data)}
+
+        # Act / Assert
+        blob.set_blob_metadata(metadata)
+        with self.assertRaises(HttpResponseError) as e:
+            blob.download_blob()
+
+        self.assertEqual('Decryption failed.', str(e.exception))
+
+    @BlobPreparer()
+    def test_encryption_modify_cek(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'Hello World Encrypted!'
+
+        blob.upload_blob(content, overwrite=True)
+
+        # Modify cek to not include the version
+        metadata = blob.get_blob_properties().metadata
+        encryption_data = loads(metadata['encryptiondata'])
+        encrypted_key = base64.b64decode(encryption_data['WrappedContentKey']['EncryptedKey'])
+        cek = kek.unwrap_key(encrypted_key, 'A256KW')
+        encrypted_key = kek.wrap_key(cek[8:])
+        encrypted_key = base64.b64encode(encrypted_key).decode()
+        encryption_data['WrappedContentKey']['EncryptedKey'] = encrypted_key
+        metadata = {'encryptiondata': dumps(encryption_data)}
+
+        # Act / Assert
+        blob.set_blob_metadata(metadata)
+        with self.assertRaises(HttpResponseError) as e:
+            blob.download_blob()
+
+        self.assertEqual('Decryption failed.', str(e.exception))
 
     @BlobPreparer()
     def test_put_blob_empty(self, storage_account_name, storage_account_key):

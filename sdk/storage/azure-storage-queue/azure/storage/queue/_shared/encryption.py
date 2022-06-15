@@ -398,7 +398,13 @@ def _generate_encryption_data_dict(kek, cek, iv, version):
     :rtype: dict
     '''
     # Encrypt the cek.
-    wrapped_cek = kek.wrap_key(cek)
+    if version == _ENCRYPTION_PROTOCOL_V1:
+        wrapped_cek = kek.wrap_key(cek)
+    # For V2, we include the encryption version in the wrapped key.
+    elif version == _ENCRYPTION_PROTOCOL_V2:
+        # We must pad the version to 8 bytes for AES Keywrap algorithms
+        to_wrap = _ENCRYPTION_PROTOCOL_V2.encode().ljust(8, b'\0') + cek
+        wrapped_cek = kek.wrap_key(to_wrap)
 
     # Build the encryption_data dict.
     # Use OrderedDict to comply with Java's ordering requirement.
@@ -542,6 +548,18 @@ def _validate_and_unwrap_cek(encryption_data, key_encryption_key=None, key_resol
     # Will throw an exception if the specified algorithm is not supported.
     content_encryption_key = key_encryption_key.unwrap_key(encryption_data.wrapped_content_key.encrypted_key,
                                                            encryption_data.wrapped_content_key.algorithm)
+
+    # For V2, the version is included with the cek. We need to validate it
+    # and remove it from the actual cek.
+    if encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2:
+        version_2_bytes = _ENCRYPTION_PROTOCOL_V2.encode().ljust(8, b'\0')
+        cek_version_bytes = content_encryption_key[:len(version_2_bytes)]
+        if cek_version_bytes != version_2_bytes:
+            raise ValueError('The encryption metadata is not valid and may have been modified.')
+
+        # Remove version from the start of the cek.
+        content_encryption_key = content_encryption_key[len(version_2_bytes):]
+
     _validate_not_none('content_encryption_key', content_encryption_key)
 
     return content_encryption_key

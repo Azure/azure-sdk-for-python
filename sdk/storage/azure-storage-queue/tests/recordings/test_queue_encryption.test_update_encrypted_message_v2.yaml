@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.4.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 08 Jun 2022 20:49:13 GMT
+      - Wed, 15 Jun 2022 00:54:26 GMT
       x-ms-version:
       - '2021-02-12'
     method: PUT
@@ -25,7 +25,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 08 Jun 2022 20:49:13 GMT
+      - Wed, 15 Jun 2022 00:54:26 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -36,8 +36,8 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <QueueMessage><MessageText>{"EncryptedMessageContents": "9ygAp6H+6EIUYasZPZdZcCmSPuhDanvsJFnGL9Qt/pjhWnIJvw==",
-      "EncryptionData": {"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "1aaapOXSk0yVCQV5+0ewAClb8KjfvErH6STQd47MLwGIYnskscnFzw==",
+      <QueueMessage><MessageText>{"EncryptedMessageContents": "gVsA7Lk4RMyK0pRq5LoUJRrvuYv6+jsXfZS2TAI7Z16XKn5cpQ==",
+      "EncryptionData": {"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "I1o0GSgg06wNZd6tYWi5yYNmB3EvXxIW6L/uKW18nrSwKLJZZHaRjj8FREY+LNdn",
       "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm":
       "AES_GCM_256"}, "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength":
       12}, "KeyWrappingMetadata": {"EncryptionLibrary": "Python 12.4.0b1"}}}</MessageText></QueueMessage>'
@@ -49,28 +49,28 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '548'
+      - '556'
       Content-Type:
       - application/xml
       User-Agent:
       - azsdk-python-storage-queue/12.4.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 08 Jun 2022 20:49:13 GMT
+      - Wed, 15 Jun 2022 00:54:26 GMT
       x-ms-version:
       - '2021-02-12'
     method: POST
     uri: https://storagename.queue.core.windows.net/encryptionqueue6bbb1637/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>2f6c8bef-7184-4889-92e7-7efbd6b805c7</MessageId><InsertionTime>Wed,
-        08 Jun 2022 20:49:13 GMT</InsertionTime><ExpirationTime>Wed, 15 Jun 2022 20:49:13
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAudYCNnl72AE=</PopReceipt><TimeNextVisible>Wed,
-        08 Jun 2022 20:49:13 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>7382fc26-f7d4-405c-948b-de4e5e404a36</MessageId><InsertionTime>Wed,
+        15 Jun 2022 00:54:26 GMT</InsertionTime><ExpirationTime>Wed, 22 Jun 2022 00:54:26
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA20NIdlKA2AE=</PopReceipt><TimeNextVisible>Wed,
+        15 Jun 2022 00:54:26 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
     headers:
       content-type:
       - application/xml
       date:
-      - Wed, 08 Jun 2022 20:49:13 GMT
+      - Wed, 15 Jun 2022 00:54:26 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -92,19 +92,19 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.4.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 08 Jun 2022 20:49:13 GMT
+      - Wed, 15 Jun 2022 00:54:26 GMT
       x-ms-version:
       - '2021-02-12'
     method: GET
     uri: https://storagename.queue.core.windows.net/encryptionqueue6bbb1637/messages?numofmessages=1
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>2f6c8bef-7184-4889-92e7-7efbd6b805c7</MessageId><InsertionTime>Wed,
-        08 Jun 2022 20:49:13 GMT</InsertionTime><ExpirationTime>Wed, 15 Jun 2022 20:49:13
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAZtjuR3l72AE=</PopReceipt><TimeNextVisible>Wed,
-        08 Jun 2022 20:49:43 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>{\"EncryptedMessageContents\":
-        \"9ygAp6H+6EIUYasZPZdZcCmSPuhDanvsJFnGL9Qt/pjhWnIJvw==\", \"EncryptionData\":
-        {\"WrappedContentKey\": {\"KeyId\": \"key1\", \"EncryptedKey\": \"1aaapOXSk0yVCQV5+0ewAClb8KjfvErH6STQd47MLwGIYnskscnFzw==\",
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>7382fc26-f7d4-405c-948b-de4e5e404a36</MessageId><InsertionTime>Wed,
+        15 Jun 2022 00:54:26 GMT</InsertionTime><ExpirationTime>Wed, 22 Jun 2022 00:54:26
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAr7o0iFKA2AE=</PopReceipt><TimeNextVisible>Wed,
+        15 Jun 2022 00:54:56 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>{\"EncryptedMessageContents\":
+        \"gVsA7Lk4RMyK0pRq5LoUJRrvuYv6+jsXfZS2TAI7Z16XKn5cpQ==\", \"EncryptionData\":
+        {\"WrappedContentKey\": {\"KeyId\": \"key1\", \"EncryptedKey\": \"I1o0GSgg06wNZd6tYWi5yYNmB3EvXxIW6L/uKW18nrSwKLJZZHaRjj8FREY+LNdn\",
         \"Algorithm\": \"A256KW\"}, \"EncryptionAgent\": {\"Protocol\": \"2.0\", \"EncryptionAlgorithm\":
         \"AES_GCM_256\"}, \"EncryptedRegionInfo\": {\"DataLength\": 4194304, \"NonceLength\":
         12}, \"KeyWrappingMetadata\": {\"EncryptionLibrary\": \"Python 12.4.0b1\"}}}</MessageText></QueueMessage></QueueMessagesList>"
@@ -114,7 +114,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Wed, 08 Jun 2022 20:49:13 GMT
+      - Wed, 15 Jun 2022 00:54:26 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -127,8 +127,8 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <QueueMessage><MessageText>{"EncryptedMessageContents": "EAsjZ+nZRmcXtzQ+rvQljYSGzosSDjYyUfGwDGMAsQ3CQy4=",
-      "EncryptionData": {"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "pEyzHAK3yJVRjMiMMHDaBS4zciJMGg3XjqOKoH2xu2zbkA5NYTlPpw==",
+      <QueueMessage><MessageText>{"EncryptedMessageContents": "9fePUgts8vsuHbshyOmSeCx4lUghM9DwUFK6kdQOBHOwYrk=",
+      "EncryptionData": {"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "N7MloOUj5rhuwXLAGTbv2bixqGb4EzQnAkDjv/7KxU5b63rbVGL6381/asBeWLmH",
       "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm":
       "AES_GCM_256"}, "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength":
       12}, "KeyWrappingMetadata": {"EncryptionLibrary": "Python 12.4.0b1"}}}</MessageText></QueueMessage>'
@@ -140,17 +140,17 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '544'
+      - '552'
       Content-Type:
       - application/xml
       User-Agent:
       - azsdk-python-storage-queue/12.4.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 08 Jun 2022 20:49:13 GMT
+      - Wed, 15 Jun 2022 00:54:26 GMT
       x-ms-version:
       - '2021-02-12'
     method: PUT
-    uri: https://storagename.queue.core.windows.net/encryptionqueue6bbb1637/messages/2f6c8bef-7184-4889-92e7-7efbd6b805c7?popreceipt=AgAAAAMAAAAAAAAAZtjuR3l72AE%3D&visibilitytimeout=0
+    uri: https://storagename.queue.core.windows.net/encryptionqueue6bbb1637/messages/7382fc26-f7d4-405c-948b-de4e5e404a36?popreceipt=AgAAAAMAAAAAAAAAr7o0iFKA2AE%3D&visibilitytimeout=0
   response:
     body:
       string: ''
@@ -158,13 +158,13 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 08 Jun 2022 20:49:13 GMT
+      - Wed, 15 Jun 2022 00:54:26 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-popreceipt:
-      - AwAAAAMAAAAAAAAAeswYNnl72AEBAAAA
+      - AwAAAAMAAAAAAAAASQFddlKA2AEBAAAA
       x-ms-time-next-visible:
-      - Wed, 08 Jun 2022 20:49:13 GMT
+      - Wed, 15 Jun 2022 00:54:26 GMT
       x-ms-version:
       - '2021-02-12'
     status:
@@ -182,19 +182,19 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.4.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 08 Jun 2022 20:49:13 GMT
+      - Wed, 15 Jun 2022 00:54:26 GMT
       x-ms-version:
       - '2021-02-12'
     method: GET
     uri: https://storagename.queue.core.windows.net/encryptionqueue6bbb1637/messages?numofmessages=1
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>2f6c8bef-7184-4889-92e7-7efbd6b805c7</MessageId><InsertionTime>Wed,
-        08 Jun 2022 20:49:13 GMT</InsertionTime><ExpirationTime>Wed, 15 Jun 2022 20:49:13
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA7LwDSHl72AE=</PopReceipt><TimeNextVisible>Wed,
-        08 Jun 2022 20:49:43 GMT</TimeNextVisible><DequeueCount>2</DequeueCount><MessageText>{\"EncryptedMessageContents\":
-        \"EAsjZ+nZRmcXtzQ+rvQljYSGzosSDjYyUfGwDGMAsQ3CQy4=\", \"EncryptionData\":
-        {\"WrappedContentKey\": {\"KeyId\": \"key1\", \"EncryptedKey\": \"pEyzHAK3yJVRjMiMMHDaBS4zciJMGg3XjqOKoH2xu2zbkA5NYTlPpw==\",
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>7382fc26-f7d4-405c-948b-de4e5e404a36</MessageId><InsertionTime>Wed,
+        15 Jun 2022 00:54:26 GMT</InsertionTime><ExpirationTime>Wed, 22 Jun 2022 00:54:26
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAABNxIiFKA2AE=</PopReceipt><TimeNextVisible>Wed,
+        15 Jun 2022 00:54:56 GMT</TimeNextVisible><DequeueCount>2</DequeueCount><MessageText>{\"EncryptedMessageContents\":
+        \"9fePUgts8vsuHbshyOmSeCx4lUghM9DwUFK6kdQOBHOwYrk=\", \"EncryptionData\":
+        {\"WrappedContentKey\": {\"KeyId\": \"key1\", \"EncryptedKey\": \"N7MloOUj5rhuwXLAGTbv2bixqGb4EzQnAkDjv/7KxU5b63rbVGL6381/asBeWLmH\",
         \"Algorithm\": \"A256KW\"}, \"EncryptionAgent\": {\"Protocol\": \"2.0\", \"EncryptionAlgorithm\":
         \"AES_GCM_256\"}, \"EncryptedRegionInfo\": {\"DataLength\": 4194304, \"NonceLength\":
         12}, \"KeyWrappingMetadata\": {\"EncryptionLibrary\": \"Python 12.4.0b1\"}}}</MessageText></QueueMessage></QueueMessagesList>"
@@ -204,7 +204,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Wed, 08 Jun 2022 20:49:13 GMT
+      - Wed, 15 Jun 2022 00:54:26 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
