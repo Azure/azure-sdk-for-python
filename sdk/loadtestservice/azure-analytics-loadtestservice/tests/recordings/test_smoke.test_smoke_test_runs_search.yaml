@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-analytics-loadtestservice/1.0.0b1 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://myservice.azure.com/testruns/sortAndFilter?maxPageSize=50&api-version=2022-06-01-preview
+    uri: https://eccdc9b7-7603-402b-879d-bde2b637db56.eus.cnt-prod.loadtesting.azure.com/testruns/sortAndFilter?maxPageSize=50&api-version=2022-06-01-preview
   response:
     body:
       string: '{"value":[],"nextLink":null}'
@@ -25,9 +25,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 15 Jun 2022 08:49:29 GMT
+      - Wed, 15 Jun 2022 09:14:42 GMT
       mise-correlation-id:
-      - 3bb51b18-f0b2-4ec9-a871-5adf1ce9febf
+      - 402365d3-eb7a-4689-8b51-fa4a5b41d9ff
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       x-content-type-options:
