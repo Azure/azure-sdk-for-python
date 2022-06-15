@@ -15,4 +15,4 @@ class PurviewCatalogSmokeTestAsync(PurviewCatalogTestAsync):
         client = self.create_async_client(endpoint=purviewcatalog_endpoint)
         response = await client.types.get_all_type_definitions()
 
-        assert set(response.keys()) == set(['enumDefs', 'structDefs', 'classificationDefs', 'entityDefs', 'relationshipDefs'])
+        assert set(response.keys()) == set(['enumDefs', 'structDefs', 'classificationDefs', 'entityDefs', 'relationshipDefs','businessMetadataDefs'])
