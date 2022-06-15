@@ -29,7 +29,7 @@ print(results)
 ids = list(map(lambda result: result.data_sources.geometry.id, results.results))
 
 
-result = client.get_polygons(ids)
+result = client.get_geometries(ids)
 print("Get Search Address by Geomtry ids:")
 print(result)
 

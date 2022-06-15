@@ -1,3 +1,8 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
 # pylint: disable=unused-import,ungrouped-imports
 class LatLon(object):
 
@@ -17,8 +22,7 @@ class LatLon(object):
     def lat(self, value: float) -> None:
         if not isinstance(value, float):
             raise TypeError(f'lat.setter(): got {type(value).__name__} but expected type is float')
-        else:
-            self._lat = value
+        self._lat = value
 
     @property
     def lon(self) -> float:
@@ -28,8 +32,7 @@ class LatLon(object):
     def lon(self, value: float) -> None:
         if not isinstance(value, float):
             raise TypeError(f'lon.setter(): got {type(value).__name__} but expected type is float')
-        else:
-            self._lon = value
+        self._lon = value
 
 class BoundingBox(object):
 

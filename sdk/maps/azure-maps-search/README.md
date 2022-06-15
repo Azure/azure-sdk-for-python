@@ -69,6 +69,61 @@ search_client = SearchClient(
 
 ## Key concepts
 
+## Examples
+
+The following sections provide several code snippets covering some of the most common Azure Maps Search tasks, including:
+
+- [Request latitude and longitude coordinates for an address](#request-latitude-and-longitude-coordinates-for-an-address)
+
+- [Search for an address or Point of Interest](#search-for-an-address-or-point-of-interest)
+
+- [Make a Reverse Address Search to translate coordinate location to street address](#make-a-reverse-address-search-to-translate-coordinate-location-to-street-address)
+- [Translate coordinate location into a human understandable cross street](#translate-coordinate-location-into-a-human-understandable-cross-street)
+- [More Sample Code](#sample-code)
+
+### Request latitude and longitude coordinates for an address
+
+You can use an authenticated client to convert an address into latitude and longitude coordinates. This process is also called geocoding. In addition to returning the coordinates, the response will also return detailed address properties such as street, postal code, municipality, and country/region information.
+
+```python
+search_result = client.search_address("400 Broad, Seattle");
+```
+
+### Search for an address or Point of Interest
+
+You can use Fuzzy Search to search an address or a point of interest (POI). The following examples demostrate how to search for `pizza` over the scope of a specific country (`France`, in this example).
+
+```python
+fuzzy_search_result = client.fuzzy_search({ query: "pizza", country_filter: "fr" });
+```
+
+### Make a Reverse Address Search to translate coordinate location to street address
+
+You can translate coordinates into human readable street addresses. This process is also called reverse geocoding.
+This is often used for applications that consume GPS feeds and want to discover addresses at specific coordinate points.
+
+```python
+coordinates: LatLon = {
+  latitude: 47.59118,
+  longitude: -122.3327,
+};
+
+reverse_search_result = client.reverse_search_address(coordinates);
+```
+
+### Translate coordinate location into a human understandable cross street
+
+Translate coordinate location into a human understandable cross street by using Search Address Reverse Cross Street API. Most often, this is needed in tracking applications that receive a GPS feed from a device or asset, and wish to know where the coordinate is located.
+
+```python
+coordinates: LatLon = {
+  latitude: 47.59118,
+  longitude: -122.3327,
+};
+
+const reverse_search_result = client.reverse_search_cross_street_address(coordinates);
+```
+
 ### Sample Code
 
 These are code samples that show common scenario operations with the Azure Maps Search client library.
@@ -86,7 +141,7 @@ pip install azure-maps-search
 python samples\search.py
 ```
 
-### Troubleshooting
+## Troubleshooting
 
 Running into issues? This section should contain details as to what to do there.
 
@@ -99,7 +154,6 @@ More sample code should go [here](https://github.com/Azure/azure-sdk-for-python/
 If you encounter any bugs or have suggestions, please file an issue in the [Issues](<https://github.com/Azure/azure-sdk-for-python/issues>) section of the project.
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftemplate%2Fazure-template%2FREADME.png)
-
 
 <!-- LINKS -->
 [azure_subscription]: https://azure.microsoft.com/free/

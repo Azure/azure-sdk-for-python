@@ -4,29 +4,43 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, overload, Union
+# pylint: disable=unused-import,ungrouped-imports
+from typing import TYPE_CHECKING, overload, Union, Any, List, Optional
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import HttpResponseError
+from azure.core.polling import LROPoller
 from ._generated._search_client import SearchClient as SearchClientGen
-from ._generated.models import PointOfInterestCategory, ReverseSearchCrossStreetAddressResult, SearchAlongRouteRequest, GeoJsonObject, BatchRequest, SearchAddressBatchResult, Polygon
-from .models import LatLon, SearchAddressResult, ReverseSearchAddressResult, ReverseSearchAddressBatchProcessResult
-# from .utils import get_authentication_policy, get_headers_policy
-
+from ._generated.models import (
+    PointOfInterestCategory,
+    ReverseSearchCrossStreetAddressResult,
+    SearchAlongRouteRequest,
+    GeoJsonObject,
+    BatchRequest,
+    SearchAddressBatchResult,
+    Polygon,
+)
+from .models import (
+    LatLon,
+    StructuredAddress,
+    SearchAddressResult,
+    ReverseSearchAddressResult,
+    ReverseSearchAddressBatchProcessResult,
+)
 if TYPE_CHECKING:
-    from typing import Any, List, Optional, Object
     from azure.core.credentials import TokenCredential
-    from azure.core.polling import LROPoller
-    from .models import LatLon, StructuredAddress, SearchAddressResult, ReverseSearchAddressResult, ReverseSearchAddressBatchProcessResult
+
+
 
 class SearchClient(object):
     """Azure Maps Search REST APIs.
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     """
+
     def __init__(
         self,
-        credential, # type: TokenCredential
-        **kwargs # type: Any
+        credential,  # type: TokenCredential
+        api_version=None, # type: Optional[str]
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
 
@@ -36,18 +50,17 @@ class SearchClient(object):
 
         self._search_client = SearchClientGen(
             credential,
+            api_version=api_version,
             **kwargs
         ).search
 
-
     @distributed_trace
-    def get_polygons(
+    def get_geometries(
         self,
         geometry_ids,  # type: List[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Polygon]
-        
         """**Get Polygon**
         `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-polygon>`_.
 
@@ -60,7 +73,7 @@ class SearchClient(object):
             geometry_ids,
             **kwargs
         )
-        result = [] if polygon_result is {} else polygon_result.polygons
+        result = [] if not polygon_result else polygon_result.polygons
         return result
 
     @overload
@@ -68,7 +81,7 @@ class SearchClient(object):
         self,
         query,  # type: str
         *,
-        coordinates, # type: Union[str, LatLon]
+        coordinates,  # type: Union[str, LatLon]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -86,7 +99,7 @@ class SearchClient(object):
         self,
         query,  # type: str
         *,
-        country_filter, # type Optional[list[str]]
+        country_filter,  # type Optional[list[str]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -181,15 +194,14 @@ class SearchClient(object):
         :return: SearchAddressResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        
+
         coordinates = kwargs.get("coordinates", None)
         country_filter = kwargs.get("country_filter", None)
-        
+
         if not coordinates or not country_filter:
-                raise TypeError('at least "coordinates" or "country_filter" is required')
-            
-        coordinates = LatLon() if not coordinates else coordinates
-        
+            raise TypeError(
+                'at least "coordinates" or "country_filter" is required')
+
         return self._search_client.fuzzy_search(
             query,
             lat=coordinates.lat,
@@ -198,16 +210,15 @@ class SearchClient(object):
             **kwargs
         )
 
-
     @distributed_trace
     def get_point_of_interest_categories(
         self,
         **kwargs  # type: Any
     ):
         # type: (...) -> List[PointOfInterestCategory]
-
         """**Get POI Category Tree**
-        `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-poi-category-tree-preview>`_.
+        `Reference Document
+         <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-poi-category-tree-preview>`_.
 
         :keyword str language: Language in which search results should be returned. Should be one of
          supported IETF language tags, except NGT and NGT-Latn. Language tag is case insensitive. When
@@ -221,17 +232,16 @@ class SearchClient(object):
         )
         return result.categories
 
-
     @distributed_trace
     def reverse_search_address(
         self,
-        coordinates, # type: Union[str, LatLon]
+        coordinates,  # type: Union[str, LatLon]
         **kwargs  # type: Any
     ):
         # type: (...) -> "ReverseSearchAddressResult"
-
         """**Search Address Reverse Batch API**
-        `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/post-search-address-reverse-batch>`_.
+        `Reference Document
+         <https://docs.microsoft.com/en-us/rest/api/maps/search/post-search-address-reverse-batch>`_.
 
         :param coordinates: The applicable coordinates
         :type coordinates: ~azure.maps.search._models.LatLon
@@ -246,12 +256,12 @@ class SearchClient(object):
          of the street (Left/Right) and also an offset position for that number.
         :keyword bool include_road_use: Boolean. To enable return of the road use array for reverse geocodes
          at street level.
-        :keyword road_use: To restrict reverse geocodes to a certain type of road use. 
+        :keyword road_use: To restrict reverse geocodes to a certain type of road use.
         :paramtype road_use: list[str or ~azure.maps.search.models.RoadUseType]
         :keyword bool allow_freeform_newline: Format of newlines in the formatted address.
         :keyword bool include_match_type: Include information on the type of match the geocoder achieved in
          the response.
-        :keyword entity_type: Specifies the level of filtering performed on geographies. 
+        :keyword entity_type: Specifies the level of filtering performed on geographies.
         :paramtype entity_type: str or ~azure.maps.search.models.GeographicEntityType
         :keyword localized_map_view: The View parameter (also called the "user region" parameter) allows
          you to show the correct maps for a certain country/region for geopolitically disputed regions.
@@ -261,21 +271,20 @@ class SearchClient(object):
         """
         result = self._search_client.reverse_search_address(
             query=[coordinates.lat, coordinates.lat]
-            **kwargs
+            ** kwargs
         )
-        return ReverseSearchAddressResult(result.summary, result.addresses)
-
+        return ReverseSearchAddressResult(summary=result.summary, results=result.addresses)
 
     @distributed_trace
     def reverse_search_cross_street_address(
         self,
-        coordinates, # type: Union[str, LatLon]
+        coordinates,  # type: Union[str, LatLon]
         **kwargs  # type: Any
     ):
         # type: (...) -> "ReverseSearchCrossStreetAddressResult"
-        
         """**Reverse Geocode to a Cross Street**
-        `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-address-reverse-cross-street>`_.
+        `Reference Document
+         <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-address-reverse-cross-street>`_.
 
         :param coordinates: The applicable coordinates
         :type coordinates: ~azure.maps.search._models.LatLon
@@ -305,7 +314,6 @@ class SearchClient(object):
             [coordinates.lat, coordinates.lat],
             **kwargs
         )
-
 
     @distributed_trace
     def search_along_route(
@@ -341,7 +349,7 @@ class SearchClient(object):
          restrict the result to specific Points of Interest categories. ID order does not matter. When
          multiple category identifiers are provided, only POIs that belong to (at least) one of the
          categories from the provided list will be returned. The list of supported categories can be
-         discovered using  `POI Categories API <https://aka.ms/AzureMapsPOICategoryTree>`_. 
+         discovered using  `POI Categories API <https://aka.ms/AzureMapsPOICategoryTree>`_.
         :keyword electric_vehicle_connector_filter: A comma-separated list of connector types which could
          be used to restrict the result to Electric Vehicle Station supporting specific connector types.
          Item order does not matter. When multiple connector types are provided, only results that
@@ -373,7 +381,7 @@ class SearchClient(object):
             route,
             **kwargs
         )
-        return SearchAddressResult(result.summary, result.results)
+        return SearchAddressResult(summary=result.summary, results=result.results)
 
     @distributed_trace
     def search_inside_geometry(
@@ -385,7 +393,7 @@ class SearchClient(object):
         # type: (...) -> "SearchAddressResult"
         """
         The Search Geometry endpoint allows you to perform a free form search inside a single geometry
-        or many of them. 
+        or many of them.
         `Reference Document <>`_
 
         :param query: The POI name to search for (e.g., "statue of liberty", "starbucks", "pizza").
@@ -404,7 +412,7 @@ class SearchClient(object):
          restrict the result to specific Points of Interest categories. ID order does not matter. When
          multiple category identifiers are provided, only POIs that belong to (at least) one of the
          categories from the provided list will be returned. The list of supported categories can be
-         discovered using  `POI Categories API <https://aka.ms/AzureMapsPOICategoryTree>`_. 
+         discovered using  `POI Categories API <https://aka.ms/AzureMapsPOICategoryTree>`_.
         :keyword extended_postal_codes_for: Indexes for which extended postal codes should be included in
          the results.
         :paramtype extended_postal_codes_for: list[str or ~azure.maps.search.models.SearchIndexes]
@@ -438,12 +446,11 @@ class SearchClient(object):
         )
         return SearchAddressResult(result.summary, result.results)
 
-
     @overload
     def search_point_of_interest(
         self,
         query,  # type: str
-        coordinates, # type: Union[str, LatLon]
+        coordinates,  # type: Union[str, LatLon]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -462,7 +469,7 @@ class SearchClient(object):
         :type coordinates: ~azure.maps.search._models.LatLon
         :return: SearchAddressResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
-        """         
+        """
         coordinates = LatLon() if not coordinates else coordinates
 
         result = self._search_client.search_point_of_interest(
@@ -472,13 +479,12 @@ class SearchClient(object):
             **kwargs
         )
         return SearchAddressResult(result.summary, result.results)
- 
-   
+
     @overload
     def search_point_of_interest(
         self,
         query,  # type: str
-        country_filter, # type list[str]
+        country_filter,  # type list[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -489,16 +495,16 @@ class SearchClient(object):
         additional query parameters such as language and filtering results by area of interest driven
         by country or bounding box.  Endpoint will return only POI results matching the query string.
         Response includes POI details such as address, coordinate location and category.
-        
+
         :param query: The POI name to search for (e.g., "statue of liberty", "starbucks"), must be
          properly URL encoded.
         :type query: str
         :keyword list[int] category_filter: A comma-separated list of category set IDs which could be used to
-         restrict the result to specific Points of Interest categories. 
+         restrict the result to specific Points of Interest categories.
         :keyword list[int] country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
         :return: SearchAddressResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
-        """         
+        """
 
         result = self._search_client.search_point_of_interest(
             query,
@@ -506,7 +512,6 @@ class SearchClient(object):
             **kwargs
         )
         return SearchAddressResult(result.summary, result.results)
-
 
     @distributed_trace
     def search_point_of_interest(
@@ -533,7 +538,7 @@ class SearchClient(object):
         :keyword int skip: Starting offset of the returned results within the full result set. Default: 0,
          minimum: 0 and maximum: 1900.
         :keyword list[int] category_filter: A comma-separated list of category set IDs which could be used to
-         restrict the result to specific Points of Interest categories. 
+         restrict the result to specific Points of Interest categories.
         :keyword list[int] country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
          search to the specified countries.
         :param coordinates: coordinates
@@ -560,12 +565,13 @@ class SearchClient(object):
         :paramtype operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
         :return: SearchAddressResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
-        """         
+        """
         coordinates = kwargs.get("coordinates", None)
         country_filter = kwargs.get("country_filter", None)
 
         if not coordinates or not country_filter:
-                raise TypeError('at least "coordinates" or "country_filter" is required')
+            raise TypeError(
+                'at least "coordinates" or "country_filter" is required')
 
         coordinates = LatLon() if not coordinates else coordinates
 
@@ -578,23 +584,23 @@ class SearchClient(object):
         )
         return SearchAddressResult(result.summary, result.results)
 
-
     @distributed_trace
     def search_nearby_point_of_interest(
         self,
-        coordinates, # type: Union[str, LatLon]
+        coordinates,  # type: Union[str, LatLon]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
         """**Search Nearby Point of Interest **
-        Please refer to `Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-nearby>`_ for details.
+        Please refer to
+         `Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-nearby>`_ for details.
 
         :keyword int top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
          maximum: 100.
         :keyword int skip: Starting offset of the returned results within the full result set. Default: 0,
          minimum: 0 and maximum: 1900.
         :keyword list[int] category_filter: A comma-separated list of category set IDs which could be used to
-         restrict the result to specific Points of Interest categories. ID order does not matter. 
+         restrict the result to specific Points of Interest categories. ID order does not matter.
         :keyword list[str] country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
          search to the specified countries.
         :param coordinates: The applicable coordinates
@@ -602,7 +608,7 @@ class SearchClient(object):
         :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area, Min value is 1, Max Value is 50000.
         :keyword str language: Language in which search results should be returned. Should be one of
-         supported IETF language tags, case insensitive. 
+         supported IETF language tags, case insensitive.
         :keyword extended_postal_codes_for: Indexes for which extended postal codes should be included in
          the results.
         :paramtype extended_postal_codes_for: list[str or ~azure.maps.search.models.SearchIndexes]
@@ -631,7 +637,7 @@ class SearchClient(object):
         self,
         query,  # type: str
         *,
-        coordinates, # type: Union[str, LatLon]
+        coordinates,  # type: Union[str, LatLon]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -649,7 +655,7 @@ class SearchClient(object):
         self,
         query,  # type: str
         *,
-        country_filter, # type Optional[list[str]]
+        country_filter,  # type Optional[list[str]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -689,7 +695,7 @@ class SearchClient(object):
         :param coordinates: The applicable coordinates
         :type coordinates: ~azure.maps.search._models.LatLon
         :keyword list[int] category_filter: A comma-separated list of category set IDs which could be used to
-         restrict the result to specific Points of Interest categories. 
+         restrict the result to specific Points of Interest categories.
         :param country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
          search to the specified countries.
         :type country_filter: list[str]
@@ -723,7 +729,8 @@ class SearchClient(object):
         country_filter = kwargs.get("country_filter", None)
 
         if not coordinates or not country_filter:
-                raise TypeError('at least "coordinates" or "country_filter" is required')
+            raise TypeError(
+                'at least "coordinates" or "country_filter" is required')
 
         coordinates = LatLon() if not coordinates else coordinates
 
@@ -740,7 +747,7 @@ class SearchClient(object):
     def search_address(
         self,
         query,  # type: str
-        coordinates=None, # type: "LatLon"
+        coordinates=None,  # type: "LatLon"
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -774,7 +781,7 @@ class SearchClient(object):
         :type top_left: str
         :param btm_right: Bottom right position of the bounding box. E.g. 37.553,-122.453.
         :type btm_right: str
-        :keyword str language: Language in which search results should be returned. 
+        :keyword str language: Language in which search results should be returned.
         :keyword extended_postal_codes_for: Indexes for which extended postal codes should be included in
          the results.
         :paramtype extended_postal_codes_for: list[str or ~azure.maps.search.models.SearchIndexes]
@@ -787,7 +794,7 @@ class SearchClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         coordinates = LatLon() if not coordinates else coordinates
-       
+
         result = self._search_client.search_address(
             query,
             lat=coordinates.lat,
@@ -796,11 +803,10 @@ class SearchClient(object):
         )
         return SearchAddressResult(result.summary, result.results)
 
-
     @distributed_trace
     def search_structured_address(
         self,
-        structured_address, # type: "StructuredAddress"
+        structured_address,  # type: "StructuredAddress"
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -838,11 +844,9 @@ class SearchClient(object):
             country_secondary_subdivision=structured_address.country_secondary_subdivision,
             country_subdivision=structured_address.country_subdivision,
             postal_code=structured_address.postal_code,
-            **kwargs
-        )
+            **kwargs)
         return SearchAddressResult(result.summary, result.results)
 
-   
     @distributed_trace
     def fuzzy_search_batch_sync(
         self,
@@ -869,7 +873,6 @@ class SearchClient(object):
             **kwargs
         )
 
-
     @distributed_trace
     def search_address_batch_sync(
         self,
@@ -890,7 +893,6 @@ class SearchClient(object):
             **kwargs
         )
 
-
     @distributed_trace
     def reverse_search_address_batch_sync(
         self,
@@ -900,7 +902,7 @@ class SearchClient(object):
         # type: (...) -> "ReverseSearchAddressBatchProcessResult"
         """**Search Address Reverse Batch API**
 
-        **Applies to**\ : S1 pricing tier.
+        **Applies to**\\ : S1 pricing tier.
 
         The Search Address Batch API sends batches of queries to `Search Address Reverse API
         <https://docs.microsoft.com/rest/api/maps/search/getsearchaddressreverse>`_ using just a single
@@ -922,4 +924,3 @@ class SearchClient(object):
             batch_result.batch_summary, batch_result.batch_items
         )
         return result
-

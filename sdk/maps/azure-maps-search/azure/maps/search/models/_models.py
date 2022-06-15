@@ -1,13 +1,19 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
 # pylint: disable=unused-import,ungrouped-imports
 from typing import List, Optional
 from .._generated.models import PointOfInterest, DataSource, ReverseSearchAddressBatchItem, BatchResultSummary
+
 
 class LatLon(object):
 
     def __init__(
         self,
-        lat: float=None,
-        lon: float=None
+        lat: float = None,
+        lon: float = None
     ):
         self._lat = lat
         self._lon = lon
@@ -19,7 +25,8 @@ class LatLon(object):
     @lat.setter
     def lat(self, value: float) -> None:
         if not isinstance(value, float):
-            raise TypeError(f'lat.setter(): got {type(value).__name__} but expected type is float')
+            raise TypeError(
+                f'lat.setter(): got {type(value).__name__} but expected type is float')
         self._lat = value
 
     @property
@@ -29,17 +36,19 @@ class LatLon(object):
     @lon.setter
     def lon(self, value: float) -> None:
         if not isinstance(value, float):
-            raise TypeError(f'lon.setter(): got {type(value).__name__} but expected type is float')
+            raise TypeError(
+                f'lon.setter(): got {type(value).__name__} but expected type is float')
         self._lon = value
+
 
 class BoundingBox(object):
 
     def __init__(
         self,
-        top_left: LatLon=None,
-        bottom_right: LatLon=None,
-        top_right: LatLon=None,
-        bottom_left: LatLon=None
+        top_left: LatLon = None,
+        bottom_right: LatLon = None,
+        top_right: LatLon = None,
+        bottom_left: LatLon = None
     ):
         self.top_left = top_left
         self.bottom_right = bottom_right
@@ -47,9 +56,13 @@ class BoundingBox(object):
         self.bottom = bottom_right.lat
         self.left = top_left.lon
         self.right = bottom_right.lon
-        self.top_right = top_right if top_right else LatLon(top_left.lat, bottom_right.lon)
-        self.bottom_left = bottom_left if bottom_left else LatLon(bottom_right.lat, top_left.lon)
+        self.top_right = top_right if top_right else LatLon(
+            top_left.lat, bottom_right.lon)
+        self.bottom_left = bottom_left if bottom_left else LatLon(
+            bottom_right.lat, top_left.lon)
 
+
+# pylint: disable=too-many-instance-attributes
 class StructuredAddress(object):
 
     def __init__(
@@ -83,7 +96,8 @@ class StructuredAddress(object):
     @country_code.setter
     def country_code(self, value: str) -> None:
         if not isinstance(value, str):
-            raise TypeError(f'country_code.setter(): got {type(value).__name__} but expected type is string')
+            raise TypeError(
+                f'country_code.setter(): got {type(value).__name__} but expected type is string')
         self._country_code = value
 
     @property
@@ -93,7 +107,8 @@ class StructuredAddress(object):
     @cross_street.setter
     def cross_street(self, value: str) -> None:
         if not isinstance(value, str):
-            raise TypeError(f'cross_street.setter(): got {type(value).__name__} but expected type is string')
+            raise TypeError(
+                f'cross_street.setter(): got {type(value).__name__} but expected type is string')
         self._cross_street = value
 
     @property
@@ -103,7 +118,8 @@ class StructuredAddress(object):
     @street_number.setter
     def street_number(self, value) -> None:
         if not isinstance(value, str):
-            raise TypeError(f'street_number.setter(): got {type(value).__name__} but expected type is string')
+            raise TypeError(
+                f'street_number.setter(): got {type(value).__name__} but expected type is string')
         self._street_number = value
 
     @property
@@ -113,7 +129,8 @@ class StructuredAddress(object):
     @street_name.setter
     def street_name(self, value: str) -> None:
         if not isinstance(value, str):
-            raise TypeError(f'street_name.setter(): got {type(value).__name__} but expected type is string')
+            raise TypeError(
+                f'street_name.setter(): got {type(value).__name__} but expected type is string')
         self._street_name = value
 
     @property
@@ -123,7 +140,8 @@ class StructuredAddress(object):
     @municipality.setter
     def municipality(self, value: str) -> None:
         if not isinstance(value, str):
-            raise TypeError(f'municipality.setter(): got {type(value).__name__} but expected type is string')
+            raise TypeError(
+                f'municipality.setter(): got {type(value).__name__} but expected type is string')
         self._municipality = value
 
     @property
@@ -133,7 +151,8 @@ class StructuredAddress(object):
     @municipality_subdivision.setter
     def municipality_subdivision(self, value: str) -> None:
         if not isinstance(value, str):
-            raise TypeError(f'municipality_subdivision.setter(): got {type(value).__name__} but expected type is string')
+            raise TypeError(
+                f'municipality_subdivision.setter(): got {type(value).__name__} but expected type is string')
         self._municipality_subdivision = value
 
     @property
@@ -143,7 +162,8 @@ class StructuredAddress(object):
     @country_tertiary_subdivision.setter
     def country_tertiary_subdivision(self, value: str) -> None:
         if not isinstance(value, str):
-            raise TypeError(f'country_tertiary_subdivision.setter(): got {type(value).__name__} but expected type is string')
+            raise TypeError(
+                f'country_tertiary_subdivision.setter(): got {type(value).__name__} but expected type is string')
         self._country_tertiary_subdivision = value
 
     @property
@@ -153,7 +173,8 @@ class StructuredAddress(object):
     @country_secondary_subdivision.setter
     def country_secondary_subdivision(self, value: str) -> None:
         if not isinstance(value, str):
-            raise TypeError(f'country_secondary_subdivision.setter(): got {type(value).__name__} but expected type is string')
+            raise TypeError(
+                f'country_secondary_subdivision.setter(): got {type(value).__name__} but expected type is string')
         self._country_secondary_subdivision = value
 
     @property
@@ -163,9 +184,9 @@ class StructuredAddress(object):
     @country_subdivision.setter
     def country_subdivision(self, value: str) -> None:
         if not isinstance(value, str):
-            raise TypeError(f'country_subdivision.setter(): got {type(value).__name__} but expected type is string')
-        else:
-            self._country_subdivision = value
+            raise TypeError(
+                f'country_subdivision.setter(): got {type(value).__name__} but expected type is string')
+        self._country_subdivision = value
 
     @property
     def postal_code(self) -> str:
@@ -174,7 +195,8 @@ class StructuredAddress(object):
     @postal_code.setter
     def postal_code(self, value: str) -> None:
         if not isinstance(value, str):
-            raise TypeError(f'postal_code.setter(): got {type(value).__name__} but expected type is string')
+            raise TypeError(
+                f'postal_code.setter(): got {type(value).__name__} but expected type is string')
         self._postal_code = value
 
 
@@ -216,7 +238,7 @@ class AddressRanges(object):
         self.from_property = LatLon() if not from_property else LatLon(
             from_property.lat, from_property.lon
         )
-        self.to =  LatLon() if not to_ else LatLon(
+        self.to = LatLon() if not to_ else LatLon(
             to_.lat, to_.lon
         )
 
@@ -224,15 +246,16 @@ class AddressRanges(object):
 class EntryPoint(object):
     def __init__(
         self,
-        type: str = None,
+        _type: str = None,
         position: LatLon = None
     ):
-        self.type = type
+        self.type = _type
         self.position = LatLon() if not position else LatLon(
             position.lat, position.lon
         )
 
 
+# pylint: disable=too-many-instance-attributes
 class Address(object):
 
     def __init__(
@@ -246,7 +269,7 @@ class Address(object):
         street_name_and_number: str = None,
         municipality: str = None,
         municipality_subdivision: str = None,
-        country_tertiary_subdivision:str = None,
+        country_tertiary_subdivision: str = None,
         country_secondary_subdivision: str = None,
         country_subdivision: str = None,
         postal_code: str = None,
@@ -282,6 +305,7 @@ class Address(object):
         self.bounding_box = bounding_box
 
 
+# pylint: disable=too-many-instance-attributes
 class SearchAddressResultItem(object):
 
     def __init__(
@@ -333,6 +357,7 @@ class SearchAddressResult(object):
     :ivar results: A list of Search API results.
     :vartype results: list[~azure.maps.search.models.SearchAddressResultItem]
     """
+
     def __init__(
         self,
         summary: SearchSummary = None,
@@ -366,6 +391,7 @@ class ReverseSearchAddressResultItem(object):
     :ivar match_type: Information on the type of match.
     :vartype match_type: str or ~azure.maps.search.models.MatchType
     """
+
     def __init__(
         self,
         address: Address = None,
@@ -391,6 +417,7 @@ class ReverseSearchAddressResult(object):
     :ivar addresses: Addresses array.
     :vartype addresses: list[~azure.maps.search.models.ReverseSearchAddressResultItem]
     """
+
     def __init__(
         self,
         summary: SearchSummary = None,
