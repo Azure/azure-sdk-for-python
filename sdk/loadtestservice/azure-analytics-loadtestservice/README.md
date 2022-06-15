@@ -58,7 +58,7 @@ Use the returned token credential to authenticate the client:
 ## Key concepts
 Azure Load Testing Preview is a fully managed load-testing service that enables you to generate high-scale load. The service simulates traffic for your applications, regardless of where they're hosted. Developers, testers, and quality assurance (QA) engineers can use it to optimize application performance, scalability, or capacity.
 
-## Troubleshootings
+## Troubleshooting
 More about it is coming soon...
 
 ## Next steps
