@@ -1301,24 +1301,30 @@ class StorageContainerTest(StorageTestCase):
         data = b'hello world'
 
         try:
-            blob_client1 = container.get_blob_client('blob1')
-            blob_client1.upload_blob(data)
-            container.get_blob_client('blob2').upload_blob(data)
-            container.get_blob_client('blob3').upload_blob(data)
+            blob = bsc.get_blob_client(container.container_name, 'blob1')
+            blob.upload_blob(data, length=len(data))
         except:
             pass
+        blob = bsc.get_blob_client(container.container_name, 'blob1')
+        old_blob_version_id = blob.get_blob_properties().get("version_id")
+        blob.stage_block(block_id='1', data="Test Content")
+        blob.commit_block_list(['1'])
+        new_blob_version_id = blob.get_blob_properties().get("version_id")
+        assert old_blob_version_id != new_blob_version_id
 
-        # Act
+        blob1_del_data = dict()
+        blob1_del_data['name'] = 'blob1'
+        blob1_del_data['version_id'] = old_blob_version_id
+
+        print('\n***CONTAINER NAME***:', container.container_name)
+        print('***OLD VID***:', old_blob_version_id)
+        print('***NEW VID***:', new_blob_version_id)
+
         response = container.delete_blobs(
-            blob_client1.get_blob_properties(),
-            'blob2',
-            'blob3',
+            blob1_del_data
         )
         response = list(response)
-        assert len(response) == 3
-        assert response[0].status_code == 202
-        assert response[1].status_code == 202
-        assert response[2].status_code == 202
+        print('***RESPONSE***:', response)
 
     @pytest.mark.live_test_only
     @BlobPreparer()

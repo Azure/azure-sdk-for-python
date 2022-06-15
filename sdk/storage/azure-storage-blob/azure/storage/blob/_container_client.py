@@ -35,6 +35,7 @@ from ._shared.response_handlers import (
     return_headers_and_deserialized)
 from ._generated import AzureBlobStorage
 from ._generated.models import SignedIdentifier
+from ._generated.operations._blob_operations import build_delete_request
 from ._deserialize import deserialize_container_properties
 from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 from ._models import ( # pylint: disable=unused-import
@@ -1150,68 +1151,68 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         kwargs.setdefault('merge_span', True)
         return blob_client.download_blob(offset=offset, length=length, **kwargs)
 
-    def _generate_delete_blobs_subrequest_options(
-        self, snapshot=None,
-        delete_snapshots=None,
-        lease_access_conditions=None,
-        modified_access_conditions=None,
-        **kwargs
-    ):
-        """This code is a copy from _generated.
+    # def _generate_delete_blobs_subrequest_options(
+    #     self, snapshot=None,
+    #     delete_snapshots=None,
+    #     lease_access_conditions=None,
+    #     modified_access_conditions=None,
+    #     **kwargs
+    # ):
+    #     """This code is a copy from _generated.
 
-        Once Autorest is able to provide request preparation this code should be removed.
-        """
-        lease_id = None
-        if lease_access_conditions is not None:
-            lease_id = lease_access_conditions.lease_id
-        if_modified_since = None
-        if modified_access_conditions is not None:
-            if_modified_since = modified_access_conditions.if_modified_since
-        if_unmodified_since = None
-        if modified_access_conditions is not None:
-            if_unmodified_since = modified_access_conditions.if_unmodified_since
-        if_match = None
-        if modified_access_conditions is not None:
-            if_match = modified_access_conditions.if_match
-        if_none_match = None
-        if modified_access_conditions is not None:
-            if_none_match = modified_access_conditions.if_none_match
-        if_tags = None
-        if modified_access_conditions is not None:
-            if_tags = modified_access_conditions.if_tags
+    #     Once Autorest is able to provide request preparation this code should be removed.
+    #     """
+    #     lease_id = None
+    #     if lease_access_conditions is not None:
+    #         lease_id = lease_access_conditions.lease_id
+    #     if_modified_since = None
+    #     if modified_access_conditions is not None:
+    #         if_modified_since = modified_access_conditions.if_modified_since
+    #     if_unmodified_since = None
+    #     if modified_access_conditions is not None:
+    #         if_unmodified_since = modified_access_conditions.if_unmodified_since
+    #     if_match = None
+    #     if modified_access_conditions is not None:
+    #         if_match = modified_access_conditions.if_match
+    #     if_none_match = None
+    #     if modified_access_conditions is not None:
+    #         if_none_match = modified_access_conditions.if_none_match
+    #     if_tags = None
+    #     if modified_access_conditions is not None:
+    #         if_tags = modified_access_conditions.if_tags
 
-        # Construct parameters
-        timeout = kwargs.pop('timeout', None)
-        query_parameters = {}
-        if snapshot is not None:
-            query_parameters['snapshot'] = self._client._serialize.query("snapshot", snapshot, 'str')  # pylint: disable=protected-access
-        if timeout is not None:
-            query_parameters['timeout'] = self._client._serialize.query("timeout", timeout, 'int', minimum=0)  # pylint: disable=protected-access
+    #     # Construct parameters
+    #     timeout = kwargs.pop('timeout', None)
+    #     query_parameters = {}
+    #     if snapshot is not None:
+    #         query_parameters['snapshot'] = self._client._serialize.query("snapshot", snapshot, 'str')  # pylint: disable=protected-access
+    #     if timeout is not None:
+    #         query_parameters['timeout'] = self._client._serialize.query("timeout", timeout, 'int', minimum=0)  # pylint: disable=protected-access
 
-        # Construct headers
-        header_parameters = {}
-        if delete_snapshots is not None:
-            header_parameters['x-ms-delete-snapshots'] = self._client._serialize.header(  # pylint: disable=protected-access
-                "delete_snapshots", delete_snapshots, 'DeleteSnapshotsOptionType')
-        if lease_id is not None:
-            header_parameters['x-ms-lease-id'] = self._client._serialize.header(  # pylint: disable=protected-access
-                "lease_id", lease_id, 'str')
-        if if_modified_since is not None:
-            header_parameters['If-Modified-Since'] = self._client._serialize.header(  # pylint: disable=protected-access
-                "if_modified_since", if_modified_since, 'rfc-1123')
-        if if_unmodified_since is not None:
-            header_parameters['If-Unmodified-Since'] = self._client._serialize.header(  # pylint: disable=protected-access
-                "if_unmodified_since", if_unmodified_since, 'rfc-1123')
-        if if_match is not None:
-            header_parameters['If-Match'] = self._client._serialize.header(  # pylint: disable=protected-access
-                "if_match", if_match, 'str')
-        if if_none_match is not None:
-            header_parameters['If-None-Match'] = self._client._serialize.header(  # pylint: disable=protected-access
-                "if_none_match", if_none_match, 'str')
-        if if_tags is not None:
-            header_parameters['x-ms-if-tags'] = self._client._serialize.header("if_tags", if_tags, 'str')  # pylint: disable=protected-access
+    #     # Construct headers
+    #     header_parameters = {}
+    #     if delete_snapshots is not None:
+    #         header_parameters['x-ms-delete-snapshots'] = self._client._serialize.header(  # pylint: disable=protected-access
+    #             "delete_snapshots", delete_snapshots, 'DeleteSnapshotsOptionType')
+    #     if lease_id is not None:
+    #         header_parameters['x-ms-lease-id'] = self._client._serialize.header(  # pylint: disable=protected-access
+    #             "lease_id", lease_id, 'str')
+    #     if if_modified_since is not None:
+    #         header_parameters['If-Modified-Since'] = self._client._serialize.header(  # pylint: disable=protected-access
+    #             "if_modified_since", if_modified_since, 'rfc-1123')
+    #     if if_unmodified_since is not None:
+    #         header_parameters['If-Unmodified-Since'] = self._client._serialize.header(  # pylint: disable=protected-access
+    #             "if_unmodified_since", if_unmodified_since, 'rfc-1123')
+    #     if if_match is not None:
+    #         header_parameters['If-Match'] = self._client._serialize.header(  # pylint: disable=protected-access
+    #             "if_match", if_match, 'str')
+    #     if if_none_match is not None:
+    #         header_parameters['If-None-Match'] = self._client._serialize.header(  # pylint: disable=protected-access
+    #             "if_none_match", if_none_match, 'str')
+    #     if if_tags is not None:
+    #         header_parameters['x-ms-if-tags'] = self._client._serialize.header("if_tags", if_tags, 'str')  # pylint: disable=protected-access
 
-        return query_parameters, header_parameters
+    #     return query_parameters, header_parameters
 
     def _generate_delete_blobs_options(self,
                                        *blobs,  # type: List[Union[str, BlobProperties, dict]]
@@ -1256,14 +1257,24 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
                     if_tags_match_condition=if_tags_match_condition
                 )
 
-            query_parameters, header_parameters = self._generate_delete_blobs_subrequest_options(**options)
+            built_url = "/{}/{}{}".format(quote(container_name), quote(blob_name, safe='/~'), self._query_str)
 
-            req = HttpRequest(
-                "DELETE",
-                "/{}/{}{}".format(quote(container_name), quote(blob_name, safe='/~'), self._query_str),
-                headers=header_parameters
-            )
-            req.format_parameters(query_parameters)
+            # TODO: Shouldn't need to POP these
+            # Should just be not included or done better somehow
+            if 'etag' in options:
+                options.pop('etag')
+            if 'lease_access_conditions' in options:
+                options.pop('lease_access_conditions')
+            if 'modified_access_conditions' in options:
+                options.pop('modified_access_conditions')
+
+            req = build_delete_request(built_url, **options)
+            if 'x-ms-version' in req.headers:
+                req.headers.pop('x-ms-version')
+            if '?' in req.url:
+                req.url = req.url.split('?', 1)[0]
+
+            # req.format_parameters(query_parameters)
             reqs.append(req)
 
         return reqs, kwargs
