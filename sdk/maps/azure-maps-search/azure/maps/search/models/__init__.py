@@ -12,7 +12,8 @@ from .._generated.models import (
     GeographicEntityType,
     LocalizedMapView,
     ElectricVehicleConnector,
-    OperatingHoursRange
+    OperatingHoursRange,
+    GeoJsonObject
 )
 
 from ._models import (
@@ -56,5 +57,6 @@ __all__ = [
     'GeographicEntityType',
     'LocalizedMapView',
     'ElectricVehicleConnector',
-    'OperatingHoursRange'
+    'OperatingHoursRange',
+    'GeoJsonObject'
 ]

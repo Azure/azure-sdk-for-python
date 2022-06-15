@@ -68,7 +68,7 @@ class SearchClient(object):
         self,
         query,  # type: str
         *,
-        coordinates, # type: Optional[Union[str, LatLon]]
+        coordinates, # type: Union[str, LatLon]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -225,7 +225,7 @@ class SearchClient(object):
     @distributed_trace
     def reverse_search_address(
         self,
-        coordinates, # type: "LatLon"
+        coordinates, # type: Union[str, LatLon]
         **kwargs  # type: Any
     ):
         # type: (...) -> "ReverseSearchAddressResult"
@@ -269,7 +269,7 @@ class SearchClient(object):
     @distributed_trace
     def reverse_search_cross_street_address(
         self,
-        coordinates, # type: "LatLon"
+        coordinates, # type: Union[str, LatLon]
         **kwargs  # type: Any
     ):
         # type: (...) -> "ReverseSearchCrossStreetAddressResult"
@@ -443,7 +443,7 @@ class SearchClient(object):
     def search_point_of_interest(
         self,
         query,  # type: str
-        coordinates, # type: "LatLon"
+        coordinates, # type: Union[str, LatLon]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -561,6 +561,12 @@ class SearchClient(object):
         :return: SearchAddressResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
         """         
+        coordinates = kwargs.get("coordinates", None)
+        country_filter = kwargs.get("country_filter", None)
+
+        if not coordinates or not country_filter:
+                raise TypeError('at least "coordinates" or "country_filter" is required')
+
         coordinates = LatLon() if not coordinates else coordinates
 
         result = self._search_client.search_point_of_interest(
@@ -576,7 +582,7 @@ class SearchClient(object):
     @distributed_trace
     def search_nearby_point_of_interest(
         self,
-        coordinates, #type: "LatLon"
+        coordinates, # type: Union[str, LatLon]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -625,7 +631,7 @@ class SearchClient(object):
         self,
         query,  # type: str
         *,
-        coordinates, # type: Optional[Union[str, LatLon]]
+        coordinates, # type: Union[str, LatLon]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
