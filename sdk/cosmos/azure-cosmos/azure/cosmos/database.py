@@ -470,6 +470,7 @@ class DatabaseProxy(object):
         default_ttl=None,  # type: Optional[int]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
         populate_query_metrics=None,  # type: Optional[bool]
+        auto_scale_setting=None,  # type: Optional[AutoScale]
         **kwargs  # type: Any
     ):
         # type: (...) -> ContainerProxy
@@ -515,6 +516,10 @@ class DatabaseProxy(object):
                 UserWarning,
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
+
+        if auto_scale_setting is not None:
+            auto_scale_setting = auto_scale_header(auto_scale=auto_scale_setting)
+            request_options["autoUpgradePolicy"] = auto_scale_setting
 
         container_id = self._get_container_id(container)
         container_link = self._get_container_link(container_id)
