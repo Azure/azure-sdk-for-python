@@ -4,7 +4,15 @@ from .._generated.models import (
     BatchRequest,
     BatchResultSummary,
     Polygon,
-    ReverseSearchAddressBatchItem
+    ReverseSearchAddressBatchItem,
+    PointOfInterestCategory,
+    SearchAlongRouteRequest,
+    SearchAddressBatchResult,
+    SearchIndexes,
+    GeographicEntityType,
+    LocalizedMapView,
+    ElectricVehicleConnector,
+    OperatingHoursRange
 )
 
 from ._models import (
@@ -41,4 +49,12 @@ __all__ = [
     'ReverseSearchAddressBatchProcessResult',
     'ReverseSearchAddressResult',
     'ReverseSearchCrossStreetAddressResult',
+    'PointOfInterestCategory',
+    'SearchAlongRouteRequest',
+    'SearchAddressBatchResult',
+    'SearchIndexes',
+    'GeographicEntityType',
+    'LocalizedMapView',
+    'ElectricVehicleConnector',
+    'OperatingHoursRange'
 ]

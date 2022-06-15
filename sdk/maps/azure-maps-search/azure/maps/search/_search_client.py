@@ -37,7 +37,7 @@ class SearchClient(object):
         self._search_client = SearchClientGen(
             credential,
             **kwargs
-        )
+        ).search
 
 
     @distributed_trace
