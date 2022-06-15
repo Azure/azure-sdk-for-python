@@ -66,11 +66,11 @@ class AutoScaleTest(unittest.TestCase):
         created_container = self.created_database.create_container(
             id='container_with_auto_scale_setting',
             partition_key=PartitionKey(path="/id"),
-            auto_scale_setting=AutoScale(5000, 0)
+            auto_scale_setting=AutoScale(5000)
 
         )
         created_container_properties = created_container.get_throughput()
-        # Testing the input values of the max_throughput
+        # Testing the input value of the max_throughput
         self.assertEqual(
             created_container_properties.properties['content']['offerAutopilotSettings']['maxThroughput'], 5000)
 
@@ -96,7 +96,7 @@ class AutoScaleTest(unittest.TestCase):
 
         )
         created_container_properties = created_container.get_throughput()
-        # Testing the input values of the max_increment_percentage
+        # Testing the input value of the max_increment_percentage
         self.assertEqual(
             created_container_properties.properties['content']['offerAutopilotSettings']['autoUpgradePolicy']
             ['throughputPolicy']['incrementPercent'], 1)
@@ -138,3 +138,32 @@ class AutoScaleTest(unittest.TestCase):
             )
         except TypeError:
             pass
+
+    def test_create_container_if_not_exist(self):
+        # Testing auto_scale_setting for the create_container_if_not_exists method
+        created_container = self.created_database.create_container_if_not_exists(
+            id='container_with_auto_scale_setting',
+            partition_key=PartitionKey(path="/id"),
+            auto_scale_setting=AutoScale(1000)
+
+        )
+        created_container_properties = created_container.get_throughput()
+        # Testing the incorrect input value of the max_throughput
+        self.assertNotEqual(
+            created_container_properties.properties['content']['offerAutopilotSettings']['maxThroughput'], 2000)
+
+        self.created_database.delete_container(created_container)
+
+        created_container = self.created_database.create_container_if_not_exists(
+            id='container_with_auto_scale_setting',
+            partition_key=PartitionKey(path="/id"),
+            auto_scale_setting=AutoScale(5000, 2)
+
+        )
+        created_container_properties = created_container.get_throughput()
+        # Testing the incorrect input value of the max_increment_percentage
+        self.assertNotEqual(
+            created_container_properties.properties['content']['offerAutopilotSettings']['autoUpgradePolicy']
+            ['throughputPolicy']['incrementPercent'], 3)
+
+        self.created_database.delete_container(created_container)
