@@ -167,3 +167,22 @@ class AutoScaleTest(unittest.TestCase):
             ['throughputPolicy']['incrementPercent'], 3)
 
         self.created_database.delete_container(created_container)
+
+    def test_replace_container(self):
+        created_container = self.created_database.create_container_if_not_exists(
+            id='container_with_auto_scale_setting',
+            partition_key=PartitionKey(path="/id")
+
+        )
+        created_container = self.created_database.replace_container(
+            container=created_container.id,
+            partition_key=PartitionKey(path="/id"),
+            auto_scale_setting=AutoScale(5000)
+
+        )
+        created_container_properties = created_container.get_throughput()
+        # Testing the input value of the max_throughput
+        self.assertEqual(
+            created_container_properties.properties['content']['offerAutopilotSettings']['maxThroughput'], 5000)
+
+        self.created_database.delete_container(created_container)
