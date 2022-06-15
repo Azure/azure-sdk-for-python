@@ -8,6 +8,11 @@ import functools
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.analytics.loadtestservice import LoadTestClient
 
+LoadtestservicePowerShellPreparer = functools.partial(
+    PowerShellPreparer,
+    "loadtestservice",
+    loadtestservice_endpoint="https:fake.loadtesting.azure.com",
+)
 
 class LoadtestserviceTest(AzureTestCase):
     def __init__(self, method_name, **kwargs):
@@ -20,10 +25,8 @@ class LoadtestserviceTest(AzureTestCase):
             credential=credential,
             endpoint=endpoint,
         )
+    
+    
 
 
-LoadtestservicePowerShellPreparer = functools.partial(
-    PowerShellPreparer,
-    "loadtestservice",
-    loadtestservice_endpoint="https://fake.loadtesting.azure.com"
-)
+

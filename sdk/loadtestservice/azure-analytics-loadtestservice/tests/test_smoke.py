@@ -6,12 +6,11 @@
 # -------------------------------------------------------------------------
 from testcase import LoadtestserviceTest, LoadtestservicePowerShellPreparer
 
-
 class LoadtestserviceSmokeTest(LoadtestserviceTest):
 
     @LoadtestservicePowerShellPreparer()
     def test_smoke_list_search(self, loadtestservice_endpoint):
-        client = self.create_client(endpoint=loadtestservice_endpoint)
+        client = self.create_client(loadtestservice_endpoint)
         result = client.test.list_load_test_search()
         assert result is not None
 

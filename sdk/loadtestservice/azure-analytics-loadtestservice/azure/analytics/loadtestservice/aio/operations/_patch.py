@@ -12,51 +12,11 @@ from msrest import Serializer
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.rest import HttpRequest
 from azure.core.utils import case_insensitive_dict
-from ..._vendor import _format_url_section
 from ._operations import TestOperations as TestOperationsGenerated, JSON, ClsType
+from ...operations._patch import build_upload_test_file_request
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-
-def build_upload_test_file_request(
-        test_id: str,
-        file_id: str,
-        file_content,
-        **kwargs,
-    ) -> HttpRequest:
-    """
-    Core logic for uploading a file
-    """
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
-
-        # Construct URL
-    _url = "/loadtests/{testId}/files/{fileId}"
-    path_format_arguments = {
-        "testId": _SERIALIZER.url("test_id", test_id, 'str',
-        max_length=50, min_length=2, pattern=r'^[a-z0-9_-]*$'),
-        "fileId": _SERIALIZER.url("file_id", file_id, 'str',
-        max_length=50, min_length=2, pattern=r'^[a-z0-9_-]*$'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="PUT",
-        url=_url,
-        files=file_content,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
 
 class TestOperations(TestOperationsGenerated):
     """
@@ -65,7 +25,7 @@ class TestOperations(TestOperationsGenerated):
     def __init__(self, *args, **kwargs):
         super(TestOperations, self).__init__(*args, **kwargs)
 
-    def upload_test_file(
+    async def upload_test_file(
         self,
         test_id,
         file_id,
