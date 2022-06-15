@@ -7,7 +7,7 @@
 from cgitb import lookup
 import datetime
 from email.generator import Generator
-from typing import Any, Dict, ItemsView, Iterator, KeysView, List, Mapping, MutableMapping, Optional, Sequence, Tuple, Union, ValuesView
+from typing import Any, Dict, ItemsView, Iterable, Iterator, KeysView, List, Mapping, MutableMapping, Optional, Sequence, Tuple, Union, ValuesView
 
 
 class _FixedOffset(datetime.tzinfo):
@@ -101,8 +101,9 @@ class CaseInsensitiveDict(MutableMapping):
     case_insensitive_dict['key'] == 'some_value' #True
     """
     def __init__(self, data = None, **kwargs: Any) -> None:
+        self._store = {}
         if data is None:
-            self._store = {}
+            data = {}
         
         self.update(data, **kwargs)
 
@@ -125,19 +126,22 @@ class CaseInsensitiveDict(MutableMapping):
     def __delitem__(self, key: str) -> None:
         del self._store[key.lower()]
 
-    def __iter__(self) -> Generator[str]:
-        return (key for key, val in self._store.values())
+    def __iter__(self) -> Iterable[str]:
+        return (key for key, _ in self._store.values())
 
     def __len__(self) -> int:
         return len(self._store)
+
+    def lowerkey_items(self):
+        return ((lower_case_key, pair[1]) for lower_case_key, pair in self._store.items())
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, Mapping):
             other = CaseInsensitiveDict(other)
         else:
-            return NotImplemented
+            return False
 
-        return dict((lower_case_key, val) for lower_case_key, (key, val) in self._store.items()) == dict((lower_case_key, val) for lower_case_key, (key, val) in other.items())
+        return dict(self.lowerkey_items()) == dict(other.lowerkey_items())
 
     def __repr__(self) -> str:
         return str(dict(self.items()))
