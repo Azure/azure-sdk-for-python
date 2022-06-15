@@ -84,7 +84,7 @@ def get_datastore_arm_id(datastore_name: str = None, operation_scope: OperationS
 
 
 class AMLNamedArmId:
-    """Parser for named arm id (no version): e.g. /subscription/.../compute/goazurego
+    """Parser for named arm id (no version): e.g. /subscription/.../compute/cpu-cluster
 
     :param arm_id: the named arm id
     :type arm_id: str
@@ -300,6 +300,24 @@ def get_resource_name_from_arm_id(resource_id: str) -> str:
     return AMLNamedArmId(resource_id).asset_name
 
 
+def get_resource_name_from_arm_id_safe(resource_id: str) -> Optional[str]:
+    """
+    Get the resource name from an ARM id. return input string if it is not an ARM id.
+    """
+    try:
+        return get_resource_name_from_arm_id(resource_id)
+    except ValidationException:
+        # already a name
+        return resource_id
+    except AttributeError:
+        # None or empty string
+        return resource_id
+    except Exception:
+        # unexpected error
+        module_logger.warning("Failed to parse resource id: %s", resource_id)
+        return resource_id
+
+
 def get_arm_id_object_from_id(resource_id: str) -> Union[AMLVersionedArmId, AMLNamedArmId, AzureResourceId]:
     """Attempts to create and return one of: AMLVersionedId, AMLNamedId, AzureResoureId.
     In the case than an AzureML ARM Id is passed in, either AMLVersionedId or AMLNamedId will be created depending on resource type
@@ -334,27 +352,6 @@ def get_arm_id_object_from_id(resource_id: str) -> Union[AMLVersionedArmId, AMLN
         no_personal_data_message=msg.format("[resource_id]"),
         target=ErrorTarget.DEPLOYMENT,
     )
-
-
-def is_arm_id_or_arm_string_or_object(asset: str, azureml_type: str) -> None:
-    if not isinstance(asset, str):
-        return
-
-    if is_ARM_id_for_resource(asset, azureml_type) or is_registry_id_for_resource(asset):
-        return
-    else:
-        if azureml_type in AzureMLResourceType.VERSIONED_TYPES:
-            name, label = parse_name_label(asset)
-            if not label:
-                name, version = parse_prefixed_name_version(asset)
-                if not version:
-                    raise ValidationException(
-                        message="Failed to extract version when parsing asset {} of type {} as arm id. Version must be provided.".format(
-                            asset, azureml_type
-                        ),
-                        no_personal_data_message="[asset]",
-                    )
-    return
 
 
 def remove_datastore_prefix(id: Optional[str]) -> Optional[str]:

@@ -1,4 +1,7 @@
-FROM ubuntu:16.04
+# internal users should provide MCR registry to build via 'docker build . --build-arg REGISTRY="mcr.microsoft.com/mirror/docker/library/"'
+# public OSS users should simply leave this argument blank or ignore its presence entirely
+ARG REGISTRY=""
+FROM ${REGISTRY}ubuntu:16.04
 
 ARG CONDA_VERSION=4.7.12
 ARG PYTHON_VERSION=3.7

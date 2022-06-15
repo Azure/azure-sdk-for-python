@@ -71,7 +71,7 @@ def sample_classify_document_single_category():
     for doc, classification_results in zip(document, document_results):
         for classification_result in classification_results:
             if not classification_result.is_error:
-                classification = classification_result.classification
+                classification = classification_result.classifications[0]
                 print("The document text '{}' was classified as '{}' with confidence score {}.".format(
                     doc, classification.category, classification.confidence_score)
                 )
