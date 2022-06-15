@@ -11,8 +11,13 @@ from testcase_async import LoadtestserviceAsyncTest
 class LoadtestserviceSmokeAsyncTest(LoadtestserviceAsyncTest):
 
     @LoadtestservicePowerShellPreparer()
-    async def test_smoke_async(self, loadtestservice_endpoint):
+    async def test_smoke_list_search_async(self, loadtestservice_endpoint):
         client = self.create_client(endpoint=loadtestservice_endpoint)
-        # test your code here, for example:
-        # result = await client.xxx.xx(...)
-        # assert result is not None
+        result=client.test.list_load_test_search()
+        assert result is not None
+
+    @LoadtestservicePowerShellPreparer()   
+    async def test_smoke_test_runs_search_async(self, loadtestservice_endpoint):
+        client = self.create_client(endpoint=loadtestservice_endpoint)
+        result=client.test_run.list_test_runs_search()
+        assert result is not None
