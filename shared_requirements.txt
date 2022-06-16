@@ -129,6 +129,7 @@ isodate>=0.6.0
 avro>=1.11.0
 pyjwt>=1.7.1
 chardet<5,>=3.0.2
+azure-maps-nspkg~=3.0.2
 #override azure-core typing-extensions>=4.0.1
 #override azure-search-documents typing-extensions>=3.7.4.3
 #override azure azure-keyvault~=1.0
