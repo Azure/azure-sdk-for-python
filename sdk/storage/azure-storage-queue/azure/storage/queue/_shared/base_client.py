@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import logging
 import uuid
+import warnings
 from typing import (  # pylint: disable=unused-import
     Optional,
     Any,
@@ -104,8 +105,15 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
 
         self.require_encryption = kwargs.get("require_encryption", False)
+        self.encryption_version = kwargs.get("encryption_version", "1.0")
         self.key_encryption_key = kwargs.get("key_encryption_key")
         self.key_resolver_function = kwargs.get("key_resolver_function")
+        if self.key_encryption_key and self.encryption_version == '1.0':
+            warnings.warn("This client has been configured to use encryption with version 1.0. \
+                           Version 1.0 is deprecated and no longer considered secure. It is highly \
+                           recommended that you switch to using version 2.0. The version can be \
+                           specified using the 'encryption_version' keyword.")
+
         self._config, self._pipeline = self._create_pipeline(self.credential, storage_sdk=service, **kwargs)
 
     def __enter__(self):
@@ -401,7 +409,8 @@ def parse_connection_str(conn_str, credential, service):
             raise ValueError("Connection string missing required connection details.")
     if service == "dfs":
         primary = primary.replace(".blob.", ".dfs.")
-        secondary = secondary.replace(".blob.", ".dfs.")
+        if secondary:
+            secondary = secondary.replace(".blob.", ".dfs.")
     return primary, secondary, credential
 
 

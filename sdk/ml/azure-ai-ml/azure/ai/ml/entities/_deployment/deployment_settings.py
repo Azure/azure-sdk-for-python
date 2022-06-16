@@ -58,7 +58,7 @@ class BatchRetrySettings(RestTranslatableMixin):
 
 
 class OnlineRequestSettings(RestTranslatableMixin):
-    """Reqeust Settings entity
+    """Request Settings entity
 
     :param request_timeout_ms: defaults to 5000
     :type request_timeout_ms: int, optional

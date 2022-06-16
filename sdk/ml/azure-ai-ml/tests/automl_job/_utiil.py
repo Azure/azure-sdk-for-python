@@ -4,8 +4,8 @@ import urllib.request as urllib
 from zipfile import ZipFile
 
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-from azure.ai.ml._operations.job_ops_helper import _wait_before_polling
-from azure.ai.ml._operations.run_history_constants import RunHistoryConstants
+from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
+from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml import MLClient
 
 

@@ -1203,10 +1203,8 @@ class DocumentError(DictMixin):
             + AnalyzeSentimentResult().keys()
             + ExtractKeyPhrasesResult().keys()
             + AnalyzeHealthcareEntitiesResult().keys()
-            + ExtractSummaryResult().keys()
             + RecognizeCustomEntitiesResult().keys()
-            + SingleCategoryClassifyResult().keys()
-            + MultiCategoryClassifyResult().keys()
+            + ClassifyDocumentResult().keys()
         )
         result_attrs = result_set.difference(DocumentError().keys())
         if attr in result_attrs:
@@ -1763,7 +1761,6 @@ class _AnalyzeActionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         "recognize_linked_entities"  #: Linked Entities Recognition action.
     )
     ANALYZE_SENTIMENT = "analyze_sentiment"  #: Sentiment Analysis action.
-    EXTRACT_SUMMARY = "extract_summary"
     RECOGNIZE_CUSTOM_ENTITIES = "recognize_custom_entities"
     SINGLE_CATEGORY_CLASSIFY = "single_category_classify"
     MULTI_CATEGORY_CLASSIFY = "multi_category_classify"
@@ -1777,10 +1774,6 @@ class ActionPointerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EXTRACT_KEY_PHRASES = "keyPhraseExtractionTasks"
     RECOGNIZE_LINKED_ENTITIES = "entityLinkingTasks"
     ANALYZE_SENTIMENT = "sentimentAnalysisTasks"
-    EXTRACT_SUMMARY = "extractiveSummarizationTasks"
-    RECOGNIZE_CUSTOM_ENTITIES = "customEntityRecognitionTasks"
-    SINGLE_CATEGORY_CLASSIFY = "customSingleClassificationTasks"
-    MULTI_CATEGORY_CLASSIFY = "customMultiClassificationTasks"
 
 
 class RecognizeEntitiesAction(DictMixin):
@@ -2156,169 +2149,6 @@ class RecognizeLinkedEntitiesAction(DictMixin):
         )
 
 
-class ExtractSummaryAction(DictMixin):
-    """ExtractSummaryAction encapsulates the parameters for starting a long-running Extractive Text
-    Summarization operation. For a conceptual discussion of extractive summarization, see the service documentation:
-    https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/extractive-summarization
-
-    :keyword str model_version: The model version to use for the analysis.
-    :keyword str string_index_type: Specifies the method used to interpret string offsets.
-        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
-        see https://aka.ms/text-analytics-offsets
-    :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, the Language service logs your
-        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the service's natural language processing functions. Setting this parameter to true,
-        disables input logging and may limit our ability to remediate issues that occur. Please see
-        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
-        additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/ai/responsible-ai.
-    :keyword int max_sentence_count: Maximum number of sentences to return. Defaults to 3.
-    :keyword str order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
-    :ivar str model_version: The model version to use for the analysis.
-    :ivar str string_index_type: Specifies the method used to interpret string offsets.
-        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
-        see https://aka.ms/text-analytics-offsets
-    :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, the Language service logs your
-        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the service's natural language processing functions. Setting this parameter to true,
-        disables input logging and may limit our ability to remediate issues that occur. Please see
-        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
-        additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/ai/responsible-ai.
-    :ivar int max_sentence_count: Number of sentences to return. Defaults to 3.
-    :ivar str order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
-    """
-
-    def __init__(self, **kwargs):
-        self.model_version = kwargs.get("model_version", None)
-        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
-        self.disable_service_logs = kwargs.get("disable_service_logs", None)
-        self.max_sentence_count = kwargs.get("max_sentence_count", None)
-        self.order_by = kwargs.get("order_by", None)
-
-    def __repr__(self):
-        return (
-            "ExtractSummaryAction(model_version={}, string_index_type={}, disable_service_logs={}, "
-            "max_sentence_count={}, order_by={})".format(
-                self.model_version,
-                self.string_index_type,
-                self.disable_service_logs,
-                self.max_sentence_count,
-                self.order_by,
-            )[:1024]
-        )
-
-    def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        return _v2022_05_01_models.ExtractiveSummarizationLROTask(  # pylint: disable=no-member
-            task_name=task_id,
-            parameters=_v2022_05_01_models.ExtractiveSummarizationTaskParameters(  # pylint: disable=no-member
-                model_version=self.model_version,
-                string_index_type=string_index_type_compatibility(self.string_index_type),
-                logging_opt_out=self.disable_service_logs,
-                sentence_count=self.max_sentence_count,
-                sort_by=self.order_by,
-            )
-        )
-
-
-class ExtractSummaryResult(DictMixin):
-    """ExtractSummaryResult is a result object which contains
-    the extractive text summarization from a particular document.
-
-    :ivar str id: Unique, non-empty document identifier.
-    :ivar sentences: A ranked list of sentences representing the extracted summary.
-    :vartype sentences: list[~azure.ai.textanalytics.SummarySentence]
-    :ivar warnings: Warnings encountered while processing document.
-    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=True` was specified in the request this
-        field will contain information about the document payload.
-    :vartype statistics: ~azure.ai.textanalytics.TextDocumentStatistics
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of an ExtractSummaryResult.
-    """
-
-    def __init__(self, **kwargs):
-        self.id = kwargs.get("id", None)
-        self.sentences = kwargs.get("sentences", None)
-        self.warnings = kwargs.get("warnings", None)
-        self.statistics = kwargs.get("statistics", None)
-        self.is_error = False
-
-    def __repr__(self):
-        return "ExtractSummaryResult(id={}, sentences={}, warnings={}, statistics={}, is_error={})".format(
-            self.id,
-            repr(self.sentences),
-            repr(self.warnings),
-            repr(self.statistics),
-            self.is_error,
-        )[
-            :1024
-        ]
-
-    @classmethod
-    def _from_generated(cls, summary):
-        return cls(
-            id=summary.id,
-            sentences=[
-                SummarySentence._from_generated(  # pylint: disable=protected-access
-                    sentence
-                )
-                for sentence in summary.sentences
-            ],
-            warnings=[
-                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
-                    w
-                )
-                for w in summary.warnings
-            ],
-            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
-                summary.statistics
-            ),
-        )
-
-
-class SummarySentence(DictMixin):
-    """Represents a single sentence from the extractive text summarization.
-
-    :ivar str text: The extracted sentence text.
-    :ivar float rank_score: A float value representing the relevance of the sentence within
-        the summary. Higher values indicate higher importance.
-    :ivar int offset: The sentence offset from the start of the document.
-        The value depends on the value of the `string_index_type` parameter
-        set in the original request, which is UnicodeCodePoint by default.
-    :ivar int length: The length of the sentence. This value depends on the value of the
-        `string_index_type` parameter set in the original request, which is UnicodeCodePoint
-        by default.
-    """
-
-    def __init__(self, **kwargs):
-        self.text = kwargs.get("text", None)
-        self.rank_score = kwargs.get("rank_score", None)
-        self.offset = kwargs.get("offset", None)
-        self.length = kwargs.get("length", None)
-
-    def __repr__(self):
-        return "SummarySentence(text={}, rank_score={}, offset={}, length={})".format(
-            self.text,
-            self.rank_score,
-            self.offset,
-            self.length,
-        )[:1024]
-
-    @classmethod
-    def _from_generated(cls, sentence):
-        return cls(
-            text=sentence.text,
-            rank_score=sentence.rank_score,
-            offset=sentence.offset,
-            length=sentence.length,
-        )
-
-
 class RecognizeCustomEntitiesAction(DictMixin):
     """RecognizeCustomEntitiesAction encapsulates the parameters for starting a long-running custom entity
     recognition operation. For information on regional support of custom features and how to train a model to
@@ -2499,8 +2329,8 @@ class MultiCategoryClassifyAction(DictMixin):
         )
 
 
-class MultiCategoryClassifyResult(DictMixin):
-    """MultiCategoryClassifyResult is a result object which contains
+class ClassifyDocumentResult(DictMixin):
+    """ClassifyDocumentResult is a result object which contains
     the classifications for a particular document.
 
     :ivar str id: Unique, non-empty document identifier.
@@ -2526,7 +2356,7 @@ class MultiCategoryClassifyResult(DictMixin):
         self.is_error = False
 
     def __repr__(self):
-        return "MultiCategoryClassifyResult(id={}, classifications={}, warnings={}, statistics={}, " \
+        return "ClassifyDocumentResult(id={}, classifications={}, warnings={}, statistics={}, " \
                "is_error={})".format(
                 self.id,
                 repr(self.classifications),
@@ -2610,62 +2440,6 @@ class SingleCategoryClassifyAction(DictMixin):
                 deployment_name=self.deployment_name,
                 logging_opt_out=self.disable_service_logs,
             )
-        )
-
-
-class SingleCategoryClassifyResult(DictMixin):
-    """SingleCategoryClassifyResult is a result object which contains
-    the classification for a particular document.
-
-    :ivar str id: Unique, non-empty document identifier.
-    :ivar classification: Recognized classification results in the document.
-    :vartype classification: ~azure.ai.textanalytics.ClassificationCategory
-    :ivar warnings: Warnings encountered while processing document.
-    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=True` was specified in the request this
-        field will contain information about the document payload.
-    :vartype statistics: ~azure.ai.textanalytics.TextDocumentStatistics
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a SingleCategoryClassifyResult.
-    """
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        self.id = kwargs.get('id', None)
-        self.classification = kwargs.get('classification', None)
-        self.warnings = kwargs.get('warnings', [])
-        self.statistics = kwargs.get('statistics', None)
-        self.is_error = False
-
-    def __repr__(self):
-        return "SingleCategoryClassifyResult(id={}, classification={}, warnings={}, statistics={}, " \
-               "is_error={})".format(
-                self.id,
-                repr(self.classification),
-                repr(self.warnings),
-                repr(self.statistics),
-                self.is_error,
-            )[
-                :1024
-            ]
-
-    @classmethod
-    def _from_generated(cls, result):
-        return cls(
-            id=result.id,
-            classification=
-            ClassificationCategory._from_generated(result.class_property),  # pylint: disable=protected-access
-            warnings=[
-                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
-                    w
-                )
-                for w in result.warnings
-            ],
-            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
-                result.statistics
-            ),
         )
 
 

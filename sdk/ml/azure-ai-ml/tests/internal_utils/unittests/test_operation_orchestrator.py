@@ -3,17 +3,17 @@ import pytest
 from pathlib import Path
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
-from azure.ai.ml._operations import (
-    CodeOperations,
+from azure.ai.ml.operations import (
     DataOperations,
-    DatasetOperations,
     DatastoreOperations,
     EnvironmentOperations,
     ModelOperations,
-    OperationOrchestrator,
     ComponentOperations,
     OnlineEndpointOperations,
 )
+from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
+from azure.ai.ml.operations._code_operations import CodeOperations
+from azure.ai.ml.operations._dataset_operations import DatasetOperations
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml.constants import (
     AZUREML_RESOURCE_PROVIDER,
@@ -29,37 +29,37 @@ from azure.ai.ml.entities._assets import Model, Code, Data, Environment, Dataset
 
 @pytest.fixture
 def environment_operations(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._operations.environment_operations.EnvironmentOperations")
+    return mocker.patch("azure.ai.ml.operations._environment_operations.EnvironmentOperations")
 
 
 @pytest.fixture
 def datastore_operations(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._operations.datastore_operations.DatastoreOperations")
+    return mocker.patch("azure.ai.ml.operations._datastore_operations.DatastoreOperations")
 
 
 @pytest.fixture
 def model_operations(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._operations.model_operations.ModelOperations")
+    return mocker.patch("azure.ai.ml.operations._model_operations.ModelOperations")
 
 
 @pytest.fixture
 def code_operations(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._operations.code_operations.CodeOperations")
+    return mocker.patch("azure.ai.ml.operations._code_operations.CodeOperations")
 
 
 @pytest.fixture
 def dataset_operations(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._operations.dataset_operations.DatasetOperations")
+    return mocker.patch("azure.ai.ml.operations._dataset_operations.DatasetOperations")
 
 
 @pytest.fixture
 def data_operations(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._operations.data_operations.DataOperations")
+    return mocker.patch("azure.ai.ml.operations._data_operations.DataOperations")
 
 
 @pytest.fixture
 def component_operations(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._operations.component_operations.ComponentOperations")
+    return mocker.patch("azure.ai.ml.operations._component_operations.ComponentOperations")
 
 
 @pytest.fixture

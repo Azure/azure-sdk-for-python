@@ -12,18 +12,18 @@ import pytest
 import vcr
 from .test_vcr_utils import before_record_cb, vcr_header_filters
 from azure.identity import DefaultAzureCredential
-from azure.ai.ml import MLClient
+from azure.ai.ml import MLClient, load_job
 from azure.core.exceptions import HttpResponseError
-from azure.ai.ml._operations import (
-    CodeOperations,
+from azure.ai.ml.operations import (
     DatastoreOperations,
     EnvironmentOperations,
     JobOperations,
-    RunOperations,
     WorkspaceOperations,
 )
-from azure.ai.ml._operations.job_ops_helper import get_git_properties
-from azure.ai.ml._operations.run_history_constants import RunHistoryConstants
+from azure.ai.ml.operations._code_operations import CodeOperations
+from azure.ai.ml.operations._run_operations import RunOperations
+from azure.ai.ml.operations._job_ops_helper import get_git_properties
+from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.constants import AzureMLResourceType, AZUREML_PRIVATE_FEATURES_ENV_VAR
 from azure.ai.ml.entities._job.command_job import CommandJob
@@ -170,7 +170,7 @@ class TestJobOperations:
     @patch.object(Job, "_from_rest_object")
     def test_submit_command_job(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = CommandJob()
-        job = CommandJob.load(path="./tests/test_configs/command_job/command_job_test.yml")
+        job = load_job(path="./tests/test_configs/command_job/command_job_test.yml")
         mock_job_operation.create_or_update(job=job)
         git_props = get_git_properties()
         assert git_props.items() <= job.properties.items()

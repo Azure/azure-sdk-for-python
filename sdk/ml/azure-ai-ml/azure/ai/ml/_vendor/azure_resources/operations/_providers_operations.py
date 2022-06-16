@@ -57,7 +57,7 @@ class ProvidersOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.Provider"
-        """Unregisters a subscription from a resource provider.
+        """Unregister a subscription from a resource provider.
 
         :param resource_provider_namespace: The namespace of the resource provider to unregister.
         :type resource_provider_namespace: str

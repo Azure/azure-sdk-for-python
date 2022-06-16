@@ -12,6 +12,7 @@ from marshmallow.exceptions import ValidationError
 from marshmallow import fields
 from marshmallow.schema import Schema
 from azure.ai.ml.entities import Data
+from azure.ai.ml import load_data
 
 
 class DummyStr(ArmStr):
@@ -163,7 +164,7 @@ name: {data_name}
 version: 3.12
 path: ./bla"""
         )
-        asset = Data.load(path=p)
+        asset = load_data(path=p)
         assert asset.version == "3.12"
 
         p = tmp_path / "version_int.yml"
@@ -173,7 +174,7 @@ name: {data_name}
 version: 3
 path: ./bla"""
         )
-        asset = Data.load(path=p)
+        asset = load_data(path=p)
         assert asset.version == "3"
 
         p = tmp_path / "version_str.yml"
@@ -183,5 +184,5 @@ name: {data_name}
 version: foobar
 path: ./bla"""
         )
-        asset = Data.load(path=p)
+        asset = load_data(path=p)
         assert asset.version == "foobar"

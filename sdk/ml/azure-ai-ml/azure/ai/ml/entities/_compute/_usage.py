@@ -73,7 +73,7 @@ class Usage(Resource, RestTranslatableMixin):
         return result
 
     def dump(self, path: Union[PathLike, str]) -> None:
-        """Dump the resourse usage content into a file in yaml format.
+        """Dump the resource usage content into a file in yaml format.
 
         :param path: Path to a local file as the target, new file will be created, raises exception if the file exists.
         :type path: str

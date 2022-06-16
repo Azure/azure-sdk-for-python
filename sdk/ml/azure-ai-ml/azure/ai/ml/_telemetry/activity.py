@@ -185,7 +185,8 @@ def monitor_with_telemetry_mixin(
     An activity is a logical block of code that consumers want to monitor.
     Object telemetry values will be added into custom dimensions if activity parameter or return object is
     an instance of TelemetryMixin, which means log dimension will include: 1. telemetry collected from
-    parameter object. 2. telemetry collected from return value. 3. custom dimensions passed in.
+    parameter object. 2. custom dimensions passed in. 3.(optional) if no telemetry found in parameter,
+    will collect from return value.
     To monitor, use the ``@monitor_with_telemetry_mixin`` decorator.
 
     :param logger: The logger adapter.
@@ -223,12 +224,13 @@ def monitor_with_telemetry_mixin(
 
         @functools.wraps(f)
         def wrapper(*args, **kwargs):
-            dimensions = _collect_from_parameters(args, kwargs)
-            if custom_dimensions:
-                dimensions.update(custom_dimensions)
+            parameter_dimensions = _collect_from_parameters(args, kwargs)
+            dimensions = {**parameter_dimensions, **(custom_dimensions or {})}
             with log_activity(logger, activity_name or f.__name__, activity_type, dimensions) as activityLogger:
                 return_value = f(*args, **kwargs)
-                activityLogger.activity_info.update(_collect_from_return_value(return_value))
+                if not parameter_dimensions:
+                    # collect from return if no dimensions from parameter
+                    activityLogger.activity_info.update(_collect_from_return_value(return_value))
                 return return_value
 
         return wrapper

@@ -109,7 +109,6 @@ from ._component.parallel_component import ParallelComponent
 
 # Pipeline related entities goes behind component since it depends on component
 from ._job.pipeline.pipeline_job import PipelineJob, PipelineJobSettings
-from ._job.pipeline._load_component import load_component
 
 
 from ._schedule.schedule import CronSchedule, RecurrenceSchedule, RecurrencePattern
@@ -201,7 +200,6 @@ __all__ = [
     "VirtualMachineSshSettings",
     "AmlComputeSshSettings",
     "AmlComputeNodeInfo",
-    "load_component",
     "CronSchedule",
     "RecurrenceSchedule",
     "RecurrencePattern",
