@@ -265,7 +265,10 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
                     )
                     assert result.key_id == imported_key.id
                     result = await crypto_client.decrypt(
-                        result.algorithm, result.ciphertext, iv=self.iv, additional_authenticated_data=self.aad
+                        result.algorithm,
+                        result.ciphertext,
+                        iv=self.iv,
+                        additional_authenticated_data=None if algorithm.endswith("CBC") else self.aad
                     )
 
                 assert result.key_id == imported_key.id
