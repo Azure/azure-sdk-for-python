@@ -10,7 +10,7 @@
 * Client now uses python dictionaries for method parameters and results instead of classes.
 * Many input and result parameter name changes in `analyze_conversation()` method
 
-## 1.0b4 (Unreleased)
+## 1.0GA (Unreleased)
 
 ### Features Added
 * Added more resolution types

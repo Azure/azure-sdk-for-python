@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, Optional, TypeVar, cast
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
@@ -21,41 +21,172 @@ from .._vendor import MixinABC
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class ConversationAnalysisClientOperationsMixin(MixinABC):
 
-    @distributed_trace_async
+    @overload
     async def analyze_conversation(
         self,
         task: JSON,
+        *,
+        content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
         """Analyzes the input conversation utterance.
 
-        :param task: A single conversational task to execute.
+        :param task: A single conversational task to execute. Required.
         :type task: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
-                kind = 'ConversationalTask'
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "kind":
+
+                # JSON input template for discriminator value "Conversation":
+                analyze_conversation_task = {
+                    "analysisInput": {
+                        "conversationItem": {
+                            "id": "str",  # The ID of a conversation item. Required.
+                            "language": "str",  # Optional. The override language of a
+                              conversation item in BCP 47 language representation.
+                            "modality": "str",  # Optional. Enumeration of supported
+                              conversational modalities. Known values are: "transcript" and "text".
+                            "participantId": "str"  # The participant ID of a
+                              conversation item. Required.
+                        }
+                    },
+                    "kind": "Conversation",
+                    "parameters": {
+                        "deploymentName": "str",  # The name of the deployment to use.
+                          Required.
+                        "directTarget": "str",  # Optional. The name of a target project to
+                          forward the request to.
+                        "isLoggingEnabled": bool,  # Optional. If true, the service will keep
+                          the query for further review.
+                        "projectName": "str",  # The name of the project to use. Required.
+                        "stringIndexType": "TextElements_v8",  # Optional. Default value is
+                          "TextElements_v8". Specifies the method used to interpret string offsets.
+                          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For
+                          additional information see https://aka.ms/text-analytics-offsets. Known
+                          values are: "TextElements_v8", "UnicodeCodePoint", and "Utf16CodeUnit".
+                        "targetProjectParameters": {
+                            "str": analysis_parameters
+                        },
+                        "verbose": bool  # Optional. If true, the service will return more
+                          detailed information in the response.
+                    }
+                }
 
                 # JSON input template you can fill out and use as your body input.
-                task = {
-                    kind: kind
+                task = analyze_conversation_task
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "ConversationResult":
+                analyze_conversation_task_result = {
+                    "kind": "ConversationResult",
+                    "result": {
+                        "detectedLanguage": "str",  # Optional. The system detected language
+                          for the query in BCP 47 language representation..
+                        "prediction": base_prediction,
+                        "query": "str"  # The conversation utterance given by the caller.
+                          Required.
+                    }
                 }
 
                 # response body for status code(s): 200
-                response.json() == {
-                    kind: kind
+                response == analyze_conversation_task_result
+        """
+
+    @overload
+    async def analyze_conversation(
+        self,
+        task: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> JSON:
+        """Analyzes the input conversation utterance.
+
+        :param task: A single conversational task to execute. Required.
+        :type task: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "ConversationResult":
+                analyze_conversation_task_result = {
+                    "kind": "ConversationResult",
+                    "result": {
+                        "detectedLanguage": "str",  # Optional. The system detected language
+                          for the query in BCP 47 language representation..
+                        "prediction": base_prediction,
+                        "query": "str"  # The conversation utterance given by the caller.
+                          Required.
+                    }
                 }
+
+                # response body for status code(s): 200
+                response == analyze_conversation_task_result
+        """
+
+
+    @distributed_trace_async
+    async def analyze_conversation(
+        self,
+        task: Union[JSON, IO],
+        **kwargs: Any
+    ) -> JSON:
+        """Analyzes the input conversation utterance.
+
+        :param task: A single conversational task to execute. Is either a model type or a IO type.
+         Required.
+        :type task: JSON or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "ConversationResult":
+                analyze_conversation_task_result = {
+                    "kind": "ConversationResult",
+                    "result": {
+                        "detectedLanguage": "str",  # Optional. The system detected language
+                          for the query in BCP 47 language representation..
+                        "prediction": base_prediction,
+                        "query": "str"  # The conversation utterance given by the caller.
+                          Required.
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == analyze_conversation_task_result
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -63,18 +194,24 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        _json = task
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(task, (IO, bytes)):
+            _content = task
+        else:
+            _json = task
 
         request = build_analyze_conversation_request(
-            api_version=api_version,
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -88,6 +225,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
