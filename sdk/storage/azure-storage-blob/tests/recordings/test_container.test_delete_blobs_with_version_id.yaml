@@ -13,11 +13,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.13.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:35 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/containere35713c0?restype=container
+    uri: https://storagenamestorname.blob.core.windows.net/containere35713c0?restype=container
   response:
     body:
       string: ''
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:35 GMT
       etag:
-      - '"0x8DA4FCB8D74D264"'
+      - '"0x8DA4FE4E615590D"'
       last-modified:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:35 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -57,11 +57,11 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:35 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/containere35713c0/blob1
+    uri: https://storagenamestorname.blob.core.windows.net/containere35713c0/blob1
   response:
     body:
       string: ''
@@ -71,11 +71,11 @@ interactions:
       content-md5:
       - XrY7u+Ae7tCTyyK7j1rNww==
       date:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:35 GMT
       etag:
-      - '"0x8DA4FCB8D803AFB"'
+      - '"0x8DA4FE4E61FD0B2"'
       last-modified:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:35 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -85,7 +85,7 @@ interactions:
       x-ms-version:
       - '2021-08-06'
       x-ms-version-id:
-      - '2022-06-16T19:08:09.7293051Z'
+      - '2022-06-16T22:09:35.8329010Z'
     status:
       code: 201
       message: Created
@@ -109,11 +109,11 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:35 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/containere35713c0/blob2
+    uri: https://storagenamestorname.blob.core.windows.net/containere35713c0/blob2
   response:
     body:
       string: ''
@@ -123,11 +123,11 @@ interactions:
       content-md5:
       - XrY7u+Ae7tCTyyK7j1rNww==
       date:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:35 GMT
       etag:
-      - '"0x8DA4FCB8D89D676"'
+      - '"0x8DA4FE4E629BA41"'
       last-modified:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:35 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -137,7 +137,7 @@ interactions:
       x-ms-version:
       - '2021-08-06'
       x-ms-version-id:
-      - '2022-06-16T19:08:09.7922678Z'
+      - '2022-06-16T22:09:35.8978625Z'
     status:
       code: 201
       message: Created
@@ -153,11 +153,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.13.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:35 GMT
       x-ms-version:
       - '2021-08-06'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/containere35713c0/blob1
+    uri: https://storagenamestorname.blob.core.windows.net/containere35713c0/blob1
   response:
     body:
       string: ''
@@ -171,11 +171,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:35 GMT
       etag:
-      - '"0x8DA4FCB8D803AFB"'
+      - '"0x8DA4FE4E61FD0B2"'
       last-modified:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:35 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-access-tier:
@@ -185,7 +185,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:35 GMT
       x-ms-is-current-version:
       - 'true'
       x-ms-lease-state:
@@ -197,7 +197,7 @@ interactions:
       x-ms-version:
       - '2021-08-06'
       x-ms-version-id:
-      - '2022-06-16T19:08:09.7293051Z'
+      - '2022-06-16T22:09:35.8329010Z'
     status:
       code: 200
       message: OK
@@ -217,11 +217,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.13.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:35 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/containere35713c0/blob1?comp=block&blockid=MQ%3D%3D
+    uri: https://storagenamestorname.blob.core.windows.net/containere35713c0/blob1?comp=block&blockid=MQ%3D%3D
   response:
     body:
       string: ''
@@ -229,7 +229,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:35 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -259,11 +259,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.13.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:35 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/containere35713c0/blob1?comp=blocklist
+    uri: https://storagenamestorname.blob.core.windows.net/containere35713c0/blob1?comp=blocklist
   response:
     body:
       string: ''
@@ -271,11 +271,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:35 GMT
       etag:
-      - '"0x8DA4FCB8DA6A923"'
+      - '"0x8DA4FE4E64295C7"'
       last-modified:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:36 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -285,7 +285,7 @@ interactions:
       x-ms-version:
       - '2021-08-06'
       x-ms-version-id:
-      - '2022-06-16T19:08:09.9831593Z'
+      - '2022-06-16T22:09:36.0617687Z'
     status:
       code: 201
       message: Created
@@ -301,11 +301,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.13.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:35 GMT
       x-ms-version:
       - '2021-08-06'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/containere35713c0/blob1
+    uri: https://storagenamestorname.blob.core.windows.net/containere35713c0/blob1
   response:
     body:
       string: ''
@@ -317,11 +317,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:35 GMT
       etag:
-      - '"0x8DA4FCB8DA6A923"'
+      - '"0x8DA4FE4E64295C7"'
       last-modified:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:36 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-access-tier:
@@ -331,7 +331,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:36 GMT
       x-ms-is-current-version:
       - 'true'
       x-ms-lease-state:
@@ -343,20 +343,20 @@ interactions:
       x-ms-version:
       - '2021-08-06'
       x-ms-version-id:
-      - '2022-06-16T19:08:09.9831593Z'
+      - '2022-06-16T22:09:36.0617687Z'
     status:
       code: 200
       message: OK
 - request:
-    body: "--batch_a97b3ce3-eda7-11ec-a51b-4851c58829e0\r\nContent-Type: application/http\r\nContent-ID:
-      0\r\nContent-Transfer-Encoding: binary\r\n\r\nDELETE /containere35713c0/blob1?versionid=2022-06-16T19%3A08%3A09.7293051Z
-      HTTP/1.1\r\nx-ms-date: Thu, 16 Jun 2022 19:08:10 GMT\r\nx-ms-client-request-id:
-      a97d3895-eda7-11ec-b0ee-4851c58829e0\r\r\nContent-Length:
-      0\r\n\r\n\r\n--batch_a97b3ce3-eda7-11ec-a51b-4851c58829e0\r\nContent-Type: application/http\r\nContent-ID:
+    body: "--batch_020ac3f6-edc1-11ec-b732-4851c58829e0\r\nContent-Type: application/http\r\nContent-ID:
+      0\r\nContent-Transfer-Encoding: binary\r\n\r\nDELETE /containere35713c0/blob1?versionid=2022-06-16T22%3A09%3A35.8329010Z
+      HTTP/1.1\r\nx-ms-date: Thu, 16 Jun 2022 22:09:36 GMT\r\nx-ms-client-request-id:
+      020b3948-edc1-11ec-9149-4851c58829e0\r\r\nContent-Length:
+      0\r\n\r\n\r\n--batch_020ac3f6-edc1-11ec-b732-4851c58829e0\r\nContent-Type: application/http\r\nContent-ID:
       1\r\nContent-Transfer-Encoding: binary\r\n\r\nDELETE /containere35713c0/blob2?
-      HTTP/1.1\r\nx-ms-date: Thu, 16 Jun 2022 19:08:10 GMT\r\nx-ms-client-request-id:
-      a97d8754-eda7-11ec-85e0-4851c58829e0\r\r\nContent-Length:
-      0\r\n\r\n\r\n--batch_a97b3ce3-eda7-11ec-a51b-4851c58829e0--\r\n"
+      HTTP/1.1\r\nx-ms-date: Thu, 16 Jun 2022 22:09:36 GMT\r\nx-ms-client-request-id:
+      020b6042-edc1-11ec-970c-4851c58829e0\r\r\nContent-Length:
+      0\r\n\r\n\r\n--batch_020ac3f6-edc1-11ec-b732-4851c58829e0--\r\n"
     headers:
       Accept:
       - '*/*'
@@ -367,31 +367,31 @@ interactions:
       Content-Length:
       - '876'
       Content-Type:
-      - multipart/mixed; boundary=batch_a97b3ce3-eda7-11ec-a51b-4851c58829e0
+      - multipart/mixed; boundary=batch_020ac3f6-edc1-11ec-b732-4851c58829e0
       User-Agent:
       - azsdk-python-storage-blob/12.13.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 16 Jun 2022 19:08:10 GMT
+      - Thu, 16 Jun 2022 22:09:36 GMT
       x-ms-version:
       - '2021-08-06'
     method: POST
-    uri: https://storagename.blob.core.windows.net/containere35713c0?restype=container&comp=batch
+    uri: https://storagenamestorname.blob.core.windows.net/containere35713c0?restype=container&comp=batch
   response:
     body:
-      string: "--batchresponse_53f2576b-970d-4803-942d-c08b37fced3f\r\nContent-Type:
+      string: "--batchresponse_131e3984-4c58-47b8-a795-469cad5fde09\r\nContent-Type:
         application/http\r\nContent-ID: 0\r\n\r\nHTTP/1.1 202 Accepted\r\nx-ms-delete-type-permanent:
-        true\r\nx-ms-request-id: 9c53fb04-501e-0060-1bb4-815fe61ee65b\r\nx-ms-version:
-        2021-08-06\r\nx-ms-client-request-id: a97d3895-eda7-11ec-b0ee-4851c58829e0\r\nServer:
-        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_53f2576b-970d-4803-942d-c08b37fced3f\r\nContent-Type:
+        true\r\nx-ms-request-id: 30c850c5-901e-0050-35cd-81e1291ee431\r\nx-ms-version:
+        2021-08-06\r\nx-ms-client-request-id: 020b3948-edc1-11ec-9149-4851c58829e0\r\nServer:
+        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_131e3984-4c58-47b8-a795-469cad5fde09\r\nContent-Type:
         application/http\r\nContent-ID: 1\r\n\r\nHTTP/1.1 202 Accepted\r\nx-ms-delete-type-permanent:
-        true\r\nx-ms-request-id: 9c53fb04-501e-0060-1bb4-815fe61ee65d\r\nx-ms-version:
-        2021-08-06\r\nx-ms-client-request-id: a97d8754-eda7-11ec-85e0-4851c58829e0\r\nServer:
-        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_53f2576b-970d-4803-942d-c08b37fced3f--"
+        true\r\nx-ms-request-id: 30c850c5-901e-0050-35cd-81e1291ee434\r\nx-ms-version:
+        2021-08-06\r\nx-ms-client-request-id: 020b6042-edc1-11ec-970c-4851c58829e0\r\nServer:
+        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_131e3984-4c58-47b8-a795-469cad5fde09--"
     headers:
       content-type:
-      - multipart/mixed; boundary=batchresponse_53f2576b-970d-4803-942d-c08b37fced3f
+      - multipart/mixed; boundary=batchresponse_131e3984-4c58-47b8-a795-469cad5fde09
       date:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:35 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -413,11 +413,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.13.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 16 Jun 2022 19:08:10 GMT
+      - Thu, 16 Jun 2022 22:09:36 GMT
       x-ms-version:
       - '2021-08-06'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/containere35713c0/blob1
+    uri: https://storagenamestorname.blob.core.windows.net/containere35713c0/blob1
   response:
     body:
       string: ''
@@ -429,11 +429,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:35 GMT
       etag:
-      - '"0x8DA4FCB8DA6A923"'
+      - '"0x8DA4FE4E64295C7"'
       last-modified:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:36 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-access-tier:
@@ -443,7 +443,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Thu, 16 Jun 2022 19:08:09 GMT
+      - Thu, 16 Jun 2022 22:09:36 GMT
       x-ms-is-current-version:
       - 'true'
       x-ms-lease-state:
@@ -455,7 +455,7 @@ interactions:
       x-ms-version:
       - '2021-08-06'
       x-ms-version-id:
-      - '2022-06-16T19:08:09.9831593Z'
+      - '2022-06-16T22:09:36.0617687Z'
     status:
       code: 200
       message: OK

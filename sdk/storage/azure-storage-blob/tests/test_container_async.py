@@ -1548,7 +1548,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blobs_with_version_id(self, versioned_storage_account_name, versioned_storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         data = b'hello world'
 

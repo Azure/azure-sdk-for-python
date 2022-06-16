@@ -7,25 +7,25 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.13.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 16 Jun 2022 19:15:50 GMT
+      - Thu, 16 Jun 2022 22:19:31 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/acontainer63e7163d?restype=container
+    uri: https://storagenamestorname.blob.core.windows.net/acontainer63e7163d?restype=container
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 16 Jun 2022 19:15:49 GMT
-      etag: '"0x8DA4FCCA02139EB"'
-      last-modified: Thu, 16 Jun 2022 19:15:50 GMT
+      date: Thu, 16 Jun 2022 22:19:30 GMT
+      etag: '"0x8DA4FE64914E214"'
+      last-modified: Thu, 16 Jun 2022 22:19:31 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2021-08-06'
     status:
       code: 201
       message: Created
-    url: https://vincenttranversioning.blob.core.windows.net/acontainer63e7163d?restype=container
+    url: https://storagenamestorname.blob.core.windows.net/acontainer63e7163d?restype=container
 - request:
     body: hello world
     headers:
@@ -42,29 +42,29 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Thu, 16 Jun 2022 19:15:50 GMT
+      - Thu, 16 Jun 2022 22:19:31 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/acontainer63e7163d/blob1
+    uri: https://storagenamestorname.blob.core.windows.net/acontainer63e7163d/blob1
   response:
     body:
       string: ''
     headers:
       content-length: '0'
       content-md5: XrY7u+Ae7tCTyyK7j1rNww==
-      date: Thu, 16 Jun 2022 19:15:49 GMT
-      etag: '"0x8DA4FCCA028B046"'
-      last-modified: Thu, 16 Jun 2022 19:15:50 GMT
+      date: Thu, 16 Jun 2022 22:19:30 GMT
+      etag: '"0x8DA4FE649213BE8"'
+      last-modified: Thu, 16 Jun 2022 22:19:31 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: vo7q9sPVKY0=
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2021-08-06'
-      x-ms-version-id: '2022-06-16T19:15:50.5290310Z'
+      x-ms-version-id: '2022-06-16T22:19:31.4343658Z'
     status:
       code: 201
       message: Created
-    url: https://vincenttranversioning.blob.core.windows.net/acontainer63e7163d/blob1
+    url: https://storagenamestorname.blob.core.windows.net/acontainer63e7163d/blob1
 - request:
     body: hello world
     headers:
@@ -81,29 +81,29 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Thu, 16 Jun 2022 19:15:50 GMT
+      - Thu, 16 Jun 2022 22:19:31 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/acontainer63e7163d/blob2
+    uri: https://storagenamestorname.blob.core.windows.net/acontainer63e7163d/blob2
   response:
     body:
       string: ''
     headers:
       content-length: '0'
       content-md5: XrY7u+Ae7tCTyyK7j1rNww==
-      date: Thu, 16 Jun 2022 19:15:49 GMT
-      etag: '"0x8DA4FCCA02F6617"'
-      last-modified: Thu, 16 Jun 2022 19:15:50 GMT
+      date: Thu, 16 Jun 2022 22:19:30 GMT
+      etag: '"0x8DA4FE649283FB3"'
+      last-modified: Thu, 16 Jun 2022 22:19:31 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: vo7q9sPVKY0=
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2021-08-06'
-      x-ms-version-id: '2022-06-16T19:15:50.5740058Z'
+      x-ms-version-id: '2022-06-16T22:19:31.4793395Z'
     status:
       code: 201
       message: Created
-    url: https://vincenttranversioning.blob.core.windows.net/acontainer63e7163d/blob2
+    url: https://storagenamestorname.blob.core.windows.net/acontainer63e7163d/blob2
 - request:
     body: null
     headers:
@@ -112,11 +112,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.13.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 16 Jun 2022 19:15:50 GMT
+      - Thu, 16 Jun 2022 22:19:31 GMT
       x-ms-version:
       - '2021-08-06'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/acontainer63e7163d/blob1
+    uri: https://storagenamestorname.blob.core.windows.net/acontainer63e7163d/blob1
   response:
     body:
       string: ''
@@ -125,24 +125,24 @@ interactions:
       content-length: '11'
       content-md5: XrY7u+Ae7tCTyyK7j1rNww==
       content-type: application/octet-stream
-      date: Thu, 16 Jun 2022 19:15:49 GMT
-      etag: '"0x8DA4FCCA028B046"'
-      last-modified: Thu, 16 Jun 2022 19:15:50 GMT
+      date: Thu, 16 Jun 2022 22:19:30 GMT
+      etag: '"0x8DA4FE649213BE8"'
+      last-modified: Thu, 16 Jun 2022 22:19:31 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-access-tier: Hot
       x-ms-access-tier-inferred: 'true'
       x-ms-blob-type: BlockBlob
-      x-ms-creation-time: Thu, 16 Jun 2022 19:15:50 GMT
+      x-ms-creation-time: Thu, 16 Jun 2022 22:19:31 GMT
       x-ms-is-current-version: 'true'
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
       x-ms-server-encrypted: 'true'
       x-ms-version: '2021-08-06'
-      x-ms-version-id: '2022-06-16T19:15:50.5290310Z'
+      x-ms-version-id: '2022-06-16T22:19:31.4343658Z'
     status:
       code: 200
       message: OK
-    url: https://vincenttranversioning.blob.core.windows.net/acontainer63e7163d/blob1
+    url: https://storagenamestorname.blob.core.windows.net/acontainer63e7163d/blob1
 - request:
     body: Test Content
     headers:
@@ -155,17 +155,17 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.13.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 16 Jun 2022 19:15:50 GMT
+      - Thu, 16 Jun 2022 22:19:31 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/acontainer63e7163d/blob1?comp=block&blockid=MQ%3D%3D
+    uri: https://storagenamestorname.blob.core.windows.net/acontainer63e7163d/blob1?comp=block&blockid=MQ%3D%3D
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 16 Jun 2022 19:15:49 GMT
+      date: Thu, 16 Jun 2022 22:19:30 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: Y9XfVTXQu3A=
       x-ms-request-server-encrypted: 'true'
@@ -173,7 +173,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://vincenttranversioning.blob.core.windows.net/acontainer63e7163d/blob1?comp=block&blockid=MQ%3D%3D
+    url: https://storagenamestorname.blob.core.windows.net/acontainer63e7163d/blob1?comp=block&blockid=MQ%3D%3D
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
@@ -188,28 +188,28 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.13.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 16 Jun 2022 19:15:50 GMT
+      - Thu, 16 Jun 2022 22:19:31 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/acontainer63e7163d/blob1?comp=blocklist
+    uri: https://storagenamestorname.blob.core.windows.net/acontainer63e7163d/blob1?comp=blocklist
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 16 Jun 2022 19:15:49 GMT
-      etag: '"0x8DA4FCCA0427604"'
-      last-modified: Thu, 16 Jun 2022 19:15:50 GMT
+      date: Thu, 16 Jun 2022 22:19:30 GMT
+      etag: '"0x8DA4FE6493B019E"'
+      last-modified: Thu, 16 Jun 2022 22:19:31 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: iEgKfcNWGmY=
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2021-08-06'
-      x-ms-version-id: '2022-06-16T19:15:50.6989332Z'
+      x-ms-version-id: '2022-06-16T22:19:31.6032686Z'
     status:
       code: 201
       message: Created
-    url: https://vincenttranversioning.blob.core.windows.net/acontainer63e7163d/blob1?comp=blocklist
+    url: https://storagenamestorname.blob.core.windows.net/acontainer63e7163d/blob1?comp=blocklist
 - request:
     body: null
     headers:
@@ -218,11 +218,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.13.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 16 Jun 2022 19:15:50 GMT
+      - Thu, 16 Jun 2022 22:19:31 GMT
       x-ms-version:
       - '2021-08-06'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/acontainer63e7163d/blob1
+    uri: https://storagenamestorname.blob.core.windows.net/acontainer63e7163d/blob1
   response:
     body:
       string: ''
@@ -230,66 +230,66 @@ interactions:
       accept-ranges: bytes
       content-length: '12'
       content-type: application/octet-stream
-      date: Thu, 16 Jun 2022 19:15:50 GMT
-      etag: '"0x8DA4FCCA0427604"'
-      last-modified: Thu, 16 Jun 2022 19:15:50 GMT
+      date: Thu, 16 Jun 2022 22:19:30 GMT
+      etag: '"0x8DA4FE6493B019E"'
+      last-modified: Thu, 16 Jun 2022 22:19:31 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-access-tier: Hot
       x-ms-access-tier-inferred: 'true'
       x-ms-blob-type: BlockBlob
-      x-ms-creation-time: Thu, 16 Jun 2022 19:15:50 GMT
+      x-ms-creation-time: Thu, 16 Jun 2022 22:19:31 GMT
       x-ms-is-current-version: 'true'
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
       x-ms-server-encrypted: 'true'
       x-ms-version: '2021-08-06'
-      x-ms-version-id: '2022-06-16T19:15:50.6989332Z'
+      x-ms-version-id: '2022-06-16T22:19:31.6032686Z'
     status:
       code: 200
       message: OK
-    url: https://vincenttranversioning.blob.core.windows.net/acontainer63e7163d/blob1
+    url: https://storagenamestorname.blob.core.windows.net/acontainer63e7163d/blob1
 - request:
-    body: "--===============3435094432893602929==\r\nContent-Type: application/http\r\nContent-Transfer-Encoding:
-      binary\r\nContent-ID: 0\r\n\r\nDELETE /acontainer63e7163d/blob1?versionid=2022-06-16T19%3A15%3A50.5290310Z
-      HTTP/1.1\r\nx-ms-date: Thu, 16 Jun 2022 19:15:50 GMT\r\nx-ms-client-request-id:
-      bc125208-eda8-11ec-8514-4851c58829e0\r\r\n\r\n\r\n--===============3435094432893602929==\r\nContent-Type:
+    body: "--===============9144225291811265788==\r\nContent-Type: application/http\r\nContent-Transfer-Encoding:
+      binary\r\nContent-ID: 0\r\n\r\nDELETE /acontainer63e7163d/blob1?versionid=2022-06-16T22%3A19%3A31.4343658Z
+      HTTP/1.1\r\nx-ms-date: Thu, 16 Jun 2022 22:19:31 GMT\r\nx-ms-client-request-id:
+      64fed526-edc2-11ec-a8d9-4851c58829e0\r\r\n\r\n\r\n--===============9144225291811265788==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 1\r\n\r\nDELETE
-      /acontainer63e7163d/blob2? HTTP/1.1\r\nx-ms-date: Thu, 16 Jun 2022 19:15:50
-      GMT\r\nx-ms-client-request-id: bc125209-eda8-11ec-b411-4851c58829e0\r\r\n\r\n\r\n--===============3435094432893602929==--\r\n"
+      /acontainer63e7163d/blob2? HTTP/1.1\r\nx-ms-date: Thu, 16 Jun 2022 22:19:31
+      GMT\r\nx-ms-client-request-id: 64fed527-edc2-11ec-8486-4851c58829e0\r\r\n\r\n\r\n--===============9144225291811265788==--\r\n"
     headers:
       Content-Length:
       - '822'
       Content-Type:
-      - multipart/mixed; boundary================3435094432893602929==
+      - multipart/mixed; boundary================9144225291811265788==
       User-Agent:
       - azsdk-python-storage-blob/12.13.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 16 Jun 2022 19:15:50 GMT
+      - Thu, 16 Jun 2022 22:19:31 GMT
       x-ms-version:
       - '2021-08-06'
     method: POST
-    uri: https://storagename.blob.core.windows.net/acontainer63e7163d?restype=container&comp=batch
+    uri: https://storagenamestorname.blob.core.windows.net/acontainer63e7163d?restype=container&comp=batch
   response:
     body:
-      string: "--batchresponse_117ce597-bf59-4f90-b785-3b93b78bc649\r\nContent-Type:
+      string: "--batchresponse_02e2f725-bd61-4b40-bbb4-41b522a12e23\r\nContent-Type:
         application/http\r\nContent-ID: 0\r\n\r\nHTTP/1.1 202 Accepted\r\nx-ms-delete-type-permanent:
-        true\r\nx-ms-request-id: c23fc9bd-301e-0014-37b5-816b161ef935\r\nx-ms-version:
-        2021-08-06\r\nx-ms-client-request-id: bc125208-eda8-11ec-8514-4851c58829e0\r\nServer:
-        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_117ce597-bf59-4f90-b785-3b93b78bc649\r\nContent-Type:
+        true\r\nx-ms-request-id: 132854ab-601e-0044-79cf-81a9461e7aff\r\nx-ms-version:
+        2021-08-06\r\nx-ms-client-request-id: 64fed526-edc2-11ec-a8d9-4851c58829e0\r\nServer:
+        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_02e2f725-bd61-4b40-bbb4-41b522a12e23\r\nContent-Type:
         application/http\r\nContent-ID: 1\r\n\r\nHTTP/1.1 202 Accepted\r\nx-ms-delete-type-permanent:
-        true\r\nx-ms-request-id: c23fc9bd-301e-0014-37b5-816b161ef937\r\nx-ms-version:
-        2021-08-06\r\nx-ms-client-request-id: bc125209-eda8-11ec-b411-4851c58829e0\r\nServer:
-        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_117ce597-bf59-4f90-b785-3b93b78bc649--"
+        true\r\nx-ms-request-id: 132854ab-601e-0044-79cf-81a9461e7b01\r\nx-ms-version:
+        2021-08-06\r\nx-ms-client-request-id: 64fed527-edc2-11ec-8486-4851c58829e0\r\nServer:
+        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_02e2f725-bd61-4b40-bbb4-41b522a12e23--"
     headers:
-      content-type: multipart/mixed; boundary=batchresponse_117ce597-bf59-4f90-b785-3b93b78bc649
-      date: Thu, 16 Jun 2022 19:15:50 GMT
+      content-type: multipart/mixed; boundary=batchresponse_02e2f725-bd61-4b40-bbb4-41b522a12e23
+      date: Thu, 16 Jun 2022 22:19:30 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2021-08-06'
     status:
       code: 202
       message: Accepted
-    url: https://vincenttranversioning.blob.core.windows.net/acontainer63e7163d?restype=container&comp=batch
+    url: https://storagenamestorname.blob.core.windows.net/acontainer63e7163d?restype=container&comp=batch
 - request:
     body: null
     headers:
@@ -298,11 +298,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.13.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 16 Jun 2022 19:15:50 GMT
+      - Thu, 16 Jun 2022 22:19:31 GMT
       x-ms-version:
       - '2021-08-06'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/acontainer63e7163d/blob1
+    uri: https://storagenamestorname.blob.core.windows.net/acontainer63e7163d/blob1
   response:
     body:
       string: ''
@@ -310,22 +310,22 @@ interactions:
       accept-ranges: bytes
       content-length: '12'
       content-type: application/octet-stream
-      date: Thu, 16 Jun 2022 19:15:50 GMT
-      etag: '"0x8DA4FCCA0427604"'
-      last-modified: Thu, 16 Jun 2022 19:15:50 GMT
+      date: Thu, 16 Jun 2022 22:19:30 GMT
+      etag: '"0x8DA4FE6493B019E"'
+      last-modified: Thu, 16 Jun 2022 22:19:31 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-access-tier: Hot
       x-ms-access-tier-inferred: 'true'
       x-ms-blob-type: BlockBlob
-      x-ms-creation-time: Thu, 16 Jun 2022 19:15:50 GMT
+      x-ms-creation-time: Thu, 16 Jun 2022 22:19:31 GMT
       x-ms-is-current-version: 'true'
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
       x-ms-server-encrypted: 'true'
       x-ms-version: '2021-08-06'
-      x-ms-version-id: '2022-06-16T19:15:50.6989332Z'
+      x-ms-version-id: '2022-06-16T22:19:31.6032686Z'
     status:
       code: 200
       message: OK
-    url: https://vincenttranversioning.blob.core.windows.net/acontainer63e7163d/blob1
+    url: https://storagenamestorname.blob.core.windows.net/acontainer63e7163d/blob1
 version: 1
