@@ -265,7 +265,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         )
 
     @distributed_trace_async
-    async def get_copy_authorization(self, **kwargs: Any) -> dict[str, str]:
+    async def get_copy_authorization(self, **kwargs: Any) -> Dict[str, str]:
         """Generate authorization for copying a custom model into the target Form Recognizer resource.
 
         This should be called by the target resource (where the model will be copied to)
