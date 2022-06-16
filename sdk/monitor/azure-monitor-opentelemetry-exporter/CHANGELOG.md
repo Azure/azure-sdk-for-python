@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0b6 (Unreleased)
+## 1.0.0b7 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b6 (2022-06-10)
 
 ### Features Added
 - Implement log exporter using experimental OT logging sdk
@@ -9,12 +19,12 @@
     ([#23633](https://github.com/Azure/azure-sdk-for-python/pull/23633))
 - Implement exporting span events as message/exception telemetry
     ([#23708](https://github.com/Azure/azure-sdk-for-python/pull/23708))
+- Implement metrics exporter using experimental OT metrics sdk
+    ([#23960](https://github.com/Azure/azure-sdk-for-python/pull/23960))
 
 ### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Update to OpenTelemetry api/sdk 1.12.0rc1
+    ([#24619](https://github.com/Azure/azure-sdk-for-python/pull/24619))
 
 ## 1.0.0b5 (2021-10-05)
 

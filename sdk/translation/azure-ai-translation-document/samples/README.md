@@ -37,7 +37,7 @@ These sample programs show common scenarios for the Document Translation client'
 1. Install the Azure Document Translation client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-translation-document --pre
+pip install azure-ai-translation-document
 ```
 For more information about how the versioning of the SDK corresponds to the versioning of the service's API, see [here][versioning_story_readme].
 
@@ -61,7 +61,7 @@ what you can do with the Azure Document Translation client library.
 |[sample_translation_with_custom_model.py][sample_translation_with_custom_model] and [sample_translation_with_custom_model_async.py][sample_translation_with_custom_model_async]|Translate documents using a custom model|
 |[sample_begin_translation_with_filters.py][sample_begin_translation_with_filters] and [sample_begin_translation_with_filters_async.py][sample_begin_translation_with_filters_async]|Translate documents under a folder or translate only a specific document|
 |[sample_list_document_statuses_with_filters.py][sample_list_document_statuses_with_filters] and [sample_list_document_statuses_with_filters_async.py][sample_list_document_statuses_with_filters_async]|List document statuses using filters|
-|[sample_list_translations_with_filters.py][sample_list_translations_with_filters] and [sample_list_translations_with_filters_async.py][sample_list_translations_with_filters_async]|List translations operations using filters|
+|[sample_list_translations_with_filters.py][sample_list_translations_with_filters] and [sample_list_translations_with_filters_async.py][sample_list_translations_with_filters_async]|List translation operations using filters|
 
 
 [versioning_story_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document#install-the-package

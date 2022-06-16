@@ -1,0 +1,30 @@
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
+name: blue
+type: kubernetes
+endpoint_name: mit-test-1
+description: description for online deployment
+model:
+    name: sklearn_regression_model
+    version: 10
+    path: ../model-1/model/sklearn_regression_model.pkl
+code_configuration:
+    code: ../model-1/onlinescoring/
+    scoring_script: score.py
+environment:
+    name: k8s-env
+    version: 3
+    image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1
+    conda_file: ../model-1/environment/conda.yml
+instance_type: cpuinstance
+liveness_probe:
+  initial_delay: 10
+  period: 10
+  timeout: 10
+  success_threshold: 1
+  failure_threshold: 1
+readiness_probe:
+  initial_delay: 10
+  period: 10
+  timeout: 10
+  success_threshold: 1
+  failure_threshold: 1

@@ -163,9 +163,13 @@ class DataSourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ALERTS = "Alerts"
 
 class IdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of managed service identity.
+    """The type of identity that creates/modifies resources
     """
 
+    USER = "user"
+    APPLICATION = "application"
+    MANAGED_IDENTITY = "managedIdentity"
+    KEY = "key"
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
     NONE = "None"

@@ -1,0 +1,20 @@
+type: pipeline
+
+name: simplePipelineJobMultipleDataforComps
+description: The hello world pipeline job with multiple data options
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: azureml:cpu-cluster
+
+inputs:
+  inputvalue: 1
+
+jobs:
+  multiple_data_component:
+    component: azureml:microsoftsamplesCommandComponentMultipleData:1
+    type: command
+      # Hard-coding input path here instead of mapping to input
+    inputs:
+      component_in_3: ${{parent.inputs.inputvalue}}

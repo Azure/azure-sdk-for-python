@@ -5,7 +5,9 @@
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
 from datetime import datetime
-from typing import Any, Dict, Union
+from typing import ( # pylint: disable=unused-import
+    Any, Dict, Optional, Union,
+    TYPE_CHECKING)
 
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.storage.blob.aio import BlobClient
@@ -19,12 +21,37 @@ from ._data_lake_lease_async import DataLakeLeaseClient
 from .._deserialize import process_storage_error
 from .._shared.policies_async import ExponentialRetry
 
+if TYPE_CHECKING:
+    from .._models import ContentSettings
+    from .._models import FileProperties
+
 _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
     'The require_encryption flag is set, but encryption is not supported'
     ' for this method.')
 
 
 class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
+    """A base client for interacting with a DataLake file/directory, even if the file/directory may not
+    yet exist.
+
+    :param str account_url:
+        The URI to the storage account.
+    :param str file_system_name:
+        The file system for the directory or files.
+    :param str file_path:
+        The whole file path, so that to interact with a specific file.
+        eg. "{directory}/{subdirectory}/{file}"
+    :param credential:
+        The credentials with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
+        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
+    """
     def __init__(
             self, account_url,  # type: str
             file_system_name,  # type: str
@@ -42,18 +69,18 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
 
         kwargs.pop('_hosts', None)
 
-        self._blob_client = BlobClient(account_url=self._blob_account_url, container_name=file_system_name,
-                                       blob_name=path_name,
+        self._blob_client = BlobClient(account_url=self._blob_account_url, container_name=self.file_system_name,
+                                       blob_name=self.path_name,
                                        credential=credential,
                                        _hosts=self._blob_client._hosts,  # pylint: disable=protected-access
                                        **kwargs)
 
-        self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url, file_system=file_system_name,
-                                                   path=path_name, pipeline=self._pipeline)
+        self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url, file_system=self.file_system_name,
+                                                   path=self.path_name, pipeline=self._pipeline)
         self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(self._blob_client.url,
                                                                                base_url=self._blob_client.url,
-                                                                               file_system=file_system_name,
-                                                                               path=path_name,
+                                                                               file_system=self.file_system_name,
+                                                                               path=self.path_name,
                                                                                pipeline=self._pipeline)
         api_version = get_api_version(kwargs)
         self._client._config.version = api_version  # pylint: disable=protected-access
@@ -100,6 +127,31 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
+        :keyword str owner:
+            The owner of the file or directory.
+        :keyword str group:
+            The owning group of the file or directory.
+        :keyword str acl:
+            Sets POSIX access control rights on files and directories. The value is a
+            comma-separated list of access control entries. Each access control entry (ACE) consists of a
+            scope, a type, a user or group identifier, and permissions in the format
+            "[scope:][type]:[id]:[permissions]".
+        :keyword str lease_id:
+            Proposed lease ID, in a GUID string format. The DataLake service returns
+            400 (Invalid request) if the proposed lease ID is not in the correct format.
+        :keyword int lease_duration:
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change.
+        :keyword expires_on:
+            The time to set the file to expiry.
+            If the type of expires_on is an int, expiration time will be set
+            as the number of milliseconds elapsed from creation time.
+            If the type of expires_on is datetime, expiration time will be set
+            absolute to the time provided. If no time zone info is provided, this
+            will be interpreted as UTC.
+        :paramtype expires_on: datetime or int
         :keyword permissions:
             Optional and only valid if Hierarchical Namespace
             is enabled for the account. Sets POSIX access permissions for the file
@@ -125,10 +177,20 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return: Dict[str, Union[str, datetime]]
+        :return: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
         """
+        lease_id = kwargs.get('lease_id', None)
+        lease_duration = kwargs.get('lease_duration', None)
+        if lease_id and not lease_duration:
+            raise ValueError("Please specify a lease_id and a lease_duration.")
+        if lease_duration and not lease_id:
+            raise ValueError("Please specify a lease_id and a lease_duration.")
         options = self._create_path_options(
             resource_type,
             content_settings=content_settings,
@@ -167,7 +229,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return: None
+        :return: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
         """
         options = self._delete_path_options(**kwargs)
         try:
@@ -586,6 +649,10 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Decrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            Required if the file/directory was created with a customer-provided key.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: DirectoryProperties or FileProperties
@@ -637,6 +704,9 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: file system-updated property dict (Etag and last modified).

@@ -576,10 +576,15 @@ function Import-Dev-Cert-python
   python $pathToScript
 }
 
-function Validate-Python-DocMsPackages ($PackageInfo, $PackageSourceOverride, $DocValidationImageId)
+function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSourceOverride, $DocValidationImageId)
 {
-  $packageName = $packageInfo.Name
-  $packageVersion = $packageInfo.Version
-  ValidatePackage -packageName $packageName -packageVersion $packageVersion `
-      -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId
+  # While eng/common/scripts/Update-DocsMsMetadata.ps1 is still passing a single packageInfo, process as a batch
+  if (!$PackageInfos) {
+    $PackageInfos =  @($PackageInfo)
+  }
+
+  foreach ($package in $PackageInfos) {
+    ValidatePackage -packageName $package.Name -packageVersion $package.Version `
+        -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId
+  }
 }

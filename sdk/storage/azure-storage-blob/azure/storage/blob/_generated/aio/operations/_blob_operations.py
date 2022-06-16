@@ -14,6 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
@@ -34,11 +35,11 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     models = _models
 
     def __init__(self, *args, **kwargs) -> None:
-        args = list(args)
-        self._client = args.pop(0) if args else kwargs.pop("client")
-        self._config = args.pop(0) if args else kwargs.pop("config")
-        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
-        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
 
     @distributed_trace_async
@@ -51,9 +52,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         range_get_content_md5: Optional[bool] = None,
         range_get_content_crc64: Optional[bool] = None,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        cpk_info: Optional["_models.CpkInfo"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        cpk_info: Optional[_models.CpkInfo] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> IO:
         """The Download operation reads or downloads a blob from the system, including its metadata and
@@ -99,11 +100,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: IO
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
 
         _lease_id = None
         _encryption_key = None
@@ -147,11 +152,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.download.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=True,
             **kwargs
@@ -272,9 +279,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         version_id: Optional[str] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        cpk_info: Optional["_models.CpkInfo"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        cpk_info: Optional[_models.CpkInfo] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """The Get Properties operation returns all user-defined metadata, standard HTTP properties, and
@@ -310,11 +317,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _lease_id = None
         _encryption_key = None
@@ -355,11 +366,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.get_properties.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -438,8 +451,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         delete_snapshots: Optional[Union[str, "_models.DeleteSnapshotsOptionType"]] = None,
         request_id_parameter: Optional[str] = None,
         blob_delete_type: Optional[str] = "Permanent",
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """If the storage account's soft delete feature is disabled then, when a blob is deleted, it is
@@ -479,8 +492,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          value is None.
         :type request_id_parameter: str
         :param blob_delete_type: Optional.  Only possible value is 'permanent', which specifies to
-         permanently delete a blob if blob soft delete is enabled. Possible values are "Permanent" or
-         None. Default value is "Permanent".
+         permanently delete a blob if blob soft delete is enabled. Known values are "Permanent" or None.
+         Default value is "Permanent".
         :type blob_delete_type: str
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
@@ -491,11 +504,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _lease_id = None
         _if_modified_since = None
@@ -528,11 +545,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             blob_delete_type=blob_delete_type,
             template_url=self.delete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -583,13 +602,16 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "undelete")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "undelete"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_undelete_request(
@@ -599,11 +621,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             template_url=self.undelete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -660,13 +684,16 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "expiry")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "expiry"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_set_expiry_request(
@@ -678,11 +705,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             expires_on=expires_on,
             template_url=self.set_expiry.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -714,9 +743,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         self,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        blob_http_headers: Optional["_models.BlobHTTPHeaders"] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """The Set HTTP Headers operation sets system properties on the blob.
@@ -744,13 +773,16 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "properties")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "properties"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _blob_cache_control = None
         _blob_content_type = None
@@ -800,11 +832,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             blob_content_disposition=_blob_content_disposition,
             request_id_parameter=request_id_parameter,
             template_url=self.set_http_headers.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -839,7 +873,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request_id_parameter: Optional[str] = None,
         immutability_policy_expiry: Optional[datetime.datetime] = None,
         immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """The Set Immutability Policy operation sets the immutability policy on the blob.
@@ -869,13 +903,16 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "immutabilityPolicies")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "immutabilityPolicies"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _if_unmodified_since = None
         if modified_access_conditions is not None:
@@ -891,11 +928,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             immutability_policy_expiry=immutability_policy_expiry,
             immutability_policy_mode=immutability_policy_mode,
             template_url=self.set_immutability_policy.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -948,13 +987,16 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "immutabilityPolicies")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "immutabilityPolicies"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_delete_immutability_policy_request(
@@ -964,11 +1006,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             template_url=self.delete_immutability_policy.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1022,13 +1066,16 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "legalhold")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "legalhold"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_set_legal_hold_request(
@@ -1039,11 +1086,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             template_url=self.set_legal_hold.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1075,10 +1124,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        cpk_info: Optional["_models.CpkInfo"] = None,
-        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        cpk_info: Optional[_models.CpkInfo] = None,
+        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """The Set Blob Metadata operation sets user-defined metadata for the specified blob as one or
@@ -1117,13 +1166,16 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "metadata")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "metadata"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _lease_id = None
         _encryption_key = None
@@ -1168,11 +1220,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.set_metadata.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1210,7 +1264,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         duration: Optional[int] = None,
         proposed_lease_id: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
@@ -1246,14 +1300,17 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "lease")  # type: str
-        action = kwargs.pop('action', "acquire")  # type: str
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
+        action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "acquire"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -1282,11 +1339,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.acquire_lease.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1320,7 +1379,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         lease_id: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
@@ -1350,14 +1409,17 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "lease")  # type: str
-        action = kwargs.pop('action', "release")  # type: str
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
+        action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "release"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -1385,11 +1447,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.release_lease.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1422,7 +1486,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         lease_id: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
@@ -1452,14 +1516,17 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "lease")  # type: str
-        action = kwargs.pop('action', "renew")  # type: str
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
+        action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "renew"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -1487,11 +1554,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.renew_lease.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1526,7 +1595,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         proposed_lease_id: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
@@ -1560,14 +1629,17 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "lease")  # type: str
-        action = kwargs.pop('action', "change")  # type: str
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
+        action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "change"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -1596,11 +1668,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.change_lease.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1634,7 +1708,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         timeout: Optional[int] = None,
         break_period: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
@@ -1670,14 +1744,17 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "lease")  # type: str
-        action = kwargs.pop('action', "break")  # type: str
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
+        action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "break"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -1705,11 +1782,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.break_lease.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1743,10 +1822,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
         request_id_parameter: Optional[str] = None,
-        cpk_info: Optional["_models.CpkInfo"] = None,
-        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        cpk_info: Optional[_models.CpkInfo] = None,
+        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """The Create Snapshot operation creates a read-only snapshot of a blob.
@@ -1784,13 +1863,16 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "snapshot")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "snapshot"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _encryption_key = None
         _encryption_key_sha256 = None
@@ -1835,11 +1917,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             template_url=self.create_snapshot.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1883,9 +1967,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         immutability_policy_expiry: Optional[datetime.datetime] = None,
         immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
         legal_hold: Optional[bool] = None,
-        source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """The Start Copy From URL operation copies a blob or an internet resource to a new blob.
@@ -1943,11 +2027,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _source_if_modified_since = None
         _source_if_unmodified_since = None
@@ -2001,11 +2089,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
             template_url=self.start_copy_from_url.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -2049,10 +2139,11 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
         legal_hold: Optional[bool] = None,
         copy_source_authorization: Optional[str] = None,
-        source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
+        copy_source_tags: Optional[Union[str, "_models.BlobCopySourceTags"]] = None,
+        source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
         **kwargs: Any
     ) -> None:
         """The Copy From URL operation copies a blob or an internet resource to a new blob. It will not
@@ -2099,6 +2190,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
          OAuth access token to copy source. Default value is None.
         :type copy_source_authorization: str
+        :param copy_source_tags: Optional, default 'replace'.  Indicates if source tags should be
+         copied or replaced with the tags specified by x-ms-tags. Default value is None.
+        :type copy_source_tags: str or ~azure.storage.blob.models.BlobCopySourceTags
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.blob.models.SourceModifiedAccessConditions
@@ -2117,13 +2211,16 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        x_ms_requires_sync = kwargs.pop('x_ms_requires_sync', "true")  # type: str
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        x_ms_requires_sync = kwargs.pop('x_ms_requires_sync', _headers.pop('x-ms-requires-sync', "true"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _source_if_modified_since = None
         _source_if_unmodified_since = None
@@ -2178,12 +2275,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             legal_hold=legal_hold,
             copy_source_authorization=copy_source_authorization,
             encryption_scope=_encryption_scope,
+            copy_source_tags=copy_source_tags,
             template_url=self.copy_from_url.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -2222,7 +2322,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         copy_id: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """The Abort Copy From URL operation aborts a pending Copy From URL operation, and leaves a
@@ -2253,14 +2353,17 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "copy")  # type: str
-        copy_action_abort_constant = kwargs.pop('copy_action_abort_constant', "abort")  # type: str
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "copy"))  # type: str
+        copy_action_abort_constant = kwargs.pop('copy_action_abort_constant', _headers.pop('x-ms-copy-action', "abort"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _lease_id = None
         if lease_access_conditions is not None:
@@ -2276,11 +2379,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             template_url=self.abort_copy_from_url.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -2314,8 +2419,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         timeout: Optional[int] = None,
         rehydrate_priority: Optional[Union[str, "_models.RehydratePriority"]] = None,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """The Set Tier operation sets the tier on a blob. The operation is allowed on a page blob in a
@@ -2360,13 +2465,16 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "tier")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "tier"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _lease_id = None
         _if_tags = None
@@ -2388,11 +2496,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             lease_id=_lease_id,
             if_tags=_if_tags,
             template_url=self.set_tier.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -2441,14 +2551,17 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        restype = kwargs.pop('restype', "account")  # type: str
-        comp = kwargs.pop('comp', "properties")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        restype = kwargs.pop('restype', _params.pop('restype', "account"))  # type: str
+        comp = kwargs.pop('comp', _params.pop('comp', "properties"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_get_account_info_request(
@@ -2457,11 +2570,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             comp=comp,
             version=self._config.version,
             template_url=self.get_account_info.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -2494,10 +2609,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         snapshot: Optional[str] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        query_request: Optional["_models.QueryRequest"] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        cpk_info: Optional["_models.CpkInfo"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        query_request: Optional[_models.QueryRequest] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        cpk_info: Optional[_models.CpkInfo] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> IO:
         """The Query operation enables users to select/project on blob data by providing simple query
@@ -2534,14 +2649,17 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: IO
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "query")  # type: str
-        content_type = kwargs.pop('content_type', "application/xml")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "query"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/xml"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
 
         _lease_id = None
         _encryption_key = None
@@ -2588,11 +2706,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.query.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=True,
             **kwargs
@@ -2693,10 +2813,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request_id_parameter: Optional[str] = None,
         snapshot: Optional[str] = None,
         version_id: Optional[str] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
-    ) -> "_models.BlobTags":
+    ) -> _models.BlobTags:
         """The Get Tags operation enables users to get the tags associated with a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -2730,13 +2850,16 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.storage.blob.models.BlobTags
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BlobTags"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "tags")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "tags"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.BlobTags]
 
         _if_tags = None
         _lease_id = None
@@ -2756,11 +2879,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             lease_id=_lease_id,
             template_url=self.get_tags.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -2796,9 +2921,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         transactional_content_md5: Optional[bytearray] = None,
         transactional_content_crc64: Optional[bytearray] = None,
         request_id_parameter: Optional[str] = None,
-        tags: Optional["_models.BlobTags"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        tags: Optional[_models.BlobTags] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """The Set Tags operation enables users to set tags on a blob.
@@ -2836,14 +2961,17 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "tags")  # type: str
-        content_type = kwargs.pop('content_type', "application/xml")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "tags"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/xml"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _if_tags = None
         _lease_id = None
@@ -2870,11 +2998,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             lease_id=_lease_id,
             template_url=self.set_tags.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs

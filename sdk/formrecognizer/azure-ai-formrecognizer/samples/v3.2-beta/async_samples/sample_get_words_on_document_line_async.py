@@ -28,12 +28,12 @@ import asyncio
 def format_bounding_region(bounding_regions):
     if not bounding_regions:
         return "N/A"
-    return ", ".join("Page #{}: {}".format(region.page_number, format_bounding_box(region.bounding_box)) for region in bounding_regions)
+    return ", ".join("Page #{}: {}".format(region.page_number, format_polygon(region.polygon)) for region in bounding_regions)
 
-def format_bounding_box(bounding_box):
-    if not bounding_box:
+def format_polygon(polygon):
+    if not polygon:
         return "N/A"
-    return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
+    return ", ".join(["[{}, {}]".format(p.x, p.y) for p in polygon])
 
 
 async def get_words_on_document_line_async():
@@ -74,11 +74,11 @@ async def get_words_on_document_line_async():
         for line_idx, line in enumerate(page.lines):
             words = line.get_words()
             print(
-                "...Line # {} has word count {} and text '{}' within bounding box '{}'".format(
+                "...Line # {} has word count {} and text '{}' within bounding polygon '{}'".format(
                     line_idx,
                     len(words),
                     line.content,
-                    format_bounding_box(line.bounding_box),
+                    format_polygon(line.polygon),
                 )
             )
 

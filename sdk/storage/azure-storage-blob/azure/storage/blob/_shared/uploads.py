@@ -18,7 +18,11 @@ from azure.core.tracing.common import with_current_context
 from . import encode_base64, url_quote
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
-from .encryption import get_blob_encryptor_and_padder
+from .encryption import (
+    GCMBlobEncryptionStream,
+    get_blob_encryptor_and_padder,
+    _ENCRYPTION_PROTOCOL_V1,
+    _ENCRYPTION_PROTOCOL_V2)
 
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
@@ -53,15 +57,22 @@ def upload_data_chunks(
         stream=None,
         validate_content=None,
         encryption_options=None,
+        progress_hook=None,
         **kwargs):
 
     if encryption_options:
-        encryptor, padder = get_blob_encryptor_and_padder(
-            encryption_options.get('cek'),
-            encryption_options.get('vector'),
-            uploader_class is not PageBlobChunkUploader)
-        kwargs['encryptor'] = encryptor
-        kwargs['padder'] = padder
+        # V1 uses an encryptor/padder to encrypt each chunk
+        if encryption_options['version'] == _ENCRYPTION_PROTOCOL_V1:
+            encryptor, padder = get_blob_encryptor_and_padder(
+                encryption_options.get('cek'),
+                encryption_options.get('vector'),
+                uploader_class is not PageBlobChunkUploader)
+            kwargs['encryptor'] = encryptor
+            kwargs['padder'] = padder
+
+        # V2 wraps the data stream with an encryption stream
+        elif encryption_options['version'] == _ENCRYPTION_PROTOCOL_V2:
+            stream = GCMBlobEncryptionStream(encryption_options.get('cek'), stream)
 
     parallel = max_concurrency > 1
     if parallel and 'modified_access_conditions' in kwargs:
@@ -75,6 +86,7 @@ def upload_data_chunks(
         stream=stream,
         parallel=parallel,
         validate_content=validate_content,
+        progress_hook=progress_hook,
         **kwargs)
     if parallel:
         with futures.ThreadPoolExecutor(max_concurrency) as executor:
@@ -98,6 +110,7 @@ def upload_substream_blocks(
         chunk_size=None,
         max_concurrency=None,
         stream=None,
+        progress_hook=None,
         **kwargs):
     parallel = max_concurrency > 1
     if parallel and 'modified_access_conditions' in kwargs:
@@ -109,6 +122,7 @@ def upload_substream_blocks(
         chunk_size=chunk_size,
         stream=stream,
         parallel=parallel,
+        progress_hook=progress_hook,
         **kwargs)
 
     if parallel:
@@ -128,7 +142,16 @@ def upload_substream_blocks(
 
 class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
 
-    def __init__(self, service, total_size, chunk_size, stream, parallel, encryptor=None, padder=None, **kwargs):
+    def __init__(
+            self, service,
+            total_size,
+            chunk_size,
+            stream,
+            parallel,
+            encryptor=None,
+            padder=None,
+            progress_hook=None,
+            **kwargs):
         self.service = service
         self.total_size = total_size
         self.chunk_size = chunk_size
@@ -136,12 +159,12 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         self.parallel = parallel
 
         # Stream management
-        self.stream_start = stream.tell() if parallel else None
         self.stream_lock = Lock() if parallel else None
 
         # Progress feedback
         self.progress_total = 0
         self.progress_lock = Lock() if parallel else None
+        self.progress_hook = progress_hook
 
         # Encryption
         self.encryptor = encryptor
@@ -198,6 +221,9 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
                 self.progress_total += length
         else:
             self.progress_total += length
+
+        if self.progress_hook:
+            self.progress_hook(self.progress_total, self.total_size)
 
     def _upload_chunk(self, chunk_offset, chunk_data):
         raise NotImplementedError("Must be implemented by child class.")

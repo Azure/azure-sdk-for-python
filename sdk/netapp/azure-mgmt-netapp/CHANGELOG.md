@@ -1,5 +1,26 @@
 # Release History
 
+## 8.0.0 (2022-06-13)
+
+**Features**
+
+  - Added operation VolumesOperations.begin_finalize_relocation
+  - Added operation VolumesOperations.begin_relocate
+  - Added operation VolumesOperations.begin_reset_cifs_password
+  - Added operation VolumesOperations.begin_revert_relocation
+  - Added operation VolumesOperations.list_replications
+  - Added operation group VolumeQuotaRulesOperations
+  - Model ProxyResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model Volume has a new parameter encrypted
+  - Model Volume has a new parameter zones
+  - Model VolumeGroupVolumeProperties has a new parameter encrypted
+
+**Breaking changes**
+
+  - Model VolumeGroup no longer has parameter tags
+  - Model VolumeGroupDetails no longer has parameter tags
+
 ## 7.0.0 (2022-03-15)
 
 **Features**

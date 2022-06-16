@@ -108,10 +108,12 @@ from ._app_platform_management_client_enums import (
     ResourceSkuRestrictionsType,
     RuntimeVersion,
     SkuScaleType,
+    StorageType,
     SupportedRuntimePlatform,
     SupportedRuntimeValue,
     TestKeyType,
     TrafficDirection,
+    Type,
     UserSourceType,
 )
 
@@ -215,9 +217,11 @@ __all__ = [
     'ResourceSkuRestrictionsType',
     'RuntimeVersion',
     'SkuScaleType',
+    'StorageType',
     'SupportedRuntimePlatform',
     'SupportedRuntimeValue',
     'TestKeyType',
     'TrafficDirection',
+    'Type',
     'UserSourceType',
 ]

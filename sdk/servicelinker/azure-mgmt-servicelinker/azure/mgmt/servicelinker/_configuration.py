@@ -19,14 +19,17 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class MicrosoftServiceLinkerConfiguration(Configuration):
-    """Configuration for MicrosoftServiceLinker.
+class ServiceLinkerManagementClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+    """Configuration for ServiceLinkerManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
+    :keyword api_version: Api Version. Default value is "2022-05-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -34,12 +37,14 @@ class MicrosoftServiceLinkerConfiguration(Configuration):
         credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
-        super(MicrosoftServiceLinkerConfiguration, self).__init__(**kwargs)
+        super(ServiceLinkerManagementClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2022-05-01")  # type: str
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
 
         self.credential = credential
-        self.api_version = "2021-11-01-preview"
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-servicelinker/{}'.format(VERSION))
         self._configure(**kwargs)

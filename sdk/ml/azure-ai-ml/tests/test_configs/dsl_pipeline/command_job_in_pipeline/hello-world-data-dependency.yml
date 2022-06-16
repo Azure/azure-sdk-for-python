@@ -1,0 +1,18 @@
+type: pipeline
+compute: azureml:cpu-cluster
+jobs:
+  hello:
+    type: command
+    outputs: 
+      hello_output:
+        mode: upload
+    command: echo "hello world at $(date)" | tee ${{outputs.hello_output}}/file.txt
+    environment:
+      image: python
+  world:
+    type: command
+    inputs: 
+      world_input: ${{parent.jobs.hello.outputs.hello_output}}
+    command: cat ${{inputs.world_input}}/file.txt
+    environment:
+      image: python

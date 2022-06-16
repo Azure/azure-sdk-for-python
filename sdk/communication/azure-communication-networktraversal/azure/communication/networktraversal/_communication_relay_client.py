@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from azure.communication.identity import CommunicationUserIdentifier
     from azure.communication.networktraversal import RouteType
 
-class CommunicationRelayClient(object):
+class CommunicationRelayClient(object): # pylint: disable=client-accepts-api-version-keyword
     """Azure Communication Services Relay client.
 
     :param str endpoint:

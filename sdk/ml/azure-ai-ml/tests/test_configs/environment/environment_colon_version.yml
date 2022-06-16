@@ -1,0 +1,4 @@
+image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04
+name: myTestEnv
+version: 18.04:2022
+description: This is it

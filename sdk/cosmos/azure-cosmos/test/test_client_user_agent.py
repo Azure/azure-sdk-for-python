@@ -21,8 +21,8 @@
 
 import unittest
 
-import azure.cosmos.cosmos_client as sync_client
-import azure.cosmos.aio.cosmos_client as async_client
+from azure.cosmos import CosmosClient as sync_client
+from azure.cosmos.aio import CosmosClient as async_client
 import pytest
 import asyncio
 from test_config import _test_config
@@ -38,14 +38,12 @@ pytestmark = pytest.mark.cosmosEmulator
 class TestClientUserAgent(unittest.TestCase):
 
     async def test_client_user_agent(self):
-        client_sync = sync_client.CosmosClient(url=_test_config.host, credential=_test_config.masterKey)
-        client_async = async_client.CosmosClient(url=_test_config.host, credential=_test_config.masterKey)
+        async with async_client(url=_test_config.host, credential=_test_config.masterKey) as client_async:
+            client_sync = sync_client(url=_test_config.host, credential=_test_config.masterKey)
 
-        self.assertTrue(client_sync.client_connection._user_agent.startswith("azsdk-python-cosmos/"))
-        self.assertTrue(client_async.client_connection._user_agent.startswith("azsdk-python-cosmos-async/"))
-        self.assertTrue(client_async.client_connection._user_agent != client_sync.client_connection._user_agent)
-
-        await client_async.close()
+            self.assertTrue(client_sync.client_connection._user_agent.startswith("azsdk-python-cosmos/"))
+            self.assertTrue(client_async.client_connection._user_agent.startswith("azsdk-python-cosmos-async/"))
+            self.assertTrue(client_async.client_connection._user_agent != client_sync.client_connection._user_agent)
 
 
 if __name__ == "__main__":

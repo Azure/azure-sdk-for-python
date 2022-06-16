@@ -110,6 +110,10 @@ class CopyFileSmbInfo(msrest.serialization.Model):
      source file(source) to a target file or a time value in ISO 8601 format to set as last write
      time on a target file.
     :vartype file_last_write_time: str
+    :ivar file_change_time: Specifies either the option to copy file last write time from a source
+     file(source) to a target file or a time value in ISO 8601 format to set as last write time on a
+     target file.
+    :vartype file_change_time: str
     :ivar file_permission_copy_mode: Specifies the option to copy file security descriptor from
      source file or to set it using the value which is defined by the header value of
      x-ms-file-permission or x-ms-file-permission-key. Possible values include: "source",
@@ -129,6 +133,7 @@ class CopyFileSmbInfo(msrest.serialization.Model):
         'file_attributes': {'key': 'fileAttributes', 'type': 'str'},
         'file_creation_time': {'key': 'fileCreationTime', 'type': 'str'},
         'file_last_write_time': {'key': 'fileLastWriteTime', 'type': 'str'},
+        'file_change_time': {'key': 'fileChangeTime', 'type': 'str'},
         'file_permission_copy_mode': {'key': 'filePermissionCopyMode', 'type': 'str'},
         'ignore_read_only': {'key': 'ignoreReadOnly', 'type': 'bool'},
         'set_archive_attribute': {'key': 'setArchiveAttribute', 'type': 'bool'},
@@ -140,6 +145,7 @@ class CopyFileSmbInfo(msrest.serialization.Model):
         file_attributes: Optional[str] = None,
         file_creation_time: Optional[str] = None,
         file_last_write_time: Optional[str] = None,
+        file_change_time: Optional[str] = None,
         file_permission_copy_mode: Optional[Union[str, "PermissionCopyModeType"]] = None,
         ignore_read_only: Optional[bool] = None,
         set_archive_attribute: Optional[bool] = None,
@@ -157,6 +163,10 @@ class CopyFileSmbInfo(msrest.serialization.Model):
          source file(source) to a target file or a time value in ISO 8601 format to set as last write
          time on a target file.
         :paramtype file_last_write_time: str
+        :keyword file_change_time: Specifies either the option to copy file last write time from a
+         source file(source) to a target file or a time value in ISO 8601 format to set as last write
+         time on a target file.
+        :paramtype file_change_time: str
         :keyword file_permission_copy_mode: Specifies the option to copy file security descriptor from
          source file or to set it using the value which is defined by the header value of
          x-ms-file-permission or x-ms-file-permission-key. Possible values include: "source",
@@ -175,6 +185,7 @@ class CopyFileSmbInfo(msrest.serialization.Model):
         self.file_attributes = file_attributes
         self.file_creation_time = file_creation_time
         self.file_last_write_time = file_last_write_time
+        self.file_change_time = file_change_time
         self.file_permission_copy_mode = file_permission_copy_mode
         self.ignore_read_only = ignore_read_only
         self.set_archive_attribute = set_archive_attribute

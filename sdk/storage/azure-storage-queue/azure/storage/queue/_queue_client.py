@@ -5,8 +5,9 @@
 # --------------------------------------------------------------------------
 
 import functools
+import warnings
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
+    Optional, Any, Dict, List,
     TYPE_CHECKING)
 try:
     from urllib.parse import urlparse, quote, unquote
@@ -34,8 +35,6 @@ from ._generated.models import QueueMessage as GenQueueMessage
 from ._models import QueueMessage, AccessPolicy, MessagesPaged
 
 if TYPE_CHECKING:
-    from datetime import datetime
-    from azure.core.pipeline.policies import HTTPPolicy
     from ._models import QueueProperties
 
 
@@ -477,10 +476,23 @@ class QueueClient(StorageAccountHostsMixin):
         visibility_timeout = kwargs.pop('visibility_timeout', None)
         time_to_live = kwargs.pop('time_to_live', None)
         timeout = kwargs.pop('timeout', None)
-        self._config.message_encode_policy.configure(
-            require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            resolver=self.key_resolver_function)
+        try:
+            self._config.message_encode_policy.configure(
+                require_encryption=self.require_encryption,
+                key_encryption_key=self.key_encryption_key,
+                resolver=self.key_resolver_function,
+                encryption_version=self.encryption_version)
+        except TypeError:
+            warnings.warn(
+                "TypeError when calling message_encode_policy.configure. \
+                It is likely missing the encryption_version parameter. \
+                Consider updating your encryption information/implementation. \
+                Retrying without encryption_version."
+            )
+            self._config.message_encode_policy.configure(
+                require_encryption=self.require_encryption,
+                key_encryption_key=self.key_encryption_key,
+                resolver=self.key_resolver_function)
         encoded_content = self._config.message_encode_policy(content)
         new_message = GenQueueMessage(message_text=encoded_content)
 
@@ -590,9 +602,9 @@ class QueueClient(StorageAccountHostsMixin):
                 :caption: List pages and corresponding messages from the queue.
 
         :keyword int visibility_timeout:
-            If not specified, the default value is 0. Specifies the
+            If not specified, the default value is 30. Specifies the
             new visibility timeout value, in seconds, relative to server time.
-            The value must be larger than or equal to 0, and cannot be
+            The value must be larger than or equal to 1, and cannot be
             larger than 7 days. The visibility timeout of a message cannot be
             set to a value later than the expiry time. visibility_timeout
             should be set to a value smaller than the time-to-live value.
@@ -711,10 +723,23 @@ class QueueClient(StorageAccountHostsMixin):
         if receipt is None:
             raise ValueError("pop_receipt must be present")
         if message_text is not None:
-            self._config.message_encode_policy.configure(
-                self.require_encryption,
-                self.key_encryption_key,
-                self.key_resolver_function)
+            try:
+                self._config.message_encode_policy.configure(
+                    self.require_encryption,
+                    self.key_encryption_key,
+                    self.key_resolver_function,
+                    encryption_version=self.encryption_version)
+            except TypeError:
+                warnings.warn(
+                    "TypeError when calling message_encode_policy.configure. \
+                    It is likely missing the encryption_version parameter. \
+                    Consider updating your encryption information/implementation. \
+                    Retrying without encryption_version."
+                )
+                self._config.message_encode_policy.configure(
+                    self.require_encryption,
+                    self.key_encryption_key,
+                    self.key_resolver_function)
             encoded_message_text = self._config.message_encode_policy(message_text)
             updated = GenQueueMessage(message_text=encoded_message_text)
         else:

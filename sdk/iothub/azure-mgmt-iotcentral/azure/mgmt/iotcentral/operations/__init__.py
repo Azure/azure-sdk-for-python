@@ -7,9 +7,13 @@
 # --------------------------------------------------------------------------
 
 from ._apps_operations import AppsOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_links_operations import PrivateLinksOperations
 from ._operations import Operations
 
 __all__ = [
     'AppsOperations',
+    'PrivateEndpointConnectionsOperations',
+    'PrivateLinksOperations',
     'Operations',
 ]

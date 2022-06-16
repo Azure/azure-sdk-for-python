@@ -16,7 +16,7 @@ autorest --v3 --python
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/preview/2021-04-10/blob.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/preview/2021-08-06/blob.json
 output-folder: ../azure/storage/blob/_generated
 namespace: azure.storage.blob
 no-namespace-folders: true
@@ -150,7 +150,7 @@ directive:
     $["x-ms-parameterized-host"] = undefined;
 ```
 
-### Add url parameter to each operation and add it to the url
+### Add url parameter to each operation and add url to the path
 ``` yaml
 directive:
 - from: swagger-document
@@ -158,14 +158,21 @@ directive:
   transform: >
     for (const property in $)
     {
-        // Don't apply to service operations (where path is just '/')
-        if (property !== '/' && !property.startsWith('/?')) {
-            $[property]["parameters"].push({"$ref": "#/parameters/Url"});
-    
-            var oldName = property;
-            var newName = '{url}' + property;
-            $[newName] = $[oldName];
-            delete $[oldName];
+        $[property]["parameters"].push({"$ref": "#/parameters/Url"});
+
+        var oldName = property;
+        // For service operations (where the path is just '/') we need to
+        // remove the '/' at the begining to avoid having an extra '/' in
+        // the final URL.
+        if (property === '/' || property.startsWith('/?'))
+        {
+            var newName = '{url}' + property.substring(1);
         }
+        else
+        {
+            var newName = '{url}' + property;
+        }
+        $[newName] = $[oldName];
+        delete $[oldName];
     }
 ```

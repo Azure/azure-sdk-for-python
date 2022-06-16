@@ -1,0 +1,26 @@
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
+name: tfserving-deployment
+endpoint_name: tfserving-endpoint
+model:
+  name: tfserving-mounted
+  version: 1
+  path: ./model/half_plus_two
+environment_variables:
+  MODEL_BASE_PATH: /var/azureml-app/azureml-models/tfserving-mounted/1
+  MODEL_NAME: half_plus_two
+environment:
+  #name: tfserving
+  #version: 1
+  image: docker.io/tensorflow/serving:latest
+  inference_config:
+    liveness_route:
+      port: 8501
+      path: /v1/models/half_plus_two
+    readiness_route:
+      port: 8501
+      path: /v1/models/half_plus_two
+    scoring_route:
+      port: 8501
+      path: /v1/models/half_plus_two:predict
+instance_type: Standard_F2s_v2
+instance_count: 1

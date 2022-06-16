@@ -1,5 +1,32 @@
 ## Release History
 
+### 4.3.1 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+- Fixed parsing of args for overloaded `container.read()` method.
+
+#### Other Changes
+
+### 4.3.0 (2022-05-23)
+#### Features Added
+- GA release of Async I/O APIs, including all changes from 4.3.0b1 to 4.3.0b4.
+
+#### Breaking Changes
+- Method signatures have been updated to use keyword arguments instead of positional arguments for most method options in the async client.
+- Bugfix: Automatic Id generation for items was turned on for `upsert_items()` method when no 'id' value was present in document body.
+Method call will now require an 'id' field to be present in the document body.
+
+#### Other Changes
+- Deprecated offer-named methods in favor of their new throughput-named counterparts (`read_offer` -> `get_throughput`).
+- Marked the GetAuthorizationHeader method for deprecation since it will no longer be public in a future release.
+- Added samples showing how to configure retry options for both the sync and async clients.
+- Deprecated the `connection_retry_policy` and `retry_options` options in the sync client.
+- Added user warning to non-query methods trying to use `populate_query_metrics` options.
+
 ### 4.3.0b4 (2022-04-07)
 
 #### Features Added
@@ -24,7 +51,7 @@
 - Added new **provisional** `max_integrated_cache_staleness_in_ms` parameter to read item and query items APIs in order
   to make use of the **preview** CosmosDB integrated cache functionality.
   Please see [Azure Cosmos DB integrated cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache) for more details.
-- Added support for split-proof queries for the async client
+- Added support for split-proof queries for the async client.
 
 ### Bugs fixed
 - Default consistency level for the sync and async clients is no longer `Session` and will instead be set to the 
