@@ -11,7 +11,7 @@ class MapsSearchApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Azure Map Search API versions supported by this package"""
 
     #: This is the default version
-    V1_0 = "1.0"
+    V1_0 = "0.1.0"
 
 
 def validate_api_version(api_version: str) -> None:
