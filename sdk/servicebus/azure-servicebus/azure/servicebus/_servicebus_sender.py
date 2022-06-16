@@ -31,6 +31,7 @@ from ._common.utils import (
     trace_message,
 )
 from ._common.constants import (
+    CONSUMER_IDENTIFIER,
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
     MGMT_REQUEST_SEQUENCE_NUMBERS,
@@ -65,7 +66,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class SenderMixin(object):
-    def _create_attribute(self):
+    def _create_attribute(self, **kwargs):
         self._auth_uri = "sb://{}/{}".format(
             self.fully_qualified_namespace, self._entity_name
         )
@@ -75,7 +76,7 @@ class SenderMixin(object):
         self._error_policy = _ServiceBusErrorPolicy(
             max_retries=self._config.retry_total
         )
-        self._name = "SBSender-{}".format(uuid.uuid4())
+        self._name = kwargs.get("client_identifier","SBSender-{}".format(uuid.uuid4()))
         self._max_message_size_on_link = 0
         self.entity_name = self._entity_name
 
@@ -151,6 +152,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
+    :keyword str client_identifier: a string based identifier to uniquely identify the client instance. Service Bus will associate it
+     with some error messages for easier correlation of errors. If not specified a unique id will be generated.
     """
 
     def __init__(
@@ -188,7 +191,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             )
 
         self._max_message_size_on_link = 0
-        self._create_attribute()
+        self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
 
     @classmethod
@@ -240,6 +243,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             client_name=self._name,
             keep_alive_interval=self._config.keep_alive,
             encoding=self._config.encoding,
+            link_properties = {CONSUMER_IDENTIFIER:self._name}
         )
 
     def _open(self):
