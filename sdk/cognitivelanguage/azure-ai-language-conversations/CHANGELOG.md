@@ -1,9 +1,5 @@
 # Release History
 
-## 1.0b4 (2022-06-01)
-Not much update from 1.0b3
-Only more resolution types added
-
 ## 1.1.0b1 (2022-05-26)
 
 ### Features Added
@@ -14,6 +10,10 @@ Only more resolution types added
 * Client now uses python dictionaries for method parameters and results instead of classes.
 * Many input and result parameter name changes in `analyze_conversation()` method
 
+## 1.0b4 (Unreleased)
+
+### Features Added
+* Added more resolution types
 
 ## 1.0.0b3 (2022-04-19)
 
