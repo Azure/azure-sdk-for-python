@@ -4,7 +4,6 @@
 # ------------------------------------
 
 import re
-import six
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, SansIOHTTPPolicy
 from azure.core.pipeline.transport import HttpTransport
