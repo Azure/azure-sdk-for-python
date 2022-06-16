@@ -188,8 +188,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         )
 
     @distributed_trace_async
-    async def begin_create_composed_model(self, component_model_ids, **kwargs):
-        # type: (List[str], Any) -> AsyncDocumentModelAdministrationLROPoller[DocumentModel]
+    async def begin_create_composed_model(self, component_model_ids: List[str], **kwargs: Any) -> AsyncDocumentModelAdministrationLROPoller[DocumentModel]:
         """Creates a composed model from a collection of existing models.
 
         A composed model allows multiple models to be called with a single model ID. When a document is

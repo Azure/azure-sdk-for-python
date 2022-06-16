@@ -20,8 +20,7 @@ if TYPE_CHECKING:
 
 
 class FormRecognizerClientBase:
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
         try:
             endpoint = endpoint.rstrip("/")
         except AttributeError:

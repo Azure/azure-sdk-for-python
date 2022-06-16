@@ -61,8 +61,7 @@ class DocumentModelAdministrationLROPoller(LROPoller[PollingReturnType]):
         return {}
 
     @property
-    def operation_id(self):
-        # type: () -> str
+    def operation_id(self) -> str:
         """The operation ID of the model operation.
 
         :rtype: str
@@ -72,8 +71,7 @@ class DocumentModelAdministrationLROPoller(LROPoller[PollingReturnType]):
         )
 
     @property
-    def operation_kind(self):
-        # type: () -> str
+    def operation_kind(self) -> str:
         """The model operation kind. For example, 'documentModelBuild', 'documentModelCompose',
         'documentModelCopyTo'.
 
@@ -82,8 +80,7 @@ class DocumentModelAdministrationLROPoller(LROPoller[PollingReturnType]):
         return self._current_body.get("kind", None)
 
     @property
-    def percent_completed(self):
-        # type: () -> int
+    def percent_completed(self) -> int:
         """Operation progress (0-100).
 
         :rtype: int
@@ -92,8 +89,7 @@ class DocumentModelAdministrationLROPoller(LROPoller[PollingReturnType]):
         return 0 if percent_completed is None else percent_completed
 
     @property
-    def resource_location_url(self):
-        # type: () -> str
+    def resource_location_url(self) -> str:
         """URL of the resource targeted by this operation.
 
         :rtype: str
@@ -101,8 +97,7 @@ class DocumentModelAdministrationLROPoller(LROPoller[PollingReturnType]):
         return self._current_body.get("resourceLocation", None)
 
     @property
-    def created_on(self):
-        # type: () -> datetime.datetime
+    def created_on(self) -> datetime.datetime:
         """Date and time (UTC) when the operation was created.
 
         :rtype: ~datetime.datetime
@@ -113,8 +108,7 @@ class DocumentModelAdministrationLROPoller(LROPoller[PollingReturnType]):
         return created_on
 
     @property
-    def last_updated_on(self):
-        # type: () -> datetime.datetime
+    def last_updated_on(self) -> datetime.datetime:
         """Date and time (UTC) when the operation was last updated.
 
         :rtype: ~datetime.datetime
@@ -125,9 +119,7 @@ class DocumentModelAdministrationLROPoller(LROPoller[PollingReturnType]):
         return last_updated_on
 
     @classmethod
-    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):
-        # type: (PollingMethod[PollingReturnType], str, **Any) -> DocumentModelAdministrationLROPoller
-
+    def from_continuation_token(cls, polling_method: PollingMethod[PollingReturnType], continuation_token: str, **kwargs: Any) -> "DocumentModelAdministrationLROPoller":
         (
             client,
             initial_response,
@@ -140,8 +132,7 @@ class DocumentModelAdministrationLROPoller(LROPoller[PollingReturnType]):
 class DocumentModelAdministrationPolling(OperationResourcePolling):
     """Polling method overrides for training endpoints."""
 
-    def get_final_get_url(self, pipeline_response):
-        # type: (PipelineResponseType) -> None
+    def get_final_get_url(self, pipeline_response: PipelineResponseType) -> None:
         """If a final GET is needed, returns the URL.
 
         :rtype: None
@@ -152,13 +143,11 @@ class DocumentModelAdministrationPolling(OperationResourcePolling):
 class FormTrainingPolling(LocationPolling):
     """Polling method overrides for training endpoints."""
 
-    def get_polling_url(self):
-        # type: () -> str
+    def get_polling_url(self) -> str:
         """Return the polling URL."""
         return self._location_url + "?includeKeys=true"
 
-    def get_status(self, pipeline_response):  # pylint: disable=no-self-use
-        # type: (PipelineResponse) -> str
+    def get_status(self, pipeline_response: PipelineResponse) -> str:  # pylint: disable=no-self-use
         """Process the latest status update retrieved from a 'location' header.
 
         :param azure.core.pipeline.PipelineResponse pipeline_response: latest REST call response.
@@ -191,8 +180,7 @@ class FormTrainingPolling(LocationPolling):
 class AnalyzePolling(OperationResourcePolling):
     """Polling method overrides for custom analyze endpoints."""
 
-    def get_status(self, pipeline_response):  # pylint: disable=no-self-use
-        # type: (PipelineResponse) -> str
+    def get_status(self, pipeline_response: PipelineResponse) -> str:  # pylint: disable=no-self-use
         """Process the latest status update retrieved from an "Operation-Location" header.
         Raise errors for issues with input document.
 
@@ -222,8 +210,7 @@ class AnalyzePolling(OperationResourcePolling):
 class CopyPolling(OperationResourcePolling):
     """Polling method overrides for copy endpoint."""
 
-    def get_status(self, pipeline_response):  # pylint: disable=no-self-use
-        # type: (PipelineResponse) -> str
+    def get_status(self, pipeline_response: PipelineResponse) -> str:  # pylint: disable=no-self-use
         """Process the latest status update retrieved from an "Operation-Location" header.
         Raise errors for issues occurring during the copy model operation.
 
