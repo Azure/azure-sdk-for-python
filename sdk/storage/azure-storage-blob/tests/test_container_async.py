@@ -1580,6 +1580,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         assert len(response) == 2
         assert response[0].status_code == 202
         assert response[1].status_code == 202
+        assert (await blob.get_blob_properties()).get("version_id") == new_blob_version_id
 
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test

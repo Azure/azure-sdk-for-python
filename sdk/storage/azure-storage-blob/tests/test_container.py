@@ -1356,6 +1356,7 @@ class StorageContainerTest(StorageTestCase):
         assert len(response) == 2
         assert response[0].status_code == 202
         assert response[1].status_code == 202
+        assert blob.get_blob_properties().get("version_id") == new_blob_version_id
 
     @pytest.mark.live_test_only
     @BlobPreparer()
