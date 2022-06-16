@@ -11,7 +11,7 @@ from azure.eventhub._pyamqp.constants import TransportType
 from azure.eventhub._pyamqp.message import Message
 
 @pytest.mark.asyncio
-async def test_event_hubs_client_send(live_eventhub):
+async def test_event_hubs_client_send_async(live_eventhub):
     uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
     sas_auth = _authentication_async.SASTokenAuthAsync(
         uri=uri,
@@ -27,5 +27,5 @@ async def test_event_hubs_client_send(live_eventhub):
     
     message = Message(value="Single Message")
 
-    with SendClient(live_eventhub['hostname'], target, auth=sas_auth, debug=True, transport_type=TransportType.Amqp) as send_client:
-        send_client.send_message_async(message)
+    async with SendClient(live_eventhub['hostname'], target, auth=sas_auth, debug=True, transport_type=TransportType.Amqp) as send_client:
+        await send_client.send_message_async(message)
