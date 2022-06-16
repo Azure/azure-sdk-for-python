@@ -18,7 +18,7 @@ _FILE_OUT_PYTHON = 'release_python_status.md'
 _PYTHON_SDK_ADMINISTRATORS = ['msyyc', 'BigCat20196', 'azure-sdk', 'Wzb123456789']
 _PYTHON_SDK_ASSIGNEES = ['BigCat20196', 'msyyc']
 _ASSIGNER_DICT = {'BigCat20196': os.getenv('JF_TOKEN'),
-                  'msyyc': os.getenv('Token')}
+                  'msyyc': os.getenv('TOKEN')}
 logging.basicConfig(level=logging.INFO,
                     format='[auto-reply  log] - %(funcName)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
