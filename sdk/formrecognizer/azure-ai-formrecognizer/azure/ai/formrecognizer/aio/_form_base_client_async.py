@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -27,7 +26,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class FormRecognizerClientBaseAsync(object):
+class FormRecognizerClientBaseAsync:
     def __init__(
         self,
         endpoint: str,

@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -232,7 +231,7 @@ class Point(namedtuple("Point", "x y")):
     __slots__ = ()
 
     def __new__(cls, x, y):
-        return super(Point, cls).__new__(cls, x, y)
+        return super().__new__(cls, x, y)
 
     def to_dict(self):
         # type: () -> dict
@@ -268,7 +267,7 @@ class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_num
     __slots__ = ()
 
     def __new__(cls, first_page_number, last_page_number):
-        return super(FormPageRange, cls).__new__(
+        return super().__new__(
             cls, first_page_number, last_page_number
         )
 
@@ -299,7 +298,7 @@ class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_num
         )
 
 
-class FormElement(object):
+class FormElement:
     """Base type which includes properties for a form element.
 
     :ivar str text: The text content of the element.
@@ -360,7 +359,7 @@ class FormElement(object):
         )
 
 
-class RecognizedForm(object):
+class RecognizedForm:
     """Represents a form that has been recognized by a trained or prebuilt model.
     The `fields` property contains the form fields that were extracted from the
     form. Tables, text lines/words, and selection marks are extracted per page
@@ -454,7 +453,7 @@ class RecognizedForm(object):
         )
 
 
-class FormField(object):
+class FormField:
     """Represents a field recognized in an input form.
 
     :ivar str value_type: The type of `value` found on FormField. Described in
@@ -577,7 +576,7 @@ class FormField(object):
         )
 
 
-class FieldData(object):
+class FieldData:
     """Contains the data for the form field. This includes the text,
     location of the text on the form, and a collection of the
     elements that make up the text.
@@ -694,7 +693,7 @@ class FieldData(object):
         )
 
 
-class FormPage(object):
+class FormPage:
     """Represents a page recognized from the input document. Contains lines,
     words, selection marks, tables and page metadata.
 
@@ -825,7 +824,7 @@ class FormLine(FormElement):
     """
 
     def __init__(self, **kwargs):
-        super(FormLine, self).__init__(kind="line", **kwargs)
+        super().__init__(kind="line", **kwargs)
         self.words = kwargs.get("words", None)
         self.appearance = kwargs.get("appearance", None)
 
@@ -920,7 +919,7 @@ class FormWord(FormElement):
     """
 
     def __init__(self, **kwargs):
-        super(FormWord, self).__init__(kind="word", **kwargs)
+        super().__init__(kind="word", **kwargs)
         self.confidence = kwargs.get("confidence", None)
 
     @classmethod
@@ -997,7 +996,7 @@ class FormSelectionMark(FormElement):
     """
 
     def __init__(self, **kwargs):
-        super(FormSelectionMark, self).__init__(kind="selectionMark", **kwargs)
+        super().__init__(kind="selectionMark", **kwargs)
         self.confidence = kwargs["confidence"]
         self.state = kwargs["state"]
 
@@ -1060,7 +1059,7 @@ class FormSelectionMark(FormElement):
         )
 
 
-class FormTable(object):
+class FormTable:
     """Information about the extracted table contained on a page.
 
     :ivar int page_number:
@@ -1138,7 +1137,7 @@ class FormTable(object):
         )
 
 
-class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
+class FormTableCell:  # pylint:disable=too-many-instance-attributes
     """Represents a cell contained in a table recognized from the input document.
 
     :ivar str text: Text content of the cell.
@@ -1285,7 +1284,7 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
         )
 
 
-class CustomFormModel(object):
+class CustomFormModel:
     """Represents a trained model.
 
     :ivar str model_id: The unique identifier of this model.
@@ -1441,7 +1440,7 @@ class CustomFormModel(object):
         )
 
 
-class CustomFormSubmodel(object):
+class CustomFormSubmodel:
     """Represents a submodel that extracts fields from a specific type of form.
 
     :ivar str model_id: Model identifier of the submodel.
@@ -1569,7 +1568,7 @@ class CustomFormSubmodel(object):
         )
 
 
-class CustomFormModelField(object):
+class CustomFormModelField:
     """A field that the model will extract from forms it analyzes.
 
     :ivar str label: The form fields label on the form.
@@ -1592,8 +1591,8 @@ class CustomFormModelField(object):
     @classmethod
     def _from_generated_unlabeled(cls, fields):
         return {
-            "field-{}".format(idx): cls(
-                name="field-{}".format(idx),
+            f"field-{idx}": cls(
+                name=f"field-{idx}",
                 label=field_name,
             )
             for idx, field_name in enumerate(fields)
@@ -1629,7 +1628,7 @@ class CustomFormModelField(object):
         )
 
 
-class TrainingDocumentInfo(object):
+class TrainingDocumentInfo:
     """Report for an individual document used for training
     a custom model.
 
@@ -1734,7 +1733,7 @@ class TrainingDocumentInfo(object):
         )
 
 
-class FormRecognizerError(object):
+class FormRecognizerError:
     """Represents an error that occurred while training.
 
     :ivar str code: Error code.
@@ -1785,7 +1784,7 @@ class FormRecognizerError(object):
         )
 
 
-class CustomFormModelInfo(object):
+class CustomFormModelInfo:
     """Custom model information.
 
     :ivar str model_id: The unique identifier of the model.
@@ -1886,7 +1885,7 @@ class CustomFormModelInfo(object):
         )
 
 
-class AccountProperties(object):
+class AccountProperties:
     """Summary of all the custom models on the account.
 
     :ivar int custom_model_count: Current count of trained custom models.
@@ -1939,7 +1938,7 @@ class AccountProperties(object):
         )
 
 
-class CustomFormModelProperties(object):
+class CustomFormModelProperties:
     """Optional model properties.
 
     :ivar bool is_composed_model: Is this model composed? (default: false).
@@ -1985,7 +1984,7 @@ class CustomFormModelProperties(object):
         )
 
 
-class DocumentSpan(object):
+class DocumentSpan:
     """Contiguous region of the content of the property, specified as an offset and length.
 
     :ivar int offset: Zero-based index of the content represented by the span.
@@ -2006,7 +2005,7 @@ class DocumentSpan(object):
         )
 
     def __repr__(self):
-        return "DocumentSpan(offset={}, length={})".format(self.offset, self.length)
+        return f"DocumentSpan(offset={self.offset}, length={self.length})"
 
     def to_dict(self):
         # type: () -> dict
@@ -2035,7 +2034,7 @@ class DocumentSpan(object):
         )
 
 
-class TextAppearance(object):
+class TextAppearance:
     """An object representing the appearance of the text line.
 
     :ivar str style_name: The text line style name.
@@ -2091,7 +2090,7 @@ class TextAppearance(object):
         )
 
 
-class BoundingRegion(object):
+class BoundingRegion:
     """The bounding region corresponding to a page.
 
     :ivar list[~azure.ai.formrecognizer.Point] polygon:
@@ -2151,7 +2150,7 @@ class BoundingRegion(object):
         )
 
 
-class AddressValue(object):
+class AddressValue:
     """An address field value.
 
     :ivar house_number: House or building number.
@@ -2250,7 +2249,7 @@ class AddressValue(object):
         )
 
 
-class CurrencyValue(object):
+class CurrencyValue:
     """A currency value element.
 
     :ivar amount: The currency amount.
@@ -2271,7 +2270,7 @@ class CurrencyValue(object):
         )
 
     def __repr__(self):
-        return "CurrencyValue(amount={}, symbol={})".format(self.amount, self.symbol)
+        return f"CurrencyValue(amount={self.amount}, symbol={self.symbol})"
 
     def to_dict(self):
         # type: () -> dict
@@ -2300,7 +2299,7 @@ class CurrencyValue(object):
         )
 
 
-class DocumentContentElement(object):
+class DocumentContentElement:
     """A DocumentContentElement.
 
     :ivar content: Text content of the document content element.
@@ -2365,7 +2364,7 @@ class DocumentContentElement(object):
         )
 
 
-class DocumentLanguage(object):
+class DocumentLanguage:
     """An object representing the detected language for a given text span.
 
     :ivar locale: Detected language code. Value may be an ISO 639-1 language code (ex.
@@ -2431,7 +2430,7 @@ class DocumentLanguage(object):
         )
 
 
-class AnalyzedDocument(object):
+class AnalyzedDocument:
     """An object describing the location and semantic content of a document.
 
     :ivar doc_type: The type of document that was analyzed.
@@ -2522,7 +2521,7 @@ class AnalyzedDocument(object):
         )
 
 
-class DocumentField(object):
+class DocumentField:
     """An object representing the content and location of a document field value.
 
     :ivar str value_type: The type of `value` found on DocumentField. Possible types include:
@@ -2667,7 +2666,7 @@ class DocumentField(object):
         )
 
 
-class DocumentKeyValueElement(object):
+class DocumentKeyValueElement:
     """An object representing the field key or value in a key-value pair.
 
     :ivar content: Concatenated content of the key-value element in reading order.
@@ -2745,7 +2744,7 @@ class DocumentKeyValueElement(object):
         )
 
 
-class DocumentKeyValuePair(object):
+class DocumentKeyValuePair:
     """An object representing a document field with distinct field label (key) and field value (may be empty).
 
     :ivar key: Field label of the key-value pair.
@@ -2813,7 +2812,7 @@ class DocumentKeyValuePair(object):
         )
 
 
-class DocumentLine(object):
+class DocumentLine:
     """A content line object representing the content found on a single line of the document.
 
     :ivar content: Concatenated content of the contained elements in reading order.
@@ -2901,7 +2900,7 @@ class DocumentLine(object):
         return result
 
 
-class DocumentParagraph(object):
+class DocumentParagraph:
     """A paragraph object generally consisting of contiguous lines with common alignment and spacing.
 
     :ivar role: Semantic role of the paragraph. Known values are: "pageHeader", "pageFooter",
@@ -2979,7 +2978,7 @@ class DocumentParagraph(object):
         )
 
 
-class DocumentPage(object):
+class DocumentPage:
     """Content and layout elements extracted from a page of the input.
 
     :ivar kind: Kind of document page. Known values are: "document", "sheet", "slide",
@@ -3142,7 +3141,7 @@ class DocumentSelectionMark(DocumentContentElement):
     """
 
     def __init__(self, **kwargs):
-        super(DocumentSelectionMark, self).__init__(kind="selectionMark", **kwargs)
+        super().__init__(kind="selectionMark", **kwargs)
         self.state = kwargs.get("state", None)
 
     @classmethod
@@ -3204,7 +3203,7 @@ class DocumentSelectionMark(DocumentContentElement):
         )
 
 
-class DocumentStyle(object):
+class DocumentStyle:
     """An object representing observed text styles.
 
     :ivar is_handwritten: Is content handwritten?.
@@ -3271,7 +3270,7 @@ class DocumentStyle(object):
         )
 
 
-class DocumentTable(object):
+class DocumentTable:
     """A table object consisting table cells arranged in a rectangular layout.
 
     :ivar row_count: Number of rows in the table.
@@ -3362,7 +3361,7 @@ class DocumentTable(object):
         )
 
 
-class DocumentTableCell(object):
+class DocumentTableCell:
     """An object representing the location and content of a table cell.
 
     :ivar kind: Table cell kind. Possible values include: "content", "rowHeader", "columnHeader",
@@ -3476,7 +3475,7 @@ class DocumentTableCell(object):
         )
 
 
-class ModelOperationInfo(object):
+class ModelOperationInfo:
     """Model operation information, including the kind and status of the operation, when it was
     created, and more.
 
@@ -3631,7 +3630,7 @@ class ModelOperation(ModelOperationInfo):
     """
 
     def __init__(self, **kwargs):
-        super(ModelOperation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = kwargs.get("error", None)
         self.result = kwargs.get("result", None)
 
@@ -3733,7 +3732,7 @@ class DocumentWord(DocumentContentElement):
     """
 
     def __init__(self, **kwargs):
-        super(DocumentWord, self).__init__(kind="word", **kwargs)
+        super().__init__(kind="word", **kwargs)
 
     @classmethod
     def _from_generated(cls, word):
@@ -3791,7 +3790,7 @@ class DocumentWord(DocumentContentElement):
         )
 
 
-class AnalyzeResult(object):  # pylint: disable=too-many-instance-attributes
+class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
     """Document analysis result.
 
     :ivar api_version: API version used to produce this result. Possible values include:
@@ -3957,7 +3956,7 @@ class AnalyzeResult(object):  # pylint: disable=too-many-instance-attributes
         )
 
 
-class DocumentModelInfo(object):
+class DocumentModelInfo:
     """Document model information including the model ID,
     its description, and when the model was created.
 
@@ -4060,7 +4059,7 @@ class DocumentModel(DocumentModelInfo):
         self,
         **kwargs
     ):
-        super(DocumentModel, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.doc_types = kwargs.get("doc_types", None)
 
     def __repr__(self):
@@ -4124,7 +4123,7 @@ class DocumentModel(DocumentModelInfo):
         )
 
 
-class DocTypeInfo(object):
+class DocTypeInfo:
     """DocTypeInfo represents a document type that a model can recognize, including its
     fields and types, and the confidence for those fields.
 
@@ -4201,7 +4200,7 @@ class DocTypeInfo(object):
         )
 
 
-class AccountInfo(object):
+class AccountInfo:
     """Info regarding models under the Form Recognizer resource.
 
     :ivar int document_model_count: Number of custom models in the current resource.
@@ -4258,7 +4257,7 @@ class AccountInfo(object):
         )
 
 
-class DocumentAnalysisError(object):
+class DocumentAnalysisError:
     """DocumentAnalysisError contains the details of the error returned by the service.
 
     :ivar code: Error code.
@@ -4339,7 +4338,7 @@ class DocumentAnalysisError(object):
         )
 
 
-class DocumentAnalysisInnerError(object):
+class DocumentAnalysisInnerError:
     """Inner error details for the DocumentAnalysisError.
 
     :ivar code: Error code.

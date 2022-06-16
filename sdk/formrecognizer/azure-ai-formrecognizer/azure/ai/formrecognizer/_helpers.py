@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -111,7 +110,7 @@ def get_authentication_policy(credential):
 def get_content_type(form):
     """Source: https://en.wikipedia.org/wiki/Magic_number_(programming)#Magic_numbers_in_files"""
 
-    if isinstance(form, six.binary_type):
+    if isinstance(form, bytes):
         return check_beginning_bytes(form)
 
     if hasattr(form, "read") and hasattr(form, "seek"):
