@@ -324,7 +324,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
     @distributed_trace_async
     async def get_copy_authorization(
         self, resource_id: str, resource_region: str, **kwargs: Any
-    ) -> Dict[str, Union[str, int]]:
+    ) -> dict[str, Union[str, int]]:
         """Generate authorization for copying a custom model into the target Form Recognizer resource.
         This should be called by the target resource (where the model will be copied to)
         and the output can be passed as the `target` parameter into :func:`~begin_copy_model()`.

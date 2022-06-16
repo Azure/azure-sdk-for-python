@@ -320,7 +320,7 @@ class FormTrainingClient(FormRecognizerClientBase):
         return CustomFormModel._from_generated(response, api_version=self._api_version)
 
     @distributed_trace
-    def get_copy_authorization(self, resource_id: str, resource_region: str, **kwargs: Any) -> Dict[str, Union[str, int]]:
+    def get_copy_authorization(self, resource_id: str, resource_region: str, **kwargs: Any) -> dict[str, Union[str, int]]:
         """Generate authorization for copying a custom model into the target Form Recognizer resource.
         This should be called by the target resource (where the model will be copied to)
         and the output can be passed as the `target` parameter into :func:`~begin_copy_model()`.
