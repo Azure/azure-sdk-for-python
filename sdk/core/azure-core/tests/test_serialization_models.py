@@ -2032,6 +2032,254 @@ def test_pass_models_in_dict():
     _tests(Outer({"innerProperty": Inner(str_property="hello")}))
     _tests(Outer({"innerProperty": Inner({"strProperty": "hello"})}))
 
+def test_mutability_list():
+    class Inner(Model):
+        str_property: str = rest_field(name="strProperty")
+
+        @overload
+        def __init__(
+            self,
+            *,
+            str_property: str,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    class Middle(Model):
+        inner_property: List[Inner] = rest_field(name="innerProperty")
+        prop: str = rest_field()
+
+        @overload
+        def __init__(
+            self,
+            *,
+            inner_property: List[Inner],
+            prop: str,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    class Outer(Model):
+        middle_property: Middle = rest_field(name="middleProperty")
+
+        @overload
+        def __init__(
+            self,
+            *,
+            middle_property: Model,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+    original_dict = {"middleProperty": {"innerProperty": [{"strProperty": "hello"}], "prop": "original"}}
+    model = Outer(original_dict)
+    assert model is not original_dict
+
+    # set with dict syntax
+    assert model.middle_property is model["middleProperty"]
+    middle_property = model.middle_property
+    middle_property["prop"] = "new"
+    assert model["middleProperty"] is model.middle_property is middle_property
+    assert model["middleProperty"]["prop"] == model.middle_property.prop == "new"
+
+    # set with attr syntax
+    middle_property.prop = "newest"
+    assert model["middleProperty"] is model.middle_property is middle_property
+    assert model["middleProperty"]["prop"] == model.middle_property.prop == "newest"
+
+    # modify innerproperty list
+    assert (
+        model["middleProperty"]["innerProperty"][0] is
+        model.middle_property.inner_property[0]
+    )
+    assert (
+        model["middleProperty"]["innerProperty"][0] is
+        model.middle_property["innerProperty"][0] is
+        model["middleProperty"].inner_property[0] is
+        model.middle_property.inner_property[0]
+    )
+    inner_property = model["middleProperty"]["innerProperty"][0]
+
+    # set with dict syntax
+    inner_property["strProperty"] = "nihao"
+    assert (
+        model["middleProperty"]["innerProperty"][0] is
+        model.middle_property["innerProperty"][0] is
+        model["middleProperty"].inner_property[0] is
+        model.middle_property.inner_property[0]
+    )
+    assert (
+        model["middleProperty"]["innerProperty"][0]["strProperty"] ==
+        model.middle_property["innerProperty"][0]["strProperty"] ==
+        model["middleProperty"].inner_property[0]["strProperty"] ==
+        model.middle_property.inner_property[0]["strProperty"] ==
+        model["middleProperty"]["innerProperty"][0].str_property ==
+        model.middle_property["innerProperty"][0].str_property ==
+        model["middleProperty"].inner_property[0].str_property ==
+        model.middle_property.inner_property[0].str_property ==
+        "nihao"
+    )
+
+def test_mutability_dict():
+    class Inner(Model):
+        str_property: str = rest_field(name="strProperty")
+
+        @overload
+        def __init__(
+            self,
+            *,
+            str_property: str,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    class Middle(Model):
+        inner_property: Dict[str, Inner] = rest_field(name="innerProperty")
+        prop: str = rest_field()
+
+        @overload
+        def __init__(
+            self,
+            *,
+            inner_property: Dict[str, Inner],
+            prop: str,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    class Outer(Model):
+        middle_property: Middle = rest_field(name="middleProperty")
+
+        @overload
+        def __init__(
+            self,
+            *,
+            middle_property: Model,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+    original_dict = {"middleProperty": {"innerProperty": {"inner": {"strProperty": "hello"}}, "prop": "original"}}
+    model = Outer(original_dict)
+    assert model is not original_dict
+
+    # set with dict syntax
+    assert model.middle_property is model["middleProperty"]
+    middle_property = model.middle_property
+    middle_property["prop"] = "new"
+    assert model["middleProperty"] is model.middle_property is middle_property
+    assert model["middleProperty"]["prop"] == model.middle_property.prop == "new"
+
+    # set with attr syntax
+    middle_property.prop = "newest"
+    assert model["middleProperty"] is model.middle_property is middle_property
+    assert model["middleProperty"]["prop"] == model.middle_property.prop == "newest"
+
+    # modify innerproperty list
+    assert (
+        model["middleProperty"]["innerProperty"]["inner"] is
+        model.middle_property.inner_property["inner"]
+    )
+    assert (
+        model["middleProperty"]["innerProperty"]["inner"] is
+        model.middle_property["innerProperty"]["inner"] is
+        model["middleProperty"].inner_property["inner"] is
+        model.middle_property.inner_property["inner"]
+    )
+    inner_property = model["middleProperty"]["innerProperty"]["inner"]
+
+    # set with dict syntax
+    inner_property["strProperty"] = "nihao"
+    assert (
+        model["middleProperty"]["innerProperty"]["inner"] is
+        model.middle_property["innerProperty"]["inner"] is
+        model["middleProperty"].inner_property["inner"] is
+        model.middle_property.inner_property["inner"]
+    )
+    assert (
+        model["middleProperty"]["innerProperty"]["inner"]["strProperty"] ==
+        model.middle_property["innerProperty"]["inner"]["strProperty"] ==
+        model["middleProperty"].inner_property["inner"]["strProperty"] ==
+        model.middle_property.inner_property["inner"]["strProperty"] ==
+        model["middleProperty"]["innerProperty"]["inner"].str_property ==
+        model.middle_property["innerProperty"]["inner"].str_property ==
+        model["middleProperty"].inner_property["inner"].str_property ==
+        model.middle_property.inner_property["inner"].str_property ==
+        "nihao"
+    )
+
+def test_del_model():
+    class TestModel(Model):
+        x: Optional[int] = rest_field()
+
+    my_dict = {}
+    my_dict["x"] = None
+
+    assert my_dict['x'] is None
+
+    my_model = TestModel({})
+    my_model["x"] = None
+
+    assert my_model["x"] is my_model.x is None
+
+    my_model = TestModel({"x": 7})
+    my_model.x = None
+
+    assert "x" not in my_model
+    assert my_model.x is None
+
+    with pytest.raises(KeyError):
+        del my_model["x"]
+    my_model.x = 8
+
+    del my_model["x"]
+    assert "x" not in my_model
+    assert my_model.x is my_model.get("x") is None
+
+    with pytest.raises(AttributeError):
+        del my_model.x
+    my_model.x = None
+    assert "x" not in my_model
+    assert my_model.x is my_model.get("x") is None
+
+def test_pop_model():
+    ...
+
+
 ##### REWRITE BODY COMPLEX INTO THIS FILE #####
 
 def test_complex_basic():
@@ -2342,7 +2590,9 @@ def test_complex_array_wrapper(model: ArrayWrapper):
     assert model.array == model["array"] == array_value
 
     model.array = None
-    assert model.array is model["array"] is None
+    with pytest.raises(KeyError):
+        model["array"]
+    assert model.array is None
 
     model["array"] = [1, 2, 3, 4, 5]
     assert model.array == ["1", "2", "3", "4", "5"]
