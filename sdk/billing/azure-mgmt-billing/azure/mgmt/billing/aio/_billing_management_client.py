@@ -6,42 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional, TYPE_CHECKING
+from copy import deepcopy
+from typing import Any, Awaitable, TYPE_CHECKING
 
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
+
+from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.mgmt.core import AsyncARMPipelineClient
+
+from .. import models
+from ._configuration import BillingManagementClientConfiguration
+from .operations import AddressOperations, AgreementsOperations, AvailableBalancesOperations, BillingAccountsOperations, BillingPeriodsOperations, BillingPermissionsOperations, BillingProfilesOperations, BillingPropertyOperations, BillingRoleAssignmentsOperations, BillingRoleDefinitionsOperations, BillingSubscriptionsOperations, CustomersOperations, EnrollmentAccountsOperations, InstructionsOperations, InvoiceSectionsOperations, InvoicesOperations, Operations, PoliciesOperations, ProductsOperations, ReservationsOperations, TransactionsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration import BillingManagementClientConfiguration
-from .operations import BillingAccountsOperations
-from .operations import AddressOperations
-from .operations import AvailableBalancesOperations
-from .operations import InstructionsOperations
-from .operations import BillingProfilesOperations
-from .operations import CustomersOperations
-from .operations import InvoiceSectionsOperations
-from .operations import BillingPermissionsOperations
-from .operations import BillingSubscriptionsOperations
-from .operations import ProductsOperations
-from .operations import InvoicesOperations
-from .operations import TransactionsOperations
-from .operations import PoliciesOperations
-from .operations import BillingPropertyOperations
-from .operations import Operations
-from .operations import BillingRoleDefinitionsOperations
-from .operations import BillingRoleAssignmentsOperations
-from .operations import AgreementsOperations
-from .operations import ReservationsOperations
-from .operations import EnrollmentAccountsOperations
-from .operations import BillingPeriodsOperations
-from .. import models
-
-
-class BillingManagementClient(object):
+class BillingManagementClient:    # pylint: disable=too-many-instance-attributes
     """Billing client provides access to billing resources for Azure subscriptions.
 
     :ivar billing_accounts: BillingAccountsOperations operations
@@ -61,7 +42,8 @@ class BillingManagementClient(object):
     :ivar billing_permissions: BillingPermissionsOperations operations
     :vartype billing_permissions: azure.mgmt.billing.aio.operations.BillingPermissionsOperations
     :ivar billing_subscriptions: BillingSubscriptionsOperations operations
-    :vartype billing_subscriptions: azure.mgmt.billing.aio.operations.BillingSubscriptionsOperations
+    :vartype billing_subscriptions:
+     azure.mgmt.billing.aio.operations.BillingSubscriptionsOperations
     :ivar products: ProductsOperations operations
     :vartype products: azure.mgmt.billing.aio.operations.ProductsOperations
     :ivar invoices: InvoicesOperations operations
@@ -72,12 +54,12 @@ class BillingManagementClient(object):
     :vartype policies: azure.mgmt.billing.aio.operations.PoliciesOperations
     :ivar billing_property: BillingPropertyOperations operations
     :vartype billing_property: azure.mgmt.billing.aio.operations.BillingPropertyOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.billing.aio.operations.Operations
     :ivar billing_role_definitions: BillingRoleDefinitionsOperations operations
-    :vartype billing_role_definitions: azure.mgmt.billing.aio.operations.BillingRoleDefinitionsOperations
+    :vartype billing_role_definitions:
+     azure.mgmt.billing.aio.operations.BillingRoleDefinitionsOperations
     :ivar billing_role_assignments: BillingRoleAssignmentsOperations operations
-    :vartype billing_role_assignments: azure.mgmt.billing.aio.operations.BillingRoleAssignmentsOperations
+    :vartype billing_role_assignments:
+     azure.mgmt.billing.aio.operations.BillingRoleAssignmentsOperations
     :ivar agreements: AgreementsOperations operations
     :vartype agreements: azure.mgmt.billing.aio.operations.AgreementsOperations
     :ivar reservations: ReservationsOperations operations
@@ -86,90 +68,122 @@ class BillingManagementClient(object):
     :vartype enrollment_accounts: azure.mgmt.billing.aio.operations.EnrollmentAccountsOperations
     :ivar billing_periods: BillingPeriodsOperations operations
     :vartype billing_periods: azure.mgmt.billing.aio.operations.BillingPeriodsOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.billing.aio.operations.Operations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID that uniquely identifies an Azure subscription.
     :type subscription_id: str
-    :param str base_url: Service URL
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :type base_url: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
         self,
         credential: "AsyncTokenCredential",
         subscription_id: str,
-        base_url: Optional[str] = None,
+        base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        if not base_url:
-            base_url = 'https://management.azure.com'
-        self._config = BillingManagementClientConfiguration(credential, subscription_id, **kwargs)
+        self._config = BillingManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
-
+        self._serialize.client_side_validation = False
         self.billing_accounts = BillingAccountsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.address = AddressOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.available_balances = AvailableBalancesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.instructions = InstructionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.billing_profiles = BillingProfilesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.customers = CustomersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.invoice_sections = InvoiceSectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.billing_permissions = BillingPermissionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.billing_subscriptions = BillingSubscriptionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.products = ProductsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.invoices = InvoicesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.transactions = TransactionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.policies = PoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.billing_property = BillingPropertyOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.billing_role_definitions = BillingRoleDefinitionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.billing_role_assignments = BillingRoleAssignmentsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.agreements = AgreementsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.reservations = ReservationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.enrollment_accounts = EnrollmentAccountsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.billing_periods = BillingPeriodsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+
+    def _send_request(
+        self,
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = await client._send_request(request)
+        <AsyncHttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
         """
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     async def close(self) -> None:
         await self._client.close()

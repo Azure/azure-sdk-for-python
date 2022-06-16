@@ -6,27 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AcceptanceMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AcceptanceMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode of acceptance for an agreement.
     """
 
@@ -34,7 +18,7 @@ class AcceptanceMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     E_SIGN_EMBEDDED = "ESignEmbedded"
     E_SIGN_OFFLINE = "ESignOffline"
 
-class AccountStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccountStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current status of the billing account.
     """
 
@@ -46,7 +30,7 @@ class AccountStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     EXTENDED = "Extended"
     TERMINATED = "Terminated"
 
-class AccountType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of customer.
     """
 
@@ -54,14 +38,14 @@ class AccountType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     INDIVIDUAL = "Individual"
     PARTNER = "Partner"
 
-class AddressValidationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AddressValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the address validation.
     """
 
     VALID = "Valid"
     INVALID = "Invalid"
 
-class AgreementType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AgreementType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of agreement.
     """
 
@@ -70,14 +54,14 @@ class AgreementType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MICROSOFT_ONLINE_SERVICES_PROGRAM = "MicrosoftOnlineServicesProgram"
     MICROSOFT_PARTNER_AGREEMENT = "MicrosoftPartnerAgreement"
 
-class AutoRenew(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AutoRenew(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates whether auto renewal is turned on or off for a product.
     """
 
     OFF = "Off"
     ON = "On"
 
-class BillingFrequency(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BillingFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The frequency at which the product will be billed.
     """
 
@@ -85,14 +69,14 @@ class BillingFrequency(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MONTHLY = "Monthly"
     USAGE_BASED = "UsageBased"
 
-class BillingProfileSpendingLimit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BillingProfileSpendingLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The billing profile spending limit.
     """
 
     OFF = "Off"
     ON = "On"
 
-class BillingProfileStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BillingProfileStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the billing profile.
     """
 
@@ -100,7 +84,7 @@ class BillingProfileStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DISABLED = "Disabled"
     WARNED = "Warned"
 
-class BillingProfileStatusReasonCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BillingProfileStatusReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Reason for the specified billing profile status.
     """
 
@@ -108,7 +92,7 @@ class BillingProfileStatusReasonCode(with_metaclass(_CaseInsensitiveEnumMeta, st
     SPENDING_LIMIT_REACHED = "SpendingLimitReached"
     SPENDING_LIMIT_EXPIRED = "SpendingLimitExpired"
 
-class BillingRelationshipType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BillingRelationshipType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Identifies which services and purchases are paid by a billing profile.
     """
 
@@ -117,7 +101,7 @@ class BillingRelationshipType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     INDIRECT_PARTNER = "IndirectPartner"
     CSP_PARTNER = "CSPPartner"
 
-class BillingSubscriptionStatusType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BillingSubscriptionStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current billing status of the subscription.
     """
 
@@ -127,7 +111,7 @@ class BillingSubscriptionStatusType(with_metaclass(_CaseInsensitiveEnumMeta, str
     DELETED = "Deleted"
     WARNING = "Warning"
 
-class Category(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Category(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The category of the agreement signed by a customer.
     """
 
@@ -135,14 +119,14 @@ class Category(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AFFILIATE_PURCHASE_TERMS = "AffiliatePurchaseTerms"
     OTHER = "Other"
 
-class DocumentSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DocumentSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The source of the document. ENF for Brazil and DRS for rest of the world.
     """
 
     DRS = "DRS"
     ENF = "ENF"
 
-class DocumentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DocumentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the document.
     """
 
@@ -151,21 +135,21 @@ class DocumentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TAX_RECEIPT = "TaxReceipt"
     CREDIT_NOTE = "CreditNote"
 
-class InvoiceDocumentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class InvoiceDocumentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the document.
     """
 
     INVOICE = "Invoice"
     CREDIT_NOTE = "CreditNote"
 
-class InvoiceSectionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class InvoiceSectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Identifies the state of an invoice section.
     """
 
     ACTIVE = "Active"
     RESTRICTED = "Restricted"
 
-class InvoiceStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class InvoiceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current status of the invoice.
     """
 
@@ -174,7 +158,7 @@ class InvoiceStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PAID = "Paid"
     VOID = "Void"
 
-class InvoiceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class InvoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Invoice type.
     """
 
@@ -182,7 +166,7 @@ class InvoiceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AZURE_MARKETPLACE = "AzureMarketplace"
     AZURE_SUPPORT = "AzureSupport"
 
-class MarketplacePurchasesPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MarketplacePurchasesPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The policy that controls whether Azure marketplace purchases are allowed for a billing profile.
     """
 
@@ -190,7 +174,7 @@ class MarketplacePurchasesPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     ONLY_FREE_ALLOWED = "OnlyFreeAllowed"
     NOT_ALLOWED = "NotAllowed"
 
-class PaymentMethodFamily(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PaymentMethodFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The family of payment method.
     """
 
@@ -199,7 +183,7 @@ class PaymentMethodFamily(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CREDIT_CARD = "CreditCard"
     NONE = "None"
 
-class ProductStatusType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProductStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current status of the product.
     """
 
@@ -212,7 +196,7 @@ class ProductStatusType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CANCELLED = "Cancelled"
     AUTO_RENEW = "AutoRenew"
 
-class ProductTransferValidationErrorCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProductTransferValidationErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Error code of the transfer validation response.
     """
 
@@ -226,35 +210,35 @@ class ProductTransferValidationErrorCode(with_metaclass(_CaseInsensitiveEnumMeta
     NOT_AVAILABLE_FOR_DESTINATION_MARKET = "NotAvailableForDestinationMarket"
     ONE_TIME_PURCHASE_PRODUCT_TRANSFER_NOT_ALLOWED = "OneTimePurchaseProductTransferNotAllowed"
 
-class ReservationPurchasesPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ReservationPurchasesPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The policy that controls whether Azure reservation purchases are allowed for a billing profile.
     """
 
     ALLOWED = "Allowed"
     NOT_ALLOWED = "NotAllowed"
 
-class ReservationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ReservationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of transaction.
     """
 
     PURCHASE = "Purchase"
     USAGE_CHARGE = "Usage Charge"
 
-class SpendingLimit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SpendingLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The billing profile spending limit.
     """
 
     OFF = "Off"
     ON = "On"
 
-class SpendingLimitForBillingProfile(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SpendingLimitForBillingProfile(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The billing profile spending limit.
     """
 
     OFF = "Off"
     ON = "On"
 
-class StatusReasonCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StatusReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Reason for the specified billing profile status.
     """
 
@@ -262,7 +246,7 @@ class StatusReasonCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SPENDING_LIMIT_REACHED = "SpendingLimitReached"
     SPENDING_LIMIT_EXPIRED = "SpendingLimitExpired"
 
-class StatusReasonCodeForBillingProfile(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StatusReasonCodeForBillingProfile(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Reason for the specified billing profile status.
     """
 
@@ -270,7 +254,7 @@ class StatusReasonCodeForBillingProfile(with_metaclass(_CaseInsensitiveEnumMeta,
     SPENDING_LIMIT_REACHED = "SpendingLimitReached"
     SPENDING_LIMIT_EXPIRED = "SpendingLimitExpired"
 
-class SubscriptionTransferValidationErrorCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SubscriptionTransferValidationErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Error code of the transfer validation response.
     """
 
@@ -295,7 +279,7 @@ class SubscriptionTransferValidationErrorCode(with_metaclass(_CaseInsensitiveEnu
     SUBSCRIPTION_NOT_ACTIVE = "SubscriptionNotActive"
     SUBSCRIPTION_TYPE_NOT_SUPPORTED = "SubscriptionTypeNotSupported"
 
-class TargetCloud(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TargetCloud(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Possible cloud environments.
     """
 
@@ -303,14 +287,14 @@ class TargetCloud(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     US_NAT = "USNat"
     US_SEC = "USSec"
 
-class TransactionTypeKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TransactionTypeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of transaction. Options are all or reservation.
     """
 
     ALL = "all"
     RESERVATION = "reservation"
 
-class ViewCharges(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ViewCharges(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The policy that controls whether the users in customer's organization can view charges at
     pay-as-you-go prices.
     """
@@ -318,7 +302,7 @@ class ViewCharges(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ALLOWED = "Allowed"
     NOT_ALLOWED = "NotAllowed"
 
-class ViewChargesPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ViewChargesPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The policy that controls whether users with Azure RBAC access to a subscription can view its
     charges.
     """
