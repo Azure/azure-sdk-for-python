@@ -27,6 +27,7 @@ from ._common.utils import (
     receive_trace_context_manager,
 )
 from ._common.constants import (
+    CONSUMER_IDENTIFIER,
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
     REQUEST_RESPONSE_RENEWLOCK_OPERATION,
@@ -125,6 +126,8 @@ class ServiceBusReceiver(
      The default value is 0, meaning messages will be received from the service and processed one at a time.
      In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
      (if provided) within its request to the service.
+     :keyword str client_identifier: a string based identifier to uniquely identify the client instance. Service Bus will associate it
+     with some error messages for easier correlation of errors. If not specified a unique id will be generated.
     """
 
     def __init__(
@@ -352,6 +355,7 @@ class ServiceBusReceiver(
             # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
             keep_alive_interval=self._config.keep_alive if self._prefetch_count != 1 else 5,
             shutdown_after_timeout=False,
+            link_properties = {CONSUMER_IDENTIFIER:self._name}
         )
         if self._prefetch_count == 1:
             self._handler._message_received = self._enhanced_message_received  # pylint: disable=protected-access
