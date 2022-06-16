@@ -14,23 +14,20 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import ConversationAnalysisProjectsClientConfiguration
+from ._operations import ConversationAnalysisProjectsClientOperationsMixin
 from ._serialization import Deserializer, Serializer
-from .operations import ConversationalAnalysisAuthoringOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Dict
 
-class ConversationAnalysisProjectsClient:  # pylint: disable=client-accepts-api-version-keyword
+class ConversationAnalysisProjectsClient(ConversationAnalysisProjectsClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms. The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
     detection and question answering. Further documentation can be found in :code:`<a
     href="https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview</a>`.
 
-    :ivar conversational_analysis_authoring: ConversationalAnalysisAuthoringOperations operations
-    :vartype conversational_analysis_authoring:
-     azure.ai.language.conversations.projects.operations.ConversationalAnalysisAuthoringOperations
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.api.cognitiveservices.azure.com). Required.
     :type endpoint: str
@@ -56,9 +53,6 @@ class ConversationAnalysisProjectsClient:  # pylint: disable=client-accepts-api-
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.conversational_analysis_authoring = ConversationalAnalysisAuthoringOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
 
 
     def send_request(

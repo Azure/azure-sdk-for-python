@@ -7,1094 +7,30 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.polling.base_polling import LROBasePolling
+from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from .._serialization import Serializer
-from .._vendor import _format_url_section
+from ..._operations._operations import build_cancel_training_job_request, build_create_project_request, build_delete_deployment_request, build_delete_project_request, build_delete_trained_model_request, build_deploy_project_request, build_export_project_request, build_get_deployment_request, build_get_deployment_status_request, build_get_export_status_request, build_get_import_status_request, build_get_model_evaluation_results_request, build_get_model_evaluation_summary_request, build_get_project_deletion_status_request, build_get_project_request, build_get_supported_languages_request, build_get_supported_prebuilt_entities_request, build_get_swap_deployments_status_request, build_get_trained_model_request, build_get_training_status_request, build_import_project_request, build_list_deployments_request, build_list_projects_request, build_list_trained_models_request, build_list_training_config_versions_request, build_list_training_jobs_request, build_swap_deployments_request, build_train_request
+from .._vendor import MixinABC
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-_SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
-
-def build_conversational_analysis_authoring_list_projects_request(
-    *,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects"
-
-    # Construct parameters
-    if top is not None:
-        _params['top'] = _SERIALIZER.query("top", top, 'int')
-    if skip is not None:
-        _params['skip'] = _SERIALIZER.query("skip", skip, 'int')
-    if maxpagesize is not None:
-        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_create_project_request(
-    project_name: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="PATCH",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_get_project_request(
-    project_name: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_delete_project_request(
-    project_name: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="DELETE",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_export_request(
-    project_name: str,
-    *,
-    string_index_type: str,
-    exported_project_format: Optional[str] = None,
-    asset_kind: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/:export"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    if exported_project_format is not None:
-        _params['format'] = _SERIALIZER.query("exported_project_format", exported_project_format, 'str')
-    _params['stringIndexType'] = _SERIALIZER.query("string_index_type", string_index_type, 'str')
-    if asset_kind is not None:
-        _params['assetKind'] = _SERIALIZER.query("asset_kind", asset_kind, 'str')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_import_method_request(
-    project_name: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    exported_project_format = kwargs.pop('exported_project_format', _params.pop('format', None))  # type: Optional[str]
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/:import"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    if exported_project_format is not None:
-        _params['format'] = _SERIALIZER.query("exported_project_format", exported_project_format, 'str')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_train_request(
-    project_name: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/:train"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_list_deployments_request(
-    project_name: str,
-    *,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/deployments"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    if top is not None:
-        _params['top'] = _SERIALIZER.query("top", top, 'int')
-    if skip is not None:
-        _params['skip'] = _SERIALIZER.query("skip", skip, 'int')
-    if maxpagesize is not None:
-        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_swap_deployments_request(
-    project_name: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/deployments/:swap"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_get_deployment_request(
-    project_name: str,
-    deployment_name: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/deployments/{deploymentName}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_deploy_project_request(
-    project_name: str,
-    deployment_name: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/deployments/{deploymentName}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="PUT",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_delete_deployment_request(
-    project_name: str,
-    deployment_name: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/deployments/{deploymentName}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="DELETE",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_get_deployment_status_request(
-    project_name: str,
-    deployment_name: str,
-    job_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/deployments/{deploymentName}/jobs/{jobId}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, 'str'),
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_get_swap_deployments_status_request(
-    project_name: str,
-    job_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/deployments/swap/jobs/{jobId}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_get_export_status_request(
-    project_name: str,
-    job_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/export/jobs/{jobId}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_get_import_status_request(
-    project_name: str,
-    job_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/import/jobs/{jobId}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_list_trained_models_request(
-    project_name: str,
-    *,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/models"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    if top is not None:
-        _params['top'] = _SERIALIZER.query("top", top, 'int')
-    if skip is not None:
-        _params['skip'] = _SERIALIZER.query("skip", skip, 'int')
-    if maxpagesize is not None:
-        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_get_trained_model_request(
-    project_name: str,
-    trained_model_label: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/models/{trainedModelLabel}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_delete_trained_model_request(
-    project_name: str,
-    trained_model_label: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/models/{trainedModelLabel}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="DELETE",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_get_model_evaluation_results_request(
-    project_name: str,
-    trained_model_label: str,
-    *,
-    string_index_type: str,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/models/{trainedModelLabel}/evaluation/result"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['stringIndexType'] = _SERIALIZER.query("string_index_type", string_index_type, 'str')
-    if top is not None:
-        _params['top'] = _SERIALIZER.query("top", top, 'int')
-    if skip is not None:
-        _params['skip'] = _SERIALIZER.query("skip", skip, 'int')
-    if maxpagesize is not None:
-        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_get_model_evaluation_summary_request(
-    project_name: str,
-    trained_model_label: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/models/{trainedModelLabel}/evaluation/summary-result"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_list_training_jobs_request(
-    project_name: str,
-    *,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/train/jobs"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    if top is not None:
-        _params['top'] = _SERIALIZER.query("top", top, 'int')
-    if skip is not None:
-        _params['skip'] = _SERIALIZER.query("skip", skip, 'int')
-    if maxpagesize is not None:
-        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_get_training_status_request(
-    project_name: str,
-    job_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/train/jobs/{jobId}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_cancel_training_job_request(
-    project_name: str,
-    job_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/train/jobs/{jobId}/:cancel"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_get_project_deletion_status_request(
-    job_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/global/deletion-jobs/{jobId}"
-    path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_get_supported_languages_request(
-    *,
-    project_kind: str,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/global/languages"
-
-    # Construct parameters
-    _params['projectKind'] = _SERIALIZER.query("project_kind", project_kind, 'str')
-    if top is not None:
-        _params['top'] = _SERIALIZER.query("top", top, 'int')
-    if skip is not None:
-        _params['skip'] = _SERIALIZER.query("skip", skip, 'int')
-    if maxpagesize is not None:
-        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_get_supported_prebuilt_entities_request(
-    *,
-    language: Optional[str] = None,
-    multilingual: Optional[str] = None,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/global/prebuilt-entities"
-
-    # Construct parameters
-    if language is not None:
-        _params['language'] = _SERIALIZER.query("language", language, 'str')
-    if multilingual is not None:
-        _params['multilingual'] = _SERIALIZER.query("multilingual", multilingual, 'str')
-    if top is not None:
-        _params['top'] = _SERIALIZER.query("top", top, 'int')
-    if skip is not None:
-        _params['skip'] = _SERIALIZER.query("skip", skip, 'int')
-    if maxpagesize is not None:
-        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_conversational_analysis_authoring_list_training_config_versions_request(
-    *,
-    project_kind: str,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/global/training-config-versions"
-
-    # Construct parameters
-    _params['projectKind'] = _SERIALIZER.query("project_kind", project_kind, 'str')
-    if top is not None:
-        _params['top'] = _SERIALIZER.query("top", top, 'int')
-    if skip is not None:
-        _params['skip'] = _SERIALIZER.query("skip", skip, 'int')
-    if maxpagesize is not None:
-        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-public-methods
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.language.conversations.projects.ConversationAnalysisProjectsClient`'s
-        :attr:`conversational_analysis_authoring` attribute.
-    """
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
+class ConversationAnalysisProjectsClientOperationsMixin(MixinABC):  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def list_projects(
@@ -1104,7 +40,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable[JSON]:
+    ) -> AsyncIterable[JSON]:
         """Lists the existing projects.
 
         :keyword top: The maximum number of resources to return from the collection. Default value is
@@ -1117,7 +53,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
          value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1161,7 +97,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_conversational_analysis_authoring_list_projects_request(
+                request = build_list_projects_request(
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
@@ -1176,7 +112,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
             else:
                 
-                request = build_conversational_analysis_authoring_list_projects_request(
+                request = build_list_projects_request(
                     headers=_headers,
                     params=_params,
                 )
@@ -1191,17 +127,17 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
                 request.method = "GET"
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request,
                 stream=False,
                 **kwargs
@@ -1215,13 +151,13 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
             return pipeline_response
 
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
 
 
     @overload
-    def create_project(
+    async def create_project(
         self,
         project_name: str,
         body: JSON,
@@ -1291,7 +227,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         """
 
     @overload
-    def create_project(
+    async def create_project(
         self,
         project_name: str,
         body: IO,
@@ -1343,8 +279,8 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         """
 
 
-    @distributed_trace
-    def create_project(
+    @distributed_trace_async
+    async def create_project(
         self,
         project_name: str,
         body: Union[JSON, IO],
@@ -1411,7 +347,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         else:
             _json = body
 
-        request = build_conversational_analysis_authoring_create_project_request(
+        request = build_create_project_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1425,7 +361,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1456,8 +392,8 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
 
 
-    @distributed_trace
-    def get_project(
+    @distributed_trace_async
+    async def get_project(
         self,
         project_name: str,
         **kwargs: Any
@@ -1510,7 +446,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
-        request = build_conversational_analysis_authoring_get_project_request(
+        request = build_get_project_request(
             project_name=project_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1521,7 +457,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1545,11 +481,11 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
 
 
-    def _delete_project_initial(  # pylint: disable=inconsistent-return-statements
+    async def _delete_project_initial(
         self,
         project_name: str,
         **kwargs: Any
-    ) -> None:
+    ) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1558,10 +494,10 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
 
         
-        request = build_conversational_analysis_authoring_delete_project_request(
+        request = build_delete_project_request(
             project_name=project_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1572,7 +508,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1580,52 +516,120 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
+        if response.status_code == 202:
+            response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
+            
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
 
 
-    @distributed_trace
-    def begin_delete_project(
+    @distributed_trace_async
+    async def begin_delete_project(
         self,
         project_name: str,
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Deletes a project.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "message": "str",  # Error message. Required.
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._delete_project_initial(  # type: ignore
+            raw_result = await self._delete_project_initial(  # type: ignore
                 project_name=project_name,
                 cls=lambda x,y,z: x,
                 headers=_headers,
@@ -1634,9 +638,15 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
             )
         kwargs.pop('error_map', None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
 
         path_format_arguments = {
@@ -1644,26 +654,26 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
+            polling_method = cast(AsyncPollingMethod, AsyncLROBasePolling(
                 lro_delay,
                 
                 path_format_arguments=path_format_arguments,
                 **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
+        ))  # type: AsyncPollingMethod
+        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else: polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
 
 
-    def _export_initial(  # pylint: disable=inconsistent-return-statements
+    async def _export_project_initial(
         self,
         project_name: str,
         *,
@@ -1671,7 +681,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         exported_project_format: Optional[str] = None,
         asset_kind: Optional[str] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1680,10 +690,10 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
 
         
-        request = build_conversational_analysis_authoring_export_request(
+        request = build_export_project_request(
             project_name=project_name,
             string_index_type=string_index_type,
             exported_project_format=exported_project_format,
@@ -1697,7 +707,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1705,21 +715,31 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
+        if response.status_code == 202:
+            response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
+            
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
 
 
-    @distributed_trace
-    def begin_export(
+    @distributed_trace_async
+    async def begin_export_project(
         self,
         project_name: str,
         *,
@@ -1727,7 +747,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         exported_project_format: Optional[str] = None,
         asset_kind: Optional[str] = None,
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Triggers a job to export a project's data.
 
         :param project_name: The name of the project to use. Required.
@@ -1741,28 +761,88 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         :keyword asset_kind: Kind of asset to export. Default value is None.
         :paramtype asset_kind: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "message": "str",  # Error message. Required.
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "resultUrl": "str",  # Optional. The URL to use in order to download the
+                      exported project.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._export_initial(  # type: ignore
+            raw_result = await self._export_project_initial(  # type: ignore
                 project_name=project_name,
                 string_index_type=string_index_type,
                 exported_project_format=exported_project_format,
@@ -1774,9 +854,15 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
             )
         kwargs.pop('error_map', None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
 
         path_format_arguments = {
@@ -1784,33 +870,33 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
+            polling_method = cast(AsyncPollingMethod, AsyncLROBasePolling(
                 lro_delay,
                 
                 path_format_arguments=path_format_arguments,
                 **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
+        ))  # type: AsyncPollingMethod
+        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else: polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
 
 
-    def _import_method_initial(  # pylint: disable=inconsistent-return-statements
+    async def _import_project_initial(
         self,
         project_name: str,
         body: Union[JSON, IO],
         *,
         exported_project_format: Optional[str] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1820,7 +906,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
 
         content_type = content_type or "application/json"
         _json = None
@@ -1830,7 +916,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         else:
             _json = body
 
-        request = build_conversational_analysis_authoring_import_method_request(
+        request = build_import_project_request(
             project_name=project_name,
             exported_project_format=exported_project_format,
             content_type=content_type,
@@ -1845,7 +931,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1853,21 +939,31 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
+        if response.status_code == 202:
+            response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
+            
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
 
 
     @overload
-    def begin_import_method(
+    async def begin_import_project(
         self,
         project_name: str,
         body: JSON,
@@ -1875,7 +971,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         exported_project_format: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
@@ -1890,14 +986,14 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
          Default value is "application/json".
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1927,10 +1023,65 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
                       offsets. For additional information see https://aka.ms/text-analytics-offsets.
                       Required. "Utf16CodeUnit"
                 }
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "message": "str",  # Error message. Required.
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
     @overload
-    def begin_import_method(
+    async def begin_import_project(
         self,
         project_name: str,
         body: IO,
@@ -1938,7 +1089,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         exported_project_format: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
@@ -1953,27 +1104,85 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
          Default value is "application/json".
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "message": "str",  # Error message. Required.
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
 
-    @distributed_trace
-    def begin_import_method(
+    @distributed_trace_async
+    async def begin_import_project(
         self,
         project_name: str,
         body: Union[JSON, IO],
         *,
         exported_project_format: Optional[str] = None,
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
@@ -1988,29 +1197,87 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
          Default value is None.
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "message": "str",  # Error message. Required.
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._import_method_initial(  # type: ignore
+            raw_result = await self._import_project_initial(  # type: ignore
                 project_name=project_name,
                 body=body,
                 exported_project_format=exported_project_format,
@@ -2022,9 +1289,15 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
             )
         kwargs.pop('error_map', None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
 
         path_format_arguments = {
@@ -2032,31 +1305,31 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
+            polling_method = cast(AsyncPollingMethod, AsyncLROBasePolling(
                 lro_delay,
                 
                 path_format_arguments=path_format_arguments,
                 **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
+        ))  # type: AsyncPollingMethod
+        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else: polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
 
 
-    def _train_initial(  # pylint: disable=inconsistent-return-statements
+    async def _train_initial(
         self,
         project_name: str,
         body: Union[JSON, IO],
         **kwargs: Any
-    ) -> None:
+    ) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2066,7 +1339,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
 
         content_type = content_type or "application/json"
         _json = None
@@ -2076,7 +1349,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         else:
             _json = body
 
-        request = build_conversational_analysis_authoring_train_request(
+        request = build_train_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2090,7 +1363,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -2098,28 +1371,38 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
+        if response.status_code == 202:
+            response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
+            
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
 
 
     @overload
-    def begin_train(
+    async def begin_train(
         self,
         project_name: str,
         body: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Triggers a training job for a project.
 
         :param project_name: The name of the project to use. Required.
@@ -2130,14 +1413,14 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
          Default value is "application/json".
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2163,17 +1446,105 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
                     "trainingMode": "str"  # Represents the mode of the training operation.
                       Required. Known values are: "advanced" and "standard".
                 }
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "message": "str",  # Error message. Required.
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "result": {
+                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
+                          Represents the estimated end date time for training and evaluation.
+                        "evaluationStatus": {
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
+                              Represents the start date time.
+                            "status": "str"  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                        },
+                        "modelLabel": "str",  # Represents trained model label. Required.
+                        "trainingConfigVersion": "str",  # Represents training config
+                          version. Required.
+                        "trainingMode": "str",  # Optional. Represents the mode of the
+                          training operation. Known values are: "advanced" and "standard".
+                        "trainingStatus": {
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
+                              Represents the start date time.
+                            "status": "str"  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                        }
+                    },
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
     @overload
-    def begin_train(
+    async def begin_train(
         self,
         project_name: str,
         body: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Triggers a training job for a project.
 
         :param project_name: The name of the project to use. Required.
@@ -2184,25 +1555,116 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
          Default value is "application/json".
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "message": "str",  # Error message. Required.
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "result": {
+                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
+                          Represents the estimated end date time for training and evaluation.
+                        "evaluationStatus": {
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
+                              Represents the start date time.
+                            "status": "str"  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                        },
+                        "modelLabel": "str",  # Represents trained model label. Required.
+                        "trainingConfigVersion": "str",  # Represents training config
+                          version. Required.
+                        "trainingMode": "str",  # Optional. Represents the mode of the
+                          training operation. Known values are: "advanced" and "standard".
+                        "trainingStatus": {
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
+                              Represents the start date time.
+                            "status": "str"  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                        }
+                    },
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
 
-    @distributed_trace
-    def begin_train(
+    @distributed_trace_async
+    async def begin_train(
         self,
         project_name: str,
         body: Union[JSON, IO],
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Triggers a training job for a project.
 
         :param project_name: The name of the project to use. Required.
@@ -2213,29 +1675,120 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
          Default value is None.
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "message": "str",  # Error message. Required.
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "result": {
+                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
+                          Represents the estimated end date time for training and evaluation.
+                        "evaluationStatus": {
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
+                              Represents the start date time.
+                            "status": "str"  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                        },
+                        "modelLabel": "str",  # Represents trained model label. Required.
+                        "trainingConfigVersion": "str",  # Represents training config
+                          version. Required.
+                        "trainingMode": "str",  # Optional. Represents the mode of the
+                          training operation. Known values are: "advanced" and "standard".
+                        "trainingStatus": {
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
+                              Represents the start date time.
+                            "status": "str"  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                        }
+                    },
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._train_initial(  # type: ignore
+            raw_result = await self._train_initial(  # type: ignore
                 project_name=project_name,
                 body=body,
                 content_type=content_type,
@@ -2246,9 +1799,15 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
             )
         kwargs.pop('error_map', None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
 
         path_format_arguments = {
@@ -2256,22 +1815,22 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
+            polling_method = cast(AsyncPollingMethod, AsyncLROBasePolling(
                 lro_delay,
                 
                 path_format_arguments=path_format_arguments,
                 **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
+        ))  # type: AsyncPollingMethod
+        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else: polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
 
 
@@ -2284,7 +1843,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable[JSON]:
+    ) -> AsyncIterable[JSON]:
         """Lists the deployments belonging to a project.
 
         :param project_name: The name of the project to use. Required.
@@ -2299,7 +1858,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
          value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2331,7 +1890,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_conversational_analysis_authoring_list_deployments_request(
+                request = build_list_deployments_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -2347,7 +1906,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
             else:
                 
-                request = build_conversational_analysis_authoring_list_deployments_request(
+                request = build_list_deployments_request(
                     project_name=project_name,
                     headers=_headers,
                     params=_params,
@@ -2363,17 +1922,17 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
                 request.method = "GET"
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request,
                 stream=False,
                 **kwargs
@@ -2387,17 +1946,17 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
             return pipeline_response
 
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
 
 
-    def _swap_deployments_initial(  # pylint: disable=inconsistent-return-statements
+    async def _swap_deployments_initial(
         self,
         project_name: str,
         body: Union[JSON, IO],
         **kwargs: Any
-    ) -> None:
+    ) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2407,7 +1966,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
 
         content_type = content_type or "application/json"
         _json = None
@@ -2417,7 +1976,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         else:
             _json = body
 
-        request = build_conversational_analysis_authoring_swap_deployments_request(
+        request = build_swap_deployments_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2431,7 +1990,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -2439,28 +1998,38 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
+        if response.status_code == 202:
+            response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
+            
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
 
 
     @overload
-    def begin_swap_deployments(
+    async def begin_swap_deployments(
         self,
         project_name: str,
         body: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Swaps two existing deployments with each other.
 
         :param project_name: The name of the project to use. Required.
@@ -2471,14 +2040,14 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
          Default value is "application/json".
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2491,17 +2060,72 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
                     "secondDeploymentName": "str"  # Represents the second deployment name.
                       Required.
                 }
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "message": "str",  # Error message. Required.
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
     @overload
-    def begin_swap_deployments(
+    async def begin_swap_deployments(
         self,
         project_name: str,
         body: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Swaps two existing deployments with each other.
 
         :param project_name: The name of the project to use. Required.
@@ -2512,25 +2136,83 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
          Default value is "application/json".
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "message": "str",  # Error message. Required.
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
 
-    @distributed_trace
-    def begin_swap_deployments(
+    @distributed_trace_async
+    async def begin_swap_deployments(
         self,
         project_name: str,
         body: Union[JSON, IO],
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Swaps two existing deployments with each other.
 
         :param project_name: The name of the project to use. Required.
@@ -2542,29 +2224,87 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
          Default value is None.
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "message": "str",  # Error message. Required.
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._swap_deployments_initial(  # type: ignore
+            raw_result = await self._swap_deployments_initial(  # type: ignore
                 project_name=project_name,
                 body=body,
                 content_type=content_type,
@@ -2575,9 +2315,15 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
             )
         kwargs.pop('error_map', None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
 
         path_format_arguments = {
@@ -2585,27 +2331,27 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
+            polling_method = cast(AsyncPollingMethod, AsyncLROBasePolling(
                 lro_delay,
                 
                 path_format_arguments=path_format_arguments,
                 **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
+        ))  # type: AsyncPollingMethod
+        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else: polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
 
 
-    @distributed_trace
-    def get_deployment(
+    @distributed_trace_async
+    async def get_deployment(
         self,
         project_name: str,
         deployment_name: str,
@@ -2649,7 +2395,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
-        request = build_conversational_analysis_authoring_get_deployment_request(
+        request = build_get_deployment_request(
             project_name=project_name,
             deployment_name=deployment_name,
             api_version=self._config.api_version,
@@ -2661,7 +2407,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -2685,13 +2431,13 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
 
 
-    def _deploy_project_initial(  # pylint: disable=inconsistent-return-statements
+    async def _deploy_project_initial(
         self,
         project_name: str,
         deployment_name: str,
         body: Union[JSON, IO],
         **kwargs: Any
-    ) -> None:
+    ) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2701,7 +2447,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
 
         content_type = content_type or "application/json"
         _json = None
@@ -2711,7 +2457,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         else:
             _json = body
 
-        request = build_conversational_analysis_authoring_deploy_project_request(
+        request = build_deploy_project_request(
             project_name=project_name,
             deployment_name=deployment_name,
             content_type=content_type,
@@ -2726,7 +2472,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -2734,21 +2480,31 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
+        if response.status_code == 202:
+            response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
+            
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
 
 
     @overload
-    def begin_deploy_project(
+    async def begin_deploy_project(
         self,
         project_name: str,
         deployment_name: str,
@@ -2756,7 +2512,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Creates a new deployment or replaces an existing one.
 
         :param project_name: The name of the project to use. Required.
@@ -2769,14 +2525,14 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
          Default value is "application/json".
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2786,10 +2542,65 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
                 body = {
                     "trainedModelLabel": "str"  # Represents the trained model label. Required.
                 }
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "message": "str",  # Error message. Required.
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
     @overload
-    def begin_deploy_project(
+    async def begin_deploy_project(
         self,
         project_name: str,
         deployment_name: str,
@@ -2797,7 +2608,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Creates a new deployment or replaces an existing one.
 
         :param project_name: The name of the project to use. Required.
@@ -2810,26 +2621,84 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
          Default value is "application/json".
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "message": "str",  # Error message. Required.
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
 
-    @distributed_trace
-    def begin_deploy_project(
+    @distributed_trace_async
+    async def begin_deploy_project(
         self,
         project_name: str,
         deployment_name: str,
         body: Union[JSON, IO],
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Creates a new deployment or replaces an existing one.
 
         :param project_name: The name of the project to use. Required.
@@ -2842,29 +2711,87 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
          Default value is None.
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "message": "str",  # Error message. Required.
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._deploy_project_initial(  # type: ignore
+            raw_result = await self._deploy_project_initial(  # type: ignore
                 project_name=project_name,
                 deployment_name=deployment_name,
                 body=body,
@@ -2876,9 +2803,15 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
             )
         kwargs.pop('error_map', None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
 
         path_format_arguments = {
@@ -2886,31 +2819,31 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
+            polling_method = cast(AsyncPollingMethod, AsyncLROBasePolling(
                 lro_delay,
                 
                 path_format_arguments=path_format_arguments,
                 **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
+        ))  # type: AsyncPollingMethod
+        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else: polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
 
 
-    def _delete_deployment_initial(  # pylint: disable=inconsistent-return-statements
+    async def _delete_deployment_initial(
         self,
         project_name: str,
         deployment_name: str,
         **kwargs: Any
-    ) -> None:
+    ) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2919,10 +2852,10 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
 
         
-        request = build_conversational_analysis_authoring_delete_deployment_request(
+        request = build_delete_deployment_request(
             project_name=project_name,
             deployment_name=deployment_name,
             api_version=self._config.api_version,
@@ -2934,7 +2867,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -2942,26 +2875,36 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
+        if response.status_code == 202:
+            response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
+            
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
 
 
-    @distributed_trace
-    def begin_delete_deployment(
+    @distributed_trace_async
+    async def begin_delete_deployment(
         self,
         project_name: str,
         deployment_name: str,
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Deletes a project deployment.
 
         :param project_name: The name of the project to use. Required.
@@ -2969,28 +2912,86 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         :param deployment_name: The name of the specific deployment of the project to use. Required.
         :type deployment_name: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "message": "str",  # Error message. Required.
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._delete_deployment_initial(  # type: ignore
+            raw_result = await self._delete_deployment_initial(  # type: ignore
                 project_name=project_name,
                 deployment_name=deployment_name,
                 cls=lambda x,y,z: x,
@@ -3000,9 +3001,15 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
             )
         kwargs.pop('error_map', None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
 
         path_format_arguments = {
@@ -3010,27 +3017,27 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
+            polling_method = cast(AsyncPollingMethod, AsyncLROBasePolling(
                 lro_delay,
                 
                 path_format_arguments=path_format_arguments,
                 **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
+        ))  # type: AsyncPollingMethod
+        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else: polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
 
 
-    @distributed_trace
-    def get_deployment_status(
+    @distributed_trace_async
+    async def get_deployment_status(
         self,
         project_name: str,
         deployment_name: str,
@@ -3118,7 +3125,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
-        request = build_conversational_analysis_authoring_get_deployment_status_request(
+        request = build_get_deployment_status_request(
             project_name=project_name,
             deployment_name=deployment_name,
             job_id=job_id,
@@ -3131,7 +3138,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -3155,8 +3162,8 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
 
 
-    @distributed_trace
-    def get_swap_deployments_status(
+    @distributed_trace_async
+    async def get_swap_deployments_status(
         self,
         project_name: str,
         job_id: str,
@@ -3241,7 +3248,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
-        request = build_conversational_analysis_authoring_get_swap_deployments_status_request(
+        request = build_get_swap_deployments_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -3253,7 +3260,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -3277,8 +3284,8 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
 
 
-    @distributed_trace
-    def get_export_status(
+    @distributed_trace_async
+    async def get_export_status(
         self,
         project_name: str,
         job_id: str,
@@ -3365,7 +3372,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
-        request = build_conversational_analysis_authoring_get_export_status_request(
+        request = build_get_export_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -3377,7 +3384,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -3401,8 +3408,8 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
 
 
-    @distributed_trace
-    def get_import_status(
+    @distributed_trace_async
+    async def get_import_status(
         self,
         project_name: str,
         job_id: str,
@@ -3487,7 +3494,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
-        request = build_conversational_analysis_authoring_get_import_status_request(
+        request = build_get_import_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -3499,7 +3506,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -3532,7 +3539,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable[JSON]:
+    ) -> AsyncIterable[JSON]:
         """Lists the trained models belonging to a project.
 
         :param project_name: The name of the project to use. Required.
@@ -3547,7 +3554,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
          value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3578,7 +3585,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_conversational_analysis_authoring_list_trained_models_request(
+                request = build_list_trained_models_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -3594,7 +3601,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
             else:
                 
-                request = build_conversational_analysis_authoring_list_trained_models_request(
+                request = build_list_trained_models_request(
                     project_name=project_name,
                     headers=_headers,
                     params=_params,
@@ -3610,17 +3617,17 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
                 request.method = "GET"
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request,
                 stream=False,
                 **kwargs
@@ -3634,13 +3641,13 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
             return pipeline_response
 
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
 
 
-    @distributed_trace
-    def get_trained_model(
+    @distributed_trace_async
+    async def get_trained_model(
         self,
         project_name: str,
         trained_model_label: str,
@@ -3683,7 +3690,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
-        request = build_conversational_analysis_authoring_get_trained_model_request(
+        request = build_get_trained_model_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             api_version=self._config.api_version,
@@ -3695,7 +3702,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -3719,8 +3726,8 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
 
 
-    @distributed_trace
-    def delete_trained_model(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def delete_trained_model(  # pylint: disable=inconsistent-return-statements
         self,
         project_name: str,
         trained_model_label: str,
@@ -3747,7 +3754,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
-        request = build_conversational_analysis_authoring_delete_trained_model_request(
+        request = build_delete_trained_model_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             api_version=self._config.api_version,
@@ -3759,7 +3766,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -3787,7 +3794,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable[JSON]:
+    ) -> AsyncIterable[JSON]:
         """Gets the detailed results of the evaluation for a trained model. This includes the raw
         inference results for the data included in the evaluation process.
 
@@ -3808,7 +3815,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
          value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3862,7 +3869,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_conversational_analysis_authoring_get_model_evaluation_results_request(
+                request = build_get_model_evaluation_results_request(
                     project_name=project_name,
                     trained_model_label=trained_model_label,
                     string_index_type=string_index_type,
@@ -3880,7 +3887,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
             else:
                 
-                request = build_conversational_analysis_authoring_get_model_evaluation_results_request(
+                request = build_get_model_evaluation_results_request(
                     project_name=project_name,
                     trained_model_label=trained_model_label,
                     headers=_headers,
@@ -3897,17 +3904,17 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
                 request.method = "GET"
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request,
                 stream=False,
                 **kwargs
@@ -3921,13 +3928,13 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
             return pipeline_response
 
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
 
 
-    @distributed_trace
-    def get_model_evaluation_summary(
+    @distributed_trace_async
+    async def get_model_evaluation_summary(
         self,
         project_name: str,
         trained_model_label: str,
@@ -4045,7 +4052,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
-        request = build_conversational_analysis_authoring_get_model_evaluation_summary_request(
+        request = build_get_model_evaluation_summary_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             api_version=self._config.api_version,
@@ -4057,7 +4064,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -4090,7 +4097,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable[JSON]:
+    ) -> AsyncIterable[JSON]:
         """Lists the non-expired training jobs created for a project.
 
         :param project_name: The name of the project to use. Required.
@@ -4105,7 +4112,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
          value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -4211,7 +4218,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_conversational_analysis_authoring_list_training_jobs_request(
+                request = build_list_training_jobs_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -4227,7 +4234,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
             else:
                 
-                request = build_conversational_analysis_authoring_list_training_jobs_request(
+                request = build_list_training_jobs_request(
                     project_name=project_name,
                     headers=_headers,
                     params=_params,
@@ -4243,17 +4250,17 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
                 request.method = "GET"
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request,
                 stream=False,
                 **kwargs
@@ -4267,13 +4274,13 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
             return pipeline_response
 
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
 
 
-    @distributed_trace
-    def get_training_status(
+    @distributed_trace_async
+    async def get_training_status(
         self,
         project_name: str,
         job_id: str,
@@ -4391,7 +4398,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
-        request = build_conversational_analysis_authoring_get_training_status_request(
+        request = build_get_training_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -4403,7 +4410,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -4427,12 +4434,12 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
 
 
-    def _cancel_training_job_initial(  # pylint: disable=inconsistent-return-statements
+    async def _cancel_training_job_initial(
         self,
         project_name: str,
         job_id: str,
         **kwargs: Any
-    ) -> None:
+    ) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -4441,10 +4448,10 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
 
         
-        request = build_conversational_analysis_authoring_cancel_training_job_request(
+        request = build_cancel_training_job_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -4456,7 +4463,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -4464,26 +4471,36 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
+        if response.status_code == 202:
+            response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
+            
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
 
 
-    @distributed_trace
-    def begin_cancel_training_job(
+    @distributed_trace_async
+    async def begin_cancel_training_job(
         self,
         project_name: str,
         job_id: str,
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Triggers a cancellation for a running training job.
 
         :param project_name: The name of the project to use. Required.
@@ -4491,28 +4508,119 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         :param job_id: The job ID. Required.
         :type job_id: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "message": "str",  # Error message. Required.
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "result": {
+                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
+                          Represents the estimated end date time for training and evaluation.
+                        "evaluationStatus": {
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
+                              Represents the start date time.
+                            "status": "str"  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                        },
+                        "modelLabel": "str",  # Represents trained model label. Required.
+                        "trainingConfigVersion": "str",  # Represents training config
+                          version. Required.
+                        "trainingMode": "str",  # Optional. Represents the mode of the
+                          training operation. Known values are: "advanced" and "standard".
+                        "trainingStatus": {
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
+                              Represents the start date time.
+                            "status": "str"  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                        }
+                    },
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._cancel_training_job_initial(  # type: ignore
+            raw_result = await self._cancel_training_job_initial(  # type: ignore
                 project_name=project_name,
                 job_id=job_id,
                 cls=lambda x,y,z: x,
@@ -4522,9 +4630,15 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
             )
         kwargs.pop('error_map', None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
 
         path_format_arguments = {
@@ -4532,27 +4646,27 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
+            polling_method = cast(AsyncPollingMethod, AsyncLROBasePolling(
                 lro_delay,
                 
                 path_format_arguments=path_format_arguments,
                 **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
+        ))  # type: AsyncPollingMethod
+        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else: polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
 
 
-    @distributed_trace
-    def get_project_deletion_status(
+    @distributed_trace_async
+    async def get_project_deletion_status(
         self,
         job_id: str,
         **kwargs: Any
@@ -4634,7 +4748,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
-        request = build_conversational_analysis_authoring_get_project_deletion_status_request(
+        request = build_get_project_deletion_status_request(
             job_id=job_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4645,7 +4759,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -4678,7 +4792,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable[JSON]:
+    ) -> AsyncIterable[JSON]:
         """Lists the supported languages for the given project type.
 
         :keyword project_kind: The project kind. Known values are: "Conversation" and "Orchestration".
@@ -4694,7 +4808,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
          value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -4720,7 +4834,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_conversational_analysis_authoring_get_supported_languages_request(
+                request = build_get_supported_languages_request(
                     project_kind=project_kind,
                     top=top,
                     skip=skip,
@@ -4736,7 +4850,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
             else:
                 
-                request = build_conversational_analysis_authoring_get_supported_languages_request(
+                request = build_get_supported_languages_request(
                     headers=_headers,
                     params=_params,
                 )
@@ -4751,17 +4865,17 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
                 request.method = "GET"
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request,
                 stream=False,
                 **kwargs
@@ -4775,7 +4889,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
             return pipeline_response
 
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
 
@@ -4790,7 +4904,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable[JSON]:
+    ) -> AsyncIterable[JSON]:
         """Lists the supported prebuilt entities that can be used while creating composed entities.
 
         :keyword language: The language to get supported prebuilt entities for. Required if
@@ -4810,7 +4924,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
          value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -4835,7 +4949,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_conversational_analysis_authoring_get_supported_prebuilt_entities_request(
+                request = build_get_supported_prebuilt_entities_request(
                     language=language,
                     multilingual=multilingual,
                     top=top,
@@ -4852,7 +4966,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
             else:
                 
-                request = build_conversational_analysis_authoring_get_supported_prebuilt_entities_request(
+                request = build_get_supported_prebuilt_entities_request(
                     headers=_headers,
                     params=_params,
                 )
@@ -4867,17 +4981,17 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
                 request.method = "GET"
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request,
                 stream=False,
                 **kwargs
@@ -4891,7 +5005,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
             return pipeline_response
 
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
 
@@ -4905,7 +5019,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable[JSON]:
+    ) -> AsyncIterable[JSON]:
         """Lists the support training config version for a given project type.
 
         :keyword project_kind: The project kind. Known values are: "Conversation" and "Orchestration".
@@ -4921,7 +5035,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
          value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -4947,7 +5061,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_conversational_analysis_authoring_list_training_config_versions_request(
+                request = build_list_training_config_versions_request(
                     project_kind=project_kind,
                     top=top,
                     skip=skip,
@@ -4963,7 +5077,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
 
             else:
                 
-                request = build_conversational_analysis_authoring_list_training_config_versions_request(
+                request = build_list_training_config_versions_request(
                     headers=_headers,
                     params=_params,
                 )
@@ -4978,17 +5092,17 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
                 request.method = "GET"
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request,
                 stream=False,
                 **kwargs
@@ -5002,7 +5116,7 @@ class ConversationalAnalysisAuthoringOperations:  # pylint: disable=too-many-pub
             return pipeline_response
 
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
 
