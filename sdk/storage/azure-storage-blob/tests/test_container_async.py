@@ -1546,6 +1546,43 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
 
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_delete_blobs_with_version_id(self, versioned_storage_account_name, versioned_storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        container = await self._create_container(bsc)
+        data = b'hello world'
+
+        try:
+            blob = bsc.get_blob_client(container.container_name, 'blob1')
+            await blob.upload_blob(data, length=len(data))
+            await container.get_blob_client('blob2').upload_blob(data)
+        except:
+            pass
+
+        # Act
+        blob = bsc.get_blob_client(container.container_name, 'blob1')
+        old_blob_version_id = (await blob.get_blob_properties()).get("version_id")
+        await blob.stage_block(block_id='1', data="Test Content")
+        await blob.commit_block_list(['1'])
+        new_blob_version_id = (await blob.get_blob_properties()).get("version_id")
+        assert old_blob_version_id != new_blob_version_id
+
+        blob1_del_data = dict()
+        blob1_del_data['name'] = 'blob1'
+        blob1_del_data['version_id'] = old_blob_version_id
+
+        response = await self._to_list(await container.delete_blobs(
+            blob1_del_data,
+            'blob2'
+        ))
+
+        # Assert
+        assert len(response) == 2
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+
+    @BlobPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blobs_snapshot(self, storage_account_name, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
