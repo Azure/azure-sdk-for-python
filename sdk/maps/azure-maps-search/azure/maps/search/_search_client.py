@@ -8,6 +8,8 @@
 from typing import TYPE_CHECKING, overload, Union, Any, List, Optional
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
+
+from ._api_version import MapsSearchApiVersion, validate_api_version
 from ._generated._search_client import SearchClient as SearchClientGen
 from ._generated.models import (
     PointOfInterestCategory,
@@ -29,17 +31,20 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-
+# By default, use the latest supported API version
 class SearchClient(object):
     """Azure Maps Search REST APIs.
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
+    :keyword api_version:
+            The API version of the service to use for requests. It defaults to the latest service version.
+            Setting to an older version may result in reduced feature compatibility.
+    :paramtype api_version: str or ~azure.ai.translation.document.MapsSearchApiVersion
     """
 
     def __init__(
         self,
         credential,  # type: TokenCredential
-        api_version=None, # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -47,10 +52,14 @@ class SearchClient(object):
         if not credential:
             raise ValueError(
                 "You need to provide account shared key to authenticate.")
+        self._api_version = kwargs.pop(
+            "api_version", MapsSearchApiVersion.V1_0
+        )
+        validate_api_version(self._api_version)
 
         self._search_client = SearchClientGen(
             credential,
-            api_version=api_version,
+            api_version=self._api_version,
             **kwargs
         ).search
 
@@ -377,8 +386,8 @@ class SearchClient(object):
         """
         result = self._search_client.search_along_route(
             query,
-            max_detour_time,
-            route,
+            max_detour_time=max_detour_time,
+            route=route,
             **kwargs
         )
         return SearchAddressResult(summary=result.summary, results=result.results)

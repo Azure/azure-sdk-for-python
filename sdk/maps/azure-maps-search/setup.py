@@ -63,6 +63,7 @@ setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
+        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.6",
@@ -85,6 +86,6 @@ setup(
         'azure-mgmt-core>=1.3.0,<2.0.0',
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-maps-nspkg'],
+        ":python_version<'3.0'": ['azure-maps-nspkg~=3.0.2'],
     }
 )

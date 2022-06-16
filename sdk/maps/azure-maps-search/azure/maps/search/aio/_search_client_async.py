@@ -8,6 +8,8 @@
 from typing import TYPE_CHECKING
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
+
+from .._api_version import MapsSearchApiVersion, validate_api_version
 from .._generated.aio._search_client import SearchClient as SearchClientGen
 from .._generated.models import BatchRequest, SearchAddressBatchResult
 
@@ -17,6 +19,7 @@ if TYPE_CHECKING:
     from azure.core.polling import LROPoller, AsyncLROPoller
 
 
+# By default, use the latest supported API version
 class SearchClient(object):
     """Azure Maps Search REST APIs.
 
@@ -30,6 +33,10 @@ class SearchClient(object):
     :param str base_url: Service URL
     :keyword int polling_interval: Default waiting time between two polls for
      LRO operations if no Retry-After header is present.
+    :keyword api_version:
+            The API version of the service to use for requests. It defaults to the latest service version.
+            Setting to an older version may result in reduced feature compatibility.
+    :paramtype api_version: str or ~azure.ai.translation.document.MapsSearchApiVersion
     """
 
     def __init__(
@@ -41,7 +48,10 @@ class SearchClient(object):
         if not credential:
             raise ValueError(
                 "You need to provide account shared key to authenticate.")
-        self._api_version = kwargs.pop("api_version", None)
+        self._api_version = kwargs.pop(
+            "api_version", MapsSearchApiVersion.V1_0
+        )
+        validate_api_version(self._api_version)
 
         self._search_client = SearchClientGen(
             credential,
