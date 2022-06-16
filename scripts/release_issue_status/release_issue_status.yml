@@ -22,7 +22,6 @@ schedules:
     always: true
 
 variables:
-  - group: Release Secrets for GitHub
   - group: Azure SDK Auto Release Pipeline Secrets
   - group: SDK Release Helper
 
@@ -54,7 +53,6 @@ jobs:
         export TOKEN=$(Yuchao-GitToken)
         export PIPELINE_TOKEN=$(PIPELINE-TOKEN)
         export JF_TOKEN=$(Jiefeng-GitToken)
-        export AZURESDK_BOT_TOKEN=$(azuresdk-github-pat)
 
         # create virtual env
         python -m venv venv-sdk

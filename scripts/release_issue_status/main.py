@@ -16,10 +16,9 @@ _NULL = ' '
 _FILE_OUT = 'release_issue_status.csv'
 _FILE_OUT_PYTHON = 'release_python_status.md'
 _PYTHON_SDK_ADMINISTRATORS = ['msyyc', 'BigCat20196', 'azure-sdk', 'Wzb123456789']
-_PYTHON_SDK_ASSIGNEES = ['BigCat20196', 'Wzb123456789', 'msyyc']
+_PYTHON_SDK_ASSIGNEES = ['BigCat20196', 'msyyc']
 _ASSIGNER_DICT = {'BigCat20196': os.getenv('JF_TOKEN'),
-                  'msyyc': os.getenv('Token'),
-                  'Wzb123456789': os.getenv('AZURESDK_BOT_TOKEN')}
+                  'msyyc': os.getenv('Token')}
 logging.basicConfig(level=logging.INFO,
                     format='[auto-reply  log] - %(funcName)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
