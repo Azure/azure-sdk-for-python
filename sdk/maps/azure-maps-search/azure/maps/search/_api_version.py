@@ -20,7 +20,7 @@ def validate_api_version(api_version: str) -> None:
         return
 
     try:
-        api_version =  MapsSearcApiVersion(api_version)
+        api_version =  MapsSearchApiVersion(api_version)
     except ValueError:
         raise ValueError(
             "Unsupported API version '{}'. Please select from:\n{}".format(
