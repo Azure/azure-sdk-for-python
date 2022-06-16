@@ -11,9 +11,10 @@ import uuid
 from azure.ai.ml._azure_environments import ENDPOINT_URLS, _get_cloud_details
 
 from azure.storage.blob import generate_blob_sas, BlobSasPermissions
+from azure.storage.filedatalake import generate_file_sas, FileSasPermissions
 from azure.ai.ml._ml_exceptions import ValidationException
-from azure.ai.ml._operations import DatastoreOperations
-from azure.ai.ml._utils._storage_utils import get_storage_client, STORAGE_ACCOUNT_URLS
+from azure.ai.ml.operations import DatastoreOperations
+from azure.ai.ml._utils._storage_utils import get_storage_client
 from azure.ai.ml.entities import Environment
 from azure.ai.ml.entities._assets._artifacts.artifact import Artifact, ArtifactStorageInfo
 from azure.ai.ml.entities._datastore.credentials import AccountKeyCredentials
@@ -30,16 +31,17 @@ from azure.ai.ml._utils._asset_utils import (
     IgnoreFile,
     _build_metadata_dict,
 )
-from azure.ai.ml._utils._storage_utils import get_artifact_path_from_blob_url, AzureMLDatastorePathUri
+from azure.ai.ml._utils._storage_utils import get_artifact_path_from_storage_url, AzureMLDatastorePathUri
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._restclient.v2021_10_01.models import (
     DatastoreType,
 )
 from azure.ai.ml._utils.utils import is_url, is_mlflow_uri
 from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId
-from azure.ai.ml.constants import SHORT_URI_FORMAT
+from azure.ai.ml.constants import SHORT_URI_FORMAT, STORAGE_ACCOUNT_URLS
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
-
+from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
+from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
 
 module_logger = logging.getLogger(__name__)
 
@@ -98,40 +100,51 @@ def get_datastore_info(operations: DatastoreOperations, name: str) -> Dict[str, 
     return datastore_info
 
 
-def list_logs_in_datastore(ds_info: Dict[str, str], blob_prefix: str, legacy_log_folder_name: str) -> Dict[str, str]:
+def list_logs_in_datastore(ds_info: Dict[str, str], prefix: str, legacy_log_folder_name: str) -> Dict[str, str]:
     """
-    Returns a dictionary of file name to blob uri with SAS token, matching the structure of RunDetials.logFiles
+    Returns a dictionary of file name to blob or data lake uri with SAS token, matching the structure of RunDetails.logFiles
 
     legacy_log_folder_name: the name of the folder in the datastore that contains the logs
         /azureml-logs/*.txt is the legacy log structure for commandJob and sweepJob
         /logs/azureml/*.txt is the legacy log structure for pipeline parent Job
     """
-    # Only support blob storage for azureml log outputs
-    if ds_info["storage_type"] != DatastoreType.AZURE_BLOB:
-        raise Exception("Can only list logs in blob storage")
+    if ds_info["storage_type"] not in [DatastoreType.AZURE_BLOB, DatastoreType.AZURE_DATA_LAKE_GEN2]:
+        raise Exception("Only Blob and Azure DataLake Storage Gen2 datastores are supported.")
+
     storage_client = get_storage_client(
         credential=ds_info["credential"],
         container_name=ds_info["container_name"],
         storage_account=ds_info["storage_account"],
         storage_type=ds_info["storage_type"],
     )
-    blobs = storage_client.list(starts_with=blob_prefix + "/user_logs/")
+
+    items = storage_client.list(starts_with=prefix + "/user_logs/")
     # Append legacy log files if present
-    blobs.extend(storage_client.list(starts_with=blob_prefix + legacy_log_folder_name))
+    items.extend(storage_client.list(starts_with=prefix + legacy_log_folder_name))
 
     log_dict = {}
-    for blob_name in blobs:
-        sub_name = blob_name.split(blob_prefix + "/")[1]
-        token = generate_blob_sas(
-            account_name=ds_info["storage_account"],
-            container_name=ds_info["container_name"],
-            blob_name=blob_name,
-            account_key=ds_info["credential"],
-            permission=BlobSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(minutes=30),
-        )
+    for item_name in items:
+        sub_name = item_name.split(prefix + "/")[1]
+        if isinstance(storage_client, BlobStorageClient):
+            token = generate_blob_sas(
+                account_name=ds_info["storage_account"],
+                container_name=ds_info["container_name"],
+                blob_name=item_name,
+                account_key=ds_info["credential"],
+                permission=BlobSasPermissions(read=True),
+                expiry=datetime.utcnow() + timedelta(minutes=30),
+            )
+        elif isinstance(storage_client, Gen2StorageClient):
+            token = generate_file_sas(
+                account_name=ds_info["storage_account"],
+                file_system_name=ds_info["container_name"],
+                file_name=item_name,
+                credential=ds_info["credential"],
+                permission=FileSasPermissions(read=True),
+                expiry=datetime.utcnow() + timedelta(minutes=30),
+            )
 
-        log_dict[sub_name] = "{}/{}/{}?{}".format(ds_info["account_url"], ds_info["container_name"], blob_name, token)
+        log_dict[sub_name] = "{}/{}/{}?{}".format(ds_info["account_url"], ds_info["container_name"], item_name, token)
     return log_dict
 
 
@@ -175,7 +188,9 @@ def upload_artifact(
         version=artifact_info["version"],
         relative_path=artifact_info["remote path"],
         datastore_arm_id=get_datastore_arm_id(datastore_name, operation_scope) if not sas_uri else None,
-        container_name=storage_client.container,
+        container_name=(
+            storage_client.container if isinstance(storage_client, BlobStorageClient) else storage_client.file_system
+        ),
         storage_account_url=datastore_info.get("account_url") if not sas_uri else sas_uri,
         indicator_file=artifact_info["indicator file"],
         is_file=Path(local_path).is_file(),
@@ -209,7 +224,7 @@ def download_artifact(
     return destination
 
 
-def download_artifact_from_blob_url(
+def download_artifact_from_storage_url(
     blob_url: str,
     destination: str,
     datastore_operation: DatastoreOperations,
@@ -220,7 +235,7 @@ def download_artifact_from_blob_url(
     """
     datastore_name = _get_datastore_name(datastore_name=datastore_name)
     datastore_info = get_datastore_info(datastore_operation, datastore_name)
-    starts_with = get_artifact_path_from_blob_url(
+    starts_with = get_artifact_path_from_storage_url(
         blob_url=str(blob_url), container_name=datastore_info.get("container_name")
     )
     return download_artifact(
@@ -317,11 +332,24 @@ def _upload_and_generate_remote_uri(
 
 def _update_metadata(name, version, indicator_file, datastore_info) -> None:
     storage_client = get_storage_client(**datastore_info)
+
+    if isinstance(storage_client, BlobStorageClient):
+        _update_blob_metadata(name, version, indicator_file, storage_client)
+    elif isinstance(storage_client, Gen2StorageClient):
+        _update_gen2_metadata(name, version, indicator_file, storage_client)
+
+
+def _update_blob_metadata(name, version, indicator_file, storage_client) -> None:
     container_client = storage_client.container_client
     if indicator_file.startswith(storage_client.container):
         indicator_file = indicator_file.split(storage_client.container)[1]
     blob = container_client.get_blob_client(blob=indicator_file)
     blob.set_blob_metadata(_build_metadata_dict(name=name, version=version))
+
+
+def _update_gen2_metadata(name, version, indicator_file, storage_client) -> None:
+    artifact_directory_client = storage_client.file_system_client.get_directory_client(indicator_file)
+    artifact_directory_client.set_metadata(_build_metadata_dict(name=name, version=version))
 
 
 T = TypeVar("T", bound=Artifact)
@@ -332,7 +360,6 @@ def _check_and_upload_path(
     asset_operations: Union["DatasetOperations", "DataOperations", "ModelOperations", "CodeOperations"],
     datastore_name: str = None,
     sas_uri: str = None,
-    check_only: bool = False,
 ) -> Tuple[T, str]:
     """Checks whether `artifact` is a path or a uri and uploads it to the datastore if necessary.
     param T artifact: artifact to check and upload
@@ -340,7 +367,6 @@ def _check_and_upload_path(
         the asset operations to use for uploading
     param str datastore_name: the name of the datastore to upload to
     param str sas_uri: the sas uri to use for uploading
-    param bool check_only: if True, only checks whether the artifact is a valid path & won't upload it
     """
 
     indicator_file = None
@@ -358,15 +384,8 @@ def _check_and_upload_path(
             if hasattr(artifact, "path") and artifact.path is not None
             else Path(artifact.local_path)
         )
-
         if not path.is_absolute():
             path = Path(artifact.base_path, path).resolve()
-
-        if check_only:
-            if not path.is_dir():
-                raise ValueError(f"{path} is not a directory")
-            return artifact, ""
-
         uploaded_artifact = _upload_to_datastore(
             asset_operations._operation_scope,
             asset_operations._datastore_operation,

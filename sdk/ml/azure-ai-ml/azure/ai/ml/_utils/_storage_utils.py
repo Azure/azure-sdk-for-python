@@ -6,8 +6,9 @@ import logging
 import re
 from typing import Tuple, Union
 
-from azure.ai.ml._artifacts._default_storage_helper import DefaultStorageClient
+from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._fileshare_storage_helper import FileStorageClient
+from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
 from azure.ai.ml._restclient.v2021_10_01.models import (
     DatastoreType,
 )
@@ -22,17 +23,13 @@ from azure.ai.ml.constants import (
     OUTPUT_URI_REGEX_FORMAT,
     MLFLOW_URI_REGEX_FORMAT,
     JOB_URI_REGEX_FORMAT,
+    STORAGE_ACCOUNT_URLS,
 )
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
 
 module_logger = logging.getLogger(__name__)
 
 SUPPORTED_STORAGE_TYPES = [DatastoreType.AZURE_BLOB, DatastoreType.AZURE_DATA_LAKE_GEN2, DatastoreType.AZURE_FILE]
-STORAGE_ACCOUNT_URLS = {
-    "AzureBlob": "https://{}.blob.{}",
-    "AzureDataLakeGen2": "https://{}.blob.{}",
-    "AzureFile": "https://{}.file.{}",
-}
 
 
 class AzureMLDatastorePathUri:
@@ -128,7 +125,7 @@ def get_storage_client(
     storage_type: Union[DatastoreType, str] = DatastoreType.AZURE_BLOB,
     account_url: str = None,
     container_name: str = None,
-) -> Union[DefaultStorageClient, FileStorageClient]:
+) -> Union[BlobStorageClient, FileStorageClient, Gen2StorageClient]:
     """
     Return a storage client class instance based on the storage account type
     """
@@ -142,13 +139,15 @@ def get_storage_client(
     if not account_url and storage_endpoint:
         account_url = STORAGE_ACCOUNT_URLS[storage_type].format(storage_account, storage_endpoint)
 
-    if storage_type in [DatastoreType.AZURE_BLOB, DatastoreType.AZURE_DATA_LAKE_GEN2]:
-        return DefaultStorageClient(credential=credential, container_name=container_name, account_url=account_url)
+    if storage_type == DatastoreType.AZURE_BLOB:
+        return BlobStorageClient(credential=credential, container_name=container_name, account_url=account_url)
+    elif storage_type == DatastoreType.AZURE_DATA_LAKE_GEN2:
+        return Gen2StorageClient(credential=credential, file_system=container_name, account_url=account_url)
     elif storage_type == DatastoreType.AZURE_FILE:
         return FileStorageClient(credential=credential, file_share_name=container_name, account_url=account_url)
 
 
-def get_artifact_path_from_blob_url(blob_url: str, container_name: dict) -> str:
+def get_artifact_path_from_storage_url(blob_url: str, container_name: dict) -> str:
     split_blob_url = blob_url.split(container_name)
     if len(split_blob_url) > 1:
         path = split_blob_url[-1]

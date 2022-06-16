@@ -63,7 +63,7 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
         api_version = kwargs.pop(
-            "api_version", DocumentAnalysisApiVersion.V2022_01_30_PREVIEW
+            "api_version", DocumentAnalysisApiVersion.V2022_06_30_PREVIEW
         )
         super(DocumentAnalysisClient, self).__init__(
             endpoint=endpoint,
@@ -127,7 +127,7 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
 
         return self._client.begin_analyze_document(  # type: ignore
             model_id=model,
-            analyze_request=document,
+            analyze_request=document,  # type: ignore
             content_type="application/octet-stream",
             string_index_type="unicodeCodePoint",
             continuation_token=continuation_token,
@@ -176,7 +176,7 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
 
         return self._client.begin_analyze_document(  # type: ignore
             model_id=model,
-            analyze_request={"url_source": document_url},
+            analyze_request={"urlSource": document_url},  # type: ignore
             string_index_type="unicodeCodePoint",
             continuation_token=continuation_token,
             cls=cls,

@@ -1,0 +1,38 @@
+type: command
+
+description: Train a basic neural network with TensorFlow on the MNIST dataset, distributed via TensorFlow.
+
+name: tf_mnist
+display_name: TF_mnist
+version: 1
+
+inputs:
+  epochs: 
+    type: number
+    default: 1
+
+outputs:
+  trained_model_output: 
+    type: uri_folder
+
+compute: azureml:gpu-cluster
+
+code: ./src
+
+environment: azureml:AzureML-tensorflow-2.4-ubuntu18.04-py37-cuda11-gpu:15
+
+command: >-
+  python train.py 
+  --epochs ${{inputs.epochs}}
+  --model-dir ${{outputs.trained_model_output}}
+
+resources:
+  instance_count: 2
+
+distribution:
+  type: tensorflow
+  worker_count: 2
+
+## TODO: remove
+environment_variables:
+  AZUREML_COMPUTE_USE_COMMON_RUNTIME: "true"

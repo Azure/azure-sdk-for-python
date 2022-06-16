@@ -224,6 +224,42 @@ def build_list_skus_request(
         **kwargs
     )
 
+
+def build_list_by_edge_zone_request(
+    location: str,
+    edge_zone: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/edgeZones/{edgeZone}/vmimages")  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "location": _SERIALIZER.url("location", location, 'str'),
+        "edgeZone": _SERIALIZER.url("edge_zone", edge_zone, 'str'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
 class VirtualMachineImagesOperations(object):
     """VirtualMachineImagesOperations operations.
 
@@ -567,4 +603,62 @@ class VirtualMachineImagesOperations(object):
         return deserialized
 
     list_skus.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers/{offer}/skus"}  # type: ignore
+
+
+    @distributed_trace
+    def list_by_edge_zone(
+        self,
+        location: str,
+        edge_zone: str,
+        **kwargs: Any
+    ) -> "_models.VmImagesInEdgeZoneListResult":
+        """Gets a list of all virtual machine image versions for the specified edge zone.
+
+        :param location: The name of a supported Azure region.
+        :type location: str
+        :param edge_zone: The name of the edge zone.
+        :type edge_zone: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: VmImagesInEdgeZoneListResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.compute.v2022_03_01.models.VmImagesInEdgeZoneListResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VmImagesInEdgeZoneListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
+
+        
+        request = build_list_by_edge_zone_request(
+            location=location,
+            edge_zone=edge_zone,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.list_by_edge_zone.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('VmImagesInEdgeZoneListResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    list_by_edge_zone.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/edgeZones/{edgeZone}/vmimages"}  # type: ignore
 

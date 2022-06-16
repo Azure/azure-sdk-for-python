@@ -1,0 +1,45 @@
+type: pipeline
+
+name: simplePipelineJobWithInlineCommandJobgit a
+description: The hello world pipeline job with inline command job
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: "azureml:cpu-cluster"
+
+inputs:
+  job_data_path:
+    type: uri_file
+    path: https://azuremlexamples.blob.core.windows.net/datasets/iris.csv
+    mode: ro_mount
+
+outputs:
+  job_out_path_1:
+    mode: mount
+
+# here the jobs in the pipeline
+jobs:
+  batch_inference:
+    # We pass the trained model from the train step to use to parallel inference
+    type: parallel
+    compute: "azureml:cpu-cluster"
+    inputs:
+      "score_input": ${{parent.inputs.job_data_path}}
+    outputs:
+      scored_result: ${{parent.outputs.job_out_path_1}}
+
+    resources:
+      instance_count: 3
+    mini_batch_size: "100kb"
+    mini_batch_error_threshold: 5
+    logging_level: "DEBUG"
+    input_data: ${{inputs.job_data_path}}
+    max_concurrency_per_instance: 2
+
+    task:
+      type: function
+      code: "../python"
+      entry_script: pass_through.py
+      append_row_to: ${{outputs.scored_result}} # optional, If Null, equals to summary_only mode in v1.
+      environment: azureml:my-env:1

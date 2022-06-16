@@ -355,11 +355,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise ValueError("Encryption required but no key was provided.")
         encryption_options = {
             'required': self.require_encryption,
+            'version': self.encryption_version,
             'key': self.key_encryption_key,
             'resolver': self.key_resolver_function,
         }
         if self.key_encryption_key is not None:
-            cek, iv, encryption_data = generate_blob_encryption_data(self.key_encryption_key)
+            cek, iv, encryption_data = generate_blob_encryption_data(
+                self.key_encryption_key,
+                self.encryption_version)
             encryption_options['cek'] = cek
             encryption_options['vector'] = iv
             encryption_options['data'] = encryption_data
@@ -376,7 +379,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             stream = BytesIO(data)
         elif hasattr(data, 'read'):
             stream = data
-        elif hasattr(data, '__iter__'):
+        elif hasattr(data, '__iter__') and not isinstance(data, (list, tuple, set, dict)):
             stream = IterStreamer(data, encoding=encoding)
         else:
             raise TypeError("Unsupported data type: {}".format(type(data)))
@@ -422,6 +425,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             kwargs['client'] = self._client.block_blob
             kwargs['data'] = data
         elif blob_type == BlobType.PageBlob:
+            if self.encryption_version == '2.0' and (self.require_encryption or self.key_encryption_key is not None):
+                raise ValueError("Encryption version 2.0 does not currently support page blobs.")
             kwargs['client'] = self._client.page_blob
         elif blob_type == BlobType.AppendBlob:
             if self.require_encryption or (self.key_encryption_key is not None):
@@ -1521,11 +1526,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
             kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
 
+        tier = None
         if premium_page_blob_tier:
             try:
-                headers['x-ms-access-tier'] = premium_page_blob_tier.value  # type: ignore
+                tier = premium_page_blob_tier.value  # type: ignore
             except AttributeError:
-                headers['x-ms-access-tier'] = premium_page_blob_tier  # type: ignore
+                tier = premium_page_blob_tier  # type: ignore
 
         blob_tags_string = serialize_blob_tags_header(kwargs.pop('tags', None))
 
@@ -1541,6 +1547,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'cpk_info': cpk_info,
             'blob_tags_string': blob_tags_string,
             'cls': return_response_headers,
+            "tier": tier,
             'headers': headers}
         options.update(kwargs)
         return options
@@ -4124,5 +4131,5 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             "{}://{}".format(self.scheme, self.primary_hostname), container_name=self.container_name,
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
-            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            require_encryption=self.require_encryption, encryption_version=self.encryption_version,
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)

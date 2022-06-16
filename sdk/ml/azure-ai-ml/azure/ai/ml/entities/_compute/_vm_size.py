@@ -44,7 +44,7 @@ class VmSize(Resource, RestTranslatableMixin):
         :type gpus: int
         :param os_vhd_size_mb: The OS VHD disk size, in MB, allowed by the virtual machine size.
         :type os_vhd_size_mb: int
-        :prarm max_resource_volume_mb: The resource volume size, in MB, allowed by the virtual machine
+        :param max_resource_volume_mb: The resource volume size, in MB, allowed by the virtual machine
         size.
         :type max_resource_volume_mb: int
         :param memory_gb: The amount of memory, in GB, supported by the virtual machine size.
