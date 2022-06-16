@@ -268,7 +268,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
                         result.algorithm,
                         result.ciphertext,
                         iv=self.iv,
-                        additional_authenticated_data=None if algorithm.endswith("CBC") else self.aad
+                        additional_authenticated_data=None if "CBC" in algorithm else self.aad
                     )
 
                 assert result.key_id == imported_key.id
