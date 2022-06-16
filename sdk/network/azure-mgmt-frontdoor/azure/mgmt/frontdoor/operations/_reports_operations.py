@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,17 +7,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import functools
-from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
-import warnings
+from typing import Any, Callable, Dict, Optional, TypeVar, Union
+
+from msrest import Serializer
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
-from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
@@ -37,10 +38,14 @@ def build_get_latency_scorecards_request(
     country: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2019-11-01"
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2019-11-01"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}/Experiments/{experimentName}/LatencyScorecard')
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}/Experiments/{experimentName}/LatencyScorecard")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
@@ -48,26 +53,24 @@ def build_get_latency_scorecards_request(
         "experimentName": _SERIALIZER.url("experiment_name", experiment_name, 'str', pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
     if end_date_time_utc is not None:
-        query_parameters['endDateTimeUTC'] = _SERIALIZER.query("end_date_time_utc", end_date_time_utc, 'str')
+        _params['endDateTimeUTC'] = _SERIALIZER.query("end_date_time_utc", end_date_time_utc, 'str')
     if country is not None:
-        query_parameters['country'] = _SERIALIZER.query("country", country, 'str')
-    query_parameters['aggregationInterval'] = _SERIALIZER.query("aggregation_interval", aggregation_interval, 'str')
+        _params['country'] = _SERIALIZER.query("country", country, 'str')
+    _params['aggregationInterval'] = _SERIALIZER.query("aggregation_interval", aggregation_interval, 'str')
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
+        url=_url,
+        params=_params,
+        headers=_headers,
         **kwargs
     )
 
@@ -86,10 +89,14 @@ def build_get_timeseries_request(
     country: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2019-11-01"
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2019-11-01"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}/Experiments/{experimentName}/Timeseries')
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}/Experiments/{experimentName}/Timeseries")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
@@ -97,53 +104,49 @@ def build_get_timeseries_request(
         "experimentName": _SERIALIZER.url("experiment_name", experiment_name, 'str', pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-    query_parameters['startDateTimeUTC'] = _SERIALIZER.query("start_date_time_utc", start_date_time_utc, 'iso-8601')
-    query_parameters['endDateTimeUTC'] = _SERIALIZER.query("end_date_time_utc", end_date_time_utc, 'iso-8601')
-    query_parameters['aggregationInterval'] = _SERIALIZER.query("aggregation_interval", aggregation_interval, 'str')
-    query_parameters['timeseriesType'] = _SERIALIZER.query("timeseries_type", timeseries_type, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['startDateTimeUTC'] = _SERIALIZER.query("start_date_time_utc", start_date_time_utc, 'iso-8601')
+    _params['endDateTimeUTC'] = _SERIALIZER.query("end_date_time_utc", end_date_time_utc, 'iso-8601')
+    _params['aggregationInterval'] = _SERIALIZER.query("aggregation_interval", aggregation_interval, 'str')
+    _params['timeseriesType'] = _SERIALIZER.query("timeseries_type", timeseries_type, 'str')
     if endpoint is not None:
-        query_parameters['endpoint'] = _SERIALIZER.query("endpoint", endpoint, 'str')
+        _params['endpoint'] = _SERIALIZER.query("endpoint", endpoint, 'str')
     if country is not None:
-        query_parameters['country'] = _SERIALIZER.query("country", country, 'str')
+        _params['country'] = _SERIALIZER.query("country", country, 'str')
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
+        url=_url,
+        params=_params,
+        headers=_headers,
         **kwargs
     )
 
-class ReportsOperations(object):
-    """ReportsOperations operations.
+class ReportsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.frontdoor.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.frontdoor.FrontDoorManagementClient`'s
+        :attr:`reports` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def get_latency_scorecards(
@@ -155,7 +158,7 @@ class ReportsOperations(object):
         end_date_time_utc: Optional[str] = None,
         country: Optional[str] = None,
         **kwargs: Any
-    ) -> "_models.LatencyScorecard":
+    ) -> _models.LatencyScorecard:
         """Gets a Latency Scorecard for a given Experiment.
 
         Gets a Latency Scorecard for a given Experiment.
@@ -169,21 +172,30 @@ class ReportsOperations(object):
         :param aggregation_interval: The aggregation interval of the Latency Scorecard.
         :type aggregation_interval: str or
          ~azure.mgmt.frontdoor.models.LatencyScorecardAggregationInterval
-        :param end_date_time_utc: The end DateTime of the Latency Scorecard in UTC.
+        :param end_date_time_utc: The end DateTime of the Latency Scorecard in UTC. Default value is
+         None.
         :type end_date_time_utc: str
         :param country: The country associated with the Latency Scorecard. Values are country ISO codes
-         as specified here- https://www.iso.org/iso-3166-country-codes.html.
+         as specified here- https://www.iso.org/iso-3166-country-codes.html. Default value is None.
         :type country: str
+        :keyword api_version: Api Version. Default value is "2019-11-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LatencyScorecard, or the result of cls(response)
         :rtype: ~azure.mgmt.frontdoor.models.LatencyScorecard
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LatencyScorecard"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2019-11-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.LatencyScorecard]
 
         
         request = build_get_latency_scorecards_request(
@@ -191,15 +203,22 @@ class ReportsOperations(object):
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             experiment_name=experiment_name,
+            api_version=api_version,
             aggregation_interval=aggregation_interval,
             end_date_time_utc=end_date_time_utc,
             country=country,
             template_url=self.get_latency_scorecards.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -214,7 +233,7 @@ class ReportsOperations(object):
 
         return deserialized
 
-    get_latency_scorecards.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}/Experiments/{experimentName}/LatencyScorecard'}  # type: ignore
+    get_latency_scorecards.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}/Experiments/{experimentName}/LatencyScorecard"}  # type: ignore
 
 
     @distributed_trace
@@ -230,7 +249,7 @@ class ReportsOperations(object):
         endpoint: Optional[str] = None,
         country: Optional[str] = None,
         **kwargs: Any
-    ) -> "_models.Timeseries":
+    ) -> _models.Timeseries:
         """Gets a Timeseries for a given Experiment.
 
         Gets a Timeseries for a given Experiment.
@@ -249,21 +268,29 @@ class ReportsOperations(object):
         :type aggregation_interval: str or ~azure.mgmt.frontdoor.models.TimeseriesAggregationInterval
         :param timeseries_type: The type of Timeseries.
         :type timeseries_type: str or ~azure.mgmt.frontdoor.models.TimeseriesType
-        :param endpoint: The specific endpoint.
+        :param endpoint: The specific endpoint. Default value is None.
         :type endpoint: str
         :param country: The country associated with the Timeseries. Values are country ISO codes as
-         specified here- https://www.iso.org/iso-3166-country-codes.html.
+         specified here- https://www.iso.org/iso-3166-country-codes.html. Default value is None.
         :type country: str
+        :keyword api_version: Api Version. Default value is "2019-11-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Timeseries, or the result of cls(response)
         :rtype: ~azure.mgmt.frontdoor.models.Timeseries
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Timeseries"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2019-11-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Timeseries]
 
         
         request = build_get_timeseries_request(
@@ -271,6 +298,7 @@ class ReportsOperations(object):
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             experiment_name=experiment_name,
+            api_version=api_version,
             start_date_time_utc=start_date_time_utc,
             end_date_time_utc=end_date_time_utc,
             aggregation_interval=aggregation_interval,
@@ -278,11 +306,17 @@ class ReportsOperations(object):
             endpoint=endpoint,
             country=country,
             template_url=self.get_timeseries.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -297,5 +331,5 @@ class ReportsOperations(object):
 
         return deserialized
 
-    get_timeseries.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}/Experiments/{experimentName}/Timeseries'}  # type: ignore
+    get_timeseries.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}/Experiments/{experimentName}/Timeseries"}  # type: ignore
 

@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class FrontDoorManagementClientConfiguration(Configuration):
+class FrontDoorManagementClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for FrontDoorManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -27,7 +27,8 @@ class FrontDoorManagementClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
+    :param subscription_id: The subscription credentials which uniquely identify the Microsoft
+     Azure subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
     """
 

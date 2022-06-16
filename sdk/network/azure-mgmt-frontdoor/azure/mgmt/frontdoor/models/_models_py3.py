@@ -7,19 +7,21 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._front_door_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AzureAsyncOperationResult(msrest.serialization.Model):
     """The response body contains the status of the specified asynchronous operation, indicating whether it has succeeded, is in progress, or has failed. Note that this status is distinct from the HTTP status code returned for the Get Operation Status operation itself. If the asynchronous operation succeeded, the response body includes the HTTP status code for the successful request. If the asynchronous operation failed, the response body includes the HTTP status code for the failed request and error information regarding the failure.
 
-    :ivar status: Status of the Azure async operation. Possible values include: "InProgress",
-     "Succeeded", "Failed".
+    :ivar status: Status of the Azure async operation. Known values are: "InProgress", "Succeeded",
+     "Failed".
     :vartype status: str or ~azure.mgmt.frontdoor.models.NetworkOperationStatus
     :ivar error:
     :vartype error: ~azure.mgmt.frontdoor.models.Error
@@ -33,12 +35,12 @@ class AzureAsyncOperationResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        status: Optional[Union[str, "NetworkOperationStatus"]] = None,
-        error: Optional["Error"] = None,
+        status: Optional[Union[str, "_models.NetworkOperationStatus"]] = None,
+        error: Optional["_models.Error"] = None,
         **kwargs
     ):
         """
-        :keyword status: Status of the Azure async operation. Possible values include: "InProgress",
+        :keyword status: Status of the Azure async operation. Known values are: "InProgress",
          "Succeeded", "Failed".
         :paramtype status: str or ~azure.mgmt.frontdoor.models.NetworkOperationStatus
         :keyword error:
@@ -66,7 +68,7 @@ class Backend(msrest.serialization.Model):
      'privateLinkResourceId' is populated.
     :vartype private_link_location: str
     :ivar private_endpoint_status: The Approval status for the connection to the Private Link.
-     Possible values include: "Pending", "Approved", "Rejected", "Disconnected", "Timeout".
+     Known values are: "Pending", "Approved", "Rejected", "Disconnected", "Timeout".
     :vartype private_endpoint_status: str or ~azure.mgmt.frontdoor.models.PrivateEndpointStatus
     :ivar private_link_approval_message: A custom message to be included in the approval request to
      connect to the Private Link.
@@ -76,7 +78,7 @@ class Backend(msrest.serialization.Model):
     :ivar https_port: The HTTPS TCP port number. Must be between 1 and 65535.
     :vartype https_port: int
     :ivar enabled_state: Whether to enable use of this backend. Permitted values are 'Enabled' or
-     'Disabled'. Possible values include: "Enabled", "Disabled".
+     'Disabled'. Known values are: "Enabled", "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.frontdoor.models.BackendEnabledState
     :ivar priority: Priority to use for load balancing. Higher priorities will not be used for load
      balancing if any lower priority backend is healthy.
@@ -121,7 +123,7 @@ class Backend(msrest.serialization.Model):
         private_link_approval_message: Optional[str] = None,
         http_port: Optional[int] = None,
         https_port: Optional[int] = None,
-        enabled_state: Optional[Union[str, "BackendEnabledState"]] = None,
+        enabled_state: Optional[Union[str, "_models.BackendEnabledState"]] = None,
         priority: Optional[int] = None,
         weight: Optional[int] = None,
         backend_host_header: Optional[str] = None,
@@ -147,7 +149,7 @@ class Backend(msrest.serialization.Model):
         :keyword https_port: The HTTPS TCP port number. Must be between 1 and 65535.
         :paramtype https_port: int
         :keyword enabled_state: Whether to enable use of this backend. Permitted values are 'Enabled'
-         or 'Disabled'. Possible values include: "Enabled", "Disabled".
+         or 'Disabled'. Known values are: "Enabled", "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.frontdoor.models.BackendEnabledState
         :keyword priority: Priority to use for load balancing. Higher priorities will not be used for
          load balancing if any lower priority backend is healthy.
@@ -215,8 +217,8 @@ class BackendPool(SubResource):
     :vartype load_balancing_settings: ~azure.mgmt.frontdoor.models.SubResource
     :ivar health_probe_settings: L7 health probe settings for a backend pool.
     :vartype health_probe_settings: ~azure.mgmt.frontdoor.models.SubResource
-    :ivar resource_state: Resource status. Possible values include: "Creating", "Enabling",
-     "Enabled", "Disabling", "Disabled", "Deleting".
+    :ivar resource_state: Resource status. Known values are: "Creating", "Enabling", "Enabled",
+     "Disabling", "Disabled", "Deleting".
     :vartype resource_state: str or ~azure.mgmt.frontdoor.models.FrontDoorResourceState
     """
 
@@ -240,9 +242,9 @@ class BackendPool(SubResource):
         *,
         id: Optional[str] = None,
         name: Optional[str] = None,
-        backends: Optional[List["Backend"]] = None,
-        load_balancing_settings: Optional["SubResource"] = None,
-        health_probe_settings: Optional["SubResource"] = None,
+        backends: Optional[List["_models.Backend"]] = None,
+        load_balancing_settings: Optional["_models.SubResource"] = None,
+        health_probe_settings: Optional["_models.SubResource"] = None,
         **kwargs
     ):
         """
@@ -321,9 +323,9 @@ class BackendPoolUpdateParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        backends: Optional[List["Backend"]] = None,
-        load_balancing_settings: Optional["SubResource"] = None,
-        health_probe_settings: Optional["SubResource"] = None,
+        backends: Optional[List["_models.Backend"]] = None,
+        load_balancing_settings: Optional["_models.SubResource"] = None,
+        health_probe_settings: Optional["_models.SubResource"] = None,
         **kwargs
     ):
         """
@@ -351,8 +353,8 @@ class BackendPoolProperties(BackendPoolUpdateParameters):
     :vartype load_balancing_settings: ~azure.mgmt.frontdoor.models.SubResource
     :ivar health_probe_settings: L7 health probe settings for a backend pool.
     :vartype health_probe_settings: ~azure.mgmt.frontdoor.models.SubResource
-    :ivar resource_state: Resource status. Possible values include: "Creating", "Enabling",
-     "Enabled", "Disabling", "Disabled", "Deleting".
+    :ivar resource_state: Resource status. Known values are: "Creating", "Enabling", "Enabled",
+     "Disabling", "Disabled", "Deleting".
     :vartype resource_state: str or ~azure.mgmt.frontdoor.models.FrontDoorResourceState
     """
 
@@ -370,9 +372,9 @@ class BackendPoolProperties(BackendPoolUpdateParameters):
     def __init__(
         self,
         *,
-        backends: Optional[List["Backend"]] = None,
-        load_balancing_settings: Optional["SubResource"] = None,
-        health_probe_settings: Optional["SubResource"] = None,
+        backends: Optional[List["_models.Backend"]] = None,
+        load_balancing_settings: Optional["_models.SubResource"] = None,
+        health_probe_settings: Optional["_models.SubResource"] = None,
         **kwargs
     ):
         """
@@ -391,8 +393,8 @@ class BackendPoolsSettings(msrest.serialization.Model):
     """Settings that apply to all backend pools.
 
     :ivar enforce_certificate_name_check: Whether to enforce certificate name check on HTTPS
-     requests to all backend pools. No effect on non-HTTPS requests. Possible values include:
-     "Enabled", "Disabled". Default value: "Enabled".
+     requests to all backend pools. No effect on non-HTTPS requests. Known values are: "Enabled",
+     "Disabled". Default value: "Enabled".
     :vartype enforce_certificate_name_check: str or
      ~azure.mgmt.frontdoor.models.EnforceCertificateNameCheckEnabledState
     :ivar send_recv_timeout_seconds: Send and receive timeout on forwarding request to the backend.
@@ -412,14 +414,14 @@ class BackendPoolsSettings(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        enforce_certificate_name_check: Optional[Union[str, "EnforceCertificateNameCheckEnabledState"]] = "Enabled",
+        enforce_certificate_name_check: Optional[Union[str, "_models.EnforceCertificateNameCheckEnabledState"]] = "Enabled",
         send_recv_timeout_seconds: Optional[int] = None,
         **kwargs
     ):
         """
         :keyword enforce_certificate_name_check: Whether to enforce certificate name check on HTTPS
-         requests to all backend pools. No effect on non-HTTPS requests. Possible values include:
-         "Enabled", "Disabled". Default value: "Enabled".
+         requests to all backend pools. No effect on non-HTTPS requests. Known values are: "Enabled",
+         "Disabled". Default value: "Enabled".
         :paramtype enforce_certificate_name_check: str or
          ~azure.mgmt.frontdoor.models.EnforceCertificateNameCheckEnabledState
         :keyword send_recv_timeout_seconds: Send and receive timeout on forwarding request to the
@@ -435,12 +437,12 @@ class CacheConfiguration(msrest.serialization.Model):
     """Caching settings for a caching-type route. To disable caching, do not provide a cacheConfiguration object.
 
     :ivar query_parameter_strip_directive: Treatment of URL query terms when forming the cache key.
-     Possible values include: "StripNone", "StripAll", "StripOnly", "StripAllExcept".
+     Known values are: "StripNone", "StripAll", "StripOnly", "StripAllExcept".
     :vartype query_parameter_strip_directive: str or ~azure.mgmt.frontdoor.models.FrontDoorQuery
     :ivar query_parameters: query parameters to include or exclude (comma separated).
     :vartype query_parameters: str
-    :ivar dynamic_compression: Whether to use dynamic compression for cached content. Possible
-     values include: "Enabled", "Disabled".
+    :ivar dynamic_compression: Whether to use dynamic compression for cached content. Known values
+     are: "Enabled", "Disabled".
     :vartype dynamic_compression: str or ~azure.mgmt.frontdoor.models.DynamicCompressionEnabled
     :ivar cache_duration: The duration for which the content needs to be cached. Allowed format is
      in ISO 8601 format (http://en.wikipedia.org/wiki/ISO_8601#Durations). HTTP requires the value
@@ -458,20 +460,20 @@ class CacheConfiguration(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        query_parameter_strip_directive: Optional[Union[str, "FrontDoorQuery"]] = None,
+        query_parameter_strip_directive: Optional[Union[str, "_models.FrontDoorQuery"]] = None,
         query_parameters: Optional[str] = None,
-        dynamic_compression: Optional[Union[str, "DynamicCompressionEnabled"]] = None,
+        dynamic_compression: Optional[Union[str, "_models.DynamicCompressionEnabled"]] = None,
         cache_duration: Optional[datetime.timedelta] = None,
         **kwargs
     ):
         """
         :keyword query_parameter_strip_directive: Treatment of URL query terms when forming the cache
-         key. Possible values include: "StripNone", "StripAll", "StripOnly", "StripAllExcept".
+         key. Known values are: "StripNone", "StripAll", "StripOnly", "StripAllExcept".
         :paramtype query_parameter_strip_directive: str or ~azure.mgmt.frontdoor.models.FrontDoorQuery
         :keyword query_parameters: query parameters to include or exclude (comma separated).
         :paramtype query_parameters: str
-        :keyword dynamic_compression: Whether to use dynamic compression for cached content. Possible
-         values include: "Enabled", "Disabled".
+        :keyword dynamic_compression: Whether to use dynamic compression for cached content. Known
+         values are: "Enabled", "Disabled".
         :paramtype dynamic_compression: str or ~azure.mgmt.frontdoor.models.DynamicCompressionEnabled
         :keyword cache_duration: The duration for which the content needs to be cached. Allowed format
          is in ISO 8601 format (http://en.wikipedia.org/wiki/ISO_8601#Durations). HTTP requires the
@@ -492,8 +494,8 @@ class CheckNameAvailabilityInput(msrest.serialization.Model):
 
     :ivar name: Required. The resource name to validate.
     :vartype name: str
-    :ivar type: Required. The type of the resource whose name is to be validated. Possible values
-     include: "Microsoft.Network/frontDoors", "Microsoft.Network/frontDoors/frontendEndpoints".
+    :ivar type: Required. The type of the resource whose name is to be validated. Known values are:
+     "Microsoft.Network/frontDoors", "Microsoft.Network/frontDoors/frontendEndpoints".
     :vartype type: str or ~azure.mgmt.frontdoor.models.ResourceType
     """
 
@@ -511,15 +513,14 @@ class CheckNameAvailabilityInput(msrest.serialization.Model):
         self,
         *,
         name: str,
-        type: Union[str, "ResourceType"],
+        type: Union[str, "_models.ResourceType"],
         **kwargs
     ):
         """
         :keyword name: Required. The resource name to validate.
         :paramtype name: str
-        :keyword type: Required. The type of the resource whose name is to be validated. Possible
-         values include: "Microsoft.Network/frontDoors",
-         "Microsoft.Network/frontDoors/frontendEndpoints".
+        :keyword type: Required. The type of the resource whose name is to be validated. Known values
+         are: "Microsoft.Network/frontDoors", "Microsoft.Network/frontDoors/frontendEndpoints".
         :paramtype type: str or ~azure.mgmt.frontdoor.models.ResourceType
         """
         super(CheckNameAvailabilityInput, self).__init__(**kwargs)
@@ -532,7 +533,7 @@ class CheckNameAvailabilityOutput(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar name_availability: Indicates whether the name is available. Possible values include:
+    :ivar name_availability: Indicates whether the name is available. Known values are:
      "Available", "Unavailable".
     :vartype name_availability: str or ~azure.mgmt.frontdoor.models.Availability
     :ivar reason: The reason why the name is not available.
@@ -570,17 +571,17 @@ class CustomHttpsConfiguration(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar certificate_source: Required. Defines the source of the SSL certificate. Possible values
-     include: "AzureKeyVault", "FrontDoor".
+    :ivar certificate_source: Required. Defines the source of the SSL certificate. Known values
+     are: "AzureKeyVault", "FrontDoor".
     :vartype certificate_source: str or ~azure.mgmt.frontdoor.models.FrontDoorCertificateSource
     :ivar protocol_type: Required. Defines the TLS extension protocol that is used for secure
-     delivery. Possible values include: "ServerNameIndication".
+     delivery. Known values are: "ServerNameIndication".
     :vartype protocol_type: str or ~azure.mgmt.frontdoor.models.FrontDoorTlsProtocolType
     :ivar minimum_tls_version: Required. The minimum TLS version required from the clients to
-     establish an SSL handshake with Front Door. Possible values include: "1.0", "1.2".
+     establish an SSL handshake with Front Door. Known values are: "1.0", "1.2".
     :vartype minimum_tls_version: str or ~azure.mgmt.frontdoor.models.MinimumTLSVersion
     :ivar certificate_type: Defines the type of the certificate used for secure connections to a
-     frontendEndpoint. Possible values include: "Dedicated".
+     frontendEndpoint. Known values are: "Dedicated".
     :vartype certificate_type: str or ~azure.mgmt.frontdoor.models.FrontDoorCertificateType
     :ivar vault: The Key Vault containing the SSL certificate.
     :vartype vault: ~azure.mgmt.frontdoor.models.KeyVaultCertificateSourceParametersVault
@@ -610,27 +611,27 @@ class CustomHttpsConfiguration(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        certificate_source: Union[str, "FrontDoorCertificateSource"],
-        protocol_type: Union[str, "FrontDoorTlsProtocolType"],
-        minimum_tls_version: Union[str, "MinimumTLSVersion"],
-        certificate_type: Optional[Union[str, "FrontDoorCertificateType"]] = None,
-        vault: Optional["KeyVaultCertificateSourceParametersVault"] = None,
+        certificate_source: Union[str, "_models.FrontDoorCertificateSource"],
+        protocol_type: Union[str, "_models.FrontDoorTlsProtocolType"],
+        minimum_tls_version: Union[str, "_models.MinimumTLSVersion"],
+        certificate_type: Optional[Union[str, "_models.FrontDoorCertificateType"]] = None,
+        vault: Optional["_models.KeyVaultCertificateSourceParametersVault"] = None,
         secret_name: Optional[str] = None,
         secret_version: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword certificate_source: Required. Defines the source of the SSL certificate. Possible
-         values include: "AzureKeyVault", "FrontDoor".
+        :keyword certificate_source: Required. Defines the source of the SSL certificate. Known values
+         are: "AzureKeyVault", "FrontDoor".
         :paramtype certificate_source: str or ~azure.mgmt.frontdoor.models.FrontDoorCertificateSource
         :keyword protocol_type: Required. Defines the TLS extension protocol that is used for secure
-         delivery. Possible values include: "ServerNameIndication".
+         delivery. Known values are: "ServerNameIndication".
         :paramtype protocol_type: str or ~azure.mgmt.frontdoor.models.FrontDoorTlsProtocolType
         :keyword minimum_tls_version: Required. The minimum TLS version required from the clients to
-         establish an SSL handshake with Front Door. Possible values include: "1.0", "1.2".
+         establish an SSL handshake with Front Door. Known values are: "1.0", "1.2".
         :paramtype minimum_tls_version: str or ~azure.mgmt.frontdoor.models.MinimumTLSVersion
         :keyword certificate_type: Defines the type of the certificate used for secure connections to a
-         frontendEndpoint. Possible values include: "Dedicated".
+         frontendEndpoint. Known values are: "Dedicated".
         :paramtype certificate_type: str or ~azure.mgmt.frontdoor.models.FrontDoorCertificateType
         :keyword vault: The Key Vault containing the SSL certificate.
         :paramtype vault: ~azure.mgmt.frontdoor.models.KeyVaultCertificateSourceParametersVault
@@ -661,9 +662,9 @@ class CustomRule(msrest.serialization.Model):
      evaluated before rules with a higher value.
     :vartype priority: int
     :ivar enabled_state: Describes if the custom rule is in enabled or disabled state. Defaults to
-     Enabled if not specified. Possible values include: "Disabled", "Enabled".
+     Enabled if not specified. Known values are: "Disabled", "Enabled".
     :vartype enabled_state: str or ~azure.mgmt.frontdoor.models.CustomRuleEnabledState
-    :ivar rule_type: Required. Describes type of rule. Possible values include: "MatchRule",
+    :ivar rule_type: Required. Describes type of rule. Known values are: "MatchRule",
      "RateLimitRule".
     :vartype rule_type: str or ~azure.mgmt.frontdoor.models.RuleType
     :ivar rate_limit_duration_in_minutes: Time window for resetting the rate limit count. Default
@@ -673,8 +674,8 @@ class CustomRule(msrest.serialization.Model):
     :vartype rate_limit_threshold: int
     :ivar match_conditions: Required. List of match conditions.
     :vartype match_conditions: list[~azure.mgmt.frontdoor.models.MatchCondition]
-    :ivar action: Required. Describes what action to be applied when rule matches. Possible values
-     include: "Allow", "Block", "Log", "Redirect".
+    :ivar action: Required. Describes what action to be applied when rule matches. Known values
+     are: "Allow", "Block", "Log", "Redirect".
     :vartype action: str or ~azure.mgmt.frontdoor.models.ActionType
     """
 
@@ -703,11 +704,11 @@ class CustomRule(msrest.serialization.Model):
         self,
         *,
         priority: int,
-        rule_type: Union[str, "RuleType"],
-        match_conditions: List["MatchCondition"],
-        action: Union[str, "ActionType"],
+        rule_type: Union[str, "_models.RuleType"],
+        match_conditions: List["_models.MatchCondition"],
+        action: Union[str, "_models.ActionType"],
         name: Optional[str] = None,
-        enabled_state: Optional[Union[str, "CustomRuleEnabledState"]] = None,
+        enabled_state: Optional[Union[str, "_models.CustomRuleEnabledState"]] = None,
         rate_limit_duration_in_minutes: Optional[int] = None,
         rate_limit_threshold: Optional[int] = None,
         **kwargs
@@ -719,9 +720,9 @@ class CustomRule(msrest.serialization.Model):
          evaluated before rules with a higher value.
         :paramtype priority: int
         :keyword enabled_state: Describes if the custom rule is in enabled or disabled state. Defaults
-         to Enabled if not specified. Possible values include: "Disabled", "Enabled".
+         to Enabled if not specified. Known values are: "Disabled", "Enabled".
         :paramtype enabled_state: str or ~azure.mgmt.frontdoor.models.CustomRuleEnabledState
-        :keyword rule_type: Required. Describes type of rule. Possible values include: "MatchRule",
+        :keyword rule_type: Required. Describes type of rule. Known values are: "MatchRule",
          "RateLimitRule".
         :paramtype rule_type: str or ~azure.mgmt.frontdoor.models.RuleType
         :keyword rate_limit_duration_in_minutes: Time window for resetting the rate limit count.
@@ -731,8 +732,8 @@ class CustomRule(msrest.serialization.Model):
         :paramtype rate_limit_threshold: int
         :keyword match_conditions: Required. List of match conditions.
         :paramtype match_conditions: list[~azure.mgmt.frontdoor.models.MatchCondition]
-        :keyword action: Required. Describes what action to be applied when rule matches. Possible
-         values include: "Allow", "Block", "Log", "Redirect".
+        :keyword action: Required. Describes what action to be applied when rule matches. Known values
+         are: "Allow", "Block", "Log", "Redirect".
         :paramtype action: str or ~azure.mgmt.frontdoor.models.ActionType
         """
         super(CustomRule, self).__init__(**kwargs)
@@ -760,7 +761,7 @@ class CustomRuleList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        rules: Optional[List["CustomRule"]] = None,
+        rules: Optional[List["_models.CustomRule"]] = None,
         **kwargs
     ):
         """
@@ -832,7 +833,7 @@ class Error(msrest.serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["ErrorDetails"]] = None,
+        details: Optional[List["_models.ErrorDetails"]] = None,
         inner_error: Optional[str] = None,
         **kwargs
     ):
@@ -1000,11 +1001,10 @@ class Experiment(Resource):
     :vartype endpoint_a: ~azure.mgmt.frontdoor.models.Endpoint
     :ivar endpoint_b: The endpoint B of an experiment.
     :vartype endpoint_b: ~azure.mgmt.frontdoor.models.Endpoint
-    :ivar enabled_state: The state of the Experiment. Possible values include: "Enabled",
-     "Disabled".
+    :ivar enabled_state: The state of the Experiment. Known values are: "Enabled", "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.frontdoor.models.State
-    :ivar resource_state: Resource status. Possible values include: "Creating", "Enabling",
-     "Enabled", "Disabling", "Disabled", "Deleting".
+    :ivar resource_state: Resource status. Known values are: "Creating", "Enabling", "Enabled",
+     "Disabling", "Disabled", "Deleting".
     :vartype resource_state: str or ~azure.mgmt.frontdoor.models.NetworkExperimentResourceState
     :ivar status: The description of Experiment status from the server side.
     :vartype status: str
@@ -1042,9 +1042,9 @@ class Experiment(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
-        endpoint_a: Optional["Endpoint"] = None,
-        endpoint_b: Optional["Endpoint"] = None,
-        enabled_state: Optional[Union[str, "State"]] = None,
+        endpoint_a: Optional["_models.Endpoint"] = None,
+        endpoint_b: Optional["_models.Endpoint"] = None,
+        enabled_state: Optional[Union[str, "_models.State"]] = None,
         **kwargs
     ):
         """
@@ -1058,8 +1058,7 @@ class Experiment(Resource):
         :paramtype endpoint_a: ~azure.mgmt.frontdoor.models.Endpoint
         :keyword endpoint_b: The endpoint B of an experiment.
         :paramtype endpoint_b: ~azure.mgmt.frontdoor.models.Endpoint
-        :keyword enabled_state: The state of the Experiment. Possible values include: "Enabled",
-         "Disabled".
+        :keyword enabled_state: The state of the Experiment. Known values are: "Enabled", "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.frontdoor.models.State
         """
         super(Experiment, self).__init__(location=location, tags=tags, **kwargs)
@@ -1114,8 +1113,7 @@ class ExperimentUpdateModel(msrest.serialization.Model):
     :vartype tags: dict[str, str]
     :ivar description: The description of the intent or details of the Experiment.
     :vartype description: str
-    :ivar enabled_state: The state of the Experiment. Possible values include: "Enabled",
-     "Disabled".
+    :ivar enabled_state: The state of the Experiment. Known values are: "Enabled", "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.frontdoor.models.State
     """
 
@@ -1130,7 +1128,7 @@ class ExperimentUpdateModel(msrest.serialization.Model):
         *,
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
-        enabled_state: Optional[Union[str, "State"]] = None,
+        enabled_state: Optional[Union[str, "_models.State"]] = None,
         **kwargs
     ):
         """
@@ -1138,8 +1136,7 @@ class ExperimentUpdateModel(msrest.serialization.Model):
         :paramtype tags: dict[str, str]
         :keyword description: The description of the intent or details of the Experiment.
         :paramtype description: str
-        :keyword enabled_state: The state of the Experiment. Possible values include: "Enabled",
-         "Disabled".
+        :keyword enabled_state: The state of the Experiment. Known values are: "Enabled", "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.frontdoor.models.State
         """
         super(ExperimentUpdateModel, self).__init__(**kwargs)
@@ -1193,7 +1190,7 @@ class ForwardingConfiguration(RouteConfiguration):
      rule. Leave empty to use incoming path.
     :vartype custom_forwarding_path: str
     :ivar forwarding_protocol: Protocol this rule will use when forwarding traffic to backends.
-     Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
+     Known values are: "HttpOnly", "HttpsOnly", "MatchRequest".
     :vartype forwarding_protocol: str or ~azure.mgmt.frontdoor.models.FrontDoorForwardingProtocol
     :ivar cache_configuration: The caching configuration associated with this rule.
     :vartype cache_configuration: ~azure.mgmt.frontdoor.models.CacheConfiguration
@@ -1217,9 +1214,9 @@ class ForwardingConfiguration(RouteConfiguration):
         self,
         *,
         custom_forwarding_path: Optional[str] = None,
-        forwarding_protocol: Optional[Union[str, "FrontDoorForwardingProtocol"]] = None,
-        cache_configuration: Optional["CacheConfiguration"] = None,
-        backend_pool: Optional["SubResource"] = None,
+        forwarding_protocol: Optional[Union[str, "_models.FrontDoorForwardingProtocol"]] = None,
+        cache_configuration: Optional["_models.CacheConfiguration"] = None,
+        backend_pool: Optional["_models.SubResource"] = None,
         **kwargs
     ):
         """
@@ -1227,7 +1224,7 @@ class ForwardingConfiguration(RouteConfiguration):
          rule. Leave empty to use incoming path.
         :paramtype custom_forwarding_path: str
         :keyword forwarding_protocol: Protocol this rule will use when forwarding traffic to backends.
-         Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
+         Known values are: "HttpOnly", "HttpsOnly", "MatchRequest".
         :paramtype forwarding_protocol: str or ~azure.mgmt.frontdoor.models.FrontDoorForwardingProtocol
         :keyword cache_configuration: The caching configuration associated with this rule.
         :paramtype cache_configuration: ~azure.mgmt.frontdoor.models.CacheConfiguration
@@ -1273,9 +1270,9 @@ class FrontDoor(Resource):
     :ivar backend_pools_settings: Settings for all backendPools.
     :vartype backend_pools_settings: ~azure.mgmt.frontdoor.models.BackendPoolsSettings
     :ivar enabled_state: Operational status of the Front Door load balancer. Permitted values are
-     'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+     'Enabled' or 'Disabled'. Known values are: "Enabled", "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.frontdoor.models.FrontDoorEnabledState
-    :ivar resource_state: Resource status of the Front Door. Possible values include: "Creating",
+    :ivar resource_state: Resource status of the Front Door. Known values are: "Creating",
      "Enabling", "Enabled", "Disabling", "Disabled", "Deleting".
     :vartype resource_state: str or ~azure.mgmt.frontdoor.models.FrontDoorResourceState
     :ivar provisioning_state: Provisioning state of the Front Door.
@@ -1326,13 +1323,13 @@ class FrontDoor(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         friendly_name: Optional[str] = None,
-        routing_rules: Optional[List["RoutingRule"]] = None,
-        load_balancing_settings: Optional[List["LoadBalancingSettingsModel"]] = None,
-        health_probe_settings: Optional[List["HealthProbeSettingsModel"]] = None,
-        backend_pools: Optional[List["BackendPool"]] = None,
-        frontend_endpoints: Optional[List["FrontendEndpoint"]] = None,
-        backend_pools_settings: Optional["BackendPoolsSettings"] = None,
-        enabled_state: Optional[Union[str, "FrontDoorEnabledState"]] = None,
+        routing_rules: Optional[List["_models.RoutingRule"]] = None,
+        load_balancing_settings: Optional[List["_models.LoadBalancingSettingsModel"]] = None,
+        health_probe_settings: Optional[List["_models.HealthProbeSettingsModel"]] = None,
+        backend_pools: Optional[List["_models.BackendPool"]] = None,
+        frontend_endpoints: Optional[List["_models.FrontendEndpoint"]] = None,
+        backend_pools_settings: Optional["_models.BackendPoolsSettings"] = None,
+        enabled_state: Optional[Union[str, "_models.FrontDoorEnabledState"]] = None,
         **kwargs
     ):
         """
@@ -1357,7 +1354,7 @@ class FrontDoor(Resource):
         :keyword backend_pools_settings: Settings for all backendPools.
         :paramtype backend_pools_settings: ~azure.mgmt.frontdoor.models.BackendPoolsSettings
         :keyword enabled_state: Operational status of the Front Door load balancer. Permitted values
-         are 'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+         are 'Enabled' or 'Disabled'. Known values are: "Enabled", "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.frontdoor.models.FrontDoorEnabledState
         """
         super(FrontDoor, self).__init__(location=location, tags=tags, **kwargs)
@@ -1430,7 +1427,7 @@ class FrontDoorUpdateParameters(msrest.serialization.Model):
     :ivar backend_pools_settings: Settings for all backendPools.
     :vartype backend_pools_settings: ~azure.mgmt.frontdoor.models.BackendPoolsSettings
     :ivar enabled_state: Operational status of the Front Door load balancer. Permitted values are
-     'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+     'Enabled' or 'Disabled'. Known values are: "Enabled", "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.frontdoor.models.FrontDoorEnabledState
     """
 
@@ -1449,13 +1446,13 @@ class FrontDoorUpdateParameters(msrest.serialization.Model):
         self,
         *,
         friendly_name: Optional[str] = None,
-        routing_rules: Optional[List["RoutingRule"]] = None,
-        load_balancing_settings: Optional[List["LoadBalancingSettingsModel"]] = None,
-        health_probe_settings: Optional[List["HealthProbeSettingsModel"]] = None,
-        backend_pools: Optional[List["BackendPool"]] = None,
-        frontend_endpoints: Optional[List["FrontendEndpoint"]] = None,
-        backend_pools_settings: Optional["BackendPoolsSettings"] = None,
-        enabled_state: Optional[Union[str, "FrontDoorEnabledState"]] = None,
+        routing_rules: Optional[List["_models.RoutingRule"]] = None,
+        load_balancing_settings: Optional[List["_models.LoadBalancingSettingsModel"]] = None,
+        health_probe_settings: Optional[List["_models.HealthProbeSettingsModel"]] = None,
+        backend_pools: Optional[List["_models.BackendPool"]] = None,
+        frontend_endpoints: Optional[List["_models.FrontendEndpoint"]] = None,
+        backend_pools_settings: Optional["_models.BackendPoolsSettings"] = None,
+        enabled_state: Optional[Union[str, "_models.FrontDoorEnabledState"]] = None,
         **kwargs
     ):
         """
@@ -1476,7 +1473,7 @@ class FrontDoorUpdateParameters(msrest.serialization.Model):
         :keyword backend_pools_settings: Settings for all backendPools.
         :paramtype backend_pools_settings: ~azure.mgmt.frontdoor.models.BackendPoolsSettings
         :keyword enabled_state: Operational status of the Front Door load balancer. Permitted values
-         are 'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+         are 'Enabled' or 'Disabled'. Known values are: "Enabled", "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.frontdoor.models.FrontDoorEnabledState
         """
         super(FrontDoorUpdateParameters, self).__init__(**kwargs)
@@ -1511,9 +1508,9 @@ class FrontDoorProperties(FrontDoorUpdateParameters):
     :ivar backend_pools_settings: Settings for all backendPools.
     :vartype backend_pools_settings: ~azure.mgmt.frontdoor.models.BackendPoolsSettings
     :ivar enabled_state: Operational status of the Front Door load balancer. Permitted values are
-     'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+     'Enabled' or 'Disabled'. Known values are: "Enabled", "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.frontdoor.models.FrontDoorEnabledState
-    :ivar resource_state: Resource status of the Front Door. Possible values include: "Creating",
+    :ivar resource_state: Resource status of the Front Door. Known values are: "Creating",
      "Enabling", "Enabled", "Disabling", "Disabled", "Deleting".
     :vartype resource_state: str or ~azure.mgmt.frontdoor.models.FrontDoorResourceState
     :ivar provisioning_state: Provisioning state of the Front Door.
@@ -1554,13 +1551,13 @@ class FrontDoorProperties(FrontDoorUpdateParameters):
         self,
         *,
         friendly_name: Optional[str] = None,
-        routing_rules: Optional[List["RoutingRule"]] = None,
-        load_balancing_settings: Optional[List["LoadBalancingSettingsModel"]] = None,
-        health_probe_settings: Optional[List["HealthProbeSettingsModel"]] = None,
-        backend_pools: Optional[List["BackendPool"]] = None,
-        frontend_endpoints: Optional[List["FrontendEndpoint"]] = None,
-        backend_pools_settings: Optional["BackendPoolsSettings"] = None,
-        enabled_state: Optional[Union[str, "FrontDoorEnabledState"]] = None,
+        routing_rules: Optional[List["_models.RoutingRule"]] = None,
+        load_balancing_settings: Optional[List["_models.LoadBalancingSettingsModel"]] = None,
+        health_probe_settings: Optional[List["_models.HealthProbeSettingsModel"]] = None,
+        backend_pools: Optional[List["_models.BackendPool"]] = None,
+        frontend_endpoints: Optional[List["_models.FrontendEndpoint"]] = None,
+        backend_pools_settings: Optional["_models.BackendPoolsSettings"] = None,
+        enabled_state: Optional[Union[str, "_models.FrontDoorEnabledState"]] = None,
         **kwargs
     ):
         """
@@ -1581,7 +1578,7 @@ class FrontDoorProperties(FrontDoorUpdateParameters):
         :keyword backend_pools_settings: Settings for all backendPools.
         :paramtype backend_pools_settings: ~azure.mgmt.frontdoor.models.BackendPoolsSettings
         :keyword enabled_state: Operational status of the Front Door load balancer. Permitted values
-         are 'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+         are 'Enabled' or 'Disabled'. Known values are: "Enabled", "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.frontdoor.models.FrontDoorEnabledState
         """
         super(FrontDoorProperties, self).__init__(friendly_name=friendly_name, routing_rules=routing_rules, load_balancing_settings=load_balancing_settings, health_probe_settings=health_probe_settings, backend_pools=backend_pools, frontend_endpoints=frontend_endpoints, backend_pools_settings=backend_pools_settings, enabled_state=enabled_state, **kwargs)
@@ -1606,7 +1603,7 @@ class FrontendEndpoint(SubResource):
     :ivar host_name: The host name of the frontendEndpoint. Must be a domain name.
     :vartype host_name: str
     :ivar session_affinity_enabled_state: Whether to allow session affinity on this host. Valid
-     options are 'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+     options are 'Enabled' or 'Disabled'. Known values are: "Enabled", "Disabled".
     :vartype session_affinity_enabled_state: str or
      ~azure.mgmt.frontdoor.models.SessionAffinityEnabledState
     :ivar session_affinity_ttl_seconds: UNUSED. This field will be ignored. The TTL to use in
@@ -1616,16 +1613,15 @@ class FrontendEndpoint(SubResource):
      each host (if applicable).
     :vartype web_application_firewall_policy_link:
      ~azure.mgmt.frontdoor.models.FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink
-    :ivar resource_state: Resource status. Possible values include: "Creating", "Enabling",
-     "Enabled", "Disabling", "Disabled", "Deleting".
+    :ivar resource_state: Resource status. Known values are: "Creating", "Enabling", "Enabled",
+     "Disabling", "Disabled", "Deleting".
     :vartype resource_state: str or ~azure.mgmt.frontdoor.models.FrontDoorResourceState
     :ivar custom_https_provisioning_state: Provisioning status of Custom Https of the
-     frontendEndpoint. Possible values include: "Enabling", "Enabled", "Disabling", "Disabled",
-     "Failed".
+     frontendEndpoint. Known values are: "Enabling", "Enabled", "Disabling", "Disabled", "Failed".
     :vartype custom_https_provisioning_state: str or
      ~azure.mgmt.frontdoor.models.CustomHttpsProvisioningState
     :ivar custom_https_provisioning_substate: Provisioning substate shows the progress of custom
-     HTTPS enabling/disabling process step by step. Possible values include:
+     HTTPS enabling/disabling process step by step. Known values are:
      "SubmittingDomainControlValidationRequest", "PendingDomainControlValidationREquestApproval",
      "DomainControlValidationRequestApproved", "DomainControlValidationRequestRejected",
      "DomainControlValidationRequestTimedOut", "IssuingCertificate", "DeployingCertificate",
@@ -1664,9 +1660,9 @@ class FrontendEndpoint(SubResource):
         id: Optional[str] = None,
         name: Optional[str] = None,
         host_name: Optional[str] = None,
-        session_affinity_enabled_state: Optional[Union[str, "SessionAffinityEnabledState"]] = None,
+        session_affinity_enabled_state: Optional[Union[str, "_models.SessionAffinityEnabledState"]] = None,
         session_affinity_ttl_seconds: Optional[int] = None,
-        web_application_firewall_policy_link: Optional["FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink"] = None,
+        web_application_firewall_policy_link: Optional["_models.FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink"] = None,
         **kwargs
     ):
         """
@@ -1677,7 +1673,7 @@ class FrontendEndpoint(SubResource):
         :keyword host_name: The host name of the frontendEndpoint. Must be a domain name.
         :paramtype host_name: str
         :keyword session_affinity_enabled_state: Whether to allow session affinity on this host. Valid
-         options are 'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+         options are 'Enabled' or 'Disabled'. Known values are: "Enabled", "Disabled".
         :paramtype session_affinity_enabled_state: str or
          ~azure.mgmt.frontdoor.models.SessionAffinityEnabledState
         :keyword session_affinity_ttl_seconds: UNUSED. This field will be ignored. The TTL to use in
@@ -1732,7 +1728,7 @@ class FrontendEndpointUpdateParameters(msrest.serialization.Model):
     :ivar host_name: The host name of the frontendEndpoint. Must be a domain name.
     :vartype host_name: str
     :ivar session_affinity_enabled_state: Whether to allow session affinity on this host. Valid
-     options are 'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+     options are 'Enabled' or 'Disabled'. Known values are: "Enabled", "Disabled".
     :vartype session_affinity_enabled_state: str or
      ~azure.mgmt.frontdoor.models.SessionAffinityEnabledState
     :ivar session_affinity_ttl_seconds: UNUSED. This field will be ignored. The TTL to use in
@@ -1755,16 +1751,16 @@ class FrontendEndpointUpdateParameters(msrest.serialization.Model):
         self,
         *,
         host_name: Optional[str] = None,
-        session_affinity_enabled_state: Optional[Union[str, "SessionAffinityEnabledState"]] = None,
+        session_affinity_enabled_state: Optional[Union[str, "_models.SessionAffinityEnabledState"]] = None,
         session_affinity_ttl_seconds: Optional[int] = None,
-        web_application_firewall_policy_link: Optional["FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink"] = None,
+        web_application_firewall_policy_link: Optional["_models.FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink"] = None,
         **kwargs
     ):
         """
         :keyword host_name: The host name of the frontendEndpoint. Must be a domain name.
         :paramtype host_name: str
         :keyword session_affinity_enabled_state: Whether to allow session affinity on this host. Valid
-         options are 'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+         options are 'Enabled' or 'Disabled'. Known values are: "Enabled", "Disabled".
         :paramtype session_affinity_enabled_state: str or
          ~azure.mgmt.frontdoor.models.SessionAffinityEnabledState
         :keyword session_affinity_ttl_seconds: UNUSED. This field will be ignored. The TTL to use in
@@ -1790,7 +1786,7 @@ class FrontendEndpointProperties(FrontendEndpointUpdateParameters):
     :ivar host_name: The host name of the frontendEndpoint. Must be a domain name.
     :vartype host_name: str
     :ivar session_affinity_enabled_state: Whether to allow session affinity on this host. Valid
-     options are 'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+     options are 'Enabled' or 'Disabled'. Known values are: "Enabled", "Disabled".
     :vartype session_affinity_enabled_state: str or
      ~azure.mgmt.frontdoor.models.SessionAffinityEnabledState
     :ivar session_affinity_ttl_seconds: UNUSED. This field will be ignored. The TTL to use in
@@ -1800,16 +1796,15 @@ class FrontendEndpointProperties(FrontendEndpointUpdateParameters):
      each host (if applicable).
     :vartype web_application_firewall_policy_link:
      ~azure.mgmt.frontdoor.models.FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink
-    :ivar resource_state: Resource status. Possible values include: "Creating", "Enabling",
-     "Enabled", "Disabling", "Disabled", "Deleting".
+    :ivar resource_state: Resource status. Known values are: "Creating", "Enabling", "Enabled",
+     "Disabling", "Disabled", "Deleting".
     :vartype resource_state: str or ~azure.mgmt.frontdoor.models.FrontDoorResourceState
     :ivar custom_https_provisioning_state: Provisioning status of Custom Https of the
-     frontendEndpoint. Possible values include: "Enabling", "Enabled", "Disabling", "Disabled",
-     "Failed".
+     frontendEndpoint. Known values are: "Enabling", "Enabled", "Disabling", "Disabled", "Failed".
     :vartype custom_https_provisioning_state: str or
      ~azure.mgmt.frontdoor.models.CustomHttpsProvisioningState
     :ivar custom_https_provisioning_substate: Provisioning substate shows the progress of custom
-     HTTPS enabling/disabling process step by step. Possible values include:
+     HTTPS enabling/disabling process step by step. Known values are:
      "SubmittingDomainControlValidationRequest", "PendingDomainControlValidationREquestApproval",
      "DomainControlValidationRequestApproved", "DomainControlValidationRequestRejected",
      "DomainControlValidationRequestTimedOut", "IssuingCertificate", "DeployingCertificate",
@@ -1842,16 +1837,16 @@ class FrontendEndpointProperties(FrontendEndpointUpdateParameters):
         self,
         *,
         host_name: Optional[str] = None,
-        session_affinity_enabled_state: Optional[Union[str, "SessionAffinityEnabledState"]] = None,
+        session_affinity_enabled_state: Optional[Union[str, "_models.SessionAffinityEnabledState"]] = None,
         session_affinity_ttl_seconds: Optional[int] = None,
-        web_application_firewall_policy_link: Optional["FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink"] = None,
+        web_application_firewall_policy_link: Optional["_models.FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink"] = None,
         **kwargs
     ):
         """
         :keyword host_name: The host name of the frontendEndpoint. Must be a domain name.
         :paramtype host_name: str
         :keyword session_affinity_enabled_state: Whether to allow session affinity on this host. Valid
-         options are 'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+         options are 'Enabled' or 'Disabled'. Known values are: "Enabled", "Disabled".
         :paramtype session_affinity_enabled_state: str or
          ~azure.mgmt.frontdoor.models.SessionAffinityEnabledState
         :keyword session_affinity_ttl_seconds: UNUSED. This field will be ignored. The TTL to use in
@@ -1934,8 +1929,8 @@ class HeaderAction(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar header_action_type: Required. Which type of manipulation to apply to the header. Possible
-     values include: "Append", "Delete", "Overwrite".
+    :ivar header_action_type: Required. Which type of manipulation to apply to the header. Known
+     values are: "Append", "Delete", "Overwrite".
     :vartype header_action_type: str or ~azure.mgmt.frontdoor.models.HeaderActionType
     :ivar header_name: Required. The name of the header this action will apply to.
     :vartype header_name: str
@@ -1958,14 +1953,14 @@ class HeaderAction(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        header_action_type: Union[str, "HeaderActionType"],
+        header_action_type: Union[str, "_models.HeaderActionType"],
         header_name: str,
         value: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword header_action_type: Required. Which type of manipulation to apply to the header.
-         Possible values include: "Append", "Delete", "Overwrite".
+        :keyword header_action_type: Required. Which type of manipulation to apply to the header. Known
+         values are: "Append", "Delete", "Overwrite".
         :paramtype header_action_type: str or ~azure.mgmt.frontdoor.models.HeaderActionType
         :keyword header_name: Required. The name of the header this action will apply to.
         :paramtype header_name: str
@@ -2027,20 +2022,19 @@ class HealthProbeSettingsModel(SubResource):
     :vartype type: str
     :ivar path: The path to use for the health probe. Default is /.
     :vartype path: str
-    :ivar protocol: Protocol scheme to use for this probe. Possible values include: "Http",
-     "Https".
+    :ivar protocol: Protocol scheme to use for this probe. Known values are: "Http", "Https".
     :vartype protocol: str or ~azure.mgmt.frontdoor.models.FrontDoorProtocol
     :ivar interval_in_seconds: The number of seconds between health probes.
     :vartype interval_in_seconds: int
     :ivar health_probe_method: Configures which HTTP method to use to probe the backends defined
-     under backendPools. Possible values include: "GET", "HEAD". Default value: "HEAD".
+     under backendPools. Known values are: "GET", "HEAD". Default value: "HEAD".
     :vartype health_probe_method: str or ~azure.mgmt.frontdoor.models.FrontDoorHealthProbeMethod
     :ivar enabled_state: Whether to enable health probes to be made against backends defined under
      backendPools. Health probes can only be disabled if there is a single enabled backend in single
-     enabled backend pool. Possible values include: "Enabled", "Disabled".
+     enabled backend pool. Known values are: "Enabled", "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.frontdoor.models.HealthProbeEnabled
-    :ivar resource_state: Resource status. Possible values include: "Creating", "Enabling",
-     "Enabled", "Disabling", "Disabled", "Deleting".
+    :ivar resource_state: Resource status. Known values are: "Creating", "Enabling", "Enabled",
+     "Disabling", "Disabled", "Deleting".
     :vartype resource_state: str or ~azure.mgmt.frontdoor.models.FrontDoorResourceState
     """
 
@@ -2067,10 +2061,10 @@ class HealthProbeSettingsModel(SubResource):
         id: Optional[str] = None,
         name: Optional[str] = None,
         path: Optional[str] = None,
-        protocol: Optional[Union[str, "FrontDoorProtocol"]] = None,
+        protocol: Optional[Union[str, "_models.FrontDoorProtocol"]] = None,
         interval_in_seconds: Optional[int] = None,
-        health_probe_method: Optional[Union[str, "FrontDoorHealthProbeMethod"]] = "HEAD",
-        enabled_state: Optional[Union[str, "HealthProbeEnabled"]] = None,
+        health_probe_method: Optional[Union[str, "_models.FrontDoorHealthProbeMethod"]] = "HEAD",
+        enabled_state: Optional[Union[str, "_models.HealthProbeEnabled"]] = None,
         **kwargs
     ):
         """
@@ -2080,17 +2074,16 @@ class HealthProbeSettingsModel(SubResource):
         :paramtype name: str
         :keyword path: The path to use for the health probe. Default is /.
         :paramtype path: str
-        :keyword protocol: Protocol scheme to use for this probe. Possible values include: "Http",
-         "Https".
+        :keyword protocol: Protocol scheme to use for this probe. Known values are: "Http", "Https".
         :paramtype protocol: str or ~azure.mgmt.frontdoor.models.FrontDoorProtocol
         :keyword interval_in_seconds: The number of seconds between health probes.
         :paramtype interval_in_seconds: int
         :keyword health_probe_method: Configures which HTTP method to use to probe the backends defined
-         under backendPools. Possible values include: "GET", "HEAD". Default value: "HEAD".
+         under backendPools. Known values are: "GET", "HEAD". Default value: "HEAD".
         :paramtype health_probe_method: str or ~azure.mgmt.frontdoor.models.FrontDoorHealthProbeMethod
         :keyword enabled_state: Whether to enable health probes to be made against backends defined
          under backendPools. Health probes can only be disabled if there is a single enabled backend in
-         single enabled backend pool. Possible values include: "Enabled", "Disabled".
+         single enabled backend pool. Known values are: "Enabled", "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.frontdoor.models.HealthProbeEnabled
         """
         super(HealthProbeSettingsModel, self).__init__(id=id, **kwargs)
@@ -2109,17 +2102,16 @@ class HealthProbeSettingsUpdateParameters(msrest.serialization.Model):
 
     :ivar path: The path to use for the health probe. Default is /.
     :vartype path: str
-    :ivar protocol: Protocol scheme to use for this probe. Possible values include: "Http",
-     "Https".
+    :ivar protocol: Protocol scheme to use for this probe. Known values are: "Http", "Https".
     :vartype protocol: str or ~azure.mgmt.frontdoor.models.FrontDoorProtocol
     :ivar interval_in_seconds: The number of seconds between health probes.
     :vartype interval_in_seconds: int
     :ivar health_probe_method: Configures which HTTP method to use to probe the backends defined
-     under backendPools. Possible values include: "GET", "HEAD". Default value: "HEAD".
+     under backendPools. Known values are: "GET", "HEAD". Default value: "HEAD".
     :vartype health_probe_method: str or ~azure.mgmt.frontdoor.models.FrontDoorHealthProbeMethod
     :ivar enabled_state: Whether to enable health probes to be made against backends defined under
      backendPools. Health probes can only be disabled if there is a single enabled backend in single
-     enabled backend pool. Possible values include: "Enabled", "Disabled".
+     enabled backend pool. Known values are: "Enabled", "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.frontdoor.models.HealthProbeEnabled
     """
 
@@ -2135,26 +2127,25 @@ class HealthProbeSettingsUpdateParameters(msrest.serialization.Model):
         self,
         *,
         path: Optional[str] = None,
-        protocol: Optional[Union[str, "FrontDoorProtocol"]] = None,
+        protocol: Optional[Union[str, "_models.FrontDoorProtocol"]] = None,
         interval_in_seconds: Optional[int] = None,
-        health_probe_method: Optional[Union[str, "FrontDoorHealthProbeMethod"]] = "HEAD",
-        enabled_state: Optional[Union[str, "HealthProbeEnabled"]] = None,
+        health_probe_method: Optional[Union[str, "_models.FrontDoorHealthProbeMethod"]] = "HEAD",
+        enabled_state: Optional[Union[str, "_models.HealthProbeEnabled"]] = None,
         **kwargs
     ):
         """
         :keyword path: The path to use for the health probe. Default is /.
         :paramtype path: str
-        :keyword protocol: Protocol scheme to use for this probe. Possible values include: "Http",
-         "Https".
+        :keyword protocol: Protocol scheme to use for this probe. Known values are: "Http", "Https".
         :paramtype protocol: str or ~azure.mgmt.frontdoor.models.FrontDoorProtocol
         :keyword interval_in_seconds: The number of seconds between health probes.
         :paramtype interval_in_seconds: int
         :keyword health_probe_method: Configures which HTTP method to use to probe the backends defined
-         under backendPools. Possible values include: "GET", "HEAD". Default value: "HEAD".
+         under backendPools. Known values are: "GET", "HEAD". Default value: "HEAD".
         :paramtype health_probe_method: str or ~azure.mgmt.frontdoor.models.FrontDoorHealthProbeMethod
         :keyword enabled_state: Whether to enable health probes to be made against backends defined
          under backendPools. Health probes can only be disabled if there is a single enabled backend in
-         single enabled backend pool. Possible values include: "Enabled", "Disabled".
+         single enabled backend pool. Known values are: "Enabled", "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.frontdoor.models.HealthProbeEnabled
         """
         super(HealthProbeSettingsUpdateParameters, self).__init__(**kwargs)
@@ -2172,20 +2163,19 @@ class HealthProbeSettingsProperties(HealthProbeSettingsUpdateParameters):
 
     :ivar path: The path to use for the health probe. Default is /.
     :vartype path: str
-    :ivar protocol: Protocol scheme to use for this probe. Possible values include: "Http",
-     "Https".
+    :ivar protocol: Protocol scheme to use for this probe. Known values are: "Http", "Https".
     :vartype protocol: str or ~azure.mgmt.frontdoor.models.FrontDoorProtocol
     :ivar interval_in_seconds: The number of seconds between health probes.
     :vartype interval_in_seconds: int
     :ivar health_probe_method: Configures which HTTP method to use to probe the backends defined
-     under backendPools. Possible values include: "GET", "HEAD". Default value: "HEAD".
+     under backendPools. Known values are: "GET", "HEAD". Default value: "HEAD".
     :vartype health_probe_method: str or ~azure.mgmt.frontdoor.models.FrontDoorHealthProbeMethod
     :ivar enabled_state: Whether to enable health probes to be made against backends defined under
      backendPools. Health probes can only be disabled if there is a single enabled backend in single
-     enabled backend pool. Possible values include: "Enabled", "Disabled".
+     enabled backend pool. Known values are: "Enabled", "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.frontdoor.models.HealthProbeEnabled
-    :ivar resource_state: Resource status. Possible values include: "Creating", "Enabling",
-     "Enabled", "Disabling", "Disabled", "Deleting".
+    :ivar resource_state: Resource status. Known values are: "Creating", "Enabling", "Enabled",
+     "Disabling", "Disabled", "Deleting".
     :vartype resource_state: str or ~azure.mgmt.frontdoor.models.FrontDoorResourceState
     """
 
@@ -2206,26 +2196,25 @@ class HealthProbeSettingsProperties(HealthProbeSettingsUpdateParameters):
         self,
         *,
         path: Optional[str] = None,
-        protocol: Optional[Union[str, "FrontDoorProtocol"]] = None,
+        protocol: Optional[Union[str, "_models.FrontDoorProtocol"]] = None,
         interval_in_seconds: Optional[int] = None,
-        health_probe_method: Optional[Union[str, "FrontDoorHealthProbeMethod"]] = "HEAD",
-        enabled_state: Optional[Union[str, "HealthProbeEnabled"]] = None,
+        health_probe_method: Optional[Union[str, "_models.FrontDoorHealthProbeMethod"]] = "HEAD",
+        enabled_state: Optional[Union[str, "_models.HealthProbeEnabled"]] = None,
         **kwargs
     ):
         """
         :keyword path: The path to use for the health probe. Default is /.
         :paramtype path: str
-        :keyword protocol: Protocol scheme to use for this probe. Possible values include: "Http",
-         "Https".
+        :keyword protocol: Protocol scheme to use for this probe. Known values are: "Http", "Https".
         :paramtype protocol: str or ~azure.mgmt.frontdoor.models.FrontDoorProtocol
         :keyword interval_in_seconds: The number of seconds between health probes.
         :paramtype interval_in_seconds: int
         :keyword health_probe_method: Configures which HTTP method to use to probe the backends defined
-         under backendPools. Possible values include: "GET", "HEAD". Default value: "HEAD".
+         under backendPools. Known values are: "GET", "HEAD". Default value: "HEAD".
         :paramtype health_probe_method: str or ~azure.mgmt.frontdoor.models.FrontDoorHealthProbeMethod
         :keyword enabled_state: Whether to enable health probes to be made against backends defined
          under backendPools. Health probes can only be disabled if there is a single enabled backend in
-         single enabled backend pool. Possible values include: "Enabled", "Disabled".
+         single enabled backend pool. Known values are: "Enabled", "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.frontdoor.models.HealthProbeEnabled
         """
         super(HealthProbeSettingsProperties, self).__init__(path=path, protocol=protocol, interval_in_seconds=interval_in_seconds, health_probe_method=health_probe_method, enabled_state=enabled_state, **kwargs)
@@ -2401,7 +2390,7 @@ class LatencyScorecard(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        latency_metrics: Optional[List["LatencyMetric"]] = None,
+        latency_metrics: Optional[List["_models.LatencyMetric"]] = None,
         **kwargs
     ):
         """
@@ -2478,8 +2467,8 @@ class LoadBalancingSettingsModel(SubResource):
     :ivar additional_latency_milliseconds: The additional latency in milliseconds for probes to
      fall into the lowest latency bucket.
     :vartype additional_latency_milliseconds: int
-    :ivar resource_state: Resource status. Possible values include: "Creating", "Enabling",
-     "Enabled", "Disabling", "Disabled", "Deleting".
+    :ivar resource_state: Resource status. Known values are: "Creating", "Enabling", "Enabled",
+     "Disabling", "Disabled", "Deleting".
     :vartype resource_state: str or ~azure.mgmt.frontdoor.models.FrontDoorResourceState
     """
 
@@ -2587,8 +2576,8 @@ class LoadBalancingSettingsProperties(LoadBalancingSettingsUpdateParameters):
     :ivar additional_latency_milliseconds: The additional latency in milliseconds for probes to
      fall into the lowest latency bucket.
     :vartype additional_latency_milliseconds: int
-    :ivar resource_state: Resource status. Possible values include: "Creating", "Enabling",
-     "Enabled", "Disabling", "Disabled", "Deleting".
+    :ivar resource_state: Resource status. Known values are: "Creating", "Enabling", "Enabled",
+     "Disabling", "Disabled", "Deleting".
     :vartype resource_state: str or ~azure.mgmt.frontdoor.models.FrontDoorResourceState
     """
 
@@ -2632,11 +2621,11 @@ class ManagedRuleDefinition(msrest.serialization.Model):
 
     :ivar rule_id: Identifier for the managed rule.
     :vartype rule_id: str
-    :ivar default_state: Describes the default state for the managed rule. Possible values include:
+    :ivar default_state: Describes the default state for the managed rule. Known values are:
      "Disabled", "Enabled".
     :vartype default_state: str or ~azure.mgmt.frontdoor.models.ManagedRuleEnabledState
     :ivar default_action: Describes the default action to be applied when the managed rule matches.
-     Possible values include: "Allow", "Block", "Log", "Redirect".
+     Known values are: "Allow", "Block", "Log", "Redirect".
     :vartype default_action: str or ~azure.mgmt.frontdoor.models.ActionType
     :ivar description: Describes the functionality of the managed rule.
     :vartype description: str
@@ -2674,12 +2663,12 @@ class ManagedRuleExclusion(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar match_variable: Required. The variable type to be excluded. Possible values include:
+    :ivar match_variable: Required. The variable type to be excluded. Known values are:
      "RequestHeaderNames", "RequestCookieNames", "QueryStringArgNames", "RequestBodyPostArgNames",
      "RequestBodyJsonArgNames".
     :vartype match_variable: str or ~azure.mgmt.frontdoor.models.ManagedRuleExclusionMatchVariable
     :ivar selector_match_operator: Required. Comparison operator to apply to the selector when
-     specifying which elements in the collection this exclusion applies to. Possible values include:
+     specifying which elements in the collection this exclusion applies to. Known values are:
      "Equals", "Contains", "StartsWith", "EndsWith", "EqualsAny".
     :vartype selector_match_operator: str or
      ~azure.mgmt.frontdoor.models.ManagedRuleExclusionSelectorMatchOperator
@@ -2703,19 +2692,19 @@ class ManagedRuleExclusion(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        match_variable: Union[str, "ManagedRuleExclusionMatchVariable"],
-        selector_match_operator: Union[str, "ManagedRuleExclusionSelectorMatchOperator"],
+        match_variable: Union[str, "_models.ManagedRuleExclusionMatchVariable"],
+        selector_match_operator: Union[str, "_models.ManagedRuleExclusionSelectorMatchOperator"],
         selector: str,
         **kwargs
     ):
         """
-        :keyword match_variable: Required. The variable type to be excluded. Possible values include:
+        :keyword match_variable: Required. The variable type to be excluded. Known values are:
          "RequestHeaderNames", "RequestCookieNames", "QueryStringArgNames", "RequestBodyPostArgNames",
          "RequestBodyJsonArgNames".
         :paramtype match_variable: str or
          ~azure.mgmt.frontdoor.models.ManagedRuleExclusionMatchVariable
         :keyword selector_match_operator: Required. Comparison operator to apply to the selector when
-         specifying which elements in the collection this exclusion applies to. Possible values include:
+         specifying which elements in the collection this exclusion applies to. Known values are:
          "Equals", "Contains", "StartsWith", "EndsWith", "EqualsAny".
         :paramtype selector_match_operator: str or
          ~azure.mgmt.frontdoor.models.ManagedRuleExclusionSelectorMatchOperator
@@ -2794,8 +2783,8 @@ class ManagedRuleGroupOverride(msrest.serialization.Model):
         self,
         *,
         rule_group_name: str,
-        exclusions: Optional[List["ManagedRuleExclusion"]] = None,
-        rules: Optional[List["ManagedRuleOverride"]] = None,
+        exclusions: Optional[List["_models.ManagedRuleExclusion"]] = None,
+        rules: Optional[List["_models.ManagedRuleOverride"]] = None,
         **kwargs
     ):
         """
@@ -2821,10 +2810,10 @@ class ManagedRuleOverride(msrest.serialization.Model):
     :ivar rule_id: Required. Identifier for the managed rule.
     :vartype rule_id: str
     :ivar enabled_state: Describes if the managed rule is in enabled or disabled state. Defaults to
-     Disabled if not specified. Possible values include: "Disabled", "Enabled".
+     Disabled if not specified. Known values are: "Disabled", "Enabled".
     :vartype enabled_state: str or ~azure.mgmt.frontdoor.models.ManagedRuleEnabledState
-    :ivar action: Describes the override action to be applied when rule matches. Possible values
-     include: "Allow", "Block", "Log", "Redirect".
+    :ivar action: Describes the override action to be applied when rule matches. Known values are:
+     "Allow", "Block", "Log", "Redirect".
     :vartype action: str or ~azure.mgmt.frontdoor.models.ActionType
     :ivar exclusions: Describes the exclusions that are applied to this specific rule.
     :vartype exclusions: list[~azure.mgmt.frontdoor.models.ManagedRuleExclusion]
@@ -2845,19 +2834,19 @@ class ManagedRuleOverride(msrest.serialization.Model):
         self,
         *,
         rule_id: str,
-        enabled_state: Optional[Union[str, "ManagedRuleEnabledState"]] = None,
-        action: Optional[Union[str, "ActionType"]] = None,
-        exclusions: Optional[List["ManagedRuleExclusion"]] = None,
+        enabled_state: Optional[Union[str, "_models.ManagedRuleEnabledState"]] = None,
+        action: Optional[Union[str, "_models.ActionType"]] = None,
+        exclusions: Optional[List["_models.ManagedRuleExclusion"]] = None,
         **kwargs
     ):
         """
         :keyword rule_id: Required. Identifier for the managed rule.
         :paramtype rule_id: str
         :keyword enabled_state: Describes if the managed rule is in enabled or disabled state. Defaults
-         to Disabled if not specified. Possible values include: "Disabled", "Enabled".
+         to Disabled if not specified. Known values are: "Disabled", "Enabled".
         :paramtype enabled_state: str or ~azure.mgmt.frontdoor.models.ManagedRuleEnabledState
-        :keyword action: Describes the override action to be applied when rule matches. Possible values
-         include: "Allow", "Block", "Log", "Redirect".
+        :keyword action: Describes the override action to be applied when rule matches. Known values
+         are: "Allow", "Block", "Log", "Redirect".
         :paramtype action: str or ~azure.mgmt.frontdoor.models.ActionType
         :keyword exclusions: Describes the exclusions that are applied to this specific rule.
         :paramtype exclusions: list[~azure.mgmt.frontdoor.models.ManagedRuleExclusion]
@@ -2878,8 +2867,8 @@ class ManagedRuleSet(msrest.serialization.Model):
     :vartype rule_set_type: str
     :ivar rule_set_version: Required. Defines the version of the rule set to use.
     :vartype rule_set_version: str
-    :ivar rule_set_action: Defines the action to take when a managed rule set score threshold is
-     met. Possible values include: "Block", "Log", "Redirect".
+    :ivar rule_set_action: Defines the rule set action. Known values are: "Block", "Log",
+     "Redirect".
     :vartype rule_set_action: str or ~azure.mgmt.frontdoor.models.ManagedRuleSetActionType
     :ivar exclusions: Describes the exclusions that are applied to all rules in the set.
     :vartype exclusions: list[~azure.mgmt.frontdoor.models.ManagedRuleExclusion]
@@ -2905,9 +2894,9 @@ class ManagedRuleSet(msrest.serialization.Model):
         *,
         rule_set_type: str,
         rule_set_version: str,
-        rule_set_action: Optional[Union[str, "ManagedRuleSetActionType"]] = None,
-        exclusions: Optional[List["ManagedRuleExclusion"]] = None,
-        rule_group_overrides: Optional[List["ManagedRuleGroupOverride"]] = None,
+        rule_set_action: Optional[Union[str, "_models.ManagedRuleSetActionType"]] = None,
+        exclusions: Optional[List["_models.ManagedRuleExclusion"]] = None,
+        rule_group_overrides: Optional[List["_models.ManagedRuleGroupOverride"]] = None,
         **kwargs
     ):
         """
@@ -2915,8 +2904,8 @@ class ManagedRuleSet(msrest.serialization.Model):
         :paramtype rule_set_type: str
         :keyword rule_set_version: Required. Defines the version of the rule set to use.
         :paramtype rule_set_version: str
-        :keyword rule_set_action: Defines the action to take when a managed rule set score threshold is
-         met. Possible values include: "Block", "Log", "Redirect".
+        :keyword rule_set_action: Defines the rule set action. Known values are: "Block", "Log",
+         "Redirect".
         :paramtype rule_set_action: str or ~azure.mgmt.frontdoor.models.ManagedRuleSetActionType
         :keyword exclusions: Describes the exclusions that are applied to all rules in the set.
         :paramtype exclusions: list[~azure.mgmt.frontdoor.models.ManagedRuleExclusion]
@@ -3052,7 +3041,7 @@ class ManagedRuleSetList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        managed_rule_sets: Optional[List["ManagedRuleSet"]] = None,
+        managed_rule_sets: Optional[List["_models.ManagedRuleSet"]] = None,
         **kwargs
     ):
         """
@@ -3068,15 +3057,15 @@ class MatchCondition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar match_variable: Required. Request variable to compare with. Possible values include:
+    :ivar match_variable: Required. Request variable to compare with. Known values are:
      "RemoteAddr", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
      "RequestBody", "Cookies", "SocketAddr".
     :vartype match_variable: str or ~azure.mgmt.frontdoor.models.MatchVariable
     :ivar selector: Match against a specific key from the QueryString, PostArgs, RequestHeader or
      Cookies variables. Default is null.
     :vartype selector: str
-    :ivar operator: Required. Comparison type to use for matching with the variable value. Possible
-     values include: "Any", "IPMatch", "GeoMatch", "Equal", "Contains", "LessThan", "GreaterThan",
+    :ivar operator: Required. Comparison type to use for matching with the variable value. Known
+     values are: "Any", "IPMatch", "GeoMatch", "Equal", "Contains", "LessThan", "GreaterThan",
      "LessThanOrEqual", "GreaterThanOrEqual", "BeginsWith", "EndsWith", "RegEx".
     :vartype operator: str or ~azure.mgmt.frontdoor.models.Operator
     :ivar negate_condition: Describes if the result of this condition should be negated.
@@ -3105,25 +3094,25 @@ class MatchCondition(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        match_variable: Union[str, "MatchVariable"],
-        operator: Union[str, "Operator"],
+        match_variable: Union[str, "_models.MatchVariable"],
+        operator: Union[str, "_models.Operator"],
         match_value: List[str],
         selector: Optional[str] = None,
         negate_condition: Optional[bool] = None,
-        transforms: Optional[List[Union[str, "TransformType"]]] = None,
+        transforms: Optional[List[Union[str, "_models.TransformType"]]] = None,
         **kwargs
     ):
         """
-        :keyword match_variable: Required. Request variable to compare with. Possible values include:
+        :keyword match_variable: Required. Request variable to compare with. Known values are:
          "RemoteAddr", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
          "RequestBody", "Cookies", "SocketAddr".
         :paramtype match_variable: str or ~azure.mgmt.frontdoor.models.MatchVariable
         :keyword selector: Match against a specific key from the QueryString, PostArgs, RequestHeader
          or Cookies variables. Default is null.
         :paramtype selector: str
-        :keyword operator: Required. Comparison type to use for matching with the variable value.
-         Possible values include: "Any", "IPMatch", "GeoMatch", "Equal", "Contains", "LessThan",
-         "GreaterThan", "LessThanOrEqual", "GreaterThanOrEqual", "BeginsWith", "EndsWith", "RegEx".
+        :keyword operator: Required. Comparison type to use for matching with the variable value. Known
+         values are: "Any", "IPMatch", "GeoMatch", "Equal", "Contains", "LessThan", "GreaterThan",
+         "LessThanOrEqual", "GreaterThanOrEqual", "BeginsWith", "EndsWith", "RegEx".
         :paramtype operator: str or ~azure.mgmt.frontdoor.models.Operator
         :keyword negate_condition: Describes if the result of this condition should be negated.
         :paramtype negate_condition: bool
@@ -3145,10 +3134,10 @@ class PolicySettings(msrest.serialization.Model):
     """Defines top-level WebApplicationFirewallPolicy configuration settings.
 
     :ivar enabled_state: Describes if the policy is in enabled or disabled state. Defaults to
-     Enabled if not specified. Possible values include: "Disabled", "Enabled".
+     Enabled if not specified. Known values are: "Disabled", "Enabled".
     :vartype enabled_state: str or ~azure.mgmt.frontdoor.models.PolicyEnabledState
-    :ivar mode: Describes if it is in detection mode or prevention mode at policy level. Possible
-     values include: "Prevention", "Detection".
+    :ivar mode: Describes if it is in detection mode or prevention mode at policy level. Known
+     values are: "Prevention", "Detection".
     :vartype mode: str or ~azure.mgmt.frontdoor.models.PolicyMode
     :ivar redirect_url: If action type is redirect, this field represents redirect URL for the
      client.
@@ -3160,7 +3149,7 @@ class PolicySettings(msrest.serialization.Model):
      response body. The body must be specified in base64 encoding.
     :vartype custom_block_response_body: str
     :ivar request_body_check: Describes if policy managed rules will inspect the request body
-     content. Possible values include: "Disabled", "Enabled".
+     content. Known values are: "Disabled", "Enabled".
     :vartype request_body_check: str or ~azure.mgmt.frontdoor.models.PolicyRequestBodyCheck
     """
 
@@ -3180,20 +3169,20 @@ class PolicySettings(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        enabled_state: Optional[Union[str, "PolicyEnabledState"]] = None,
-        mode: Optional[Union[str, "PolicyMode"]] = None,
+        enabled_state: Optional[Union[str, "_models.PolicyEnabledState"]] = None,
+        mode: Optional[Union[str, "_models.PolicyMode"]] = None,
         redirect_url: Optional[str] = None,
         custom_block_response_status_code: Optional[int] = None,
         custom_block_response_body: Optional[str] = None,
-        request_body_check: Optional[Union[str, "PolicyRequestBodyCheck"]] = None,
+        request_body_check: Optional[Union[str, "_models.PolicyRequestBodyCheck"]] = None,
         **kwargs
     ):
         """
         :keyword enabled_state: Describes if the policy is in enabled or disabled state. Defaults to
-         Enabled if not specified. Possible values include: "Disabled", "Enabled".
+         Enabled if not specified. Known values are: "Disabled", "Enabled".
         :paramtype enabled_state: str or ~azure.mgmt.frontdoor.models.PolicyEnabledState
-        :keyword mode: Describes if it is in detection mode or prevention mode at policy level.
-         Possible values include: "Prevention", "Detection".
+        :keyword mode: Describes if it is in detection mode or prevention mode at policy level. Known
+         values are: "Prevention", "Detection".
         :paramtype mode: str or ~azure.mgmt.frontdoor.models.PolicyMode
         :keyword redirect_url: If action type is redirect, this field represents redirect URL for the
          client.
@@ -3205,7 +3194,7 @@ class PolicySettings(msrest.serialization.Model):
          response body. The body must be specified in base64 encoding.
         :paramtype custom_block_response_body: str
         :keyword request_body_check: Describes if policy managed rules will inspect the request body
-         content. Possible values include: "Disabled", "Enabled".
+         content. Known values are: "Disabled", "Enabled".
         :paramtype request_body_check: str or ~azure.mgmt.frontdoor.models.PolicyRequestBodyCheck
         """
         super(PolicySettings, self).__init__(**kwargs)
@@ -3236,8 +3225,8 @@ class PreconfiguredEndpoint(Resource):
     :vartype description: str
     :ivar endpoint: The endpoint that is preconfigured.
     :vartype endpoint: str
-    :ivar endpoint_type: The type of endpoint. Possible values include: "AFD", "AzureRegion",
-     "CDN", "ATM".
+    :ivar endpoint_type: The type of endpoint. Known values are: "AFD", "AzureRegion", "CDN",
+     "ATM".
     :vartype endpoint_type: str or ~azure.mgmt.frontdoor.models.EndpointType
     :ivar backend: The preconfigured endpoint backend.
     :vartype backend: str
@@ -3268,7 +3257,7 @@ class PreconfiguredEndpoint(Resource):
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
         endpoint: Optional[str] = None,
-        endpoint_type: Optional[Union[str, "EndpointType"]] = None,
+        endpoint_type: Optional[Union[str, "_models.EndpointType"]] = None,
         backend: Optional[str] = None,
         **kwargs
     ):
@@ -3281,8 +3270,8 @@ class PreconfiguredEndpoint(Resource):
         :paramtype description: str
         :keyword endpoint: The endpoint that is preconfigured.
         :paramtype endpoint: str
-        :keyword endpoint_type: The type of endpoint. Possible values include: "AFD", "AzureRegion",
-         "CDN", "ATM".
+        :keyword endpoint_type: The type of endpoint. Known values are: "AFD", "AzureRegion", "CDN",
+         "ATM".
         :paramtype endpoint_type: str or ~azure.mgmt.frontdoor.models.EndpointType
         :keyword backend: The preconfigured endpoint backend.
         :paramtype backend: str
@@ -3346,11 +3335,10 @@ class Profile(Resource):
     :vartype tags: dict[str, str]
     :ivar etag: Gets a unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :ivar resource_state: Resource status. Possible values include: "Creating", "Enabling",
-     "Enabled", "Disabling", "Disabled", "Deleting".
+    :ivar resource_state: Resource status. Known values are: "Creating", "Enabling", "Enabled",
+     "Disabling", "Disabled", "Deleting".
     :vartype resource_state: str or ~azure.mgmt.frontdoor.models.NetworkExperimentResourceState
-    :ivar enabled_state: The state of the Experiment. Possible values include: "Enabled",
-     "Disabled".
+    :ivar enabled_state: The state of the Experiment. Known values are: "Enabled", "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.frontdoor.models.State
     """
 
@@ -3378,7 +3366,7 @@ class Profile(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        enabled_state: Optional[Union[str, "State"]] = None,
+        enabled_state: Optional[Union[str, "_models.State"]] = None,
         **kwargs
     ):
         """
@@ -3388,8 +3376,7 @@ class Profile(Resource):
         :paramtype tags: dict[str, str]
         :keyword etag: Gets a unique read-only string that changes whenever the resource is updated.
         :paramtype etag: str
-        :keyword enabled_state: The state of the Experiment. Possible values include: "Enabled",
-         "Disabled".
+        :keyword enabled_state: The state of the Experiment. Known values are: "Enabled", "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.frontdoor.models.State
         """
         super(Profile, self).__init__(location=location, tags=tags, **kwargs)
@@ -3438,8 +3425,7 @@ class ProfileUpdateModel(msrest.serialization.Model):
 
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
-    :ivar enabled_state: The enabled state of the Profile. Possible values include: "Enabled",
-     "Disabled".
+    :ivar enabled_state: The enabled state of the Profile. Known values are: "Enabled", "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.frontdoor.models.State
     """
 
@@ -3452,13 +3438,13 @@ class ProfileUpdateModel(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        enabled_state: Optional[Union[str, "State"]] = None,
+        enabled_state: Optional[Union[str, "_models.State"]] = None,
         **kwargs
     ):
         """
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword enabled_state: The enabled state of the Profile. Possible values include: "Enabled",
+        :keyword enabled_state: The enabled state of the Profile. Known values are: "Enabled",
          "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.frontdoor.models.State
         """
@@ -3507,11 +3493,11 @@ class RedirectConfiguration(RouteConfiguration):
 
     :ivar odata_type: Required. Constant filled by server.
     :vartype odata_type: str
-    :ivar redirect_type: The redirect type the rule will use when redirecting traffic. Possible
-     values include: "Moved", "Found", "TemporaryRedirect", "PermanentRedirect".
+    :ivar redirect_type: The redirect type the rule will use when redirecting traffic. Known values
+     are: "Moved", "Found", "TemporaryRedirect", "PermanentRedirect".
     :vartype redirect_type: str or ~azure.mgmt.frontdoor.models.FrontDoorRedirectType
     :ivar redirect_protocol: The protocol of the destination to where the traffic is redirected.
-     Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
+     Known values are: "HttpOnly", "HttpsOnly", "MatchRequest".
     :vartype redirect_protocol: str or ~azure.mgmt.frontdoor.models.FrontDoorRedirectProtocol
     :ivar custom_host: Host to redirect. Leave empty to use the incoming host as the destination
      host.
@@ -3547,8 +3533,8 @@ class RedirectConfiguration(RouteConfiguration):
     def __init__(
         self,
         *,
-        redirect_type: Optional[Union[str, "FrontDoorRedirectType"]] = None,
-        redirect_protocol: Optional[Union[str, "FrontDoorRedirectProtocol"]] = None,
+        redirect_type: Optional[Union[str, "_models.FrontDoorRedirectType"]] = None,
+        redirect_protocol: Optional[Union[str, "_models.FrontDoorRedirectProtocol"]] = None,
         custom_host: Optional[str] = None,
         custom_path: Optional[str] = None,
         custom_fragment: Optional[str] = None,
@@ -3556,11 +3542,11 @@ class RedirectConfiguration(RouteConfiguration):
         **kwargs
     ):
         """
-        :keyword redirect_type: The redirect type the rule will use when redirecting traffic. Possible
-         values include: "Moved", "Found", "TemporaryRedirect", "PermanentRedirect".
+        :keyword redirect_type: The redirect type the rule will use when redirecting traffic. Known
+         values are: "Moved", "Found", "TemporaryRedirect", "PermanentRedirect".
         :paramtype redirect_type: str or ~azure.mgmt.frontdoor.models.FrontDoorRedirectType
         :keyword redirect_protocol: The protocol of the destination to where the traffic is redirected.
-         Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
+         Known values are: "HttpOnly", "HttpsOnly", "MatchRequest".
         :paramtype redirect_protocol: str or ~azure.mgmt.frontdoor.models.FrontDoorRedirectProtocol
         :keyword custom_host: Host to redirect. Leave empty to use the incoming host as the destination
          host.
@@ -3606,7 +3592,7 @@ class RoutingRule(SubResource):
     :ivar patterns_to_match: The route patterns of the rule.
     :vartype patterns_to_match: list[str]
     :ivar enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-     'Disabled'. Possible values include: "Enabled", "Disabled".
+     'Disabled'. Known values are: "Enabled", "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.frontdoor.models.RoutingRuleEnabledState
     :ivar route_configuration: A reference to the routing configuration.
     :vartype route_configuration: ~azure.mgmt.frontdoor.models.RouteConfiguration
@@ -3617,8 +3603,8 @@ class RoutingRule(SubResource):
      each routing rule (if applicable).
     :vartype web_application_firewall_policy_link:
      ~azure.mgmt.frontdoor.models.RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink
-    :ivar resource_state: Resource status. Possible values include: "Creating", "Enabling",
-     "Enabled", "Disabling", "Disabled", "Deleting".
+    :ivar resource_state: Resource status. Known values are: "Creating", "Enabling", "Enabled",
+     "Disabling", "Disabled", "Deleting".
     :vartype resource_state: str or ~azure.mgmt.frontdoor.models.FrontDoorResourceState
     """
 
@@ -3646,13 +3632,13 @@ class RoutingRule(SubResource):
         *,
         id: Optional[str] = None,
         name: Optional[str] = None,
-        frontend_endpoints: Optional[List["SubResource"]] = None,
-        accepted_protocols: Optional[List[Union[str, "FrontDoorProtocol"]]] = None,
+        frontend_endpoints: Optional[List["_models.SubResource"]] = None,
+        accepted_protocols: Optional[List[Union[str, "_models.FrontDoorProtocol"]]] = None,
         patterns_to_match: Optional[List[str]] = None,
-        enabled_state: Optional[Union[str, "RoutingRuleEnabledState"]] = None,
-        route_configuration: Optional["RouteConfiguration"] = None,
-        rules_engine: Optional["SubResource"] = None,
-        web_application_firewall_policy_link: Optional["RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink"] = None,
+        enabled_state: Optional[Union[str, "_models.RoutingRuleEnabledState"]] = None,
+        route_configuration: Optional["_models.RouteConfiguration"] = None,
+        rules_engine: Optional["_models.SubResource"] = None,
+        web_application_firewall_policy_link: Optional["_models.RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink"] = None,
         **kwargs
     ):
         """
@@ -3667,7 +3653,7 @@ class RoutingRule(SubResource):
         :keyword patterns_to_match: The route patterns of the rule.
         :paramtype patterns_to_match: list[str]
         :keyword enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-         'Disabled'. Possible values include: "Enabled", "Disabled".
+         'Disabled'. Known values are: "Enabled", "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.frontdoor.models.RoutingRuleEnabledState
         :keyword route_configuration: A reference to the routing configuration.
         :paramtype route_configuration: ~azure.mgmt.frontdoor.models.RouteConfiguration
@@ -3762,7 +3748,7 @@ class RoutingRuleUpdateParameters(msrest.serialization.Model):
     :ivar patterns_to_match: The route patterns of the rule.
     :vartype patterns_to_match: list[str]
     :ivar enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-     'Disabled'. Possible values include: "Enabled", "Disabled".
+     'Disabled'. Known values are: "Enabled", "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.frontdoor.models.RoutingRuleEnabledState
     :ivar route_configuration: A reference to the routing configuration.
     :vartype route_configuration: ~azure.mgmt.frontdoor.models.RouteConfiguration
@@ -3788,13 +3774,13 @@ class RoutingRuleUpdateParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        frontend_endpoints: Optional[List["SubResource"]] = None,
-        accepted_protocols: Optional[List[Union[str, "FrontDoorProtocol"]]] = None,
+        frontend_endpoints: Optional[List["_models.SubResource"]] = None,
+        accepted_protocols: Optional[List[Union[str, "_models.FrontDoorProtocol"]]] = None,
         patterns_to_match: Optional[List[str]] = None,
-        enabled_state: Optional[Union[str, "RoutingRuleEnabledState"]] = None,
-        route_configuration: Optional["RouteConfiguration"] = None,
-        rules_engine: Optional["SubResource"] = None,
-        web_application_firewall_policy_link: Optional["RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink"] = None,
+        enabled_state: Optional[Union[str, "_models.RoutingRuleEnabledState"]] = None,
+        route_configuration: Optional["_models.RouteConfiguration"] = None,
+        rules_engine: Optional["_models.SubResource"] = None,
+        web_application_firewall_policy_link: Optional["_models.RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink"] = None,
         **kwargs
     ):
         """
@@ -3805,7 +3791,7 @@ class RoutingRuleUpdateParameters(msrest.serialization.Model):
         :keyword patterns_to_match: The route patterns of the rule.
         :paramtype patterns_to_match: list[str]
         :keyword enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-         'Disabled'. Possible values include: "Enabled", "Disabled".
+         'Disabled'. Known values are: "Enabled", "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.frontdoor.models.RoutingRuleEnabledState
         :keyword route_configuration: A reference to the routing configuration.
         :paramtype route_configuration: ~azure.mgmt.frontdoor.models.RouteConfiguration
@@ -3839,7 +3825,7 @@ class RoutingRuleProperties(RoutingRuleUpdateParameters):
     :ivar patterns_to_match: The route patterns of the rule.
     :vartype patterns_to_match: list[str]
     :ivar enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-     'Disabled'. Possible values include: "Enabled", "Disabled".
+     'Disabled'. Known values are: "Enabled", "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.frontdoor.models.RoutingRuleEnabledState
     :ivar route_configuration: A reference to the routing configuration.
     :vartype route_configuration: ~azure.mgmt.frontdoor.models.RouteConfiguration
@@ -3850,8 +3836,8 @@ class RoutingRuleProperties(RoutingRuleUpdateParameters):
      each routing rule (if applicable).
     :vartype web_application_firewall_policy_link:
      ~azure.mgmt.frontdoor.models.RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink
-    :ivar resource_state: Resource status. Possible values include: "Creating", "Enabling",
-     "Enabled", "Disabling", "Disabled", "Deleting".
+    :ivar resource_state: Resource status. Known values are: "Creating", "Enabling", "Enabled",
+     "Disabling", "Disabled", "Deleting".
     :vartype resource_state: str or ~azure.mgmt.frontdoor.models.FrontDoorResourceState
     """
 
@@ -3873,13 +3859,13 @@ class RoutingRuleProperties(RoutingRuleUpdateParameters):
     def __init__(
         self,
         *,
-        frontend_endpoints: Optional[List["SubResource"]] = None,
-        accepted_protocols: Optional[List[Union[str, "FrontDoorProtocol"]]] = None,
+        frontend_endpoints: Optional[List["_models.SubResource"]] = None,
+        accepted_protocols: Optional[List[Union[str, "_models.FrontDoorProtocol"]]] = None,
         patterns_to_match: Optional[List[str]] = None,
-        enabled_state: Optional[Union[str, "RoutingRuleEnabledState"]] = None,
-        route_configuration: Optional["RouteConfiguration"] = None,
-        rules_engine: Optional["SubResource"] = None,
-        web_application_firewall_policy_link: Optional["RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink"] = None,
+        enabled_state: Optional[Union[str, "_models.RoutingRuleEnabledState"]] = None,
+        route_configuration: Optional["_models.RouteConfiguration"] = None,
+        rules_engine: Optional["_models.SubResource"] = None,
+        web_application_firewall_policy_link: Optional["_models.RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink"] = None,
         **kwargs
     ):
         """
@@ -3890,7 +3876,7 @@ class RoutingRuleProperties(RoutingRuleUpdateParameters):
         :keyword patterns_to_match: The route patterns of the rule.
         :paramtype patterns_to_match: list[str]
         :keyword enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-         'Disabled'. Possible values include: "Enabled", "Disabled".
+         'Disabled'. Known values are: "Enabled", "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.frontdoor.models.RoutingRuleEnabledState
         :keyword route_configuration: A reference to the routing configuration.
         :paramtype route_configuration: ~azure.mgmt.frontdoor.models.RouteConfiguration
@@ -3944,8 +3930,8 @@ class RulesEngine(msrest.serialization.Model):
     :vartype id: str
     :ivar rules: A list of rules that define a particular Rules Engine Configuration.
     :vartype rules: list[~azure.mgmt.frontdoor.models.RulesEngineRule]
-    :ivar resource_state: Resource status. Possible values include: "Creating", "Enabling",
-     "Enabled", "Disabling", "Disabled", "Deleting".
+    :ivar resource_state: Resource status. Known values are: "Creating", "Enabling", "Enabled",
+     "Disabling", "Disabled", "Deleting".
     :vartype resource_state: str or ~azure.mgmt.frontdoor.models.FrontDoorResourceState
     """
 
@@ -3967,7 +3953,7 @@ class RulesEngine(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        rules: Optional[List["RulesEngineRule"]] = None,
+        rules: Optional[List["_models.RulesEngineRule"]] = None,
         **kwargs
     ):
         """
@@ -4004,9 +3990,9 @@ class RulesEngineAction(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        request_header_actions: Optional[List["HeaderAction"]] = None,
-        response_header_actions: Optional[List["HeaderAction"]] = None,
-        route_configuration_override: Optional["RouteConfiguration"] = None,
+        request_header_actions: Optional[List["_models.HeaderAction"]] = None,
+        response_header_actions: Optional[List["_models.HeaderAction"]] = None,
+        route_configuration_override: Optional["_models.RouteConfiguration"] = None,
         **kwargs
     ):
         """
@@ -4065,17 +4051,16 @@ class RulesEngineMatchCondition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar rules_engine_match_variable: Required. Match Variable. Possible values include:
-     "IsMobile", "RemoteAddr", "RequestMethod", "QueryString", "PostArgs", "RequestUri",
-     "RequestPath", "RequestFilename", "RequestFilenameExtension", "RequestHeader", "RequestBody",
-     "RequestScheme".
+    :ivar rules_engine_match_variable: Required. Match Variable. Known values are: "IsMobile",
+     "RemoteAddr", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestPath",
+     "RequestFilename", "RequestFilenameExtension", "RequestHeader", "RequestBody", "RequestScheme".
     :vartype rules_engine_match_variable: str or
      ~azure.mgmt.frontdoor.models.RulesEngineMatchVariable
     :ivar selector: Name of selector in RequestHeader or RequestBody to be matched.
     :vartype selector: str
     :ivar rules_engine_operator: Required. Describes operator to apply to the match condition.
-     Possible values include: "Any", "IPMatch", "GeoMatch", "Equal", "Contains", "LessThan",
-     "GreaterThan", "LessThanOrEqual", "GreaterThanOrEqual", "BeginsWith", "EndsWith".
+     Known values are: "Any", "IPMatch", "GeoMatch", "Equal", "Contains", "LessThan", "GreaterThan",
+     "LessThanOrEqual", "GreaterThanOrEqual", "BeginsWith", "EndsWith".
     :vartype rules_engine_operator: str or ~azure.mgmt.frontdoor.models.RulesEngineOperator
     :ivar negate_condition: Describes if this is negate condition or not.
     :vartype negate_condition: bool
@@ -4105,26 +4090,25 @@ class RulesEngineMatchCondition(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        rules_engine_match_variable: Union[str, "RulesEngineMatchVariable"],
-        rules_engine_operator: Union[str, "RulesEngineOperator"],
+        rules_engine_match_variable: Union[str, "_models.RulesEngineMatchVariable"],
+        rules_engine_operator: Union[str, "_models.RulesEngineOperator"],
         rules_engine_match_value: List[str],
         selector: Optional[str] = None,
         negate_condition: Optional[bool] = None,
-        transforms: Optional[List[Union[str, "Transform"]]] = None,
+        transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
         **kwargs
     ):
         """
-        :keyword rules_engine_match_variable: Required. Match Variable. Possible values include:
-         "IsMobile", "RemoteAddr", "RequestMethod", "QueryString", "PostArgs", "RequestUri",
-         "RequestPath", "RequestFilename", "RequestFilenameExtension", "RequestHeader", "RequestBody",
-         "RequestScheme".
+        :keyword rules_engine_match_variable: Required. Match Variable. Known values are: "IsMobile",
+         "RemoteAddr", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestPath",
+         "RequestFilename", "RequestFilenameExtension", "RequestHeader", "RequestBody", "RequestScheme".
         :paramtype rules_engine_match_variable: str or
          ~azure.mgmt.frontdoor.models.RulesEngineMatchVariable
         :keyword selector: Name of selector in RequestHeader or RequestBody to be matched.
         :paramtype selector: str
         :keyword rules_engine_operator: Required. Describes operator to apply to the match condition.
-         Possible values include: "Any", "IPMatch", "GeoMatch", "Equal", "Contains", "LessThan",
-         "GreaterThan", "LessThanOrEqual", "GreaterThanOrEqual", "BeginsWith", "EndsWith".
+         Known values are: "Any", "IPMatch", "GeoMatch", "Equal", "Contains", "LessThan", "GreaterThan",
+         "LessThanOrEqual", "GreaterThanOrEqual", "BeginsWith", "EndsWith".
         :paramtype rules_engine_operator: str or ~azure.mgmt.frontdoor.models.RulesEngineOperator
         :keyword negate_condition: Describes if this is negate condition or not.
         :paramtype negate_condition: bool
@@ -4158,7 +4142,7 @@ class RulesEngineUpdateParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        rules: Optional[List["RulesEngineRule"]] = None,
+        rules: Optional[List["_models.RulesEngineRule"]] = None,
         **kwargs
     ):
         """
@@ -4176,8 +4160,8 @@ class RulesEngineProperties(RulesEngineUpdateParameters):
 
     :ivar rules: A list of rules that define a particular Rules Engine Configuration.
     :vartype rules: list[~azure.mgmt.frontdoor.models.RulesEngineRule]
-    :ivar resource_state: Resource status. Possible values include: "Creating", "Enabling",
-     "Enabled", "Disabling", "Disabled", "Deleting".
+    :ivar resource_state: Resource status. Known values are: "Creating", "Enabling", "Enabled",
+     "Disabling", "Disabled", "Deleting".
     :vartype resource_state: str or ~azure.mgmt.frontdoor.models.FrontDoorResourceState
     """
 
@@ -4193,7 +4177,7 @@ class RulesEngineProperties(RulesEngineUpdateParameters):
     def __init__(
         self,
         *,
-        rules: Optional[List["RulesEngineRule"]] = None,
+        rules: Optional[List["_models.RulesEngineRule"]] = None,
         **kwargs
     ):
         """
@@ -4220,8 +4204,8 @@ class RulesEngineRule(msrest.serialization.Model):
      this rule to run. Having no match conditions means the actions will always run.
     :vartype match_conditions: list[~azure.mgmt.frontdoor.models.RulesEngineMatchCondition]
     :ivar match_processing_behavior: If this rule is a match should the rules engine continue
-     running the remaining rules or stop. If not present, defaults to Continue. Possible values
-     include: "Continue", "Stop".
+     running the remaining rules or stop. If not present, defaults to Continue. Known values are:
+     "Continue", "Stop".
     :vartype match_processing_behavior: str or ~azure.mgmt.frontdoor.models.MatchProcessingBehavior
     """
 
@@ -4244,9 +4228,9 @@ class RulesEngineRule(msrest.serialization.Model):
         *,
         name: str,
         priority: int,
-        action: "RulesEngineAction",
-        match_conditions: Optional[List["RulesEngineMatchCondition"]] = None,
-        match_processing_behavior: Optional[Union[str, "MatchProcessingBehavior"]] = None,
+        action: "_models.RulesEngineAction",
+        match_conditions: Optional[List["_models.RulesEngineMatchCondition"]] = None,
+        match_processing_behavior: Optional[Union[str, "_models.MatchProcessingBehavior"]] = None,
         **kwargs
     ):
         """
@@ -4261,8 +4245,8 @@ class RulesEngineRule(msrest.serialization.Model):
          of this rule to run. Having no match conditions means the actions will always run.
         :paramtype match_conditions: list[~azure.mgmt.frontdoor.models.RulesEngineMatchCondition]
         :keyword match_processing_behavior: If this rule is a match should the rules engine continue
-         running the remaining rules or stop. If not present, defaults to Continue. Possible values
-         include: "Continue", "Stop".
+         running the remaining rules or stop. If not present, defaults to Continue. Known values are:
+         "Continue", "Stop".
         :paramtype match_processing_behavior: str or
          ~azure.mgmt.frontdoor.models.MatchProcessingBehavior
         """
@@ -4302,7 +4286,7 @@ class SecurityPolicyLink(msrest.serialization.Model):
 class Sku(msrest.serialization.Model):
     """The pricing tier of the web application firewall policy.
 
-    :ivar name: Name of the pricing tier. Possible values include: "Classic_AzureFrontDoor",
+    :ivar name: Name of the pricing tier. Known values are: "Classic_AzureFrontDoor",
      "Standard_AzureFrontDoor", "Premium_AzureFrontDoor".
     :vartype name: str or ~azure.mgmt.frontdoor.models.SkuName
     """
@@ -4314,11 +4298,11 @@ class Sku(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: Optional[Union[str, "SkuName"]] = None,
+        name: Optional[Union[str, "_models.SkuName"]] = None,
         **kwargs
     ):
         """
-        :keyword name: Name of the pricing tier. Possible values include: "Classic_AzureFrontDoor",
+        :keyword name: Name of the pricing tier. Known values are: "Classic_AzureFrontDoor",
          "Standard_AzureFrontDoor", "Premium_AzureFrontDoor".
         :paramtype name: str or ~azure.mgmt.frontdoor.models.SkuName
         """
@@ -4372,10 +4356,10 @@ class Timeseries(Resource):
     :vartype start_date_time_utc: str
     :ivar end_date_time_utc: The end DateTime of the Timeseries in UTC.
     :vartype end_date_time_utc: str
-    :ivar aggregation_interval: The aggregation interval of the Timeseries. Possible values
-     include: "Hourly", "Daily".
+    :ivar aggregation_interval: The aggregation interval of the Timeseries. Known values are:
+     "Hourly", "Daily".
     :vartype aggregation_interval: str or ~azure.mgmt.frontdoor.models.AggregationInterval
-    :ivar timeseries_type: The type of Timeseries. Possible values include: "MeasurementCounts",
+    :ivar timeseries_type: The type of Timeseries. Known values are: "MeasurementCounts",
      "LatencyP50", "LatencyP75", "LatencyP95".
     :vartype timeseries_type: str or ~azure.mgmt.frontdoor.models.TimeseriesType
     :ivar country: The country associated with the Timeseries. Values are country ISO codes as
@@ -4414,10 +4398,10 @@ class Timeseries(Resource):
         endpoint: Optional[str] = None,
         start_date_time_utc: Optional[str] = None,
         end_date_time_utc: Optional[str] = None,
-        aggregation_interval: Optional[Union[str, "AggregationInterval"]] = None,
-        timeseries_type: Optional[Union[str, "TimeseriesType"]] = None,
+        aggregation_interval: Optional[Union[str, "_models.AggregationInterval"]] = None,
+        timeseries_type: Optional[Union[str, "_models.TimeseriesType"]] = None,
         country: Optional[str] = None,
-        timeseries_data: Optional[List["TimeseriesDataPoint"]] = None,
+        timeseries_data: Optional[List["_models.TimeseriesDataPoint"]] = None,
         **kwargs
     ):
         """
@@ -4431,10 +4415,10 @@ class Timeseries(Resource):
         :paramtype start_date_time_utc: str
         :keyword end_date_time_utc: The end DateTime of the Timeseries in UTC.
         :paramtype end_date_time_utc: str
-        :keyword aggregation_interval: The aggregation interval of the Timeseries. Possible values
-         include: "Hourly", "Daily".
+        :keyword aggregation_interval: The aggregation interval of the Timeseries. Known values are:
+         "Hourly", "Daily".
         :paramtype aggregation_interval: str or ~azure.mgmt.frontdoor.models.AggregationInterval
-        :keyword timeseries_type: The type of Timeseries. Possible values include: "MeasurementCounts",
+        :keyword timeseries_type: The type of Timeseries. Known values are: "MeasurementCounts",
          "LatencyP50", "LatencyP75", "LatencyP95".
         :paramtype timeseries_type: str or ~azure.mgmt.frontdoor.models.TimeseriesType
         :keyword country: The country associated with the Timeseries. Values are country ISO codes as
@@ -4590,8 +4574,8 @@ class WebApplicationFirewallPolicy(Resource):
     :vartype security_policy_links: list[~azure.mgmt.frontdoor.models.SecurityPolicyLink]
     :ivar provisioning_state: Provisioning state of the policy.
     :vartype provisioning_state: str
-    :ivar resource_state: Resource status of the policy. Possible values include: "Creating",
-     "Enabling", "Enabled", "Disabling", "Disabled", "Deleting".
+    :ivar resource_state: Resource status of the policy. Known values are: "Creating", "Enabling",
+     "Enabled", "Disabling", "Disabled", "Deleting".
     :vartype resource_state: str or ~azure.mgmt.frontdoor.models.PolicyResourceState
     """
 
@@ -4630,10 +4614,10 @@ class WebApplicationFirewallPolicy(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        sku: Optional["Sku"] = None,
-        policy_settings: Optional["PolicySettings"] = None,
-        custom_rules: Optional["CustomRuleList"] = None,
-        managed_rules: Optional["ManagedRuleSetList"] = None,
+        sku: Optional["_models.Sku"] = None,
+        policy_settings: Optional["_models.PolicySettings"] = None,
+        custom_rules: Optional["_models.CustomRuleList"] = None,
+        managed_rules: Optional["_models.ManagedRuleSetList"] = None,
         **kwargs
     ):
         """

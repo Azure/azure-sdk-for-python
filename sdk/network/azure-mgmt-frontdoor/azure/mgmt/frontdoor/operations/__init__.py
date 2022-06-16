@@ -6,30 +6,35 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._network_experiment_profiles_operations import NetworkExperimentProfilesOperations
-from ._preconfigured_endpoints_operations import PreconfiguredEndpointsOperations
-from ._experiments_operations import ExperimentsOperations
-from ._reports_operations import ReportsOperations
+from ._policies_operations import PoliciesOperations
+from ._managed_rule_sets_operations import ManagedRuleSetsOperations
 from ._front_door_name_availability_operations import FrontDoorNameAvailabilityOperations
 from ._front_door_name_availability_with_subscription_operations import FrontDoorNameAvailabilityWithSubscriptionOperations
 from ._front_doors_operations import FrontDoorsOperations
 from ._frontend_endpoints_operations import FrontendEndpointsOperations
 from ._endpoints_operations import EndpointsOperations
 from ._rules_engines_operations import RulesEnginesOperations
-from ._policies_operations import PoliciesOperations
-from ._managed_rule_sets_operations import ManagedRuleSetsOperations
+from ._network_experiment_profiles_operations import NetworkExperimentProfilesOperations
+from ._preconfigured_endpoints_operations import PreconfiguredEndpointsOperations
+from ._experiments_operations import ExperimentsOperations
+from ._reports_operations import ReportsOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
-    'NetworkExperimentProfilesOperations',
-    'PreconfiguredEndpointsOperations',
-    'ExperimentsOperations',
-    'ReportsOperations',
+    'PoliciesOperations',
+    'ManagedRuleSetsOperations',
     'FrontDoorNameAvailabilityOperations',
     'FrontDoorNameAvailabilityWithSubscriptionOperations',
     'FrontDoorsOperations',
     'FrontendEndpointsOperations',
     'EndpointsOperations',
     'RulesEnginesOperations',
-    'PoliciesOperations',
-    'ManagedRuleSetsOperations',
+    'NetworkExperimentProfilesOperations',
+    'PreconfiguredEndpointsOperations',
+    'ExperimentsOperations',
+    'ReportsOperations',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
