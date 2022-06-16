@@ -25,8 +25,3 @@ class LoadtestserviceTest(AzureTestCase):
             credential=credential,
             endpoint=endpoint,
         )
-    
-    
-
-
-

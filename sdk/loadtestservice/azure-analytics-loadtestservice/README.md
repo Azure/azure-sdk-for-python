@@ -50,7 +50,8 @@ Use the returned token credential to authenticate the client:
 
 >>> client = LoadTestClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 >>> try:
-        <!-- write test code here -->
+        result = client.test.list_load_test_search()
+        print(result)
     except HttpResponseError as e:
         print('service responds error: {}'.format(e.response.json()))
 

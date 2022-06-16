@@ -45,9 +45,9 @@ except KeyError:
 # Build a client through AAD
 client = LoadTestClient(credential=DefaultAzureCredential(), endpoint=endpoint)
 
-# write your sample here. For example:
-# try:
-#     result = client.xxx.xx(...)
-#     print(result)
-# except HttpResponseError as e:
-#     print('Failed to send JSON message: {}'.format(e.response.json()))
+# Listing the load test search
+try:
+    result = client.test.list_load_test_search()
+    print(result)
+except HttpResponseError as e:
+    print('Failed to send JSON message: {}'.format(e.response.json()))
