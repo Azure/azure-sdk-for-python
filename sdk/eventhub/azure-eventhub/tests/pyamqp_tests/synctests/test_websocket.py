@@ -23,5 +23,7 @@ def test_event_hubs_client_web_socket(live_eventhub):
         live_eventhub['consumer_group'],
         live_eventhub['partition'])
 
-    with ReceiveClient(live_eventhub['hostname'] + '/$servicebus/websocket/', source, auth=sas_auth, debug=False, timeout=5000, prefetch=50, transport_type=TransportType.AmqpOverWebsocket) as receive_client:
-        receive_client.receive_message_batch(max_batch_size=10)
+    with ReceiveClient(live_eventhub['hostname'] + '/$servicebus/websocket/', source, auth=sas_auth, debug=False, timeout=10, prefetch=1, transport_type=TransportType.AmqpOverWebsocket) as receive_client:
+        begin = receive_client._received_messages.qsize()
+        receive_client.receive_message_batch(max_batch_size=1)
+        return receive_client._received_messages.qsize() - begin
