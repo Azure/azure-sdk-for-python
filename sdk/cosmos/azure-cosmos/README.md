@@ -79,7 +79,7 @@ client = CosmosClient(URL, credential=KEY)
 ### AAD Authentication
 
 You can also authenticate a client utilizing your service principal's AAD credentials and the azure identity package. 
-You can directly pass in the credentials information to ClientSecretCrednetial, or use the DefaultAzureCredential:
+You can directly pass in the credentials information to ClientSecretCredential, or use the DefaultAzureCredential:
 ```Python
 from azure.cosmos import CosmosClient
 from azure.identity import ClientSecretCredential, DefaultAzureCredential
@@ -162,7 +162,6 @@ Currently the features below are **not supported**. For alternatives options, ch
 
 * Get CollectionSizeUsage, DatabaseUsage, and DocumentUsage metrics
 * Create Geospatial Index
-* Provision Autoscale DBs or containers
 * Update Autoscale throughput
 * Update analytical store ttl (time to live)
 * Get the connection string
