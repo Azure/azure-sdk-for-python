@@ -1778,7 +1778,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 actions=[
                     AnalyzeHealthcareEntitiesAction(
                         model_version="latest",
-                        fhir_version="4.0.1"
                     )
                 ],
                 show_stats=True,
@@ -1795,5 +1794,4 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         assert res.error.code == "InvalidDocument"
                     else:
                         assert res.entities
-                        assert res.fhir_bundle
                         assert res.statistics
