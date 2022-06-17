@@ -181,7 +181,7 @@ def create_container(db, id):
     except exceptions.CosmosResourceExistsError:
         print('A container with id \'_container_analytical_store\' already exists')
 
-    print("\n2.8 Create Container - With auto scale setting")
+    print("\n2.8 Create Container - With auto scale settings")
 
     try:
         container = db.create_container(
