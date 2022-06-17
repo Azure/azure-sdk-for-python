@@ -24,13 +24,15 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import io
+
 import logging
 import os
 import sys
 import tempfile
 
-from azure.confidentialledger_identity_service import ConfidentialLedgerIdentityServiceClient
+from azure.confidentialledger_identity_service import (
+    ConfidentialLedgerIdentityServiceClient,
+)
 from azure.confidentialledger import ConfidentialLedgerClient
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
@@ -57,7 +59,9 @@ ledger_id = ledger_endpoint.replace("https://", "").split(".")[0]
 
 identity_service_client = ConfidentialLedgerIdentityServiceClient(ledger_endpoint)
 ledger_certificate = (
-    identity_service_client.confidential_ledger_identity_service.get_ledger_identity(ledger_id)
+    identity_service_client.confidential_ledger_identity_service.get_ledger_identity(
+        ledger_id
+    )
 )
 
 # The Confidential Ledger's TLS certificate must be written to a file to be used by the

@@ -29,7 +29,9 @@ import os
 import sys
 import tempfile
 
-from azure.confidentialledger_identity_service import ConfidentialLedgerIdentityServiceClient
+from azure.confidentialledger_identity_service import (
+    ConfidentialLedgerIdentityServiceClient,
+)
 from azure.confidentialledger import ConfidentialLedgerClient
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
@@ -56,7 +58,9 @@ ledger_id = ledger_endpoint.replace("https://", "").split(".")[0]
 
 identity_service_client = ConfidentialLedgerIdentityServiceClient(ledger_endpoint)
 ledger_certificate = (
-    identity_service_client.confidential_ledger_identity_service.get_ledger_identity(ledger_id)
+    identity_service_client.confidential_ledger_identity_service.get_ledger_identity(
+        ledger_id
+    )
 )
 
 # The Confidential Ledger's TLS certificate must be written to a file to be used by the
@@ -79,27 +83,33 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
             {"contents": "Hello world!"}
         )
         transaction_id = post_entry_result["transactionId"]
-        print(f'Successfully sent a ledger entry with transaction id {transaction_id}')
+        print(f"Successfully sent a ledger entry with transaction id {transaction_id}")
     except HttpResponseError as e:
-        print('Request failed: {}'.format(e.response.json()))
+        print("Request failed: {}".format(e.response.json()))
         raise
 
     # For some scenarios, users may want to eventually ensure the written entry is durably
     # committed.
     try:
-        wait_poller = ledger_client.confidential_ledger.begin_wait_for_commit(transaction_id)
+        wait_poller = ledger_client.confidential_ledger.begin_wait_for_commit(
+            transaction_id
+        )
         wait_poller.wait()
-        print(f'Ledger entry at transaction id {transaction_id} has been committed successfully')
+        print(
+            f"Ledger entry at transaction id {transaction_id} has been committed successfully"
+        )
     except HttpResponseError as e:
-        print('Request failed: {}'.format(e.response.json()))
+        print("Request failed: {}".format(e.response.json()))
         raise
 
     # Get the latest ledger entry.
     try:
-        current_ledger_entry = ledger_client.confidential_ledger.get_current_ledger_entry()["contents"]
-        print(f'The current ledger entry is {current_ledger_entry}')
+        current_ledger_entry = (
+            ledger_client.confidential_ledger.get_current_ledger_entry()["contents"]
+        )
+        print(f"The current ledger entry is {current_ledger_entry}")
     except HttpResponseError as e:
-        print('Request failed: {}'.format(e.response.json()))
+        print("Request failed: {}".format(e.response.json()))
         raise
 
     # Users may wait for a durable commit when writing a ledger entry though this will reduce
@@ -110,43 +120,49 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
         )
         new_post_result = post_poller.result()
         print(
-            'The new ledger entry has been committed successfully at transaction id '
+            "The new ledger entry has been committed successfully at transaction id "
             f'{new_post_result["transactionId"]}'
         )
     except HttpResponseError as e:
-        print('Request failed: {}'.format(e.response.json()))
+        print("Request failed: {}".format(e.response.json()))
         raise
 
     # Get the latest ledger entry.
     try:
-        current_ledger_entry = ledger_client.confidential_ledger.get_current_ledger_entry()["contents"]
-        print(f'The current ledger entry is {current_ledger_entry}')
+        current_ledger_entry = (
+            ledger_client.confidential_ledger.get_current_ledger_entry()["contents"]
+        )
+        print(f"The current ledger entry is {current_ledger_entry}")
     except HttpResponseError as e:
-        print('Request failed: {}'.format(e.response.json()))
+        print("Request failed: {}".format(e.response.json()))
         raise
 
     # Make a query for a prior ledger entry. The service may take some time to load the result, so a
     # poller is provided.
     try:
-        get_entry_poller = ledger_client.confidential_ledger.begin_get_ledger_entry(transaction_id)
+        get_entry_poller = ledger_client.confidential_ledger.begin_get_ledger_entry(
+            transaction_id
+        )
         get_entry_result = get_entry_poller.result()
         print(
             f'At transaction id {get_entry_result["transactionId"]}, the ledger entry contains '
             f'\'{get_entry_result["contents"]}\''
         )
     except HttpResponseError as e:
-        print('Request failed: {}'.format(e.response.json()))
+        print("Request failed: {}".format(e.response.json()))
         raise
 
     # Get a receipt for a  ledger entry.
     try:
-        get_receipt_poller = ledger_client.confidential_ledger.begin_get_receipt(transaction_id)
+        get_receipt_poller = ledger_client.confidential_ledger.begin_get_receipt(
+            transaction_id
+        )
         get_receipt_result = get_receipt_poller.result()
         print(
             f'Receipt for transaction id {get_entry_result["transactionId"]}: {get_receipt_result}'
         )
     except HttpResponseError as e:
-        print('Request failed: {}'.format(e.response.json()))
+        print("Request failed: {}".format(e.response.json()))
         raise
 
     # Users may specify a collectionId to group different sets of writes.
@@ -158,19 +174,21 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
         )
         new_post_result = post_poller.result()
         print(
-            f'The ledger entry for {collection_id} has been committed successfully at transaction '
-            f'id '{new_post_result["transactionId"]}'
+            f"The ledger entry for {collection_id} has been committed successfully at transaction "
+            f'id {new_post_result["transactionId"]}'
         )
     except HttpResponseError as e:
-        print('Request failed: {}'.format(e.response.json()))
+        print("Request failed: {}".format(e.response.json()))
         raise
 
     # Get the latest ledger entry in the collection.
     try:
-        current_ledger_entry = ledger_client.confidential_ledger.get_current_ledger_entry(
-            collection_id=collection_id
-        )["contents"]
-        print(f'The current ledger entry in {collection_id} is {current_ledger_entry}')
+        current_ledger_entry = (
+            ledger_client.confidential_ledger.get_current_ledger_entry(
+                collection_id=collection_id
+            )["contents"]
+        )
+        print(f"The current ledger entry in {collection_id} is {current_ledger_entry}")
     except HttpResponseError as e:
-        print('Request failed: {}'.format(e.response.json()))
+        print("Request failed: {}".format(e.response.json()))
         raise
