@@ -10,16 +10,16 @@ interactions:
     uri: https://identity.confidential-ledger.core.azure.com/ledgerIdentity/lyshi-python-sdk?api-version=2022-05-13
   response:
     body:
-      string: '{"ledgerTlsCertificate":"-----BEGIN CERTIFICATE-----\nMIIBezCCASGgAwIBAgIRALIcQXh8t2gNyfSJxiifOI8wCgYIKoZIzj0EAwIwFjEU\nMBIGA1UEAwwLQ0NGIE5ldHdvcmswHhcNMjIwNjA2MTgwNTMwWhcNMjIwOTA0MTgw\nNTI5WjAWMRQwEgYDVQQDDAtDQ0YgTmV0d29yazBZMBMGByqGSM49AgEGCCqGSM49\nAwEHA0IABKhwx5QkB3yds+CO6vuWVSOdC5Cr4bJDz6Az6cpi3vacAHXovsV3Ozez\nSGNAP0Ohy4Lui7F2Jw+uXVLANpMhRnmjUDBOMAwGA1UdEwQFMAMBAf8wHQYDVR0O\nBBYEFK1wDj0wkK0xKTi12CbkHDU80r/GMB8GA1UdIwQYMBaAFK1wDj0wkK0xKTi1\n2CbkHDU80r/GMAoGCCqGSM49BAMCA0gAMEUCIHyZk7TPbs+lxbPW8G01z2BMDa9G\nifISL1zefkT3lCyiAiEA9XoyhKddPMNUaW+4+90lrcseXXbZdR7DWLNQTNwFErs=\n-----END
+      string: '{"ledgerTlsCertificate":"-----BEGIN CERTIFICATE-----\nMIIBejCCASCgAwIBAgIQPo6ESCqpf+JvsHyfbk3F3jAKBggqhkjOPQQDAjAWMRQw\nEgYDVQQDDAtDQ0YgTmV0d29yazAeFw0yMjA2MTcyMjUzMjJaFw0yMjA5MTUyMjUz\nMjFaMBYxFDASBgNVBAMMC0NDRiBOZXR3b3JrMFkwEwYHKoZIzj0CAQYIKoZIzj0D\nAQcDQgAE0AtPX/j3WA/R3MBXcOT/XRPdmRyDx7a4mj25AnxaOUELWKayTkvZV4ly\ndlnP72oLaIWrKIN+aIjEhNytANcudqNQME4wDAYDVR0TBAUwAwEB/zAdBgNVHQ4E\nFgQUfIOFLnFPQ8uUL0xlsoiDLUmMfdkwHwYDVR0jBBgwFoAUfIOFLnFPQ8uUL0xl\nsoiDLUmMfdkwCgYIKoZIzj0EAwIDSAAwRQIgG9FxH5Dm6Dq+1nLCRi+0yCZbNxAE\np1cSqjTGTlxHf10CIQDjsEmZhmACgyB1wMd3HtPBhAVj0xTJXdc+/lZPtG2i/w==\n-----END
         CERTIFICATE-----\n","ledgerId":"lyshi-python-sdk"}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Mon, 06 Jun 2022 18:15:03 GMT
+      date: Fri, 17 Jun 2022 23:04:03 GMT
       server: Kestrel
       transfer-encoding: chunked
-      x-ms-image-digest: sha256:8df21bf6b92018f3152b8bbca434b14dd2db607cab98f7f01187df4729f1b008
-      x-ms-image-tag: 1.0.01970.467-e3aaf78e2208bae8fe669bf6476299013fc7f446
-      x-ms-machinename: identityservice-dbd5c75f9-mgxqb
+      x-ms-image-digest: sha256:29bbfd3911930b3c6bc6ff9b8b9744695478f16e37f5faf310a9310501ee7e21
+      x-ms-image-tag: 1.0.01994.526-688809e45fe53dbeda7757e735f2db0f0b911134
+      x-ms-machinename: identityservice-7cbdbd8dcb-htcsq
     status:
       code: 200
       message: OK
