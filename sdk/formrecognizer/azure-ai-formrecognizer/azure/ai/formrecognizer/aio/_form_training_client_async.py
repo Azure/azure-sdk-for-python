@@ -11,8 +11,10 @@ from typing import (
     Dict,
     Union,
     List,
-    TYPE_CHECKING,
 )
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.pipeline import PipelineResponse
 from azure.core.polling import AsyncLROPoller
 from azure.core.pipeline import AsyncPipeline
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
@@ -25,11 +27,6 @@ from .._api_versions import FormRecognizerApiVersion
 from .._models import CustomFormModelInfo, AccountProperties, CustomFormModel
 from ._form_base_client_async import FormRecognizerClientBaseAsync
 from .._polling import FormTrainingPolling, CopyPolling
-
-if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential
-    from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.pipeline import PipelineResponse
 
 
 class FormTrainingClient(FormRecognizerClientBaseAsync):
@@ -75,7 +72,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
     def __init__(
         self,
         endpoint: str,
-        credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
         **kwargs: Any
     ) -> None:
         api_version = kwargs.pop("api_version", FormRecognizerApiVersion.V2_1)

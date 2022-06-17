@@ -7,8 +7,14 @@
 
 import datetime
 import json
-from typing import Union, TypeVar, Any, TYPE_CHECKING
+from typing import Union, TypeVar, Any
 from azure.core.exceptions import HttpResponseError, ODataV4Format
+from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline.transport import (
+    HttpResponse,
+    AsyncHttpResponse,
+    HttpRequest,
+)
 from azure.core.polling import LROPoller, PollingMethod
 from azure.core.polling.base_polling import (
     LocationPolling,
@@ -20,16 +26,9 @@ from azure.core.polling.base_polling import (
 
 PollingReturnType = TypeVar("PollingReturnType")
 
-if TYPE_CHECKING:
-    from azure.core.pipeline import PipelineResponse
-    from azure.core.pipeline.transport import (
-        HttpResponse,
-        AsyncHttpResponse,
-        HttpRequest,
-    )
 
-    ResponseType = Union[HttpResponse, AsyncHttpResponse]
-    PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
+ResponseType = Union[HttpResponse, AsyncHttpResponse]
+PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
 
 
 def raise_error(response, errors, message):

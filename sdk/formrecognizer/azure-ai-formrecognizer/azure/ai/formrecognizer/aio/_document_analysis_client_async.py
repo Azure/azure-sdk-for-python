@@ -5,16 +5,14 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, IO, Union, TYPE_CHECKING
+from typing import Any, IO, Union
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import AsyncLROPoller
 from .._api_versions import DocumentAnalysisApiVersion
 from ._form_base_client_async import FormRecognizerClientBaseAsync
 from .._models import AnalyzeResult
-
-if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
@@ -63,7 +61,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
     def __init__(
         self,
         endpoint: str,
-        credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
         **kwargs: Any
     ) -> None:
         api_version = kwargs.pop(

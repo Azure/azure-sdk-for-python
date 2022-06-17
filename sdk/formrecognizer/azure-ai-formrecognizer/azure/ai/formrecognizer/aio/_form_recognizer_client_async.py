@@ -5,7 +5,9 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, IO, Union, List, TYPE_CHECKING
+from typing import Any, IO, Union, List
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import AsyncLROPoller
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
@@ -19,10 +21,6 @@ from .._api_versions import FormRecognizerApiVersion
 from .._polling import AnalyzePolling
 from ._form_base_client_async import FormRecognizerClientBaseAsync
 from .._models import FormPage, RecognizedForm
-
-if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class FormRecognizerClient(FormRecognizerClientBaseAsync):
@@ -68,7 +66,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
     def __init__(
         self,
         endpoint: str,
-        credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
         **kwargs: Any
     ) -> None:
         api_version = kwargs.pop("api_version", FormRecognizerApiVersion.V2_1)
