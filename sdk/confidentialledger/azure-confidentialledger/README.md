@@ -238,7 +238,7 @@ post_poller = ledger_client.confidential_ledger.begin_post_ledger_entry(
 )
 last_transaction_id = post_poller.result()["transactionId"]
 
-ranged_result = client.confidential_ledger.list_ledger_entries(
+ranged_result = ledger_client.confidential_ledger.list_ledger_entries(
     from_transaction_id=first_transaction_id,
     to_transaction_id=last_transaction_id,
 )

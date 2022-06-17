@@ -24,7 +24,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import io
 import logging
 import os
 import sys
@@ -32,8 +31,9 @@ import tempfile
 
 from azure.confidentialledger_identity_service import ConfidentialLedgerIdentityServiceClient
 from azure.confidentialledger import ConfidentialLedgerClient
-from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
+from azure.identity import DefaultAzureCredential
+
 
 logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger()
@@ -67,7 +67,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
     ledger_certificate_file.flush()
 
     # Build a client through AAD
-    client = ConfidentialLedgerClient(
+    ledger_client = ConfidentialLedgerClient(
         ledger_endpoint,
         credential=DefaultAzureCredential(),
         ledger_certificate_path=ledger_certificate_file.name,
@@ -75,7 +75,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
 
     # Write a ledger entry.
     try:
-        post_entry_result = client.confidential_ledger.post_ledger_entry(
+        post_entry_result = ledger_client.confidential_ledger.post_ledger_entry(
             {"contents": "Hello world!"}
         )
         transaction_id = post_entry_result["transactionId"]
@@ -87,7 +87,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
     # For some scenarios, users may want to eventually ensure the written entry is durably
     # committed.
     try:
-        wait_poller = client.confidential_ledger.begin_wait_for_commit(transaction_id)
+        wait_poller = ledger_client.confidential_ledger.begin_wait_for_commit(transaction_id)
         wait_poller.wait()
         print(f'Ledger entry at transaction id {transaction_id} has been committed successfully')
     except HttpResponseError as e:
@@ -96,7 +96,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
 
     # Get the latest ledger entry.
     try:
-        current_ledger_entry = client.confidential_ledger.get_current_ledger_entry()["contents"]
+        current_ledger_entry = ledger_client.confidential_ledger.get_current_ledger_entry()["contents"]
         print(f'The current ledger entry is {current_ledger_entry}')
     except HttpResponseError as e:
         print('Request failed: {}'.format(e.response.json()))
@@ -105,7 +105,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
     # Users may wait for a durable commit when writing a ledger entry though this will reduce
     # client throughput.
     try:
-        post_poller = client.confidential_ledger.begin_post_ledger_entry(
+        post_poller = ledger_client.confidential_ledger.begin_post_ledger_entry(
             {"contents": "Hello world again!"}
         )
         new_post_result = post_poller.result()
@@ -119,7 +119,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
 
     # Get the latest ledger entry.
     try:
-        current_ledger_entry = client.confidential_ledger.get_current_ledger_entry()["contents"]
+        current_ledger_entry = ledger_client.confidential_ledger.get_current_ledger_entry()["contents"]
         print(f'The current ledger entry is {current_ledger_entry}')
     except HttpResponseError as e:
         print('Request failed: {}'.format(e.response.json()))
@@ -128,7 +128,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
     # Make a query for a prior ledger entry. The service may take some time to load the result, so a
     # poller is provided.
     try:
-        get_entry_poller = client.confidential_ledger.begin_get_ledger_entry(transaction_id)
+        get_entry_poller = ledger_client.confidential_ledger.begin_get_ledger_entry(transaction_id)
         get_entry_result = get_entry_poller.result()
         print(
             f'At transaction id {get_entry_result["transactionId"]}, the ledger entry contains '
@@ -140,7 +140,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
 
     # Get a receipt for a  ledger entry.
     try:
-        get_receipt_poller = client.confidential_ledger.begin_get_receipt(transaction_id)
+        get_receipt_poller = ledger_client.confidential_ledger.begin_get_receipt(transaction_id)
         get_receipt_result = get_receipt_poller.result()
         print(
             f'Receipt for transaction id {get_entry_result["transactionId"]}: {get_receipt_result}'
@@ -152,7 +152,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
     # Users may specify a collectionId to group different sets of writes.
     collection_id = "myCollection"
     try:
-        post_poller = client.confidential_ledger.begin_post_ledger_entry(
+        post_poller = ledger_client.confidential_ledger.begin_post_ledger_entry(
             {"contents": "Hello world again!"},
             collection_id=collection_id,
         )
@@ -167,7 +167,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
 
     # Get the latest ledger entry in the collection.
     try:
-        current_ledger_entry = client.confidential_ledger.get_current_ledger_entry(
+        current_ledger_entry = ledger_client.confidential_ledger.get_current_ledger_entry(
             collection_id=collection_id
         )["contents"]
         print(f'The current ledger entry in {collection_id} is {current_ledger_entry}')
