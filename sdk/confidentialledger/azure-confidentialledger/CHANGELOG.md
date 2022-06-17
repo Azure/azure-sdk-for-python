@@ -2,13 +2,16 @@
 
 ## 1.0.0 (Unreleased)
 
+GA Data Plane Python SDK for Confidential Ledger.
+
 ### Bugs Fixed
 - Fixes [[confidentialledger] mypy: function has duplicate type signatures (#23356)](https://github.com/Azure/azure-sdk-for-python/issues/23356)
 - User ids that are certificate fingerprints are no longer URL-encoded in the request URI.
 
 ### Breaking Changes
-- Removed `TransactionStatus` model.
-- `get_ledger_entry` and `wait_until_durable` align with [Azure Python SDK conventions](https://docs.microsoft.com/en-us/python/api/azure-core/azure.core.pipeline.policies.retrypolicy?view=azure-python).
+- Removed all models. Methods now return JSON directly as a side-effect of migrating to DPG generation.
+- In accordance with the updated Swagger, the `sub_ledger_id` fields are now named `collection_id`.
+- Renamed `azure.confidentialledger.identity_service` to `azure.confidentialledger_identity_service`.
 
 ### Other Changes
 
