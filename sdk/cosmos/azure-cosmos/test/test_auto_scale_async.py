@@ -152,7 +152,7 @@ class AutoScaleTest(unittest.TestCase):
             ['throughputPolicy']['incrementPercent'], 3)
 
         await self.created_database.delete_container(created_container)
-        await  self.client.delete_database(test_config._test_config.TEST_DATABASE_ID)
+        await self.client.delete_database(test_config._test_config.TEST_DATABASE_ID)
     async def test_create_database_if_not_exists(self):
         # Testing auto_scale_settings for the create_database_if_not_exists method
         client = CosmosClient(self.host, self.masterKey, consistency_level="Session",
