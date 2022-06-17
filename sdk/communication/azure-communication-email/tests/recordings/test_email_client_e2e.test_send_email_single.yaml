@@ -1,0 +1,53 @@
+interactions:
+- request:
+    body: '{"sender": "DoNotReply@266db372-a95a-494f-88b5-81ffd9e866af.azurecomm.net",
+      "content": {"subject": "This is the subject", "plainText": "This is the body"},
+      "importance": "normal", "recipients": {"to": [{"email": "acseaastesting@gmail.com",
+      "displayName": "Customer Name"}]}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '274'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-email/1.0.0b1 Python/3.10.4 (Windows-10-10.0.19044-SP0)
+      repeatability-first-sent:
+      - Thu, 16 Jun 2022 23:57:39 GMT
+      repeatability-request-id:
+      - e19daf10-3c5c-4b5a-84a2-6dcd31946e9a
+      x-ms-content-sha256:
+      - 5Efo+JDWFExoHqUXqWOtGVGR8b9UFPpSZvfMSo/0XCQ=
+      x-ms-date:
+      - Thu, 16 Jun 2022 23:57:39 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://email-js-sdk-recording-comm-2.communication.azure.com/emails:send?api-version=2021-10-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions:
+      - 2021-10-01-preview
+      content-length:
+      - '0'
+      date:
+      - Thu, 16 Jun 2022 23:57:40 GMT
+      operation-location:
+      - https://email-js-sdk-recording-comm-2.communication.azure.com/emails/0ba65ac2-55da-4178-85b4-1d4f44c6fa84/status
+      repeatability-result:
+      - accepted
+      x-azure-ref:
+      - 0dMOrYgAAAAAaqONyzFwZSo1BsrwLQtafV1NURURHRTA4MTEAOWZjN2I1MTktYThjYy00Zjg5LTkzNWUtYzkxNDhhZTA5ZTgx
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 202
+      message: Accepted
+version: 1
