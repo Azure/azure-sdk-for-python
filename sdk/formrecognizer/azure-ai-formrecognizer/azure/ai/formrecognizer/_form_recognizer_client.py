@@ -301,7 +301,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             raise e
 
     @distributed_trace
-    def begin_recognize_business_cards_from_url(self, business_card_url: str, **kwargs: Any) -> LROPoller[List[RecognizedForm]]:
+    def begin_recognize_business_cards_from_url(
+        self, business_card_url: str, **kwargs: Any
+    ) -> LROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given business card.
         The input document must be the location (URL) of the card to be analyzed.
 
@@ -830,7 +832,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_recognize_custom_forms_from_url(self, model_id: str, form_url: str, **kwargs: Any) -> LROPoller[List[RecognizedForm]]:
+    def begin_recognize_custom_forms_from_url(
+        self, model_id: str, form_url: str, **kwargs: Any
+    ) -> LROPoller[List[RecognizedForm]]:
         """Analyze a custom form with a model trained with or without labels. The form
         to analyze should be of the same type as the forms that were used to train the model.
         The input document must be the location (URL) of the document to be analyzed.
