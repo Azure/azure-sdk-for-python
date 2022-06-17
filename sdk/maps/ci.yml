@@ -36,3 +36,6 @@ extends:
       safeName: azuremapssearch
     - name: azure-maps-geolocation
       safeName: azuremapsgeolocation
+    - name: azure-maps-render
+      safeName: azuremapsrender
+
