@@ -3,7 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Any, Union, TYPE_CHECKING
+from typing import Any, Union
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import HttpLoggingPolicy
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._api_versions import validate_api_version
@@ -14,9 +15,6 @@ from ._helpers import (
     QuotaExceededPolicy,
 )
 from ._user_agent import USER_AGENT
-
-if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential, TokenCredential
 
 
 class FormRecognizerClientBase:

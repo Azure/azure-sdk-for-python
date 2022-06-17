@@ -5,15 +5,13 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, Union, IO, TYPE_CHECKING
+from typing import Any, Union, IO
+from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from ._api_versions import DocumentAnalysisApiVersion
 from ._form_base_client import FormRecognizerClientBase
 from ._models import AnalyzeResult
-
-if TYPE_CHECKING:
-    from azure.core.polling import LROPoller
-    from azure.core.credentials import AzureKeyCredential, TokenCredential
 
 
 class DocumentAnalysisClient(FormRecognizerClientBase):
@@ -80,7 +78,9 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         return AnalyzeResult._from_generated(analyze_operation_result.analyze_result)
 
     @distributed_trace
-    def begin_analyze_document(self, model: str, document: Union[bytes, IO[bytes]], **kwargs: Any) -> LROPoller[AnalyzeResult]:
+    def begin_analyze_document(
+        self, model: str, document: Union[bytes, IO[bytes]], **kwargs: Any
+    ) -> LROPoller[AnalyzeResult]:
         """Analyze field text and semantic values from a given document.
 
         :param str model: A unique model identifier can be passed in as a string.

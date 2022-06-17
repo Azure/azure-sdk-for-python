@@ -119,7 +119,9 @@ class DocumentModelAdministrationLROPoller(LROPoller[PollingReturnType]):
         return last_updated_on
 
     @classmethod
-    def from_continuation_token(cls, polling_method: PollingMethod[PollingReturnType], continuation_token: str, **kwargs: Any) -> "DocumentModelAdministrationLROPoller":
+    def from_continuation_token(
+        cls, polling_method: PollingMethod[PollingReturnType], continuation_token: str, **kwargs: Any
+    ) -> "DocumentModelAdministrationLROPoller":
         (
             client,
             initial_response,

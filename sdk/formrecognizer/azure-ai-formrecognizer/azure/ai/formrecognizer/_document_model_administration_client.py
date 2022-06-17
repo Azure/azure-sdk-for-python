@@ -11,8 +11,8 @@ from typing import (
     Union,
     List,
     Dict,
-    TYPE_CHECKING,
 )
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.pipeline import Pipeline
@@ -33,9 +33,6 @@ from ._models import (
     ModelOperationInfo,
     AccountInfo,
 )
-
-if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential, TokenCredential
 
 
 class DocumentModelAdministrationClient(FormRecognizerClientBase):
@@ -95,7 +92,9 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_build_model(self, source: str, build_mode: Union[str, DocumentBuildMode], **kwargs: Any) -> DocumentModelAdministrationLROPoller[DocumentModel]:
+    def begin_build_model(
+        self, source: str, build_mode: Union[str, DocumentBuildMode], **kwargs: Any
+    ) -> DocumentModelAdministrationLROPoller[DocumentModel]:
         """Build a custom model.
 
         The request must include a `source` parameter that is an
@@ -181,7 +180,9 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_create_composed_model(self, component_model_ids: List[str], **kwargs: Any) -> DocumentModelAdministrationLROPoller[DocumentModel]:
+    def begin_create_composed_model(
+        self, component_model_ids: List[str], **kwargs: Any
+    ) -> DocumentModelAdministrationLROPoller[DocumentModel]:
         """Creates a composed model from a collection of existing models.
 
         A composed model allows multiple models to be called with a single model ID. When a document is

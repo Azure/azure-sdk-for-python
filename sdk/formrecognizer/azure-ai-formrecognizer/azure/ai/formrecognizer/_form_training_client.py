@@ -11,12 +11,14 @@ from typing import (
     Dict,
     Union,
     List,
-    TYPE_CHECKING,
 )
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
-from azure.core.pipeline import Pipeline
+from azure.core.pipeline import Pipeline, PipelineResponse
+from azure.core.pipeline.transport import HttpResponse
 from ._helpers import TransportWrapper
 from ._api_versions import FormRecognizerApiVersion
 from ._models import (
@@ -28,13 +30,7 @@ from ._polling import FormTrainingPolling, CopyPolling
 from ._form_recognizer_client import FormRecognizerClient
 from ._form_base_client import FormRecognizerClientBase
 
-if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential, TokenCredential
-    from azure.core.pipeline import PipelineResponse
-    from azure.core.pipeline.transport import HttpResponse
-    from azure.core.paging import ItemPaged
-
-    PipelineResponseType = HttpResponse
+PipelineResponseType = HttpResponse
 
 
 class FormTrainingClient(FormRecognizerClientBase):
@@ -88,7 +84,9 @@ class FormTrainingClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_training(self, training_files_url: str, use_training_labels: bool, **kwargs: Any) -> LROPoller[CustomFormModel]:
+    def begin_training(
+        self, training_files_url: str, use_training_labels: bool, **kwargs: Any
+    ) -> LROPoller[CustomFormModel]:
         """Create and train a custom model. The request must include a `training_files_url` parameter that is an
         externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
         a container URI (without SAS) is accepted only when the container is public or has a managed identity
@@ -320,7 +318,9 @@ class FormTrainingClient(FormRecognizerClientBase):
         return CustomFormModel._from_generated(response, api_version=self._api_version)
 
     @distributed_trace
-    def get_copy_authorization(self, resource_id: str, resource_region: str, **kwargs: Any) -> Dict[str, Union[str, int]]:
+    def get_copy_authorization(
+        self, resource_id: str, resource_region: str, **kwargs: Any
+    ) -> Dict[str, Union[str, int]]:
         """Generate authorization for copying a custom model into the target Form Recognizer resource.
         This should be called by the target resource (where the model will be copied to)
         and the output can be passed as the `target` parameter into :func:`~begin_copy_model()`.
