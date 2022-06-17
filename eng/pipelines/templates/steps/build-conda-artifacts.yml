@@ -70,7 +70,7 @@ steps:
 
     - bash: |
         conda env create --name ${{ artifact.name }} --file $(Build.SourcesDirectory)/eng/conda_env.yml
-        conda install --yes --quiet --name ${{ artifact.name }} conda-build conda-verify typing_extensions
+        conda install --yes --quiet --name ${{ artifact.name }} conda-build conda-verify typing-extensions
       displayName: 'Prepare Conda Environment for building ${{ artifact.name }}'
 
     - bash: |
