@@ -31,7 +31,7 @@ pip install azure-ai-language-conversations
 ```
 
 ### Authenticate the client
-In order to interact with the CLU service, you'll need to create an instance of the [ConversationAnalysisClient][conversationanalysis_client_class] class. You will need an **endpoint**, and an **API key** to instantiate a client object. For more information regarding authenticating with Cognitive Services, see [Authenticate requests to Azure Cognitive Services][cognitive_auth].
+In order to interact with the CLU service, you'll need to create an instance of the [ConversationAnalysisClient][conversationanalysis_client_class] class, or [ConversationAuthoringClient][conversationauthoring_client_class] class. You will need an **endpoint**, and an **API key** to instantiate a client object. For more information regarding authenticating with Cognitive Services, see [Authenticate requests to Azure Cognitive Services][cognitive_auth].
 
 #### Get an API key
 You can get the **endpoint** and an **API key** from the Cognitive Services resource in the [Azure Portal][azure_portal].
@@ -55,11 +55,26 @@ credential = AzureKeyCredential("<api-key>")
 client = ConversationAnalysisClient(endpoint, credential)
 ```
 
+#### Create ConversationAuthoringClient
+Once you've determined your **endpoint** and **API key** you can instantiate a `ConversationAuthoringClient`:
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.conversations.authoring import ConversationAuthoringClient
+
+endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
+credential = AzureKeyCredential("<api-key>")
+client = ConversationAuthoringClient(endpoint, credential)
+```
+
 
 ## Key concepts
 
 ### ConversationAnalysisClient
 The [ConversationAnalysisClient][conversationanalysis_client_class] is the primary interface for making predictions using your deployed Conversations models. For asynchronous operations, an async `ConversationAnalysisClient` is in the `azure.ai.language.conversation.aio` namespace.
+
+### ConversationAnalysisClient
+The [ConversationAuthoringClient][conversationauthoring_client_class] is the primary class for interfacing with the authorings part of your language resource (only CLU projects). For example, you can use it to create a project, populate with training data, train, test, and deploy. For asynchronous operations, an async `ConversationAnalysisClient` is in the `azure.ai.language.conversation.authoring.aio` namespace.
 
 ## Examples
 The `azure-ai-language-conversation` client library provides both synchronous and asynchronous APIs.
@@ -197,6 +212,63 @@ if top_intent_object["targetProjectKind"] == "Luis":
         print("\n{}".format(entity))
 ```
 
+### Import a Conversation Project
+This sample shows a common scenario for the authoring part of the SDK
+
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.conversations.authoring import ConversationAuthoringClient
+
+clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
+clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
+
+project_name = "test_project"
+
+exported_project_assets = {
+    "projectKind": "Conversation",
+    "intents": [{"category": "Read"}, {"category": "Delete"}],
+    "entities": [{"category": "Sender"}],
+    "utterances": [
+        {
+            "text": "Open Blake's email",
+            "dataset": "Train",
+            "intent": "Read",
+            "entities": [{"category": "Sender", "offset": 5, "length": 5}],
+        },
+        {
+            "text": "Delete last email",
+            "language": "en-gb",
+            "dataset": "Test",
+            "intent": "Delete",
+            "entities": [],
+        },
+    ],
+}
+
+client = ConversationAuthoringClient(
+    clu_endpoint, AzureKeyCredential(clu_key)
+)
+poller = client.begin_import_project(
+    project_name=project_name,
+    project={
+        "assets": exported_project_assets,
+        "metadata": {
+            "projectKind": "Conversation",
+            "settings": {"confidenceThreshold": 0.7},
+            "projectName": "EmailApp",
+            "multilingual": True,
+            "description": "Trying out CLU",
+            "language": "en-us",
+        },
+        "projectFileVersion": "2022-05-01",
+    },
+)
+response = poller.result()
+print(response)
+
+```
+
 
 ## Optional Configuration
 
@@ -283,5 +355,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [conversationallanguage_docs]: https://docs.microsoft.com/azure/cognitive-services/language-service/conversational-language-understanding/overview
 [conversationallanguage_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/README.md
 [conversationanalysis_client_class]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html#azure.ai.language.conversations.ConversationAnalysisClient
+[conversationauthoring_client_class]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html#azure.ai.language.conversations.ConversationAuthoringClient
 [azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftemplate%2Fazure-template%2FREADME.png)
