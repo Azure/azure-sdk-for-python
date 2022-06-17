@@ -15,14 +15,14 @@ from azure.core.pipeline import policies
 from ._version import VERSION
 
 
-class ConversationAnalysisProjectsClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
-    """Configuration for ConversationAnalysisProjectsClient.
+class ConversationAuthoringClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+    """Configuration for ConversationAuthoringClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
-     https://:code:`<resource-name>`.api.cognitiveservices.azure.com). Required.
+     https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
@@ -37,7 +37,7 @@ class ConversationAnalysisProjectsClientConfiguration(Configuration):  # pylint:
         credential: AzureKeyCredential,
         **kwargs: Any
     ) -> None:
-        super(ConversationAnalysisProjectsClientConfiguration, self).__init__(**kwargs)
+        super(ConversationAuthoringClientConfiguration, self).__init__(**kwargs)
         api_version = kwargs.pop('api_version', "2022-05-01")  # type: str
 
         if endpoint is None:

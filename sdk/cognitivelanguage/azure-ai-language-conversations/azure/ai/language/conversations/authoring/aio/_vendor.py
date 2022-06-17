@@ -8,30 +8,18 @@
 from abc import ABC
 from typing import TYPE_CHECKING
 
-from ._configuration import ConversationAnalysisProjectsClientConfiguration
+from ._configuration import ConversationAuthoringClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core import PipelineClient
+    from azure.core import AsyncPipelineClient
 
-    from ._serialization import Deserializer, Serializer
+    from .._serialization import Deserializer, Serializer
 
-
-def _format_url_section(template, **kwargs):
-    components = template.split("/")
-    while components:
-        try:
-            return template.format(**kwargs)
-        except KeyError as key:
-            formatted_components = template.split("/")
-            components = [
-                c for c in formatted_components if "{}".format(key.args[0]) not in c
-            ]
-            template = "/".join(components)
 
 class MixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
-    _client: "PipelineClient"
-    _config: ConversationAnalysisProjectsClientConfiguration
+    _client: "AsyncPipelineClient"
+    _config: ConversationAuthoringClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"

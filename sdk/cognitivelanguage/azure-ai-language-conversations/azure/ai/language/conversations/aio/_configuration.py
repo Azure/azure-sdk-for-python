@@ -22,7 +22,7 @@ class ConversationAnalysisClientConfiguration(Configuration):  # pylint: disable
     attributes.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
-     https://:code:`<resource-name>`.api.cognitiveservices.azure.com). Required.
+     https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential

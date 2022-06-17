@@ -13,15 +13,15 @@ from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import ConversationAnalysisProjectsClientConfiguration
-from ._operations import ConversationAnalysisProjectsClientOperationsMixin
+from ._configuration import ConversationAuthoringClientConfiguration
+from ._operations import ConversationAuthoringClientOperationsMixin
 from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Dict
 
-class ConversationAnalysisProjectsClient(ConversationAnalysisProjectsClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class ConversationAuthoringClient(ConversationAuthoringClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms. The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
@@ -29,7 +29,7 @@ class ConversationAnalysisProjectsClient(ConversationAnalysisProjectsClientOpera
     href="https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview</a>`.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
-     https://:code:`<resource-name>`.api.cognitiveservices.azure.com). Required.
+     https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
@@ -47,7 +47,7 @@ class ConversationAnalysisProjectsClient(ConversationAnalysisProjectsClientOpera
         **kwargs: Any
     ) -> None:
         _endpoint = '{Endpoint}/language'
-        self._config = ConversationAnalysisProjectsClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = ConversationAuthoringClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -90,7 +90,7 @@ class ConversationAnalysisProjectsClient(ConversationAnalysisProjectsClientOpera
         self._client.close()
 
     def __enter__(self):
-        # type: () -> ConversationAnalysisProjectsClient
+        # type: () -> ConversationAuthoringClient
         self._client.__enter__()
         return self
 

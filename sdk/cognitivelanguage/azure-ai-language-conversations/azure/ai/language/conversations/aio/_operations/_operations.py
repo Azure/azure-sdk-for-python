@@ -76,10 +76,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                           the query for further review.
                         "projectName": "str",  # The name of the project to use. Required.
                         "stringIndexType": "TextElements_v8",  # Optional. Default value is
-                          "TextElements_v8". Specifies the method used to interpret string offsets.
-                          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For
-                          additional information see https://aka.ms/text-analytics-offsets. Known
-                          values are: "TextElements_v8", "UnicodeCodePoint", and "Utf16CodeUnit".
+                          "TextElements_v8". Specifies the method used to interpret string offsets. Set
+                          to "UnicodeCodePoint" for Python strings. Known values are:
+                          "TextElements_v8", "UnicodeCodePoint", and "Utf16CodeUnit".
                         "targetProjectParameters": {
                             "str": analysis_parameters
                         },
