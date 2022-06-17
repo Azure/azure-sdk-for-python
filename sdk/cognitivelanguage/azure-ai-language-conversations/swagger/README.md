@@ -104,11 +104,6 @@ directive:
     multilingualParam.type = "boolean";
 ```
 
-<<<<<<< HEAD
-## Authoring API Directives
-
-### Give LROs return types
-=======
 ### Python customizations
 
 ```yaml
@@ -120,16 +115,18 @@ directive:
     $["description"] = "Specifies the method used to interpret string offsets. Set to \"UnicodeCodePoint\" for Python strings.";
     $["x-ms-client-default"] = "UnicodeCodePoint";
 
-# This is the only option for these types?
+# Only Utf16CodeUnit is supported for these types right now. Once UnicodeCodePoint is supported we can default to that.
 # - from: swagger-document
 #   where: $.definitions.ConversationalAnalysisAuthoringStringIndexType
 #   transform: |
-#     $["x-ms-client-default"] = "Utf16CodeUnit";
+#     $["description"] = "Specifies the method used to interpret string offsets. Set to \"UnicodeCodePoint\" for Python strings.";
+#     $["x-ms-client-default"] = "UnicodeCodePoint";
 
 # - from: swagger-document
 #   where: $.parameters.ConversationalAnalysisAuthoringStringIndexTypeQueryParameter
 #   transform: |
-#     $["x-ms-client-default"] = "Utf16CodeUnit";
+#     $["description"] = "Specifies the method used to interpret string offsets. Set to \"UnicodeCodePoint\" for Python strings.";
+#     $["x-ms-client-default"] = "UnicodeCodePoint";
 ```
 
 
@@ -155,7 +152,6 @@ directive:
 
 
 ### Authoring API Directives
->>>>>>> 436f425dc9 (update swagger transform)
 
 ```yaml $(tag) == 'release_authoring_1_0'
 # Give LROs return types
