@@ -55,4 +55,3 @@ async def test_event_hubs_client_web_socket_async(live_eventhub):
         await receive_client.receive_message_batch_async(max_batch_size=1)
         return receive_client._received_messages.qsize() - begin
 
-# Need to fix this test 
