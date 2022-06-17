@@ -4,6 +4,42 @@ Azure Confidential Ledger provides a service for logging to an immutable, tamper
 
 [Source code][confidential_ledger_client_src] | [Package (PyPI)][pypi_package_confidential_ledger] | [API reference documentation][reference_docs] | [Product documentation][confidential_ledger_docs]
 
+# Table of Contents
+- [Azure Confidential Ledger client library for Python](#azure-confidential-ledger-client-library-for-python)
+- [Table of Contents](#table-of-contents)
+  - [Getting started](#getting-started)
+    - [Install packages](#install-packages)
+    - [Prerequisites](#prerequisites)
+    - [Authenticate the client](#authenticate-the-client)
+      - [Using Azure Active Directory](#using-azure-active-directory)
+      - [Using a client certificate](#using-a-client-certificate)
+    - [Create a client](#create-a-client)
+  - [Key concepts](#key-concepts)
+    - [Ledger entries and transactions](#ledger-entries-and-transactions)
+    - [Receipts](#receipts)
+    - [Collections](#collections)
+    - [Users](#users)
+    - [Confidential computing](#confidential-computing)
+    - [Confidential Consortium Framework](#confidential-consortium-framework)
+  - [Examples](#examples)
+    - [Append entry](#append-entry)
+    - [Get receipt](#get-receipt)
+    - [Using sub-ledgers](#using-sub-ledgers)
+    - [Retrieving ledger entries](#retrieving-ledger-entries)
+    - [Making a ranged query](#making-a-ranged-query)
+    - [Managing users](#managing-users)
+    - [Using certificate authentication](#using-certificate-authentication)
+    - [Verifying service details](#verifying-service-details)
+    - [Async API](#async-api)
+      - [Asynchronously get a ledger entry](#asynchronously-get-a-ledger-entry)
+      - [Asynchronously get a range of ledger entries](#asynchronously-get-a-range-of-ledger-entries)
+  - [Troubleshooting](#troubleshooting)
+    - [General](#general)
+    - [Logging](#logging)
+  - [Next steps](#next-steps)
+    - [Additional Documentation](#additional-documentation)
+  - [Contributing](#contributing)
+
 ## Getting started
 ### Install packages
 Install [azure-confidentialledger][pypi_package_confidential_ledger] and [azure-identity][azure_identity_pypi] with [pip][pip]:
@@ -42,7 +78,7 @@ Because Confidential Ledgers use self-signed certificates securely generated and
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.confidentialledger import ConfidentialLedgerClient
-from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
+from azure.confidentialledger_identity_service import ConfidentialLedgerIdentityServiceClient
 
 identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
 network_identity = identity_client.get_ledger_identity(
@@ -51,7 +87,7 @@ network_identity = identity_client.get_ledger_identity(
 
 ledger_tls_cert_file_name = "ledger_certificate.pem"
 with open(ledger_tls_cert_file_name, "w") as cert_file:
-    cert_file.write(network_identity.ledger_tls_certificate)
+    cert_file.write(network_identity["ledgerTlsCertificate"])
 
 credential = DefaultAzureCredential()
 ledger_client = ConfidentialLedgerClient(
@@ -68,10 +104,10 @@ Every write to Azure Confidential Ledger generates an immutable ledger entry in 
 ### Receipts
 State changes to the Confidential Ledger are saved in a data structure called a Merkle tree. To cryptographically verify that writes were correctly saved, a Merkle proof, or receipt, can be retrieved for any transaction id.
 
-### Sub-ledgers
-While most use cases will involve one ledger, we provide the sub-ledger feature in case semantically or logically different groups of data need to be stored in the same Confidential Ledger.
+### Collections
+While most use cases involve just one collection per Confidential Ledger, we provide the collection id feature in case semantically or logically different groups of data need to be stored in the same Confidential Ledger.
 
-Ledger entries are retrieved by their sub-ledger identifier. The Confidential Ledger will always assume a constant, service-determined sub-ledger id for entries submitted without a sub-ledger specified.
+Ledger entries are retrieved by their `collectionId`. The Confidential Ledger will always assume a constant, service-determined `collectionId` for entries written without a `collectionId` specified.
 
 ### Users
 Users are managed directly with the Confidential Ledger instead of through Azure. Users may be AAD-based, identified by their AAD object id, or certificate-based, identified by their PEM certificate fingerprint.
@@ -80,21 +116,10 @@ Users are managed directly with the Confidential Ledger instead of through Azure
 [Azure Confidential Computing][azure_confidential_computing] allows you to isolate and protect your data while it is being processed in the cloud. Azure Confidential Ledger runs on Azure Confidential Computing virtual machines, thus providing stronger data protection with encryption of data in use.
 
 ### Confidential Consortium Framework
-Azure Confidential Ledger is built on Microsoft Research's open-source [Confidential Consortium Framework (CCF)][ccf]. Under CCF, applications are managed by a consortium of members with the ability to submit proposals to modify and govern application operation. In Azure Confidential Ledger, Microsoft Azure owns a member identity, allowing it to perform governance actions like replacing unhealthy nodes in the Confidential Ledger, or upgrading the enclave code.
+Azure Confidential Ledger is built on Microsoft Research's open-source [Confidential Consortium Framework (CCF)][ccf]. Under CCF, applications are managed by a consortium of members with the ability to submit proposals to modify and govern application operation. In Azure Confidential Ledger, Microsoft Azure owns a an operator member identity that allows it to perform governance and maintenance actions like replacing unhealthy nodes in the Confidential Ledger and upgrading the enclave code.
 
 ## Examples
 This section contains code snippets covering common tasks:
-* [Append a ledger entry](#append-entry "Append a ledger entry")
-* [Get a receipt](#get-receipt "Get a receipt")
-* [Using sub-ledgers](#using-sub-ledgers "Using sub-ledgers")
-* [Retrieving ledger entries](#retrieving-ledger-entries "Retrieving ledger entries")
-* [Making a ranged query](#making-a-ranged-query "Making a ranged query")
-* [Managing users](#managing-users "Managing users")
-* [Using certificate authentication](#using-certificate-authentication "Using certificate authentication")
-* [Verifying service details](#verifying-service-details "Verifying service details")
-* [Asynchronously get a ledger entry](#asynchronously-get-a-ledger-entry "Asynchronously get a ledger entry")
-* [Asynchronously get a range of ledger entries](#asynchronously-get-a-range-of-ledger-entries "Asynchronously get a range of ledger entries")
-
 
 ### Append entry
 Data that needs to be stored immutably in a tamper-proof manner can be saved to Azure Confidential Ledger by appending an entry to the ledger.
