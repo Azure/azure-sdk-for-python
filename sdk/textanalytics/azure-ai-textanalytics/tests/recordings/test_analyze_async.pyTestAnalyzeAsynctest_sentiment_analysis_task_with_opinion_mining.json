@@ -38,18 +38,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "2f4668a9-f644-445e-9bd4-3021e861f69b",
+        "apim-request-id": "1f69e4d2-dd46-428c-93c4-cb950d736ba8",
         "Content-Length": "0",
-        "Date": "Thu, 09 Jun 2022 17:41:09 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/bc9f2113-8612-428b-b17e-b3b20816fce5?api-version=2022-05-01",
+        "Date": "Fri, 17 Jun 2022 17:35:28 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/9a6d8b41-cd86-4339-8a81-9261a77606ae?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "170"
+        "x-envoy-upstream-service-time": "275"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/bc9f2113-8612-428b-b17e-b3b20816fce5?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/9a6d8b41-cd86-4339-8a81-9261a77606ae?api-version=2022-05-01\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -59,19 +59,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "ef361e60-00b3-403c-b55b-4e212009fd68",
-        "Content-Length": "2456",
+        "apim-request-id": "fa747b39-726f-4c0f-b522-b13a2238e6fa",
+        "Content-Length": "2462",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:41:14 GMT",
+        "Date": "Fri, 17 Jun 2022 17:35:33 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "85"
+        "x-envoy-upstream-service-time": "43"
       },
       "ResponseBody": {
-        "jobId": "bc9f2113-8612-428b-b17e-b3b20816fce5",
-        "lastUpdatedDateTime": "2022-06-09T17:41:11Z",
-        "createdDateTime": "2022-06-09T17:41:09Z",
-        "expirationDateTime": "2022-06-10T17:41:09Z",
+        "jobId": "9a6d8b41-cd86-4339-8a81-9261a77606ae",
+        "lastUpdatedDateTime": "2022-06-17T17:35:30Z",
+        "createdDateTime": "2022-06-17T17:35:28Z",
+        "expirationDateTime": "2022-06-18T17:35:28Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -83,7 +83,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-09T17:41:11.0384725Z",
+              "lastUpdateDateTime": "2022-06-17T17:35:30.1158358Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -101,16 +101,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.98,
-                      "neutral": 0.02,
+                      "positive": 0.99,
+                      "neutral": 0.01,
                       "negative": 0.0
                     },
                     "sentences": [
                       {
                         "sentiment": "positive",
                         "confidenceScores": {
-                          "positive": 0.98,
-                          "neutral": 0.02,
+                          "positive": 0.99,
+                          "neutral": 0.01,
                           "negative": 0.0
                         },
                         "offset": 0,
@@ -156,9 +156,9 @@
                               "positive": 1.0,
                               "negative": 0.0
                             },
-                            "offset": 15,
-                            "length": 7,
-                            "text": "premium",
+                            "offset": 53,
+                            "length": 9,
+                            "text": "beautiful",
                             "isNegated": false
                           }
                         ]
@@ -174,17 +174,17 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.0,
+                      "positive": 0.01,
                       "neutral": 0.0,
-                      "negative": 1.0
+                      "negative": 0.99
                     },
                     "sentences": [
                       {
                         "sentiment": "negative",
                         "confidenceScores": {
-                          "positive": 0.0,
+                          "positive": 0.01,
                           "neutral": 0.0,
-                          "negative": 1.0
+                          "negative": 0.99
                         },
                         "offset": 0,
                         "length": 32,
@@ -207,10 +207,10 @@
                             ]
                           },
                           {
-                            "sentiment": "negative",
+                            "sentiment": "positive",
                             "confidenceScores": {
-                              "positive": 0.0,
-                              "negative": 1.0
+                              "positive": 1.0,
+                              "negative": 0.0
                             },
                             "offset": 13,
                             "length": 7,
@@ -242,7 +242,7 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2020-04-01"
+                "modelVersion": "2021-10-01"
               }
             }
           ]
