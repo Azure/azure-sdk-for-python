@@ -4,7 +4,11 @@ import tempfile
 
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 
-from .constants import NETWORK_CERTIFICATE, USER_CERTIFICATE
+from azure.confidentialledger_identity_service import (
+    ConfidentialLedgerIdentityServiceClient,
+)
+
+from .constants import USER_CERTIFICATE
 
 
 ConfidentialLedgerPreparer = functools.partial(
@@ -22,11 +26,7 @@ class ConfidentialLedgerTestCase(AzureTestCase):
     def setUp(self):
         super().setUp()
 
-        with tempfile.NamedTemporaryFile(
-            "w", suffix=".pem", delete=False
-        ) as tls_cert_file:
-            tls_cert_file.write(NETWORK_CERTIFICATE)
-            self.network_certificate_path = tls_cert_file.name
+        self.network_certificate_path = None
 
         with tempfile.NamedTemporaryFile(
             "w", suffix=".pem", delete=False
@@ -36,5 +36,26 @@ class ConfidentialLedgerTestCase(AzureTestCase):
 
     def tearDown(self):
         os.remove(self.user_certificate_path)
-        os.remove(self.network_certificate_path)
+        if self.network_certificate_path:
+            os.remove(self.network_certificate_path)
+
         return super().tearDown()
+
+    def set_ledger_identity(self, confidentialledger_endpoint):
+        client = self.create_client_from_credential(
+            ConfidentialLedgerIdentityServiceClient,
+            credential=None,
+        )
+
+        ledger_id = confidentialledger_endpoint.replace("https://", "").split(".")[0]
+        network_identity = (
+            client.confidential_ledger_identity_service.get_ledger_identity(
+                ledger_id=ledger_id
+            )
+        )
+
+        with tempfile.NamedTemporaryFile(
+            "w", suffix=".pem", delete=False
+        ) as tls_cert_file:
+            tls_cert_file.write(network_identity["ledgerTlsCertificate"])
+            self.network_certificate_path = tls_cert_file.name

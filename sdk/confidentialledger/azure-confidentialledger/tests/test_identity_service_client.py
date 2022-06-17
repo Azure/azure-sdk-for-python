@@ -1,9 +1,9 @@
+from devtools_testutils import AzureTestCase
+
 from azure.confidentialledger_identity_service import (
     ConfidentialLedgerIdentityServiceClient,
 )
-from devtools_testutils import AzureTestCase
 
-from .constants import NETWORK_CERTIFICATE
 from .testcase import ConfidentialLedgerPreparer
 
 
@@ -23,6 +23,4 @@ class ConfidentialLedgerIdentityServiceClientTest(AzureTestCase):
         )
 
         self.assertEqual(network_identity["ledgerId"], ledger_id)
-
-        cert_recv = network_identity["ledgerTlsCertificate"]
-        self.assertEqual(cert_recv, NETWORK_CERTIFICATE)
+        self.assertTrue(network_identity["ledgerTlsCertificate"])

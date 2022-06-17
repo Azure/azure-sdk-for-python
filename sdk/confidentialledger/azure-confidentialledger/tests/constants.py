@@ -3,18 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-NETWORK_CERTIFICATE = """-----BEGIN CERTIFICATE-----
-MIIBezCCASGgAwIBAgIRALIcQXh8t2gNyfSJxiifOI8wCgYIKoZIzj0EAwIwFjEU
-MBIGA1UEAwwLQ0NGIE5ldHdvcmswHhcNMjIwNjA2MTgwNTMwWhcNMjIwOTA0MTgw
-NTI5WjAWMRQwEgYDVQQDDAtDQ0YgTmV0d29yazBZMBMGByqGSM49AgEGCCqGSM49
-AwEHA0IABKhwx5QkB3yds+CO6vuWVSOdC5Cr4bJDz6Az6cpi3vacAHXovsV3Ozez
-SGNAP0Ohy4Lui7F2Jw+uXVLANpMhRnmjUDBOMAwGA1UdEwQFMAMBAf8wHQYDVR0O
-BBYEFK1wDj0wkK0xKTi12CbkHDU80r/GMB8GA1UdIwQYMBaAFK1wDj0wkK0xKTi1
-2CbkHDU80r/GMAoGCCqGSM49BAMCA0gAMEUCIHyZk7TPbs+lxbPW8G01z2BMDa9G
-ifISL1zefkT3lCyiAiEA9XoyhKddPMNUaW+4+90lrcseXXbZdR7DWLNQTNwFErs=
------END CERTIFICATE-----
-"""
-
 # Duplicate certificate from KeyVault.
 # https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-certificates/tests/ca.crt
 # https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-certificates/tests/ca.key

@@ -11,13 +11,16 @@ from .testcase import ConfidentialLedgerPreparer, ConfidentialLedgerTestCase
 
 class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
     async def create_confidentialledger_client(self, endpoint, is_aad):
+        self.set_ledger_identity(endpoint)
+
         # The ACL instance should already have the potential AAD user added as an Administrator.
         credential = self.get_credential(ConfidentialLedgerClient, is_async=True)
         client = self.create_client_from_credential(
             ConfidentialLedgerClient,
             credential=credential,
             ledger_uri=endpoint,
-            ledger_certificate_path=self.network_certificate_path,
+            # self.network_certificate_path is set via self.set_ledger_identity
+            ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
 
         if not is_aad:
@@ -32,7 +35,8 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             client = ConfidentialLedgerClient(
                 credential=credential,
                 ledger_uri=endpoint,
-                ledger_certificate_path=self.network_certificate_path,
+                # self.network_certificate_path is set via self.set_ledger_identity
+                ledger_certificate_path=self.network_certificate_path,  # type: ignore
             )
 
         return client
