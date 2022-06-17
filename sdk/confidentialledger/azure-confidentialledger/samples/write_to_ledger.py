@@ -103,7 +103,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
         raise
 
     # Users may wait for a durable commit when writing a ledger entry though this will reduce
-    # throughput.
+    # client throughput.
     try:
         post_poller = client.confidential_ledger.begin_post_ledger_entry(
             {"contents": "Hello world again!"}
@@ -125,7 +125,8 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
         print('Request failed: {}'.format(e.response.json()))
         raise
 
-    # Make a query for a prior ledger entry.
+    # Make a query for a prior ledger entry. The service may take some time to load the result, so a
+    # poller is provided.
     try:
         get_entry_poller = client.confidential_ledger.begin_get_ledger_entry(transaction_id)
         get_entry_result = get_entry_poller.result()
@@ -144,6 +145,32 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
         print(
             f'Receipt for transaction id {get_entry_result["transactionId"]}: {get_receipt_result}'
         )
+    except HttpResponseError as e:
+        print('Request failed: {}'.format(e.response.json()))
+        raise
+
+    # Users may specify a collectionId to group different sets of writes.
+    collection_id = "myCollection"
+    try:
+        post_poller = client.confidential_ledger.begin_post_ledger_entry(
+            {"contents": "Hello world again!"},
+            collection_id=collection_id,
+        )
+        new_post_result = post_poller.result()
+        print(
+            f'The ledger entry for {collection_id} has been committed successfully at transaction '
+            f'id '{new_post_result["transactionId"]}'
+        )
+    except HttpResponseError as e:
+        print('Request failed: {}'.format(e.response.json()))
+        raise
+
+    # Get the latest ledger entry in the collection.
+    try:
+        current_ledger_entry = client.confidential_ledger.get_current_ledger_entry(
+            collection_id=collection_id
+        )["contents"]
+        print(f'The current ledger entry in {collection_id} is {current_ledger_entry}')
     except HttpResponseError as e:
         print('Request failed: {}'.format(e.response.json()))
         raise

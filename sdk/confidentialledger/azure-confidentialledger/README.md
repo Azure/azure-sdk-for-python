@@ -24,8 +24,8 @@ Azure Confidential Ledger provides a service for logging to an immutable, tamper
   - [Examples](#examples)
     - [Append entry](#append-entry)
     - [Get receipt](#get-receipt)
-    - [Using sub-ledgers](#using-sub-ledgers)
-    - [Retrieving ledger entries](#retrieving-ledger-entries)
+    - [Using collections](#using-collections)
+    - [Retrieving earlier ledger entries](#retrieving-earlier-ledger-entries)
     - [Making a ranged query](#making-a-ranged-query)
     - [Managing users](#managing-users)
     - [Using certificate authentication](#using-certificate-authentication)
@@ -125,113 +125,125 @@ This section contains code snippets covering common tasks:
 Data that needs to be stored immutably in a tamper-proof manner can be saved to Azure Confidential Ledger by appending an entry to the ledger.
 
 ```python
-first_append_result = ledger_client.append_to_ledger(entry_contents="Hello world!")
-print(first_append_result.transaction_id)
+post_entry_result = ledger_client.confidential_ledger.post_ledger_entry(
+        {"contents": "Hello world!"}
+    )
+transaction_id = post_entry_result["transactionId"]
+print(transaction_id)
 ```
 
 Since Confidential Ledger is a distributed system, rare transient failures may cause writes to be lost. For entries that must be preserved, it is advisable to verify that the write became durable. Waits are blocking calls.
-```python
-from azure.confidentialledger import TransactionState
-ledger_client.wait_until_durable(transaction_id=first_append_result.transaction_id)
-assert ledger_client.get_transaction_status(
-    transaction_id=first_append_result.transaction_id
-).state is TransactionState.COMMITTED
 
-# Alternatively, a client may wait when appending.
-append_result = ledger_client.append_to_ledger(
-    entry_contents="Hello world, again!", wait_for_commit=True
+```python
+wait_poller = ledger_client.confidential_ledger.begin_wait_for_commit(transaction_id)
+wait_poller.wait()
+print(f'Ledger entry at transaction id {transaction_id} has been committed successfully')
+```
+
+Alternatively, the client may wait for commit when writing a ledger entry. Note this will reduce client throughput.
+
+```python
+post_poller = ledger_client.confidential_ledger.begin_post_ledger_entry(
+    {"contents": "Hello world again!"}
 )
-assert ledger_client.get_transaction_status(
-    transaction_id=append_result.transaction_id
-).state is TransactionState.COMMITTED
+new_post_result = post_poller.result()
+print(
+    'The new ledger entry has been committed successfully at transaction id '
+    f'{new_post_result["transactionId"]}'
+)
 ```
 
 ### Get receipt
 A receipt can be retrieved for any transaction id to provide cryptographic proof of the contents of the transaction.
-```python
-receipt = ledger_client.get_transaction_receipt(
-    transaction_id=append_result.transaction_id
-)
-print(receipt.contents)
-```
 
-### Using sub-ledgers
-Clients can write to different sub-ledgers to separate logically-distinct data.
 ```python
-ledger_client.append_to_ledger(
-    entry_contents="Hello from Alice", sub_ledger_id="Alice"
-)
-ledger_client.append_to_ledger(
-    entry_contents="Hello from Bob", sub_ledger_id="Bob"
+get_receipt_poller = client.confidential_ledger.begin_get_receipt(transaction_id)
+get_receipt_result = get_receipt_poller.result()
+print(
+    f'Receipt for transaction id {get_entry_result["transactionId"]}: '
+    f'{get_receipt_result["receipt"]}'
 )
 ```
 
-When no sub-ledger id is specified on method calls, the Confidential Ledger service will assume a constant, service-determined sub-ledger id.
+### Using collections
+Clients can write to different collections to group data.
+
 ```python
-append_result = ledger_client.append_to_ledger(entry_contents="Hello world?", wait_for_commit=True)
-
-# The append result contains the sub-ledger id assigned.
-entry_by_subledger = ledger_client.get_ledger_entry(
-    transaction_id=append_result.transaction_id,
-    sub_ledger_id=append_result.sub_ledger_id
+client.confidential_ledger.post_ledger_entry(
+    {"contents": "Hello from Alice"},
+    collection_id="Messages_Alice",
 )
-assert entry_by_subledger.contents == "Hello world?"
-
-# When a ledger entry is retrieved without a sub-ledger specified,
-# the service default is used.
-entry = ledger_client.get_ledger_entry(transaction_id=append_result.transaction_id)
-assert entry.contents == entry_by_subledger.contents
-assert entry.sub_ledger_id == entry_by_subledger.sub_ledger_id
+client.confidential_ledger.post_ledger_entry(
+    {"contents": "Hello from Bob"},
+    collection_id="Messages_Bob",
+)
 ```
 
-### Retrieving ledger entries
-Ledger entries are retrieved from sub-ledgers. When a transaction id is specified, the returned value is the value contained in the specified sub-ledger at the point in time identified by the transaction id. If no transaction id is specified, the latest available value is returned.
+When no collection id is specified on method calls, the Confidential Ledger service will assume a constant, service-determined collection id.
+
 ```python
-append_result = ledger_client.append_to_ledger(entry_contents="Hello world 0")
-ledger_client.append_to_ledger(entry_contents="Hello world 1")
-
-subledger_append_result = ledger_client.append_to_ledger(
-    entry_contents="Hello world sub-ledger 0",
-    sub_ledger_id="sub-ledger"
+post_poller = ledger_client.confidential_ledger.begin_post_ledger_entry(
+    {"contents": "Hello world?"}
 )
-ledger_client.append_to_ledger(
-    entry_contents="Hello world sub-ledger 1",
-    sub_ledger_id="sub-ledger",
-    wait_for_commit=True
+post_result = post_poller.result()
+
+# The append result contains the collection id assigned.
+latest_entry = ledger_client.get_current_ledger_entry()
+assert latest_entry["collectionId"] == post_result["collectionId"]
+assert latest_entry["contents"] == "Hello world?"
+```
+
+### Retrieving earlier ledger entries
+Getting ledger entries older than the latest may take some time as the service is loading historical entries, so a poller is provided.
+
+Ledger entries are retrieved by collection. The returned value is the value contained in the specified collection at the point in time identified by the transaction id.
+
+```python
+latest_entry = ledger_client.get_current_ledger_entry()
+print(
+    f'Current entry (transaction id = {latest_entry["transactionId"]}) "
+    f"in collection {latest_entry["collectionId"]}: {latest_entry["contents"]}'
 )
 
-# The ledger entry written at 'append_result.transaction_id'
-# is retrieved from the default sub-ledger.
-entry = ledger_client.get_ledger_entry(transaction_id=append_result.transaction_id)
-assert entry.contents == "Hello world 0"
+prior_transaction_id = latest_entry["transactionId"]
 
-# This is the latest entry available in the default sub-ledger.
-latest_entry = ledger_client.get_ledger_entry()
-assert latest_entry.contents == "Hello world 1"
-
-# The ledger entry written at 'subledger_append_result.transaction_id'
-# is retrieved from the sub-ledger 'sub-ledger'.
-subledger_entry = ledger_client.get_ledger_entry(
-    transaction_id=subledger_append_result.transaction_id,
-    sub_ledger_id="sub-ledger"
+post_poller = ledger_client.confidential_ledger.begin_post_ledger_entry(
+    {"contents": "Hello!"}
 )
-assert subledger_entry.contents == "Hello world sub-ledger 0"
+post_result = post_poller.result()
 
-# This is the latest entry available in the sub-ledger 'sub-ledger'.
-subledger_latest_entry = ledger_client.get_ledger_entry(
-    sub_ledger_id="sub-ledger"
+get_entry_poller = ledger_client.confidential_ledger.begin_get_ledger_entry(prior_transaction_id)
+older_entry = get_entry_poller.result()
+print(
+    f'Contents of {older_entry["collectionId"]} at {prior_transaction_id}: {older_entry["contents"]}'
 )
-assert subledger_latest_entry.contents == "Hello world sub-ledger 1"
 ```
 
 ### Making a ranged query
-Ledger entries in a sub-ledger may be retrieved over a range of transaction ids.
+Ledger entries may be retrieved over a range of transaction ids. Entries will only be returned from the default or specified collection.
+
 ```python
-ranged_result = ledger_client.get_ledger_entries(
-    from_transaction_id=first_append_result.transaction_id
+post_poller = ledger_client.confidential_ledger.begin_post_ledger_entry(
+    {"contents": "First message"}
+)
+first_transaction_id = post_poller.result()["transactionId"]
+
+for i in range(10):
+    ledger_client.confidential_ledger.post_ledger_entry(
+        {"contents": f"Message {i}"}
+    )
+
+post_poller = ledger_client.confidential_ledger.begin_post_ledger_entry(
+    {"contents": "Last message"}
+)
+last_transaction_id = post_poller.result()["transactionId"]
+
+ranged_result = client.confidential_ledger.list_ledger_entries(
+    from_transaction_id=first_transaction_id,
+    to_transaction_id=last_transaction_id,
 )
 for entry in ranged_result:
-    print(f"Transaction id {entry.transaction_id} contents: {entry.contents}")
+    print(f'Contents at {entry["transactionId"]}: {entry["contents"]}')
 ```
 
 ### Managing users
