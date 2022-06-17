@@ -266,8 +266,11 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
                     historical_entry["transactionId"], messages[i][index][0]
                 )
                 self.assertEqual(historical_entry["contents"], messages[i][index][1])
+                collection_id = messages[i][index][2].get("collection_id", None)
+                if collection_id is not None:
+                    self.assertEqual(historical_entry["collectionId"], collection_id)
+
                 index += 1
-                # TODO check collection id
                 num_matched += 1
 
         # Due to replication delay, it's possible not all messages are matched.
