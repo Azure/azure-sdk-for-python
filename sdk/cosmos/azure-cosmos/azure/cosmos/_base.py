@@ -684,6 +684,6 @@ def auto_scale_header(auto_scale):
 
     auto_scale_params = {"maxThroughput": max_throughput, "autoUpgradePolicy":
         {"throughputPolicy": {"incrementPercent": increment_percent}}}
-    auto_scale_setting = json.dumps(auto_scale_params)
+    auto_scale_settings = json.dumps(auto_scale_params)
 
-    return auto_scale_setting
+    return auto_scale_settings

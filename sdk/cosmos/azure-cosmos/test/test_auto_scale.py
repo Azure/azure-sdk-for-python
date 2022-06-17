@@ -49,9 +49,9 @@ class AutoScaleTest(unittest.TestCase):
 
     def test_auto_scale_max_throughput(self):
         created_container = self.created_database.create_container(
-            id='container_with_auto_scale_setting',
+            id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            auto_scale_setting=AutoScaleProperties(5000)
+            auto_scale_settings=AutoScaleProperties(5000)
 
         )
         created_container_properties = created_container.get_throughput()
@@ -64,9 +64,9 @@ class AutoScaleTest(unittest.TestCase):
         # Testing the incorrect passing of an input value of the max_throughput to verify negative behavior
         try:
             created_container = self.created_database.create_container(
-                id='container_with_wrong_auto_scale_setting',
+                id='container_with_wrong_auto_scale_settings',
                 partition_key=PartitionKey(path="/id"),
-                auto_scale_setting=AutoScaleProperties(200, 0)
+                auto_scale_settings=AutoScaleProperties(200, 0)
 
             )
         except exceptions.CosmosHttpResponseError as e:
@@ -75,9 +75,9 @@ class AutoScaleTest(unittest.TestCase):
 
     def test_auto_scale_increment_percentage(self):
         created_container = self.created_database.create_container(
-            id='container_with_auto_scale_setting',
+            id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            auto_scale_setting=AutoScaleProperties(5000, 1)
+            auto_scale_settings=AutoScaleProperties(5000, 1)
 
         )
         created_container_properties = created_container.get_throughput()
@@ -91,9 +91,9 @@ class AutoScaleTest(unittest.TestCase):
         # Testing the incorrect passing of an input value of the max_increment_percentage to verify negative behavior
         try:
             created_container = self.created_database.create_container(
-                id='container_with_wrong_auto_scale_setting',
+                id='container_with_wrong_auto_scale_settings',
                 partition_key=PartitionKey(path="/id"),
-                auto_scale_setting=AutoScaleProperties(5000, -25)
+                auto_scale_settings=AutoScaleProperties(5000, -25)
 
             )
             self.created_database.delete_container(created_container)
@@ -101,35 +101,35 @@ class AutoScaleTest(unittest.TestCase):
             self.assertEqual(e.status_code, http_constants.StatusCodes.BAD_REQUEST)
 
 
-    def test_auto_scale_setting(self):
-        # Testing for wrong attributes for the auto_scale_setting in the created container
+    def test_auto_scale_settings(self):
+        # Testing for wrong attributes for the auto_scale_settings in the created container
         try:
             created_container = self.created_database.create_container(
-                id='container_with_wrong_auto_scale_setting',
+                id='container_with_wrong_auto_scale_settings',
                 partition_key=PartitionKey(path="/id"),
-                auto_scale_setting="wrong setting"
+                auto_scale_settings="wrong setting"
 
             )
         except AttributeError:
             pass
 
-        # Testing for empty required positional arguments for the auto_scale_setting in the created container
+        # Testing for empty required positional arguments for the auto_scale_settings in the created container
         try:
             created_container = self.created_database.create_container(
-                id='container_with_wrong_auto_scale_setting',
+                id='container_with_wrong_auto_scale_settings',
                 partition_key=PartitionKey(path="/id"),
-                auto_scale_setting=AutoScaleProperties()
+                auto_scale_settings=AutoScaleProperties()
 
             )
         except TypeError:
             pass
 
     def test_create_container_if_not_exist(self):
-        # Testing auto_scale_setting for the create_container_if_not_exists method
+        # Testing auto_scale_settings for the create_container_if_not_exists method
         created_container = self.created_database.create_container_if_not_exists(
-            id='container_with_auto_scale_setting',
+            id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            auto_scale_setting=AutoScaleProperties(1000)
+            auto_scale_settings=AutoScaleProperties(1000)
 
         )
         created_container_properties = created_container.get_throughput()
@@ -140,9 +140,9 @@ class AutoScaleTest(unittest.TestCase):
         self.created_database.delete_container(created_container)
 
         created_container = self.created_database.create_container_if_not_exists(
-            id='container_with_auto_scale_setting',
+            id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            auto_scale_setting=AutoScaleProperties(5000, 2)
+            auto_scale_settings=AutoScaleProperties(5000, 2)
 
         )
         created_container_properties = created_container.get_throughput()
@@ -154,15 +154,15 @@ class AutoScaleTest(unittest.TestCase):
         self.created_database.delete_container(created_container)
         self.client.delete_database(test_config._test_config.TEST_DATABASE_ID)
     def test_create_database_if_not_exists(self):
-        # Testing auto_scale_setting for the create_database_if_not_exists method
+        # Testing auto_scale_settings for the create_database_if_not_exists method
         client = cosmos_client.CosmosClient(self.host, self.masterKey, consistency_level="Session",
                                    connection_policy=self.connectionPolicy)
         created_database = client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
 
         created_container = created_database.create_container(
-            id='container_with_auto_scale_setting',
+            id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            auto_scale_setting=AutoScaleProperties(8000)
+            auto_scale_settings=AutoScaleProperties(8000)
 
         )
         created_container_properties = created_container.get_throughput()
@@ -173,9 +173,9 @@ class AutoScaleTest(unittest.TestCase):
         self.created_database.delete_container(created_container)
 
         created_container = self.created_database.create_container_if_not_exists(
-            id='container_with_auto_scale_setting',
+            id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            auto_scale_setting=AutoScaleProperties(5000, 7)
+            auto_scale_settings=AutoScaleProperties(5000, 7)
 
         )
         created_container_properties = created_container.get_throughput()
