@@ -205,6 +205,12 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             original_entry["entry"]["collectionId"], append_result_sub_ledger_id
         )
 
+        collections = client.confidential_ledger.list_collections()
+        collection_ids = set()
+        for collection in collections:
+            collection_ids.add(collection["collectionId"])
+        self.assertIn("collection_id", collection_ids)
+
     @ConfidentialLedgerPreparer()
     def test_range_query_aad_user(self, confidentialledger_endpoint):
         client = self.create_confidentialledger_client(
