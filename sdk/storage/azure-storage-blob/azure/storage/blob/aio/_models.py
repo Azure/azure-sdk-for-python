@@ -87,7 +87,6 @@ class FilteredBlobPaged(AsyncPageIterator):
     :ivar current_page: The current page of listed results.
     :vartype current_page: list(~azure.storage.blob.BlobProperties)
     :ivar str container: The container that the blobs are listed from.
-
     :param callable command: Function to retrieve the next page of items.
     :param str container: The name of the container.
     :param int results_per_page: The maximum number of blobs to retrieve per
@@ -138,7 +137,11 @@ class FilteredBlobPaged(AsyncPageIterator):
     def _build_item(item):
         if isinstance(item, FilterBlobItem):
             tags = parse_tags(item.tags)
-            blob = FilteredBlob(name=item.name, container_name=item.container_name, tags=tags)
+            blob = FilteredBlob(name=item.name,
+                                container_name=item.container_name,
+                                tags=tags,
+                                version_id=item.version_id,
+                                is_current_version=item.is_current_version)
             return blob
         return item
 
