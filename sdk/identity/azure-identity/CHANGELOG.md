@@ -10,6 +10,8 @@
 
 ### Bugs Fixed
 
+- Fixed the issue that failed to parse PEM certificate if it does not start with "-----"    ([#24643](https://github.com/Azure/azure-sdk-for-python/issues/24643))
+
 ### Other Changes
 
 ## 1.11.0b1 (2022-05-10)
