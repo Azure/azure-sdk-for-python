@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-class AutoScale(object):
+class AutoScaleProperties(object):
     """Represents the auto-scale throughput properties in an Azure Cosmos DB SQL API container.
 
    :param auto_scale_max_throughput is the max autoscale throughput, it should have valid throughput
