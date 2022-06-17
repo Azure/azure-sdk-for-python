@@ -30,7 +30,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection
-from .._base import build_options as _build_options
+from .._base import build_options as _build_options, auto_scale_header
 from ._container import ContainerProxy
 from ..offer import ThroughputProperties
 from ..http_constants import StatusCodes
@@ -230,6 +230,11 @@ class DatabaseProxy(object):
         if offer_throughput is not None:
             request_options["offerThroughput"] = offer_throughput
 
+        auto_scale_settings = kwargs.pop('auto_scale_settings', None)
+        if auto_scale_settings is not None:
+            auto_scale_settings = auto_scale_header(auto_scale=auto_scale_settings)
+            request_options["autoUpgradePolicy"] = auto_scale_settings
+
         data = await self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )
@@ -288,6 +293,7 @@ class DatabaseProxy(object):
             conflict_resolution_policy = kwargs.pop('conflict_resolution_policy', None)
             analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
             offer_throughput = kwargs.pop('offer_throughput', None)
+            auto_scale_settings = kwargs.pop('auto_scale_settings', None)
             response_hook = kwargs.pop('response_hook', None)
             return await self.create_container(
                 id=id,
@@ -298,6 +304,7 @@ class DatabaseProxy(object):
                 unique_key_policy=unique_key_policy,
                 conflict_resolution_policy=conflict_resolution_policy,
                 analytical_storage_ttl=analytical_storage_ttl,
+                auto_scale_settings=auto_scale_settings,
                 response_hook=response_hook
             )
 
