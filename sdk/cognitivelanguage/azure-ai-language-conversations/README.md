@@ -74,7 +74,7 @@ client = ConversationAuthoringClient(endpoint, credential)
 The [ConversationAnalysisClient][conversationanalysis_client_class] is the primary interface for making predictions using your deployed Conversations models. For asynchronous operations, an async `ConversationAnalysisClient` is in the `azure.ai.language.conversation.aio` namespace.
 
 ### ConversationAnalysisClient
-The [ConversationAuthoringClient][conversationauthoring_client_class] is the primary class for interfacing with the authorings part of your language resource (only CLU projects). For example, you can use it to create a project, populate with training data, train, test, and deploy. For asynchronous operations, an async `ConversationAnalysisClient` is in the `azure.ai.language.conversation.authoring.aio` namespace.
+You can use the [ConversationAuthoringClient][conversationauthoring_client_class] to interface with the [Azure Language Portal][azure_language_portal] to carry out authoring operations on your language resource/project. For example, you can use it to create a project, populate with training data, train, test, and deploy. For asynchronous operations, an async `ConversationAnalysisClient` is in the `azure.ai.language.conversation.authoring.aio` namespace.
 
 ## Examples
 The `azure-ai-language-conversation` client library provides both synchronous and asynchronous APIs.
@@ -357,4 +357,5 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [conversationanalysis_client_class]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html#azure.ai.language.conversations.ConversationAnalysisClient
 [conversationauthoring_client_class]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html#azure.ai.language.conversations.ConversationAuthoringClient
 [azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
+[azure_language_portal]: https://language.cognitive.azure.com/home
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftemplate%2Fazure-template%2FREADME.png)
