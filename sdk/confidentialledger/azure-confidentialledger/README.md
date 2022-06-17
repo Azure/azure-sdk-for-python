@@ -31,8 +31,6 @@ Azure Confidential Ledger provides a service for logging to an immutable, tamper
     - [Using certificate authentication](#using-certificate-authentication)
     - [Verifying service details](#verifying-service-details)
     - [Async API](#async-api)
-      - [Asynchronously get a ledger entry](#asynchronously-get-a-ledger-entry)
-      - [Asynchronously get a range of ledger entries](#asynchronously-get-a-range-of-ledger-entries)
   - [Troubleshooting](#troubleshooting)
     - [General](#general)
     - [Logging](#logging)
@@ -76,12 +74,12 @@ Constructing the client also requires your Confidential Ledger's URL and id, whi
 Because Confidential Ledgers use self-signed certificates securely generated and stored in an enclave, the signing certificate for each Confidential Ledger must first be retrieved from the Confidential Ledger Identity Service.
 
 ```python
-from azure.identity import DefaultAzureCredential
 from azure.confidentialledger import ConfidentialLedgerClient
 from azure.confidentialledger_identity_service import ConfidentialLedgerIdentityServiceClient
+from azure.identity import DefaultAzureCredential
 
 identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
-network_identity = identity_client.get_ledger_identity(
+network_identity = identity_client.confidential_ledger_identity_service.get_ledger_identity(
     ledger_id="my-ledger-id"
 )
 
@@ -250,42 +248,47 @@ for entry in ranged_result:
 Users with `Administrator` privileges can manage users of the Confidential Ledger directly with the Confidential Ledger itself. Available roles are `Reader` (read-only), `Contributor` (read and write), and `Administrator` (read, write, and add or remove users).
 
 ```python
-from azure.confidentialledger import LedgerUserRole
 user_id = "some AAD object id"
-user = ledger_client.create_or_update_user(
-    user_id, LedgerUserRole.CONTRIBUTOR
+user = ledger_client.confidential_ledger.create_or_update_user(
+    user_id, {"assignedRole": "Contributor"}
 )
-# A client may now be created and used with AAD credentials for the user identified by `user_id`.
+# A client may now be created and used with AAD credentials (i.e. AAD-issued JWT tokens) for the user identified by `user_id`.
 
 user = ledger_client.get_user(user_id)
-assert user.id == user_id
-assert user.role == LedgerUserRole.CONTRIBUTOR
+assert user["userId"] == user_id
+assert user["assignedRole"] == "Contributor"
 
 ledger_client.delete_user(user_id)
 
 # For a certificate-based user, their user ID is the fingerprint for their PEM certificate.
 user_id = "PEM certificate fingerprint"
 user = ledger_client.create_or_update_user(
-    user_id, LedgerUserRole.READER
+    user_id, {"assignedRole": "Reader"}
 )
 ```
 
 ### Using certificate authentication
 Clients may authenticate with a client certificate in mutual TLS instead of via an Azure Active Directory token. `ConfidentialLedgerCertificateCredential` is provided for such clients.
+
 ```python
-from azure.confidentialledger import ConfidentialLedgerClient, ConfidentialLedgerCertificateCredential
-from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
+from azure.confidentialledger import (
+    ConfidentialLedgerCertificateCredential,
+    ConfidentialLedgerClient,
+)
+from azure.confidentialledger_identity_service import ConfidentialLedgerIdentityServiceClient
 
 identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
-network_identity = identity_client.get_ledger_identity(
+network_identity = identity_client.confidential_ledger_identity_service.get_ledger_identity(
     ledger_id="my-ledger-id"
 )
 
 ledger_tls_cert_file_name = "ledger_certificate.pem"
 with open(ledger_tls_cert_file_name, "w") as cert_file:
-    cert_file.write(network_identity.ledger_tls_certificate)
+    cert_file.write(network_identity["ledgerTlsCertificate"])
 
-credential = ConfidentialLedgerCertificateCredential("path to user certificate PEM")
+credential = ConfidentialLedgerCertificateCredential(
+    certificate_path="Path to user certificate PEM file"
+)
 ledger_client = ConfidentialLedgerClient(
     endpoint="https://my-ledger-url.confidential-ledger.azure.com",
     credential=credential,
@@ -294,36 +297,30 @@ ledger_client = ConfidentialLedgerClient(
 ```
 
 ### Verifying service details
-One may want to validate details about the Confidential Ledger for a variety of reasons. For example, you may want to view details about how Microsoft may manage your Confidential Ledger as part of [Confidential Consortium Framework governance](https://microsoft.github.io/CCF/main/governance/index.html), or verify that your Confidential Ledger is indeed running in a secure enclave. A number of client methods are provided for these use cases.
+A user may want to validate details about the Confidential Ledger. For example, you may want to view details about how Microsoft may manage your Confidential Ledger as part of [Confidential Consortium Framework governance](https://microsoft.github.io/CCF/main/governance/index.html), or verify that your Confidential Ledger is indeed running in a secure enclave. A number of client methods are provided for these use cases.
+
 ```python
-consortium = ledger_client.get_consortium()
-# Consortium members can manage and alter the Confidential Ledger,
-# such as by replacing unhealthy nodes.
+# Consortium members can manage and alter the Confidential Ledger. Microsoft participates in the consortium to maintain the Confidential Ledger instance.
+consortium = ledger_client.confidential_ledger.get_consortium_members()
 for member in consortium.members:
-    print(member.certificate)
-    print(member.id)
+    print(f'Member {member["id"]} has certificate {member["certificate"]}')
 
 import hashlib
-# The constitution is a collection of JavaScript code that
-# defines actions available to members,
-# and vets proposals by members to execute those actions.
-constitution = ledger_client.get_constitution()
-assert constitution.digest.lower() == \
-    hashlib.sha256(constitution.contents.encode()).hexdigest().lower()
-print(constitution.contents)
-print(constitution.digest)
+# The constitution is a collection of JavaScript code that defines actions available to members, and vets proposals by members to execute those actions.
+constitution = ledger_client.confidential_ledger.get_constitution()
+assert (
+    constitution["digest"].lower() ==
+    hashlib.sha256(constitution["script"].encode()).hexdigest().lower()
+)
+print(constitution["script"])
 
 # Enclave quotes contain material that can be used to
 # cryptographically verify the validity and contents
 # of an enclave.
-ledger_enclaves = ledger_client.get_enclave_quotes()
-assert ledger_enclaves.source_node in ledger_enclaves.quotes
-for node_id, quote in ledger_enclaves.quotes.items():
-    assert node_id == quote.node_id
-    print(quote.node_id)
-    print(quote.mrenclave)
-    print(quote.raw_quote)
-    print(quote.version)
+ledger_enclaves = ledger_client.confidential_ledger.get_enclave_quotes()
+assert ledger_enclaves["currentNodeId"] in ledger_enclaves["enclaveQuotes"]
+for node_id, quote in ledger_enclaves["enclaveQuotes"].items():
+    print(f"Quote for node {node_id}: {quote}")
 ```
 
 [Microsoft Azure Attestation Service](https://azure.microsoft.com/services/azure-attestation/) is one provider of enclave quotes.
@@ -337,57 +334,43 @@ Async clients should be closed when they're no longer needed. These objects are 
 
 ```python
 from azure.identity.aio import DefaultAzureCredential
-from azure.confidentialledger.aio import ConfidentialLedgerClient
-from azure.confidentialledger.identity_service.aio import ConfidentialLedgerIdentityServiceClient
+from azure.confidentialledger.aio import (
+    ConfidentialLedgerClient,
+)
+from azure.confidentialledger_identity_service.aio import (
+    ConfidentialLedgerIdentityServiceClient,
+)
 
 identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
-network_identity = await identity_client.get_ledger_identity(
+network_identity = identity_client.confidential_ledger_identity_service.get_ledger_identity(
     ledger_id="my-ledger-id"
 )
 
 ledger_tls_cert_file_name = "ledger_certificate.pem"
 with open(ledger_tls_cert_file_name, "w") as cert_file:
-    cert_file.write(network_identity.ledger_tls_certificate)
+    cert_file.write(network_identity["ledgerTlsCertificate"])
 
-credential = DefaultAzureCredential()
 ledger_client = ConfidentialLedgerClient(
     endpoint="https://my-ledger-url.confidential-ledger.azure.com",
-    credential=credential,
+    credential=DefaultAzureCredential(),
     ledger_certificate_path=ledger_tls_cert_file_name
 )
 
 # Call close when the client and credential are no longer needed.
-await client.close()
+await identity_client.close()
+await ledger_client.close()
 await credential.close()
 
 # Alternatively, use them as async context managers (contextlib.AsyncExitStack can help).
+credential = DefaultAzureCredential()
 ledger_client = ConfidentialLedgerClient(
     endpoint="https://my-ledger-url.confidential-ledger.azure.com",
-    credential=credential,
+    credential=DefaultAzureCredential(),
     ledger_certificate_path=ledger_tls_cert_file_name
 )
-async with client:
-    async with credential:
+async with credential:
+    async with ledger_client:
         pass
-```
-
-#### Asynchronously get a ledger entry
-Ledger entries may be retrieved with the async client.
-```python
-entry = await self.client.get_ledger_entry()
-print(entry.contents)
-print(entry.sub_ledger_id)
-```
-
-#### Asynchronously get a range of ledger entries
-Ledger entries may be retrieved over a range with the async client.
-```python
-query_result = client.get_ledger_entries(
-    from_transaction_id="12.3"
-)
-async for entry in query_result:
-    print(entry.transaction_id)
-    print(entry.contents)
 ```
 
 ## Troubleshooting
@@ -396,18 +379,18 @@ Confidential Ledger clients raise exceptions defined in [azure-core][azure_core_
 
 ```python
 from azure.core.exceptions import ResourceNotFoundError
-from azure.identity import DefaultAzureCredential
 from azure.confidentialledger import ConfidentialLedgerClient
-from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
+from azure.confidentialledger_identity_service import ConfidentialLedgerIdentityServiceClient
+from azure.identity import DefaultAzureCredential
 
 identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
-network_identity = identity_client.get_ledger_identity(
+network_identity = identity_client.confidential_ledger_identity_service.get_ledger_identity(
     ledger_id="my-ledger-id"
 )
 
 ledger_tls_cert_file_name = "ledger_certificate.pem"
 with open(ledger_tls_cert_file_name, "w") as cert_file:
-    cert_file.write(network_identity.ledger_tls_certificate)
+    cert_file.write(network_identity["ledgerTlsCertificate"])
 
 credential = DefaultAzureCredential()
 ledger_client = ConfidentialLedgerClient(
@@ -417,7 +400,9 @@ ledger_client = ConfidentialLedgerClient(
 )
 
 try:
-    ledger_client.get_ledger_entry(transaction_id="10000.100000")
+    ledger_client.confidential_ledger.begin_get_ledger_entry(
+        transaction_id="10000.100000"
+    )
 except ResourceNotFoundError as e:
     print(e.message)
 ```
@@ -431,9 +416,9 @@ Detailed DEBUG level logging, including request/response bodies and unredacted h
 import logging
 import sys
 
-from azure.identity import DefaultAzureCredential
 from azure.confidentialledger import ConfidentialLedgerClient
 from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
+from azure.identity import DefaultAzureCredential
 
 # Create a logger for the 'azure' SDK
 logger = logging.getLogger('azure')
@@ -444,28 +429,28 @@ handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
 identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
-network_identity = identity_client.get_ledger_identity(
+network_identity = identity_client.confidential_ledger_identity_service.get_ledger_identity(
     ledger_id="my-ledger-id"
 )
 
 ledger_tls_cert_file_name = "ledger_certificate.pem"
 with open(ledger_tls_cert_file_name, "w") as cert_file:
-    cert_file.write(network_identity.ledger_tls_certificate)
+    cert_file.write(network_identity["ledgerTlsCertificate"])
 
 credential = DefaultAzureCredential()
 
-# This client will log detailed information about its HTTP sessions, at DEBUG level
+# This client will log detailed information about its HTTP sessions, at DEBUG level.
 ledger_client = ConfidentialLedgerClient(
     endpoint="https://my-ledger-url.confidential-ledger.azure.com",
     credential=credential,
     ledger_certificate_path=ledger_tls_cert_file_name,
-    logging_enable=True
+    logging_enable=True,
 )
 ```
 
 Similarly, `logging_enable` can enable detailed logging for a single operation, even when it isn't enabled for the client:
 ```python
-ledger_client.get_ledger_entry(transaction_id="12.3", logging_enable=True)
+ledger_client.confidential_ledger.get_current_ledger_entry(logging_enable=True)
 ```
 
 ## Next steps
