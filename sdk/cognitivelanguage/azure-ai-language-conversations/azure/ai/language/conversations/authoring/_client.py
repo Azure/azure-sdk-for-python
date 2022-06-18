@@ -13,25 +13,20 @@ from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import ConversationAnalysisClientConfiguration
-from ._operations import ConversationAnalysisClientOperationsMixin
+from ._configuration import ConversationAuthoringClientConfiguration
+from ._operations import ConversationAuthoringClientOperationsMixin
 from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Dict
 
-class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
-    """The language service conversations API is a suite of natural language processing (NLP) skills
-    that can be used to analyze structured conversations (textual or spoken). The synchronous API
-    in this suite accepts a request and mediates among multiple language projects, such as LUIS
-    Generally Available, Question Answering, Conversational Language Understanding, and then calls
-    the best candidate service to handle the request. At last, it returns a response with the
-    candidate service's response as a payload.
-
-     In some cases, this API needs to forward requests and responses between the caller and an
-    upstream service. The asynchronous APIs in this suite enable tasks like Conversation
-    Summarization and Conversational PII detection.
+class ConversationAuthoringClient(ConversationAuthoringClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+    """The language service API is a suite of natural language processing (NLP) skills built with
+    best-in-class Microsoft machine learning algorithms. The API can be used to analyze
+    unstructured text for tasks such as sentiment analysis, key phrase extraction, language
+    detection and question answering. Further documentation can be found in :code:`<a
+    href="https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview</a>`.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
@@ -41,6 +36,8 @@ class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):  # 
     :keyword api_version: Api Version. Default value is "2022-05-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
@@ -50,7 +47,7 @@ class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):  # 
         **kwargs: Any
     ) -> None:
         _endpoint = '{Endpoint}/language'
-        self._config = ConversationAnalysisClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = ConversationAuthoringClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -93,7 +90,7 @@ class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):  # 
         self._client.close()
 
     def __enter__(self):
-        # type: () -> ConversationAnalysisClient
+        # type: () -> ConversationAuthoringClient
         self._client.__enter__()
         return self
 
