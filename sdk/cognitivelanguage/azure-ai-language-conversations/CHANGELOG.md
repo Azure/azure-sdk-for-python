@@ -13,7 +13,8 @@
 ## 1.0.0 (Unreleased)
 
 ### Features Added
-* Added more resolution types
+* Added more resolution types for entities
+* Added support for authoring client
 
 ## 1.0.0b3 (2022-04-19)
 
