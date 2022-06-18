@@ -300,10 +300,9 @@ def trace_message(message, parent_span=None):
             })
             with current_span.span(name=SPAN_NAME_MESSAGE, kind=SpanKind.PRODUCER, links=[link]) as message_span:
                 message_span.add_attribute(TRACE_NAMESPACE_PROPERTY, TRACE_NAMESPACE)
-                # TODO: Remove intermediary message; this is standin while this var is being renamed in a concurrent PR
-                if not message.message.application_properties:
-                    message.message.application_properties = dict()
-                message.message.application_properties.setdefault(
+                if not message.application_properties:
+                    message.application_properties = dict()
+                message.application_properties.setdefault(
                     TRACE_PARENT_PROPERTY,
                     message_span.get_trace_parent().encode(TRACE_PROPERTY_ENCODING),
                 )
@@ -320,14 +319,14 @@ def get_receive_links(messages):
     links = []
     try:
         for message in trace_messages:  # type: ignore
-            if message.message.application_properties:
-                traceparent = message.message.application_properties.get(
+            if message.application_properties:
+                traceparent = message.application_properties.get(
                     TRACE_PARENT_PROPERTY, ""
                 ).decode(TRACE_PROPERTY_ENCODING)
                 if traceparent:
                     links.append(Link({'traceparent': traceparent},
                         {
-                            SPAN_ENQUEUED_TIME_PROPERTY: message.message.annotations.get(
+                            SPAN_ENQUEUED_TIME_PROPERTY: message.raw_amqp_message.annotations.get(
                                 TRACE_ENQUEUED_TIME_PROPERTY
                             )
                         }))

@@ -340,6 +340,7 @@ def test_message_backcompat_receive_and_delete_databody():
     assert outgoing_message.message.properties.reply_to_group_id == b'reply to session'
     assert outgoing_message.message.properties.get_properties_obj().message_id
  
+    # TODO: Test updating message and resending
     with sb_client.get_queue_receiver(queue_name,
                                         receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
                                         max_wait_time=10) as receiver:
@@ -386,6 +387,8 @@ def test_message_backcompat_receive_and_delete_databody():
         assert not incoming_message.message.release()
         assert not incoming_message.message.reject()
         assert not incoming_message.message.modify(True, True)
+
+        # TODO: Test updating message and resending
 
 
 def test_message_backcompat_peek_lock_databody():
@@ -654,3 +657,5 @@ def test_message_backcompat_peek_lock_sequencebody():
         assert not incoming_message.message.release()
         assert not incoming_message.message.reject()
         assert not incoming_message.message.modify(True, True)
+
+# TODO: Add batch message backcompat tests

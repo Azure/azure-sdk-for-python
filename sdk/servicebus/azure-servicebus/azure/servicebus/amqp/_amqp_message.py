@@ -12,6 +12,7 @@ from typing import Optional, Any, cast, Mapping, Union, Dict
 
 from msrest.serialization import TZ_UTC
 from .._pyamqp.message import Message, Header, Properties
+from .._pyamqp.utils import normalized_data_body, normalized_sequence_body
 
 from ._constants import AmqpMessageBodyType
 from .._common.constants import MAX_DURATION_VALUE, MAX_ABSOLUTE_EXPIRY_TIME
@@ -146,10 +147,10 @@ class AmqpAnnotatedMessage(object):
             )
 
         if "data_body" in kwargs:
-            self._data_body = kwargs.get("data_body")
+            self._data_body = normalized_data_body(kwargs.get("data_body"))
             self.body_type = AmqpMessageBodyType.DATA
         elif "sequence_body" in kwargs:
-            self._sequence_body = kwargs.get("sequence_body")
+            self._sequence_body = normalized_sequence_body(kwargs.get("sequence_body"))
             self.body_type = AmqpMessageBodyType.SEQUENCE
         elif "value_body" in kwargs:
             self._value_body = kwargs.get("value_body")
@@ -172,7 +173,6 @@ class AmqpAnnotatedMessage(object):
         elif self.body_type == AmqpMessageBodyType.VALUE:
             return str(self._value_body)
         return ""
-        
 
     def __repr__(self) -> str:
         # pylint: disable=bare-except
@@ -329,9 +329,9 @@ class AmqpAnnotatedMessage(object):
         :rtype: Any
         """
         if self.body_type == AmqpMessageBodyType.DATA:
-            return self._data_body
+            return (i for i in self._data_body)
         elif self.body_type == AmqpMessageBodyType.SEQUENCE:
-            return self._sequence_body
+            return (i for i in self._sequence_body)
         elif self.body_type == AmqpMessageBodyType.VALUE:
             return self._value_body
         return None

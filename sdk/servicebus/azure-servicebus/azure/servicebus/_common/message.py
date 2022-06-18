@@ -12,9 +12,10 @@ import functools
 from typing import Optional, Dict, List, Tuple, Union, Iterable, TYPE_CHECKING, Any, Mapping, cast
 
 
-from .._pyamqp.message import Message
+from .._pyamqp.message import Message, BatchMessage
 from .._pyamqp.performatives import TransferFrame
-from .._pyamqp._message_backcompat import LegacyMessage
+from .._pyamqp._message_backcompat import LegacyMessage, LegacyBatchMessage
+from .._pyamqp.utils import add_batch, get_message_encoded_size
 
 #import uamqp.errors
 #import uamqp.message
@@ -39,6 +40,7 @@ from .constants import (
     MESSAGE_PROPERTY_MAX_LENGTH,
     MAX_ABSOLUTE_EXPIRY_TIME,
     MAX_DURATION_VALUE,
+    MAX_MESSAGE_LENGTH_BYTES,
     MESSAGE_STATE_NAME
 )
 from ..amqp import (
@@ -131,7 +133,7 @@ class ServiceBusMessage(
             # Internal usage only for transforming AmqpAnnotatedMessage to outgoing ServiceBusMessage
             self._raw_amqp_message = kwargs["raw_amqp_message"]
         elif "message" in kwargs:
-            self._raw_amqp_message = AmqpAnnotatedMessage(message=kwargs["message"], frame=kwargs.get("frame"))
+            self._raw_amqp_message = AmqpAnnotatedMessage(message=kwargs["message"])
         else:
             self._build_message(body)
             self.application_properties = application_properties
@@ -243,7 +245,7 @@ class ServiceBusMessage(
         #self.message = self.raw_amqp_message._to_outgoing_amqp_message()
         #return self
         raise Exception("Why are we here")
-        return self.raw_amqp_message._to_outgoing_amqp_message()
+        return self.raw_amqp_message._to_outgoing_message()
         
     @property
     def message(self) -> LegacyMessage:
@@ -644,44 +646,43 @@ class ServiceBusMessageBatch(object):
      can hold.
     """
 
-    def __init__(self, max_size_in_bytes=None):
-        # type: (Optional[int]) -> None
-        self.message = uamqp.BatchMessage(
-            data=[], multi_messages=False, properties=None
-        )
-        self._max_size_in_bytes = (
-            max_size_in_bytes or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
-        )
-        self._size = self.message.gather()[0].get_message_encoded_size()
+    def __init__(self, max_size_in_bytes: Optional[int] = None) -> None:
+        self._max_size_in_bytes = max_size_in_bytes or MAX_MESSAGE_LENGTH_BYTES
+        self._message = [None] * 9
+        self._size = get_message_encoded_size(BatchMessage(*self._message))
         self._count = 0
-        self._messages = []  # type: List[ServiceBusMessage]
+        self._messages: List[ServiceBusMessage] = []
 
-    def __repr__(self):
-        # type: () -> str
+    def __repr__(self) -> str:
         batch_repr = "max_size_in_bytes={}, message_count={}".format(
             self.max_size_in_bytes, self._count
         )
         return "ServiceBusMessageBatch({})".format(batch_repr)
 
-    def __len__(self):
-        # type: () -> int
+    def __len__(self) -> int:
         return self._count
 
-    def _from_list(self, messages, parent_span=None):
-        # type: (Iterable[ServiceBusMessage], AbstractSpan) -> None
+    def _from_list(
+            self,
+            messages: Iterable[ServiceBusMessage],
+            parent_span: AbstractSpan = None
+    ) -> None:
         for message in messages:
             self._add(message, parent_span)
 
-    def _add(self, add_message, parent_span=None):
-        # type: (Union[ServiceBusMessage, Mapping[str, Any], AmqpAnnotatedMessage], AbstractSpan) -> None
+    def _add(
+            self,
+            add_message: Union[ServiceBusMessage, Mapping[str, Any], AmqpAnnotatedMessage],
+            parent_span: AbstractSpan = None
+    ) -> None:
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
         message = transform_messages_if_needed(add_message, ServiceBusMessage)
         message = cast(ServiceBusMessage, message)
         trace_message(
             message, parent_span
         )  # parent_span is e.g. if built as part of a send operation.
-        message_size = (
-            message.message.get_message_encoded_size()
+        message_size = get_message_encoded_size(
+            message.raw_amqp_message._to_outgoing_amqp_message()  # pylint: disable=protected-access
         )
 
         # For a ServiceBusMessageBatch, if the encoded_message_size of event_data is < 256, then the overhead cost to
@@ -698,15 +699,19 @@ class ServiceBusMessageBatch(object):
                     self.max_size_in_bytes
                 )
             )
-
-        self.message._body_gen.append(message)  # pylint: disable=protected-access
+        add_batch(self._message, message.raw_amqp_message._to_outgoing_amqp_message())  # pylint: disable=protected-access
         self._size = size_after_add
         self._count += 1
         self._messages.append(message)
 
     @property
-    def max_size_in_bytes(self):
-        # type: () -> int
+    def message(self) -> LegacyBatchMessage:
+        raise Exception("Attempting to use legacy batch")
+        message = AmqpAnnotatedMessage(message=Message(*self._message))
+        return LegacyBatchMessage(message)
+
+    @property
+    def max_size_in_bytes(self) -> int:
         """The maximum size of bytes data that a ServiceBusMessageBatch object can hold.
 
         :rtype: int
@@ -714,16 +719,14 @@ class ServiceBusMessageBatch(object):
         return self._max_size_in_bytes
 
     @property
-    def size_in_bytes(self):
-        # type: () -> int
+    def size_in_bytes(self) -> int:
         """The combined size of the messages in the batch, in bytes.
 
         :rtype: int
         """
         return self._size
 
-    def add_message(self, message):
-        # type: (Union[ServiceBusMessage, AmqpAnnotatedMessage, Mapping[str, Any]]) -> None
+    def add_message(self, message: Union[ServiceBusMessage, AmqpAnnotatedMessage, Mapping[str, Any]]) -> None:
         """Try to add a single Message to the batch.
 
         The total size of an added message is the sum of its body, properties, etc.
@@ -908,8 +911,16 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
     @property
     def message(self) -> LegacyMessage:
         raise Exception("Looking for received legacy attribute")
-        settler = functools.partial(self._receiver._settle_message, self)
-        return LegacyMessage(self._raw_amqp_message, settler=settler)
+        if not self._settled:
+            settler = functools.partial(self._receiver._settle_message, self)
+        else:
+            settler = None
+        return LegacyMessage(
+            self._raw_amqp_message,
+            delivery_no=self._delivery_id,
+            delivery_tag=self._delivery_tag,
+            settler=settler,
+            encoding=self._encoding)
 
     @property
     def dead_letter_error_description(self) -> Optional[str]:
