@@ -5,7 +5,8 @@
 # -------------------------------------------------------------------------
 from enum import Enum
 
-from uamqp import constants, types
+from .._pyamqp.utils import amqp_symbol_value
+from .._pyamqp import constants
 from azure.core import CaseInsensitiveEnumMeta
 
 VENDOR = b"com.microsoft"
@@ -179,8 +180,8 @@ class ServiceBusMessageState(int, Enum):
 
 # To enable extensible string enums for the public facing parameter, and translate to the "real" uamqp constants.
 ServiceBusToAMQPReceiveModeMap = {
-    ServiceBusReceiveMode.PEEK_LOCK: constants.ReceiverSettleMode.PeekLock,
-    ServiceBusReceiveMode.RECEIVE_AND_DELETE: constants.ReceiverSettleMode.ReceiveAndDelete,
+    ServiceBusReceiveMode.PEEK_LOCK: constants.ReceiverSettleMode.Second,
+    ServiceBusReceiveMode.RECEIVE_AND_DELETE: constants.ReceiverSettleMode.First,
 }
 
 
@@ -193,9 +194,9 @@ class ServiceBusSubQueue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TRANSFER_DEAD_LETTER = "transferdeadletter"
 
 
-ANNOTATION_SYMBOL_PARTITION_KEY = types.AMQPSymbol(_X_OPT_PARTITION_KEY)
-ANNOTATION_SYMBOL_VIA_PARTITION_KEY = types.AMQPSymbol(_X_OPT_VIA_PARTITION_KEY)
-ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME = types.AMQPSymbol(
+ANNOTATION_SYMBOL_PARTITION_KEY = amqp_symbol_value(_X_OPT_PARTITION_KEY)
+ANNOTATION_SYMBOL_VIA_PARTITION_KEY = amqp_symbol_value(_X_OPT_VIA_PARTITION_KEY)
+ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME = amqp_symbol_value(
     _X_OPT_SCHEDULED_ENQUEUE_TIME
 )
 

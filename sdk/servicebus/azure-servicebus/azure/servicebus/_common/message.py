@@ -8,13 +8,16 @@
 import time
 import datetime
 import uuid
-import logging
-from typing import Optional, Dict, List, Union, Iterable, TYPE_CHECKING, Any, Mapping, cast
+import functools
+from typing import Optional, Dict, List, Tuple, Union, Iterable, TYPE_CHECKING, Any, Mapping, cast
 
-import six
 
-import uamqp.errors
-import uamqp.message
+from .._pyamqp.message import Message
+from .._pyamqp.performatives import TransferFrame
+from .._pyamqp._message_backcompat import LegacyMessage
+
+#import uamqp.errors
+#import uamqp.message
 
 from .constants import (
     _BATCH_MESSAGE_OVERHEAD_COST,
@@ -66,8 +69,6 @@ if TYPE_CHECKING:
         str,
         uuid.UUID
     ]
-
-_LOGGER = logging.getLogger(__name__)
 
 
 class ServiceBusMessage(
@@ -126,14 +127,11 @@ class ServiceBusMessage(
         # problems as MessageProperties won't absorb spurious args.
         self._encoding = kwargs.pop("encoding", "UTF-8")
 
-        if "raw_amqp_message" in kwargs and "message" in kwargs:
+        if "raw_amqp_message" in kwargs:
             # Internal usage only for transforming AmqpAnnotatedMessage to outgoing ServiceBusMessage
-            self.message = kwargs["message"]
             self._raw_amqp_message = kwargs["raw_amqp_message"]
         elif "message" in kwargs:
-            # Note: This cannot be renamed until UAMQP no longer relies on this specific name.
-            self.message = kwargs["message"]
-            self._raw_amqp_message = AmqpAnnotatedMessage(message=self.message)
+            self._raw_amqp_message = AmqpAnnotatedMessage(message=kwargs["message"], frame=kwargs.get("frame"))
         else:
             self._build_message(body)
             self.application_properties = application_properties
@@ -149,12 +147,10 @@ class ServiceBusMessage(
             self.time_to_live = time_to_live
             self.partition_key = partition_key
 
-    def __str__(self):
-        # type: () -> str
+    def __str__(self) -> str:
         return str(self.raw_amqp_message)
 
-    def __repr__(self):
-        # type: () -> str
+    def __repr__(self) -> str:
         # pylint: disable=bare-except
         message_repr = "body={}".format(
             str(self)
@@ -211,7 +207,7 @@ class ServiceBusMessage(
 
     def _build_message(self, body):
         if not (
-            isinstance(body, (six.string_types, six.binary_type)) or (body is None)
+            isinstance(body, (str, bytes)) or (body is None)
         ):
             raise TypeError(
                 "ServiceBusMessage body must be a string, bytes, or None.  Got instead: {}".format(
@@ -242,21 +238,25 @@ class ServiceBusMessage(
         else:
             self._raw_amqp_message.annotations[ANNOTATION_SYMBOL_KEY_MAP[key]] = value
 
-    def _to_outgoing_message(self):
-        # type: () -> ServiceBusMessage
+    def _to_outgoing_message(self) -> "ServiceBusMessage":
         # pylint: disable=protected-access
-        self.message = self.raw_amqp_message._to_outgoing_amqp_message()
-        return self
+        #self.message = self.raw_amqp_message._to_outgoing_amqp_message()
+        #return self
+        raise Exception("Why are we here")
+        return self.raw_amqp_message._to_outgoing_amqp_message()
+        
+    @property
+    def message(self) -> LegacyMessage:
+        raise Exception("Looking for legacy attribute")
+        return LegacyMessage(self._raw_amqp_message)
 
     @property
-    def raw_amqp_message(self):
-        # type: () -> AmqpAnnotatedMessage
+    def raw_amqp_message(self) -> AmqpAnnotatedMessage:
         """Advanced usage only. The internal AMQP message payload that is sent or received."""
         return self._raw_amqp_message
 
     @property
-    def session_id(self):
-        # type: () -> Optional[str]
+    def session_id(self) -> Optional[str]:
         """The session identifier of the message for a sessionful entity.
 
         For sessionful entities, this application-defined value specifies the session affiliation of the message.
@@ -275,8 +275,7 @@ class ServiceBusMessage(
             return self._raw_amqp_message.properties.group_id
 
     @session_id.setter
-    def session_id(self, value):
-        # type: (str) -> None
+    def session_id(self, value: str) -> None:
         if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
             raise ValueError(
                 "session_id cannot be longer than {} characters.".format(
@@ -290,8 +289,7 @@ class ServiceBusMessage(
         self._raw_amqp_message.properties.group_id = value
 
     @property
-    def application_properties(self):
-        # type: () -> Optional[Dict]
+    def application_properties(self) -> Optional[Dict[Union[str, bytes], Any]]:
         """The user defined properties on the message.
 
         :rtype: dict
@@ -299,13 +297,11 @@ class ServiceBusMessage(
         return self._raw_amqp_message.application_properties
 
     @application_properties.setter
-    def application_properties(self, value):
-        # type: (Dict) -> None
+    def application_properties(self, value: Dict[Union[str, bytes], Any]) -> None:
         self._raw_amqp_message.application_properties = value
 
     @property
-    def partition_key(self):
-        # type: () -> Optional[str]
+    def partition_key(self) -> Optional[str]:
         """The partition key for sending a message to a partitioned entity.
 
         Setting this value enables assigning related messages to the same internal partition, so that submission
@@ -333,8 +329,7 @@ class ServiceBusMessage(
             return p_key
 
     @partition_key.setter
-    def partition_key(self, value):
-        # type: (str) -> None
+    def partition_key(self, value: str) -> None:
         if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
             raise ValueError(
                 "partition_key cannot be longer than {} characters.".format(
@@ -351,8 +346,7 @@ class ServiceBusMessage(
         self._set_message_annotations(_X_OPT_PARTITION_KEY, value)
 
     @property
-    def time_to_live(self):
-        # type: () -> Optional[datetime.timedelta]
+    def time_to_live(self) -> Optional[datetime.timedelta]:
         """The life duration of a message.
 
         This value is the relative duration after which the message expires, starting from the instant the message
@@ -370,8 +364,7 @@ class ServiceBusMessage(
         return None
 
     @time_to_live.setter
-    def time_to_live(self, value):
-        # type: (datetime.timedelta) -> None
+    def time_to_live(self, value: Union[datetime.timedelta, int]) -> None:
         if not self._raw_amqp_message.header:
             self._raw_amqp_message.header = AmqpMessageHeader()
         if value is None:
@@ -394,8 +387,7 @@ class ServiceBusMessage(
             )
 
     @property
-    def scheduled_enqueue_time_utc(self):
-        # type: () -> Optional[datetime.datetime]
+    def scheduled_enqueue_time_utc(self) -> Optional[datetime.datetime]:
         """The utc scheduled enqueue time to the message.
 
         This property can be used for scheduling when sending a message through `ServiceBusSender.send` method.
@@ -418,8 +410,7 @@ class ServiceBusMessage(
         return None
 
     @scheduled_enqueue_time_utc.setter
-    def scheduled_enqueue_time_utc(self, value):
-        # type: (datetime.datetime) -> None
+    def scheduled_enqueue_time_utc(self, value: datetime.datetime) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         if not self._raw_amqp_message.properties.message_id:
@@ -427,8 +418,7 @@ class ServiceBusMessage(
         self._set_message_annotations(_X_OPT_SCHEDULED_ENQUEUE_TIME, value)
 
     @property
-    def body(self):
-        # type: () -> Any
+    def body(self) -> Any:
         """The body of the Message. The format may vary depending on the body type:
         For :class:`azure.servicebus.amqp.AmqpMessageBodyType.DATA<azure.servicebus.amqp.AmqpMessageBodyType.DATA>`,
         the body could be bytes or Iterable[bytes].
@@ -443,8 +433,7 @@ class ServiceBusMessage(
         return self._raw_amqp_message.body
 
     @property
-    def body_type(self):
-        # type: () -> AmqpMessageBodyType
+    def body_type(self) -> AmqpMessageBodyType:
         """The body type of the underlying AMQP message.
 
         :rtype: ~azure.servicebus.amqp.AmqpMessageBodyType
@@ -452,8 +441,7 @@ class ServiceBusMessage(
         return self._raw_amqp_message.body_type
 
     @property
-    def content_type(self):
-        # type: () -> Optional[str]
+    def content_type(self) -> Optional[str]:
         """The content type descriptor.
 
         Optionally describes the payload of the message, with a descriptor following the format of RFC2045, Section 5,
@@ -469,15 +457,13 @@ class ServiceBusMessage(
             return self._raw_amqp_message.properties.content_type
 
     @content_type.setter
-    def content_type(self, value):
-        # type: (str) -> None
+    def content_type(self, value: str) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.content_type = value
 
     @property
-    def correlation_id(self):
-        # type: () -> Optional[str]
+    def correlation_id(self) -> Optional[str]:
         # pylint: disable=line-too-long
         """The correlation identifier.
 
@@ -497,15 +483,13 @@ class ServiceBusMessage(
             return self._raw_amqp_message.properties.correlation_id
 
     @correlation_id.setter
-    def correlation_id(self, value):
-        # type: (str) -> None
+    def correlation_id(self, value: str) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.correlation_id = value
 
     @property
-    def subject(self):
-        # type: () -> Optional[str]
+    def subject(self) -> Optional[str]:
         """The application specific subject, sometimes referred to as a label.
 
         This property enables the application to indicate the purpose of the message to the receiver in a standardized
@@ -521,15 +505,13 @@ class ServiceBusMessage(
             return self._raw_amqp_message.properties.subject
 
     @subject.setter
-    def subject(self, value):
-        # type: (str) -> None
+    def subject(self, value: str) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.subject = value
 
     @property
-    def message_id(self):
-        # type: () -> Optional[str]
+    def message_id(self) -> Optional[str]:
         """The id to identify the message.
 
         The message identifier is an application-defined value that uniquely identifies the message and its payload.
@@ -548,8 +530,7 @@ class ServiceBusMessage(
             return self._raw_amqp_message.properties.message_id
 
     @message_id.setter
-    def message_id(self, value):
-        # type: (str) -> None
+    def message_id(self, value: str) -> None:
         if value and len(str(value)) > MESSAGE_PROPERTY_MAX_LENGTH:
             raise ValueError(
                 "message_id cannot be longer than {} characters.".format(
@@ -561,8 +542,7 @@ class ServiceBusMessage(
         self._raw_amqp_message.properties.message_id = value
 
     @property
-    def reply_to(self):
-        # type: () -> Optional[str]
+    def reply_to(self) -> Optional[str]:
         # pylint: disable=line-too-long
         """The address of an entity to send replies to.
 
@@ -583,15 +563,13 @@ class ServiceBusMessage(
             return self._raw_amqp_message.properties.reply_to
 
     @reply_to.setter
-    def reply_to(self, value):
-        # type: (str) -> None
+    def reply_to(self, value: str) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.reply_to = value
 
     @property
-    def reply_to_session_id(self):
-        # type: () -> Optional[str]
+    def reply_to_session_id(self) -> Optional[str]:
         # pylint: disable=line-too-long
         """The session identifier augmenting the `reply_to` address.
 
@@ -611,7 +589,7 @@ class ServiceBusMessage(
             return self._raw_amqp_message.properties.reply_to_group_id
 
     @reply_to_session_id.setter
-    def reply_to_session_id(self, value):
+    def reply_to_session_id(self, value: str) -> None:
         # type: (str) -> None
         if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
             raise ValueError(
@@ -625,8 +603,7 @@ class ServiceBusMessage(
         self._raw_amqp_message.properties.reply_to_group_id = value
 
     @property
-    def to(self):
-        # type: () -> Optional[str]
+    def to(self) -> Optional[str]:
         """The `to` address.
 
         This property is reserved for future use in routing scenarios and presently ignored by the broker itself.
@@ -645,8 +622,7 @@ class ServiceBusMessage(
             return self._raw_amqp_message.properties.to
 
     @to.setter
-    def to(self, value):
-        # type: (str) -> None
+    def to(self, value: str) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.to = value
@@ -781,10 +757,17 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
 
     """
 
-    def __init__(self, message, receive_mode=ServiceBusReceiveMode.PEEK_LOCK, **kwargs):
-        # type: (uamqp.message.Message, Union[ServiceBusReceiveMode, str], Any) -> None
+    def __init__(
+            self,
+            message: Tuple[TransferFrame, Message],
+            receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
+            **kwargs
+    ) -> None:
+        frame, message = message
         super(ServiceBusReceivedMessage, self).__init__(None, message=message)  # type: ignore
         self._settled = receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
+        self._delivery_tag = frame[2]
+        self._delivery_id = frame[1]
         self._received_timestamp_utc = utc_now()
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self._is_peeked_message = kwargs.get("is_peeked_message", False)
@@ -802,9 +785,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         self._expiry = None  # type: Optional[datetime.datetime]
 
     @property
-    def _lock_expired(self):
-        # type: () -> bool
-        # pylint: disable=protected-access
+    def _lock_expired(self) -> bool:
         """
         Whether the lock on the message has expired.
 
@@ -821,13 +802,11 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             return True
         return False
 
-    def _to_outgoing_message(self):
-        # type: () -> ServiceBusMessage
+    def _to_outgoing_message(self) -> ServiceBusMessage:
         # pylint: disable=protected-access
         return ServiceBusMessage(body=None, message=self.raw_amqp_message._to_outgoing_amqp_message())
 
-    def __repr__(self):  # pylint: disable=too-many-branches,too-many-statements
-        # type: () -> str
+    def __repr__(self) -> str:  # pylint: disable=too-many-branches,too-many-statements
         # pylint: disable=bare-except
         message_repr = "body={}".format(
             str(self)
@@ -927,8 +906,13 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         return "ServiceBusReceivedMessage({})".format(message_repr)[:1024]
 
     @property
-    def dead_letter_error_description(self):
-        # type: () -> Optional[str]
+    def message(self) -> LegacyMessage:
+        raise Exception("Looking for received legacy attribute")
+        settler = functools.partial(self._receiver._settle_message, self)
+        return LegacyMessage(self._raw_amqp_message, settler=settler)
+
+    @property
+    def dead_letter_error_description(self) -> Optional[str]:
         """
         Dead letter error description, when the message is received from a deadletter subqueue of an entity.
 
@@ -944,8 +928,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         return None
 
     @property
-    def dead_letter_reason(self):
-        # type: () -> Optional[str]
+    def dead_letter_reason(self) -> Optional[str]:
         """
         Dead letter reason, when the message is received from a deadletter subqueue of an entity.
 
@@ -961,8 +944,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         return None
 
     @property
-    def dead_letter_source(self):
-        # type: () -> Optional[str]
+    def dead_letter_source(self) -> Optional[str]:
         """
         The name of the queue or subscription that this message was enqueued on, before it was deadlettered.
         This property is only set in messages that have been dead-lettered and subsequently auto-forwarded
@@ -980,8 +962,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         return None
 
     @property
-    def state(self):
-        # type: () -> ServiceBusMessageState
+    def state(self) -> ServiceBusMessageState:
         """
         Defaults to Active. Represents the message state of the message. Can be Active, Deferred.
         or Scheduled.
@@ -998,8 +979,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             return ServiceBusMessageState.ACTIVE
 
     @property
-    def delivery_count(self):
-        # type: () -> Optional[int]
+    def delivery_count(self) -> Optional[int]:
         """
         Number of deliveries that have been attempted for this message. The count is incremented
         when a message lock expires or the message is explicitly abandoned by the receiver.
@@ -1011,8 +991,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         return None
 
     @property
-    def enqueued_sequence_number(self):
-        # type: () -> Optional[int]
+    def enqueued_sequence_number(self) -> Optional[int]:
         """
         For messages that have been auto-forwarded, this property reflects the sequence number that had
         first been assigned to the message at its original point of submission.
@@ -1024,8 +1003,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         return None
 
     @property
-    def enqueued_time_utc(self):
-        # type: () -> Optional[datetime.datetime]
+    def enqueued_time_utc(self) -> Optional[datetime.datetime]:
         """
         The UTC datetime at which the message has been accepted and stored in the entity.
 
@@ -1039,8 +1017,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         return None
 
     @property
-    def expires_at_utc(self):
-        # type: () -> Optional[datetime.datetime]
+    def expires_at_utc(self) -> Optional[datetime.datetime]:
         """
         The UTC datetime at which the message is marked for removal and no longer available for retrieval
         from the entity due to expiration. Expiry is controlled by the `Message.time_to_live` property.
@@ -1053,8 +1030,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         return None
 
     @property
-    def sequence_number(self):
-        # type: () -> Optional[int]
+    def sequence_number(self) -> Optional[int]:
         """
         The unique number assigned to a message by Service Bus. The sequence number is a unique 64-bit integer
         assigned to a message as it is accepted and stored by the broker and functions as its true identifier.
@@ -1068,8 +1044,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         return None
 
     @property
-    def lock_token(self):
-        # type: () -> Optional[Union[uuid.UUID, str]]
+    def lock_token(self) -> Optional[Union[uuid.UUID, str]]:
         """
         The lock token for the current message serving as a reference to the lock that
         is being held by the broker in PEEK_LOCK mode.
@@ -1079,8 +1054,8 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         if self._settled:
             return None
 
-        if self.message.delivery_tag:
-            return uuid.UUID(bytes_le=self.message.delivery_tag)
+        if self._delivery_tag:
+            return uuid.UUID(bytes_le=self._delivery_tag)
 
         delivery_annotations = self._raw_amqp_message.delivery_annotations
         if delivery_annotations:
@@ -1088,9 +1063,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         return None
 
     @property
-    def locked_until_utc(self):
-        # type: () -> Optional[datetime.datetime]
-        # pylint: disable=protected-access
+    def locked_until_utc(self) -> Optional[datetime.datetime]:
         """
         The UTC datetime until which the message will be locked in the queue/subscription.
         When the lock expires, delivery count of hte message is incremented and the message
