@@ -33,8 +33,8 @@ def sample_analyze_orchestration_app_conv_response():
     # get secrets
     clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-    project_name = os.environ["AZURE_CONVERSATIONS_PROJECT_NAME"]
-    deployment_name = os.environ["AZURE_CONVERSATIONS_DEPLOYMENT_NAME"]
+    project_name = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT_NAME"]
+    deployment_name = os.environ["AZURE_CONVERSATIONS_WORKFLOW_DEPLOYMENT_NAME"]
 
     # analyze query
     client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
