@@ -7,9 +7,11 @@ import uuid
 import functools
 from typing import Optional, Callable
 
-from uamqp import Source
+from .._pyamqp.endpoints import Source
+from .._pyamqp.error import RetryPolicy, AMQPError
 
 from .message import ServiceBusReceivedMessage
+from ..exceptions import _NO_RETRY_CONDITION_ERROR_CODES
 from .constants import (
     NEXT_AVAILABLE_SESSION,
     SESSION_FILTER,
@@ -51,8 +53,17 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         )
 
         self._session_id = kwargs.get("session_id")
-        self._error_policy = _ServiceBusErrorPolicy(
-            max_retries=self._config.retry_total, is_session=bool(self._session_id)
+        # self._error_policy = _ServiceBusErrorPolicy(
+        #     max_retries=self._config.retry_total, is_session=bool(self._session_id)
+        # )
+        # TODO: This needs work
+        # self._error_policy = _ServiceBusErrorPolicy(
+        #     max_retries=self._config.retry_total
+        # )
+        self._error_policy = RetryPolicy(
+            retry_total=self._config.retry_total,
+            no_retry_condition=_NO_RETRY_CONDITION_ERROR_CODES,
+            #custom_condition_backoff=CUSTOM_CONDITION_BACKOFF
         )
 
         self._name = "SBReceiver-{}".format(uuid.uuid4())
@@ -95,11 +106,12 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _get_source(self):
         # pylint: disable=protected-access
         if self._session:
-            source = Source(self._entity_uri)
-            session_filter = (
-                None if self._session_id == NEXT_AVAILABLE_SESSION else self._session_id
+            session_filter = None if self._session_id == NEXT_AVAILABLE_SESSION else self._session_id
+            filter_map = {SESSION_FILTER: (None, session_filter)}
+            source = Source(
+                address=self._entity_uri,
+                filters=filter_map
             )
-            source.set_filter(session_filter, name=SESSION_FILTER, descriptor=None)
             return source
         return self._entity_uri
 
@@ -136,40 +148,52 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         dead_letter_reason=None,
         dead_letter_error_description=None,
     ):
-        # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> Callable
-        # pylint: disable=no-self-use
+        # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> None
         if settle_operation == MESSAGE_COMPLETE:
-            return functools.partial(message.message.accept)
+            return self._handler.settle_messages(message.delivery_id, 'accepted')
         if settle_operation == MESSAGE_ABANDON:
-            return functools.partial(message.message.modify, True, False)
+            return self._handler.settle_messages(
+                message.delivery_id,
+                'modified',
+                delivery_failed=True,
+                undeliverable_here=False
+            )
         if settle_operation == MESSAGE_DEAD_LETTER:
-            return functools.partial(
-                message.message.reject,
-                condition=DEADLETTERNAME,
-                description=dead_letter_error_description,
-                info={
-                    RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
-                    RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
-                },
+            return self._handler.settle_messages(
+                message.delivery_id,
+                'rejected',
+                error=AMQPError(
+                    condition=DEADLETTERNAME,
+                    description=dead_letter_error_description,
+                    info={
+                        RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
+                        RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
+                    }
+                )
             )
         if settle_operation == MESSAGE_DEFER:
-            return functools.partial(message.message.modify, True, True)
+            return self._handler.settle_messages(
+                message.delivery_id,
+                'modified',
+                delivery_failed=True,
+                undeliverable_here=True
+            )
         raise ValueError(
             "Unsupported settle operation type: {}".format(settle_operation)
         )
 
-    def _on_attach(self, source, target, properties, error):
+    def _on_attach(self, attach_frame):
         # pylint: disable=protected-access, unused-argument
-        if self._session and str(source) == self._entity_uri:
+        if self._session and str(attach_frame.source.address) == self._entity_uri:
             # This has to live on the session object so that autorenew has access to it.
             self._session._session_start = utc_now()
-            expiry_in_seconds = properties.get(SESSION_LOCKED_UNTIL)
+            expiry_in_seconds = attach_frame.properties.get(SESSION_LOCKED_UNTIL)
             if expiry_in_seconds:
                 expiry_in_seconds = (
                     expiry_in_seconds - DATETIMEOFFSET_EPOCH
                 ) / 10000000
                 self._session._locked_until_utc = utc_from_timestamp(expiry_in_seconds)
-            session_filter = source.get_filter(name=SESSION_FILTER)
+            session_filter = attach_frame.source.filters[SESSION_FILTER]
             self._session_id = session_filter.decode(self._config.encoding)
             self._session._session_id = self._session_id
 
@@ -177,10 +201,10 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         if self._session:
             message[MGMT_REQUEST_SESSION_ID] = self._session_id
 
-    def _enhanced_message_received(self, message):
+    def _enhanced_message_received(self, frame, message):
         # pylint: disable=protected-access
         self._handler._was_message_received = True
         if self._receive_context.is_set():
-            self._handler._received_messages.put(message)
+            self._handler._received_messages.put((frame, message))
         else:
             message.release()

@@ -12,11 +12,11 @@ import datetime
 import warnings
 from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, cast
 
-import six
-
-from uamqp import ReceiveClient, types, Message
-from uamqp.constants import SenderSettleMode
-from uamqp.authentication.common import AMQPAuth
+#from uamqp.authentication.common import AMQPAuth
+from ._pyamqp.message import Message
+from ._pyamqp.constants import SenderSettleMode
+from ._pyamqp.client import ReceiveClient
+from ._pyamqp import utils
 
 from .exceptions import ServiceBusError
 from ._base_handler import BaseHandler
@@ -334,15 +334,14 @@ class ServiceBusReceiver(
     def _create_handler(self, auth):
         # type: (AMQPAuth) -> None
         self._handler = ReceiveClient(
+            self.fully_qualified_namespace,
             self._get_source(),
             auth=auth,
-            debug=self._config.logging_enable,
+            network_trace=self._config.logging_enable,
             properties=self._properties,
-            error_policy=self._error_policy,
+            retry_policy=self._error_policy,
             client_name=self._name,
             on_attach=self._on_attach,
-            auto_complete=False,
-            encoding=self._config.encoding,
             receive_settle_mode=ServiceBusToAMQPReceiveModeMap[self._receive_mode],
             send_settle_mode=SenderSettleMode.Settled
             if self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
@@ -407,7 +406,7 @@ class ServiceBusReceiver(
             # Dynamically issue link credit if max_message_count > 1 when the prefetch_count is the default value 1
             if max_message_count and self._prefetch_count == 1 and max_message_count > 1:
                 link_credit_needed = max_message_count - len(batch)
-                amqp_receive_client.message_handler.reset_link_credit(link_credit_needed)
+                amqp_receive_client._link.flow(link_credit=link_credit_needed)
 
             first_message_received = expired = False
             receiving = True
@@ -499,7 +498,7 @@ class ServiceBusReceiver(
                         settle_operation,
                         dead_letter_reason=dead_letter_reason,
                         dead_letter_error_description=dead_letter_error_description,
-                    )()
+                    )
                     return
                 except RuntimeError as exception:
                     _LOGGER.info(
@@ -536,7 +535,7 @@ class ServiceBusReceiver(
         # type: (str, List[Union[uuid.UUID, str]], Optional[Dict[str, Any]]) -> Any
         message = {
             MGMT_REQUEST_DISPOSITION_STATUS: settlement,
-            MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens),
+            MGMT_REQUEST_LOCK_TOKENS: utils.amqp_array_value(lock_tokens),
         }
 
         self._populate_message_properties(message)
@@ -551,7 +550,7 @@ class ServiceBusReceiver(
     def _renew_locks(self, *lock_tokens, **kwargs):
         # type: (str, Any) -> Any
         timeout = kwargs.pop("timeout", None)
-        message = {MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)}
+        message = {MGMT_REQUEST_LOCK_TOKENS: utils.amqp_array_value(lock_tokens)}
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEWLOCK_OPERATION,
             message,
@@ -707,7 +706,7 @@ class ServiceBusReceiver(
         self._check_live()
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        if isinstance(sequence_numbers, six.integer_types):
+        if isinstance(sequence_numbers, int):
             sequence_numbers = [sequence_numbers]
         sequence_numbers = cast(List[int], sequence_numbers)
         if len(sequence_numbers) == 0:
@@ -719,10 +718,10 @@ class ServiceBusReceiver(
         except AttributeError:
             receive_mode = int(uamqp_receive_mode.value)
         message = {
-            MGMT_REQUEST_SEQUENCE_NUMBERS: types.AMQPArray(
-                [types.AMQPLong(s) for s in sequence_numbers]
+            MGMT_REQUEST_SEQUENCE_NUMBERS: utils.amqp_array_value(
+                [utils.amqp_long_value(s) for s in sequence_numbers]
             ),
-            MGMT_REQUEST_RECEIVER_SETTLE_MODE: types.AMQPuInt(receive_mode),
+            MGMT_REQUEST_RECEIVER_SETTLE_MODE: utils.amqp_uint_value(receive_mode),
         }
 
         self._populate_message_properties(message)
@@ -794,7 +793,7 @@ class ServiceBusReceiver(
 
         self._open()
         message = {
-            MGMT_REQUEST_FROM_SEQUENCE_NUMBER: types.AMQPLong(sequence_number),
+            MGMT_REQUEST_FROM_SEQUENCE_NUMBER: utils.amqp_long_value(sequence_number),
             MGMT_REQUEST_MAX_MESSAGE_COUNT: max_message_count,
         }
 

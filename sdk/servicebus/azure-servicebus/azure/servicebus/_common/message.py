@@ -746,7 +746,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         super(ServiceBusReceivedMessage, self).__init__(None, message=message)  # type: ignore
         self._settled = receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
         self._delivery_tag = frame[2]
-        self._delivery_id = frame[1]
+        self.delivery_id = frame[1]
         self._received_timestamp_utc = utc_now()
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self._is_peeked_message = kwargs.get("is_peeked_message", False)
@@ -893,7 +893,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             settler = None
         return LegacyMessage(
             self._raw_amqp_message,
-            delivery_no=self._delivery_id,
+            delivery_no=self.delivery_id,
             delivery_tag=self._delivery_tag,
             settler=settler,
             encoding=self._encoding)

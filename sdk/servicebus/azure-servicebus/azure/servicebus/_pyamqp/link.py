@@ -6,6 +6,7 @@
 
 import threading
 import struct
+from typing import Optional
 import uuid
 import logging
 import time
@@ -103,6 +104,7 @@ class Link(object):
         self._pending_deliveries = {}
         self._received_payload = bytearray()
         self._on_link_state_change = kwargs.get('on_link_state_change')
+        self._on_attach = kwargs.get('on_attach')
         self._error = None
 
     def __enter__(self):
@@ -206,16 +208,21 @@ class Link(object):
             self._set_state(LinkState.ATTACH_RCVD)
         elif self.state == LinkState.ATTACH_SENT:
             self._set_state(LinkState.ATTACHED)
+        if self._on_attach:
+            try:
+                self._on_attach(AttachFrame(*frame))
+            except Exception as e:
+                _LOGGER.warning("Callback for link attach raised error: {}".format(e))
 
-    def _outgoing_flow(self):
+    def _outgoing_flow(self, **kwargs):
         flow_frame = {
             'handle': self.handle,
-            'delivery_count': self.delivery_count,
+            'delivery_count':  self.delivery_count,
             'link_credit': self.current_link_credit,
-            'available': None,
-            'drain': None,
-            'echo': None,
-            'properties': None
+            'available': kwargs.get('available'),
+            'drain': kwargs.get('drain'),
+            'echo': kwargs.get('echo'),
+            'properties': kwargs.get('properties')
         }
         self._session._outgoing_flow(flow_frame)
 
@@ -275,3 +282,13 @@ class Link(object):
         except Exception as exc:
             _LOGGER.info("An error occurred when detaching the link: %r", exc)
             self._set_state(LinkState.DETACHED)
+
+    def flow(
+            self,
+            *,
+            link_credit: Optional[int] = None,
+            **kwargs
+        ) -> None:
+        if link_credit:
+            self.current_link_credit = link_credit
+        self._outgoing_flow(**kwargs)

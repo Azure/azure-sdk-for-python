@@ -66,6 +66,7 @@ DEFAULT_LINK_CREDIT = 10000
 
 FIELD = namedtuple('field', 'name, type, mandatory, default, multiple')
 
+STRING_FILTER = b"apache.org:selector-filter:string"
 
 DEFAULT_AUTH_TIMEOUT = 60
 AUTH_DEFAULT_EXPIRATION_SECONDS = 3600

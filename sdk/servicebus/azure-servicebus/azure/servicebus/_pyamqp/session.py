@@ -333,7 +333,7 @@ class Session(object):
             raise ValueError("Connection has been configured to not allow piplined-open. Please set 'wait' parameter.")
 
     def end(self, error=None, wait=False):
-        # type: (Optional[AMQPError]) -> None
+        # type: (Optional[AMQPError], bool) -> None
         try:
             if self.state not in [SessionState.UNMAPPED, SessionState.DISCARDING]:
                 self._outgoing_end(error=error)

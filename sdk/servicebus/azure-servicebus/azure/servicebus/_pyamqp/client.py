@@ -12,6 +12,7 @@ import uuid
 import certifi
 import queue
 from functools import partial
+from typing import Any, Dict, Literal, Optional, Tuple, Union, overload
 
 from ._connection import Connection
 from .message import _MessageDelivery
@@ -27,7 +28,15 @@ from .error import (
     ErrorCondition,
     MessageException,
     MessageSendFailed,
-    RetryPolicy
+    RetryPolicy,
+    AMQPError
+)
+from .outcomes import(
+    Received,
+    Rejected,
+    Released,
+    Accepted,
+    Modified
 )
 
 from .constants import (
@@ -153,6 +162,7 @@ class AMQPClient(object):
         self._send_settle_mode = kwargs.pop('send_settle_mode', SenderSettleMode.Unsettled)
         self._receive_settle_mode = kwargs.pop('receive_settle_mode', ReceiverSettleMode.Second)
         self._desired_capabilities = kwargs.pop('desired_capabilities', None)
+        self._on_attach = kwargs.pop('on_attach', None)
 
         # transport
         if kwargs.get('transport_type') is TransportType.Amqp and kwargs.get('http_proxy') is not None:
@@ -643,9 +653,10 @@ class ReceiveClient(AMQPClient):
                 send_settle_mode=self._send_settle_mode,
                 rcv_settle_mode=self._receive_settle_mode,
                 max_message_size=self._max_message_size,
-                on_message_received=self._message_received,
+                on_transfer=self._message_received,
                 properties=self._link_properties,
-                desired_capabilities=self._desired_capabilities
+                desired_capabilities=self._desired_capabilities,
+                on_attach=self._on_attach
             )
             self._link.attach()
             return False
@@ -668,7 +679,7 @@ class ReceiveClient(AMQPClient):
             return False
         return True
 
-    def _message_received(self, message):
+    def _message_received(self, frame, message):
         """Callback run on receipt of every message. If there is
         a user-defined callback, this will be called.
         Additionally if the client is retrieving messages for a batch
@@ -680,11 +691,7 @@ class ReceiveClient(AMQPClient):
         if self._message_received_callback:
             self._message_received_callback(message)
         if not self._streaming_receive:
-            self._received_messages.put(message)
-        # TODO: do we need settled property for a message?
-        #elif not message.settled:
-        #    # Message was received with callback processing and wasn't settled.
-        #    _logger.info("Message was not settled.")
+            self._received_messages.put((frame, message))
 
     def _receive_message_batch_impl(self, max_batch_size=None, on_message_received=None, timeout=0):
         self._message_received_callback = on_message_received
@@ -695,7 +702,9 @@ class ReceiveClient(AMQPClient):
         self.open()
         while len(batch) < max_batch_size:
             try:
-                batch.append(self._received_messages.get_nowait())
+                # TODO: This looses the transfer frame data
+                _, message = self._received_messages.get_nowait()
+                batch.append(message)
                 self._received_messages.task_done()
             except queue.Empty:
                 break
@@ -723,7 +732,8 @@ class ReceiveClient(AMQPClient):
 
         while len(batch) < max_batch_size:
             try:
-                batch.append(self._received_messages.get_nowait())
+                _, message = self._received_messages.get_nowait()
+                batch.append(message)
                 self._received_messages.task_done()
             except queue.Empty:
                 break
@@ -761,4 +771,87 @@ class ReceiveClient(AMQPClient):
         return self._do_retryable_operation(
             self._receive_message_batch_impl,
             **kwargs
+        )
+
+    @overload
+    def settle_messages(
+        self,
+        delivery_id: Union[int, Tuple[int, int]],
+        outcome: Literal["accepted"],
+        *,
+        batchable: Optional[bool] = None
+    ):
+        ...
+
+    @overload
+    def settle_messages(
+        self,
+        delivery_id: Union[int, Tuple[int, int]],
+        outcome: Literal["released"],
+        *,
+        batchable: Optional[bool] = None
+    ):
+        ...
+
+    @overload
+    def settle_messages(
+        self,
+        delivery_id: Union[int, Tuple[int, int]],
+        outcome: Literal["rejected"],
+        *,
+        error: Optional[AMQPError] = None,
+        batchable: Optional[bool] = None
+    ):
+        ...
+
+    @overload
+    def settle_messages(
+        self,
+        delivery_id: Union[int, Tuple[int, int]],
+        outcome: Literal["modified"],
+        *,
+        delivery_failed: Optional[bool] = None,
+        undeliverable_here: Optional[bool] = None,
+        message_annotations: Optional[Dict[Union[str, bytes], Any]],
+        batchable: Optional[bool] = None
+    ):
+        ...
+
+    @overload
+    def settle_messages(
+        self,
+        delivery_id: Union[int, Tuple[int, int]],
+        outcome: Literal["received"],
+        *,
+        section_number: int,
+        section_offset: int,
+        batchable: Optional[bool] = None
+    ):
+        ...
+
+    def settle_messages(self, delivery_id: Union[int, Tuple[int, int]], outcome: str, **kwargs):
+        batchable = kwargs.pop('batchable', None)
+        if outcome.lower() == 'accepted':
+            state = Accepted()
+        elif outcome.lower() == 'released':
+            state = Released()
+        elif outcome.lower() == 'rejected':
+            state = Rejected(**kwargs)
+        elif outcome.lower() == 'modified':
+            state = Modified(**kwargs)
+        elif outcome.lower() == 'received':
+            state = Received(**kwargs)
+        else:
+            raise ValueError("Unrecognized message output: {}".format(outcome))
+        try:
+            first, last = delivery_id
+        except TypeError:
+            first = delivery_id
+            last = None
+        self._link.send_disposition(
+            first_delivery_id=first,
+            last_delivery_id=last,
+            settled=True,
+            delivery_state=state,
+            batchable=batchable
         )

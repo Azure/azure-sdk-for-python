@@ -7,6 +7,7 @@
 import uuid
 import logging
 from io import BytesIO
+from typing import Optional, Union
 
 from ._decode import decode_payload
 from .constants import DEFAULT_LINK_CREDIT, Role
@@ -27,6 +28,13 @@ from .performatives import (
     DispositionFrame,
     FlowFrame,
 )
+from .outcomes import (
+    Received,
+    Accepted,
+    Rejected,
+    Released,
+    Modified
+)
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -34,23 +42,17 @@ _LOGGER = logging.getLogger(__name__)
 
 class ReceiverLink(Link):
 
-    def __init__(self, session, handle, source_address, **kwargs):
+    def __init__(self, session, handle, source_address, * on_transfer, **kwargs):
         name = kwargs.pop('name', None) or str(uuid.uuid4())
         role = Role.Receiver
         if 'target_address' not in kwargs:
             kwargs['target_address'] = "receiver-link-{}".format(name)
         super(ReceiverLink, self).__init__(session, handle, name, role, source_address=source_address, **kwargs)
-        self.on_message_received = kwargs.get('on_message_received')
-        self.on_transfer_received = kwargs.get('on_transfer_received')
-        if not self.on_message_received and not self.on_transfer_received:
-            raise ValueError("Must specify either a message or transfer handler.")
+        self._on_transfer = on_transfer
 
     def _process_incoming_message(self, frame, message):
         try:
-            if self.on_message_received:
-                return self.on_message_received(message)
-            elif self.on_transfer_received:
-                return self.on_transfer_received(frame, message)
+            return self.on_transfer(frame, message)
         except Exception as e:
             _LOGGER.error("Handler function failed with error: %r", e)
         return None
@@ -83,25 +85,45 @@ class ReceiverLink(Link):
                 message = decode_payload(frame[11])
             delivery_state = self._process_incoming_message(frame, message)
             if not frame[4] and delivery_state:  # settled
-                self._outgoing_disposition(frame[1], delivery_state)
+                self._outgoing_disposition(first=frame[1], settled=True, state=delivery_state)
         if self.current_link_credit <= 0:
             self.current_link_credit = self.link_credit
             self._outgoing_flow()
 
-    def _outgoing_disposition(self, delivery_id, delivery_state):
+    def _outgoing_disposition(
+            self,
+            first: int,
+            last: Optional[int],
+            settled: Optional[bool],
+            state: Optional[Union[Received, Accepted, Rejected, Released, Modified]],
+            batchable: Optional[bool]
+    ):
         disposition_frame = DispositionFrame(
-            role=self.role,
-            first=delivery_id,
-            last=delivery_id,
-            settled=True,
-            state=delivery_state,
-            batchable=None
+            first=first,
+            last=last,
+            settled=settled,
+            state=state,
+            batchable=batchable
         )
         if self.network_trace:
             _LOGGER.info("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
         self._session._outgoing_disposition(disposition_frame)
 
-    def send_disposition(self, delivery_id, delivery_state=None):
+    def send_disposition(
+            self,
+            *
+            first_delivery_id: int,
+            last_delivery_id: Optional[int] = None,
+            settled: Optional[bool] = None,
+            delivery_state: Optional[Union[Received, Accepted, Rejected, Released, Modified]] = None,
+            batchable: Optional[bool] = None
+        ):
         if self._is_closed:
             raise ValueError("Link already closed.")
-        self._outgoing_disposition(delivery_id, delivery_state)
+        self._outgoing_disposition(
+            first_delivery_id,
+            last_delivery_id,
+            settled,
+            delivery_state,
+            batchable
+        )
