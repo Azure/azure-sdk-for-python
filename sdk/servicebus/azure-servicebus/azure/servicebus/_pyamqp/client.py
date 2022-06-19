@@ -12,7 +12,8 @@ import uuid
 import certifi
 import queue
 from functools import partial
-from typing import Any, Dict, Literal, Optional, Tuple, Union, overload
+from typing import Any, Dict, Optional, Tuple, Union, overload
+from typing_extensions import Literal
 
 from ._connection import Connection
 from .message import _MessageDelivery

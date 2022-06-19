@@ -886,7 +886,6 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
 
     @property
     def message(self) -> LegacyMessage:
-        raise Exception("Looking for received legacy attribute")
         if not self._settled:
             settler = functools.partial(self._receiver._settle_message, self)
         else:

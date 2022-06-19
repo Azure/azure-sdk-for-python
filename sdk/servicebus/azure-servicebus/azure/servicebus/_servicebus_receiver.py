@@ -386,14 +386,14 @@ class ServiceBusReceiver(
             amqp_receive_client = self._handler
             received_messages_queue = amqp_receive_client._received_messages
             max_message_count = max_message_count or self._prefetch_count
-            timeout_ms = (
-                1000 * (timeout or self._max_wait_time)
+            timeout_seconds = (
+                timeout or self._max_wait_time
                 if (timeout or self._max_wait_time)
                 else 0
             )
-            abs_timeout_ms = (
-                amqp_receive_client._counter.get_current_ms() + timeout_ms
-                if timeout_ms
+            abs_timeout = (
+                time.time() + timeout_seconds
+                if (timeout_seconds)
                 else 0
             )
             batch = []  # type: List[Message]
@@ -413,8 +413,8 @@ class ServiceBusReceiver(
             while receiving and not expired and len(batch) < max_message_count:
                 while receiving and received_messages_queue.qsize() < max_message_count:
                     if (
-                        abs_timeout_ms
-                        and amqp_receive_client._counter.get_current_ms() > abs_timeout_ms
+                        abs_timeout
+                        and time.time() > abs_timeout
                     ):
                         expired = True
                         break
@@ -428,10 +428,7 @@ class ServiceBusReceiver(
                     ):
                         # first message(s) received, continue receiving for some time
                         first_message_received = True
-                        abs_timeout_ms = (
-                            amqp_receive_client._counter.get_current_ms()
-                            + self._further_pull_receive_timeout_ms
-                        )
+                        abs_timeout = time.time() + self._further_pull_receive_timeout_ms
                 while (
                     not received_messages_queue.empty() and len(batch) < max_message_count
                 ):

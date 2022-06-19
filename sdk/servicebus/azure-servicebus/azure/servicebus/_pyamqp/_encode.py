@@ -474,11 +474,13 @@ def encode_annotations(value):
     fields = {TYPE: AMQPTypes.map, VALUE:[]}
     for key, data in value.items():
         if isinstance(key, int):
-            fields[VALUE].append(({TYPE: AMQPTypes.ulong, VALUE: key}, {TYPE: None, VALUE: data}))
+            field_key = {TYPE: AMQPTypes.ulong, VALUE: key}
         else:
-            if isinstance(key, six.text_type):
-                key = key.encode('utf-8')
-            fields[VALUE].append(({TYPE: AMQPTypes.symbol, VALUE: key}, {TYPE: None, VALUE: data}))
+            field_key = {TYPE: AMQPTypes.symbol, VALUE: key}
+        try:
+            fields[VALUE].append((field_key, {TYPE: data[TYPE], VALUE: data[VALUE]}))
+        except (KeyError, TypeError):
+            fields[VALUE].append((field_key, {TYPE: None, VALUE: data}))
     return fields
 
 

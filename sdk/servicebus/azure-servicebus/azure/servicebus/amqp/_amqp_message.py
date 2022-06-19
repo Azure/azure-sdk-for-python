@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
+from __future__ import annotations
 import time
 import uuid
 from datetime import datetime
@@ -12,10 +13,20 @@ from typing import Optional, Any, cast, Mapping, Union, Dict
 
 from msrest.serialization import TZ_UTC
 from .._pyamqp.message import Message, Header, Properties
-from .._pyamqp.utils import normalized_data_body, normalized_sequence_body
+from .._pyamqp.utils import normalized_data_body, normalized_sequence_body, amqp_long_value
 
 from ._constants import AmqpMessageBodyType
-from .._common.constants import MAX_DURATION_VALUE, MAX_ABSOLUTE_EXPIRY_TIME
+from .._common.constants import (
+    MAX_DURATION_VALUE,
+    MAX_ABSOLUTE_EXPIRY_TIME,
+    _X_OPT_SCHEDULED_ENQUEUE_TIME,
+    _X_OPT_ENQUEUED_TIME
+)
+
+_LONG_ANNOTATIONS = (
+    _X_OPT_ENQUEUED_TIME,
+    _X_OPT_SCHEDULED_ENQUEUE_TIME
+)
 
 
 class DictMixin(object):
@@ -241,7 +252,7 @@ class AmqpAnnotatedMessage(object):
             priority=message.header.priority
         ) if message.header else None
         self._footer = message.footer
-        self._annotations = message.annotations
+        self._annotations = message.message_annotations
         self._delivery_annotations = message.delivery_annotations
         self._application_properties = message.application_properties
 
@@ -298,10 +309,15 @@ class AmqpAnnotatedMessage(object):
                 creation_time=creation_time_from_ttl if ttl_set else None,
                 absolute_expiry_time=absolute_expiry_time_from_ttl if ttl_set else None,
             )
+        # TODO: Investigate how we originally encoded annotations.
+        annotations = dict(self.annotations)
+        for key in _LONG_ANNOTATIONS:
+            if key in self.annotations:
+                annotations[key] = amqp_long_value(self.annotations[key])
         return Message(
             header=message_header,
             delivery_annotations=self.delivery_annotations,
-            message_annotations=self.annotations,
+            message_annotations=annotations,
             properties=message_properties,
             application_properties=self.application_properties,
             data=self._data_body,

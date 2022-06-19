@@ -48,7 +48,7 @@ class ManagementLink(object):
         self._response_link: ReceiverLink = session.create_receiver_link(
             endpoint,
             on_link_state_change=self._on_receiver_state_change,
-            on_message_received=self._on_message_received,
+            on_transfer=self._on_message_received,
             send_settle_mode=SenderSettleMode.Unsettled,
             rcv_settle_mode=ReceiverSettleMode.First
         )
@@ -118,7 +118,7 @@ class ManagementLink(object):
             # All state transitions shall be ignored.
             return
 
-    def _on_message_received(self, message):
+    def _on_message_received(self, _, message):
         message_properties = message.properties
         correlation_id = message_properties[5]
         response_detail = message.application_properties

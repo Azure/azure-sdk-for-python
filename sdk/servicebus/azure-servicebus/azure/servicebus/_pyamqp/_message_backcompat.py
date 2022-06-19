@@ -46,7 +46,7 @@ class LegacyMessage(object):
         self._settler = kwargs.get('settler')
         self._encoding = kwargs.get('encoding')
         self.delivery_no = kwargs.get('delivery_no')
-        self.delivery_tag = kwargs.get('delivery_tag')
+        self.delivery_tag = kwargs.get('delivery_tag') or None
         self.on_send_complete = None
         self.properties = LegacyMessageProperties(self._message.properties)
         self.application_properties = self._message.application_properties
@@ -151,19 +151,19 @@ class LegacyBatchMessage(LegacyMessage):
 class LegacyMessageProperties(object):
 
     def __init__(self, properties):
-        self.message_id = properties.message_id.encode("UTF-8") if properties.message_id else None
-        self.user_id = properties.user_id
-        self.to = properties.to.encode("UTF-8") if properties.to else None
-        self.subject = properties.subject.encode("UTF-8") if properties.subject else None
-        self.reply_to = properties.reply_to.encode("UTF-8") if properties.reply_to else None
-        self.correlation_id = properties.correlation_id.encode("UTF-8") if properties.correlation_id else None
-        self.content_type = properties.content_type.encode("UTF-8") if properties.content_type else None
-        self.content_encoding = properties.content_encoding.encode("UTF-8") if properties.content_encoding else None
+        self.message_id = self._encode_property(properties.message_id)
+        self.user_id = self._encode_property(properties.user_id)
+        self.to = self._encode_property(properties.to)
+        self.subject = self._encode_property(properties.subject)
+        self.reply_to = self._encode_property(properties.reply_to)
+        self.correlation_id = self._encode_property(properties.correlation_id)
+        self.content_type = self._encode_property(properties.content_type)
+        self.content_encoding = self._encode_property(properties.content_encoding)
         self.absolute_expiry_time = properties.absolute_expiry_time
         self.creation_time = properties.creation_time
-        self.group_id = properties.group_id.encode("UTF-8") if properties.group_id else None
+        self.group_id = self._encode_property(properties.group_id)
         self.group_sequence = properties.group_sequence
-        self.reply_to_group_id = properties.reply_to_group_id.encode("UTF-8") if properties.reply_to_group_id else None
+        self.reply_to_group_id = self._encode_property(properties.reply_to_group_id)
 
     def __str__(self):
         return str(
@@ -183,6 +183,12 @@ class LegacyMessageProperties(object):
                 "reply_to_group_id": self.reply_to_group_id,
             }
         )
+
+    def _encode_property(self, value):
+        try:
+            return value.encode("UTF-8")
+        except AttributeError:
+            return value
 
     def get_properties_obj(self):
         return Properties(

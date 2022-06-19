@@ -42,17 +42,17 @@ _LOGGER = logging.getLogger(__name__)
 
 class ReceiverLink(Link):
 
-    def __init__(self, session, handle, source_address, * on_transfer, **kwargs):
+    def __init__(self, session, handle, source_address, **kwargs):
         name = kwargs.pop('name', None) or str(uuid.uuid4())
         role = Role.Receiver
         if 'target_address' not in kwargs:
             kwargs['target_address'] = "receiver-link-{}".format(name)
         super(ReceiverLink, self).__init__(session, handle, name, role, source_address=source_address, **kwargs)
-        self._on_transfer = on_transfer
+        self._on_transfer = kwargs.pop('on_transfer')
 
     def _process_incoming_message(self, frame, message):
         try:
-            return self.on_transfer(frame, message)
+            return self._on_transfer(frame, message)
         except Exception as e:
             _LOGGER.error("Handler function failed with error: %r", e)
         return None
