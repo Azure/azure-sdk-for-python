@@ -69,6 +69,9 @@ search_client = SearchClient(
 
 ## Key concepts
 
+`SearchClient` is the primary client for developers using the Azure Maps Search client library for Python.
+Once you initialized a `SearchClient` class, you can explore the methods on this client object to understand the different features of the Azure Maps Search service that you can access.
+
 ## Examples
 
 The following sections provide several code snippets covering some of the most common Azure Maps Search tasks, including:
@@ -145,11 +148,11 @@ python samples\search.py
 
 Running into issues? This section should contain details as to what to do there.
 
-### Next steps
+## Next steps
 
 More sample code should go [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-search/samples), along with links out to the appropriate example tests.
 
-### Contributing
+## Contributing
 
 If you encounter any bugs or have suggestions, please file an issue in the [Issues](<https://github.com/Azure/azure-sdk-for-python/issues>) section of the project.
 
@@ -157,6 +160,6 @@ If you encounter any bugs or have suggestions, please file an issue in the [Issu
 
 <!-- LINKS -->
 [azure_subscription]: https://azure.microsoft.com/free/
-[azure_identity]: https://github.com/Azure/azure-sdk-for-java/blob/master/sdk/identity/azure-identity
+[azure_identity]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
