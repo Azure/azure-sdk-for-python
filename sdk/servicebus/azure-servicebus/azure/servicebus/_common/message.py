@@ -125,6 +125,7 @@ class ServiceBusMessage(
         # Although we might normally thread through **kwargs this causes
         # problems as MessageProperties won't absorb spurious args.
         self._encoding = kwargs.pop("encoding", "UTF-8")
+        self._uamqp_message = None
 
         if "raw_amqp_message" in kwargs:
             # Internal usage only for transforming AmqpAnnotatedMessage to outgoing ServiceBusMessage
@@ -235,7 +236,9 @@ class ServiceBusMessage(
         
     @property
     def message(self) -> LegacyMessage:
-        return LegacyMessage(self._raw_amqp_message)
+        if not self._uamqp_message:
+            self._uamqp_message = LegacyMessage(self._raw_amqp_message)
+        return self._uamqp_message
 
     @property
     def raw_amqp_message(self) -> AmqpAnnotatedMessage:
@@ -628,6 +631,7 @@ class ServiceBusMessageBatch(object):
         self._size = get_message_encoded_size(BatchMessage(*self._message))
         self._count = 0
         self._messages: List[ServiceBusMessage] = []
+        self._uamqp_mesage = None
 
     def __repr__(self) -> str:
         batch_repr = "max_size_in_bytes={}, message_count={}".format(
@@ -682,9 +686,11 @@ class ServiceBusMessageBatch(object):
 
     @property
     def message(self) -> LegacyBatchMessage:
-        raise Exception("Attempting to use legacy batch")
-        message = AmqpAnnotatedMessage(message=Message(*self._message))
-        return LegacyBatchMessage(message)
+        if not self._uamqp_mesage:
+            raise Exception("Attempting to use legacy batch")
+            message = AmqpAnnotatedMessage(message=Message(*self._message))
+            self._uamqp_mesage = LegacyBatchMessage(message)
+        return self._uamqp_mesage
 
     @property
     def max_size_in_bytes(self) -> int:
@@ -886,16 +892,18 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
 
     @property
     def message(self) -> LegacyMessage:
-        if not self._settled:
-            settler = functools.partial(self._receiver._settle_message, self)
-        else:
-            settler = None
-        return LegacyMessage(
-            self._raw_amqp_message,
-            delivery_no=self.delivery_id,
-            delivery_tag=self._delivery_tag,
-            settler=settler,
-            encoding=self._encoding)
+        if not self._uamqp_message:
+            if not self._settled:
+                settler = self._receiver._handler
+            else:
+                settler = None
+            self._uamqp_message = LegacyMessage(
+                self._raw_amqp_message,
+                delivery_no=self.delivery_id,
+                delivery_tag=self._delivery_tag,
+                settler=settler,
+                encoding=self._encoding)
+        return self._uamqp_message
 
     @property
     def dead_letter_error_description(self) -> Optional[str]:

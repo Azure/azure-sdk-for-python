@@ -20,12 +20,14 @@ from .._common.constants import (
     MAX_DURATION_VALUE,
     MAX_ABSOLUTE_EXPIRY_TIME,
     _X_OPT_SCHEDULED_ENQUEUE_TIME,
-    _X_OPT_ENQUEUED_TIME
+    _X_OPT_ENQUEUED_TIME,
+    _X_OPT_LOCKED_UNTIL
 )
 
 _LONG_ANNOTATIONS = (
     _X_OPT_ENQUEUED_TIME,
-    _X_OPT_SCHEDULED_ENQUEUE_TIME
+    _X_OPT_SCHEDULED_ENQUEUE_TIME,
+    _X_OPT_LOCKED_UNTIL
 )
 
 
@@ -309,11 +311,13 @@ class AmqpAnnotatedMessage(object):
                 creation_time=creation_time_from_ttl if ttl_set else None,
                 absolute_expiry_time=absolute_expiry_time_from_ttl if ttl_set else None,
             )
-        # TODO: Investigate how we originally encoded annotations.
-        annotations = dict(self.annotations)
-        for key in _LONG_ANNOTATIONS:
-            if key in self.annotations:
-                annotations[key] = amqp_long_value(self.annotations[key])
+        annotations = None
+        if self.annotations:
+            # TODO: Investigate how we originally encoded annotations.
+            annotations = dict(self.annotations)
+            for key in _LONG_ANNOTATIONS:
+                if key in self.annotations:
+                    annotations[key] = amqp_long_value(self.annotations[key])
         return Message(
             header=message_header,
             delivery_annotations=self.delivery_annotations,

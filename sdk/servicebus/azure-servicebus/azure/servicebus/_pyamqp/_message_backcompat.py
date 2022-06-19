@@ -9,6 +9,7 @@ from enum import Enum
 
 from ._encode import encode_payload
 from .utils import get_message_encoded_size
+from .error import AMQPError
 from .message import Message, Header, Properties, BatchMessage
 #from uamqp import constants, errors
 
@@ -100,43 +101,42 @@ class LegacyMessage(object):
 
     def accept(self):
         if self._can_settle_message():
-            # TODO
-            # self._response = errors.MessageAccepted()
-            # self._settler(self._response)
+            self._settler.settle_messages(self.delivery_no, 'accepted')
             self.state = MessageState.ReceivedSettled
             return True
         return False
 
     def reject(self, condition=None, description=None, info=None):
         if self._can_settle_message():
-            # TODO
-            # self._response = errors.MessageRejected(
-            #     condition=condition,
-            #     description=description,
-            #     info=info,
-            #     encoding=self._encoding,
-            # )
-            # self._settler(self._response)
+            self._settler.settle_messages(
+                self.delivery_no,
+                'rejected',
+                error=AMQPError(
+                    condition=condition,
+                    description=description,
+                    info=info
+                )
+            )
             self.state = MessageState.ReceivedSettled
             return True
         return False
 
     def release(self):
         if self._can_settle_message():
-            # TODO
-            #self._response = errors.MessageReleased()
-            #self._settler(self._response)
+            self._settler.settle_messages(self.delivery_no, 'released')
             self.state = MessageState.ReceivedSettled
             return True
         return False
 
     def modify(self, failed, deliverable, annotations=None):
         if self._can_settle_message():
-            # TODO
-            # self._response = errors.MessageModified(
-            #     failed, deliverable, annotations=annotations, encoding=self._encoding
-            # )
-            # self._settler(self._response)
+            self._settler.settle_messages(
+                self.delivery_no,
+                'modified',
+                delivery_failed=failed,
+                undeliverable_here=deliverable,
+                message_annotations=annotations,
+            )
             self.state = MessageState.ReceivedSettled
             return True
         return False

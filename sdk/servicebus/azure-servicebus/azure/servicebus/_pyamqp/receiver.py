@@ -99,6 +99,7 @@ class ReceiverLink(Link):
             batchable: Optional[bool]
     ):
         disposition_frame = DispositionFrame(
+            role=self.role,
             first=first,
             last=last,
             settled=settled,
@@ -111,7 +112,7 @@ class ReceiverLink(Link):
 
     def send_disposition(
             self,
-            *
+            *,
             first_delivery_id: int,
             last_delivery_id: Optional[int] = None,
             settled: Optional[bool] = None,
