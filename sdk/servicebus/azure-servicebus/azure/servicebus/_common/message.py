@@ -34,9 +34,6 @@ from .constants import (
     _X_OPT_DEAD_LETTER_SOURCE,
     PROPERTIES_DEAD_LETTER_REASON,
     PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION,
-    ANNOTATION_SYMBOL_PARTITION_KEY,
-    ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME,
-    ANNOTATION_SYMBOL_KEY_MAP,
     MESSAGE_PROPERTY_MAX_LENGTH,
     MAX_ABSOLUTE_EXPIRY_TIME,
     MAX_DURATION_VALUE,
@@ -57,20 +54,20 @@ from .utils import (
     transform_messages_if_needed,
 )
 
-if TYPE_CHECKING:
-    from ..aio._servicebus_receiver_async import (
-        ServiceBusReceiver as AsyncServiceBusReceiver,
-    )
-    from .._servicebus_receiver import ServiceBusReceiver
-    from azure.core.tracing import AbstractSpan
-    PrimitiveTypes = Union[
-        int,
-        float,
-        bytes,
-        bool,
-        str,
-        uuid.UUID
-    ]
+#if TYPE_CHECKING:
+#from ..aio._servicebus_receiver_async import (
+#    ServiceBusReceiver as AsyncServiceBusReceiver,
+#)
+#from .._servicebus_receiver import ServiceBusReceiver
+from azure.core.tracing import AbstractSpan
+PrimitiveTypes = Union[
+    int,
+    float,
+    bytes,
+    bool,
+    str,
+    uuid.UUID
+]
 
 
 class ServiceBusMessage(
@@ -225,31 +222,19 @@ class ServiceBusMessage(
     def _set_message_annotations(self, key, value):
         if not self._raw_amqp_message.annotations:
             self._raw_amqp_message.annotations = {}
-
-        if isinstance(self, ServiceBusReceivedMessage):
+        if value is None:
             try:
                 del self._raw_amqp_message.annotations[key]
             except KeyError:
                 pass
-
-        if value is None:
-            try:
-                del self._raw_amqp_message.annotations[ANNOTATION_SYMBOL_KEY_MAP[key]]
-            except KeyError:
-                pass
         else:
-            self._raw_amqp_message.annotations[ANNOTATION_SYMBOL_KEY_MAP[key]] = value
+            self._raw_amqp_message.annotations[key] = value
 
     def _to_outgoing_message(self) -> "ServiceBusMessage":
-        # pylint: disable=protected-access
-        #self.message = self.raw_amqp_message._to_outgoing_amqp_message()
-        #return self
-        raise Exception("Why are we here")
-        return self.raw_amqp_message._to_outgoing_message()
+        return self
         
     @property
     def message(self) -> LegacyMessage:
-        raise Exception("Looking for legacy attribute")
         return LegacyMessage(self._raw_amqp_message)
 
     @property
@@ -315,20 +300,13 @@ class ServiceBusMessage(
 
         :rtype: str
         """
-        p_key = None
         try:
-            # opt_p_key is used on the incoming message
             opt_p_key = self._raw_amqp_message.annotations.get(_X_OPT_PARTITION_KEY)  # type: ignore
             if opt_p_key is not None:
-                p_key = opt_p_key
-            # symbol_p_key is used on the outgoing message
-            symbol_p_key = self._raw_amqp_message.annotations.get(ANNOTATION_SYMBOL_PARTITION_KEY)  # type: ignore
-            if symbol_p_key is not None:
-                p_key = symbol_p_key
-
-            return p_key.decode("UTF-8")  # type: ignore
+                return opt_p_key.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
-            return p_key
+            pass
+        return None
 
     @partition_key.setter
     def partition_key(self, value: str) -> None:
@@ -400,9 +378,7 @@ class ServiceBusMessage(
         :rtype: ~datetime.datetime
         """
         if self._raw_amqp_message.annotations:
-            timestamp = self._raw_amqp_message.annotations.get(
-                _X_OPT_SCHEDULED_ENQUEUE_TIME
-            ) or self._raw_amqp_message.annotations.get(ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME)
+            timestamp = self._raw_amqp_message.annotations.get(_X_OPT_SCHEDULED_ENQUEUE_TIME)
             if timestamp:
                 try:
                     in_seconds = timestamp / 1000.0

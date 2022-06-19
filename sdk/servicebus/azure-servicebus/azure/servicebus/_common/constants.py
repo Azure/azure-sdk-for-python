@@ -5,7 +5,6 @@
 # -------------------------------------------------------------------------
 from enum import Enum
 
-from .._pyamqp.utils import amqp_symbol_value
 from .._pyamqp import constants
 from azure.core import CaseInsensitiveEnumMeta
 
@@ -193,19 +192,6 @@ class ServiceBusSessionFilter(Enum):
 class ServiceBusSubQueue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DEAD_LETTER = "deadletter"
     TRANSFER_DEAD_LETTER = "transferdeadletter"
-
-
-ANNOTATION_SYMBOL_PARTITION_KEY = amqp_symbol_value(_X_OPT_PARTITION_KEY)
-ANNOTATION_SYMBOL_VIA_PARTITION_KEY = amqp_symbol_value(_X_OPT_VIA_PARTITION_KEY)
-ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME = amqp_symbol_value(
-    _X_OPT_SCHEDULED_ENQUEUE_TIME
-)
-
-ANNOTATION_SYMBOL_KEY_MAP = {
-    _X_OPT_PARTITION_KEY: ANNOTATION_SYMBOL_PARTITION_KEY,
-    _X_OPT_VIA_PARTITION_KEY: ANNOTATION_SYMBOL_VIA_PARTITION_KEY,
-    _X_OPT_SCHEDULED_ENQUEUE_TIME: ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME,
-}
 
 
 NEXT_AVAILABLE_SESSION = ServiceBusSessionFilter.NEXT_AVAILABLE

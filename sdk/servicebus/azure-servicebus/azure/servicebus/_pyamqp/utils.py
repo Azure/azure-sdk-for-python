@@ -136,3 +136,6 @@ def amqp_string_value(value):
 
 def amqp_symbol_value(value):
     return {TYPE: AMQPTypes.symbol, VALUE: value}
+
+def amqp_array_value(value):
+    return {TYPE: AMQPTypes.array, VALUE: value}

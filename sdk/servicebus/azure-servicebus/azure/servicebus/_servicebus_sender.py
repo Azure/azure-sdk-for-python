@@ -9,9 +9,11 @@ import datetime
 import warnings
 from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast
 
-import uamqp
-from uamqp import SendClient, types
-from uamqp.authentication.common import AMQPAuth
+#from uamqp.authentication.common import AMQPAuth
+from ._pyamqp.client import SendClient
+from ._pyamqp.utils import amqp_long_value, amqp_array_value
+from ._pyamqp.error import RetryPolicy, MessageException
+
 
 from ._base_handler import BaseHandler
 from ._common import mgmt_handlers
@@ -22,6 +24,7 @@ from ._common.message import (
 from .amqp import AmqpAnnotatedMessage
 from .exceptions import (
     OperationTimeoutError,
+    _NO_RETRY_CONDITION_ERROR_CODES,
     _ServiceBusErrorPolicy,
 )
 from ._common.utils import (
@@ -40,6 +43,7 @@ from ._common.constants import (
     MGMT_REQUEST_MESSAGE_ID,
     MGMT_REQUEST_PARTITION_KEY,
     SPAN_NAME_SCHEDULE,
+    MAX_MESSAGE_LENGTH_BYTES
 )
 
 if TYPE_CHECKING:
@@ -72,26 +76,18 @@ class SenderMixin(object):
         self._entity_uri = "amqps://{}/{}".format(
             self.fully_qualified_namespace, self._entity_name
         )
-        self._error_policy = _ServiceBusErrorPolicy(
-            max_retries=self._config.retry_total
+        # TODO: This needs work
+        # self._error_policy = _ServiceBusErrorPolicy(
+        #     max_retries=self._config.retry_total
+        # )
+        self._error_policy = RetryPolicy(
+            retry_total=self._config.retry_total,
+            no_retry_condition=_NO_RETRY_CONDITION_ERROR_CODES,
+            #custom_condition_backoff=CUSTOM_CONDITION_BACKOFF
         )
         self._name = "SBSender-{}".format(uuid.uuid4())
         self._max_message_size_on_link = 0
         self.entity_name = self._entity_name
-
-    def _set_msg_timeout(self, timeout=None, last_exception=None):
-        # pylint: disable=protected-access
-        if not timeout:
-            self._handler._msg_timeout = 0
-            return
-        if timeout <= 0.0:
-            if last_exception:
-                error = last_exception
-            else:
-                error = OperationTimeoutError(message="Send operation timed out")
-            _LOGGER.info("%r send operation timed out. (%r)", self._name, error)
-            raise error
-        self._handler._msg_timeout = timeout * 1000  # type: ignore
 
     @classmethod
     def _build_schedule_request(cls, schedule_time_utc, send_span, *messages):
@@ -232,14 +228,16 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     def _create_handler(self, auth):
         # type: (AMQPAuth) -> None
         self._handler = SendClient(
+            self.fully_qualified_namespace,
             self._entity_uri,
             auth=auth,
-            debug=self._config.logging_enable,
+            network_trace=self._config.logging_enable,
             properties=self._properties,
-            error_policy=self._error_policy,
+            retry_policy=self._error_policy,
             client_name=self._name,
             keep_alive_interval=self._config.keep_alive,
-            encoding=self._config.encoding,
+            transport_type=self._config.transport_type,
+            http_proxy=self._config.http_proxy
         )
 
     def _open(self):
@@ -257,22 +255,22 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 time.sleep(0.05)
             self._running = True
             self._max_message_size_on_link = (
-                self._handler.message_handler._link.peer_max_message_size
-                or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
+                self._handler._link.remote_max_message_size
+                or MAX_MESSAGE_LENGTH_BYTES
             )
         except:
             self._close_handler()
             raise
 
-    def _send(self, message, timeout=None, last_exception=None):
+    def _send(self, message, timeout=None):
         # type: (Union[ServiceBusMessage, ServiceBusMessageBatch], Optional[float], Exception) -> None
         self._open()
-        default_timeout = self._handler._msg_timeout  # pylint: disable=protected-access
         try:
-            self._set_msg_timeout(timeout, last_exception)
-            self._handler.send_message(message.message)
-        finally:  # reset the timeout of the handler back to the default value
-            self._set_msg_timeout(default_timeout, None)
+            self._handler.send_message(message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout)
+        except TimeoutError:
+            raise OperationTimeoutError(message="Send operation timed out")
+        except MessageException:
+            pass # TODO: This should be handled?
 
     def schedule_messages(
         self,
@@ -365,12 +363,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         if isinstance(sequence_numbers, int):
-            numbers = [types.AMQPLong(sequence_numbers)]
+            numbers = [amqp_long_value(sequence_numbers)]
         else:
-            numbers = [types.AMQPLong(s) for s in sequence_numbers]
+            numbers = [amqp_long_value(s) for s in sequence_numbers]
         if len(numbers) == 0:
             return None  # no-op on empty list.
-        request_body = {MGMT_REQUEST_SEQUENCE_NUMBERS: types.AMQPArray(numbers)}
+        request_body = {MGMT_REQUEST_SEQUENCE_NUMBERS: amqp_array_value(numbers)}
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
             request_body,
@@ -443,13 +441,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
             if send_span:
                 self._add_span_request_attributes(send_span)
-
-            self._do_retryable_operation(
-                self._send,
+            self._send(
                 message=obj_message,
-                timeout=timeout,
-                operation_requires_timeout=True,
-                require_last_exception=True,
+                timeout=timeout
             )
 
     def create_message_batch(

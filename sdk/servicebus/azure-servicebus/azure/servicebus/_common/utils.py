@@ -31,7 +31,7 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
-from uamqp import authentication, types
+from .._pyamqp import authentication
 
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind, Link
@@ -110,14 +110,14 @@ def create_properties(user_agent=None):
     :rtype: dict
     """
     properties = {}
-    properties[types.AMQPSymbol("product")] = USER_AGENT_PREFIX
-    properties[types.AMQPSymbol("version")] = VERSION
+    properties["product"] = USER_AGENT_PREFIX
+    properties["version"] = VERSION
     framework = "Python/{}.{}.{}".format(
         sys.version_info[0], sys.version_info[1], sys.version_info[2]
     )
-    properties[types.AMQPSymbol("framework")] = framework
+    properties["framework"] = framework
     platform_str = platform.platform()
-    properties[types.AMQPSymbol("platform")] = platform_str
+    properties["platform"] = platform_str
 
     final_user_agent = "{}/{} {} ({})".format(
         USER_AGENT_PREFIX, VERSION, framework, platform_str
@@ -125,7 +125,7 @@ def create_properties(user_agent=None):
     if user_agent:
         final_user_agent = "{} {}".format(user_agent, final_user_agent)
 
-    properties[types.AMQPSymbol("user-agent")] = final_user_agent
+    properties["user-agent"] = final_user_agent
     return properties
 
 
@@ -165,26 +165,23 @@ def create_authentication(client):
     except AttributeError:
         token_type = TOKEN_TYPE_JWT
     if token_type == TOKEN_TYPE_SASTOKEN:
-        auth = authentication.JWTTokenAuth(
+        return authentication.JWTTokenAuth(
             client._auth_uri,
             client._auth_uri,
             functools.partial(client._credential.get_token, client._auth_uri),
-            token_type=token_type,
-            timeout=client._config.auth_timeout,
-            http_proxy=client._config.http_proxy,
-            transport_type=client._config.transport_type,
+            custom_endpoint_hostname=client._config.custom_endpoint_hostname,
+            port=client._config.connection_port,
+            verify=client._config.connection_verify,
         )
-        auth.update_token()
-        return auth
     return authentication.JWTTokenAuth(
         client._auth_uri,
         client._auth_uri,
         functools.partial(client._credential.get_token, JWT_TOKEN_SCOPE),
         token_type=token_type,
         timeout=client._config.auth_timeout,
-        http_proxy=client._config.http_proxy,
-        transport_type=client._config.transport_type,
-        refresh_window=300,
+        custom_endpoint_hostname=client._config.custom_endpoint_hostname,
+        port=client._config.connection_port,
+        verify=client._config.connection_verify,
     )
 
 

@@ -518,7 +518,7 @@ class Connection(object):
          should be interrupted.
         """
         try:
-            performative, fields = frame  # type: int, Tuple[Any, ...]
+            performative, fields = frame
         except TypeError:
             return True  # Empty Frame or socket timeout
         try:

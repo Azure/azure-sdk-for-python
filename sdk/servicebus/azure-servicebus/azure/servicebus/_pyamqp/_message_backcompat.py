@@ -21,6 +21,16 @@ class MessageState(Enum):
     ReceivedUnsettled = 4
     ReceivedSettled = 5
 
+    def __eq__(self, __o: object) -> bool:
+        try:
+            return self.value == __o.value
+        except AttributeError:
+            return super().__eq__(__o)
+
+
+class MessageAlreadySettled(Exception):
+    pass
+
 
 DONE_STATES = (MessageState.SendComplete, MessageState.SendFailed)
 RECEIVE_STATES = (MessageState.ReceivedSettled, MessageState.ReceivedUnsettled)
@@ -30,7 +40,7 @@ PENDING_STATES = (MessageState.WaitingForSendAck, MessageState.WaitingToBeSent)
 class LegacyMessage(object):
     def __init__(self, message, **kwargs):
         self._message = message
-        self.state = MessageState.WaitingToBeSent
+        self.state = MessageState.SendComplete
         self.idle_time = 0
         self.retries = 0
         self._settler = kwargs.get('settler')
@@ -66,22 +76,23 @@ class LegacyMessage(object):
         return True
 
     def get_message_encoded_size(self):
-        return get_message_encoded_size(self._message._to_outgoing_amqp_message)
+        return get_message_encoded_size(self._message._to_outgoing_amqp_message())
 
     def encode_message(self):
         output = bytearray()
-        encode_payload(output, self._message._to_outgoing_amqp_message)
-        return output
+        encode_payload(output, self._message._to_outgoing_amqp_message())
+        return bytes(output)
 
     def get_data(self):
-        return self._message.body()
+        return self._message.body
 
     def gather(self):
         if self.state in RECEIVE_STATES:
             raise TypeError("Only new messages can be gathered.")
         if not self._message:
             raise ValueError("Message data already consumed.")
-        # TODO Raise MessageAlreadySettled or Settlement response
+        if self.state in DONE_STATES:
+            raise MessageAlreadySettled()
         return [self]
 
     def get_message(self):
@@ -140,19 +151,19 @@ class LegacyBatchMessage(LegacyMessage):
 class LegacyMessageProperties(object):
 
     def __init__(self, properties):
-        self.message_id = properties.message_id
+        self.message_id = properties.message_id.encode("UTF-8") if properties.message_id else None
         self.user_id = properties.user_id
-        self.to = properties.to
-        self.subject = properties.subject
-        self.reply_to = properties.reply_to
-        self.correlation_id = properties.correlation_id
-        self.content_type = properties.content_type
-        self.content_encoding = properties.content_encoding
+        self.to = properties.to.encode("UTF-8") if properties.to else None
+        self.subject = properties.subject.encode("UTF-8") if properties.subject else None
+        self.reply_to = properties.reply_to.encode("UTF-8") if properties.reply_to else None
+        self.correlation_id = properties.correlation_id.encode("UTF-8") if properties.correlation_id else None
+        self.content_type = properties.content_type.encode("UTF-8") if properties.content_type else None
+        self.content_encoding = properties.content_encoding.encode("UTF-8") if properties.content_encoding else None
         self.absolute_expiry_time = properties.absolute_expiry_time
         self.creation_time = properties.creation_time
-        self.group_id = properties.group_id
+        self.group_id = properties.group_id.encode("UTF-8") if properties.group_id else None
         self.group_sequence = properties.group_sequence
-        self.reply_to_group_id = properties.reply_to_group_id
+        self.reply_to_group_id = properties.reply_to_group_id.encode("UTF-8") if properties.reply_to_group_id else None
 
     def __str__(self):
         return str(
@@ -194,7 +205,7 @@ class LegacyMessageProperties(object):
 class LegacyMessageHeader(object):
 
     def __init__(self, header):
-        self.delivery_count = header.delivery_count or 0
+        self.delivery_count = header.delivery_count  # or 0
         self.time_to_live = header.time_to_live
         self.first_acquirer = header.first_acquirer
         self.durable = header.durable

@@ -224,7 +224,7 @@ class AMQPClient(object):
                     absolute_timeout -= (end_time - start_time)
         raise retry_settings['history'][-1]
 
-    def open(self):
+    def open(self, connection=None):
         """Open the client. The client can create a new Connection
         or an existing Connection can be passed in. This existing Connection
         may have an existing CBS authentication Session, which will be
@@ -239,7 +239,10 @@ class AMQPClient(object):
         if self._session:
             return  # already open.
         _logger.debug("Opening client connection.")
-        if not self._connection:
+        if connection:
+            self._connection = connection
+            self._external_connection = True
+        elif not self._connection:
             self._connection = Connection(
                 "amqps://" + self._hostname,
                 sasl_credential=self._auth.sasl,

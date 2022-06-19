@@ -5,7 +5,9 @@
 # -------------------------------------------------------------------------
 
 import logging
-import uamqp
+
+from .._pyamqp._decode import decode_payload
+
 from .message import ServiceBusReceivedMessage
 from ..exceptions import _handle_amqp_mgmt_error
 from .constants import ServiceBusReceiveMode, MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
@@ -63,8 +65,8 @@ def peek_op(  # pylint: disable=inconsistent-return-statements
     )
     if status_code == 200:
         parsed = []
-        for m in message.get_data()[b"messages"]:
-            wrapped = uamqp.Message.decode_from_bytes(bytearray(m[b"message"]))
+        for m in message.value[b"messages"]:
+            wrapped = decode_payload(bytearray(m[b"message"]))
             parsed.append(
                 ServiceBusReceivedMessage(
                     wrapped, is_peeked_message=True, receiver=receiver
@@ -111,8 +113,8 @@ def deferred_message_op(  # pylint: disable=inconsistent-return-statements
     )
     if status_code == 200:
         parsed = []
-        for m in message.get_data()[b"messages"]:
-            wrapped = uamqp.Message.decode_from_bytes(bytearray(m[b"message"]))
+        for m in message.value[b"messages"]:
+            wrapped = decode_payload(bytearray(m[b"message"]))
             parsed.append(
                 message_type(
                     wrapped, receive_mode, is_deferred_message=True, receiver=receiver

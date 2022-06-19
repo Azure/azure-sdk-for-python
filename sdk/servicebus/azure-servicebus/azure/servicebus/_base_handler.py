@@ -15,9 +15,13 @@ except ImportError:
     from urllib import quote_plus  # type: ignore
     from urlparse import urlparse  # type: ignore
 
-import uamqp
-from uamqp import utils, compat
-from uamqp.message import MessageProperties
+from ._pyamqp import error as errors, utils
+from ._pyamqp.message import Message, Properties
+from ._pyamqp.authentication import JWTTokenAuth
+
+
+from uamqp import compat
+
 
 from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 from azure.core.pipeline.policies import RetryMode
@@ -146,11 +150,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
         expiry = timedelta(hours=1)  # Default to 1 hour.
 
     abs_expiry = int(time.time()) + expiry.seconds
-    encoded_uri = quote_plus(uri).encode("utf-8")  # pylint: disable=no-member
-    encoded_policy = quote_plus(policy).encode("utf-8")  # pylint: disable=no-member
-    encoded_key = key.encode("utf-8")
-
-    token = utils.create_sas_token(encoded_policy, encoded_key, encoded_uri, expiry)
+    token = utils.generate_sas_token(uri, policy, key, abs_expiry).encode("UTF-8")
     return AccessToken(token=token, expires_on=abs_expiry)
 
 def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
@@ -480,16 +480,14 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         if keep_alive_associated_link:
             try:
                 application_properties = {
-                    ASSOCIATEDLINKPROPERTYNAME: self._handler.message_handler.name
+                    ASSOCIATEDLINKPROPERTYNAME: self._handler._link.name  # pylint: disable=protected-access
                 }
             except AttributeError:
                 pass
 
-        mgmt_msg = uamqp.Message(
-            body=message,
-            properties=MessageProperties(
-                reply_to=self._mgmt_target, encoding=self._config.encoding, **kwargs
-            ),
+        mgmt_msg = Message(
+            value=message,
+            properties=Properties(reply_to=self._mgmt_target, **kwargs),
             application_properties=application_properties,
         )
         try:
@@ -512,7 +510,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any
         return self._do_retryable_operation(
             self._mgmt_request_response,
-            mgmt_operation=mgmt_operation,
+            mgmt_operation=mgmt_operation.decode("UTF-8"),
             message=message,
             callback=callback,
             timeout=timeout,

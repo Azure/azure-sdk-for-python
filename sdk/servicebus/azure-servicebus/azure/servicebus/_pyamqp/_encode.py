@@ -593,7 +593,7 @@ def encode_filter_set(value):
 
 
 def encode_unknown(output, value, **kwargs):
-    # type: (bytearray, Optional[Any]) -> None
+    # type: (bytearray, Optional[Any], Any) -> None
     """
     Dynamic encoding according to the type of `value`.
     """

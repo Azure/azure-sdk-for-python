@@ -298,7 +298,6 @@ class AmqpAnnotatedMessage(object):
                 creation_time=creation_time_from_ttl if ttl_set else None,
                 absolute_expiry_time=absolute_expiry_time_from_ttl if ttl_set else None,
             )
-
         return Message(
             header=message_header,
             delivery_annotations=self.delivery_annotations,
