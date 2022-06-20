@@ -1,7 +1,7 @@
 [packaging]
 package_name = "azure-maps-search"
 package_nspkg = "azure-maps-nspkg"
-package_pprint_name = "MyService Management"
+package_pprint_name = "Maps Search"
 package_doc_id = ""
 is_stable = false
 is_arm = true

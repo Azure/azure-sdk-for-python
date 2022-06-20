@@ -16,9 +16,6 @@ parser = argparse.ArgumentParser(
 parser.parse_args()
 
 
-os.environ['CLIENT_ID'] = 'af2448e6-f867-486e-b7ae-2d463a73b282' 
-os.environ['SUBSCRIPTION_KEY'] = 'b00a18e8-9a2d-40aa-ada2-8e3afe3dd8ad'
-
 client = SearchClient('None', x_ms_client_id=os.environ.get("CLIENT_ID", None), authentication_policy=AzureKeyInQueryCredentialPolicy(
     AzureKeyCredential(os.environ.get("SUBSCRIPTION_KEY")), "subscription-key"))
 
@@ -67,7 +64,6 @@ print(result)
 result = client.get_point_of_interest_category_tree()
 print("Get Search POI Category Tree:")
 print(result)
-
 
 
 with open("resources/search_address_batch_request_body.json", "r") as file:
