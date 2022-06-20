@@ -19,6 +19,7 @@ if TYPE_CHECKING:
 
 class MixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
+
     _client: "PipelineClient"
     _config: ConversationAnalysisClientConfiguration
     _serialize: "Serializer"
