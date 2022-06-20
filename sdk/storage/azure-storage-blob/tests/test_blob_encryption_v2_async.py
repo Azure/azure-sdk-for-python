@@ -6,16 +6,16 @@
 
 import base64
 import os
-import pytest
 from json import dumps, loads
 
+import pytest
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import BlobType
 from azure.storage.blob.aio import (
     BlobServiceClient
 )
-from azure.storage.blob._shared.encryption import (
+from azure.storage.blob._encryption import (
     _dict_to_encryption_data,
     _validate_and_unwrap_cek,
     _GCM_NONCE_LENGTH,
