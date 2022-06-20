@@ -22,9 +22,6 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 class TestIdDocument(FormRecognizerTest):
 
-    def teardown(self):
-        self.sleep(4)
-
     @pytest.mark.skip()
     @FormRecognizerPreparer()
     @recorded_by_proxy

@@ -1,7 +1,6 @@
 import time
-import pytest
 from azure.mgmt.resource import ResourceManagementClient
-from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_custom_default_matcher
+from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
 from azure.mgmt.netapp.models import Backup, BackupPatch, VolumePatch
 from test_account import delete_account
 from test_volume import create_volume, wait_for_volume, delete_volume, delete_pool
@@ -102,10 +101,7 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
     # Note that when tests are run in live mode it is best to run one test at a time.
     @recorded_by_proxy
     def test_create_delete_backup(self):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
+        set_bodiless_matcher()
         # Create 2 backups since delete backups can only be used when volume has multiple backups
         create_backup(self.client, live=self.is_live)
         create_backup(self.client, backup_name=TEST_BACKUP_2, backup_only=True, live=self.is_live)
@@ -126,10 +122,7 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
 
     @recorded_by_proxy
     def test_list_backup(self):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
+        set_bodiless_matcher()
         create_backup(self.client, live=self.is_live)
         create_backup(self.client, backup_name=TEST_BACKUP_2, backup_only=True, live=self.is_live)
         backup_list = get_backup_list(self.client)
@@ -149,10 +142,7 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
 
     @recorded_by_proxy
     def test_get_backup_by_name(self):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
+        set_bodiless_matcher()
         create_backup(self.client, live=self.is_live)
 
         backup = get_backup(self.client, TEST_BACKUP_1)
@@ -162,10 +152,7 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
 
     @recorded_by_proxy
     def test_update_backup(self):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
+        set_bodiless_matcher()
         create_backup(self.client, live=self.is_live)
         backup_body = BackupPatch(location=LOCATION, label="label1")
         self.client.backups.begin_update(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_BACKUP_1, backup_body).wait()
@@ -177,10 +164,7 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
 
     @recorded_by_proxy
     def test_get_backup_status(self):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
+        set_bodiless_matcher()
         create_backup(self.client, live=self.is_live)
 
         if self.is_live:
@@ -191,4 +175,3 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
         assert backup_status.mirror_state == "Mirrored"
 
         clean_up(self.client, live=self.is_live)
-

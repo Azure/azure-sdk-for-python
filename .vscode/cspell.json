@@ -157,6 +157,7 @@
     "delenv",
     "dependened",
     "deserialization",
+    "disablecov",
     "docfx",
     "dotenv",
     "dpkg",

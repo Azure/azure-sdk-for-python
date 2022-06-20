@@ -1,13 +1,23 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import os
 from email.policy import default
 import logging
-from marshmallow import fields, post_load, INCLUDE, Schema, pre_dump, pre_load
+from pathlib import Path
+
+from marshmallow import fields, post_load, INCLUDE, Schema, pre_dump, pre_load, post_dump, ValidationError
 
 from azure.ai.ml.constants import AzureMLResourceType
 from azure.ai.ml.constants import NodeType
-from azure.ai.ml._schema import ArmVersionedStr, NestedField, UnionField, AnonymousEnvironmentSchema, RegistryStr
+from azure.ai.ml._schema import (
+    ArmVersionedStr,
+    NestedField,
+    UnionField,
+    AnonymousEnvironmentSchema,
+    RegistryStr,
+    PathAwareSchema,
+)
 
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.entities._inputs_outputs import Input, Output
@@ -21,16 +31,20 @@ from azure.ai.ml._schema.job.input_output_fields_provider import InputsField
 from azure.ai.ml._schema.job.input_output_entry import OutputSchema
 from azure.ai.ml._schema.pipeline.pipeline_job_io import OutputBindingStr
 from .._sweep.parameterized_sweep import ParameterizedSweepSchema
-from .._utils.data_binding import support_data_binding_for_fields
+from .._utils.data_binding_expression import support_data_binding_expression_for_fields
 
 from ..core.fields import ComputeField, StringTransformedEnum
 from ..job import ParameterizedCommandSchema, ParameterizedParallelSchema
+from ..job.distribution import PyTorchDistributionSchema, TensorFlowDistributionSchema, MPIDistributionSchema
 from ..job.job_limits import CommandJobLimitsSchema
+from ..._ml_exceptions import ValidationException
+from ...entities._job.pipeline._attr_dict import _AttrDict
 
 module_logger = logging.getLogger(__name__)
 
 
-class BaseNodeSchema(Schema):
+# do inherit PathAwareSchema to support relative path & default partial load (allow None value if not specified)
+class BaseNodeSchema(PathAwareSchema):
     unknown = INCLUDE
 
     compute = ComputeField()
@@ -42,7 +56,15 @@ class BaseNodeSchema(Schema):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        support_data_binding_for_fields(self, ["type"])
+        support_data_binding_expression_for_fields(self, ["type"])
+
+    @post_dump(pass_original=True)
+    def add_user_setting_attr_dict(self, data, original_data, **kwargs):
+        """Support serializing unknown fields for pipeline node."""
+        if isinstance(original_data, _AttrDict):
+            user_setting_attr_dict = original_data._get_attrs()
+            data.update(user_setting_attr_dict)
+        return data
 
 
 def _delete_type_for_binding(io):
@@ -73,7 +95,7 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
             RegistryStr(),
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
-            # inline component or component file reference starting with FILE prefex
+            # inline component or component file reference starting with FILE prefix
             NestedField(AnonymousCommandComponentSchema, unknown=INCLUDE),
             # component file reference
             ComponentFileRefField(),
@@ -104,12 +126,38 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
 
         # parse inputs/outputs
         data = parse_inputs_outputs(data)
-        command_node = command(**data)
+        try:
+            command_node = command(**data)
+        except ValidationException as e:
+            # It may raise ValidationError during initialization, command._validate_io e.g. raise ValidationError
+            # instead in marshmallow function, so it won't break SchemaValidatable._schema_validate
+            raise ValidationError(e.message)
         return command_node
 
     @pre_dump
     def resolve_inputs_outputs(self, job, **kwargs):
         return _resolve_inputs_outputs(job)
+
+    @post_dump(pass_original=True)
+    def resolve_code_path(self, data, original_data, **kwargs):
+        # Command.code is relative to pipeline instead of Command.component after serialization,
+        # so we need to transform it. Not sure if this is the best way to do it
+        # maybe move this logic to LocalPathField
+        if (
+            hasattr(original_data.component, "code")
+            and original_data.component.code is not None
+            and original_data.component.base_path != original_data._base_path
+        ):
+            try:
+                code_path = Path(original_data.component.base_path) / original_data.component.code
+                if code_path.exists():
+                    rebased_code_path = str(os.path.relpath(code_path, original_data._base_path))
+                    data["code"], data["component"]["code"] = rebased_code_path, rebased_code_path
+            except OSError:
+                # OSError will be raised when _base_path or code is an arm_str or an invalid path,
+                # then just return the origin value to avoid blocking serialization
+                pass
+        return data
 
 
 class SweepSchema(BaseNodeSchema, ParameterizedSweepSchema):
@@ -118,7 +166,7 @@ class SweepSchema(BaseNodeSchema, ParameterizedSweepSchema):
         [
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
-            # inline component or component file reference starting with FILE prefex
+            # inline component or component file reference starting with FILE prefix
             NestedField(AnonymousCommandComponentSchema, unknown=INCLUDE),
             # component file reference
             ComponentFileRefField(),
@@ -149,7 +197,7 @@ class ParallelSchema(BaseNodeSchema, ParameterizedParallelSchema):
             RegistryStr(),
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
-            # inline component or component file reference starting with FILE prefex
+            # inline component or component file reference starting with FILE prefix
             NestedField(AnonymousParallelComponentSchema, unknown=INCLUDE),
             # component file reference
             ParallelComponentFileRefField(),

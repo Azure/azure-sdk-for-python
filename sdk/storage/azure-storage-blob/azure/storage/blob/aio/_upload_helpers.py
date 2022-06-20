@@ -20,7 +20,11 @@ from .._shared.uploads_async import (
     BlockBlobChunkUploader,
     PageBlobChunkUploader,
     AppendBlobChunkUploader)
-from .._shared.encryption import generate_blob_encryption_data, encrypt_blob
+from .._shared.encryption import (
+    encrypt_blob,
+    get_adjusted_upload_size,
+    generate_blob_encryption_data,
+    _ENCRYPTION_PROTOCOL_V2)
 from .._generated.models import (
     BlockLookupList,
     AppendPositionAccessConditions,
@@ -50,7 +54,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
             kwargs['modified_access_conditions'].if_none_match = '*'
         adjusted_count = length
         if (encryption_options.get('key') is not None) and (adjusted_count is not None):
-            adjusted_count += (16 - (length % 16))
+            adjusted_count = get_adjusted_upload_size(adjusted_count, encryption_options['version'])
         blob_headers = kwargs.pop('blob_headers', None)
         tier = kwargs.pop('standard_blob_tier', None)
         blob_tags_string = kwargs.pop('blob_tags_string', None)
@@ -70,7 +74,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
             except AttributeError:
                 pass
             if encryption_options.get('key'):
-                encryption_data, data = encrypt_blob(data, encryption_options['key'])
+                encryption_data, data = encrypt_blob(data, encryption_options['key'], encryption_options['version'])
                 headers['x-ms-meta-encryptiondata'] = encryption_data
             response = await client.upload(
                 body=data,
@@ -100,15 +104,23 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
             not hasattr(stream, 'seek') or not hasattr(stream, 'tell')
 
         if use_original_upload_path:
+            total_size = length
             if encryption_options.get('key'):
-                cek, iv, encryption_data = generate_blob_encryption_data(encryption_options['key'])
+                cek, iv, encryption_data = generate_blob_encryption_data(
+                    encryption_options['key'],
+                    encryption_options['version'])
                 headers['x-ms-meta-encryptiondata'] = encryption_data
                 encryption_options['cek'] = cek
                 encryption_options['vector'] = iv
+
+                # Adjust total_size for encryption V2
+                if encryption_options['version'] == _ENCRYPTION_PROTOCOL_V2:
+                    total_size = adjusted_count
+
             block_ids = await upload_data_chunks(
                 service=client,
                 uploader_class=BlockBlobChunkUploader,
-                total_size=length,
+                total_size=total_size,
                 chunk_size=blob_settings.max_block_size,
                 max_concurrency=max_concurrency,
                 stream=stream,

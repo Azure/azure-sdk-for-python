@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-04-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "363",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -39,77 +39,41 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "43c10bbb-eeaf-4c22-af43-a2be5ea8a201",
+        "apim-request-id": "c2bd702c-08f2-429d-bac8-a1f4b60c4f67",
         "Content-Length": "0",
-        "Date": "Tue, 03 May 2022 00:03:17 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/9db53bd2-7133-4be1-a6ee-0afa46daf392?api-version=2022-04-01-preview",
+        "Date": "Fri, 17 Jun 2022 17:35:22 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/1aa27aa6-4933-47e4-8e6e-848dde499244?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "347"
+        "x-envoy-upstream-service-time": "117"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/9db53bd2-7133-4be1-a6ee-0afa46daf392?api-version=2022-04-01-preview\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/1aa27aa6-4933-47e4-8e6e-848dde499244?api-version=2022-05-01\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "61da5744-1466-4bea-aeea-3c20af5257e4",
-        "Content-Length": "279",
+        "apim-request-id": "54835c6b-b5dd-4f72-b2c4-789ddbbb13d8",
+        "Content-Length": "2461",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 03 May 2022 00:03:21 GMT",
+        "Date": "Fri, 17 Jun 2022 17:35:27 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "45"
+        "x-envoy-upstream-service-time": "34"
       },
       "ResponseBody": {
-        "jobId": "9db53bd2-7133-4be1-a6ee-0afa46daf392",
-        "lastUpdateDateTime": "2022-05-03T00:03:17Z",
-        "createdDateTime": "2022-05-03T00:03:16Z",
-        "expirationDateTime": "2022-05-04T00:03:16Z",
-        "status": "running",
-        "errors": [],
-        "tasks": {
-          "completed": 0,
-          "failed": 0,
-          "inProgress": 1,
-          "total": 1,
-          "items": []
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/9db53bd2-7133-4be1-a6ee-0afa46daf392?api-version=2022-04-01-preview\u0026showStats=True",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "4552f0e4-e3bf-4d6e-9169-bcb209ed5213",
-        "Content-Length": "2455",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 03 May 2022 00:03:26 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "132"
-      },
-      "ResponseBody": {
-        "jobId": "9db53bd2-7133-4be1-a6ee-0afa46daf392",
-        "lastUpdateDateTime": "2022-05-03T00:03:25Z",
-        "createdDateTime": "2022-05-03T00:03:16Z",
-        "expirationDateTime": "2022-05-04T00:03:16Z",
+        "jobId": "1aa27aa6-4933-47e4-8e6e-848dde499244",
+        "lastUpdatedDateTime": "2022-06-17T17:35:25Z",
+        "createdDateTime": "2022-06-17T17:35:22Z",
+        "expirationDateTime": "2022-06-18T17:35:22Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -121,7 +85,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-05-03T00:03:25.3974182Z",
+              "lastUpdateDateTime": "2022-06-17T17:35:25.933235Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -139,16 +103,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.98,
-                      "neutral": 0.02,
+                      "positive": 0.99,
+                      "neutral": 0.01,
                       "negative": 0.0
                     },
                     "sentences": [
                       {
                         "sentiment": "positive",
                         "confidenceScores": {
-                          "positive": 0.98,
-                          "neutral": 0.02,
+                          "positive": 0.99,
+                          "neutral": 0.01,
                           "negative": 0.0
                         },
                         "offset": 0,
@@ -194,9 +158,9 @@
                               "positive": 1.0,
                               "negative": 0.0
                             },
-                            "offset": 15,
-                            "length": 7,
-                            "text": "premium",
+                            "offset": 53,
+                            "length": 9,
+                            "text": "beautiful",
                             "isNegated": false
                           }
                         ]
@@ -212,17 +176,17 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.0,
+                      "positive": 0.01,
                       "neutral": 0.0,
-                      "negative": 1.0
+                      "negative": 0.99
                     },
                     "sentences": [
                       {
                         "sentiment": "negative",
                         "confidenceScores": {
-                          "positive": 0.0,
+                          "positive": 0.01,
                           "neutral": 0.0,
-                          "negative": 1.0
+                          "negative": 0.99
                         },
                         "offset": 0,
                         "length": 32,
@@ -245,10 +209,10 @@
                             ]
                           },
                           {
-                            "sentiment": "negative",
+                            "sentiment": "positive",
                             "confidenceScores": {
-                              "positive": 0.0,
-                              "negative": 1.0
+                              "positive": 1.0,
+                              "negative": 0.0
                             },
                             "offset": 13,
                             "length": 7,
@@ -280,7 +244,7 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2020-04-01"
+                "modelVersion": "2021-10-01"
               }
             }
           ]

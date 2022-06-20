@@ -165,3 +165,13 @@ directive:
     transform: >
       $["title"] = "Text Analytics Client";
 ```
+
+
+### Rename changed JobState property with ApiVersion v2022_05_01
+
+```yaml $(tag) == 'release_2022_05_01'
+directive:
+  - from: swagger-document
+    where: $.definitions.JobState
+    transform: $.properties.lastUpdatedDateTime["x-ms-client-name"] = "lastUpdateDateTime";
+```

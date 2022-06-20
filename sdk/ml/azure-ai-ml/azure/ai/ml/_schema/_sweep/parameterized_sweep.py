@@ -8,7 +8,7 @@ from ..job.job_limits import SweepJobLimitsSchema
 
 
 class ParameterizedSweepSchema(PathAwareSchema):
-    """Shared shema for standalone and pipeline sweep job."""
+    """Shared schema for standalone and pipeline sweep job."""
 
     sampling_algorithm = SamplingAlgorithmField()
     search_space = SearchSpaceField()
