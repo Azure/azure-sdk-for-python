@@ -37,7 +37,7 @@ These sample programs show common scenarios for the Conversational Language Unde
 1. Install the Azure Conversational Language Understanding client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-language-conversations --pre
+pip install azure-ai-language-conversations
 ```
 
 For more information about how the versioning of the SDK corresponds to the versioning of the service's API, see [here][versioning_story_readme].
