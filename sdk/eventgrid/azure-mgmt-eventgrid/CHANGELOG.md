@@ -1,5 +1,71 @@
 # Release History
 
+## 10.2.0 (2022-06-20)
+
+**Features**
+
+  - Added operation TopicsOperations.regenerate_key
+
+**Breaking changes**
+
+  - Model Domain no longer has parameter auto_create_topic_with_first_subscription
+  - Model Domain no longer has parameter auto_delete_topic_with_last_subscription
+  - Model Domain no longer has parameter disable_local_auth
+  - Model Domain no longer has parameter identity
+  - Model Domain no longer has parameter inbound_ip_rules
+  - Model Domain no longer has parameter input_schema
+  - Model Domain no longer has parameter input_schema_mapping
+  - Model Domain no longer has parameter metric_resource_id
+  - Model Domain no longer has parameter private_endpoint_connections
+  - Model Domain no longer has parameter public_network_access
+  - Model Domain no longer has parameter system_data
+  - Model DomainTopic no longer has parameter system_data
+  - Model DomainUpdateParameters no longer has parameter auto_create_topic_with_first_subscription
+  - Model DomainUpdateParameters no longer has parameter auto_delete_topic_with_last_subscription
+  - Model DomainUpdateParameters no longer has parameter disable_local_auth
+  - Model DomainUpdateParameters no longer has parameter identity
+  - Model DomainUpdateParameters no longer has parameter inbound_ip_rules
+  - Model DomainUpdateParameters no longer has parameter public_network_access
+  - Model EventHubEventSubscriptionDestination no longer has parameter delivery_attribute_mappings
+  - Model EventSubscription no longer has parameter dead_letter_with_resource_identity
+  - Model EventSubscription no longer has parameter delivery_with_resource_identity
+  - Model EventSubscription no longer has parameter event_delivery_schema
+  - Model EventSubscription no longer has parameter system_data
+  - Model EventSubscriptionFilter no longer has parameter enable_advanced_filtering_on_arrays
+  - Model EventSubscriptionUpdateParameters no longer has parameter dead_letter_with_resource_identity
+  - Model EventSubscriptionUpdateParameters no longer has parameter delivery_with_resource_identity
+  - Model EventSubscriptionUpdateParameters no longer has parameter event_delivery_schema
+  - Model HybridConnectionEventSubscriptionDestination no longer has parameter delivery_attribute_mappings
+  - Model ServiceBusQueueEventSubscriptionDestination no longer has parameter delivery_attribute_mappings
+  - Model StorageQueueEventSubscriptionDestination no longer has parameter queue_message_time_to_live_in_seconds
+  - Model Topic no longer has parameter disable_local_auth
+  - Model Topic no longer has parameter identity
+  - Model Topic no longer has parameter inbound_ip_rules
+  - Model Topic no longer has parameter input_schema
+  - Model Topic no longer has parameter input_schema_mapping
+  - Model Topic no longer has parameter metric_resource_id
+  - Model Topic no longer has parameter private_endpoint_connections
+  - Model Topic no longer has parameter public_network_access
+  - Model Topic no longer has parameter system_data
+  - Model TopicTypeInfo no longer has parameter source_resource_format
+  - Model TopicTypeInfo no longer has parameter supported_scopes_for_source
+  - Model TopicUpdateParameters no longer has parameter disable_local_auth
+  - Model TopicUpdateParameters no longer has parameter identity
+  - Model TopicUpdateParameters no longer has parameter inbound_ip_rules
+  - Model TopicUpdateParameters no longer has parameter public_network_access
+  - Model WebHookEventSubscriptionDestination no longer has parameter azure_active_directory_application_id_or_uri
+  - Model WebHookEventSubscriptionDestination no longer has parameter azure_active_directory_tenant_id
+  - Model WebHookEventSubscriptionDestination no longer has parameter delivery_attribute_mappings
+  - Model WebHookEventSubscriptionDestination no longer has parameter max_events_per_batch
+  - Model WebHookEventSubscriptionDestination no longer has parameter preferred_batch_size_in_kilobytes
+  - Removed operation EventSubscriptionsOperations.get_delivery_attributes
+  - Removed operation TopicsOperations.begin_regenerate_key
+  - Removed operation group ExtensionTopicsOperations
+  - Removed operation group PrivateEndpointConnectionsOperations
+  - Removed operation group PrivateLinkResourcesOperations
+  - Removed operation group SystemTopicEventSubscriptionsOperations
+  - Removed operation group SystemTopicsOperations
+
 ## 10.2.0b2 (2022-05-30)
 
 **Breaking changes**

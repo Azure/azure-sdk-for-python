@@ -7,18 +7,8 @@
 # --------------------------------------------------------------------------
 
 from ._models_py3 import AdvancedFilter
-from ._models_py3 import AzureADPartnerClientAuthentication
-from ._models_py3 import AzureFunctionEventSubscriptionDestination
 from ._models_py3 import BoolEqualsAdvancedFilter
-from ._models_py3 import Channel
-from ._models_py3 import ChannelUpdateParameters
-from ._models_py3 import ChannelsListResult
-from ._models_py3 import ConnectionState
 from ._models_py3 import DeadLetterDestination
-from ._models_py3 import DeadLetterWithResourceIdentity
-from ._models_py3 import DeliveryAttributeListResult
-from ._models_py3 import DeliveryAttributeMapping
-from ._models_py3 import DeliveryWithResourceIdentity
 from ._models_py3 import Domain
 from ._models_py3 import DomainRegenerateKeyRequest
 from ._models_py3 import DomainSharedAccessKeys
@@ -26,98 +16,35 @@ from ._models_py3 import DomainTopic
 from ._models_py3 import DomainTopicsListResult
 from ._models_py3 import DomainUpdateParameters
 from ._models_py3 import DomainsListResult
-from ._models_py3 import DynamicDeliveryAttributeMapping
-from ._models_py3 import EventChannel
-from ._models_py3 import EventChannelDestination
-from ._models_py3 import EventChannelFilter
-from ._models_py3 import EventChannelSource
-from ._models_py3 import EventChannelsListResult
 from ._models_py3 import EventHubEventSubscriptionDestination
 from ._models_py3 import EventSubscription
 from ._models_py3 import EventSubscriptionDestination
 from ._models_py3 import EventSubscriptionFilter
 from ._models_py3 import EventSubscriptionFullUrl
-from ._models_py3 import EventSubscriptionIdentity
 from ._models_py3 import EventSubscriptionUpdateParameters
 from ._models_py3 import EventSubscriptionsListResult
 from ._models_py3 import EventType
-from ._models_py3 import EventTypeInfo
 from ._models_py3 import EventTypesListResult
-from ._models_py3 import ExtendedLocation
-from ._models_py3 import ExtensionTopic
 from ._models_py3 import HybridConnectionEventSubscriptionDestination
-from ._models_py3 import IdentityInfo
-from ._models_py3 import InboundIpRule
-from ._models_py3 import InlineEventProperties
-from ._models_py3 import InputSchemaMapping
-from ._models_py3 import IsNotNullAdvancedFilter
-from ._models_py3 import IsNullOrUndefinedAdvancedFilter
-from ._models_py3 import JsonField
-from ._models_py3 import JsonFieldWithDefault
-from ._models_py3 import JsonInputSchemaMapping
 from ._models_py3 import NumberGreaterThanAdvancedFilter
 from ._models_py3 import NumberGreaterThanOrEqualsAdvancedFilter
 from ._models_py3 import NumberInAdvancedFilter
-from ._models_py3 import NumberInRangeAdvancedFilter
 from ._models_py3 import NumberLessThanAdvancedFilter
 from ._models_py3 import NumberLessThanOrEqualsAdvancedFilter
 from ._models_py3 import NumberNotInAdvancedFilter
-from ._models_py3 import NumberNotInRangeAdvancedFilter
 from ._models_py3 import Operation
 from ._models_py3 import OperationInfo
 from ._models_py3 import OperationsListResult
-from ._models_py3 import Partner
-from ._models_py3 import PartnerAuthorization
-from ._models_py3 import PartnerClientAuthentication
-from ._models_py3 import PartnerConfiguration
-from ._models_py3 import PartnerConfigurationUpdateParameters
-from ._models_py3 import PartnerConfigurationsListResult
-from ._models_py3 import PartnerDestination
-from ._models_py3 import PartnerDestinationInfo
-from ._models_py3 import PartnerDestinationUpdateParameters
-from ._models_py3 import PartnerDestinationsListResult
-from ._models_py3 import PartnerDetails
-from ._models_py3 import PartnerEventSubscriptionDestination
-from ._models_py3 import PartnerNamespace
-from ._models_py3 import PartnerNamespaceRegenerateKeyRequest
-from ._models_py3 import PartnerNamespaceSharedAccessKeys
-from ._models_py3 import PartnerNamespaceUpdateParameters
-from ._models_py3 import PartnerNamespacesListResult
-from ._models_py3 import PartnerRegistration
-from ._models_py3 import PartnerRegistrationUpdateParameters
-from ._models_py3 import PartnerRegistrationsListResult
-from ._models_py3 import PartnerTopic
-from ._models_py3 import PartnerTopicInfo
-from ._models_py3 import PartnerTopicUpdateParameters
-from ._models_py3 import PartnerTopicsListResult
-from ._models_py3 import PartnerUpdateDestinationInfo
-from ._models_py3 import PartnerUpdateTopicInfo
-from ._models_py3 import PrivateEndpoint
-from ._models_py3 import PrivateEndpointConnection
-from ._models_py3 import PrivateEndpointConnectionListResult
-from ._models_py3 import PrivateLinkResource
-from ._models_py3 import PrivateLinkResourcesListResult
 from ._models_py3 import Resource
-from ._models_py3 import ResourceMoveChangeHistory
-from ._models_py3 import ResourceSku
 from ._models_py3 import RetryPolicy
 from ._models_py3 import ServiceBusQueueEventSubscriptionDestination
-from ._models_py3 import ServiceBusTopicEventSubscriptionDestination
-from ._models_py3 import StaticDeliveryAttributeMapping
 from ._models_py3 import StorageBlobDeadLetterDestination
 from ._models_py3 import StorageQueueEventSubscriptionDestination
 from ._models_py3 import StringBeginsWithAdvancedFilter
 from ._models_py3 import StringContainsAdvancedFilter
 from ._models_py3 import StringEndsWithAdvancedFilter
 from ._models_py3 import StringInAdvancedFilter
-from ._models_py3 import StringNotBeginsWithAdvancedFilter
-from ._models_py3 import StringNotContainsAdvancedFilter
-from ._models_py3 import StringNotEndsWithAdvancedFilter
 from ._models_py3 import StringNotInAdvancedFilter
-from ._models_py3 import SystemData
-from ._models_py3 import SystemTopic
-from ._models_py3 import SystemTopicUpdateParameters
-from ._models_py3 import SystemTopicsListResult
 from ._models_py3 import Topic
 from ._models_py3 import TopicRegenerateKeyRequest
 from ._models_py3 import TopicSharedAccessKeys
@@ -126,74 +53,27 @@ from ._models_py3 import TopicTypesListResult
 from ._models_py3 import TopicUpdateParameters
 from ._models_py3 import TopicsListResult
 from ._models_py3 import TrackedResource
-from ._models_py3 import UserIdentityProperties
-from ._models_py3 import VerifiedPartner
-from ._models_py3 import VerifiedPartnersListResult
 from ._models_py3 import WebHookEventSubscriptionDestination
-from ._models_py3 import WebhookPartnerDestinationInfo
-from ._models_py3 import WebhookUpdatePartnerDestinationInfo
 
 
 from ._event_grid_management_client_enums import (
     AdvancedFilterOperatorType,
-    ChannelProvisioningState,
-    ChannelType,
-    CreatedByType,
-    DataResidencyBoundary,
     DeadLetterEndPointType,
-    DeliveryAttributeMappingType,
     DomainProvisioningState,
     DomainTopicProvisioningState,
     EndpointType,
-    EventChannelProvisioningState,
-    EventDefinitionKind,
-    EventDeliverySchema,
-    EventSubscriptionIdentityType,
     EventSubscriptionProvisioningState,
-    IdentityType,
-    InputSchema,
-    InputSchemaMappingType,
-    IpActionType,
-    ParentType,
-    PartnerClientAuthenticationType,
-    PartnerConfigurationProvisioningState,
-    PartnerDestinationActivationState,
-    PartnerDestinationProvisioningState,
-    PartnerEndpointType,
-    PartnerNamespaceProvisioningState,
-    PartnerRegistrationProvisioningState,
-    PartnerRegistrationVisibilityState,
-    PartnerTopicActivationState,
-    PartnerTopicProvisioningState,
-    PartnerTopicReadinessState,
-    PartnerTopicRoutingMode,
-    PersistedConnectionStatus,
-    PublicNetworkAccess,
-    ReadinessState,
-    ResourceKind,
-    ResourceProvisioningState,
     ResourceRegionType,
-    Sku,
     TopicProvisioningState,
-    TopicTypePropertiesSupportedScopesForSourceItem,
     TopicTypeProvisioningState,
-    VerifiedPartnerProvisioningState,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'AdvancedFilter',
-    'AzureADPartnerClientAuthentication',
-    'AzureFunctionEventSubscriptionDestination',
     'BoolEqualsAdvancedFilter',
-    'Channel',
-    'ChannelUpdateParameters',
-    'ChannelsListResult',
-    'ConnectionState',
     'DeadLetterDestination',
-    'DeadLetterWithResourceIdentity',
-    'DeliveryAttributeListResult',
-    'DeliveryAttributeMapping',
-    'DeliveryWithResourceIdentity',
     'Domain',
     'DomainRegenerateKeyRequest',
     'DomainSharedAccessKeys',
@@ -201,98 +81,35 @@ __all__ = [
     'DomainTopicsListResult',
     'DomainUpdateParameters',
     'DomainsListResult',
-    'DynamicDeliveryAttributeMapping',
-    'EventChannel',
-    'EventChannelDestination',
-    'EventChannelFilter',
-    'EventChannelSource',
-    'EventChannelsListResult',
     'EventHubEventSubscriptionDestination',
     'EventSubscription',
     'EventSubscriptionDestination',
     'EventSubscriptionFilter',
     'EventSubscriptionFullUrl',
-    'EventSubscriptionIdentity',
     'EventSubscriptionUpdateParameters',
     'EventSubscriptionsListResult',
     'EventType',
-    'EventTypeInfo',
     'EventTypesListResult',
-    'ExtendedLocation',
-    'ExtensionTopic',
     'HybridConnectionEventSubscriptionDestination',
-    'IdentityInfo',
-    'InboundIpRule',
-    'InlineEventProperties',
-    'InputSchemaMapping',
-    'IsNotNullAdvancedFilter',
-    'IsNullOrUndefinedAdvancedFilter',
-    'JsonField',
-    'JsonFieldWithDefault',
-    'JsonInputSchemaMapping',
     'NumberGreaterThanAdvancedFilter',
     'NumberGreaterThanOrEqualsAdvancedFilter',
     'NumberInAdvancedFilter',
-    'NumberInRangeAdvancedFilter',
     'NumberLessThanAdvancedFilter',
     'NumberLessThanOrEqualsAdvancedFilter',
     'NumberNotInAdvancedFilter',
-    'NumberNotInRangeAdvancedFilter',
     'Operation',
     'OperationInfo',
     'OperationsListResult',
-    'Partner',
-    'PartnerAuthorization',
-    'PartnerClientAuthentication',
-    'PartnerConfiguration',
-    'PartnerConfigurationUpdateParameters',
-    'PartnerConfigurationsListResult',
-    'PartnerDestination',
-    'PartnerDestinationInfo',
-    'PartnerDestinationUpdateParameters',
-    'PartnerDestinationsListResult',
-    'PartnerDetails',
-    'PartnerEventSubscriptionDestination',
-    'PartnerNamespace',
-    'PartnerNamespaceRegenerateKeyRequest',
-    'PartnerNamespaceSharedAccessKeys',
-    'PartnerNamespaceUpdateParameters',
-    'PartnerNamespacesListResult',
-    'PartnerRegistration',
-    'PartnerRegistrationUpdateParameters',
-    'PartnerRegistrationsListResult',
-    'PartnerTopic',
-    'PartnerTopicInfo',
-    'PartnerTopicUpdateParameters',
-    'PartnerTopicsListResult',
-    'PartnerUpdateDestinationInfo',
-    'PartnerUpdateTopicInfo',
-    'PrivateEndpoint',
-    'PrivateEndpointConnection',
-    'PrivateEndpointConnectionListResult',
-    'PrivateLinkResource',
-    'PrivateLinkResourcesListResult',
     'Resource',
-    'ResourceMoveChangeHistory',
-    'ResourceSku',
     'RetryPolicy',
     'ServiceBusQueueEventSubscriptionDestination',
-    'ServiceBusTopicEventSubscriptionDestination',
-    'StaticDeliveryAttributeMapping',
     'StorageBlobDeadLetterDestination',
     'StorageQueueEventSubscriptionDestination',
     'StringBeginsWithAdvancedFilter',
     'StringContainsAdvancedFilter',
     'StringEndsWithAdvancedFilter',
     'StringInAdvancedFilter',
-    'StringNotBeginsWithAdvancedFilter',
-    'StringNotContainsAdvancedFilter',
-    'StringNotEndsWithAdvancedFilter',
     'StringNotInAdvancedFilter',
-    'SystemData',
-    'SystemTopic',
-    'SystemTopicUpdateParameters',
-    'SystemTopicsListResult',
     'Topic',
     'TopicRegenerateKeyRequest',
     'TopicSharedAccessKeys',
@@ -301,53 +118,16 @@ __all__ = [
     'TopicUpdateParameters',
     'TopicsListResult',
     'TrackedResource',
-    'UserIdentityProperties',
-    'VerifiedPartner',
-    'VerifiedPartnersListResult',
     'WebHookEventSubscriptionDestination',
-    'WebhookPartnerDestinationInfo',
-    'WebhookUpdatePartnerDestinationInfo',
     'AdvancedFilterOperatorType',
-    'ChannelProvisioningState',
-    'ChannelType',
-    'CreatedByType',
-    'DataResidencyBoundary',
     'DeadLetterEndPointType',
-    'DeliveryAttributeMappingType',
     'DomainProvisioningState',
     'DomainTopicProvisioningState',
     'EndpointType',
-    'EventChannelProvisioningState',
-    'EventDefinitionKind',
-    'EventDeliverySchema',
-    'EventSubscriptionIdentityType',
     'EventSubscriptionProvisioningState',
-    'IdentityType',
-    'InputSchema',
-    'InputSchemaMappingType',
-    'IpActionType',
-    'ParentType',
-    'PartnerClientAuthenticationType',
-    'PartnerConfigurationProvisioningState',
-    'PartnerDestinationActivationState',
-    'PartnerDestinationProvisioningState',
-    'PartnerEndpointType',
-    'PartnerNamespaceProvisioningState',
-    'PartnerRegistrationProvisioningState',
-    'PartnerRegistrationVisibilityState',
-    'PartnerTopicActivationState',
-    'PartnerTopicProvisioningState',
-    'PartnerTopicReadinessState',
-    'PartnerTopicRoutingMode',
-    'PersistedConnectionStatus',
-    'PublicNetworkAccess',
-    'ReadinessState',
-    'ResourceKind',
-    'ResourceProvisioningState',
     'ResourceRegionType',
-    'Sku',
     'TopicProvisioningState',
-    'TopicTypePropertiesSupportedScopesForSourceItem',
     'TopicTypeProvisioningState',
-    'VerifiedPartnerProvisioningState',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
