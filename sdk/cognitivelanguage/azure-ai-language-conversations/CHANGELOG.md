@@ -14,7 +14,10 @@
 
 ### Features Added
 * Added more resolution types for entities
-* Added support for authoring client
+* Added support for authoring operations with `ConversationAuthoringClient` under the `azure.ai.language.conversations.authoring` namespace.
+
+### Breaking Changes
+* Client now uses python dictionaries for method parameters and results instead of classes.
 
 ## 1.0.0b3 (2022-04-19)
 
