@@ -24,8 +24,8 @@ from cryptography.hazmat.primitives.padding import PKCS7
 
 from azure.core.exceptions import HttpResponseError
 
-from .._version import VERSION
-from . import encode_base64, decode_base64_to_bytes
+from ._version import VERSION
+from ._shared import encode_base64, decode_base64_to_bytes
 
 
 _ENCRYPTION_PROTOCOL_V1 = '1.0'
