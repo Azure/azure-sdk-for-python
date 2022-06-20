@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import time
-from tkinter import W
 from typing import TYPE_CHECKING, Optional
 
 from uamqp import (
@@ -25,9 +24,8 @@ from uamqp.errors import ErrorPolicy, ErrorAction, LinkDetach
 
 from ._base import AmqpTransport, TransportMessageBase
 from ..amqp._constants import AmqpMessageBodyType
-from ..amqp._constants import AmqpMessageBodyType
 from .._constants import (
-    NO_RETRY_ERRORS, 
+    NO_RETRY_ERRORS,
     PROP_PARTITION_KEY_AMQP_SYMBOL,
 )
 from ..exceptions import OperationTimeoutError
@@ -58,33 +56,6 @@ def _error_handler(error):
         return ErrorAction(retry=False)
     return ErrorAction(retry=True)
 
-class UamqpTransportMessage(TransportMessageBase, Message):
-
-    @property
-    def body_type(self):
-        # type: () -> AmqpMessageBodyType
-        """The body type of the underlying AMQP message.
-
-        :rtype: ~azure.eventhub.amqp.AmqpMessageBodyType
-        """
-        return UamqpTransport.AMQP_MESSAGE_BODY_TYPE_MAP.get(
-            self._body.type, AmqpMessageBodyType.VALUE  # pylint: disable=protected-access
-        )
-
-    @property
-    def body(self):
-        """The body of the Message. The format may vary depending on the body type:
-        For :class:`azure.eventhub.amqp.AmqpMessageBodyType.DATA<azure.eventhub.amqp.AmqpMessageBodyType.DATA>`,
-        the body could be bytes or Iterable[bytes].
-        For :class:`azure.eventhub.amqp.AmqpMessageBodyType.SEQUENCE<azure.eventhub.amqp.AmqpMessageBodyType.SEQUENCE>`,
-        the body could be List or Iterable[List].
-        For :class:`azure.eventhub.amqp.AmqpMessageBodyType.VALUE<azure.eventhub.amqp.AmqpMessageBodyType.VALUE>`,
-        the body could be any type.
-
-        :rtype: Any
-        """
-        return self.get_data()
-
 class UamqpTransport(AmqpTransport):
     """
     Class which defines uamqp-based methods used by the producer and consumer.
@@ -92,12 +63,6 @@ class UamqpTransport(AmqpTransport):
     # define constants
     BATCH_MESSAGE = BatchMessage
     MAX_MESSAGE_LENGTH_BYTES = constants.MAX_MESSAGE_LENGTH_BYTES
-    AMQP_MESSAGE_BODY_TYPE_MAP = {
-        MessageBodyType.Data.value: AmqpMessageBodyType.DATA,
-        MessageBodyType.Sequence.value: AmqpMessageBodyType.SEQUENCE,
-        MessageBodyType.Value.value: AmqpMessageBodyType.VALUE,
-    }
-    TRANSPORT_MESSAGE = UamqpTransportMessage
     IDLE_TIMEOUT_FACTOR = 1000 # pyamqp = 1
 
     # define symbols
@@ -157,7 +122,7 @@ class UamqpTransport(AmqpTransport):
             # amqp_body_type is type of AmqpMessageBodyType.VALUE
             amqp_body_type = MessageBodyType.Value
 
-        return UamqpTransportMessage(
+        return Message(
             body=amqp_body,
             body_type=amqp_body_type,
             header=message_header,

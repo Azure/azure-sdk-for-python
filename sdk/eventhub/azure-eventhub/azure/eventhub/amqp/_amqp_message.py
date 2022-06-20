@@ -52,8 +52,6 @@ class AmqpAnnotatedMessage(object):
         message = kwargs.pop("message", None)
         if message:
             self._from_amqp_message(message)
-            self._body = message.body
-            self._body_type = message.body_type
             return
 
         # manually constructed AMQPAnnotatedMessage
@@ -172,6 +170,15 @@ class AmqpAnnotatedMessage(object):
         self._annotations = message.annotations if message.annotations else {}
         self._delivery_annotations = message.delivery_annotations if message.delivery_annotations else {}
         self._application_properties = message.application_properties if message.application_properties else {}
+        if message.data:
+            self._body = message.data
+            self._body_type = AmqpMessageBodyType.DATA
+        elif message.sequence:
+            self._body = message.sequence
+            self._body_type = AmqpMessageBodyType.SEQUENCE
+        else:
+            self._body = message.value
+            self._body_type = AmqpMessageBodyType.VALUE
 
     @property
     def body(self):

@@ -71,6 +71,9 @@ PrimitiveTypes = Optional[Union[
     uuid.UUID,
 ]]
 
+if TYPE_CHECKING:
+    from ._transport._base import AmqpTransport
+
 _LOGGER = logging.getLogger(__name__)
 
 # event_data.encoded_size < 255, batch encode overhead is 5, >=256, overhead is 8 each
@@ -205,8 +208,8 @@ class EventData(object):
         return event_data
 
     @classmethod
-    def _from_message(cls, message, raw_amqp_message=None):
-        # type: (Message, Optional[AmqpAnnotatedMessage]) -> EventData
+    def _from_message(cls, message, raw_amqp_message=None, amqp_transport=None):
+        # type: (Message, Optional[AmqpAnnotatedMessage], AmqpTransport) -> EventData
         # pylint:disable=protected-access
         """Internal use only.
 
@@ -219,7 +222,8 @@ class EventData(object):
         event_data = cls(body="")
         event_data.message = message
         # pylint: disable=protected-access
-        event_data._raw_amqp_message = raw_amqp_message if raw_amqp_message else AmqpAnnotatedMessage(message=message)
+        event_data._raw_amqp_message = raw_amqp_message if raw_amqp_message else \
+            AmqpAnnotatedMessage(message=message, amqp_transport=amqp_transport)
         return event_data
 
     #def _encode_message(self):
