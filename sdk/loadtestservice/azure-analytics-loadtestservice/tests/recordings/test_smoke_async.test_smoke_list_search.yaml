@@ -10,18 +10,18 @@ interactions:
     uri: https://fake.loadtesting.azure.com/loadtests/sortAndFilter?maxPageSize=50&api-version=2022-06-01-preview
   response:
     body:
-      string: '{"value":[{"testId":"","description":"","displayName":"newtest"}]}'
+      string: '{"value":[{"testId":"0045a","description":"","displayName":"Test_6/20/2022_11:43:41PM","resourceId":"/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk","loadTestConfig":{"engineInstances":1,"splitAllCSVs":false},"passFailCriteria":{"passFailMetrics":{}},"createdDateTime":"2022-06-20T18:14:00.127Z","createdBy":"t-harshanb@microsoft.com","lastModifiedDateTime":"2022-06-20T18:14:02.264Z","lastModifiedBy":"t-harshanb@microsoft.com","inputArtifacts":{"configUrl":null,"testScriptUrl":{"url":"https://stcntproddataeus.blob.core.windows.net/f46691cd-327d-4243-a7dd-045035ebb277/890bba39-760f-4de1-b3bc-e0455159c043?sv=2020-04-08&se=2022-06-20T20%3A48%3A46Z&sr=b&sp=r&sig=NFVMVzDJLCrZC%2BXfyc20YoUXtXjUmMvwQ84vfGA1IhQ%3D","fileId":"890bba39","filename":"NGINX-10s.jmx","fileType":0,"expireTime":"2022-06-20T19:58:46.7866564+00:00","validationStatus":"VALIDATION_SUCCESS"},"userPropUrl":null,"inputArtifactsZipFileurl":null,"additionalUrls":[]},"secrets":null,"environmentVariables":null,"subnetId":null,"keyvaultReferenceIdentityType":"SystemAssigned","keyvaultReferenceIdentityId":null}],"nextLink":null}'
     headers:
       api-supported-versions: 2021-07-01-preview, 2022-04-15-preview, 2022-06-01-preview
       connection: keep-alive
-      content-length: '20589'
+      content-length: '1246'
       content-type: application/json; charset=utf-8
-      date: Wed, 15 Jun 2022 20:04:11 GMT
-      mise-correlation-id: c6412025-6511-0000-a378-e2fdf65ac2ef
+      date: Mon, 20 Jun 2022 19:48:46 GMT
+      mise-correlation-id: df9a13bd-e2ee-4cc9-97cd-bc3ff3979624
       strict-transport-security: max-age=15724800; includeSubDomains
       x-content-type-options: nosniff
     status:
       code: 200
       message: OK
-    url: https://fake.eus2.cnt-canary.loadtesting.azure.com/loadtests/sortAndFilter?maxPageSize=50&api-version=2022-06-01-preview
+    url: https://fake.eus.cnt-prod.loadtesting.azure.com/loadtests/sortAndFilter?maxPageSize=50&api-version=2022-06-01-preview
 version: 1

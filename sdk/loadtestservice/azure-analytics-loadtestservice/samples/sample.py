@@ -45,9 +45,75 @@ except KeyError:
 # Build a client through AAD
 client = LoadTestClient(credential=DefaultAzureCredential(), endpoint=endpoint)
 
-# Listing the load test search
+# Creating or updating a load test
 try:
-    result = client.test.list_load_test_search()
+    test_id="test-name"
+    body_test={"createdBy": "user-name",  # Optional. The user that created the test model.
+        "createdDateTime": "2022-06-20 00:00:00",  # Optional. The created
+        "description": "test-description",  # Optional. The test description.
+        "displayName": "test-display-name",  # Optional. Display name of a test.
+        "resourceId": "resource-ID",  # Optional. 
+        # more param can be there
+        }  
+    result = client.test.create_or_update_test(test_id, body_test)
     print(result)
+except HttpResponseError as e:
+    print('Failed to send JSON message: {}'.format(e.response.json()))
+
+#Uploading a test file
+try:
+    test_id="test-name"
+    file_id="file-name"
+    file_body = {}
+    #reading file using python open
+    f= open("jmx-script.jmx","rb")
+    file_body["file"]=f 
+    result=client.test.upload_test_file(test_id,file_id,file_body)
+    print(result)
+except HttpResponseError as e:
+    print('Failed to send JSON message: {}'.format(e.response.json()))
+
+#Creating a test run
+try:
+    test_run_id="test-run-name"
+    body_test_run=body_test={"createdBy": "user-name",  # Optional. The user that created the test model.
+        "createdDateTime": "2022-06-20 00:00:00",  # Optional. The created
+        "description": "test-description",  # Optional. The test description.
+        "displayName": "test-display-name",  # Optional. Display name of a test.
+        "resourceId": "resource-ID",  # Optional. 
+        # more param can be there
+        } 
+    result=client.test_run.create_and_update_test(test_run_id,body_test_run)
+    print(result)
+except HttpResponseError as e:
+    print('Failed to send JSON message: {}'.format(e.response.json()))
+
+# Getting test run client metrics
+try:
+    test_run_id="test-run-name"
+    body_test_run=body_test={"createdBy": "user-name",  # Optional. The user that created the test model.
+        "createdDateTime": "2022-06-20 00:00:00",  # Optional. The created
+        "description": "test-description",  # Optional. The test description.
+        "displayName": "test-display-name",  # Optional. Display name of a test.
+        "resourceId": "resource-ID",  # Optional. 
+        # more param can be there
+        } 
+    result=client.test_run.get_test_run_client_metrics(test_run_id,body_test_run)
+    print(result)
+except HttpResponseError as e:
+    print('Failed to send JSON message: {}'.format(e.response.json()))
+
+
+# Stopping a test run
+try:
+    test_run_id="test-run-name"
+    result=client.test_run.stop_test_run(test_run_id)
+except HttpResponseError as e:
+    print('Failed to send JSON message: {}'.format(e.response.json()))
+
+# Deleting a load test
+try:
+    test_id="test-name"
+    result=client.test.delete_load_test(test_id)
 except HttpResponseError as e:
     print('Failed to send JSON message: {}'.format(e.response.json()))

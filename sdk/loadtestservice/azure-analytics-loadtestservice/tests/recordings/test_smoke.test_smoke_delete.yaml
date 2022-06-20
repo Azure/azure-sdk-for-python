@@ -8,31 +8,29 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '0'
       User-Agent:
       - azsdk-python-analytics-loadtestservice/1.0.0b1 Python/3.9.8 (Windows-10-10.0.19044)
-    method: GET
-    uri: https://fake.loadtesting.azure.com/testruns/sortAndFilter?maxPageSize=50&api-version=2022-06-01-preview
+    method: DELETE
+    uri: https://fake.loadtesting.azure.com/loadtests/d7c9990e?api-version=2022-06-01-preview
   response:
     body:
-      string: '{"value":[{"testRunId":"","displayName":"TestRun"}]}'
+      string: ''
     headers:
       api-supported-versions:
       - 2021-07-01-preview, 2022-04-15-preview, 2022-06-01-preview
       connection:
       - keep-alive
-      content-length:
-      - '194662'
-      content-type:
-      - application/json; charset=utf-8
       date:
-      - Wed, 15 Jun 2022 20:04:09 GMT
+      - Mon, 20 Jun 2022 19:48:42 GMT
       mise-correlation-id:
-      - 0142b621-0000-4541-bea1-0256cbac7041
+      - 4f2611a5-0290-4956-9fd9-c42ed6861627
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       x-content-type-options:
       - nosniff
     status:
-      code: 200
-      message: OK
+      code: 204
+      message: No Content
 version: 1
