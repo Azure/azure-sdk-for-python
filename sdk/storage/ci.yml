@@ -30,7 +30,8 @@ extends:
   parameters:
     ServiceDirectory: storage
     TestTimeoutInMinutes: 120
-    # Override the base matrix due to https://github.com/Azure/azure-sdk-for-python/issues/17837
+    # Override the base matrix due to the issues with building cryptography on unsupported platforms
+    # https://github.com/Azure/azure-sdk-for-python/issues/17837
     MatrixConfigs:
       - Name: storage_ci_matrix
         Path: eng/pipelines/templates/stages/platform-matrix-cryptography-dependency.json
