@@ -73,7 +73,7 @@ class PartnerTopicsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         
         request = build_get_request(
@@ -136,7 +136,7 @@ class PartnerTopicsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(partner_topic_info, 'PartnerTopic')
@@ -190,7 +190,7 @@ class PartnerTopicsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         
         request = build_delete_request_initial(
@@ -247,7 +247,7 @@ class PartnerTopicsOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -314,7 +314,7 @@ class PartnerTopicsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(partner_topic_update_parameters, 'PartnerTopicUpdateParameters')
@@ -384,7 +384,7 @@ class PartnerTopicsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.PartnerTopicsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PartnerTopicsListResult"]
         error_map = {
@@ -480,7 +480,7 @@ class PartnerTopicsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.PartnerTopicsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PartnerTopicsListResult"]
         error_map = {
@@ -571,7 +571,7 @@ class PartnerTopicsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         
         request = build_activate_request(
@@ -631,7 +631,7 @@ class PartnerTopicsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         
         request = build_deactivate_request(
