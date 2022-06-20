@@ -15,9 +15,11 @@ parser = argparse.ArgumentParser(
     description='Search Samples Program. Set SUBSCRIPTION_KEY env variable.')
 parser.parse_args()
 
-
-client = SearchClient('None', x_ms_client_id=os.environ.get("CLIENT_ID", None), authentication_policy=AzureKeyInQueryCredentialPolicy(
-    AzureKeyCredential(os.environ.get("SUBSCRIPTION_KEY")), "subscription-key"))
+client = SearchClient(
+    credential='None',
+    client_id=os.environ.get("CLIENT_ID"),
+    authentication_policy=AzureKeyCredential(os.environ.get("SUBSCRIPTION_KEY"))
+)
 
 
 results = client.search.fuzzy_search("seattle", {"lat": 2.2, "lon": 3.3})

@@ -60,10 +60,13 @@ Once completed, set the values of the client ID, and client secret of the AAD ap
 from azure.identity import DefaultAzureCredential
 from azure.maps.search import SearchClient
 credential = DefaultAzureCredential()
+client_id = os.environ.get("CLIENT_ID")
+authentication_policy = AzureKeyCredential(os.environ.get("SUBSCRIPTION_KEY"))
 
 search_client = SearchClient(
-    endpoint="https://<resource-name>.mapsservices.azure.com/",
-    credential=credential
+    credential=credential,
+    client_id=client_id,
+    authentication_policy=authentication_policy
 )
 ```
 
