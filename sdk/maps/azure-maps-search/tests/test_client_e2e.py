@@ -44,8 +44,7 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
     def setUp(self):
         super(AzureMapsSearchClientE2ETest, self).setUp()
         self.client = self.create_client_from_credential(SearchClient,
-            credential=FakeTokenCredential(),
-            client_id=self.get_settings_value("CLIENT_ID"),
+            credential='NotUsed',
             authentication_policy = self.get_credential(SearchClient))
         assert self.client is not None
 
