@@ -9,10 +9,7 @@ from utils import AUTO_CLOSE_LABEL, get_last_released_date, record_release
 _PYTHON_OWNER = {'BigCat20196', 'msyyc', 'azure-sdk'}
 
 # 'github assignee': 'token'
-_ASSIGNEE_TOKEN_PYTHON = {
-    'BigCat20196': os.getenv('PYTHON_BIGCAT_TOKEN'),
-    'msyyc': os.getenv('PYTHON_MSYYC_TOKEN'),
-}
+_ASSIGNEE_TOKEN_PYTHON = os.getenv('AZURESDK_BOT_TOKEN')
 
 # record published issues
 _FILE_OUT = 'published_issues_python.csv'
@@ -36,7 +33,6 @@ class IssueProcessPython(IssueProcess):
         contents = str(self.issue_package.rest_repo.get_contents(readme_python_path).decoded_content)
         pattern_package = re.compile(r'package-name: [\w+-.]+')
         self.package_name = pattern_package.search(contents).group().split(':')[-1].strip()
-        print(f'*** package_name: {self.package_name}')
 
     def get_edit_content(self) -> None:
         self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}\n{self.package_name}'
@@ -50,7 +46,8 @@ class IssueProcessPython(IssueProcess):
             self.issue_package.issue.create_comment(body=comment)
             self.issue_package.issue.edit(state='closed')
             self.issue_package.issue.add_to_labels('auto-closed')
-            self.log("has been closed!")
+            self.is_open = False
+            self.log(f"{self.issue_package.issue.number} has been closed!")
             record_release(self.package_name, self.issue_package.issue, _FILE_OUT)
 
     def run(self) -> None:

@@ -19,7 +19,8 @@ _LOG = logging.getLogger(__name__)
 _LANGUAGE_OWNER = {'msyyc'}
 
 # 'github assignee': 'token'
-_ASSIGNEE_TOKEN = {'msyyc': os.getenv('AZURESDK_BOT_TOKEN')}
+_BOT_NAME = 'azure-sdk'
+_ASSIGNEE_TOKEN = os.getenv('AZURESDK_BOT_TOKEN')
 
 _SWAGGER_URL = 'https://github.com/Azure/azure-rest-api-specs/blob/main/specification'
 _SWAGGER_PULL = 'https://github.com/Azure/azure-rest-api-specs/pull'
@@ -62,6 +63,7 @@ class IssueProcess:
         self.package_name = ''
         self.target_date = ''
         self.date_from_target = 0
+        self.is_open = True
 
     def get_issue_body(self) -> List[str]:
         return [i for i in self.issue_package.issue.body.split("\n") if i]
@@ -293,10 +295,11 @@ class Common:
     file_out_name = ''  # file that storages issue status
     """
 
-    def __init__(self, issues_package: List[IssuePackage], assignee_token: Dict[str, str], language_owner: Set[str]):
+    def __init__(self, issues_package: List[IssuePackage], language_owner: Set[str], assignee_token=_ASSIGNEE_TOKEN):
         self.issues_package = issues_package
-        self.assignee_candidates = set(assignee_token.keys())
         self.language_owner = language_owner
+        language_owner.discard(_BOT_NAME)
+        self.assignee_candidates = language_owner
         # arguments add to language.md
         self.file_out_name = 'common.md'
         self.target_release_date = ''
@@ -306,18 +309,18 @@ class Common:
         self.request_repo_dict = {}
         self.issue_process_function = IssueProcess
 
-        for assignee in assignee_token:
-            self.request_repo_dict[assignee] = Github(assignee_token[assignee]).get_repo(REQUEST_REPO)
+        for assignee in self.assignee_candidates:
+            self.request_repo_dict[assignee] = Github(assignee_token).get_repo(REQUEST_REPO)
 
     def output(self):
         with open(self.file_out_name, 'w') as file_out:
             file_out.write('| issue | author | package | assignee | bot advice | created date of issue | target release date | date from target |\n')
             file_out.write('| ------ | ------ | ------ | ------ | ------ | ------ | ------ | :-----: |\n')
             for item in self.result:
-                print(f'**** item: {item.issue_package.issue.number}')
                 try:
-                    item_status = Common.output_md(item)
-                    file_out.write(item_status)
+                    if item.is_open:
+                        item_status = Common.output_md(item)
+                        file_out.write(item_status)
                 except Exception as e:
                     _LOG.error(f'Error happened during output result of handled issue {item.issue_package.issue.number}: {e}')
 
@@ -354,5 +357,5 @@ class Common:
 
 
 def common_process(issues: List[IssuePackage]):
-    instance = Common(issues, _ASSIGNEE_TOKEN, _LANGUAGE_OWNER)
+    instance = Common(issues, _ASSIGNEE_TOKEN,  _LANGUAGE_OWNER)
     instance.run()

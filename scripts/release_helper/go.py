@@ -3,10 +3,7 @@ from typing import Any, List
 import os
 
 # assignee dict which will be assigned to handle issues
-_GO_OWNER = {'ArcturusZhang', 'Alancere'}
-
-# 'github assignee': 'token'
-_ASSIGNEE_TOKEN_GO = {'Alancere': os.getenv('AZURESDK_BOT_TOKEN')}
+_GO_OWNER = {'ArcturusZhang', 'Alancere', 'azure-sdk'}
 
 
 class IssueProcessGo(IssueProcess):
@@ -14,11 +11,11 @@ class IssueProcessGo(IssueProcess):
 
 
 class Go(Common):
-    def __init__(self, issues, assignee_token, language_owner):
-        super(Go, self).__init__(issues, assignee_token, language_owner)
+    def __init__(self, issues, language_owner):
+        super(Go, self).__init__(issues, language_owner)
         self.file_out_name = 'release_go_status.md'
 
 
 def go_process(issues: List[Any]):
-    instance = Go(issues, _ASSIGNEE_TOKEN_GO, _GO_OWNER)
+    instance = Go(issues, _GO_OWNER)
     instance.run()
