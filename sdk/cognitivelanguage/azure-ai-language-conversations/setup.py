@@ -69,6 +69,9 @@ setup(
         'azure.ai',
         'azure.ai.language',
     ]),
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     install_requires=[
         "azure-core<2.0.0,>=1.24.0",
     ],
