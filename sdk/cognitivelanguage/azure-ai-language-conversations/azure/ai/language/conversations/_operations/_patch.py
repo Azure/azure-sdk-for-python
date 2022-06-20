@@ -41,7 +41,7 @@ class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientOperat
                                 "role": "str", # Optional. The role of the participant. Known values are: "agent", "cutomer", and "generic".
                                 "modality": "string", # Required, Enumeration of supported conversational modalities. Known values are: "text", and "transcript".,
                                 "language": "str", # Optional. The override language of a conversation item in BCP 47 language representation.,
-                                "text": "str", # Required. The text input. 
+                                "text": "str", # Required. The text input.
                             }
                         },
                         "parameters": {
@@ -57,7 +57,7 @@ class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientOperat
                     response.json() == {
                         "kind": "str", # Required. Enumeration of supported conversational task results. Known values are: "ConversationResult",
                         "result": {
-                            "query": "str", # Required. The conversation utterance given by the caller., 
+                            "query": "str", # Required. The conversation utterance given by the caller.,
                             "detectedLanguage": "str", # Optional. The system detected language for the query in BCP 47 language representation.,
                             "prediction": {
                                 "topIntent": "str", # Required. The intent with the highest score.,
@@ -73,6 +73,7 @@ class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientOperat
 __all__: List[str] = [
     "ConversationAnalysisClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
+
 
 def patch_sdk():
     """Do not remove from this file.
