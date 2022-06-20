@@ -1,4 +1,4 @@
-# Microsoft Opentelemetry exporter for Azure Monitor
+# Azure Monitor Opentelemetry Exporters
 
 [![Gitter chat](https://img.shields.io/gitter/room/Microsoft/azure-monitor-python)](https://gitter.im/Azure/azure-sdk-for-python)
 
@@ -10,7 +10,7 @@ The exporter for Azure Monitor allows you to export data utilizing the OpenTelem
 
 ### Install the package
 
-Install the Microsoft Opentelemetry exporter for Azure Monitor with [pip][pip]:
+Install the Azure Monitor Opentelemetry Exporters with [pip][pip]:
 
 ```Bash
 pip install azure-monitor-opentelemetry-exporter --pre
