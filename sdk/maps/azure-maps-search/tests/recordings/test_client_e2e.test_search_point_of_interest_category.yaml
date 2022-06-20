@@ -1,0 +1,72 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-maps-search/1.0-preview Python/3.7.8 (Windows-10-10.0.19041-SP0)
+      subscription-key:
+      - <RealSubscriptionKey>
+      x-ms-client-id:
+      - <RealClientId>
+    method: GET
+    uri: https://atlas.microsoft.com/search/poi/category/json?api-version=1.0&query=RESTAURANT&lat=25.0338053&lon=121.5640089
+  response:
+    body:
+      string: "{\"summary\":{\"query\":\"restaurant\",\"queryType\":\"NON_NEAR\",\"queryTime\":7,\"numResults\":10,\"offset\":0,\"totalResults\":6402579,\"fuzzyLevel\":1,\"geoBias\":{\"lat\":25.0338053,\"lon\":121.5640089}},\"results\":[{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDE3MzgxNjahY6NUV06hdqdVbmlmaWVk\",\"score\":2.5745277405,\"dist\":27.28825958225483,\"info\":\"search:ta:158009001738166-TW\",\"poi\":{\"name\":\"\u9F0E\u6CF0\u8C50101\u5E97\",\"phone\":\"+886
+        2 8101 7799\",\"brands\":[{\"name\":\"Din Tai Fung\"}],\"categorySet\":[{\"id\":7315012}],\"categories\":[\"chinese\",\"restaurant\"],\"classifications\":[{\"code\":\"RESTAURANT\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"restaurant\"},{\"nameLocale\":\"en-US\",\"name\":\"chinese\"}]}]},\"address\":{\"streetNumber\":\"45\",\"streetName\":\"\u5E02\u5E9C\u8DEF\",\"municipalitySubdivision\":\"\u4FE1\u7FA9\u5340\",\"municipality\":\"\u53F0\u5317\u5E02\",\"countrySubdivision\":\"\u53F0\u5317\u5E02\",\"postalCode\":\"110\",\"extendedPostalCode\":\"11001\",\"countryCode\":\"TW\",\"country\":\"\u53F0\u7063\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"45,
+        \u5E02\u5E9C\u8DEF, \u4FE1\u7FA9\u5340, \u53F0\u5317\u5E02 11001\",\"localName\":\"\u4FE1\u7FA9\u5340\"},\"position\":{\"lat\":25.03403,\"lon\":121.5639},\"viewport\":{\"topLeftPoint\":{\"lat\":25.03493,\"lon\":121.56291},\"btmRightPoint\":{\"lat\":25.03313,\"lon\":121.56489}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.03404,\"lon\":121.56355}}]},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDE5OTM5MzmhY6NUV06hdqdVbmlmaWVk\",\"score\":2.5745277405,\"dist\":20.454972080149794,\"info\":\"search:ta:158009001993939-TW\",\"poi\":{\"name\":\"Vege
+        Creek-Taipei 101 Store\",\"phone\":\"+886 2 8101 8171\",\"categorySet\":[{\"id\":7315059}],\"categories\":[\"restaurant\",\"taiwanese\"],\"classifications\":[{\"code\":\"RESTAURANT\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"restaurant\"},{\"nameLocale\":\"en-US\",\"name\":\"taiwanese\"}]}]},\"address\":{\"streetName\":\"Shifu
+        Road\",\"municipalitySubdivision\":\"Xinyi District\",\"municipality\":\"Taipei
+        City\",\"countrySubdivision\":\"Taipei City\",\"postalCode\":\"110\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"Shifu
+        Road, Xinyi District, Taipei City 110\",\"localName\":\"Xinyi District\"},\"position\":{\"lat\":25.03378,\"lon\":121.56421},\"viewport\":{\"topLeftPoint\":{\"lat\":25.03468,\"lon\":121.56322},\"btmRightPoint\":{\"lat\":25.03288,\"lon\":121.5652}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.03381,\"lon\":121.56354}}],\"dataSources\":{\"poiDetails\":[{\"id\":\"Rm91cnNxdWFyZTo1YWQ2YzA1YWVlNjI4YjJmMmQ2OTIzNTE=\",\"sourceName\":\"Foursquare\"}]}},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDE3OTY2NDehY6NUV06hdqdVbmlmaWVk\",\"score\":2.5745277405,\"dist\":27.28825958225483,\"info\":\"search:ta:158009001796647-TW\",\"poi\":{\"name\":\"\u6469\u65AF\u6F22\u5821\u53F0\u5317101\u5E97\",\"phone\":\"+886
+        2 8101 7720\",\"brands\":[{\"name\":\"Mos Burger\"}],\"categorySet\":[{\"id\":7315015}],\"categories\":[\"fast
+        food\",\"restaurant\"],\"classifications\":[{\"code\":\"RESTAURANT\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"restaurant\"},{\"nameLocale\":\"en-US\",\"name\":\"fast
+        food\"}]}]},\"address\":{\"streetNumber\":\"45\",\"streetName\":\"\u5E02\u5E9C\u8DEF\",\"municipalitySubdivision\":\"\u4FE1\u7FA9\u5340\",\"municipality\":\"\u53F0\u5317\u5E02\",\"countrySubdivision\":\"\u53F0\u5317\u5E02\",\"postalCode\":\"110\",\"extendedPostalCode\":\"11001\",\"countryCode\":\"TW\",\"country\":\"\u53F0\u7063\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"45,
+        \u5E02\u5E9C\u8DEF, \u4FE1\u7FA9\u5340, \u53F0\u5317\u5E02 11001\",\"localName\":\"\u4FE1\u7FA9\u5340\"},\"position\":{\"lat\":25.03403,\"lon\":121.5639},\"viewport\":{\"topLeftPoint\":{\"lat\":25.03493,\"lon\":121.56291},\"btmRightPoint\":{\"lat\":25.03313,\"lon\":121.56489}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.03404,\"lon\":121.56355}}]},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDE4Mjk5ODWhY6NUV06hdqdVbmlmaWVk\",\"score\":2.5745277405,\"dist\":27.28825958225483,\"info\":\"search:ta:158009001829985-TW\",\"poi\":{\"name\":\"\u96DE\u7389\u9326\u62C9\u9EB5Nishiki\u53F0\u5317101\u5E97\",\"phone\":\"+886
+        2 8101 8321\",\"categorySet\":[{\"id\":7315026}],\"categories\":[\"japanese\",\"restaurant\"],\"classifications\":[{\"code\":\"RESTAURANT\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"restaurant\"},{\"nameLocale\":\"en-US\",\"name\":\"japanese\"}]}]},\"address\":{\"streetNumber\":\"45\",\"streetName\":\"\u5E02\u5E9C\u8DEF\",\"municipalitySubdivision\":\"\u4FE1\u7FA9\u5340\",\"municipality\":\"\u53F0\u5317\u5E02\",\"countrySubdivision\":\"\u53F0\u5317\u5E02\",\"postalCode\":\"110\",\"extendedPostalCode\":\"11001\",\"countryCode\":\"TW\",\"country\":\"\u53F0\u7063\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"45,
+        \u5E02\u5E9C\u8DEF, \u4FE1\u7FA9\u5340, \u53F0\u5317\u5E02 11001\",\"localName\":\"\u4FE1\u7FA9\u5340\"},\"position\":{\"lat\":25.03403,\"lon\":121.5639},\"viewport\":{\"topLeftPoint\":{\"lat\":25.03493,\"lon\":121.56291},\"btmRightPoint\":{\"lat\":25.03313,\"lon\":121.56489}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.03404,\"lon\":121.56355}}]},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDEzMjc4MjWhY6NUV06hdqdVbmlmaWVk\",\"score\":2.5745277405,\"dist\":27.28825958225483,\"info\":\"search:ta:158009001327825-TW\",\"poi\":{\"name\":\"\u96A8\u610F\u9CE5\u5730\u65B9\",\"phone\":\"+886
+        2 8101 8268\",\"brands\":[{\"name\":\"Diamond Tony's\"}],\"categorySet\":[{\"id\":7315025}],\"categories\":[\"italian\",\"restaurant\"],\"classifications\":[{\"code\":\"RESTAURANT\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"restaurant\"},{\"nameLocale\":\"en-US\",\"name\":\"italian\"}]}]},\"address\":{\"streetNumber\":\"45\",\"streetName\":\"\u5E02\u5E9C\u8DEF\",\"municipalitySubdivision\":\"\u4FE1\u7FA9\u5340\",\"municipality\":\"\u53F0\u5317\u5E02\",\"countrySubdivision\":\"\u53F0\u5317\u5E02\",\"postalCode\":\"110\",\"extendedPostalCode\":\"11001\",\"countryCode\":\"TW\",\"country\":\"\u53F0\u7063\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"45,
+        \u5E02\u5E9C\u8DEF, \u4FE1\u7FA9\u5340, \u53F0\u5317\u5E02 11001\",\"localName\":\"\u4FE1\u7FA9\u5340\"},\"position\":{\"lat\":25.03403,\"lon\":121.5639},\"viewport\":{\"topLeftPoint\":{\"lat\":25.03493,\"lon\":121.56291},\"btmRightPoint\":{\"lat\":25.03313,\"lon\":121.56489}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.03404,\"lon\":121.56355}}]},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDEyODkxNTmhY6NUV06hdqdVbmlmaWVk\",\"score\":2.5745277405,\"dist\":27.28825958225483,\"info\":\"search:ta:158009001289159-TW\",\"poi\":{\"name\":\"\u6D77\u58FD\u53F8\u4FE1\u7FA9\u4E00\u5E97\",\"phone\":\"+886
+        2 8101 8358\",\"categorySet\":[{\"id\":7315148}],\"categories\":[\"restaurant\",\"sushi\"],\"classifications\":[{\"code\":\"RESTAURANT\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"restaurant\"},{\"nameLocale\":\"en-US\",\"name\":\"sushi\"}]}]},\"address\":{\"streetNumber\":\"45\",\"streetName\":\"\u5E02\u5E9C\u8DEF\",\"municipalitySubdivision\":\"\u4FE1\u7FA9\u5340\",\"municipality\":\"\u53F0\u5317\u5E02\",\"countrySubdivision\":\"\u53F0\u5317\u5E02\",\"postalCode\":\"110\",\"extendedPostalCode\":\"11001\",\"countryCode\":\"TW\",\"country\":\"\u53F0\u7063\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"45,
+        \u5E02\u5E9C\u8DEF, \u4FE1\u7FA9\u5340, \u53F0\u5317\u5E02 11001\",\"localName\":\"\u4FE1\u7FA9\u5340\"},\"position\":{\"lat\":25.03403,\"lon\":121.5639},\"viewport\":{\"topLeftPoint\":{\"lat\":25.03493,\"lon\":121.56291},\"btmRightPoint\":{\"lat\":25.03313,\"lon\":121.56489}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.03404,\"lon\":121.56355}}]},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDE3NjQxNzChY6NUV06hdqdVbmlmaWVk\",\"score\":2.5745277405,\"dist\":27.28825958225483,\"info\":\"search:ta:158009001764170-TW\",\"poi\":{\"name\":\"101\u98DF\u5802\",\"phone\":\"+886
+        2 8101 8056\",\"categorySet\":[{\"id\":7315026}],\"categories\":[\"japanese\",\"restaurant\"],\"classifications\":[{\"code\":\"RESTAURANT\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"restaurant\"},{\"nameLocale\":\"en-US\",\"name\":\"japanese\"}]}]},\"address\":{\"streetNumber\":\"45\",\"streetName\":\"\u5E02\u5E9C\u8DEF\",\"municipalitySubdivision\":\"\u4FE1\u7FA9\u5340\",\"municipality\":\"\u53F0\u5317\u5E02\",\"countrySubdivision\":\"\u53F0\u5317\u5E02\",\"postalCode\":\"110\",\"extendedPostalCode\":\"11001\",\"countryCode\":\"TW\",\"country\":\"\u53F0\u7063\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"45,
+        \u5E02\u5E9C\u8DEF, \u4FE1\u7FA9\u5340, \u53F0\u5317\u5E02 11001\",\"localName\":\"\u4FE1\u7FA9\u5340\"},\"position\":{\"lat\":25.03403,\"lon\":121.5639},\"viewport\":{\"topLeftPoint\":{\"lat\":25.03493,\"lon\":121.56291},\"btmRightPoint\":{\"lat\":25.03313,\"lon\":121.56489}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.03404,\"lon\":121.56355}}]},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDIwMTYxMTOhY6NUV06hdqdVbmlmaWVk\",\"score\":2.5745277405,\"dist\":14.877150523148003,\"info\":\"search:ta:158009002016113-TW\",\"poi\":{\"name\":\"Irvins
+        Salted Egg\",\"categorySet\":[{\"id\":7315139}],\"categories\":[\"restaurant\",\"snacks\"],\"classifications\":[{\"code\":\"RESTAURANT\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"restaurant\"},{\"nameLocale\":\"en-US\",\"name\":\"snacks\"}]}]},\"address\":{\"streetName\":\"Shifu
+        Road\",\"municipalitySubdivision\":\"Xinyi District\",\"municipality\":\"Taipei
+        City\",\"countrySubdivision\":\"Taipei City\",\"postalCode\":\"110\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"Shifu
+        Road, Xinyi District, Taipei City 110\",\"localName\":\"Xinyi District\"},\"position\":{\"lat\":25.0337,\"lon\":121.5641},\"viewport\":{\"topLeftPoint\":{\"lat\":25.0346,\"lon\":121.56311},\"btmRightPoint\":{\"lat\":25.0328,\"lon\":121.56509}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.03372,\"lon\":121.56354}}],\"dataSources\":{\"poiDetails\":[{\"id\":\"Rm91cnNxdWFyZTo1YmUxMGQyOGUxZjBhYTAwMmMxYzY1NGQ=\",\"sourceName\":\"Foursquare\"}]}},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDE3MTg2NDmhY6NUV06hdqdVbmlmaWVk\",\"score\":2.5745277405,\"dist\":21.668267069632197,\"info\":\"search:ta:158009001718649-TW\",\"poi\":{\"name\":\"Auntie
+        Anne's\u5B89\u8482\u601D\u8774\u8776\u9905\u5C08\u8CE3\u5E97\u53F0\u5317101\u5E97\",\"phone\":\"+886
+        2 8101 8592\",\"categorySet\":[{\"id\":7315015}],\"categories\":[\"fast food\",\"restaurant\"],\"classifications\":[{\"code\":\"RESTAURANT\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"restaurant\"},{\"nameLocale\":\"en-US\",\"name\":\"fast
+        food\"}]}]},\"address\":{\"streetNumber\":\"45\",\"streetName\":\"\u5E02\u5E9C\u8DEF\",\"municipalitySubdivision\":\"\u4FE1\u7FA9\u5340\",\"municipality\":\"\u53F0\u5317\u5E02\",\"countrySubdivision\":\"\u53F0\u5317\u5E02\",\"postalCode\":\"110\",\"extendedPostalCode\":\"11001\",\"countryCode\":\"TW\",\"country\":\"\u53F0\u7063\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"45,
+        \u5E02\u5E9C\u8DEF, \u4FE1\u7FA9\u5340, \u53F0\u5317\u5E02 11001\",\"localName\":\"\u4FE1\u7FA9\u5340\"},\"position\":{\"lat\":25.034,\"lon\":121.564},\"viewport\":{\"topLeftPoint\":{\"lat\":25.0349,\"lon\":121.56301},\"btmRightPoint\":{\"lat\":25.0331,\"lon\":121.56499}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.03404,\"lon\":121.56355}}]},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDE3NDI5MDehY6NUV06hdqdVbmlmaWVk\",\"score\":2.5745277405,\"dist\":27.28825958225483,\"info\":\"search:ta:158009001742907-TW\",\"poi\":{\"name\":\"\u4E86\u51E1\u6CB9\u96DE\u98EF
+        \u9EB5Hawker Chan \u53F0\u5317101\u5E97\",\"phone\":\"+886 2 8101 8678\",\"categorySet\":[{\"id\":7315054}],\"categories\":[\"guangdong\",\"restaurant\"],\"classifications\":[{\"code\":\"RESTAURANT\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"restaurant\"},{\"nameLocale\":\"en-US\",\"name\":\"guangdong\"}]}]},\"address\":{\"streetNumber\":\"45\",\"streetName\":\"\u5E02\u5E9C\u8DEF\",\"municipalitySubdivision\":\"\u4FE1\u7FA9\u5340\",\"municipality\":\"\u53F0\u5317\u5E02\",\"countrySubdivision\":\"\u53F0\u5317\u5E02\",\"postalCode\":\"110\",\"extendedPostalCode\":\"11001\",\"countryCode\":\"TW\",\"country\":\"\u53F0\u7063\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"45,
+        \u5E02\u5E9C\u8DEF, \u4FE1\u7FA9\u5340, \u53F0\u5317\u5E02 11001\",\"localName\":\"\u4FE1\u7FA9\u5340\"},\"position\":{\"lat\":25.03403,\"lon\":121.5639},\"viewport\":{\"topLeftPoint\":{\"lat\":25.03493,\"lon\":121.56291},\"btmRightPoint\":{\"lat\":25.03313,\"lon\":121.56489}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.03404,\"lon\":121.56355}}]}]}"
+    headers:
+      content-length:
+      - '10545'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 10 Dec 2021 07:03:38 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-cache:
+      - CONFIG_NOCACHE
+      x-content-type-options:
+      - nosniff
+      x-ms-azuremaps-region:
+      - West US 2
+      x-msedge-ref:
+      - 'Ref A: 5264053AC3C5474982C9C1B8ECB45325 Ref B: TYAEDGE0714 Ref C: 2021-12-10T07:03:38Z'
+    status:
+      code: 200
+      message: OK
+version: 1

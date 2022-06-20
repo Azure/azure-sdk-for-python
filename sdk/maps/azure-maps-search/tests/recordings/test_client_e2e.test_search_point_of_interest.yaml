@@ -1,0 +1,98 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-maps-search/1.0-preview Python/3.7.8 (Windows-10-10.0.19041-SP0)
+      subscription-key:
+      - <RealSubscriptionKey>
+      x-ms-client-id:
+      - <RealClientId>
+    method: GET
+    uri: https://atlas.microsoft.com/search/poi/json?api-version=1.0&query=Taipei
+  response:
+    body:
+      string: "{\"summary\":{\"query\":\"taipei\",\"queryType\":\"NON_NEAR\",\"queryTime\":54,\"numResults\":10,\"offset\":0,\"totalResults\":1383,\"fuzzyLevel\":1},\"results\":[{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDE4NjU2MjehY6NUV06hdqdVbmlmaWVk\",\"score\":2.1037807465,\"info\":\"search:ta:158009001865627-TW\",\"poi\":{\"name\":\"Taipei
+        Guest House\",\"phone\":\"+886 2 2348 2999\",\"categorySet\":[{\"id\":7376002}],\"categories\":[\"building\",\"important
+        tourist attraction\"],\"classifications\":[{\"code\":\"IMPORTANT_TOURIST_ATTRACTION\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"important
+        tourist attraction\"},{\"nameLocale\":\"en-US\",\"name\":\"building\"}]}]},\"address\":{\"streetNumber\":\"1\",\"streetName\":\"Ketagalan
+        Boulevard\",\"municipalitySubdivision\":\"Zhongzheng District\",\"municipality\":\"Taipei
+        City\",\"countrySubdivision\":\"Taipei City\",\"postalCode\":\"100\",\"extendedPostalCode\":\"10048\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"1,
+        Ketagalan Boulevard, Zhongzheng District, Taipei City 10048\",\"localName\":\"Zhongzheng
+        District\"},\"position\":{\"lat\":25.04004,\"lon\":121.51671},\"viewport\":{\"topLeftPoint\":{\"lat\":25.04094,\"lon\":121.51572},\"btmRightPoint\":{\"lat\":25.03914,\"lon\":121.5177}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.03949,\"lon\":121.51628}}]},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDA4MjIxMDmhY6NUV06hdqdVbmlmaWVk\",\"score\":2.0869066715,\"info\":\"search:ta:158009000822109-TW\",\"poi\":{\"name\":\"Taipei
+        International Airport\",\"phone\":\"+886 2 8770 3460\",\"categorySet\":[{\"id\":7383002}],\"url\":\"www.tsa.gov.tw\",\"categories\":[\"airport\",\"public
+        authority\"],\"classifications\":[{\"code\":\"AIRPORT\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"airport\"},{\"nameLocale\":\"en-US\",\"name\":\"public
+        authority\"}]}]},\"address\":{\"streetNumber\":\"340-9\",\"streetName\":\"Dunhua
+        North Road\",\"municipalitySubdivision\":\"Songshan District\",\"municipality\":\"Taipei
+        City\",\"countrySubdivision\":\"Taipei City\",\"postalCode\":\"105\",\"extendedPostalCode\":\"10548\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"340-9,
+        Dunhua North Road, Songshan District, Taipei City 10548\",\"localName\":\"Songshan
+        District\"},\"position\":{\"lat\":25.0637,\"lon\":121.55209},\"viewport\":{\"topLeftPoint\":{\"lat\":25.07185,\"lon\":121.53844},\"btmRightPoint\":{\"lat\":25.06162,\"lon\":121.56831}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.06354,\"lon\":121.55068}},{\"type\":\"main\",\"position\":{\"lat\":25.06344,\"lon\":121.55202}}],\"dataSources\":{\"geometry\":{\"id\":\"00005457-3100-3c00-0000-0000596831e0\"}}},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDEzNzMxNDWhY6NUV06hdqdVbmlmaWVk\",\"score\":2.0745999813,\"info\":\"search:ta:158009001373145-TW\",\"poi\":{\"name\":\"\u53F0\u5317\u5BCC\u90A6\u5546\u696D\u9280\u884C\u5317\u5C6F\u5206\u884C\",\"phone\":\"+886
+        4 2422 8336\",\"brands\":[{\"name\":\"Taipei Fubon Bank\"}],\"categorySet\":[{\"id\":7328}],\"categories\":[\"bank\"],\"classifications\":[{\"code\":\"BANK\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"bank\"}]}]},\"address\":{\"streetNumber\":\"138\",\"streetName\":\"\u5D07\u5FB7\u8DEF\u4E09\u6BB5\",\"municipalitySubdivision\":\"\u5317\u5C6F\u5340\",\"municipality\":\"\u53F0\u4E2D\u5E02\",\"countrySubdivision\":\"\u53F0\u4E2D\u5E02\",\"postalCode\":\"406\",\"extendedPostalCode\":\"40673\",\"countryCode\":\"TW\",\"country\":\"\u53F0\u7063\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"138,
+        \u5D07\u5FB7\u8DEF\u4E09\u6BB5, \u5317\u5C6F\u5340, \u53F0\u4E2D\u5E02 40673\",\"localName\":\"\u5317\u5C6F\u5340\"},\"position\":{\"lat\":24.18454,\"lon\":120.68646},\"viewport\":{\"topLeftPoint\":{\"lat\":24.18544,\"lon\":120.68547},\"btmRightPoint\":{\"lat\":24.18364,\"lon\":120.68745}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":24.18454,\"lon\":120.68627}}]},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDEzNTQ2MjOhY6NUV06hdqdVbmlmaWVk\",\"score\":2.0745999813,\"info\":\"search:ta:158009001354623-TW\",\"poi\":{\"name\":\"\u53F0\u5317\u5BCC\u90A6\u5546\u696D\u9280\u884C\u745E\u6E56\u5206\u884C\",\"phone\":\"+886
+        2 2659 1088\",\"brands\":[{\"name\":\"Taipei Fubon Bank\"}],\"categorySet\":[{\"id\":7328}],\"categories\":[\"bank\"],\"classifications\":[{\"code\":\"BANK\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"bank\"}]}]},\"address\":{\"streetNumber\":\"62\",\"streetName\":\"Ruihu
+        Street\",\"municipalitySubdivision\":\"Neihu District\",\"municipality\":\"Taipei
+        City\",\"countrySubdivision\":\"Taipei City\",\"postalCode\":\"114\",\"extendedPostalCode\":\"11494\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"62,
+        Ruihu Street, Neihu District, Taipei City 11494\",\"localName\":\"Neihu District\"},\"position\":{\"lat\":25.07379,\"lon\":121.57572},\"viewport\":{\"topLeftPoint\":{\"lat\":25.07469,\"lon\":121.57473},\"btmRightPoint\":{\"lat\":25.07289,\"lon\":121.57671}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.07381,\"lon\":121.57586}}]},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDE3ODE4NTahY6NUV06hdqdVbmlmaWVk\",\"score\":2.0745999813,\"info\":\"search:ta:158009001781856-TW\",\"poi\":{\"name\":\"Taipei
+        Fubon Bank Yong He Fen Hang\",\"brands\":[{\"name\":\"Taipei Fubon Bank\"}],\"categorySet\":[{\"id\":7397}],\"categories\":[\"cash
+        dispenser\"],\"classifications\":[{\"code\":\"CASH_DISPENSER\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"cash
+        dispenser\"}]}]},\"address\":{\"streetNumber\":\"1\",\"streetName\":\"Zhongshan
+        Road Section 1 Lane 18\",\"municipalitySubdivision\":\"Yonghe District\",\"municipality\":\"New
+        Taipei City\",\"countrySubdivision\":\"New Taipei City\",\"postalCode\":\"234\",\"extendedPostalCode\":\"23446\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"1,
+        Zhongshan Road Section 1 Lane 18, Yonghe District, New Taipei City 23446\",\"localName\":\"Yonghe
+        District\"},\"position\":{\"lat\":25.0102,\"lon\":121.51431},\"viewport\":{\"topLeftPoint\":{\"lat\":25.0111,\"lon\":121.51332},\"btmRightPoint\":{\"lat\":25.0093,\"lon\":121.5153}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.0105,\"lon\":121.51383}}]},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDEzMzk0NTihY6NUV06hdqdVbmlmaWVk\",\"score\":2.0745999813,\"info\":\"search:ta:158009001339458-TW\",\"poi\":{\"name\":\"\u53F0\u5317\u5BCC\u90A6\u5546\u696D\u9280\u884C\u6771\u53F0\u5357\u5206\u884C\",\"phone\":\"+886
+        6 260 6118\",\"brands\":[{\"name\":\"Taipei Fubon Bank\"}],\"categorySet\":[{\"id\":7328}],\"categories\":[\"bank\"],\"classifications\":[{\"code\":\"BANK\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"bank\"}]}]},\"address\":{\"streetNumber\":\"318\",\"streetName\":\"\u4E2D\u83EF\u6771\u8DEF\u4E09\u6BB5\",\"municipalitySubdivision\":\"\u6771\u5340\",\"municipality\":\"\u53F0\u5357\u5E02\",\"countrySubdivision\":\"\u53F0\u5357\u5E02\",\"postalCode\":\"701\",\"extendedPostalCode\":\"70168\",\"countryCode\":\"TW\",\"country\":\"\u53F0\u7063\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"318,
+        \u4E2D\u83EF\u6771\u8DEF\u4E09\u6BB5, \u6771\u5340, \u53F0\u5357\u5E02 70168\",\"localName\":\"\u6771\u5340\"},\"position\":{\"lat\":22.9746,\"lon\":120.22315},\"viewport\":{\"topLeftPoint\":{\"lat\":22.9755,\"lon\":120.22217},\"btmRightPoint\":{\"lat\":22.9737,\"lon\":120.22413}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":22.97447,\"lon\":120.22324}}]},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDE4MDk4NzGhY6NUV06hdqdVbmlmaWVk\",\"score\":2.0745999813,\"info\":\"search:ta:158009001809871-TW\",\"poi\":{\"name\":\"Taipei
+        Fubon Bank Feng Cheng Fen Hang\",\"brands\":[{\"name\":\"Taipei Fubon Bank\"}],\"categorySet\":[{\"id\":7397}],\"categories\":[\"cash
+        dispenser\"],\"classifications\":[{\"code\":\"CASH_DISPENSER\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"cash
+        dispenser\"}]}]},\"address\":{\"streetNumber\":\"168\",\"streetName\":\"Jianzhong
+        Road\",\"municipalitySubdivision\":\"East District\",\"municipality\":\"Hsinchu
+        City\",\"countrySubdivision\":\"\u53F0\u7063\",\"postalCode\":\"300\",\"extendedPostalCode\":\"30070\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"168,
+        Jianzhong Road, East District, Hsinchu City 30070\",\"localName\":\"East District\"},\"position\":{\"lat\":24.80329,\"lon\":120.99628},\"viewport\":{\"topLeftPoint\":{\"lat\":24.80419,\"lon\":120.99529},\"btmRightPoint\":{\"lat\":24.80239,\"lon\":120.99727}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":24.80333,\"lon\":120.9962}}]},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDE4MTg2MjShY6NUV06hdqdVbmlmaWVk\",\"score\":2.0745999813,\"info\":\"search:ta:158009001818624-TW\",\"poi\":{\"name\":\"Taipei
+        Fubon Bank Zhong Shi Xin Da Lou\",\"brands\":[{\"name\":\"Taipei Fubon Bank\"}],\"categorySet\":[{\"id\":7397}],\"categories\":[\"cash
+        dispenser\"],\"classifications\":[{\"code\":\"CASH_DISPENSER\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"cash
+        dispenser\"}]}]},\"address\":{\"streetNumber\":\"118\",\"streetName\":\"Chongyang
+        Road\",\"municipalitySubdivision\":\"Nangang District\",\"municipality\":\"Taipei
+        City\",\"countrySubdivision\":\"Taipei City\",\"postalCode\":\"115\",\"extendedPostalCode\":\"11573\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"118,
+        Chongyang Road, Nangang District, Taipei City 11573\",\"localName\":\"Nangang
+        District\"},\"position\":{\"lat\":25.05618,\"lon\":121.59865},\"viewport\":{\"topLeftPoint\":{\"lat\":25.05708,\"lon\":121.59766},\"btmRightPoint\":{\"lat\":25.05528,\"lon\":121.59964}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.05639,\"lon\":121.59854}}]},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDEzNDk0MTShY6NUV06hdqdVbmlmaWVk\",\"score\":2.0745999813,\"info\":\"search:ta:158009001349414-TW\",\"poi\":{\"name\":\"\u53F0\u5317\u5BCC\u90A6\u5546\u696D\u9280\u884C\u4E09\u5CFD\u5206\u884C\",\"phone\":\"+886
+        2 2680 5899\",\"brands\":[{\"name\":\"Taipei Fubon Bank\"}],\"categorySet\":[{\"id\":7328}],\"categories\":[\"bank\"],\"classifications\":[{\"code\":\"BANK\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"bank\"}]}]},\"address\":{\"streetNumber\":\"541\",\"streetName\":\"Xuecheng
+        Road\",\"municipalitySubdivision\":\"Shulin District\",\"municipality\":\"New
+        Taipei City\",\"countrySubdivision\":\"New Taipei City\",\"postalCode\":\"238\",\"extendedPostalCode\":\"23854\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"541,
+        Xuecheng Road, Shulin District, New Taipei City 23854\",\"localName\":\"Shulin
+        District\"},\"position\":{\"lat\":24.946,\"lon\":121.38057},\"viewport\":{\"topLeftPoint\":{\"lat\":24.9469,\"lon\":121.37958},\"btmRightPoint\":{\"lat\":24.9451,\"lon\":121.38156}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":24.94579,\"lon\":121.38065}}]},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDE3OTI0MjKhY6NUV06hdqdVbmlmaWVk\",\"score\":2.0745999813,\"info\":\"search:ta:158009001792422-TW\",\"poi\":{\"name\":\"Taipei
+        Fubon Bank Gao Tie Nan Gang Zhan Er\",\"brands\":[{\"name\":\"Taipei Fubon
+        Bank\"}],\"categorySet\":[{\"id\":7397}],\"categories\":[\"cash dispenser\"],\"classifications\":[{\"code\":\"CASH_DISPENSER\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"cash
+        dispenser\"}]}]},\"address\":{\"streetNumber\":\"313\",\"streetName\":\"Nangang
+        Road Section 1\",\"municipalitySubdivision\":\"Nangang District\",\"municipality\":\"Taipei
+        City\",\"countrySubdivision\":\"Taipei City\",\"postalCode\":\"115\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"313,
+        Nangang Road Section 1, Nangang District, Taipei City 115\",\"localName\":\"Nangang
+        District\"},\"position\":{\"lat\":25.05358,\"lon\":121.60733},\"viewport\":{\"topLeftPoint\":{\"lat\":25.05448,\"lon\":121.60634},\"btmRightPoint\":{\"lat\":25.05268,\"lon\":121.60832}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.05443,\"lon\":121.60716}}]}]}"
+    headers:
+      content-length:
+      - '10429'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 10 Dec 2021 07:03:37 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-cache:
+      - CONFIG_NOCACHE
+      x-content-type-options:
+      - nosniff
+      x-ms-azuremaps-region:
+      - West US 2
+      x-msedge-ref:
+      - 'Ref A: 6B3766D9C2A04C4285F22AE420EEDA53 Ref B: TYAEDGE0414 Ref C: 2021-12-10T07:03:38Z'
+    status:
+      code: 200
+      message: OK
+version: 1
