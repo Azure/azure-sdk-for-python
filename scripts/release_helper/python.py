@@ -8,8 +8,6 @@ from utils import AUTO_CLOSE_LABEL, get_last_released_date, record_release
 # assignee dict which will be assigned to handle issues
 _PYTHON_OWNER = {'BigCat20196', 'msyyc', 'azure-sdk'}
 
-# 'github assignee': 'token'
-_ASSIGNEE_TOKEN_PYTHON = os.getenv('AZURESDK_BOT_TOKEN')
 
 # record published issues
 _FILE_OUT = 'published_issues_python.csv'
@@ -56,12 +54,12 @@ class IssueProcessPython(IssueProcess):
         self.auto_close()
 
 class Python(Common):
-    def __init__(self, issues, assignee_token, language_owner):
-        super(Python, self).__init__(issues, assignee_token, language_owner)
+    def __init__(self, issues, language_owner):
+        super(Python, self).__init__(issues, language_owner)
         self.file_out_name = 'release_python_status.md'
         self.issue_process_function = IssueProcessPython
 
 
 def python_process(issues: List[Any]):
-    instance = Python(issues, _ASSIGNEE_TOKEN_PYTHON, _PYTHON_OWNER)
+    instance = Python(issues, _PYTHON_OWNER)
     instance.run()

@@ -357,5 +357,5 @@ class Common:
 
 
 def common_process(issues: List[IssuePackage]):
-    instance = Common(issues, _ASSIGNEE_TOKEN,  _LANGUAGE_OWNER)
+    instance = Common(issues,  _LANGUAGE_OWNER)
     instance.run()
