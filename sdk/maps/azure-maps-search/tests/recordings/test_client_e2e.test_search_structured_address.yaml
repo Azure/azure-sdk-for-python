@@ -1,0 +1,94 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-maps-search/1.0-preview Python/3.7.8 (Windows-10-10.0.19041-SP0)
+      subscription-key:
+      - <RealSubscriptionKey>
+      x-ms-client-id:
+      - <RealClientId>
+    method: GET
+    uri: https://atlas.microsoft.com/search/address/structured/json?api-version=1.0&countryCode=TW&streetNumber=221&streetName=Sec.%202%2C%20Zhishan%20Rd.&municipality=Taipei%20City&municipalitySubdivision=Shilin%20Dist.
+  response:
+    body:
+      string: '{"summary":{"query":"sec 2 zhishan rd 221 taipei city shilin dist","queryType":"NON_NEAR","queryTime":258,"numResults":10,"offset":0,"totalResults":8422,"fuzzyLevel":2},"results":[{"type":"Point
+        Address","id":"TW/PAD/p0/848986","score":13.7633953094,"address":{"streetNumber":"11-2","streetName":"Zhishan
+        Road Section 2","municipalitySubdivision":"Shilin District","municipality":"Taipei
+        City","countrySubdivision":"Taipei City","postalCode":"111","extendedPostalCode":"11143","countryCode":"TW","country":"Taiwan","countryCodeISO3":"TWN","freeformAddress":"11-2,
+        Zhishan Road Section 2, Shilin District, Taipei City 11143","localName":"Shilin
+        District"},"position":{"lat":25.09735,"lon":121.54401},"viewport":{"topLeftPoint":{"lat":25.09825,"lon":121.54302},"btmRightPoint":{"lat":25.09645,"lon":121.545}},"entryPoints":[{"type":"main","position":{"lat":25.09723,"lon":121.544}}]},{"type":"Point
+        Address","id":"TW/PAD/p0/1576501","score":13.7633953094,"address":{"streetNumber":"90-2","streetName":"Zhishan
+        Road Section 2","municipalitySubdivision":"Shilin District","municipality":"Taipei
+        City","countrySubdivision":"Taipei City","postalCode":"111","extendedPostalCode":"11143","countryCode":"TW","country":"Taiwan","countryCodeISO3":"TWN","freeformAddress":"90-2,
+        Zhishan Road Section 2, Shilin District, Taipei City 11143","localName":"Shilin
+        District"},"position":{"lat":25.09775,"lon":121.54639},"viewport":{"topLeftPoint":{"lat":25.09865,"lon":121.5454},"btmRightPoint":{"lat":25.09685,"lon":121.54738}},"entryPoints":[{"type":"main","position":{"lat":25.09793,"lon":121.54629}}]},{"type":"Point
+        Address","id":"TW/PAD/p0/2452420","score":13.7633953094,"address":{"streetNumber":"3-2","streetName":"Zhishan
+        Road Section 2","municipalitySubdivision":"Shilin District","municipality":"Taipei
+        City","countrySubdivision":"Taipei City","postalCode":"111","extendedPostalCode":"11143","countryCode":"TW","country":"Taiwan","countryCodeISO3":"TWN","freeformAddress":"3-2,
+        Zhishan Road Section 2, Shilin District, Taipei City 11143","localName":"Shilin
+        District"},"position":{"lat":25.09764,"lon":121.54334},"viewport":{"topLeftPoint":{"lat":25.09854,"lon":121.54235},"btmRightPoint":{"lat":25.09674,"lon":121.54433}},"entryPoints":[{"type":"main","position":{"lat":25.09724,"lon":121.54334}}]},{"type":"Point
+        Address","id":"TW/PAD/p0/2452437","score":13.7633953094,"address":{"streetNumber":"5-2","streetName":"Zhishan
+        Road Section 2","municipalitySubdivision":"Shilin District","municipality":"Taipei
+        City","countrySubdivision":"Taipei City","postalCode":"111","extendedPostalCode":"11143","countryCode":"TW","country":"Taiwan","countryCodeISO3":"TWN","freeformAddress":"5-2,
+        Zhishan Road Section 2, Shilin District, Taipei City 11143","localName":"Shilin
+        District"},"position":{"lat":25.09764,"lon":121.54352},"viewport":{"topLeftPoint":{"lat":25.09854,"lon":121.54253},"btmRightPoint":{"lat":25.09674,"lon":121.54451}},"entryPoints":[{"type":"main","position":{"lat":25.09724,"lon":121.54351}}]},{"type":"Point
+        Address","id":"TW/PAD/p0/2644785","score":13.7633953094,"address":{"streetNumber":"360-2","streetName":"Zhishan
+        Road Section 2","municipalitySubdivision":"Shilin District","municipality":"Taipei
+        City","countrySubdivision":"Taipei City","postalCode":"111","extendedPostalCode":"11144","countryCode":"TW","country":"Taiwan","countryCodeISO3":"TWN","freeformAddress":"360-2,
+        Zhishan Road Section 2, Shilin District, Taipei City 11144","localName":"Shilin
+        District"},"position":{"lat":25.10468,"lon":121.55715},"viewport":{"topLeftPoint":{"lat":25.10558,"lon":121.55616},"btmRightPoint":{"lat":25.10378,"lon":121.55814}},"entryPoints":[{"type":"main","position":{"lat":25.10473,"lon":121.55705}}]},{"type":"Point
+        Address","id":"TW/PAD/p0/2651670","score":13.7633953094,"address":{"streetNumber":"7-2","streetName":"Zhishan
+        Road Section 2","municipalitySubdivision":"Shilin District","municipality":"Taipei
+        City","countrySubdivision":"Taipei City","postalCode":"111","extendedPostalCode":"11143","countryCode":"TW","country":"Taiwan","countryCodeISO3":"TWN","freeformAddress":"7-2,
+        Zhishan Road Section 2, Shilin District, Taipei City 11143","localName":"Shilin
+        District"},"position":{"lat":25.09757,"lon":121.54365},"viewport":{"topLeftPoint":{"lat":25.09847,"lon":121.54266},"btmRightPoint":{"lat":25.09667,"lon":121.54464}},"entryPoints":[{"type":"main","position":{"lat":25.09724,"lon":121.54365}}]},{"type":"Point
+        Address","id":"TW/PAD/p0/2445802","score":13.6426954269,"address":{"streetNumber":"2","streetName":"Zhishan
+        Road Section 2 Lane 332","municipalitySubdivision":"Shilin District","municipality":"Taipei
+        City","countrySubdivision":"Taipei City","postalCode":"111","extendedPostalCode":"11143","countryCode":"TW","country":"Taiwan","countryCodeISO3":"TWN","freeformAddress":"2,
+        Zhishan Road Section 2 Lane 332, Shilin District, Taipei City 11143","localName":"Shilin
+        District"},"position":{"lat":25.10222,"lon":121.55356},"viewport":{"topLeftPoint":{"lat":25.10312,"lon":121.55257},"btmRightPoint":{"lat":25.10132,"lon":121.55455}},"entryPoints":[{"type":"main","position":{"lat":25.10203,"lon":121.5534}}]},{"type":"Point
+        Address","id":"TW/PAD/p0/2451515","score":13.6426954269,"address":{"streetNumber":"2","streetName":"Zhishan
+        Road Section 2 Lane 421","municipalitySubdivision":"Shilin District","municipality":"Taipei
+        City","countrySubdivision":"Taipei City","postalCode":"111","extendedPostalCode":"11144","countryCode":"TW","country":"Taiwan","countryCodeISO3":"TWN","freeformAddress":"2,
+        Zhishan Road Section 2 Lane 421, Shilin District, Taipei City 11144","localName":"Shilin
+        District"},"position":{"lat":25.10836,"lon":121.55706},"viewport":{"topLeftPoint":{"lat":25.10926,"lon":121.55607},"btmRightPoint":{"lat":25.10746,"lon":121.55805}},"entryPoints":[{"type":"main","position":{"lat":25.10829,"lon":121.55709}}]},{"type":"Point
+        Address","id":"TW/PAD/p0/2644830","score":13.6426954269,"address":{"streetNumber":"2","streetName":"Zhishan
+        Road Section 2 Lane 361","municipalitySubdivision":"Shilin District","municipality":"Taipei
+        City","countrySubdivision":"Taipei City","postalCode":"111","extendedPostalCode":"11143","countryCode":"TW","country":"Taiwan","countryCodeISO3":"TWN","freeformAddress":"2,
+        Zhishan Road Section 2 Lane 361, Shilin District, Taipei City 11143","localName":"Shilin
+        District"},"position":{"lat":25.10418,"lon":121.55522},"viewport":{"topLeftPoint":{"lat":25.10508,"lon":121.55423},"btmRightPoint":{"lat":25.10328,"lon":121.55621}},"entryPoints":[{"type":"main","position":{"lat":25.10399,"lon":121.55539}}]},{"type":"Point
+        Address","id":"TW/PAD/p0/3404317","score":13.6426954269,"address":{"streetNumber":"2","streetName":"Zhishan
+        Road Section 2 Lane 441","municipalitySubdivision":"Shilin District","municipality":"Taipei
+        City","countrySubdivision":"Taipei City","postalCode":"111","extendedPostalCode":"11144","countryCode":"TW","country":"Taiwan","countryCodeISO3":"TWN","freeformAddress":"2,
+        Zhishan Road Section 2 Lane 441, Shilin District, Taipei City 11144","localName":"Shilin
+        District"},"position":{"lat":25.10862,"lon":121.55694},"viewport":{"topLeftPoint":{"lat":25.10952,"lon":121.55595},"btmRightPoint":{"lat":25.10772,"lon":121.55793}},"entryPoints":[{"type":"main","position":{"lat":25.10863,"lon":121.55691}}]}]}'
+    headers:
+      content-length:
+      - '7288'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 10 Dec 2021 07:03:38 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-cache:
+      - CONFIG_NOCACHE
+      x-content-type-options:
+      - nosniff
+      x-ms-azuremaps-region:
+      - West US 2
+      x-msedge-ref:
+      - 'Ref A: 2180273315DD4E258ED0DB566417BDCA Ref B: TYO01EDGE2107 Ref C: 2021-12-10T07:03:38Z'
+    status:
+      code: 200
+      message: OK
+version: 1

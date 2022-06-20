@@ -207,10 +207,6 @@ class SearchClient(object):
         coordinates = kwargs.get("coordinates", LatLon())
         country_filter = kwargs.get("country_filter", None)
 
-        if not coordinates or not country_filter:
-            raise TypeError(
-                'at least "coordinates" or "country_filter" is required')
-
         return self._search_client.fuzzy_search(
             query,
             lat=coordinates.lat,
@@ -575,14 +571,8 @@ class SearchClient(object):
         :return: SearchAddressResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        coordinates = kwargs.get("coordinates", None)
+        coordinates = kwargs.get("coordinates", LatLon())
         country_filter = kwargs.get("country_filter", None)
-
-        if not coordinates or not country_filter:
-            raise TypeError(
-                'at least "coordinates" or "country_filter" is required')
-
-        coordinates = LatLon() if not coordinates else coordinates
 
         result = self._search_client.search_point_of_interest(
             query,
@@ -734,14 +724,8 @@ class SearchClient(object):
         :return: SearchAddressResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        coordinates = kwargs.get("coordinates", None)
+        coordinates = kwargs.get("coordinates", LatLon())
         country_filter = kwargs.get("country_filter", None)
-
-        if not coordinates or not country_filter:
-            raise TypeError(
-                'at least "coordinates" or "country_filter" is required')
-
-        coordinates = LatLon() if not coordinates else coordinates
 
         result = self._search_client.search_point_of_interest_category(
             query,
