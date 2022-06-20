@@ -82,7 +82,7 @@ async def main():
         # Write a ledger entry.
         try:
             post_entry_result = (
-                await ledger_client.confidential_ledger.post_ledger_entry(
+                await ledger_client.post_ledger_entry(
                     {"contents": "Hello world!"}
                 )
             )
@@ -97,7 +97,7 @@ async def main():
         # For some scenarios, users may want to eventually ensure the written entry is durably
         # committed.
         try:
-            wait_poller = await ledger_client.confidential_ledger.begin_wait_for_commit(
+            wait_poller = await ledger_client.begin_wait_for_commit(
                 transaction_id
             )
             await wait_poller.wait()
@@ -111,7 +111,7 @@ async def main():
         # Get the latest ledger entry.
         try:
             current_ledger_entry = (
-                await ledger_client.confidential_ledger.get_current_ledger_entry()
+                await ledger_client.get_current_ledger_entry()
             )
             print(f'The current ledger entry is {current_ledger_entry["contents"]}')
         except HttpResponseError as e:
@@ -122,7 +122,7 @@ async def main():
         # client throughput.
         try:
             post_poller = (
-                await ledger_client.confidential_ledger.begin_post_ledger_entry(
+                await ledger_client.begin_post_ledger_entry(
                     {"contents": "Hello world again!"}
                 )
             )
@@ -138,7 +138,7 @@ async def main():
         # Get the latest ledger entry.
         try:
             current_ledger_entry = (
-                await ledger_client.confidential_ledger.get_current_ledger_entry()
+                await ledger_client.get_current_ledger_entry()
             )
             print(f'The current ledger entry is {current_ledger_entry["contents"]}')
         except HttpResponseError as e:
@@ -149,7 +149,7 @@ async def main():
         # poller is provided.
         try:
             get_entry_poller = (
-                await ledger_client.confidential_ledger.begin_get_ledger_entry(
+                await ledger_client.begin_get_ledger_entry(
                     transaction_id
                 )
             )
@@ -165,7 +165,7 @@ async def main():
         # Get a receipt for a  ledger entry.
         try:
             get_receipt_poller = (
-                await ledger_client.confidential_ledger.begin_get_receipt(
+                await ledger_client.begin_get_receipt(
                     transaction_id
                 )
             )
@@ -181,7 +181,7 @@ async def main():
         collection_id = "myCollection"
         try:
             post_poller = (
-                await ledger_client.confidential_ledger.begin_post_ledger_entry(
+                await ledger_client.begin_post_ledger_entry(
                     {"contents": "Hello world again!"},
                     collection_id=collection_id,
                 )
@@ -198,7 +198,7 @@ async def main():
         # Get the latest ledger entry in the collection.
         try:
             current_ledger_entry = (
-                await ledger_client.confidential_ledger.get_current_ledger_entry(
+                await ledger_client.get_current_ledger_entry(
                     collection_id=collection_id
                 )
             )

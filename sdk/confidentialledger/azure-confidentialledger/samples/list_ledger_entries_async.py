@@ -79,22 +79,22 @@ async def main():
             ledger_certificate_path=ledger_certificate_file.name,
         )
 
-        post_poller = await ledger_client.confidential_ledger.begin_post_ledger_entry(
+        post_poller = await ledger_client.begin_post_ledger_entry(
             {"contents": "First message"}
         )
         first_transaction_id = await post_poller.result()["transactionId"]
 
         for i in range(10):
-            await ledger_client.confidential_ledger.post_ledger_entry(
+            await ledger_client.post_ledger_entry(
                 {"contents": f"Message {i}"}
             )
 
-        post_poller = await ledger_client.confidential_ledger.begin_post_ledger_entry(
+        post_poller = await ledger_client.begin_post_ledger_entry(
             {"contents": "Last message"}
         )
         last_transaction_id = await post_poller.result()["transactionId"]
 
-        ranged_result = ledger_client.confidential_ledger.list_ledger_entries(
+        ranged_result = ledger_client.list_ledger_entries(
             from_transaction_id=first_transaction_id,
             to_transaction_id=last_transaction_id,
         )

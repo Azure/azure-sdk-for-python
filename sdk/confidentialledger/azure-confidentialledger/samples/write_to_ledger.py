@@ -79,7 +79,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
 
     # Write a ledger entry.
     try:
-        post_entry_result = ledger_client.confidential_ledger.post_ledger_entry(
+        post_entry_result = ledger_client.post_ledger_entry(
             {"contents": "Hello world!"}
         )
         transaction_id = post_entry_result["transactionId"]
@@ -91,7 +91,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
     # For some scenarios, users may want to eventually ensure the written entry is durably
     # committed.
     try:
-        wait_poller = ledger_client.confidential_ledger.begin_wait_for_commit(
+        wait_poller = ledger_client.begin_wait_for_commit(
             transaction_id
         )
         wait_poller.wait()
@@ -105,7 +105,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
     # Get the latest ledger entry.
     try:
         current_ledger_entry = (
-            ledger_client.confidential_ledger.get_current_ledger_entry()["contents"]
+            ledger_client.get_current_ledger_entry()["contents"]
         )
         print(f"The current ledger entry is {current_ledger_entry}")
     except HttpResponseError as e:
@@ -115,7 +115,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
     # Users may wait for a durable commit when writing a ledger entry though this will reduce
     # client throughput.
     try:
-        post_poller = ledger_client.confidential_ledger.begin_post_ledger_entry(
+        post_poller = ledger_client.begin_post_ledger_entry(
             {"contents": "Hello world again!"}
         )
         new_post_result = post_poller.result()
@@ -130,7 +130,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
     # Get the latest ledger entry.
     try:
         current_ledger_entry = (
-            ledger_client.confidential_ledger.get_current_ledger_entry()["contents"]
+            ledger_client.get_current_ledger_entry()["contents"]
         )
         print(f"The current ledger entry is {current_ledger_entry}")
     except HttpResponseError as e:
@@ -140,7 +140,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
     # Make a query for a prior ledger entry. The service may take some time to load the result, so a
     # poller is provided.
     try:
-        get_entry_poller = ledger_client.confidential_ledger.begin_get_ledger_entry(
+        get_entry_poller = ledger_client.begin_get_ledger_entry(
             transaction_id
         )
         get_entry_result = get_entry_poller.result()
@@ -154,7 +154,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
 
     # Get a receipt for a  ledger entry.
     try:
-        get_receipt_poller = ledger_client.confidential_ledger.begin_get_receipt(
+        get_receipt_poller = ledger_client.begin_get_receipt(
             transaction_id
         )
         get_receipt_result = get_receipt_poller.result()
@@ -168,7 +168,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
     # Users may specify a collectionId to group different sets of writes.
     collection_id = "myCollection"
     try:
-        post_poller = ledger_client.confidential_ledger.begin_post_ledger_entry(
+        post_poller = ledger_client.begin_post_ledger_entry(
             {"contents": "Hello world again!"},
             collection_id=collection_id,
         )
@@ -184,7 +184,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
     # Get the latest ledger entry in the collection.
     try:
         current_ledger_entry = (
-            ledger_client.confidential_ledger.get_current_ledger_entry(
+            ledger_client.get_current_ledger_entry(
                 collection_id=collection_id
             )["contents"]
         )

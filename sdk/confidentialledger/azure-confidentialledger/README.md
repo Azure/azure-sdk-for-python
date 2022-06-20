@@ -123,7 +123,7 @@ This section contains code snippets covering common tasks:
 Data that needs to be stored immutably in a tamper-proof manner can be saved to Azure Confidential Ledger by appending an entry to the ledger.
 
 ```python
-post_entry_result = ledger_client.confidential_ledger.post_ledger_entry(
+post_entry_result = ledger_client.post_ledger_entry(
         {"contents": "Hello world!"}
     )
 transaction_id = post_entry_result["transactionId"]
@@ -133,7 +133,7 @@ print(transaction_id)
 Since Confidential Ledger is a distributed system, rare transient failures may cause writes to be lost. For entries that must be preserved, it is advisable to verify that the write became durable. Waits are blocking calls.
 
 ```python
-wait_poller = ledger_client.confidential_ledger.begin_wait_for_commit(transaction_id)
+wait_poller = ledger_client.begin_wait_for_commit(transaction_id)
 wait_poller.wait()
 print(f'Ledger entry at transaction id {transaction_id} has been committed successfully')
 ```
@@ -141,7 +141,7 @@ print(f'Ledger entry at transaction id {transaction_id} has been committed succe
 Alternatively, the client may wait for commit when writing a ledger entry. Note this will reduce client throughput.
 
 ```python
-post_poller = ledger_client.confidential_ledger.begin_post_ledger_entry(
+post_poller = ledger_client.begin_post_ledger_entry(
     {"contents": "Hello world again!"}
 )
 new_post_result = post_poller.result()
@@ -155,7 +155,7 @@ print(
 A receipt can be retrieved for any transaction id to provide cryptographic proof of the contents of the transaction.
 
 ```python
-get_receipt_poller = client.confidential_ledger.begin_get_receipt(transaction_id)
+get_receipt_poller = client.begin_get_receipt(transaction_id)
 get_receipt_result = get_receipt_poller.result()
 print(
     f'Receipt for transaction id {get_entry_result["transactionId"]}: '
@@ -167,11 +167,11 @@ print(
 Clients can write to different collections to group data.
 
 ```python
-client.confidential_ledger.post_ledger_entry(
+client.post_ledger_entry(
     {"contents": "Hello from Alice"},
     collection_id="Messages_Alice",
 )
-client.confidential_ledger.post_ledger_entry(
+client.post_ledger_entry(
     {"contents": "Hello from Bob"},
     collection_id="Messages_Bob",
 )
@@ -180,7 +180,7 @@ client.confidential_ledger.post_ledger_entry(
 When no collection id is specified on method calls, the Confidential Ledger service will assume a constant, service-determined collection id.
 
 ```python
-post_poller = ledger_client.confidential_ledger.begin_post_ledger_entry(
+post_poller = ledger_client.begin_post_ledger_entry(
     {"contents": "Hello world?"}
 )
 post_result = post_poller.result()
@@ -205,12 +205,12 @@ print(
 
 prior_transaction_id = latest_entry["transactionId"]
 
-post_poller = ledger_client.confidential_ledger.begin_post_ledger_entry(
+post_poller = ledger_client.begin_post_ledger_entry(
     {"contents": "Hello!"}
 )
 post_result = post_poller.result()
 
-get_entry_poller = ledger_client.confidential_ledger.begin_get_ledger_entry(prior_transaction_id)
+get_entry_poller = ledger_client.begin_get_ledger_entry(prior_transaction_id)
 older_entry = get_entry_poller.result()
 print(
     f'Contents of {older_entry["collectionId"]} at {prior_transaction_id}: {older_entry["contents"]}'
@@ -221,22 +221,22 @@ print(
 Ledger entries may be retrieved over a range of transaction ids. Entries will only be returned from the default or specified collection.
 
 ```python
-post_poller = ledger_client.confidential_ledger.begin_post_ledger_entry(
+post_poller = ledger_client.begin_post_ledger_entry(
     {"contents": "First message"}
 )
 first_transaction_id = post_poller.result()["transactionId"]
 
 for i in range(10):
-    ledger_client.confidential_ledger.post_ledger_entry(
+    ledger_client.post_ledger_entry(
         {"contents": f"Message {i}"}
     )
 
-post_poller = ledger_client.confidential_ledger.begin_post_ledger_entry(
+post_poller = ledger_client.begin_post_ledger_entry(
     {"contents": "Last message"}
 )
 last_transaction_id = post_poller.result()["transactionId"]
 
-ranged_result = ledger_client.confidential_ledger.list_ledger_entries(
+ranged_result = ledger_client.list_ledger_entries(
     from_transaction_id=first_transaction_id,
     to_transaction_id=last_transaction_id,
 )
@@ -249,7 +249,7 @@ Users with `Administrator` privileges can manage users of the Confidential Ledge
 
 ```python
 user_id = "some AAD object id"
-user = ledger_client.confidential_ledger.create_or_update_user(
+user = ledger_client.create_or_update_user(
     user_id, {"assignedRole": "Contributor"}
 )
 # A client may now be created and used with AAD credentials (i.e. AAD-issued JWT tokens) for the user identified by `user_id`.
@@ -301,13 +301,13 @@ A user may want to validate details about the Confidential Ledger. For example, 
 
 ```python
 # Consortium members can manage and alter the Confidential Ledger. Microsoft participates in the consortium to maintain the Confidential Ledger instance.
-consortium = ledger_client.confidential_ledger.get_consortium_members()
+consortium = ledger_client.get_consortium_members()
 for member in consortium.members:
     print(f'Member {member["id"]} has certificate {member["certificate"]}')
 
 import hashlib
 # The constitution is a collection of JavaScript code that defines actions available to members, and vets proposals by members to execute those actions.
-constitution = ledger_client.confidential_ledger.get_constitution()
+constitution = ledger_client.get_constitution()
 assert (
     constitution["digest"].lower() ==
     hashlib.sha256(constitution["script"].encode()).hexdigest().lower()
@@ -317,7 +317,7 @@ print(constitution["script"])
 # Enclave quotes contain material that can be used to
 # cryptographically verify the validity and contents
 # of an enclave.
-ledger_enclaves = ledger_client.confidential_ledger.get_enclave_quotes()
+ledger_enclaves = ledger_client.get_enclave_quotes()
 assert ledger_enclaves["currentNodeId"] in ledger_enclaves["enclaveQuotes"]
 for node_id, quote in ledger_enclaves["enclaveQuotes"].items():
     print(f"Quote for node {node_id}: {quote}")
@@ -400,7 +400,7 @@ ledger_client = ConfidentialLedgerClient(
 )
 
 try:
-    ledger_client.confidential_ledger.begin_get_ledger_entry(
+    ledger_client.begin_get_ledger_entry(
         transaction_id="10000.100000"
     )
 except ResourceNotFoundError as e:
@@ -450,7 +450,7 @@ ledger_client = ConfidentialLedgerClient(
 
 Similarly, `logging_enable` can enable detailed logging for a single operation, even when it isn't enabled for the client:
 ```python
-ledger_client.confidential_ledger.get_current_ledger_entry(logging_enable=True)
+ledger_client.get_current_ledger_entry(logging_enable=True)
 ```
 
 ## Next steps

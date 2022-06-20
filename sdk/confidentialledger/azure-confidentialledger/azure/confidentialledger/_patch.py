@@ -12,6 +12,7 @@ from typing import Any, List, Union
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline import policies
 
+from azure.confidentialledger.operations import ConfidentialLedgerOperations as OperationsMixin
 from azure.confidentialledger._client import ConfidentialLedgerClient as GeneratedClient
 
 __all__: List[str] = [
@@ -40,7 +41,7 @@ class ConfidentialLedgerCertificateCredential:
         self.certificate_path = certificate_path
 
 
-class ConfidentialLedgerClient(GeneratedClient):
+class ConfidentialLedgerClient(GeneratedClient, OperationsMixin):
     """The ConfidentialLedgerClient writes and retrieves ledger entries against the Confidential
     Ledger service.
 
@@ -69,7 +70,7 @@ class ConfidentialLedgerClient(GeneratedClient):
         # For ConfidentialLedgerCertificateCredential, pass the path to the certificate down to the
         # PipelineCLient.
         if isinstance(credential, ConfidentialLedgerCertificateCredential):
-            kwargs["connection_cert"] = credential.certificate_path
+            kwargs["connection_cert"] = kwargs.get("connection_cert", credential.certificate_path)
 
         # The auto-generated client has authentication disabled so we can customize authentication.
         # If the credential is the typical TokenCredential, then construct the authentication policy

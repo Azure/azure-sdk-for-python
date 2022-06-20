@@ -12,13 +12,13 @@ from typing import Any, List, Union
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline import policies
 
+from azure.confidentialledger.aio.operations import ConfidentialLedgerOperations as OperationsMixin
 from azure.confidentialledger.aio._client import (
     ConfidentialLedgerClient as GeneratedClient,
 )
 from azure.confidentialledger._patch import ConfidentialLedgerCertificateCredential
 
 __all__: List[str] = [
-    "ConfidentialLedgerCertificateCredential",
     "ConfidentialLedgerClient",
 ]  # Add all objects you want publicly available to users at this package level
 
@@ -32,7 +32,7 @@ def patch_sdk():
     """
 
 
-class ConfidentialLedgerClient(GeneratedClient):
+class ConfidentialLedgerClient(GeneratedClient, OperationsMixin):
     """The ConfidentialLedgerClient writes and retrieves ledger entries against the Confidential
     Ledger service.
 

@@ -4,7 +4,7 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       BuildTargetingString: azure-confidentialledger*
-      ServiceDirectory: cognitivelanguage
+      ServiceDirectory: confidentialledger
       MatrixReplace:
         - TestSamples=.*/true
       MaxParallel: 1
