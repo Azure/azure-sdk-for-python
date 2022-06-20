@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class NetAppManagementClientConfiguration(Configuration):
+class NetAppManagementClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for NetAppManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -27,8 +27,12 @@ class NetAppManagementClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
+    :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure
+     subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
+    :keyword api_version: Api Version. Default value is "2022-01-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -38,6 +42,8 @@ class NetAppManagementClientConfiguration(Configuration):
         **kwargs: Any
     ) -> None:
         super(NetAppManagementClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2022-01-01")  # type: str
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
@@ -45,7 +51,7 @@ class NetAppManagementClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2021-10-01"
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-netapp/{}'.format(VERSION))
         self._configure(**kwargs)

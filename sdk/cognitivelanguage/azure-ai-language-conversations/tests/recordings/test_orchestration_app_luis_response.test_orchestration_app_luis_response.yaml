@@ -3,8 +3,7 @@ interactions:
     body: '{"kind": "Conversation", "analysisInput": {"conversationItem": {"participantId":
       "1", "id": "1", "modality": "text", "language": "en", "text": "Reserve a table
       for 2 at the Italian restaurant"}, "isLoggingEnabled": false}, "parameters":
-      {"projectName": "OrchScriptDeployed1", "deploymentName": "dep_test", "verbose":
-      true, "stringIndexType": "UnicodeCodePoint"}}'
+      {"projectName": "orch_test", "deploymentName": "dep_test", "verbose": true}}'
     headers:
       Accept:
       - application/json
@@ -13,13 +12,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '364'
+      - '325'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-conversations/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-conversations/1.0GA Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: POST
-    uri: https://languagesdktest.cognitiveservices.azure.com/language/:analyze-conversations?api-version=2022-05-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?api-version=2022-05-01
   response:
     body:
       string: '{"kind":"ConversationResult","result":{"query":"Reserve a table for
@@ -29,7 +28,7 @@ interactions:
         Extractor","recognitionSources":["model"]}]}}}}},"ChitChat-QnA":{"confidenceScore":0.61326313,"targetProjectKind":"QuestionAnswering"},"EmailIntent":{"confidenceScore":0.2647618,"targetProjectKind":"Conversation"},"None":{"confidenceScore":0.24316412,"targetProjectKind":"NonLinked"}}}}}'
     headers:
       apim-request-id:
-      - 3ca95ad7-541c-4ec6-8e1e-995d692b449d
+      - c2dfc655-a27e-40c7-9d00-5891c5cbf2d1
       cache-control:
       - no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type:
@@ -37,11 +36,11 @@ interactions:
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.Language.OrchestrationWorkflow.Prediction=1
       date:
-      - Thu, 26 May 2022 16:35:19 GMT
+      - Tue, 31 May 2022 14:25:17 GMT
       pragma:
       - no-cache
       request-id:
-      - 3ca95ad7-541c-4ec6-8e1e-995d692b449d
+      - c2dfc655-a27e-40c7-9d00-5891c5cbf2d1
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -49,7 +48,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '206'
+      - '91'
     status:
       code: 200
       message: OK

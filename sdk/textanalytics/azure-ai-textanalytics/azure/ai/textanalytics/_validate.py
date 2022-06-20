@@ -29,7 +29,6 @@ def check_for_unsupported_actions_types(*args, **kwargs):
     actions_version_mapping = {
         "2022-05-01":
         [
-            "ExtractSummaryAction",
             "RecognizeCustomEntitiesAction",
             "SingleCategoryClassifyAction",
             "MultiCategoryClassifyAction",

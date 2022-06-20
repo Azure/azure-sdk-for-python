@@ -64,15 +64,18 @@ class InputOutputBase(ABC):
         :type meta: Union[ComponentInput, ComponentOutput]
         :param data: Actual value of input/output, None means un-configured data.
         :type data: Union[None, int, bool, float, str
-                          azure.ai.ml.dsl.component.Output,
-                          azure.ai.ml.dsl.component.PipelineInput,
-                          azure.ai.ml.entities.Input,
-                          azure.ai.ml.entities.Output]
+                          azure.ai.ml.Input,
+                          azure.ai.ml.Output]
         """
         self._meta = meta
         self._data = self._build_data(data)
         self._type = meta.type if meta else kwargs.pop("type", None)
         self._mode = self._data.mode if self._data and hasattr(self._data, "mode") else kwargs.pop("mode", None)
+        self._description = (
+            self._data.description
+            if self._data and hasattr(self._data, "description") and not self._data.description
+            else kwargs.pop("description", None)
+        )
         # TODO: remove this
         self._attribute_map = {}
         super(InputOutputBase, self).__init__(**kwargs)
@@ -113,6 +116,10 @@ class InputOutputBase(ABC):
             self._data.mode = mode
         else:
             self._data._mode = mode
+
+    @property
+    def description(self) -> str:
+        return self._description
 
     @property
     def path(self) -> str:
@@ -181,9 +188,8 @@ class PipelineInputBase(InputOutputBase):
             TODO: new examples
             component.inputs.xxx = Input(path="arm_id")
         :type data: Union[int, bool, float, str
-                          azure.ai.ml.dsl.component.Output,
-                          azure.ai.ml.dsl.component.PipelineInput,
-                          azure.ai.ml.entities.Input]
+                          azure.ai.ml.Output,
+                          azure.ai.ml.Input]
         :param owner: The owner component of the input, used to calculate binding.
         :type owner: Union[azure.ai.ml.entities.BaseNode, azure.ai.ml.entities.PipelineJob]
         :param kwargs: A dictionary of additional configuration parameters.

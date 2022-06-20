@@ -21,7 +21,7 @@ from .parameterized_command import ParameterizedCommand
 module_logger = logging.getLogger(__name__)
 
 """
-TODO[Joe]: This class is temperarily created to handle "Base" job type from the service.
+TODO[Joe]: This class is temporarily created to handle "Base" job type from the service.
     We will be working on a more granular job type for pipeline child jobs in the future.
     Spec Ref: https://github.com/Azure/azureml_run_specification/pull/340
     MFE PR: https://msdata.visualstudio.com/DefaultCollection/Vienna/_workitems/edit/1167303/

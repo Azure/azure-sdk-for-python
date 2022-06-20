@@ -9,7 +9,7 @@ from azure.ai.ml._schema._data.mltable_metadata_schema import MLTableMetadataSch
 from azure.ai.ml._restclient.v2021_10_01.models import UriReference
 
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, SKIP_VALIDATION_MESSAGE
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._util import load_from_dict
 from marshmallow import INCLUDE
 
@@ -60,9 +60,10 @@ class MLTableMetadata:
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
         }
-        return load_from_dict(
-            MLTableMetadataSchema, yaml_data, context, SKIP_VALIDATION_MESSAGE, unknown=INCLUDE, **kwargs
-        )
+        return load_from_dict(MLTableMetadataSchema, yaml_data, context, "", unknown=INCLUDE, **kwargs)
 
     def _to_dict(self) -> Dict:
         return MLTableMetadataSchema(context={BASE_PATH_CONTEXT_KEY: "./"}, unknown=INCLUDE).dump(self)
+
+    def referenced_uris(self) -> List[str]:
+        return [path.file or path.folder for path in self.paths if path.file or path.folder]

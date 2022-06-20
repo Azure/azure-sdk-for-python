@@ -15,6 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
@@ -24,32 +25,30 @@ T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class FactoriesOperations:
-    """FactoriesOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.datafactory.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.datafactory.aio.DataFactoryManagementClient`'s
+        :attr:`factories` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def list(
         self,
         **kwargs: Any
-    ) -> AsyncIterable["_models.FactoryListResponse"]:
+    ) -> AsyncIterable[_models.FactoryListResponse]:
         """Lists factories under the specified subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -58,13 +57,16 @@ class FactoriesOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.datafactory.models.FactoryListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2018-06-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FactoryListResponse"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-06-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.FactoryListResponse]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -72,9 +74,11 @@ class FactoriesOperations:
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -82,9 +86,11 @@ class FactoriesOperations:
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -121,9 +127,9 @@ class FactoriesOperations:
     async def configure_factory_repo(
         self,
         location_id: str,
-        factory_repo_update: "_models.FactoryRepoUpdate",
+        factory_repo_update: _models.FactoryRepoUpdate,
         **kwargs: Any
-    ) -> "_models.Factory":
+    ) -> _models.Factory:
         """Updates a factory's repo information.
 
         :param location_id: The location identifier.
@@ -135,14 +141,17 @@ class FactoriesOperations:
         :rtype: ~azure.mgmt.datafactory.models.Factory
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Factory"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-06-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-06-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Factory]
 
         _json = self._serialize.body(factory_repo_update, 'FactoryRepoUpdate')
 
@@ -153,11 +162,13 @@ class FactoriesOperations:
             content_type=content_type,
             json=_json,
             template_url=self.configure_factory_repo.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -183,7 +194,7 @@ class FactoriesOperations:
         self,
         resource_group_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.FactoryListResponse"]:
+    ) -> AsyncIterable[_models.FactoryListResponse]:
         """Lists factories.
 
         :param resource_group_name: The resource group name.
@@ -194,13 +205,16 @@ class FactoriesOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.datafactory.models.FactoryListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2018-06-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FactoryListResponse"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-06-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.FactoryListResponse]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -209,9 +223,11 @@ class FactoriesOperations:
                     resource_group_name=resource_group_name,
                     api_version=api_version,
                     template_url=self.list_by_resource_group.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -220,9 +236,11 @@ class FactoriesOperations:
                     resource_group_name=resource_group_name,
                     api_version=api_version,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -260,10 +278,10 @@ class FactoriesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        factory: "_models.Factory",
+        factory: _models.Factory,
         if_match: Optional[str] = None,
         **kwargs: Any
-    ) -> "_models.Factory":
+    ) -> _models.Factory:
         """Creates or updates a factory.
 
         :param resource_group_name: The resource group name.
@@ -280,14 +298,17 @@ class FactoriesOperations:
         :rtype: ~azure.mgmt.datafactory.models.Factory
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Factory"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-06-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-06-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Factory]
 
         _json = self._serialize.body(factory, 'Factory')
 
@@ -300,11 +321,13 @@ class FactoriesOperations:
             json=_json,
             if_match=if_match,
             template_url=self.create_or_update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -330,9 +353,9 @@ class FactoriesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        factory_update_parameters: "_models.FactoryUpdateParameters",
+        factory_update_parameters: _models.FactoryUpdateParameters,
         **kwargs: Any
-    ) -> "_models.Factory":
+    ) -> _models.Factory:
         """Updates a factory.
 
         :param resource_group_name: The resource group name.
@@ -346,14 +369,17 @@ class FactoriesOperations:
         :rtype: ~azure.mgmt.datafactory.models.Factory
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Factory"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-06-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-06-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Factory]
 
         _json = self._serialize.body(factory_update_parameters, 'FactoryUpdateParameters')
 
@@ -365,11 +391,13 @@ class FactoriesOperations:
             content_type=content_type,
             json=_json,
             template_url=self.update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -397,7 +425,7 @@ class FactoriesOperations:
         factory_name: str,
         if_none_match: Optional[str] = None,
         **kwargs: Any
-    ) -> Optional["_models.Factory"]:
+    ) -> Optional[_models.Factory]:
         """Gets a factory.
 
         :param resource_group_name: The resource group name.
@@ -413,13 +441,16 @@ class FactoriesOperations:
         :rtype: ~azure.mgmt.datafactory.models.Factory or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Factory"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-06-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-06-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.Factory]]
 
         
         request = build_get_request(
@@ -429,11 +460,13 @@ class FactoriesOperations:
             api_version=api_version,
             if_none_match=if_none_match,
             template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -474,13 +507,16 @@ class FactoriesOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-06-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-06-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_delete_request(
@@ -489,11 +525,13 @@ class FactoriesOperations:
             factory_name=factory_name,
             api_version=api_version,
             template_url=self.delete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -515,9 +553,9 @@ class FactoriesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        git_hub_access_token_request: "_models.GitHubAccessTokenRequest",
+        git_hub_access_token_request: _models.GitHubAccessTokenRequest,
         **kwargs: Any
-    ) -> "_models.GitHubAccessTokenResponse":
+    ) -> _models.GitHubAccessTokenResponse:
         """Get GitHub Access Token.
 
         :param resource_group_name: The resource group name.
@@ -531,14 +569,17 @@ class FactoriesOperations:
         :rtype: ~azure.mgmt.datafactory.models.GitHubAccessTokenResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GitHubAccessTokenResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-06-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-06-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.GitHubAccessTokenResponse]
 
         _json = self._serialize.body(git_hub_access_token_request, 'GitHubAccessTokenRequest')
 
@@ -550,11 +591,13 @@ class FactoriesOperations:
             content_type=content_type,
             json=_json,
             template_url=self.get_git_hub_access_token.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -580,9 +623,9 @@ class FactoriesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        policy: "_models.UserAccessPolicy",
+        policy: _models.UserAccessPolicy,
         **kwargs: Any
-    ) -> "_models.AccessPolicyResponse":
+    ) -> _models.AccessPolicyResponse:
         """Get Data Plane access.
 
         :param resource_group_name: The resource group name.
@@ -596,14 +639,17 @@ class FactoriesOperations:
         :rtype: ~azure.mgmt.datafactory.models.AccessPolicyResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AccessPolicyResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-06-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-06-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AccessPolicyResponse]
 
         _json = self._serialize.body(policy, 'UserAccessPolicy')
 
@@ -615,11 +661,13 @@ class FactoriesOperations:
             content_type=content_type,
             json=_json,
             template_url=self.get_data_plane_access.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs

@@ -17,7 +17,7 @@ def create_backup_policy(client, backup_policy_name, rg=TEST_RG, account_name=TE
 
     backup_policy_body = BackupPolicy(
         location=location,
-        daily_backups_to_keep=1,
+        daily_backups_to_keep=2,
         weekly_backups_to_keep=0,
         monthly_backups_to_keep=0,
         enabled=True

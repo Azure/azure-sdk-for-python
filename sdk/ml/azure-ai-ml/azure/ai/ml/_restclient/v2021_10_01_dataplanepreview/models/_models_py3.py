@@ -162,6 +162,69 @@ class AccountKeyDatastoreSecrets(DatastoreSecrets):
         self.key = key
 
 
+class AcrDetails(msrest.serialization.Model):
+    """AcrDetails.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar acr_address:
+    :vartype acr_address: str
+    :ivar acr_name:
+    :vartype acr_name: str
+    :ivar acr_region:
+    :vartype acr_region: str
+    :ivar arm_scope:
+    :vartype arm_scope: str
+    :ivar resource_group_name:
+    :vartype resource_group_name: str
+    :ivar subscription_id:
+    :vartype subscription_id: str
+    """
+
+    _validation = {
+        'arm_scope': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'acr_address': {'key': 'acrAddress', 'type': 'str'},
+        'acr_name': {'key': 'acrName', 'type': 'str'},
+        'acr_region': {'key': 'acrRegion', 'type': 'str'},
+        'arm_scope': {'key': 'armScope', 'type': 'str'},
+        'resource_group_name': {'key': 'resourceGroupName', 'type': 'str'},
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        acr_address: Optional[str] = None,
+        acr_name: Optional[str] = None,
+        acr_region: Optional[str] = None,
+        resource_group_name: Optional[str] = None,
+        subscription_id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword acr_address:
+        :paramtype acr_address: str
+        :keyword acr_name:
+        :paramtype acr_name: str
+        :keyword acr_region:
+        :paramtype acr_region: str
+        :keyword resource_group_name:
+        :paramtype resource_group_name: str
+        :keyword subscription_id:
+        :paramtype subscription_id: str
+        """
+        super(AcrDetails, self).__init__(**kwargs)
+        self.acr_address = acr_address
+        self.acr_name = acr_name
+        self.acr_region = acr_region
+        self.arm_scope = None
+        self.resource_group_name = resource_group_name
+        self.subscription_id = subscription_id
+
+
 class IdentityConfiguration(msrest.serialization.Model):
     """Base definition for identity configuration.
 
@@ -2808,6 +2871,52 @@ class FlavorData(msrest.serialization.Model):
         self.data = data
 
 
+class ImageReferenceForConsumptionDto(msrest.serialization.Model):
+    """ImageReferenceForConsumptionDto.
+
+    :ivar acr_details:
+    :vartype acr_details: ~azure.mgmt.machinelearningservices.models.AcrDetails
+    :ivar credential: Anything.
+    :vartype credential: any
+    :ivar image_name:
+    :vartype image_name: str
+    :ivar image_registry_reference:
+    :vartype image_registry_reference: str
+    """
+
+    _attribute_map = {
+        'acr_details': {'key': 'acrDetails', 'type': 'AcrDetails'},
+        'credential': {'key': 'credential', 'type': 'object'},
+        'image_name': {'key': 'imageName', 'type': 'str'},
+        'image_registry_reference': {'key': 'imageRegistryReference', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        acr_details: Optional["AcrDetails"] = None,
+        credential: Optional[Any] = None,
+        image_name: Optional[str] = None,
+        image_registry_reference: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword acr_details:
+        :paramtype acr_details: ~azure.mgmt.machinelearningservices.models.AcrDetails
+        :keyword credential: Anything.
+        :paramtype credential: any
+        :keyword image_name:
+        :paramtype image_name: str
+        :keyword image_registry_reference:
+        :paramtype image_registry_reference: str
+        """
+        super(ImageReferenceForConsumptionDto, self).__init__(**kwargs)
+        self.acr_details = acr_details
+        self.credential = credential
+        self.image_name = image_name
+        self.image_registry_reference = image_registry_reference
+
+
 class InferenceContainerProperties(msrest.serialization.Model):
     """InferenceContainerProperties.
 
@@ -3633,9 +3742,8 @@ class ModelVersionDetails(AssetBase):
     :vartype flavors: dict[str, ~azure.mgmt.machinelearningservices.models.FlavorData]
     :ivar job_name: Name of the training job which produced this model.
     :vartype job_name: str
-    :ivar model_format: The storage format for this entity. Used for NCD. Possible values include:
-     "Custom", "MLFlow", "Triton", "OpenAI".
-    :vartype model_format: str or ~azure.mgmt.machinelearningservices.models.ModelFormat
+    :ivar model_type: The storage format for this entity. Used for NCD.
+    :vartype model_type: str
     :ivar model_uri: The URI path to the model contents.
     :vartype model_uri: str
     """
@@ -3648,7 +3756,7 @@ class ModelVersionDetails(AssetBase):
         'is_archived': {'key': 'isArchived', 'type': 'bool'},
         'flavors': {'key': 'flavors', 'type': '{FlavorData}'},
         'job_name': {'key': 'jobName', 'type': 'str'},
-        'model_format': {'key': 'modelFormat', 'type': 'str'},
+        'model_type': {'key': 'modelType', 'type': 'str'},
         'model_uri': {'key': 'modelUri', 'type': 'str'},
     }
 
@@ -3662,7 +3770,7 @@ class ModelVersionDetails(AssetBase):
         is_archived: Optional[bool] = False,
         flavors: Optional[Dict[str, "FlavorData"]] = None,
         job_name: Optional[str] = None,
-        model_format: Optional[Union[str, "ModelFormat"]] = None,
+        model_type: Optional[str] = None,
         model_uri: Optional[str] = None,
         **kwargs
     ):
@@ -3681,16 +3789,15 @@ class ModelVersionDetails(AssetBase):
         :paramtype flavors: dict[str, ~azure.mgmt.machinelearningservices.models.FlavorData]
         :keyword job_name: Name of the training job which produced this model.
         :paramtype job_name: str
-        :keyword model_format: The storage format for this entity. Used for NCD. Possible values
-         include: "Custom", "MLFlow", "Triton", "OpenAI".
-        :paramtype model_format: str or ~azure.mgmt.machinelearningservices.models.ModelFormat
+        :keyword model_type: The storage format for this entity. Used for NCD.
+        :paramtype model_type: str
         :keyword model_uri: The URI path to the model contents.
         :paramtype model_uri: str
         """
         super(ModelVersionDetails, self).__init__(description=description, properties=properties, tags=tags, is_anonymous=is_anonymous, is_archived=is_archived, **kwargs)
         self.flavors = flavors
         self.job_name = job_name
-        self.model_format = model_format
+        self.model_type = model_type
         self.model_uri = model_uri
 
 
@@ -4596,6 +4703,9 @@ class TemporaryDataReferenceResponseDto(msrest.serialization.Model):
     :ivar blob_reference_for_consumption:
     :vartype blob_reference_for_consumption:
      ~azure.mgmt.machinelearningservices.models.BlobReferenceForConsumptionDto
+    :ivar image_reference_for_consumption:
+    :vartype image_reference_for_consumption:
+     ~azure.mgmt.machinelearningservices.models.ImageReferenceForConsumptionDto
     :ivar temporary_data_reference_id:
     :vartype temporary_data_reference_id: str
     :ivar temporary_data_reference_type:
@@ -4604,6 +4714,7 @@ class TemporaryDataReferenceResponseDto(msrest.serialization.Model):
 
     _attribute_map = {
         'blob_reference_for_consumption': {'key': 'blobReferenceForConsumption', 'type': 'BlobReferenceForConsumptionDto'},
+        'image_reference_for_consumption': {'key': 'imageReferenceForConsumption', 'type': 'ImageReferenceForConsumptionDto'},
         'temporary_data_reference_id': {'key': 'temporaryDataReferenceId', 'type': 'str'},
         'temporary_data_reference_type': {'key': 'temporaryDataReferenceType', 'type': 'str'},
     }
@@ -4612,6 +4723,7 @@ class TemporaryDataReferenceResponseDto(msrest.serialization.Model):
         self,
         *,
         blob_reference_for_consumption: Optional["BlobReferenceForConsumptionDto"] = None,
+        image_reference_for_consumption: Optional["ImageReferenceForConsumptionDto"] = None,
         temporary_data_reference_id: Optional[str] = None,
         temporary_data_reference_type: Optional[str] = None,
         **kwargs
@@ -4620,6 +4732,9 @@ class TemporaryDataReferenceResponseDto(msrest.serialization.Model):
         :keyword blob_reference_for_consumption:
         :paramtype blob_reference_for_consumption:
          ~azure.mgmt.machinelearningservices.models.BlobReferenceForConsumptionDto
+        :keyword image_reference_for_consumption:
+        :paramtype image_reference_for_consumption:
+         ~azure.mgmt.machinelearningservices.models.ImageReferenceForConsumptionDto
         :keyword temporary_data_reference_id:
         :paramtype temporary_data_reference_id: str
         :keyword temporary_data_reference_type:
@@ -4627,6 +4742,7 @@ class TemporaryDataReferenceResponseDto(msrest.serialization.Model):
         """
         super(TemporaryDataReferenceResponseDto, self).__init__(**kwargs)
         self.blob_reference_for_consumption = blob_reference_for_consumption
+        self.image_reference_for_consumption = image_reference_for_consumption
         self.temporary_data_reference_id = temporary_data_reference_id
         self.temporary_data_reference_type = temporary_data_reference_type
 

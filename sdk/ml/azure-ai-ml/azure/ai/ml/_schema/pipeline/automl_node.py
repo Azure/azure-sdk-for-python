@@ -4,7 +4,8 @@
 from marshmallow import fields, Schema, pre_dump, post_dump, INCLUDE
 from pydash import get
 
-from azure.ai.ml._schema._utils.data_binding import support_data_binding_for_fields
+from azure.ai.ml._schema import PathAwareSchema
+from azure.ai.ml._schema._utils.data_binding_expression import support_data_binding_expression_for_fields
 from azure.ai.ml._schema.automl import AutoMLClassificationSchema, AutoMLRegressionSchema, AutoMLForecastingSchema
 from azure.ai.ml._schema.automl.image_vertical.image_object_detection import (
     ImageObjectDetectionSchema,
@@ -15,7 +16,7 @@ from azure.ai.ml._schema.automl.image_vertical.image_classification import (
     ImageClassificationMultilabelSchema,
 )
 from azure.ai.ml._schema.automl.nlp_vertical.text_classification import TextClassificationSchema
-from azure.ai.ml._schema.automl.nlp_vertical.text_classification_multilabel import TextClassificationMultilableSchema
+from azure.ai.ml._schema.automl.nlp_vertical.text_classification_multilabel import TextClassificationMultilabelSchema
 from azure.ai.ml._schema.automl.nlp_vertical.text_ner import TextNerSchema
 from azure.ai.ml._schema.core.fields import ComputeField, UnionField, NestedField, StringTransformedEnum, ArmStr
 from azure.ai.ml._schema.job.input_output_entry import OutputSchema
@@ -23,11 +24,16 @@ from azure.ai.ml._schema.job.input_output_fields_provider import InputsField
 from azure.ai.ml._schema.pipeline.pipeline_job_io import OutputBindingStr
 
 
-class AutoMLNodeMixin:
+class AutoMLNodeMixin(PathAwareSchema):
     """Inherit this mixin to change automl job schemas to automl node schema.
 
     eg: Compute is required for automl job but not required for automl node in pipeline.
     Note: Inherit this before BaseJobSchema to make sure optional takes affect."""
+
+    def __init__(self, **kwargs):
+        super(AutoMLNodeMixin, self).__init__(**kwargs)
+        # update field objects and add data binding support, won't bind task & type as data binding
+        support_data_binding_expression_for_fields(self, attrs_to_skip=["task_type", "type"])
 
     compute = ComputeField(required=False)
     outputs = fields.Dict(
@@ -81,104 +87,54 @@ class AutoMLNodeMixin:
 
 
 class AutoMLClassificationNodeSchema(AutoMLNodeMixin, AutoMLClassificationSchema):
-    def __init__(self, **kwargs):
-        super(AutoMLClassificationNodeSchema, self).__init__(**kwargs)
-        # update field objects and add data binding support, won't bind task as data binding
-        support_data_binding_for_fields(self, attrs_to_skip=["task_type"])
-
     training_data = UnionField([fields.Str(), InputsField()])
     validation_data = UnionField([fields.Str(), InputsField()])
     test_data = UnionField([fields.Str(), InputsField()])
 
 
 class AutoMLRegressionNodeSchema(AutoMLNodeMixin, AutoMLRegressionSchema):
-    def __init__(self, **kwargs):
-        super(AutoMLRegressionNodeSchema, self).__init__(**kwargs)
-        # update field objects and add data binding support
-        support_data_binding_for_fields(self, attrs_to_skip=["task_type"])
-
     training_data = UnionField([fields.Str(), InputsField()])
     validation_data = UnionField([fields.Str(), InputsField()])
     test_data = UnionField([fields.Str(), InputsField()])
 
 
 class AutoMLForecastingNodeSchema(AutoMLNodeMixin, AutoMLForecastingSchema):
-    def __init__(self, **kwargs):
-        super(AutoMLForecastingNodeSchema, self).__init__(**kwargs)
-        # update field objects and add data binding support
-        support_data_binding_for_fields(self, attrs_to_skip=["task_type"])
-
     training_data = UnionField([fields.Str(), InputsField()])
     validation_data = UnionField([fields.Str(), InputsField()])
     test_data = UnionField([fields.Str(), InputsField()])
 
 
 class AutoMLTextClassificationNode(AutoMLNodeMixin, TextClassificationSchema):
-    def __init__(self, **kwargs):
-        super(TextClassificationSchema, self).__init__(**kwargs)
-        # update field objects and add data binding support
-        support_data_binding_for_fields(self, attrs_to_skip=["task_type"])
-
     training_data = UnionField([fields.Str(), InputsField()])
     validation_data = UnionField([fields.Str(), InputsField()])
 
 
-class AutoMLTextClassificationMultilabelNode(AutoMLNodeMixin, TextClassificationMultilableSchema):
-    def __init__(self, **kwargs):
-        super(TextClassificationMultilableSchema, self).__init__(**kwargs)
-        # update field objects and add data binding support
-        support_data_binding_for_fields(self, attrs_to_skip=["task_type"])
-
+class AutoMLTextClassificationMultilabelNode(AutoMLNodeMixin, TextClassificationMultilabelSchema):
     training_data = UnionField([fields.Str(), InputsField()])
     validation_data = UnionField([fields.Str(), InputsField()])
 
 
 class AutoMLTextNerNode(AutoMLNodeMixin, TextNerSchema):
-    def __init__(self, **kwargs):
-        super(TextNerSchema, self).__init__(**kwargs)
-        # update field objects and add data binding support
-        support_data_binding_for_fields(self, attrs_to_skip=["task_type"])
-
     training_data = UnionField([fields.Str(), InputsField()])
     validation_data = UnionField([fields.Str(), InputsField()])
 
 
 class ImageClassificationMulticlassNodeSchema(AutoMLNodeMixin, ImageClassificationSchema):
-    def __init__(self, **kwargs):
-        super(ImageClassificationMulticlassNodeSchema, self).__init__(**kwargs)
-        # update field objects and add data binding support
-        support_data_binding_for_fields(self, attrs_to_skip=["task_type"])
-
     training_data = UnionField([fields.Str(), InputsField()])
     validation_data = UnionField([fields.Str(), InputsField()])
 
 
 class ImageClassificationMultilabelNodeSchema(AutoMLNodeMixin, ImageClassificationMultilabelSchema):
-    def __init__(self, **kwargs):
-        super(ImageClassificationMultilabelNodeSchema, self).__init__(**kwargs)
-        # update field objects and add data binding support
-        support_data_binding_for_fields(self, attrs_to_skip=["task_type"])
-
     training_data = UnionField([fields.Str(), InputsField()])
     validation_data = UnionField([fields.Str(), InputsField()])
 
 
 class ImageObjectDetectionNodeSchema(AutoMLNodeMixin, ImageObjectDetectionSchema):
-    def __init__(self, **kwargs):
-        super(ImageObjectDetectionNodeSchema, self).__init__(**kwargs)
-        # update field objects and add data binding support
-        support_data_binding_for_fields(self, attrs_to_skip=["task_type"])
-
     training_data = UnionField([fields.Str(), InputsField()])
     validation_data = UnionField([fields.Str(), InputsField()])
 
 
 class ImageInstanceSegmentationNodeSchema(AutoMLNodeMixin, ImageInstanceSegmentationSchema):
-    def __init__(self, **kwargs):
-        super(ImageInstanceSegmentationNodeSchema, self).__init__(**kwargs)
-        # update field objects and add data binding support
-        support_data_binding_for_fields(self, attrs_to_skip=["task_type"])
-
     training_data = UnionField([fields.Str(), InputsField()])
     validation_data = UnionField([fields.Str(), InputsField()])
 

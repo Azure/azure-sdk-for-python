@@ -44,14 +44,11 @@ from .._models import (
     RecognizeLinkedEntitiesAction,
     AnalyzeSentimentAction,
     AnalyzeHealthcareEntitiesResult,
-    ExtractSummaryAction,
-    ExtractSummaryResult,
     RecognizeCustomEntitiesAction,
     RecognizeCustomEntitiesResult,
     SingleCategoryClassifyAction,
-    SingleCategoryClassifyResult,
     MultiCategoryClassifyAction,
-    MultiCategoryClassifyResult,
+    ClassifyDocumentResult,
     AnalyzeHealthcareEntitiesAction
 )
 from .._check import is_language_api, string_index_type_compatibility
@@ -76,10 +73,8 @@ AsyncAnalyzeActionsResponse = AsyncAnalyzeActionsLROPoller[
                 RecognizePiiEntitiesResult,
                 ExtractKeyPhrasesResult,
                 AnalyzeSentimentResult,
-                ExtractSummaryResult,
                 RecognizeCustomEntitiesResult,
-                SingleCategoryClassifyResult,
-                MultiCategoryClassifyResult,
+                ClassifyDocumentResult,
                 AnalyzeHealthcareEntitiesResult,
                 DocumentError,
             ]
@@ -837,7 +832,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     @validate_multiapi_args(
         version_method_added="v3.1",
-        args_mapping={"2022-05-01": ["display_name", "fhir_version"]}
+        args_mapping={"2022-05-01": ["display_name"]}
     )
     async def begin_analyze_healthcare_entities(
         self,
@@ -872,9 +867,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             take precedence over whole batch language. See https://aka.ms/talangs for
             supported languages in Text Analytics API.
         :keyword str display_name: An optional display name to set for the requested analysis.
-        :keyword str fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle
-            on the result object. For additional information see https://www.hl7.org/fhir/overview.html.
-            The only acceptable values to pass in are None and "4.0.1". The default value is None.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             Can be one of 'UnicodeCodePoint' (default), 'Utf16CodeUnit', or 'TextElement_v8'.
             For additional information see https://aka.ms/text-analytics-offsets
@@ -903,7 +895,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. versionadded:: v3.1
             The *begin_analyze_healthcare_entities* client method.
         .. versionadded:: 2022-04-01-preview
-            The *display_name* and *fhir_version* keyword arguments.
+            The *display_name* keyword arguments.
 
         .. admonition:: Example:
 
@@ -923,7 +915,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         display_name = kwargs.pop("display_name", None)
-        fhir_version = kwargs.pop("fhir_version", None)
 
         if continuation_token:
             def get_result_from_cont_token(initial_response, pipeline_response):
@@ -979,7 +970,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                                         model_version=model_version,
                                         logging_opt_out=disable_service_logs,
                                         string_index_type=string_index_type_compatibility(string_index_type),
-                                        fhir_version=fhir_version,
                                     )
                                 )
                             ]
@@ -1066,7 +1056,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 RecognizePiiEntitiesAction,
                 ExtractKeyPhrasesAction,
                 AnalyzeSentimentAction,
-                ExtractSummaryAction,
                 RecognizeCustomEntitiesAction,
                 SingleCategoryClassifyAction,
                 MultiCategoryClassifyAction,
@@ -1083,10 +1072,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     RecognizePiiEntitiesResult,
                     ExtractKeyPhrasesResult,
                     AnalyzeSentimentResult,
-                    ExtractSummaryResult,
                     RecognizeCustomEntitiesResult,
-                    SingleCategoryClassifyResult,
-                    MultiCategoryClassifyResult,
+                    ClassifyDocumentResult,
                     AnalyzeHealthcareEntitiesResult,
                     DocumentError,
                 ]
@@ -1114,7 +1101,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             The action results will be in the same order of the input actions.
         :type actions:
             list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
-            RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or ExtractSummaryAction or
+            RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or
             RecognizeCustomEntitiesAction or SingleCategoryClassifyAction or
             MultiCategoryClassifyAction or AnalyzeHealthcareEntitiesAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
@@ -1144,18 +1131,17 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :rtype:
             ~azure.ai.textanalytics.aio.AsyncAnalyzeActionsLROPoller[~azure.core.async_paging.AsyncItemPaged[
             list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
-            ExtractKeyPhrasesResult or AnalyzeSentimentResult or ExtractSummaryAction or RecognizeCustomEntitiesResult
-            or SingleCategoryClassifyResult or MultiCategoryClassifyResult or AnalyzeHealthcareEntitiesResult or
-            DocumentError]]]
+            ExtractKeyPhrasesResult or AnalyzeSentimentResult or RecognizeCustomEntitiesResult
+            or ClassifyDocumentResult or AnalyzeHealthcareEntitiesResult or DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
             The *begin_analyze_actions* client method.
         .. versionadded:: 2022-04-01-preview
-            The *ExtractSummaryAction*, *RecognizeCustomEntitiesAction*, *SingleCategoryClassifyAction*,
+            The *RecognizeCustomEntitiesAction*, *SingleCategoryClassifyAction*,
             *MultiCategoryClassifyAction*, and *AnalyzeHealthcareEntitiesAction* input options and the
-            corresponding *ExtractSummaryResult*, *RecognizeCustomEntitiesResult*, *SingleCategoryClassifyResult*,
-            *MultiCategoryClassifyResult*, and *AnalyzeHealthcareEntitiesResult* result objects
+            corresponding *RecognizeCustomEntitiesResult*, *ClassifyDocumentResult*,
+            and *AnalyzeHealthcareEntitiesResult* result objects
 
         .. admonition:: Example:
 
@@ -1272,22 +1258,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 sentiment_analysis_tasks=[
                     a for a in generated_tasks
                     if _determine_action_type(a) == _AnalyzeActionsType.ANALYZE_SENTIMENT
-                ],
-                extractive_summarization_tasks=[
-                    a for a in generated_tasks
-                    if _determine_action_type(a) == _AnalyzeActionsType.EXTRACT_SUMMARY
-                ],
-                custom_entity_recognition_tasks=[
-                    a for a in generated_tasks
-                    if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES
-                ],
-                custom_single_classification_tasks=[
-                    a for a in generated_tasks
-                    if _determine_action_type(a) == _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY
-                ],
-                custom_multi_classification_tasks=[
-                    a for a in generated_tasks
-                    if _determine_action_type(a) == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY
                 ],
             )
             analyze_body = models.AnalyzeBatchInput(
