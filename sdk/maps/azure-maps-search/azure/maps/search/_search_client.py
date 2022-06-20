@@ -204,7 +204,7 @@ class SearchClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        coordinates = kwargs.get("coordinates", None)
+        coordinates = kwargs.get("coordinates", LatLon())
         country_filter = kwargs.get("country_filter", None)
 
         if not coordinates or not country_filter:

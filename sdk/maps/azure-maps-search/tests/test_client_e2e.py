@@ -2,6 +2,7 @@ import os
 import sys
 import pytest
 
+from azure.core.credentials import AccessToken
 from devtools_testutils import AzureTestCase
 from azure_devtools.scenario_tests import RecordingProcessor
 from azure.maps.search import SearchClient
@@ -24,6 +25,12 @@ class HeaderReplacer(RecordingProcessor):
                     break
         return request
 
+class FakeTokenCredential(object):
+    def __init__(self):
+        self.token = AccessToken("Fake Token", 0)
+
+    def get_token(self, *args):
+        return self.token
 
 # cSpell:disable
 class AzureMapsSearchClientE2ETest(AzureTestCase):
@@ -37,12 +44,11 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
     def setUp(self):
         super(AzureMapsSearchClientE2ETest, self).setUp()
         self.client = self.create_client_from_credential(SearchClient,
-            credential="NotUsed",
+            credential=FakeTokenCredential(),
             client_id=self.get_settings_value("CLIENT_ID"),
             authentication_policy = self.get_credential(SearchClient))
         assert self.client is not None
 
-    @pytest.mark.live_test_only
     def test_fuzzy_search_poi_coordinates(self):
         result = self.client.fuzzy_search("Taipei 101", coordinates=LatLon(25.0338053, 121.5640089))
         assert len(result.results) > 0 and result.results[0].type == "POI"
