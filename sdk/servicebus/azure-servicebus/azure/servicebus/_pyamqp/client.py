@@ -813,7 +813,7 @@ class ReceiveClient(AMQPClient):
         *,
         delivery_failed: Optional[bool] = None,
         undeliverable_here: Optional[bool] = None,
-        message_annotations: Optional[Dict[Union[str, bytes], Any]],
+        message_annotations: Optional[Dict[Union[str, bytes], Any]] = None,
         batchable: Optional[bool] = None
     ):
         ...

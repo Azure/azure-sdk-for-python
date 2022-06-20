@@ -513,6 +513,7 @@ def test_message_backcompat_peek_lock_databody():
         assert incoming_message.message.properties.reply_to_group_id == b'reply to session'
         assert incoming_message.message.properties.get_properties_obj().message_id
         assert incoming_message.message.accept()
+        # TODO: State isn't updated if settled correctly via the receiver.
         assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
         assert incoming_message.message.settled
         assert not incoming_message.message.release()

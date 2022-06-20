@@ -83,6 +83,7 @@ if _CAN_ADD_DOCSTRING:
 
 
 Rejected = namedtuple('rejected', ['error'])
+Rejected.__new__.__defaults__ = (None,) * len(Rejected._fields)
 Rejected._code = 0x00000025
 Rejected._definition = (FIELD("error", ObjDefinition.error, False, None, False),)
 if _CAN_ADD_DOCSTRING:
@@ -123,6 +124,7 @@ if _CAN_ADD_DOCSTRING:
 
 
 Modified = namedtuple('modified', ['delivery_failed', 'undeliverable_here', 'message_annotations'])
+Modified.__new__.__defaults__ = (None,) * len(Modified._fields)
 Modified._code = 0x00000027
 Modified._definition = (
     FIELD('delivery_failed', AMQPTypes.boolean, False, None, False),
