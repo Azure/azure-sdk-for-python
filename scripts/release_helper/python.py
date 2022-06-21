@@ -19,7 +19,7 @@ class IssueProcessPython(IssueProcess):
 
     def __init__(self, issue_package: IssuePackage, request_repo_dict: Dict[str, Repository],
                  assignee_candidates: Set[str], language_owner: Set[str]):
-        IssueProcess.__init__(issue_package, request_repo_dict, assignee_candidates, language_owner)
+        IssueProcess.__init__(self, issue_package, request_repo_dict, assignee_candidates, language_owner)
         self.output_folder = ''
         self.is_multiapi = False
         self.pattern_resource_manager = re.compile(r'/specification/([\w-]+/)+resource-manager')
