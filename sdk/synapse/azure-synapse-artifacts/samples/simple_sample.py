@@ -24,7 +24,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import io
 import logging
 import os
 
