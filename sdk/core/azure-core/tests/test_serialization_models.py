@@ -1830,6 +1830,29 @@ class ModelWithReadonly(Model):
 #     assert received_model.normal_property == received_model["normalProperty"] == "foo"
 #     assert received_model.readonly_property == received_model["readonlyProperty"] == "bar"
 
+def test_incorrect_initialization():
+    class MyModel(Model):
+        id: int = rest_field()
+        field: str = rest_field()
+
+        @overload
+        def __init__(self, *, id: int, field: str,):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    with pytest.raises(TypeError):
+        MyModel(1, "field")
+
+    with pytest.raises(TypeError):
+        MyModel(id=1, field="field", unknown="me")
+
+
 def test_serialization_initialization_and_setting():
     serialized_datetime = "9999-12-31T23:59:59.999000Z"
     parsed_datetime = isodate.parse_datetime(serialized_datetime)
@@ -2202,7 +2225,13 @@ def test_mutability_dict():
     middle_property = model.middle_property
     middle_property["prop"] = "new"
     assert model["middleProperty"] is model.middle_property is middle_property
-    assert model["middleProperty"]["prop"] == model.middle_property.prop == "new"
+    assert (
+        model["middleProperty"]["prop"] ==
+        model["middleProperty"].prop ==
+        model.middle_property.prop ==
+        model.middle_property["prop"] ==
+        "new"
+    )
 
     # set with attr syntax
     middle_property.prop = "newest"
@@ -2277,7 +2306,173 @@ def test_del_model():
     assert my_model.x is my_model.get("x") is None
 
 def test_pop_model():
-    ...
+    class Inner(Model):
+        str_property: str = rest_field(name="strProperty")
+
+        @overload
+        def __init__(
+            self,
+            *,
+            str_property: str,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    class Middle(Model):
+        inner_property: Dict[str, Inner] = rest_field(name="innerProperty")
+        prop: str = rest_field()
+
+        @overload
+        def __init__(
+            self,
+            *,
+            inner_property: Dict[str, Inner],
+            prop: str,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    class Outer(Model):
+        middle_property: Middle = rest_field(name="middleProperty")
+
+        @overload
+        def __init__(
+            self,
+            *,
+            middle_property: Model,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    original_dict = {"middleProperty": {"innerProperty": {"inner": {"strProperty": "hello"}}, "prop": "original"}}
+    model_dict = Outer(original_dict)  # model we will access with dict syntax
+    model_attr = Outer(original_dict)  # model we will access with attr syntax
+
+    assert model_dict is not original_dict is not model_attr
+    assert (
+        original_dict["middleProperty"]["innerProperty"]["inner"].pop("strProperty") ==
+        model_dict["middleProperty"]["innerProperty"]["inner"].pop("strProperty") ==
+        model_attr.middle_property.inner_property["inner"].pop("strProperty") ==
+        "hello"
+    )
+
+    with pytest.raises(KeyError):
+        original_dict["middleProperty"]["innerProperty"]["inner"].pop("strProperty")
+    with pytest.raises(KeyError):
+        model_dict["middleProperty"]["innerProperty"]["inner"].pop("strProperty")
+    with pytest.raises(KeyError):
+        model_attr.middle_property.inner_property["inner"].pop("strProperty")
+
+def test_contains():
+    class ParentA(Model):
+        a_prop: str = rest_field(name="aProp")
+
+        @overload
+        def __init__(
+            self,
+            *,
+            a_prop: str,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    class ParentB(Model):
+        b_prop: str = rest_field(name="bProp")
+
+        @overload
+        def __init__(
+            self,
+            *,
+            b_prop: str,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    class ChildC(ParentA, ParentB):
+        c_prop: str = rest_field(name="cProp")
+
+        @overload
+        def __init__(
+            self,
+            *,
+            a_prop: str,
+            b_prop: str,
+            c_prop: str,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    parent_a_dict = {"aProp": "a"}
+    assert "aProp" in parent_a_dict
+
+    parent_a = ParentA(parent_a_dict)
+    assert "aProp" in parent_a
+    assert not "a_prop" in parent_a
+
+    parent_a.a_prop = None # clear it out
+    assert "aProp" not in parent_a
+
+    parent_b_dict = {"bProp": "b"}
+    assert "bProp" in parent_b_dict
+
+    parent_b = ParentB(parent_b_dict)
+    assert "bProp" in parent_b
+    assert "b_prop" not in parent_b
+
+    parent_b.b_prop = None # clear it out
+    assert "bProp" not in parent_b
+
+
+    props = ["aProp", "bProp", "cProp"]
+    child_c_dict = {"aProp": "a", "bProp": "b", "cProp": "c"}
+    assert all(p for p in props if p in child_c_dict)
+
+    child_c = ChildC(child_c_dict)
+    assert all(p for p in props if p in child_c)
+    assert not any(p for p in ["a_prop", "b_prop", "c_prop"] if p in child_c)
+
+    child_c.a_prop = None
+    child_c.b_prop = None
+    child_c.c_prop = None
+
+    assert not any(p for p in props if p in child_c)
+
 
 
 ##### REWRITE BODY COMPLEX INTO THIS FILE #####
