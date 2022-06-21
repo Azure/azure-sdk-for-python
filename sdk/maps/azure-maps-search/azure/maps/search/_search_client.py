@@ -207,10 +207,6 @@ class SearchClient(object):
         coordinates = kwargs.get("coordinates", LatLon())
         country_filter = kwargs.get("country_filter", None)
 
-        if not coordinates or not country_filter:
-            raise TypeError(
-                'at least "coordinates" or "country_filter" is required')
-
         return self._search_client.fuzzy_search(
             query,
             lat=coordinates.lat,

@@ -25,12 +25,6 @@ class HeaderReplacer(RecordingProcessor):
                     break
         return request
 
-class FakeTokenCredential(object):
-    def __init__(self):
-        self.token = AccessToken("Fake Token", 0)
-
-    def get_token(self, *args):
-        return self.token
 
 # cSpell:disable
 class AzureMapsSearchClientE2ETest(AzureTestCase):
@@ -44,8 +38,7 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
     def setUp(self):
         super(AzureMapsSearchClientE2ETest, self).setUp()
         self.client = self.create_client_from_credential(SearchClient,
-            credential=FakeTokenCredential(),
-            client_id=self.get_settings_value("CLIENT_ID"),
+            credential='NotUsed',
             authentication_policy = self.get_credential(SearchClient))
         assert self.client is not None
 

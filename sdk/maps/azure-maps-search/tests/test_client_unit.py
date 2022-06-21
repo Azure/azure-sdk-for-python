@@ -153,7 +153,7 @@ class AzureMapsSearchClientUnitTest(AzureTestCase):
 }'''
         client = create_mock_client(status_code=400, body=body)
         with pytest.raises(HttpResponseError) as err:
-            result = client.fuzzy_search(self, query="Taipei 101", country_filter=["TW"], top=0)
+            result = client.fuzzy_search("Taipei 101", top=0)
         assert err.value.status_code == 400 and "limit value" in err.value.message
 
     def test_fuzzy_search_invalid_skip(self):
@@ -165,7 +165,7 @@ class AzureMapsSearchClientUnitTest(AzureTestCase):
 }'''
         client = create_mock_client(status_code=400, body=body)
         with pytest.raises(HttpResponseError) as err:
-            result = client.fuzzy_search(self, "Taipei 101", country_filter="TW", skip=10000)
+            result = client.fuzzy_search("Taipei 101", skip=10000)
         assert err.value.status_code == 400 and "ofs value" in err.value.message
 
     def test_search_nearby_point_of_interest_miss_coordinates(self):
