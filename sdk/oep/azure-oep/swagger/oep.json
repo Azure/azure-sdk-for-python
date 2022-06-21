@@ -1,0 +1,1432 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2021-06-01-preview",
+    "title": "Api Documentation",
+    "description": "Api Documentation",
+    "contact": {
+
+    }
+  },
+  "host": "bvtstglf7zn1c.oep.ppe.azure-int.net",
+  "basePath": "/",
+  "securityDefinitions": {
+    "Authorization": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/legal/v1/_ah/liveness_check": {
+      "get": {
+        "description": "livenessCheck",
+        "summary": "livenessCheckUsingGET",
+        "tags": [
+          "health-check-api"
+        ],
+        "operationId": "livenessCheckUsingGET",
+        "deprecated": false,
+        "produces": [
+          "text/plain"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "livenessCheckUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/livenessCheckUsingGET_MaximumSet_Gen.json"
+          },
+          "livenessCheckUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/livenessCheckUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/legal/v1/_ah/readiness_check": {
+      "get": {
+        "description": "readinessCheck",
+        "summary": "readinessCheckUsingGET",
+        "tags": [
+          "health-check-api"
+        ],
+        "operationId": "readinessCheckUsingGET",
+        "deprecated": false,
+        "produces": [
+          "text/plain"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "readinessCheckUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/readinessCheckUsingGET_MaximumSet_Gen.json"
+          },
+          "readinessCheckUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/readinessCheckUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/legal/v1/info": {
+      "get": {
+        "description": "info",
+        "summary": "infoUsingGET",
+        "tags": [
+          "info-api"
+        ],
+        "operationId": "infoUsingGET",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/VersionInfo"
+            },
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "infoUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/infoUsingGET_MaximumSet_Gen.json"
+          },
+          "infoUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/infoUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/legal/v1/legaltags": {
+      "get": {
+        "description": "listLegalTags",
+        "summary": "listLegalTagsUsingGET",
+        "tags": [
+          "legal-tag-api"
+        ],
+        "operationId": "listLegalTagsUsingGET",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "valid",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "description": "valid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/LegalTagDef"
+            },
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "listLegalTagsUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/listLegalTagsUsingGET_MaximumSet_Gen.json"
+          },
+          "listLegalTagsUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/listLegalTagsUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      },
+      "put": {
+        "description": "updateLegalTag",
+        "summary": "updateLegalTagUsingPUT",
+        "tags": [
+          "legal-tag-api"
+        ],
+        "operationId": "updateLegalTagUsingPUT",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": false,
+            "enum": [
+              "application/json"
+            ],
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/UpdateLegalTag"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/LegalTagDto"
+            },
+            "headers": {
+
+            }
+          },
+          "201": {
+            "description": "Created",
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "updateLegalTagUsingPUT_MaximumSet_Gen": {
+            "$ref": "./examples/updateLegalTagUsingPUT_MaximumSet_Gen.json"
+          },
+          "updateLegalTagUsingPUT_MinimumSet_Gen": {
+            "$ref": "./examples/updateLegalTagUsingPUT_MinimumSet_Gen.json"
+          }
+        }
+      },
+      "post": {
+        "description": "createLegalTag",
+        "summary": "createLegalTagUsingPOST",
+        "tags": [
+          "legal-tag-api"
+        ],
+        "operationId": "createLegalTagUsingPOST",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": false,
+            "enum": [
+              "application/json"
+            ],
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/LegalTagDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/LegalTagDto"
+            },
+            "headers": {
+
+            }
+          },
+          "201": {
+            "description": "Created",
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "createLegalTagUsingPOST_MaximumSet_Gen": {
+            "$ref": "./examples/createLegalTagUsingPOST_MaximumSet_Gen.json"
+          },
+          "createLegalTagUsingPOST_MinimumSet_Gen": {
+            "$ref": "./examples/createLegalTagUsingPOST_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/legal/v1/legaltags/{name}": {
+      "get": {
+        "description": "getLegalTag",
+        "summary": "getLegalTagUsingGET",
+        "tags": [
+          "legal-tag-api"
+        ],
+        "operationId": "getLegalTagUsingGET",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ResponseEntity"
+            },
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "getLegalTagUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/getLegalTagUsingGET_MaximumSet_Gen.json"
+          },
+          "getLegalTagUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/getLegalTagUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      },
+      "delete": {
+        "description": "deleteLegalTag",
+        "summary": "deleteLegalTagUsingDELETE",
+        "tags": [
+          "legal-tag-api"
+        ],
+        "operationId": "deleteLegalTagUsingDELETE",
+        "deprecated": false,
+        "produces": [
+          "text/plain"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ApiLegalV1LegaltagsResponse"
+            },
+            "headers": {
+
+            }
+          },
+          "204": {
+            "description": "No Content",
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "deleteLegalTagUsingDELETE_MaximumSet_Gen": {
+            "$ref": "./examples/deleteLegalTagUsingDELETE_MaximumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/legal/v1/legaltags:batchRetrieve": {
+      "post": {
+        "description": "getLegalTags",
+        "summary": "getLegalTagsUsingPOST",
+        "tags": [
+          "legal-tag-api"
+        ],
+        "operationId": "getLegalTagsUsingPOST",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": false,
+            "enum": [
+              "application/json"
+            ],
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/RequestLegalTags"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/LegalTagDef"
+            },
+            "headers": {
+
+            }
+          },
+          "201": {
+            "description": "Created",
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "getLegalTagsUsingPOST_MaximumSet_Gen": {
+            "$ref": "./examples/getLegalTagsUsingPOST_MaximumSet_Gen.json"
+          },
+          "getLegalTagsUsingPOST_MinimumSet_Gen": {
+            "$ref": "./examples/getLegalTagsUsingPOST_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/legal/v1/legaltags:properties": {
+      "get": {
+        "description": "getLegalTagProperties",
+        "summary": "getLegalTagPropertiesUsingGET",
+        "tags": [
+          "legal-tag-api"
+        ],
+        "operationId": "getLegalTagPropertiesUsingGET",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ReadablePropertyValues"
+            },
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "getLegalTagPropertiesUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/getLegalTagPropertiesUsingGET_MaximumSet_Gen.json"
+          },
+          "getLegalTagPropertiesUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/getLegalTagPropertiesUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/legal/v1/legaltags:validate": {
+      "post": {
+        "description": "validateLegalTags",
+        "summary": "validateLegalTagsUsingPOST",
+        "tags": [
+          "legal-tag-api"
+        ],
+        "operationId": "validateLegalTagsUsingPOST",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": false,
+            "enum": [
+              "application/json"
+            ],
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/RequestLegalTags"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/InvalidTagsWithReason"
+            },
+            "headers": {
+
+            }
+          },
+          "201": {
+            "description": "Created",
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "validateLegalTagsUsingPOST_MaximumSet_Gen": {
+            "$ref": "./examples/validateLegalTagsUsingPOST_MaximumSet_Gen.json"
+          },
+          "validateLegalTagsUsingPOST_MinimumSet_Gen": {
+            "$ref": "./examples/validateLegalTagsUsingPOST_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/legal/v1/jobs/updateLegalTagStatus": {
+      "get": {
+        "description": "checkLegalTagStatusChanges",
+        "summary": "checkLegalTagStatusChangesUsingGET",
+        "tags": [
+          "legal-tag-status-job-api"
+        ],
+        "operationId": "checkLegalTagStatusChangesUsingGET",
+        "deprecated": false,
+        "produces": [
+          "text/plain"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ApiLegalV1JobsUpdateLegalTagStatusResponse"
+            },
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "checkLegalTagStatusChangesUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/checkLegalTagStatusChangesUsingGET_MaximumSet_Gen.json"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ConnectedOuterService": {
+      "title": "ConnectedOuterService",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "InvalidTagWithReason": {
+      "title": "InvalidTagWithReason",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "InvalidTagsWithReason": {
+      "title": "InvalidTagsWithReason",
+      "type": "object",
+      "properties": {
+        "invalidLegalTags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InvalidTagWithReason"
+          }
+        }
+      }
+    },
+    "LegalTagDto": {
+      "title": "LegalTagDto",
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "properties": {
+          "$ref": "#/definitions/Properties"
+        }
+      }
+    },
+    "LegalTagDef": {
+      "title": "LegalTagDef",
+      "type": "object",
+      "properties": {
+        "legalTags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LegalTagDto"
+          }
+        }
+      }
+    },
+    "Properties": {
+      "title": "Properties",
+      "type": "object",
+      "properties": {
+        "contractId": {
+          "type": "string"
+        },
+        "countryOfOrigin": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dataType": {
+          "type": "string"
+        },
+        "expirationDate": {
+          "example": "yyyy-MM-dd",
+          "type": "string"
+        },
+        "exportClassification": {
+          "type": "string"
+        },
+        "originator": {
+          "type": "string"
+        },
+        "personalData": {
+          "type": "string"
+        },
+        "securityClassification": {
+          "type": "string"
+        }
+      }
+    },
+    "ReadablePropertyValues": {
+      "title": "ReadablePropertyValues",
+      "type": "object",
+      "properties": {
+        "countriesOfOrigin": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "dataTypes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "exportClassificationControlNumbers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "otherRelevantDataCountries": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "personalDataTypes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "securityClassifications": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "RequestLegalTags": {
+      "title": "RequestLegalTags",
+      "type": "object",
+      "properties": {
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "names"
+      ]
+    },
+    "ResponseEntity": {
+      "title": "ResponseEntity",
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "object"
+        },
+        "statusCode": {
+          "$ref": "#/definitions/StatusCode"
+        },
+        "statusCodeValue": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "UpdateLegalTag": {
+      "title": "UpdateLegalTag",
+      "type": "object",
+      "properties": {
+        "contractId": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "expirationDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "VersionInfo": {
+      "title": "VersionInfo",
+      "type": "object",
+      "properties": {
+        "artifactId": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "buildTime": {
+          "type": "string"
+        },
+        "commitId": {
+          "type": "string"
+        },
+        "commitMessage": {
+          "type": "string"
+        },
+        "connectedOuterServices": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ConnectedOuterService"
+          }
+        },
+        "groupId": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "ApiLegalV1JobsUpdateLegalTagStatusResponse": {
+      "title": "ApiLegalV1JobsUpdateLegalTagStatusResponse",
+      "example": "ACCEPTED",
+      "type": "string",
+      "enum": [
+        "ACCEPTED",
+        "ALREADY_REPORTED",
+        "BAD_GATEWAY",
+        "BAD_REQUEST",
+        "BANDWIDTH_LIMIT_EXCEEDED",
+        "CHECKPOINT",
+        "CONFLICT",
+        "CONTINUE",
+        "CREATED",
+        "DESTINATION_LOCKED",
+        "EXPECTATION_FAILED",
+        "FAILED_DEPENDENCY",
+        "FORBIDDEN",
+        "FOUND",
+        "GATEWAY_TIMEOUT",
+        "GONE",
+        "HTTP_VERSION_NOT_SUPPORTED",
+        "IM_USED",
+        "INSUFFICIENT_SPACE_ON_RESOURCE",
+        "INSUFFICIENT_STORAGE",
+        "INTERNAL_SERVER_ERROR",
+        "I_AM_A_TEAPOT",
+        "LENGTH_REQUIRED",
+        "LOCKED",
+        "LOOP_DETECTED",
+        "METHOD_FAILURE",
+        "METHOD_NOT_ALLOWED",
+        "MOVED_PERMANENTLY",
+        "MOVED_TEMPORARILY",
+        "MULTIPLE_CHOICES",
+        "MULTI_STATUS",
+        "NETWORK_AUTHENTICATION_REQUIRED",
+        "NON_AUTHORITATIVE_INFORMATION",
+        "NOT_ACCEPTABLE",
+        "NOT_EXTENDED",
+        "NOT_FOUND",
+        "NOT_IMPLEMENTED",
+        "NOT_MODIFIED",
+        "NO_CONTENT",
+        "OK",
+        "PARTIAL_CONTENT",
+        "PAYLOAD_TOO_LARGE",
+        "PAYMENT_REQUIRED",
+        "PERMANENT_REDIRECT",
+        "PRECONDITION_FAILED",
+        "PRECONDITION_REQUIRED",
+        "PROCESSING",
+        "PROXY_AUTHENTICATION_REQUIRED",
+        "REQUESTED_RANGE_NOT_SATISFIABLE",
+        "REQUEST_ENTITY_TOO_LARGE",
+        "REQUEST_HEADER_FIELDS_TOO_LARGE",
+        "REQUEST_TIMEOUT",
+        "REQUEST_URI_TOO_LONG",
+        "RESET_CONTENT",
+        "SEE_OTHER",
+        "SERVICE_UNAVAILABLE",
+        "SWITCHING_PROTOCOLS",
+        "TEMPORARY_REDIRECT",
+        "TOO_EARLY",
+        "TOO_MANY_REQUESTS",
+        "UNAUTHORIZED",
+        "UNAVAILABLE_FOR_LEGAL_REASONS",
+        "UNPROCESSABLE_ENTITY",
+        "UNSUPPORTED_MEDIA_TYPE",
+        "UPGRADE_REQUIRED",
+        "URI_TOO_LONG",
+        "USE_PROXY",
+        "VARIANT_ALSO_NEGOTIATES"
+      ]
+    },
+    "ApiLegalV1LegaltagsResponse": {
+      "title": "ApiLegalV1LegaltagsResponse",
+      "example": "ACCEPTED",
+      "type": "string",
+      "enum": [
+        "ACCEPTED",
+        "ALREADY_REPORTED",
+        "BAD_GATEWAY",
+        "BAD_REQUEST",
+        "BANDWIDTH_LIMIT_EXCEEDED",
+        "CHECKPOINT",
+        "CONFLICT",
+        "CONTINUE",
+        "CREATED",
+        "DESTINATION_LOCKED",
+        "EXPECTATION_FAILED",
+        "FAILED_DEPENDENCY",
+        "FORBIDDEN",
+        "FOUND",
+        "GATEWAY_TIMEOUT",
+        "GONE",
+        "HTTP_VERSION_NOT_SUPPORTED",
+        "IM_USED",
+        "INSUFFICIENT_SPACE_ON_RESOURCE",
+        "INSUFFICIENT_STORAGE",
+        "INTERNAL_SERVER_ERROR",
+        "I_AM_A_TEAPOT",
+        "LENGTH_REQUIRED",
+        "LOCKED",
+        "LOOP_DETECTED",
+        "METHOD_FAILURE",
+        "METHOD_NOT_ALLOWED",
+        "MOVED_PERMANENTLY",
+        "MOVED_TEMPORARILY",
+        "MULTIPLE_CHOICES",
+        "MULTI_STATUS",
+        "NETWORK_AUTHENTICATION_REQUIRED",
+        "NON_AUTHORITATIVE_INFORMATION",
+        "NOT_ACCEPTABLE",
+        "NOT_EXTENDED",
+        "NOT_FOUND",
+        "NOT_IMPLEMENTED",
+        "NOT_MODIFIED",
+        "NO_CONTENT",
+        "OK",
+        "PARTIAL_CONTENT",
+        "PAYLOAD_TOO_LARGE",
+        "PAYMENT_REQUIRED",
+        "PERMANENT_REDIRECT",
+        "PRECONDITION_FAILED",
+        "PRECONDITION_REQUIRED",
+        "PROCESSING",
+        "PROXY_AUTHENTICATION_REQUIRED",
+        "REQUESTED_RANGE_NOT_SATISFIABLE",
+        "REQUEST_ENTITY_TOO_LARGE",
+        "REQUEST_HEADER_FIELDS_TOO_LARGE",
+        "REQUEST_TIMEOUT",
+        "REQUEST_URI_TOO_LONG",
+        "RESET_CONTENT",
+        "SEE_OTHER",
+        "SERVICE_UNAVAILABLE",
+        "SWITCHING_PROTOCOLS",
+        "TEMPORARY_REDIRECT",
+        "TOO_EARLY",
+        "TOO_MANY_REQUESTS",
+        "UNAUTHORIZED",
+        "UNAVAILABLE_FOR_LEGAL_REASONS",
+        "UNPROCESSABLE_ENTITY",
+        "UNSUPPORTED_MEDIA_TYPE",
+        "UPGRADE_REQUIRED",
+        "URI_TOO_LONG",
+        "USE_PROXY",
+        "VARIANT_ALSO_NEGOTIATES"
+      ]
+    },
+    "StatusCode": {
+      "title": "StatusCode",
+      "example": "ACCEPTED",
+      "type": "string",
+      "enum": [
+        "ACCEPTED",
+        "ALREADY_REPORTED",
+        "BAD_GATEWAY",
+        "BAD_REQUEST",
+        "BANDWIDTH_LIMIT_EXCEEDED",
+        "CHECKPOINT",
+        "CONFLICT",
+        "CONTINUE",
+        "CREATED",
+        "DESTINATION_LOCKED",
+        "EXPECTATION_FAILED",
+        "FAILED_DEPENDENCY",
+        "FORBIDDEN",
+        "FOUND",
+        "GATEWAY_TIMEOUT",
+        "GONE",
+        "HTTP_VERSION_NOT_SUPPORTED",
+        "IM_USED",
+        "INSUFFICIENT_SPACE_ON_RESOURCE",
+        "INSUFFICIENT_STORAGE",
+        "INTERNAL_SERVER_ERROR",
+        "I_AM_A_TEAPOT",
+        "LENGTH_REQUIRED",
+        "LOCKED",
+        "LOOP_DETECTED",
+        "METHOD_FAILURE",
+        "METHOD_NOT_ALLOWED",
+        "MOVED_PERMANENTLY",
+        "MOVED_TEMPORARILY",
+        "MULTIPLE_CHOICES",
+        "MULTI_STATUS",
+        "NETWORK_AUTHENTICATION_REQUIRED",
+        "NON_AUTHORITATIVE_INFORMATION",
+        "NOT_ACCEPTABLE",
+        "NOT_EXTENDED",
+        "NOT_FOUND",
+        "NOT_IMPLEMENTED",
+        "NOT_MODIFIED",
+        "NO_CONTENT",
+        "OK",
+        "PARTIAL_CONTENT",
+        "PAYLOAD_TOO_LARGE",
+        "PAYMENT_REQUIRED",
+        "PERMANENT_REDIRECT",
+        "PRECONDITION_FAILED",
+        "PRECONDITION_REQUIRED",
+        "PROCESSING",
+        "PROXY_AUTHENTICATION_REQUIRED",
+        "REQUESTED_RANGE_NOT_SATISFIABLE",
+        "REQUEST_ENTITY_TOO_LARGE",
+        "REQUEST_HEADER_FIELDS_TOO_LARGE",
+        "REQUEST_TIMEOUT",
+        "REQUEST_URI_TOO_LONG",
+        "RESET_CONTENT",
+        "SEE_OTHER",
+        "SERVICE_UNAVAILABLE",
+        "SWITCHING_PROTOCOLS",
+        "TEMPORARY_REDIRECT",
+        "TOO_EARLY",
+        "TOO_MANY_REQUESTS",
+        "UNAUTHORIZED",
+        "UNAVAILABLE_FOR_LEGAL_REASONS",
+        "UNPROCESSABLE_ENTITY",
+        "UNSUPPORTED_MEDIA_TYPE",
+        "UPGRADE_REQUIRED",
+        "URI_TOO_LONG",
+        "USE_PROXY",
+        "VARIANT_ALSO_NEGOTIATES"
+      ]
+    }
+  },
+  "security": [
+
+  ],
+  "tags": [
+    {
+      "name": "health-check-api",
+      "description": "Health Check Api"
+    },
+    {
+      "name": "info-api",
+      "description": "Info Api"
+    },
+    {
+      "name": "legal-tag-api",
+      "description": "Legal Tag Api"
+    },
+    {
+      "name": "legal-tag-status-job-api",
+      "description": "Legal Tag Status Job Api"
+    }
+  ]
+}
