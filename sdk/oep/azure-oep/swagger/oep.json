@@ -1,0 +1,944 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2021-06-01-preview",
+    "title": "Api Documentation",
+    "description": "Api Documentation",
+    "contact": {
+
+    }
+  },
+  "host": "bvtstglf7zn1c.oep.ppe.azure-int.net",
+  "basePath": "/",
+  "securityDefinitions": {
+    "Authorization": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/search/v2/health/liveness_check": {
+      "get": {
+        "description": "livenessCheck",
+        "summary": "livenessCheckUsingGET",
+        "tags": [
+          "health-check-api"
+        ],
+        "operationId": "livenessCheckUsingGET",
+        "deprecated": false,
+        "produces": [
+          "text/plain"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant. This should be same value as first field in 'kind' field"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "x-ms-examples": {
+          "livenessCheckUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/livenessCheckUsingGET_MaximumSet_Gen.json"
+          },
+          "livenessCheckUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/livenessCheckUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/search/v2/health/readiness_check": {
+      "get": {
+        "description": "readinessCheck",
+        "summary": "readinessCheckUsingGET",
+        "tags": [
+          "health-check-api"
+        ],
+        "operationId": "readinessCheckUsingGET",
+        "deprecated": false,
+        "produces": [
+          "text/plain"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant. This should be same value as first field in 'kind' field"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "x-ms-examples": {
+          "readinessCheckUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/readinessCheckUsingGET_MaximumSet_Gen.json"
+          },
+          "readinessCheckUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/readinessCheckUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/search/v2/info": {
+      "get": {
+        "description": "info",
+        "summary": "infoUsingGET",
+        "tags": [
+          "info-api"
+        ],
+        "operationId": "infoUsingGET",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant. This should be same value as first field in 'kind' field"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/VersionInfo"
+            },
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "x-ms-examples": {
+          "infoUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/infoUsingGET_MaximumSet_Gen.json"
+          },
+          "infoUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/infoUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/search/v2/ccs/query": {
+      "post": {
+        "description": "The API supports cross cluster searches when given the list of partitions.",
+        "summary": "CCS Query",
+        "tags": [
+          "search-api"
+        ],
+        "operationId": "CCSQuery",
+        "deprecated": true,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "account-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "Account ID is the active DELFI account (SLB account or customer's account) which the users choose to use with the Search API."
+          },
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant. This should be same value as first field in 'kind' field"
+          },
+          {
+            "name": "on-behalf-of",
+            "in": "header",
+            "required": false,
+            "type": "string",
+            "description": "Token (Google ID or SAuth) representing the user whose request is sent on behalf of."
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": false,
+            "enum": [
+              "application/json"
+            ],
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/CcsQueryRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/CcsQueryResponse"
+            },
+            "headers": {
+
+            }
+          },
+          "201": {
+            "description": "Created",
+            "headers": {
+
+            }
+          },
+          "400": {
+            "description": "Invalid parameters were given on request",
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "User not authorized to perform the action",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          },
+          "502": {
+            "description": "Search service scale-up is taking longer than expected. Wait 10 seconds and retry.",
+            "headers": {
+
+            }
+          }
+        },
+        "x-ms-examples": {
+          "CCSQuery_MaximumSet_Gen": {
+            "$ref": "./examples/CCSQuery_MaximumSet_Gen.json"
+          },
+          "CCSQuery_MinimumSet_Gen": {
+            "$ref": "./examples/CCSQuery_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/search/v2/query": {
+      "post": {
+        "description": "The API supports full text search on string fields, range queries on date, numeric or string fields, along with geo-spatial search. Required roles: 'users.datalake.viewers' or 'users.datalake.editors' or 'users.datalake.admins' or 'users.datalake.ops'. In addition, users must be a member of data groups to access the data.",
+        "summary": "Query",
+        "tags": [
+          "search-api"
+        ],
+        "operationId": "Query",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "account-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "Account ID is the active DELFI account (SLB account or customer's account) which the users choose to use with the Search API."
+          },
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant. This should be same value as first field in 'kind' field"
+          },
+          {
+            "name": "on-behalf-of",
+            "in": "header",
+            "required": false,
+            "type": "string",
+            "description": "Token (Google ID or SAuth) representing the user whose request is sent on behalf of."
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": false,
+            "enum": [
+              "application/json"
+            ],
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/QueryRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/QueryResponse"
+            },
+            "headers": {
+
+            }
+          },
+          "201": {
+            "description": "Created",
+            "headers": {
+
+            }
+          },
+          "400": {
+            "description": "Invalid parameters were given on request",
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "User not authorized to perform the action",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          },
+          "502": {
+            "description": "Search service scale-up is taking longer than expected. Wait 10 seconds and retry.",
+            "headers": {
+
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Query_MaximumSet_Gen": {
+            "$ref": "./examples/Query_MaximumSet_Gen.json"
+          },
+          "Query_MinimumSet_Gen": {
+            "$ref": "./examples/Query_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/search/v2/query_with_cursor": {
+      "post": {
+        "description": "The API supports full text search on string fields, range queries on date, numeric or string fields, along with geo-spatial search. Required roles: 'users.datalake.viewers' or 'users.datalake.editors' or 'users.datalake.admins' or 'users.datalake.ops'. In addition, users must be a member of data groups to access the data. It can be used to retrieve large numbers of results (or even all results) from a single search request, in much the same way as you would use a cursor on a traditional database.",
+        "summary": "Query with cursor",
+        "tags": [
+          "search-api"
+        ],
+        "operationId": "QueryWithCursor",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "account-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "Account ID is the active DELFI account (SLB account or customer's account) which the users choose to use with the Search API."
+          },
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant. This should be same value as first field in 'kind' field"
+          },
+          {
+            "name": "on-behalf-of",
+            "in": "header",
+            "required": false,
+            "type": "string",
+            "description": "Token (Google ID or SAuth) representing the user whose request is sent on behalf of."
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": false,
+            "enum": [
+              "application/json"
+            ],
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/CursorQueryRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/CursorQueryResponse"
+            },
+            "headers": {
+
+            }
+          },
+          "201": {
+            "description": "Created",
+            "headers": {
+
+            }
+          },
+          "400": {
+            "description": "Invalid parameters were given on request",
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "User not authorized to perform the action",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          },
+          "502": {
+            "description": "Search service scale-up is taking longer than expected. Wait 10 seconds and retry.",
+            "headers": {
+
+            }
+          }
+        },
+        "x-ms-examples": {
+          "QueryWithCursor_MaximumSet_Gen": {
+            "$ref": "./examples/QueryWithCursor_MaximumSet_Gen.json"
+          },
+          "QueryWithCursor_MinimumSet_Gen": {
+            "$ref": "./examples/QueryWithCursor_MinimumSet_Gen.json"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "AggregationResponse": {
+      "title": "AggregationResponse",
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "key": {
+          "type": "string"
+        }
+      }
+    },
+    "AppError": {
+      "title": "AppError",
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "ByBoundingBox": {
+      "title": "ByBoundingBox",
+      "type": "object",
+      "properties": {
+        "bottomRight": {
+          "$ref": "#/definitions/Point"
+        },
+        "topLeft": {
+          "$ref": "#/definitions/Point"
+        }
+      }
+    },
+    "ByDistance": {
+      "title": "ByDistance",
+      "type": "object",
+      "properties": {
+        "distance": {
+          "description": "The radius of the circle centered on the specified location. Points which fall into this circle are considered to be matches.",
+          "example": 1500,
+          "type": "number",
+          "minimum": 0,
+          "maximum": 9223372036854776000,
+          "format": "double"
+        },
+        "point": {
+          "$ref": "#/definitions/Point"
+        }
+      }
+    },
+    "ByGeoPolygon": {
+      "title": "ByGeoPolygon",
+      "type": "object",
+      "properties": {
+        "points": {
+          "description": "Polygon defined by a set of points.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Point"
+          }
+        }
+      }
+    },
+    "CcsQueryRequest": {
+      "title": "CcsQueryRequest",
+      "type": "object",
+      "properties": {
+        "kind": {
+          "description": "'kind' to search",
+          "example": "common:ihs:well:1.0.0",
+          "type": "string"
+        },
+        "limit": {
+          "description": "The maximum number of results to return from the given offset. If no limit is provided, then it will return 10 items. Max number of items which can be fetched by the query is 1000. (If you wish to fetch large set of items, please use query_with_cursor API)",
+          "example": 30,
+          "type": "integer",
+          "format": "int32"
+        },
+        "offset": {
+          "description": "The starting offset from which to return results.",
+          "example": 0,
+          "type": "integer",
+          "format": "int32"
+        },
+        "query": {
+          "description": "The query string in Lucene query string syntax.",
+          "type": "string"
+        },
+        "queryAsOwner": {
+          "description": "The queryAsOwner switches between viewer and owner to return results that you are entitled to view or results you are the owner of.",
+          "example": false,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind"
+      ]
+    },
+    "CcsQueryResponse": {
+      "title": "CcsQueryResponse",
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "totalCount": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "ConnectedOuterService": {
+      "title": "ConnectedOuterService",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "CursorQueryRequest": {
+      "title": "CursorQueryRequest",
+      "type": "object",
+      "properties": {
+        "cursor": {
+          "description": "Search context to retrieve next batch of results.",
+          "type": "string"
+        },
+        "kind": {
+          "description": "'kind' to search",
+          "example": "common:ihs:well:1.0.0",
+          "type": "string"
+        },
+        "limit": {
+          "description": "The maximum number of results to return from the given offset. If no limit is provided, then it will return 10 items. Max number of items which can be fetched by the query is 1000. (If you wish to fetch large set of items, please use query_with_cursor API)",
+          "example": 30,
+          "type": "integer",
+          "format": "int32"
+        },
+        "query": {
+          "description": "The query string in Lucene query string syntax.",
+          "type": "string"
+        },
+        "queryAsOwner": {
+          "description": "The queryAsOwner switches between viewer and owner to return results that you are entitled to view or results you are the owner of.",
+          "example": false,
+          "type": "boolean"
+        },
+        "returnedFields": {
+          "description": "The fields on which to project the results.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sort": {
+          "$ref": "#/definitions/SortQuery"
+        },
+        "spatialFilter": {
+          "$ref": "#/definitions/SpatialFilter"
+        },
+        "trackTotalCount": {
+          "description": "Tracks accurate record count matching the query if 'true', partial count otherwise. Partial count queries are more performant. Default is 'false' and returns 10000 if matching records are higher than 10000.",
+          "example": false,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind"
+      ]
+    },
+    "CursorQueryResponse": {
+      "title": "CursorQueryResponse",
+      "type": "object",
+      "properties": {
+        "cursor": {
+          "type": "string"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "totalCount": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "Point": {
+      "title": "Point",
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "description": "Latitude of point.",
+          "example": 37.450727,
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90,
+          "format": "double"
+        },
+        "longitude": {
+          "description": "Longitude of point.",
+          "example": -122.174762,
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180,
+          "format": "double"
+        }
+      }
+    },
+    "QueryRequest": {
+      "title": "QueryRequest",
+      "type": "object",
+      "properties": {
+        "kind": {
+          "description": "'kind' to search",
+          "example": "common:ihs:well:1.0.0",
+          "type": "string"
+        },
+        "limit": {
+          "description": "The maximum number of results to return from the given offset. If no limit is provided, then it will return 10 items. Max number of items which can be fetched by the query is 1000. (If you wish to fetch large set of items, please use query_with_cursor API)",
+          "example": 30,
+          "type": "integer",
+          "format": "int32"
+        },
+        "offset": {
+          "description": "The starting offset from which to return results.",
+          "example": 0,
+          "type": "integer",
+          "format": "int32"
+        },
+        "query": {
+          "description": "The query string in Lucene query string syntax.",
+          "type": "string"
+        },
+        "queryAsOwner": {
+          "description": "The queryAsOwner switches between viewer and owner to return results that you are entitled to view or results you are the owner of.",
+          "example": false,
+          "type": "boolean"
+        },
+        "returnedFields": {
+          "description": "The fields on which to project the results.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sort": {
+          "$ref": "#/definitions/SortQuery"
+        },
+        "spatialFilter": {
+          "$ref": "#/definitions/SpatialFilter"
+        },
+        "trackTotalCount": {
+          "description": "Tracks accurate record count matching the query if 'true', partial count otherwise. Partial count queries are more performant. Default is 'false' and returns 10000 if matching records are higher than 10000.",
+          "example": false,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind"
+      ]
+    },
+    "QueryResponse": {
+      "title": "QueryResponse",
+      "type": "object",
+      "properties": {
+        "aggregations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AggregationResponse"
+          }
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "totalCount": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "SortQuery": {
+      "title": "SortQuery",
+      "type": "object",
+      "properties": {
+        "field": {
+          "description": "The list of fields to sort the results.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "order": {
+          "description": "The list of orders to sort the results. The element must be either ASC or DESC.",
+          "type": "object"
+        }
+      }
+    },
+    "SpatialFilter": {
+      "title": "SpatialFilter",
+      "type": "object",
+      "properties": {
+        "byBoundingBox": {
+          "$ref": "#/definitions/ByBoundingBox"
+        },
+        "byDistance": {
+          "$ref": "#/definitions/ByDistance"
+        },
+        "byGeoPolygon": {
+          "$ref": "#/definitions/ByGeoPolygon"
+        },
+        "field": {
+          "description": "geo-point field in the index on which filtering will be performed. Use GET schema API to find which fields supports spatial search.",
+          "type": "string"
+        }
+      }
+    },
+    "VersionInfo": {
+      "title": "VersionInfo",
+      "type": "object",
+      "properties": {
+        "artifactId": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "buildTime": {
+          "type": "string"
+        },
+        "commitId": {
+          "type": "string"
+        },
+        "commitMessage": {
+          "type": "string"
+        },
+        "connectedOuterServices": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ConnectedOuterService"
+          }
+        },
+        "groupId": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "security": [
+
+  ],
+  "tags": [
+    {
+      "name": "health-check-api",
+      "description": "Health Check Api"
+    },
+    {
+      "name": "info-api",
+      "description": "Info Api"
+    },
+    {
+      "name": "search-api",
+      "description": "Search Api"
+    }
+  ]
+}
