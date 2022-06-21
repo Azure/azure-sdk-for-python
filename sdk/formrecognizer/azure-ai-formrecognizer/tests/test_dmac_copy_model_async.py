@@ -7,6 +7,7 @@
 import pytest
 import functools
 import uuid
+from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
@@ -42,6 +43,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_copy_model_successful(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        set_bodiless_matcher()
         async with client:
             training_poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
             model = await training_poller.result()
@@ -67,6 +69,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_copy_model_with_model_id_and_desc(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        set_bodiless_matcher()
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
             model = await poller.result()
@@ -95,6 +98,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_copy_model_fail_bad_model_id(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        set_bodiless_matcher()
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
             model = await poller.result()
@@ -110,6 +114,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_copy_model_transform(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        set_bodiless_matcher()
         raw_response = []
 
         def callback(response, _, headers):
@@ -150,6 +155,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_copy_model_with_composed_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        set_bodiless_matcher()
         async with client:
             poller_1 = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
             model_1 = await poller_1.result()
@@ -201,6 +207,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        set_bodiless_matcher()
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
             model = await poller.result()
