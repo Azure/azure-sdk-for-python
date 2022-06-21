@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
     from azure.core.credentials_async import AsyncTokenCredential
 
-class LoadTestClient:
+class LoadTestClient:  # pylint: disable=client-accepts-api-version-keyword
     """These APIs allow end users to create, view and run load tests using Azure Load Test Service.
 
     :ivar app_component: AppComponentOperations operations
@@ -34,7 +34,7 @@ class LoadTestClient:
     :vartype test: azure.analytics.loadtestservice.aio.operations.TestOperations
     :ivar test_run: TestRunOperations operations
     :vartype test_run: azure.analytics.loadtestservice.aio.operations.TestRunOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword endpoint: Service URL. Default value is "https://<dataPlaneURL>".
     :paramtype endpoint: str
@@ -62,7 +62,7 @@ class LoadTestClient:
         self.server_metrics = ServerMetricsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.test = TestOperations(  # type: ignore # pylint: disable=abstract-class-instantiated
+        self.test = TestOperations(  # type: ignore  # pylint: disable=abstract-class-instantiated
             self._client, self._config, self._serialize, self._deserialize
         )
         self.test_run = TestRunOperations(

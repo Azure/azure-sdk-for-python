@@ -24,7 +24,7 @@ class LoadTestClientConfiguration(Configuration):  # pylint: disable=too-many-in
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: Api Version. Default value is "2022-06-01-preview". Note that overriding
      this default value may result in unsupported behavior.

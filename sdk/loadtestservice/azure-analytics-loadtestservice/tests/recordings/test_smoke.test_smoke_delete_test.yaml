@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-analytics-loadtestservice/1.0.0b1 Python/3.9.8 (Windows-10-10.0.19044)
     method: DELETE
-    uri: https://fake.loadtesting.azure.com/loadtests/d7c9990e?api-version=2022-06-01-preview
+    uri: https://fake.loadtesting.azure.com/loadtests/000001?api-version=2022-06-01-preview
   response:
     body:
       string: ''
@@ -23,9 +23,9 @@ interactions:
       connection:
       - keep-alive
       date:
-      - Mon, 20 Jun 2022 19:48:42 GMT
+      - Tue, 21 Jun 2022 12:14:11 GMT
       mise-correlation-id:
-      - 4f2611a5-0290-4956-9fd9-c42ed6861627
+      - 088be17c-a8f6-4117-a8ca-5b55b96ef98a
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       x-content-type-options:

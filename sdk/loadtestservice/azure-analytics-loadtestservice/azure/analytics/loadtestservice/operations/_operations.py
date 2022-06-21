@@ -9,7 +9,7 @@
 import abc
 import datetime
 import sys
-from typing import Any, Callable, Dict, Optional, TypeVar, cast
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 
 from msrest import Serializer
 
@@ -24,7 +24,7 @@ from .._vendor import _format_url_section
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -34,9 +34,6 @@ _SERIALIZER.client_side_validation = False
 
 def build_app_component_create_or_update_app_components_request(
     name: str,
-    *,
-    json: Optional[JSON] = None,
-    content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -67,8 +64,6 @@ def build_app_component_create_or_update_app_components_request(
         url=_url,
         params=_params,
         headers=_headers,
-        json=json,
-        content=content,
         **kwargs
     )
 
@@ -175,9 +170,6 @@ def build_app_component_get_app_component_request(
 
 def build_server_metrics_create_or_update_server_metrics_config_request(
     name: str,
-    *,
-    json: Optional[JSON] = None,
-    content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -208,8 +200,6 @@ def build_server_metrics_create_or_update_server_metrics_config_request(
         url=_url,
         params=_params,
         headers=_headers,
-        json=json,
-        content=content,
         **kwargs
     )
 
@@ -370,9 +360,6 @@ def build_server_metrics_list_supported_resource_type_request(
 
 def build_test_create_or_update_test_request(
     test_id: str,
-    *,
-    json: Optional[JSON] = None,
-    content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -403,8 +390,6 @@ def build_test_create_or_update_test_request(
         url=_url,
         params=_params,
         headers=_headers,
-        json=json,
-        content=content,
         **kwargs
     )
 
@@ -482,7 +467,7 @@ def build_test_list_load_test_search_request(
     last_updated_start_time: Optional[datetime.datetime] = None,
     last_updated_end_time: Optional[datetime.datetime] = None,
     continuation_token_parameter: Optional[str] = None,
-    max_page_size: Optional[int] = 50,
+    max_page_size: int = 50,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -672,15 +657,12 @@ def build_test_run_delete_test_run_request(
 
 def build_test_run_create_and_update_test_request(
     test_run_id: str,
-    *,
-    json: Optional[JSON] = None,
-    content: Any = None,
-    old_test_run_id: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    old_test_run_id = kwargs.pop('old_test_run_id', _params.pop('oldTestRunId', None))  # type: Optional[str]
     api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
     content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
     accept = _headers.pop('Accept', "application/json")
@@ -708,8 +690,6 @@ def build_test_run_create_and_update_test_request(
         url=_url,
         params=_params,
         headers=_headers,
-        json=json,
-        content=content,
         **kwargs
     )
 
@@ -790,7 +770,7 @@ def build_test_run_list_test_runs_search_request(
     execution_from: Optional[datetime.datetime] = None,
     execution_to: Optional[datetime.datetime] = None,
     status: Optional[str] = None,
-    max_page_size: Optional[int] = 50,
+    max_page_size: int = 50,
     test_id: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -869,9 +849,6 @@ def build_test_run_stop_test_run_request(
 
 def build_test_run_get_test_run_client_metrics_request(
     test_run_id: str,
-    *,
-    json: Optional[JSON] = None,
-    content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -902,8 +879,6 @@ def build_test_run_get_test_run_client_metrics_request(
         url=_url,
         params=_params,
         headers=_headers,
-        json=json,
-        content=content,
         **kwargs
     )
 
@@ -958,11 +933,13 @@ class AppComponentOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
 
-    @distributed_trace
+    @overload
     def create_or_update_app_components(
         self,
         name: str,
         body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> JSON:
         """Associate an App Component (Azure resource) to a test or test run.
@@ -970,12 +947,16 @@ class AppComponentOperations:
         Associate an App Component (Azure resource) to a test or test run.
 
         :param name: Unique name of the App Component, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
         :type name: str
-        :param body: App Component model.
+        :param body: App Component model. Required.
         :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -995,11 +976,11 @@ class AppComponentOperations:
                             "kind": "str",  # Optional. Kind of Azure resource type.
                             "resourceGroup": "str",  # Optional. Resource group name of
                               the Azure resource.
-                            "resourceId": "str",  # Required. Fully qualified resource Id
-                              e.g
+                            "resourceId": "str",  # Fully qualified resource Id e.g
                               subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}.
-                            "resourceName": "str",  # Required. Azure resource name.
-                            "resourceType": "str",  # Required. Azure resource type.
+                              Required.
+                            "resourceName": "str",  # Azure resource name. Required.
+                            "resourceType": "str",  # Azure resource type. Required.
                             "subscriptionId": "str"  # Optional. Subscription Id of the
                               Azure resource.
                         }
@@ -1021,11 +1002,120 @@ class AppComponentOperations:
                             "kind": "str",  # Optional. Kind of Azure resource type.
                             "resourceGroup": "str",  # Optional. Resource group name of
                               the Azure resource.
-                            "resourceId": "str",  # Required. Fully qualified resource Id
-                              e.g
+                            "resourceId": "str",  # Fully qualified resource Id e.g
                               subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}.
-                            "resourceName": "str",  # Required. Azure resource name.
-                            "resourceType": "str",  # Required. Azure resource type.
+                              Required.
+                            "resourceName": "str",  # Azure resource name. Required.
+                            "resourceType": "str",  # Azure resource type. Required.
+                            "subscriptionId": "str"  # Optional. Subscription Id of the
+                              Azure resource.
+                        }
+                    }
+                }
+        """
+
+    @overload
+    def create_or_update_app_components(
+        self,
+        name: str,
+        body: IO,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> JSON:
+        """Associate an App Component (Azure resource) to a test or test run.
+
+        Associate an App Component (Azure resource) to a test or test run.
+
+        :param name: Unique name of the App Component, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
+        :type name: str
+        :param body: App Component model. Required.
+        :type body: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 201
+                response.json() == {
+                    "name": "str",  # Optional. AppComponent name.
+                    "resourceId": "str",  # Optional. Azure Load Testing resource Id.
+                    "testId": "str",  # Optional. [Required, if testRunId is not given] Load test
+                      unique identifier.
+                    "testRunId": "str",  # Optional. [Required if testId is not given] Load test
+                      run unique identifier.
+                    "value": {
+                        "str": {
+                            "displayName": "str",  # Optional. Azure resource display
+                              name.
+                            "kind": "str",  # Optional. Kind of Azure resource type.
+                            "resourceGroup": "str",  # Optional. Resource group name of
+                              the Azure resource.
+                            "resourceId": "str",  # Fully qualified resource Id e.g
+                              subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}.
+                              Required.
+                            "resourceName": "str",  # Azure resource name. Required.
+                            "resourceType": "str",  # Azure resource type. Required.
+                            "subscriptionId": "str"  # Optional. Subscription Id of the
+                              Azure resource.
+                        }
+                    }
+                }
+        """
+
+
+    @distributed_trace
+    def create_or_update_app_components(
+        self,
+        name: str,
+        body: Union[JSON, IO],
+        **kwargs: Any
+    ) -> JSON:
+        """Associate an App Component (Azure resource) to a test or test run.
+
+        Associate an App Component (Azure resource) to a test or test run.
+
+        :param name: Unique name of the App Component, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
+        :type name: str
+        :param body: App Component model. Is either a model type or a IO type. Required.
+        :type body: JSON or IO
+        :keyword content_type: Body Parameter content-type. Known values are:
+         'application/merge-patch+json'. Default value is None.
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 201
+                response.json() == {
+                    "name": "str",  # Optional. AppComponent name.
+                    "resourceId": "str",  # Optional. Azure Load Testing resource Id.
+                    "testId": "str",  # Optional. [Required, if testRunId is not given] Load test
+                      unique identifier.
+                    "testRunId": "str",  # Optional. [Required if testId is not given] Load test
+                      run unique identifier.
+                    "value": {
+                        "str": {
+                            "displayName": "str",  # Optional. Azure resource display
+                              name.
+                            "kind": "str",  # Optional. Kind of Azure resource type.
+                            "resourceGroup": "str",  # Optional. Resource group name of
+                              the Azure resource.
+                            "resourceId": "str",  # Fully qualified resource Id e.g
+                              subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}.
+                              Required.
+                            "resourceName": "str",  # Azure resource name. Required.
+                            "resourceType": "str",  # Azure resource type. Required.
                             "subscriptionId": "str"  # Optional. Subscription Id of the
                               Azure resource.
                         }
@@ -1040,17 +1130,24 @@ class AppComponentOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        _json = body
+        content_type = content_type or "application/merge-patch+json"
+        _json = None
+        _content = None
+        if isinstance(body, (IO, bytes)):
+            _content = body
+        else:
+            _json = body
 
         request = build_app_component_create_or_update_app_components_request(
             name=name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -1061,6 +1158,7 @@ class AppComponentOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
@@ -1097,10 +1195,11 @@ class AppComponentOperations:
         Delete an App Component.
 
         :param name: Unique name of the App Component, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
         :type name: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1110,7 +1209,7 @@ class AppComponentOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
@@ -1127,6 +1226,7 @@ class AppComponentOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -1149,10 +1249,11 @@ class AppComponentOperations:
         Get App Component details by App Component name.
 
         :param name: Unique name of the App Component, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
         :type name: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -1172,11 +1273,11 @@ class AppComponentOperations:
                             "kind": "str",  # Optional. Kind of Azure resource type.
                             "resourceGroup": "str",  # Optional. Resource group name of
                               the Azure resource.
-                            "resourceId": "str",  # Required. Fully qualified resource Id
-                              e.g
+                            "resourceId": "str",  # Fully qualified resource Id e.g
                               subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}.
-                            "resourceName": "str",  # Required. Azure resource name.
-                            "resourceType": "str",  # Required. Azure resource type.
+                              Required.
+                            "resourceName": "str",  # Azure resource name. Required.
+                            "resourceType": "str",  # Azure resource type. Required.
                             "subscriptionId": "str"  # Optional. Subscription Id of the
                               Azure resource.
                         }
@@ -1191,7 +1292,7 @@ class AppComponentOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
@@ -1208,6 +1309,7 @@ class AppComponentOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1245,7 +1347,7 @@ class AppComponentOperations:
         :paramtype test_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -1265,11 +1367,11 @@ class AppComponentOperations:
                             "kind": "str",  # Optional. Kind of Azure resource type.
                             "resourceGroup": "str",  # Optional. Resource group name of
                               the Azure resource.
-                            "resourceId": "str",  # Required. Fully qualified resource Id
-                              e.g
+                            "resourceId": "str",  # Fully qualified resource Id e.g
                               subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}.
-                            "resourceName": "str",  # Required. Azure resource name.
-                            "resourceType": "str",  # Required. Azure resource type.
+                              Required.
+                            "resourceName": "str",  # Azure resource name. Required.
+                            "resourceType": "str",  # Azure resource type. Required.
                             "subscriptionId": "str"  # Optional. Subscription Id of the
                               Azure resource.
                         }
@@ -1284,14 +1386,14 @@ class AppComponentOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
         request = build_app_component_get_app_component_request(
-            api_version=api_version,
             test_run_id=test_run_id,
             test_id=test_id,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -1302,6 +1404,7 @@ class AppComponentOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1337,11 +1440,13 @@ class ServerMetricsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
 
-    @distributed_trace
+    @overload
     def create_or_update_server_metrics_config(
         self,
         name: str,
         body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> JSON:
         """Configure server metrics for a test or test run.
@@ -1349,12 +1454,16 @@ class ServerMetricsOperations:
         Configure server metrics for a test or test run.
 
         :param name: Unique name for server metrics, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
         :type name: str
-        :param body: Server metrics configuration model.
+        :param body: Server metrics configuration model. Required.
         :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -1363,17 +1472,17 @@ class ServerMetricsOperations:
                 body = {
                     "metrics": {
                         "str": {
-                            "aggregation": "str",  # Required. Metric aggregation.
+                            "aggregation": "str",  # Metric aggregation. Required.
                             "displayDescription": "str",  # Optional. Metric description.
                             "id": "str",  # Optional. Unique identifier for metric.
-                            "metricnamespace": "str",  # Required. Metric name space.
+                            "metricnamespace": "str",  # Metric name space. Required.
                             "name": {
-                                "localizedValue": "str",  # Required. Metric
-                                  localized name.
-                                "value": "str"  # Required. Metric name value.
+                                "localizedValue": "str",  # Metric localized name.
+                                  Required.
+                                "value": "str"  # Metric name value. Required.
                             },
-                            "resourceId": "str",  # Required. Azure resource Id.
-                            "resourceType": "str",  # Required. Azure resource type.
+                            "resourceId": "str",  # Azure resource Id. Required.
+                            "resourceType": "str",  # Azure resource type. Required.
                             "unit": "str"  # Optional. Metric unit.
                         }
                     },
@@ -1388,17 +1497,124 @@ class ServerMetricsOperations:
                 response.json() == {
                     "metrics": {
                         "str": {
-                            "aggregation": "str",  # Required. Metric aggregation.
+                            "aggregation": "str",  # Metric aggregation. Required.
                             "displayDescription": "str",  # Optional. Metric description.
                             "id": "str",  # Optional. Unique identifier for metric.
-                            "metricnamespace": "str",  # Required. Metric name space.
+                            "metricnamespace": "str",  # Metric name space. Required.
                             "name": {
-                                "localizedValue": "str",  # Required. Metric
-                                  localized name.
-                                "value": "str"  # Required. Metric name value.
+                                "localizedValue": "str",  # Metric localized name.
+                                  Required.
+                                "value": "str"  # Metric name value. Required.
                             },
-                            "resourceId": "str",  # Required. Azure resource Id.
-                            "resourceType": "str",  # Required. Azure resource type.
+                            "resourceId": "str",  # Azure resource Id. Required.
+                            "resourceType": "str",  # Azure resource type. Required.
+                            "unit": "str"  # Optional. Metric unit.
+                        }
+                    },
+                    "name": "str",  # Optional. Server metrics config name.
+                    "testId": "str",  # Optional. [Required, if testRunId is not given] Load test
+                      unique identifier.
+                    "testRunId": "str"  # Optional. [Required, if testId is not given] Load test
+                      run unique identifier.
+                }
+        """
+
+    @overload
+    def create_or_update_server_metrics_config(
+        self,
+        name: str,
+        body: IO,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> JSON:
+        """Configure server metrics for a test or test run.
+
+        Configure server metrics for a test or test run.
+
+        :param name: Unique name for server metrics, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
+        :type name: str
+        :param body: Server metrics configuration model. Required.
+        :type body: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 201
+                response.json() == {
+                    "metrics": {
+                        "str": {
+                            "aggregation": "str",  # Metric aggregation. Required.
+                            "displayDescription": "str",  # Optional. Metric description.
+                            "id": "str",  # Optional. Unique identifier for metric.
+                            "metricnamespace": "str",  # Metric name space. Required.
+                            "name": {
+                                "localizedValue": "str",  # Metric localized name.
+                                  Required.
+                                "value": "str"  # Metric name value. Required.
+                            },
+                            "resourceId": "str",  # Azure resource Id. Required.
+                            "resourceType": "str",  # Azure resource type. Required.
+                            "unit": "str"  # Optional. Metric unit.
+                        }
+                    },
+                    "name": "str",  # Optional. Server metrics config name.
+                    "testId": "str",  # Optional. [Required, if testRunId is not given] Load test
+                      unique identifier.
+                    "testRunId": "str"  # Optional. [Required, if testId is not given] Load test
+                      run unique identifier.
+                }
+        """
+
+
+    @distributed_trace
+    def create_or_update_server_metrics_config(
+        self,
+        name: str,
+        body: Union[JSON, IO],
+        **kwargs: Any
+    ) -> JSON:
+        """Configure server metrics for a test or test run.
+
+        Configure server metrics for a test or test run.
+
+        :param name: Unique name for server metrics, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
+        :type name: str
+        :param body: Server metrics configuration model. Is either a model type or a IO type. Required.
+        :type body: JSON or IO
+        :keyword content_type: Body Parameter content-type. Known values are:
+         'application/merge-patch+json'. Default value is None.
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 201
+                response.json() == {
+                    "metrics": {
+                        "str": {
+                            "aggregation": "str",  # Metric aggregation. Required.
+                            "displayDescription": "str",  # Optional. Metric description.
+                            "id": "str",  # Optional. Unique identifier for metric.
+                            "metricnamespace": "str",  # Metric name space. Required.
+                            "name": {
+                                "localizedValue": "str",  # Metric localized name.
+                                  Required.
+                                "value": "str"  # Metric name value. Required.
+                            },
+                            "resourceId": "str",  # Azure resource Id. Required.
+                            "resourceType": "str",  # Azure resource type. Required.
                             "unit": "str"  # Optional. Metric unit.
                         }
                     },
@@ -1417,17 +1633,24 @@ class ServerMetricsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        _json = body
+        content_type = content_type or "application/merge-patch+json"
+        _json = None
+        _content = None
+        if isinstance(body, (IO, bytes)):
+            _content = body
+        else:
+            _json = body
 
         request = build_server_metrics_create_or_update_server_metrics_config_request(
             name=name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -1438,6 +1661,7 @@ class ServerMetricsOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
@@ -1474,10 +1698,11 @@ class ServerMetricsOperations:
         Get server metrics configuration by its name.
 
         :param name: Unique name for server metrics, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
         :type name: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -1486,17 +1711,17 @@ class ServerMetricsOperations:
                 response.json() == {
                     "metrics": {
                         "str": {
-                            "aggregation": "str",  # Required. Metric aggregation.
+                            "aggregation": "str",  # Metric aggregation. Required.
                             "displayDescription": "str",  # Optional. Metric description.
                             "id": "str",  # Optional. Unique identifier for metric.
-                            "metricnamespace": "str",  # Required. Metric name space.
+                            "metricnamespace": "str",  # Metric name space. Required.
                             "name": {
-                                "localizedValue": "str",  # Required. Metric
-                                  localized name.
-                                "value": "str"  # Required. Metric name value.
+                                "localizedValue": "str",  # Metric localized name.
+                                  Required.
+                                "value": "str"  # Metric name value. Required.
                             },
-                            "resourceId": "str",  # Required. Azure resource Id.
-                            "resourceType": "str",  # Required. Azure resource type.
+                            "resourceId": "str",  # Azure resource Id. Required.
+                            "resourceType": "str",  # Azure resource type. Required.
                             "unit": "str"  # Optional. Metric unit.
                         }
                     },
@@ -1515,7 +1740,7 @@ class ServerMetricsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
@@ -1532,6 +1757,7 @@ class ServerMetricsOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1561,10 +1787,11 @@ class ServerMetricsOperations:
         Delete server metrics configuration by its name.
 
         :param name: Unique name for server metrics, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
         :type name: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1574,7 +1801,7 @@ class ServerMetricsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
@@ -1591,6 +1818,7 @@ class ServerMetricsOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -1621,7 +1849,7 @@ class ServerMetricsOperations:
         :paramtype test_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -1630,17 +1858,17 @@ class ServerMetricsOperations:
                 response.json() == {
                     "metrics": {
                         "str": {
-                            "aggregation": "str",  # Required. Metric aggregation.
+                            "aggregation": "str",  # Metric aggregation. Required.
                             "displayDescription": "str",  # Optional. Metric description.
                             "id": "str",  # Optional. Unique identifier for metric.
-                            "metricnamespace": "str",  # Required. Metric name space.
+                            "metricnamespace": "str",  # Metric name space. Required.
                             "name": {
-                                "localizedValue": "str",  # Required. Metric
-                                  localized name.
-                                "value": "str"  # Required. Metric name value.
+                                "localizedValue": "str",  # Metric localized name.
+                                  Required.
+                                "value": "str"  # Metric name value. Required.
                             },
-                            "resourceId": "str",  # Required. Azure resource Id.
-                            "resourceType": "str",  # Required. Azure resource type.
+                            "resourceId": "str",  # Azure resource Id. Required.
+                            "resourceType": "str",  # Azure resource type. Required.
                             "unit": "str"  # Optional. Metric unit.
                         }
                     },
@@ -1659,14 +1887,14 @@ class ServerMetricsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
         request = build_server_metrics_get_server_metrics_request(
-            api_version=api_version,
             test_run_id=test_run_id,
             test_id=test_id,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -1677,6 +1905,7 @@ class ServerMetricsOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1706,7 +1935,7 @@ class ServerMetricsOperations:
 
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -1754,7 +1983,7 @@ class ServerMetricsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
@@ -1770,6 +1999,7 @@ class ServerMetricsOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1799,7 +2029,7 @@ class ServerMetricsOperations:
 
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -1819,7 +2049,7 @@ class ServerMetricsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
@@ -1835,6 +2065,7 @@ class ServerMetricsOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1870,11 +2101,13 @@ class TestOperations(abc.ABC):
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
 
-    @distributed_trace
+    @overload
     def create_or_update_test(
         self,
         test_id: str,
         body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> JSON:
         """Create a new test or Update an existing test.
@@ -1882,12 +2115,16 @@ class TestOperations(abc.ABC):
         Create a new test or Update an existing test.
 
         :param test_id: Unique name for load test, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
         :type test_id: str
-        :param body: Load test model.
+        :param body: Load test model. Required.
         :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -1911,7 +2148,7 @@ class TestOperations(abc.ABC):
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -1924,7 +2161,7 @@ class TestOperations(abc.ABC):
                             "fileId": "str",  # Optional. File unique identifier.
                             "fileType": 0,  # Optional. Integer representation of the
                               file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS).
-                              Known values are: 0, 1, 2.
+                              Known values are: 0, 1, and 2.
                             "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
                             "validationStatus": "str"  # Optional. Validation status of
@@ -1936,7 +2173,7 @@ class TestOperations(abc.ABC):
                             "fileId": "str",  # Optional. File unique identifier.
                             "fileType": 0,  # Optional. Integer representation of the
                               file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS).
-                              Known values are: 0, 1, 2.
+                              Known values are: 0, 1, and 2.
                             "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
                             "validationStatus": "str"  # Optional. Validation status of
@@ -1948,7 +2185,7 @@ class TestOperations(abc.ABC):
                             "fileId": "str",  # Optional. File unique identifier.
                             "fileType": 0,  # Optional. Integer representation of the
                               file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS).
-                              Known values are: 0, 1, 2.
+                              Known values are: 0, 1, and 2.
                             "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
                             "validationStatus": "str"  # Optional. Validation status of
@@ -1960,7 +2197,7 @@ class TestOperations(abc.ABC):
                             "fileId": "str",  # Optional. File unique identifier.
                             "fileType": 0,  # Optional. Integer representation of the
                               file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS).
-                              Known values are: 0, 1, 2.
+                              Known values are: 0, 1, and 2.
                             "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
                             "validationStatus": "str"  # Optional. Validation status of
@@ -2043,7 +2280,7 @@ class TestOperations(abc.ABC):
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -2056,7 +2293,7 @@ class TestOperations(abc.ABC):
                             "fileId": "str",  # Optional. File unique identifier.
                             "fileType": 0,  # Optional. Integer representation of the
                               file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS).
-                              Known values are: 0, 1, 2.
+                              Known values are: 0, 1, and 2.
                             "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
                             "validationStatus": "str"  # Optional. Validation status of
@@ -2068,7 +2305,7 @@ class TestOperations(abc.ABC):
                             "fileId": "str",  # Optional. File unique identifier.
                             "fileType": 0,  # Optional. Integer representation of the
                               file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS).
-                              Known values are: 0, 1, 2.
+                              Known values are: 0, 1, and 2.
                             "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
                             "validationStatus": "str"  # Optional. Validation status of
@@ -2080,7 +2317,7 @@ class TestOperations(abc.ABC):
                             "fileId": "str",  # Optional. File unique identifier.
                             "fileType": 0,  # Optional. Integer representation of the
                               file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS).
-                              Known values are: 0, 1, 2.
+                              Known values are: 0, 1, and 2.
                             "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
                             "validationStatus": "str"  # Optional. Validation status of
@@ -2092,7 +2329,328 @@ class TestOperations(abc.ABC):
                             "fileId": "str",  # Optional. File unique identifier.
                             "fileType": 0,  # Optional. Integer representation of the
                               file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS).
-                              Known values are: 0, 1, 2.
+                              Known values are: 0, 1, and 2.
+                            "filename": "str",  # Optional. Name of the file.
+                            "url": "str",  # Optional. File URL.
+                            "validationStatus": "str"  # Optional. Validation status of
+                              the file.
+                        }
+                    },
+                    "keyvaultReferenceIdentityId": "str",  # Optional. Resource Id of the managed
+                      identity referencing the Key vault.
+                    "keyvaultReferenceIdentityType": "str",  # Optional. Type of the managed
+                      identity referencing the Key vault.
+                    "lastModifiedBy": "str",  # Optional. The user that last modified the test
+                      model.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
+                      DateTime(ISO 8601 literal format) of the test model.
+                    "loadTestConfig": {
+                        "engineInstances": 0,  # Optional. The number of engine instances to
+                          execute load test. Supported values are in range of 1-45. Required for
+                          creating a new test.
+                        "splitAllCSVs": bool  # Optional. Whether all the input CSV files
+                          should be split evenly across all engines.
+                    },
+                    "passFailCriteria": {
+                        "passFailMetrics": {
+                            "str": {
+                                "action": "str",  # Optional. Either "u2018stop"u2019
+                                  or "u2018continue"u2019 after the threshold is met. Default is
+                                  "u2018continue"u2019.
+                                "actualValue": 0.0,  # Optional. The actual value of
+                                  the client metric for the test run.
+                                "aggregate": "str",  # Optional. The aggregation
+                                  function to be applied on the client metric. Allowed functions -
+                                  "u2018percentage"u2019 - for error metric , "u2018avg"u2019 - for
+                                  response_time_ms and latency metric.
+                                "clientmetric": "str",  # Optional. The client metric
+                                  on which the criteria should be applied. Allowed values -
+                                  "u2018response_time_ms"u2019 , "u2018latency"u2019,
+                                  "u2018error"u2019.
+                                "condition": "str",  # Optional. The comparison
+                                  operator. Supported types "u2018>"u2019.
+                                "result": "str",  # Optional. Outcome of the test
+                                  run. possible outcome - "u2018passed"u2019 , "u2018failed"u2019 ,
+                                  "u2018undetermined"u2019.
+                                "value": 0.0  # Optional. The value to compare with
+                                  the client metric. Allowed values - "u2018error : [0.0 , 100.0] unit-
+                                  % "u2019, response_time_ms and latency : any integer value unit- ms.
+                            }
+                        }
+                    },
+                    "resourceId": "str",  # Optional. Fully qualified resource Id e.g
+                      /subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}.
+                    "secrets": {
+                        "str": {
+                            "type": "str",  # Optional. Type of secret. eg.
+                              AKV_SECRET_URI/SECRET_VALUE.
+                            "value": "str"  # Optional. The value of the secret, of type
+                              AKV_SECRET_URI or SECRET_VALUE.
+                        }
+                    },
+                    "subnetId": "str",  # Optional. Subnet ID on which the load test instances
+                      should run.
+                    "testId": "str"  # Optional. Unique test name as identifier.
+                }
+        """
+
+    @overload
+    def create_or_update_test(
+        self,
+        test_id: str,
+        body: IO,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> JSON:
+        """Create a new test or Update an existing test.
+
+        Create a new test or Update an existing test.
+
+        :param test_id: Unique name for load test, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
+        :type test_id: str
+        :param body: Load test model. Required.
+        :type body: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 201
+                response.json() == {
+                    "createdBy": "str",  # Optional. The user that created the test model.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The created
+                      DateTime(ISO 8601 literal format) of the test model.
+                    "description": "str",  # Optional. The test description.
+                    "displayName": "str",  # Optional. Display name of a test.
+                    "environmentVariables": {
+                        "str": "str"  # Optional. Environment variables which are defined as
+                          a set of <name,value> pairs.
+                    },
+                    "inputArtifacts": {
+                        "additionalUrls": [
+                            {
+                                "expireTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file.
+                                "fileId": "str",  # Optional. File unique identifier.
+                                "fileType": 0,  # Optional. Integer representation of
+                                  the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
+                                "filename": "str",  # Optional. Name of the file.
+                                "url": "str",  # Optional. File URL.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file.
+                            }
+                        ],
+                        "configUrl": {
+                            "expireTime": "2020-02-20 00:00:00",  # Optional. Expiry time
+                              of the file.
+                            "fileId": "str",  # Optional. File unique identifier.
+                            "fileType": 0,  # Optional. Integer representation of the
+                              file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS).
+                              Known values are: 0, 1, and 2.
+                            "filename": "str",  # Optional. Name of the file.
+                            "url": "str",  # Optional. File URL.
+                            "validationStatus": "str"  # Optional. Validation status of
+                              the file.
+                        },
+                        "inputArtifactsZipFileurl": {
+                            "expireTime": "2020-02-20 00:00:00",  # Optional. Expiry time
+                              of the file.
+                            "fileId": "str",  # Optional. File unique identifier.
+                            "fileType": 0,  # Optional. Integer representation of the
+                              file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS).
+                              Known values are: 0, 1, and 2.
+                            "filename": "str",  # Optional. Name of the file.
+                            "url": "str",  # Optional. File URL.
+                            "validationStatus": "str"  # Optional. Validation status of
+                              the file.
+                        },
+                        "testScriptUrl": {
+                            "expireTime": "2020-02-20 00:00:00",  # Optional. Expiry time
+                              of the file.
+                            "fileId": "str",  # Optional. File unique identifier.
+                            "fileType": 0,  # Optional. Integer representation of the
+                              file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS).
+                              Known values are: 0, 1, and 2.
+                            "filename": "str",  # Optional. Name of the file.
+                            "url": "str",  # Optional. File URL.
+                            "validationStatus": "str"  # Optional. Validation status of
+                              the file.
+                        },
+                        "userPropUrl": {
+                            "expireTime": "2020-02-20 00:00:00",  # Optional. Expiry time
+                              of the file.
+                            "fileId": "str",  # Optional. File unique identifier.
+                            "fileType": 0,  # Optional. Integer representation of the
+                              file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS).
+                              Known values are: 0, 1, and 2.
+                            "filename": "str",  # Optional. Name of the file.
+                            "url": "str",  # Optional. File URL.
+                            "validationStatus": "str"  # Optional. Validation status of
+                              the file.
+                        }
+                    },
+                    "keyvaultReferenceIdentityId": "str",  # Optional. Resource Id of the managed
+                      identity referencing the Key vault.
+                    "keyvaultReferenceIdentityType": "str",  # Optional. Type of the managed
+                      identity referencing the Key vault.
+                    "lastModifiedBy": "str",  # Optional. The user that last modified the test
+                      model.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
+                      DateTime(ISO 8601 literal format) of the test model.
+                    "loadTestConfig": {
+                        "engineInstances": 0,  # Optional. The number of engine instances to
+                          execute load test. Supported values are in range of 1-45. Required for
+                          creating a new test.
+                        "splitAllCSVs": bool  # Optional. Whether all the input CSV files
+                          should be split evenly across all engines.
+                    },
+                    "passFailCriteria": {
+                        "passFailMetrics": {
+                            "str": {
+                                "action": "str",  # Optional. Either "u2018stop"u2019
+                                  or "u2018continue"u2019 after the threshold is met. Default is
+                                  "u2018continue"u2019.
+                                "actualValue": 0.0,  # Optional. The actual value of
+                                  the client metric for the test run.
+                                "aggregate": "str",  # Optional. The aggregation
+                                  function to be applied on the client metric. Allowed functions -
+                                  "u2018percentage"u2019 - for error metric , "u2018avg"u2019 - for
+                                  response_time_ms and latency metric.
+                                "clientmetric": "str",  # Optional. The client metric
+                                  on which the criteria should be applied. Allowed values -
+                                  "u2018response_time_ms"u2019 , "u2018latency"u2019,
+                                  "u2018error"u2019.
+                                "condition": "str",  # Optional. The comparison
+                                  operator. Supported types "u2018>"u2019.
+                                "result": "str",  # Optional. Outcome of the test
+                                  run. possible outcome - "u2018passed"u2019 , "u2018failed"u2019 ,
+                                  "u2018undetermined"u2019.
+                                "value": 0.0  # Optional. The value to compare with
+                                  the client metric. Allowed values - "u2018error : [0.0 , 100.0] unit-
+                                  % "u2019, response_time_ms and latency : any integer value unit- ms.
+                            }
+                        }
+                    },
+                    "resourceId": "str",  # Optional. Fully qualified resource Id e.g
+                      /subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}.
+                    "secrets": {
+                        "str": {
+                            "type": "str",  # Optional. Type of secret. eg.
+                              AKV_SECRET_URI/SECRET_VALUE.
+                            "value": "str"  # Optional. The value of the secret, of type
+                              AKV_SECRET_URI or SECRET_VALUE.
+                        }
+                    },
+                    "subnetId": "str",  # Optional. Subnet ID on which the load test instances
+                      should run.
+                    "testId": "str"  # Optional. Unique test name as identifier.
+                }
+        """
+
+
+    @distributed_trace
+    def create_or_update_test(
+        self,
+        test_id: str,
+        body: Union[JSON, IO],
+        **kwargs: Any
+    ) -> JSON:
+        """Create a new test or Update an existing test.
+
+        Create a new test or Update an existing test.
+
+        :param test_id: Unique name for load test, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
+        :type test_id: str
+        :param body: Load test model. Is either a model type or a IO type. Required.
+        :type body: JSON or IO
+        :keyword content_type: Body Parameter content-type. Known values are:
+         'application/merge-patch+json'. Default value is None.
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 201
+                response.json() == {
+                    "createdBy": "str",  # Optional. The user that created the test model.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The created
+                      DateTime(ISO 8601 literal format) of the test model.
+                    "description": "str",  # Optional. The test description.
+                    "displayName": "str",  # Optional. Display name of a test.
+                    "environmentVariables": {
+                        "str": "str"  # Optional. Environment variables which are defined as
+                          a set of <name,value> pairs.
+                    },
+                    "inputArtifacts": {
+                        "additionalUrls": [
+                            {
+                                "expireTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file.
+                                "fileId": "str",  # Optional. File unique identifier.
+                                "fileType": 0,  # Optional. Integer representation of
+                                  the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
+                                "filename": "str",  # Optional. Name of the file.
+                                "url": "str",  # Optional. File URL.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file.
+                            }
+                        ],
+                        "configUrl": {
+                            "expireTime": "2020-02-20 00:00:00",  # Optional. Expiry time
+                              of the file.
+                            "fileId": "str",  # Optional. File unique identifier.
+                            "fileType": 0,  # Optional. Integer representation of the
+                              file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS).
+                              Known values are: 0, 1, and 2.
+                            "filename": "str",  # Optional. Name of the file.
+                            "url": "str",  # Optional. File URL.
+                            "validationStatus": "str"  # Optional. Validation status of
+                              the file.
+                        },
+                        "inputArtifactsZipFileurl": {
+                            "expireTime": "2020-02-20 00:00:00",  # Optional. Expiry time
+                              of the file.
+                            "fileId": "str",  # Optional. File unique identifier.
+                            "fileType": 0,  # Optional. Integer representation of the
+                              file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS).
+                              Known values are: 0, 1, and 2.
+                            "filename": "str",  # Optional. Name of the file.
+                            "url": "str",  # Optional. File URL.
+                            "validationStatus": "str"  # Optional. Validation status of
+                              the file.
+                        },
+                        "testScriptUrl": {
+                            "expireTime": "2020-02-20 00:00:00",  # Optional. Expiry time
+                              of the file.
+                            "fileId": "str",  # Optional. File unique identifier.
+                            "fileType": 0,  # Optional. Integer representation of the
+                              file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS).
+                              Known values are: 0, 1, and 2.
+                            "filename": "str",  # Optional. Name of the file.
+                            "url": "str",  # Optional. File URL.
+                            "validationStatus": "str"  # Optional. Validation status of
+                              the file.
+                        },
+                        "userPropUrl": {
+                            "expireTime": "2020-02-20 00:00:00",  # Optional. Expiry time
+                              of the file.
+                            "fileId": "str",  # Optional. File unique identifier.
+                            "fileType": 0,  # Optional. Integer representation of the
+                              file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS).
+                              Known values are: 0, 1, and 2.
                             "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
                             "validationStatus": "str"  # Optional. Validation status of
@@ -2164,17 +2722,24 @@ class TestOperations(abc.ABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        _json = body
+        content_type = content_type or "application/merge-patch+json"
+        _json = None
+        _content = None
+        if isinstance(body, (IO, bytes)):
+            _content = body
+        else:
+            _json = body
 
         request = build_test_create_or_update_test_request(
             test_id=test_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -2185,6 +2750,7 @@ class TestOperations(abc.ABC):
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
@@ -2221,10 +2787,11 @@ class TestOperations(abc.ABC):
         Delete a test by its name.
 
         :param test_id: Unique name for load test, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
         :type test_id: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -2234,7 +2801,7 @@ class TestOperations(abc.ABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
@@ -2251,6 +2818,7 @@ class TestOperations(abc.ABC):
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -2273,10 +2841,11 @@ class TestOperations(abc.ABC):
         Get load test details by test name.
 
         :param test_id: Unique name for load test, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
         :type test_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -2300,7 +2869,7 @@ class TestOperations(abc.ABC):
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -2313,7 +2882,7 @@ class TestOperations(abc.ABC):
                             "fileId": "str",  # Optional. File unique identifier.
                             "fileType": 0,  # Optional. Integer representation of the
                               file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS).
-                              Known values are: 0, 1, 2.
+                              Known values are: 0, 1, and 2.
                             "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
                             "validationStatus": "str"  # Optional. Validation status of
@@ -2325,7 +2894,7 @@ class TestOperations(abc.ABC):
                             "fileId": "str",  # Optional. File unique identifier.
                             "fileType": 0,  # Optional. Integer representation of the
                               file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS).
-                              Known values are: 0, 1, 2.
+                              Known values are: 0, 1, and 2.
                             "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
                             "validationStatus": "str"  # Optional. Validation status of
@@ -2337,7 +2906,7 @@ class TestOperations(abc.ABC):
                             "fileId": "str",  # Optional. File unique identifier.
                             "fileType": 0,  # Optional. Integer representation of the
                               file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS).
-                              Known values are: 0, 1, 2.
+                              Known values are: 0, 1, and 2.
                             "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
                             "validationStatus": "str"  # Optional. Validation status of
@@ -2349,7 +2918,7 @@ class TestOperations(abc.ABC):
                             "fileId": "str",  # Optional. File unique identifier.
                             "fileType": 0,  # Optional. Integer representation of the
                               file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS).
-                              Known values are: 0, 1, 2.
+                              Known values are: 0, 1, and 2.
                             "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
                             "validationStatus": "str"  # Optional. Validation status of
@@ -2421,7 +2990,7 @@ class TestOperations(abc.ABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
@@ -2438,6 +3007,7 @@ class TestOperations(abc.ABC):
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2465,7 +3035,7 @@ class TestOperations(abc.ABC):
         last_updated_start_time: Optional[datetime.datetime] = None,
         last_updated_end_time: Optional[datetime.datetime] = None,
         continuation_token_parameter: Optional[str] = None,
-        max_page_size: Optional[int] = 50,
+        max_page_size: int = 50,
         **kwargs: Any
     ) -> JSON:
         """Get all load tests by the fully qualified resource Id e.g
@@ -2493,7 +3063,7 @@ class TestOperations(abc.ABC):
         :paramtype max_page_size: int
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -2524,7 +3094,7 @@ class TestOperations(abc.ABC):
                                         "fileType": 0,  # Optional. Integer
                                           representation of the file type (0 = JMX_FILE, 1 =
                                           USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS). Known values are:
-                                          0, 1, 2.
+                                          0, 1, and 2.
                                         "filename": "str",  # Optional. Name
                                           of the file.
                                         "url": "str",  # Optional. File URL.
@@ -2540,7 +3110,7 @@ class TestOperations(abc.ABC):
                                     "fileType": 0,  # Optional. Integer
                                       representation of the file type (0 = JMX_FILE, 1 =
                                       USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS). Known values are: 0,
-                                      1, 2.
+                                      1, and 2.
                                     "filename": "str",  # Optional. Name of the
                                       file.
                                     "url": "str",  # Optional. File URL.
@@ -2555,7 +3125,7 @@ class TestOperations(abc.ABC):
                                     "fileType": 0,  # Optional. Integer
                                       representation of the file type (0 = JMX_FILE, 1 =
                                       USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS). Known values are: 0,
-                                      1, 2.
+                                      1, and 2.
                                     "filename": "str",  # Optional. Name of the
                                       file.
                                     "url": "str",  # Optional. File URL.
@@ -2570,7 +3140,7 @@ class TestOperations(abc.ABC):
                                     "fileType": 0,  # Optional. Integer
                                       representation of the file type (0 = JMX_FILE, 1 =
                                       USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS). Known values are: 0,
-                                      1, 2.
+                                      1, and 2.
                                     "filename": "str",  # Optional. Name of the
                                       file.
                                     "url": "str",  # Optional. File URL.
@@ -2585,7 +3155,7 @@ class TestOperations(abc.ABC):
                                     "fileType": 0,  # Optional. Integer
                                       representation of the file type (0 = JMX_FILE, 1 =
                                       USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS). Known values are: 0,
-                                      1, 2.
+                                      1, and 2.
                                     "filename": "str",  # Optional. Name of the
                                       file.
                                     "url": "str",  # Optional. File URL.
@@ -2662,18 +3232,18 @@ class TestOperations(abc.ABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
         request = build_test_list_load_test_search_request(
-            api_version=api_version,
             order_by=order_by,
             search=search,
             last_updated_start_time=last_updated_start_time,
             last_updated_end_time=last_updated_end_time,
             continuation_token_parameter=continuation_token_parameter,
             max_page_size=max_page_size,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -2684,6 +3254,7 @@ class TestOperations(abc.ABC):
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2712,6 +3283,21 @@ class TestOperations(abc.ABC):
         """You need to write a custom operation for "upload_test_file". Please refer to
         https://aka.ms/azsdk/python/dpcodegen/python/customize to learn how to customize.
 
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 201
+                response.json() == {
+                    "expireTime": "2020-02-20 00:00:00",  # Optional. Expiry time of the file.
+                    "fileId": "str",  # Optional. File unique identifier.
+                    "fileType": 0,  # Optional. Integer representation of the file type (0 =
+                      JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS). Known values are: 0, 1,
+                      and 2.
+                    "filename": "str",  # Optional. Name of the file.
+                    "url": "str",  # Optional. File URL.
+                    "validationStatus": "str"  # Optional. Validation status of the file.
+                }
         """
 
 
@@ -2727,12 +3313,14 @@ class TestOperations(abc.ABC):
         Get test file by the file name.
 
         :param test_id: Unique name for load test, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
         :type test_id: str
         :param file_id: Unique identifier for test file, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
         :type file_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -2743,7 +3331,7 @@ class TestOperations(abc.ABC):
                     "fileId": "str",  # Optional. File unique identifier.
                     "fileType": 0,  # Optional. Integer representation of the file type (0 =
                       JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS). Known values are: 0, 1,
-                      2.
+                      and 2.
                     "filename": "str",  # Optional. Name of the file.
                     "url": "str",  # Optional. File URL.
                     "validationStatus": "str"  # Optional. Validation status of the file.
@@ -2757,7 +3345,7 @@ class TestOperations(abc.ABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
@@ -2775,6 +3363,7 @@ class TestOperations(abc.ABC):
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2805,12 +3394,14 @@ class TestOperations(abc.ABC):
         Delete file by the file name for a test.
 
         :param test_id: Unique name for load test, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
         :type test_id: str
         :param file_id: Unique identifier for test file, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
         :type file_id: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -2820,7 +3411,7 @@ class TestOperations(abc.ABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
@@ -2838,6 +3429,7 @@ class TestOperations(abc.ABC):
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -2862,13 +3454,14 @@ class TestOperations(abc.ABC):
         Get all test files.
 
         :param test_id: Unique name for load test, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
         :type test_id: str
         :keyword continuation_token_parameter: Continuation token to get the next page of response.
          Default value is None.
         :paramtype continuation_token_parameter: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -2884,7 +3477,7 @@ class TestOperations(abc.ABC):
                             "fileId": "str",  # Optional. File unique identifier.
                             "fileType": 0,  # Optional. Integer representation of the
                               file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS).
-                              Known values are: 0, 1, 2.
+                              Known values are: 0, 1, and 2.
                             "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
                             "validationStatus": "str"  # Optional. Validation status of
@@ -2901,14 +3494,14 @@ class TestOperations(abc.ABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
         request = build_test_get_all_test_files_request(
             test_id=test_id,
-            api_version=api_version,
             continuation_token_parameter=continuation_token_parameter,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -2919,6 +3512,7 @@ class TestOperations(abc.ABC):
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2965,11 +3559,11 @@ class TestRunOperations:
         Delete a test run by its name.
 
         :param test_run_id: Unique name of the load test run, must be a valid URL character
-         ^[a-z0-9_-]*$.
+         ^[a-z0-9_-]*$. Required.
         :type test_run_id: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -2979,7 +3573,7 @@ class TestRunOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
@@ -2996,6 +3590,7 @@ class TestRunOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -3007,13 +3602,14 @@ class TestRunOperations:
 
 
 
-    @distributed_trace
+    @overload
     def create_and_update_test(
         self,
         test_run_id: str,
         body: JSON,
         *,
         old_test_run_id: Optional[str] = None,
+        content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> JSON:
         """Create and start a new test run with the given name.
@@ -3021,15 +3617,18 @@ class TestRunOperations:
         Create and start a new test run with the given name.
 
         :param test_run_id: Unique name of the load test run, must be a valid URL character
-         ^[a-z0-9_-]*$.
+         ^[a-z0-9_-]*$. Required.
         :type test_run_id: str
-        :param body: Load test run model.
+        :param body: Load test run model. Required.
         :type body: JSON
         :keyword old_test_run_id: Existing test run Id that should be rerun. Default value is None.
         :paramtype old_test_run_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -3041,7 +3640,7 @@ class TestRunOperations:
                       DateTime(ISO 8601 literal format) of the test run.
                     "description": "str",  # Optional. The test run description.
                     "displayName": "str",  # Optional. Display name of a test run.
-                    "duration": 0.0,  # Optional. Test run duration in milliseconds.
+                    "duration": 0,  # Optional. Test run duration in milliseconds.
                     "endDateTime": "2020-02-20 00:00:00",  # Optional. The test run end
                       DateTime(ISO 8601 literal format).
                     "environmentVariables": {
@@ -3113,7 +3712,7 @@ class TestRunOperations:
                                     "fileType": 0,  # Optional. Integer
                                       representation of the file type (0 = JMX_FILE, 1 =
                                       USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS). Known values are: 0,
-                                      1, 2.
+                                      1, and 2.
                                     "filename": "str",  # Optional. Name of the
                                       file.
                                     "url": "str",  # Optional. File URL.
@@ -3127,7 +3726,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -3139,7 +3738,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -3151,7 +3750,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -3163,7 +3762,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -3177,7 +3776,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -3189,7 +3788,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -3232,7 +3831,7 @@ class TestRunOperations:
                       DateTime(ISO 8601 literal format) of the test run.
                     "description": "str",  # Optional. The test run description.
                     "displayName": "str",  # Optional. Display name of a test run.
-                    "duration": 0.0,  # Optional. Test run duration in milliseconds.
+                    "duration": 0,  # Optional. Test run duration in milliseconds.
                     "endDateTime": "2020-02-20 00:00:00",  # Optional. The test run end
                       DateTime(ISO 8601 literal format).
                     "environmentVariables": {
@@ -3304,7 +3903,7 @@ class TestRunOperations:
                                     "fileType": 0,  # Optional. Integer
                                       representation of the file type (0 = JMX_FILE, 1 =
                                       USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS). Known values are: 0,
-                                      1, 2.
+                                      1, and 2.
                                     "filename": "str",  # Optional. Name of the
                                       file.
                                     "url": "str",  # Optional. File URL.
@@ -3318,7 +3917,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -3330,7 +3929,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -3342,7 +3941,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -3354,7 +3953,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -3368,7 +3967,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -3380,7 +3979,453 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
+                                "filename": "str",  # Optional. Name of the file.
+                                "url": "str",  # Optional. File URL.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file.
+                            }
+                        }
+                    },
+                    "testId": "str",  # Optional. Associated test Id.
+                    "testResult": "str",  # Optional. Test result for pass/Fail criteria used
+                      during the test run. possible outcome - "u2018Passed"u2019 , "u2018Failed"u2019 ,
+                      "u2018Not Applicable"u2019.
+                    "testRunId": "str",  # Optional. Unique test run name as identifier.
+                    "testRunStatistics": {
+                        "str": {
+                            "errorCount": 0.0,  # Optional. Error count.
+                            "errorPct": 0.0,  # Optional. Error percentage.
+                            "maxResTime": 0.0,  # Optional. Max response time.
+                            "meanResTime": 0.0,  # Optional. Mean response time.
+                            "medianResTime": 0.0,  # Optional. Median response time.
+                            "minResTime": 0.0,  # Optional. Minimum response time.
+                            "pct1ResTime": 0.0,  # Optional. 90 percentile response time.
+                            "pct2ResTime": 0.0,  # Optional. 95 percentile response time.
+                            "pct3ResTime": 0.0,  # Optional. 99 percentile response time.
+                            "receivedKBytesPerSec": 0.0,  # Optional. Received network
+                              bytes.
+                            "sampleCount": 0.0,  # Optional. Sampler count.
+                            "sentKBytesPerSec": 0.0,  # Optional. Sent network bytes.
+                            "throughput": 0.0,  # Optional. Throughput.
+                            "transaction": "str"  # Optional. Transaction name.
+                        }
+                    },
+                    "vusers": 0  # Optional. Number of virtual users, for which test has been
+                      run.
+                }
+        """
+
+    @overload
+    def create_and_update_test(
+        self,
+        test_run_id: str,
+        body: IO,
+        *,
+        old_test_run_id: Optional[str] = None,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> JSON:
+        """Create and start a new test run with the given name.
+
+        Create and start a new test run with the given name.
+
+        :param test_run_id: Unique name of the load test run, must be a valid URL character
+         ^[a-z0-9_-]*$. Required.
+        :type test_run_id: str
+        :param body: Load test run model. Required.
+        :type body: IO
+        :keyword old_test_run_id: Existing test run Id that should be rerun. Default value is None.
+        :paramtype old_test_run_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response.json() == {
+                    "createdBy": "str",  # Optional. The user that created the test run.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The created
+                      DateTime(ISO 8601 literal format) of the test run.
+                    "description": "str",  # Optional. The test run description.
+                    "displayName": "str",  # Optional. Display name of a test run.
+                    "duration": 0,  # Optional. Test run duration in milliseconds.
+                    "endDateTime": "2020-02-20 00:00:00",  # Optional. The test run end
+                      DateTime(ISO 8601 literal format).
+                    "environmentVariables": {
+                        "str": "str"  # Optional. Environment variables which are defined as
+                          a set of <name,value> pairs.
+                    },
+                    "executedDateTime": "2020-02-20 00:00:00",  # Optional. Test run initiated
+                      time.
+                    "lastModifiedBy": "str",  # Optional. The user that updated the test run.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last updated
+                      DateTime(ISO 8601 literal format) of the test run.
+                    "loadTestConfig": {
+                        "engineInstances": 0,  # Optional. The number of engine instances to
+                          execute load test. Supported values are in range of 1-45. Required for
+                          creating a new test.
+                        "splitAllCSVs": bool  # Optional. Whether all the input CSV files
+                          should be split evenly across all engines.
+                    },
+                    "passFailCriteria": {
+                        "passFailMetrics": {
+                            "str": {
+                                "action": "str",  # Optional. Either "u2018stop"u2019
+                                  or "u2018continue"u2019 after the threshold is met. Default is
+                                  "u2018continue"u2019.
+                                "actualValue": 0.0,  # Optional. The actual value of
+                                  the client metric for the test run.
+                                "aggregate": "str",  # Optional. The aggregation
+                                  function to be applied on the client metric. Allowed functions -
+                                  "u2018percentage"u2019 - for error metric , "u2018avg"u2019 - for
+                                  response_time_ms and latency metric.
+                                "clientmetric": "str",  # Optional. The client metric
+                                  on which the criteria should be applied. Allowed values -
+                                  "u2018response_time_ms"u2019 , "u2018latency"u2019,
+                                  "u2018error"u2019.
+                                "condition": "str",  # Optional. The comparison
+                                  operator. Supported types "u2018>"u2019.
+                                "result": "str",  # Optional. Outcome of the test
+                                  run. possible outcome - "u2018passed"u2019 , "u2018failed"u2019 ,
+                                  "u2018undetermined"u2019.
+                                "value": 0.0  # Optional. The value to compare with
+                                  the client metric. Allowed values - "u2018error : [0.0 , 100.0] unit-
+                                  % "u2019, response_time_ms and latency : any integer value unit- ms.
+                            }
+                        }
+                    },
+                    "portalUrl": "str",  # Optional. Portal url.
+                    "resourceId": "str",  # Optional. Load test resource Id.
+                    "secrets": {
+                        "str": {
+                            "type": "str",  # Optional. Type of secret. eg.
+                              AKV_SECRET_URI/SECRET_VALUE.
+                            "value": "str"  # Optional. The value of the secret, of type
+                              AKV_SECRET_URI or SECRET_VALUE.
+                        }
+                    },
+                    "startDateTime": "2020-02-20 00:00:00",  # Optional. The test run start
+                      DateTime(ISO 8601 literal format).
+                    "status": "str",  # Optional. The test run status.
+                    "subnetId": "str",  # Optional. Subnet ID on which the load test instances
+                      should run.
+                    "testArtifacts": {
+                        "inputArtifacts": {
+                            "additionalUrls": [
+                                {
+                                    "expireTime": "2020-02-20 00:00:00",  #
+                                      Optional. Expiry time of the file.
+                                    "fileId": "str",  # Optional. File unique
+                                      identifier.
+                                    "fileType": 0,  # Optional. Integer
+                                      representation of the file type (0 = JMX_FILE, 1 =
+                                      USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS). Known values are: 0,
+                                      1, and 2.
+                                    "filename": "str",  # Optional. Name of the
+                                      file.
+                                    "url": "str",  # Optional. File URL.
+                                    "validationStatus": "str"  # Optional.
+                                      Validation status of the file.
+                                }
+                            ],
+                            "configUrl": {
+                                "expireTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file.
+                                "fileId": "str",  # Optional. File unique identifier.
+                                "fileType": 0,  # Optional. Integer representation of
+                                  the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
+                                "filename": "str",  # Optional. Name of the file.
+                                "url": "str",  # Optional. File URL.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file.
+                            },
+                            "inputArtifactsZipFileurl": {
+                                "expireTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file.
+                                "fileId": "str",  # Optional. File unique identifier.
+                                "fileType": 0,  # Optional. Integer representation of
+                                  the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
+                                "filename": "str",  # Optional. Name of the file.
+                                "url": "str",  # Optional. File URL.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file.
+                            },
+                            "testScriptUrl": {
+                                "expireTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file.
+                                "fileId": "str",  # Optional. File unique identifier.
+                                "fileType": 0,  # Optional. Integer representation of
+                                  the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
+                                "filename": "str",  # Optional. Name of the file.
+                                "url": "str",  # Optional. File URL.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file.
+                            },
+                            "userPropUrl": {
+                                "expireTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file.
+                                "fileId": "str",  # Optional. File unique identifier.
+                                "fileType": 0,  # Optional. Integer representation of
+                                  the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
+                                "filename": "str",  # Optional. Name of the file.
+                                "url": "str",  # Optional. File URL.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file.
+                            }
+                        },
+                        "outputArtifacts": {
+                            "logsUrl": {
+                                "expireTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file.
+                                "fileId": "str",  # Optional. File unique identifier.
+                                "fileType": 0,  # Optional. Integer representation of
+                                  the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
+                                "filename": "str",  # Optional. Name of the file.
+                                "url": "str",  # Optional. File URL.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file.
+                            },
+                            "resultUrl": {
+                                "expireTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file.
+                                "fileId": "str",  # Optional. File unique identifier.
+                                "fileType": 0,  # Optional. Integer representation of
+                                  the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
+                                "filename": "str",  # Optional. Name of the file.
+                                "url": "str",  # Optional. File URL.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file.
+                            }
+                        }
+                    },
+                    "testId": "str",  # Optional. Associated test Id.
+                    "testResult": "str",  # Optional. Test result for pass/Fail criteria used
+                      during the test run. possible outcome - "u2018Passed"u2019 , "u2018Failed"u2019 ,
+                      "u2018Not Applicable"u2019.
+                    "testRunId": "str",  # Optional. Unique test run name as identifier.
+                    "testRunStatistics": {
+                        "str": {
+                            "errorCount": 0.0,  # Optional. Error count.
+                            "errorPct": 0.0,  # Optional. Error percentage.
+                            "maxResTime": 0.0,  # Optional. Max response time.
+                            "meanResTime": 0.0,  # Optional. Mean response time.
+                            "medianResTime": 0.0,  # Optional. Median response time.
+                            "minResTime": 0.0,  # Optional. Minimum response time.
+                            "pct1ResTime": 0.0,  # Optional. 90 percentile response time.
+                            "pct2ResTime": 0.0,  # Optional. 95 percentile response time.
+                            "pct3ResTime": 0.0,  # Optional. 99 percentile response time.
+                            "receivedKBytesPerSec": 0.0,  # Optional. Received network
+                              bytes.
+                            "sampleCount": 0.0,  # Optional. Sampler count.
+                            "sentKBytesPerSec": 0.0,  # Optional. Sent network bytes.
+                            "throughput": 0.0,  # Optional. Throughput.
+                            "transaction": "str"  # Optional. Transaction name.
+                        }
+                    },
+                    "vusers": 0  # Optional. Number of virtual users, for which test has been
+                      run.
+                }
+        """
+
+
+    @distributed_trace
+    def create_and_update_test(
+        self,
+        test_run_id: str,
+        body: Union[JSON, IO],
+        *,
+        old_test_run_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> JSON:
+        """Create and start a new test run with the given name.
+
+        Create and start a new test run with the given name.
+
+        :param test_run_id: Unique name of the load test run, must be a valid URL character
+         ^[a-z0-9_-]*$. Required.
+        :type test_run_id: str
+        :param body: Load test run model. Is either a model type or a IO type. Required.
+        :type body: JSON or IO
+        :keyword old_test_run_id: Existing test run Id that should be rerun. Default value is None.
+        :paramtype old_test_run_id: str
+        :keyword content_type: Body Parameter content-type. Known values are:
+         'application/merge-patch+json'. Default value is None.
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response.json() == {
+                    "createdBy": "str",  # Optional. The user that created the test run.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The created
+                      DateTime(ISO 8601 literal format) of the test run.
+                    "description": "str",  # Optional. The test run description.
+                    "displayName": "str",  # Optional. Display name of a test run.
+                    "duration": 0,  # Optional. Test run duration in milliseconds.
+                    "endDateTime": "2020-02-20 00:00:00",  # Optional. The test run end
+                      DateTime(ISO 8601 literal format).
+                    "environmentVariables": {
+                        "str": "str"  # Optional. Environment variables which are defined as
+                          a set of <name,value> pairs.
+                    },
+                    "executedDateTime": "2020-02-20 00:00:00",  # Optional. Test run initiated
+                      time.
+                    "lastModifiedBy": "str",  # Optional. The user that updated the test run.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last updated
+                      DateTime(ISO 8601 literal format) of the test run.
+                    "loadTestConfig": {
+                        "engineInstances": 0,  # Optional. The number of engine instances to
+                          execute load test. Supported values are in range of 1-45. Required for
+                          creating a new test.
+                        "splitAllCSVs": bool  # Optional. Whether all the input CSV files
+                          should be split evenly across all engines.
+                    },
+                    "passFailCriteria": {
+                        "passFailMetrics": {
+                            "str": {
+                                "action": "str",  # Optional. Either "u2018stop"u2019
+                                  or "u2018continue"u2019 after the threshold is met. Default is
+                                  "u2018continue"u2019.
+                                "actualValue": 0.0,  # Optional. The actual value of
+                                  the client metric for the test run.
+                                "aggregate": "str",  # Optional. The aggregation
+                                  function to be applied on the client metric. Allowed functions -
+                                  "u2018percentage"u2019 - for error metric , "u2018avg"u2019 - for
+                                  response_time_ms and latency metric.
+                                "clientmetric": "str",  # Optional. The client metric
+                                  on which the criteria should be applied. Allowed values -
+                                  "u2018response_time_ms"u2019 , "u2018latency"u2019,
+                                  "u2018error"u2019.
+                                "condition": "str",  # Optional. The comparison
+                                  operator. Supported types "u2018>"u2019.
+                                "result": "str",  # Optional. Outcome of the test
+                                  run. possible outcome - "u2018passed"u2019 , "u2018failed"u2019 ,
+                                  "u2018undetermined"u2019.
+                                "value": 0.0  # Optional. The value to compare with
+                                  the client metric. Allowed values - "u2018error : [0.0 , 100.0] unit-
+                                  % "u2019, response_time_ms and latency : any integer value unit- ms.
+                            }
+                        }
+                    },
+                    "portalUrl": "str",  # Optional. Portal url.
+                    "resourceId": "str",  # Optional. Load test resource Id.
+                    "secrets": {
+                        "str": {
+                            "type": "str",  # Optional. Type of secret. eg.
+                              AKV_SECRET_URI/SECRET_VALUE.
+                            "value": "str"  # Optional. The value of the secret, of type
+                              AKV_SECRET_URI or SECRET_VALUE.
+                        }
+                    },
+                    "startDateTime": "2020-02-20 00:00:00",  # Optional. The test run start
+                      DateTime(ISO 8601 literal format).
+                    "status": "str",  # Optional. The test run status.
+                    "subnetId": "str",  # Optional. Subnet ID on which the load test instances
+                      should run.
+                    "testArtifacts": {
+                        "inputArtifacts": {
+                            "additionalUrls": [
+                                {
+                                    "expireTime": "2020-02-20 00:00:00",  #
+                                      Optional. Expiry time of the file.
+                                    "fileId": "str",  # Optional. File unique
+                                      identifier.
+                                    "fileType": 0,  # Optional. Integer
+                                      representation of the file type (0 = JMX_FILE, 1 =
+                                      USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS). Known values are: 0,
+                                      1, and 2.
+                                    "filename": "str",  # Optional. Name of the
+                                      file.
+                                    "url": "str",  # Optional. File URL.
+                                    "validationStatus": "str"  # Optional.
+                                      Validation status of the file.
+                                }
+                            ],
+                            "configUrl": {
+                                "expireTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file.
+                                "fileId": "str",  # Optional. File unique identifier.
+                                "fileType": 0,  # Optional. Integer representation of
+                                  the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
+                                "filename": "str",  # Optional. Name of the file.
+                                "url": "str",  # Optional. File URL.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file.
+                            },
+                            "inputArtifactsZipFileurl": {
+                                "expireTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file.
+                                "fileId": "str",  # Optional. File unique identifier.
+                                "fileType": 0,  # Optional. Integer representation of
+                                  the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
+                                "filename": "str",  # Optional. Name of the file.
+                                "url": "str",  # Optional. File URL.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file.
+                            },
+                            "testScriptUrl": {
+                                "expireTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file.
+                                "fileId": "str",  # Optional. File unique identifier.
+                                "fileType": 0,  # Optional. Integer representation of
+                                  the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
+                                "filename": "str",  # Optional. Name of the file.
+                                "url": "str",  # Optional. File URL.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file.
+                            },
+                            "userPropUrl": {
+                                "expireTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file.
+                                "fileId": "str",  # Optional. File unique identifier.
+                                "fileType": 0,  # Optional. Integer representation of
+                                  the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
+                                "filename": "str",  # Optional. Name of the file.
+                                "url": "str",  # Optional. File URL.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file.
+                            }
+                        },
+                        "outputArtifacts": {
+                            "logsUrl": {
+                                "expireTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file.
+                                "fileId": "str",  # Optional. File unique identifier.
+                                "fileType": 0,  # Optional. Integer representation of
+                                  the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
+                                "filename": "str",  # Optional. Name of the file.
+                                "url": "str",  # Optional. File URL.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file.
+                            },
+                            "resultUrl": {
+                                "expireTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file.
+                                "fileId": "str",  # Optional. File unique identifier.
+                                "fileType": 0,  # Optional. Integer representation of
+                                  the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -3424,18 +4469,25 @@ class TestRunOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        _json = body
+        content_type = content_type or "application/merge-patch+json"
+        _json = None
+        _content = None
+        if isinstance(body, (IO, bytes)):
+            _content = body
+        else:
+            _json = body
 
         request = build_test_run_create_and_update_test_request(
             test_run_id=test_run_id,
+            old_test_run_id=old_test_run_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            old_test_run_id=old_test_run_id,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -3446,6 +4498,7 @@ class TestRunOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -3475,10 +4528,11 @@ class TestRunOperations:
         Get test run details by name.
 
         :param test_run_id: Unique name of load test run, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
         :type test_run_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -3490,7 +4544,7 @@ class TestRunOperations:
                       DateTime(ISO 8601 literal format) of the test run.
                     "description": "str",  # Optional. The test run description.
                     "displayName": "str",  # Optional. Display name of a test run.
-                    "duration": 0.0,  # Optional. Test run duration in milliseconds.
+                    "duration": 0,  # Optional. Test run duration in milliseconds.
                     "endDateTime": "2020-02-20 00:00:00",  # Optional. The test run end
                       DateTime(ISO 8601 literal format).
                     "environmentVariables": {
@@ -3562,7 +4616,7 @@ class TestRunOperations:
                                     "fileType": 0,  # Optional. Integer
                                       representation of the file type (0 = JMX_FILE, 1 =
                                       USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS). Known values are: 0,
-                                      1, 2.
+                                      1, and 2.
                                     "filename": "str",  # Optional. Name of the
                                       file.
                                     "url": "str",  # Optional. File URL.
@@ -3576,7 +4630,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -3588,7 +4642,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -3600,7 +4654,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -3612,7 +4666,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -3626,7 +4680,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -3638,7 +4692,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -3682,7 +4736,7 @@ class TestRunOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
@@ -3699,6 +4753,7 @@ class TestRunOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -3729,13 +4784,14 @@ class TestRunOperations:
         Get test run file by file name.
 
         :param test_run_id: Unique name of load test run, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
         :type test_run_id: str
         :param file_id: Unique identifier for test run file, must be a valid URL character
-         ^[a-z0-9_-]*$.
+         ^[a-z0-9_-]*$. Required.
         :type file_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -3746,7 +4802,7 @@ class TestRunOperations:
                     "fileId": "str",  # Optional. File unique identifier.
                     "fileType": 0,  # Optional. Integer representation of the file type (0 =
                       JMX_FILE, 1 = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS). Known values are: 0, 1,
-                      2.
+                      and 2.
                     "filename": "str",  # Optional. Name of the file.
                     "url": "str",  # Optional. File URL.
                     "validationStatus": "str"  # Optional. Validation status of the file.
@@ -3760,7 +4816,7 @@ class TestRunOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
@@ -3778,6 +4834,7 @@ class TestRunOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -3806,7 +4863,7 @@ class TestRunOperations:
         execution_from: Optional[datetime.datetime] = None,
         execution_to: Optional[datetime.datetime] = None,
         status: Optional[str] = None,
-        max_page_size: Optional[int] = 50,
+        max_page_size: int = 50,
         test_id: Optional[str] = None,
         **kwargs: Any
     ) -> JSON:
@@ -3841,7 +4898,7 @@ class TestRunOperations:
         :paramtype test_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -3859,7 +4916,7 @@ class TestRunOperations:
                             "description": "str",  # Optional. The test run description.
                             "displayName": "str",  # Optional. Display name of a test
                               run.
-                            "duration": 0.0,  # Optional. Test run duration in
+                            "duration": 0,  # Optional. Test run duration in
                               milliseconds.
                             "endDateTime": "2020-02-20 00:00:00",  # Optional. The test
                               run end DateTime(ISO 8601 literal format).
@@ -3934,7 +4991,7 @@ class TestRunOperations:
                                             "fileType": 0,  # Optional.
                                               Integer representation of the file type (0 = JMX_FILE, 1
                                               = USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS). Known
-                                              values are: 0, 1, 2.
+                                              values are: 0, 1, and 2.
                                             "filename": "str",  #
                                               Optional. Name of the file.
                                             "url": "str",  # Optional.
@@ -3951,7 +5008,7 @@ class TestRunOperations:
                                         "fileType": 0,  # Optional. Integer
                                           representation of the file type (0 = JMX_FILE, 1 =
                                           USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS). Known values are:
-                                          0, 1, 2.
+                                          0, 1, and 2.
                                         "filename": "str",  # Optional. Name
                                           of the file.
                                         "url": "str",  # Optional. File URL.
@@ -3966,7 +5023,7 @@ class TestRunOperations:
                                         "fileType": 0,  # Optional. Integer
                                           representation of the file type (0 = JMX_FILE, 1 =
                                           USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS). Known values are:
-                                          0, 1, 2.
+                                          0, 1, and 2.
                                         "filename": "str",  # Optional. Name
                                           of the file.
                                         "url": "str",  # Optional. File URL.
@@ -3981,7 +5038,7 @@ class TestRunOperations:
                                         "fileType": 0,  # Optional. Integer
                                           representation of the file type (0 = JMX_FILE, 1 =
                                           USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS). Known values are:
-                                          0, 1, 2.
+                                          0, 1, and 2.
                                         "filename": "str",  # Optional. Name
                                           of the file.
                                         "url": "str",  # Optional. File URL.
@@ -3996,7 +5053,7 @@ class TestRunOperations:
                                         "fileType": 0,  # Optional. Integer
                                           representation of the file type (0 = JMX_FILE, 1 =
                                           USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS). Known values are:
-                                          0, 1, 2.
+                                          0, 1, and 2.
                                         "filename": "str",  # Optional. Name
                                           of the file.
                                         "url": "str",  # Optional. File URL.
@@ -4013,7 +5070,7 @@ class TestRunOperations:
                                         "fileType": 0,  # Optional. Integer
                                           representation of the file type (0 = JMX_FILE, 1 =
                                           USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS). Known values are:
-                                          0, 1, 2.
+                                          0, 1, and 2.
                                         "filename": "str",  # Optional. Name
                                           of the file.
                                         "url": "str",  # Optional. File URL.
@@ -4028,7 +5085,7 @@ class TestRunOperations:
                                         "fileType": 0,  # Optional. Integer
                                           representation of the file type (0 = JMX_FILE, 1 =
                                           USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS). Known values are:
-                                          0, 1, 2.
+                                          0, 1, and 2.
                                         "filename": "str",  # Optional. Name
                                           of the file.
                                         "url": "str",  # Optional. File URL.
@@ -4087,12 +5144,11 @@ class TestRunOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
         request = build_test_run_list_test_runs_search_request(
-            api_version=api_version,
             order_by=order_by,
             continuation_token_parameter=continuation_token_parameter,
             search=search,
@@ -4101,6 +5157,7 @@ class TestRunOperations:
             status=status,
             max_page_size=max_page_size,
             test_id=test_id,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -4111,6 +5168,7 @@ class TestRunOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -4140,11 +5198,11 @@ class TestRunOperations:
         Stop test run by name.
 
         :param test_run_id: Unique name of the load test run, must be a valid URL character
-         ^[a-z0-9_-]*$.
+         ^[a-z0-9_-]*$. Required.
         :type test_run_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -4156,7 +5214,7 @@ class TestRunOperations:
                       DateTime(ISO 8601 literal format) of the test run.
                     "description": "str",  # Optional. The test run description.
                     "displayName": "str",  # Optional. Display name of a test run.
-                    "duration": 0.0,  # Optional. Test run duration in milliseconds.
+                    "duration": 0,  # Optional. Test run duration in milliseconds.
                     "endDateTime": "2020-02-20 00:00:00",  # Optional. The test run end
                       DateTime(ISO 8601 literal format).
                     "environmentVariables": {
@@ -4228,7 +5286,7 @@ class TestRunOperations:
                                     "fileType": 0,  # Optional. Integer
                                       representation of the file type (0 = JMX_FILE, 1 =
                                       USER_PROPERTIES, 2 = ADDITIONAL_ARTIFACTS). Known values are: 0,
-                                      1, 2.
+                                      1, and 2.
                                     "filename": "str",  # Optional. Name of the
                                       file.
                                     "url": "str",  # Optional. File URL.
@@ -4242,7 +5300,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -4254,7 +5312,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -4266,7 +5324,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -4278,7 +5336,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -4292,7 +5350,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -4304,7 +5362,7 @@ class TestRunOperations:
                                 "fileId": "str",  # Optional. File unique identifier.
                                 "fileType": 0,  # Optional. Integer representation of
                                   the file type (0 = JMX_FILE, 1 = USER_PROPERTIES, 2 =
-                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, 2.
+                                  ADDITIONAL_ARTIFACTS). Known values are: 0, 1, and 2.
                                 "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
                                 "validationStatus": "str"  # Optional. Validation
@@ -4348,7 +5406,7 @@ class TestRunOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
@@ -4365,6 +5423,7 @@ class TestRunOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -4383,11 +5442,13 @@ class TestRunOperations:
 
 
 
-    @distributed_trace
+    @overload
     def get_test_run_client_metrics(
         self,
         test_run_id: str,
         body: JSON,
+        *,
+        content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
         """Get all client metrics for a load test run.
@@ -4395,20 +5456,23 @@ class TestRunOperations:
         Get all client metrics for a load test run.
 
         :param test_run_id: Unique name of the load test run, must be a valid URL character
-         ^[a-z0-9_-]*$.
+         ^[a-z0-9_-]*$. Required.
         :type test_run_id: str
-        :param body: Client metrics request model.
+        :param body: Client metrics request model. Required.
         :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
                 body = {
-                    "endTime": "2020-02-20 00:00:00",  # Required. End time.
+                    "endTime": "2020-02-20 00:00:00",  # End time. Required.
                     "errors": [
                         "str"  # Optional. List of errors, maximum supported errors for
                           queries are 20. In case of empty, by default will return metrics for maximum
@@ -4427,8 +5491,153 @@ class TestRunOperations:
                           samplers for queries are 20. In case of empty, it will return metrics for
                           maximum 20 samplers.
                     ],
-                    "startTime": "2020-02-20 00:00:00"  # Required. Start time.
+                    "startTime": "2020-02-20 00:00:00"  # Start time. Required.
                 }
+
+                # response body for status code(s): 200
+                response.json() == {
+                    "testRunId": "str",  # Optional. Test run name for which client metrics
+                      results is required.
+                    "timeSeries": {
+                        "activeUsers": {
+                            "str": [
+                                {
+                                    "timestamp": "2020-02-20 00:00:00",  #
+                                      Optional. Timestamp(ISO 8601 literal format).
+                                    "value": 0.0  # Optional. Value at timestamp.
+                                }
+                            ]
+                        },
+                        "errors": {
+                            "str": [
+                                {
+                                    "timestamp": "2020-02-20 00:00:00",  #
+                                      Optional. Timestamp(ISO 8601 literal format).
+                                    "value": 0.0  # Optional. Value at timestamp.
+                                }
+                            ]
+                        },
+                        "responseTime": {
+                            "str": [
+                                {
+                                    "timestamp": "2020-02-20 00:00:00",  #
+                                      Optional. Timestamp(ISO 8601 literal format).
+                                    "value": 0.0  # Optional. Value at timestamp.
+                                }
+                            ]
+                        },
+                        "throughput": {
+                            "str": [
+                                {
+                                    "timestamp": "2020-02-20 00:00:00",  #
+                                      Optional. Timestamp(ISO 8601 literal format).
+                                    "value": 0.0  # Optional. Value at timestamp.
+                                }
+                            ]
+                        }
+                    }
+                }
+        """
+
+    @overload
+    def get_test_run_client_metrics(
+        self,
+        test_run_id: str,
+        body: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> JSON:
+        """Get all client metrics for a load test run.
+
+        Get all client metrics for a load test run.
+
+        :param test_run_id: Unique name of the load test run, must be a valid URL character
+         ^[a-z0-9_-]*$. Required.
+        :type test_run_id: str
+        :param body: Client metrics request model. Required.
+        :type body: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response.json() == {
+                    "testRunId": "str",  # Optional. Test run name for which client metrics
+                      results is required.
+                    "timeSeries": {
+                        "activeUsers": {
+                            "str": [
+                                {
+                                    "timestamp": "2020-02-20 00:00:00",  #
+                                      Optional. Timestamp(ISO 8601 literal format).
+                                    "value": 0.0  # Optional. Value at timestamp.
+                                }
+                            ]
+                        },
+                        "errors": {
+                            "str": [
+                                {
+                                    "timestamp": "2020-02-20 00:00:00",  #
+                                      Optional. Timestamp(ISO 8601 literal format).
+                                    "value": 0.0  # Optional. Value at timestamp.
+                                }
+                            ]
+                        },
+                        "responseTime": {
+                            "str": [
+                                {
+                                    "timestamp": "2020-02-20 00:00:00",  #
+                                      Optional. Timestamp(ISO 8601 literal format).
+                                    "value": 0.0  # Optional. Value at timestamp.
+                                }
+                            ]
+                        },
+                        "throughput": {
+                            "str": [
+                                {
+                                    "timestamp": "2020-02-20 00:00:00",  #
+                                      Optional. Timestamp(ISO 8601 literal format).
+                                    "value": 0.0  # Optional. Value at timestamp.
+                                }
+                            ]
+                        }
+                    }
+                }
+        """
+
+
+    @distributed_trace
+    def get_test_run_client_metrics(
+        self,
+        test_run_id: str,
+        body: Union[JSON, IO],
+        **kwargs: Any
+    ) -> JSON:
+        """Get all client metrics for a load test run.
+
+        Get all client metrics for a load test run.
+
+        :param test_run_id: Unique name of the load test run, must be a valid URL character
+         ^[a-z0-9_-]*$. Required.
+        :type test_run_id: str
+        :param body: Client metrics request model. Is either a model type or a IO type. Required.
+        :type body: JSON or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
 
                 # response body for status code(s): 200
                 response.json() == {
@@ -4482,17 +5691,24 @@ class TestRunOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        _json = body
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(body, (IO, bytes)):
+            _content = body
+        else:
+            _json = body
 
         request = build_test_run_get_test_run_client_metrics_request(
             test_run_id=test_run_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -4503,6 +5719,7 @@ class TestRunOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -4532,10 +5749,11 @@ class TestRunOperations:
         Get all filters that are supported for client metrics for a given load test run.
 
         :param test_run_id: Unique name for load test run, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
         :type test_run_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -4570,7 +5788,7 @@ class TestRunOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
@@ -4587,6 +5805,7 @@ class TestRunOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
