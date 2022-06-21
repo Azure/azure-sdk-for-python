@@ -38,7 +38,7 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
         super(AzureMapsSearchClientE2ETest, self).setUp()
         self.client = self.create_client_from_credential(SearchClient,
             credential='NotUsed',
-            client_id=self.get_settings_value("SUBSCRIPTION_ID"),
+            client_id="<RealClientId>",
             authentication_policy = self.get_credential(SearchClient))
         assert self.client is not None
 
@@ -98,7 +98,7 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
             assert "RESTAURANT" in [category.code for category in item.point_of_interest.classifications]
 
     def test_search_structured_address(self):
-        addr = StructuredAddress(street_number=68,
+        addr = StructuredAddress(street_number="68",
                                  street_name="Sec. 5, Zhongxiao E. Rd.",
                                  municipality_subdivision="Xinyi Dist.",
                                  municipality="Taipei City",

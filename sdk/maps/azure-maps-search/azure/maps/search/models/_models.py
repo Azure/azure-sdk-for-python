@@ -106,7 +106,7 @@ class StructuredAddress(object):
 
     @cross_street.setter
     def cross_street(self, value: str) -> None:
-        if not isinstance(value, str):
+        if value and not isinstance(value, str):
             raise TypeError(
                 f'cross_street.setter(): got {type(value).__name__} but expected type is string')
         self._cross_street = value
@@ -117,7 +117,7 @@ class StructuredAddress(object):
 
     @street_number.setter
     def street_number(self, value) -> None:
-        if not isinstance(value, str):
+        if value and not isinstance(value, str):
             raise TypeError(
                 f'street_number.setter(): got {type(value).__name__} but expected type is string')
         self._street_number = value
@@ -128,7 +128,7 @@ class StructuredAddress(object):
 
     @street_name.setter
     def street_name(self, value: str) -> None:
-        if not isinstance(value, str):
+        if value and not isinstance(value, str):
             raise TypeError(
                 f'street_name.setter(): got {type(value).__name__} but expected type is string')
         self._street_name = value
@@ -139,7 +139,7 @@ class StructuredAddress(object):
 
     @municipality.setter
     def municipality(self, value: str) -> None:
-        if not isinstance(value, str):
+        if value and not isinstance(value, str):
             raise TypeError(
                 f'municipality.setter(): got {type(value).__name__} but expected type is string')
         self._municipality = value
@@ -150,7 +150,7 @@ class StructuredAddress(object):
 
     @municipality_subdivision.setter
     def municipality_subdivision(self, value: str) -> None:
-        if not isinstance(value, str):
+        if value and not isinstance(value, str):
             raise TypeError(
                 f'municipality_subdivision.setter(): got {type(value).__name__} but expected type is string')
         self._municipality_subdivision = value
@@ -161,7 +161,7 @@ class StructuredAddress(object):
 
     @country_tertiary_subdivision.setter
     def country_tertiary_subdivision(self, value: str) -> None:
-        if not isinstance(value, str):
+        if value and not isinstance(value, str):
             raise TypeError(
                 f'country_tertiary_subdivision.setter(): got {type(value).__name__} but expected type is string')
         self._country_tertiary_subdivision = value
@@ -172,7 +172,7 @@ class StructuredAddress(object):
 
     @country_secondary_subdivision.setter
     def country_secondary_subdivision(self, value: str) -> None:
-        if not isinstance(value, str):
+        if value and not isinstance(value, str):
             raise TypeError(
                 f'country_secondary_subdivision.setter(): got {type(value).__name__} but expected type is string')
         self._country_secondary_subdivision = value
@@ -183,7 +183,7 @@ class StructuredAddress(object):
 
     @country_subdivision.setter
     def country_subdivision(self, value: str) -> None:
-        if not isinstance(value, str):
+        if value and not isinstance(value, str):
             raise TypeError(
                 f'country_subdivision.setter(): got {type(value).__name__} but expected type is string')
         self._country_subdivision = value
@@ -194,7 +194,7 @@ class StructuredAddress(object):
 
     @postal_code.setter
     def postal_code(self, value: str) -> None:
-        if not isinstance(value, str):
+        if value and not isinstance(value, str):
             raise TypeError(
                 f'postal_code.setter(): got {type(value).__name__} but expected type is string')
         self._postal_code = value
