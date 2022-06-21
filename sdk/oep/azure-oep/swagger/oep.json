@@ -1,0 +1,1345 @@
+
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2021-06-01-preview",
+    "title": "Api Documentation",
+    "description": "Api Documentation",
+    "contact": {
+
+    }
+  },
+  "host": "bvtstglf7zn1c.oep.ppe.azure-int.net",
+  "basePath": "/",
+  "securityDefinitions": {
+    "Authorization": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/workflow/liveness_check": {
+      "get": {
+        "description": "livenessCheck",
+        "summary": "livenessCheckUsingGET",
+        "tags": [
+          "health-check-api"
+        ],
+        "operationId": "livenessCheckUsingGET",
+        "deprecated": false,
+        "produces": [
+          "text/plain"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "The file type/format of the request body"
+          },
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "Which tenant to use"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "livenessCheckUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/livenessCheckUsingGET_MaximumSet_Gen.json"
+          },
+          "livenessCheckUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/livenessCheckUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/workflow/readiness_check": {
+      "get": {
+        "description": "readinessCheck",
+        "summary": "readinessCheckUsingGET",
+        "tags": [
+          "health-check-api"
+        ],
+        "operationId": "readinessCheckUsingGET",
+        "deprecated": false,
+        "produces": [
+          "text/plain"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "The file type/format of the request body"
+          },
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "Which tenant to use"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "readinessCheckUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/readinessCheckUsingGET_MaximumSet_Gen.json"
+          },
+          "readinessCheckUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/readinessCheckUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/workflow/info": {
+      "get": {
+        "description": "info",
+        "summary": "infoUsingGET",
+        "tags": [
+          "info-api"
+        ],
+        "operationId": "infoUsingGET",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "The file type/format of the request body"
+          },
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "Which tenant to use"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/VersionInfo"
+            },
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "infoUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/infoUsingGET_MaximumSet_Gen.json"
+          },
+          "infoUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/infoUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/workflow/v1/workflow": {
+      "get": {
+        "description": "getAllWorkflowsForTenant",
+        "summary": "getAllWorkflowsForTenantUsingGET",
+        "tags": [
+          "workflow-manager-api"
+        ],
+        "operationId": "getAllWorkflowsForTenantUsingGET",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "The file type/format of the request body"
+          },
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "Which tenant to use"
+          },
+          {
+            "name": "prefix",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "prefix"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "default": "",
+              "items": {
+                "$ref": "#/definitions/WorkflowMetadata"
+              }
+            },
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "getAllWorkflowsForTenantUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/getAllWorkflowsForTenantUsingGET_MaximumSet_Gen.json"
+          },
+          "getAllWorkflowsForTenantUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/getAllWorkflowsForTenantUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      },
+      "post": {
+        "description": "create",
+        "summary": "createUsingPOST",
+        "tags": [
+          "workflow-manager-api"
+        ],
+        "operationId": "createUsingPOST",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": false,
+            "enum": [
+              "application/json"
+            ],
+            "type": "string",
+            "description": "The file type/format of the request body"
+          },
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "Which tenant to use"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/CreateWorkflowRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/WorkflowMetadata"
+            },
+            "headers": {
+
+            }
+          },
+          "201": {
+            "description": "Created",
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "createUsingPOST_MaximumSet_Gen": {
+            "$ref": "./examples/createUsingPOST_MaximumSet_Gen.json"
+          },
+          "createUsingPOST_MinimumSet_Gen": {
+            "$ref": "./examples/createUsingPOST_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/workflow/v1/workflow/{workflow_name}": {
+      "get": {
+        "description": "getWorkflowByName",
+        "summary": "getWorkflowByNameUsingGET",
+        "tags": [
+          "workflow-manager-api"
+        ],
+        "operationId": "getWorkflowByNameUsingGET",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "The file type/format of the request body"
+          },
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "Which tenant to use"
+          },
+          {
+            "name": "workflow_name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "workflow_name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/WorkflowMetadata"
+            },
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "getWorkflowByNameUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/getWorkflowByNameUsingGET_MaximumSet_Gen.json"
+          },
+          "getWorkflowByNameUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/getWorkflowByNameUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      },
+      "delete": {
+        "description": "deleteWorkflowById",
+        "summary": "deleteWorkflowByIdUsingDELETE",
+        "tags": [
+          "workflow-manager-api"
+        ],
+        "operationId": "deleteWorkflowByIdUsingDELETE",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "The file type/format of the request body"
+          },
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "Which tenant to use"
+          },
+          {
+            "name": "workflow_name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "workflow_name"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "deleteWorkflowByIdUsingDELETE_MaximumSet_Gen": {
+            "$ref": "./examples/deleteWorkflowByIdUsingDELETE_MaximumSet_Gen.json"
+          },
+          "deleteWorkflowByIdUsingDELETE_MinimumSet_Gen": {
+            "$ref": "./examples/deleteWorkflowByIdUsingDELETE_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/workflow/v1/workflow/{workflow_name}/workflowRun": {
+      "get": {
+        "description": "getAllRunInstances",
+        "summary": "getAllRunInstancesUsingGET",
+        "tags": [
+          "workflow-run-api"
+        ],
+        "operationId": "getAllRunInstancesUsingGET",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "The file type/format of the request body"
+          },
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "Which tenant to use"
+          },
+          {
+            "name": "workflow_name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "workflow_name"
+          },
+          {
+            "name": "params",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "description": "params"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "default": "",
+              "items": {
+                "$ref": "#/definitions/WorkflowRun"
+              }
+            },
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "getAllRunInstancesUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/getAllRunInstancesUsingGET_MaximumSet_Gen.json"
+          },
+          "getAllRunInstancesUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/getAllRunInstancesUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      },
+      "post": {
+        "description": "triggerWorkflow",
+        "summary": "triggerWorkflowUsingPOST",
+        "tags": [
+          "workflow-run-api"
+        ],
+        "operationId": "triggerWorkflowUsingPOST",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": false,
+            "enum": [
+              "application/json"
+            ],
+            "type": "string",
+            "description": "The file type/format of the request body"
+          },
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "Which tenant to use"
+          },
+          {
+            "name": "workflow_name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "workflow_name"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/TriggerWorkflowRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/WorkflowRunResponse"
+            },
+            "headers": {
+
+            }
+          },
+          "201": {
+            "description": "Created",
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "triggerWorkflowUsingPOST_MaximumSet_Gen": {
+            "$ref": "./examples/triggerWorkflowUsingPOST_MaximumSet_Gen.json"
+          },
+          "triggerWorkflowUsingPOST_MinimumSet_Gen": {
+            "$ref": "./examples/triggerWorkflowUsingPOST_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/workflow/v1/workflow/{workflow_name}/workflowRun/{runId}": {
+      "get": {
+        "description": "getWorkflowRunById",
+        "summary": "getWorkflowRunByIdUsingGET",
+        "tags": [
+          "workflow-run-api"
+        ],
+        "operationId": "getWorkflowRunByIdUsingGET",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "The file type/format of the request body"
+          },
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "Which tenant to use"
+          },
+          {
+            "name": "workflow_name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "workflow_name"
+          },
+          {
+            "name": "runId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "runId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/WorkflowRunResponse"
+            },
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "getWorkflowRunByIdUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/getWorkflowRunByIdUsingGET_MaximumSet_Gen.json"
+          },
+          "getWorkflowRunByIdUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/getWorkflowRunByIdUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      },
+      "put": {
+        "description": "updateWorkflowRun",
+        "summary": "updateWorkflowRunUsingPUT",
+        "tags": [
+          "workflow-run-api"
+        ],
+        "operationId": "updateWorkflowRunUsingPUT",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": false,
+            "enum": [
+              "application/json"
+            ],
+            "type": "string",
+            "description": "The file type/format of the request body"
+          },
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "Which tenant to use"
+          },
+          {
+            "name": "workflow_name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "workflow_name"
+          },
+          {
+            "name": "runId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "runId"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/UpdateWorkflowRunRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/WorkflowRunResponse"
+            },
+            "headers": {
+
+            }
+          },
+          "201": {
+            "description": "Created",
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "updateWorkflowRunUsingPUT_MaximumSet_Gen": {
+            "$ref": "./examples/updateWorkflowRunUsingPUT_MaximumSet_Gen.json"
+          },
+          "updateWorkflowRunUsingPUT_MinimumSet_Gen": {
+            "$ref": "./examples/updateWorkflowRunUsingPUT_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/workflow/v1/workflow/system": {
+      "post": {
+        "description": "createSystemWorkflow",
+        "summary": "createSystemWorkflowUsingPOST",
+        "tags": [
+          "workflow-system-manager-api"
+        ],
+        "operationId": "createSystemWorkflowUsingPOST",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": false,
+            "enum": [
+              "application/json"
+            ],
+            "type": "string",
+            "description": "The file type/format of the request body"
+          },
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "Which tenant to use"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/CreateWorkflowRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/WorkflowMetadata"
+            },
+            "headers": {
+
+            }
+          },
+          "201": {
+            "description": "Created",
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "createSystemWorkflowUsingPOST_MaximumSet_Gen": {
+            "$ref": "./examples/createSystemWorkflowUsingPOST_MaximumSet_Gen.json"
+          },
+          "createSystemWorkflowUsingPOST_MinimumSet_Gen": {
+            "$ref": "./examples/createSystemWorkflowUsingPOST_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/workflow/v1/workflow/system/{workflow_name}": {
+      "delete": {
+        "description": "deleteSystemWorkflowById",
+        "summary": "deleteSystemWorkflowByIdUsingDELETE",
+        "tags": [
+          "workflow-system-manager-api"
+        ],
+        "operationId": "deleteSystemWorkflowByIdUsingDELETE",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "The file type/format of the request body"
+          },
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "Which tenant to use"
+          },
+          {
+            "name": "workflow_name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "workflow_name"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "headers": {
+
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "deleteSystemWorkflowByIdUsingDELETE_MaximumSet_Gen": {
+            "$ref": "./examples/deleteSystemWorkflowByIdUsingDELETE_MaximumSet_Gen.json"
+          },
+          "deleteSystemWorkflowByIdUsingDELETE_MinimumSet_Gen": {
+            "$ref": "./examples/deleteSystemWorkflowByIdUsingDELETE_MinimumSet_Gen.json"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ConnectedOuterService": {
+      "title": "ConnectedOuterService",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "CreateWorkflowRequest": {
+      "title": "CreateWorkflowRequest",
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "registrationInstructions": {
+          "type": "object"
+        },
+        "workflowName": {
+          "type": "string"
+        }
+      }
+    },
+    "TriggerWorkflowRequest": {
+      "title": "TriggerWorkflowRequest",
+      "type": "object",
+      "properties": {
+        "executionContext": {
+          "type": "object"
+        },
+        "runId": {
+          "type": "string"
+        }
+      }
+    },
+    "UpdateWorkflowRunRequest": {
+      "title": "UpdateWorkflowRunRequest",
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status"
+        }
+      }
+    },
+    "VersionInfo": {
+      "title": "VersionInfo",
+      "type": "object",
+      "properties": {
+        "artifactId": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "buildTime": {
+          "type": "string"
+        },
+        "commitId": {
+          "type": "string"
+        },
+        "commitMessage": {
+          "type": "string"
+        },
+        "connectedOuterServices": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ConnectedOuterService"
+          }
+        },
+        "groupId": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "WorkflowMetadata": {
+      "title": "WorkflowMetadata",
+      "type": "object",
+      "properties": {
+        "createdBy": {
+          "type": "string"
+        },
+        "creationTimestamp": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": {
+          "type": "string"
+        },
+        "registrationInstructions": {
+          "type": "object"
+        },
+        "version": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "workflowId": {
+          "type": "string"
+        },
+        "workflowName": {
+          "type": "string"
+        }
+      }
+    },
+    "WorkflowRun": {
+      "title": "WorkflowRun",
+      "type": "object",
+      "properties": {
+        "endTimeStamp": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "runId": {
+          "type": "string"
+        },
+        "startTimeStamp": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "status": {
+          "$ref": "#/definitions/Status"
+        },
+        "submittedBy": {
+          "type": "string"
+        },
+        "workflowEngineExecutionDate": {
+          "type": "string"
+        },
+        "workflowId": {
+          "type": "string"
+        },
+        "workflowName": {
+          "type": "string"
+        }
+      }
+    },
+    "WorkflowRunResponse": {
+      "title": "WorkflowRunResponse",
+      "type": "object",
+      "properties": {
+        "endTimeStamp": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "runId": {
+          "type": "string"
+        },
+        "startTimeStamp": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "status": {
+          "$ref": "#/definitions/Status"
+        },
+        "submittedBy": {
+          "type": "string"
+        },
+        "workflowId": {
+          "type": "string"
+        }
+      }
+    },
+    "Status": {
+      "title": "Status",
+      "type": "string",
+      "enum": [
+        "FAILED",
+        "FINISHED",
+        "RUNNING",
+        "SUBMITTED",
+        "SUCCESS"
+      ]
+    }
+  },
+  "security": [
+
+  ],
+  "tags": [
+    {
+      "name": "health-check-api",
+      "description": "Health Check Api"
+    },
+    {
+      "name": "info-api",
+      "description": "Info Api"
+    },
+    {
+      "name": "workflow-manager-api",
+      "description": "Workflow Manager Api"
+    },
+    {
+      "name": "workflow-run-api",
+      "description": "Workflow Run Api"
+    },
+    {
+      "name": "workflow-system-manager-api",
+      "description": "Workflow System Manager Api"
+    }
+  ]
+}
