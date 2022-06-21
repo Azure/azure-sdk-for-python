@@ -64,7 +64,6 @@ class IssueProcess:
         self.target_date = ''
         self.date_from_target = 0
         self.is_open = True
-        print(f'**** issue {self.issue_package.issue.number}, language owner: {self.language_owner}, assignee_candidates: {self.assignee_candidates}')
 
     def get_issue_body(self) -> List[str]:
         return [i for i in self.issue_package.issue.body.split("\n") if i]
@@ -298,7 +297,7 @@ class Common:
 
     def __init__(self, issues_package: List[IssuePackage], language_owner: Set[str], assignee_token=_ASSIGNEE_TOKEN):
         self.issues_package = issues_package
-        self.language_owner = language_owner
+        self.language_owner = language_owner.copy()
         language_owner.discard(_BOT_NAME)
         self.assignee_candidates = language_owner
         # arguments add to language.md
