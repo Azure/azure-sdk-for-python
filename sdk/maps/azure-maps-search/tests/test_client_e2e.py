@@ -2,7 +2,6 @@ import os
 import sys
 import pytest
 
-from azure.core.credentials import AccessToken
 from devtools_testutils import AzureTestCase
 from azure_devtools.scenario_tests import RecordingProcessor
 from azure.maps.search import SearchClient
@@ -39,6 +38,7 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
         super(AzureMapsSearchClientE2ETest, self).setUp()
         self.client = self.create_client_from_credential(SearchClient,
             credential='NotUsed',
+            client_id=self.get_settings_value("SUBSCRIPTION_ID"),
             authentication_policy = self.get_credential(SearchClient))
         assert self.client is not None
 
