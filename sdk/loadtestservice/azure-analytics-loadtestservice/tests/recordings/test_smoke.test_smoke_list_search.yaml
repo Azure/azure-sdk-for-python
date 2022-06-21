@@ -14,32 +14,13 @@ interactions:
     uri: https://fake.loadtesting.azure.com/loadtests/sortAndFilter?maxPageSize=50&api-version=2022-06-01-preview
   response:
     body:
-      string: '{"value":[{"testId":"5f6403ac-6d53-4a64-adfa-bf35aee7c11b","description":"","displayName":"Test_6/21/2022_1:43:50PM",
-              "resourceId":"/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk",
+      string: '{"value":[{"testId":"00000-000-0000-00000000","description":"","displayName":"Test_6/21/2022_1:43:50PM",
+              "resourceId":"/subscriptions/000000-00000-00000-0000/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk",
               "loadTestConfig":{"engineInstances":1,"splitAllCSVs":false},"passFailCriteria":{"passFailMetrics":{}},"createdDateTime":"2022-06-21T08:14:17.269Z",
               "createdBy":"t-yjain@microsoft.com","lastModifiedDateTime":"2022-06-21T08:14:18.022Z","lastModifiedBy":"t-yjain@microsoft.com",
-              "inputArtifacts":{"configUrl":null,"testScriptUrl":{"url":"https://stcntproddataeus.blob.core.windows.net/429e69ea-d7a3-4563-b603-b23e6ddcac70/b80fa917-0f42-47a4-bd76-f05ef76e1573?sv=2020-04-08&se=2022-06-21T13%3A14%3A13Z&sr=b&sp=r&sig=xe4b1yuC%2F4hD9U%2B53%2BF9xUg9HA3XW8FXTbcMhO510JQ%3D",
-              "fileId":"b80fa917-0f42-47a4-bd76-f05ef76e1573","filename":"NGINX-10s.jmx","fileType":0,"expireTime":"2022-06-21T12:24:13.926561+00:00",
-              "validationStatus":"VALIDATION_SUCCESS"},"userPropUrl":null,"inputArtifactsZipFileurl":null,"additionalUrls":[]},
-              "secrets":null,"environmentVariables":null,"subnetId":null,"keyvaultReferenceIdentityType":"SystemAssigned",
-              "keyvaultReferenceIdentityId":null},{"testId":"a011890b-12cd-004d-015d-12aed8880000","description":"","displayName":"testone",
-              "resourceId":"/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk",
-              "loadTestConfig":{"engineInstances":1,"splitAllCSVs":false},"passFailCriteria":{"passFailMetrics":{}},
-              "createdDateTime":"2022-06-21T07:47:10.453Z","createdBy":null,"lastModifiedDateTime":"2022-06-21T07:47:10.453Z",
-              "lastModifiedBy":null,"inputArtifacts":{"configUrl":null,"testScriptUrl":{"url":"https://stcntproddataeus.blob.core.windows.net/24b4322e-17cc-4f1f-858d-6ee72312d5ee/a012b234-1234-ab03-0045-ab12c450008d?sv=2020-04-08&se=2022-06-21T13%3A14%3A13Z&sr=b&sp=r&sig=8mtA7XV5b4l%2B0ufEDR0P3Qdn57pfj3XIq37H5zN%2BWGk%3D",
-              "fileId":"a012b234-1234-ab03-0045-ab12c450008d","filename":"NGINX-10s.jmx","fileType":0,"expireTime":"2022-06-21T12:24:13.9266005+00:00",
-              "validationStatus":"VALIDATION_SUCCESS"},"userPropUrl":null,"inputArtifactsZipFileurl":null,"additionalUrls":[]},
-              "secrets":null,"environmentVariables":null,"subnetId":null,"keyvaultReferenceIdentityType":"SystemAssigned",
-              "keyvaultReferenceIdentityId":null},{"testId":"c952988d-4618-402f-be94-401963858b40","description":"",
-              "displayName":"Test_6/20/2022_11:43:41PM","resourceId":"/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk",
-              "loadTestConfig":{"engineInstances":1,"splitAllCSVs":false},"passFailCriteria":{"passFailMetrics":{}},
-              "createdDateTime":"2022-06-20T18:14:00.127Z","createdBy":"t-harshanb@microsoft.com","lastModifiedDateTime":"2022-06-20T18:14:02.264Z",
-              "lastModifiedBy":"t-harshanb@microsoft.com","inputArtifacts":{"configUrl":null,
-              "testScriptUrl":{"url":"https://stcntproddataeus.blob.core.windows.net/f46691cd-327d-4243-a7dd-045035ebb277/890bba39-760f-4de1-b3bc-e0455159c043?sv=2020-04-08&se=2022-06-21T13%3A14%3A13Z&sr=b&sp=r&sig=akCxpUVZXNqYk04mpceEb2e4YF7dyjhpE018xgxSxyo%3D",
-              "fileId":"890bba39-760f-4de1-b3bc-e0455159c043","filename":"NGINX-10s.jmx","fileType":0,
-              "expireTime":"2022-06-21T12:24:13.9266048+00:00","validationStatus":"VALIDATION_SUCCESS"},"userPropUrl":null,
-              "inputArtifactsZipFileurl":null,"additionalUrls":[]},"secrets":null,"environmentVariables":null,"subnetId":null,
-              "keyvaultReferenceIdentityType":"SystemAssigned","keyvaultReferenceIdentityId":null}],"nextLink":null}'
+              "inputArtifacts":{"configUrl":null,"testScriptUrl":{"url":"https://fakeHA3XW8FXTbcMhO510JQ%3D",
+              "fileId":"00000000-0000-0000-0000-00000000000","filename":"NGINX-10s.jmx","fileType":0,"expireTime":"2022-06-21T12:24:13.926561+00:00",
+              "validationStatus":"VALIDATION_SUCCESS"},"userPropUrl":null,"inputArtifactsZipFileurl":null,"additionalUrls":[]}'
     headers:
       api-supported-versions:
       - 2021-07-01-preview, 2022-04-15-preview, 2022-06-01-preview
