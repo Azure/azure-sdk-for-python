@@ -1,8 +1,9 @@
+import pytest
 import types
 from azure.eventhub._pyamqp.client import AMQPClient
 from azure.eventhub._pyamqp.authentication import SASTokenAuth
 
-
+@pytest.mark.skip
 def test_keep_alive_thread_fail_to_start():
 
     class MockThread:
