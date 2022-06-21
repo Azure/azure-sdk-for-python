@@ -1,5 +1,12 @@
 # Release History
 
+## 1.1.0 (2022-06-21)
+
+**Features**
+
+  - Added operation CustomLocationsOperations.find_target_resource_group
+  - Added operation group ResourceSyncRulesOperations
+
 ## 1.0.0 (2021-09-22)
 
 **Features**
