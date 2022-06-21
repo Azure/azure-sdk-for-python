@@ -10,20 +10,19 @@ interactions:
     uri: https://fake.loadtesting.azure.com/loadtests/sortAndFilter?maxPageSize=50&api-version=2022-06-01-preview
   response:
     body:
-      string: '{"value":[{"testId":"00000-000-0000-00000000","description":"","displayName":"Test_6/21/2022_1:43:50PM",
-              "resourceId":"/subscriptions/000000-00000-00000-0000/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk",
-              "loadTestConfig":{"engineInstances":1,"splitAllCSVs":false},"passFailCriteria":{"passFailMetrics":{}},"createdDateTime":"2022-06-21T08:14:17.269Z",
-              "createdBy":"t-yjain@microsoft.com","lastModifiedDateTime":"2022-06-21T08:14:18.022Z","lastModifiedBy":"t-yjain@microsoft.com",
-              "inputArtifacts":{"configUrl":null,"testScriptUrl":{"url":"https://fakeHA3XW8FXTbcMhO510JQ%3D",
-              "fileId":"00000000-0000-0000-0000-00000000000","filename":"NGINX-10s.jmx","fileType":0,"expireTime":"2022-06-21T12:24:13.926561+00:00",
-              "validationStatus":"VALIDATION_SUCCESS"},"userPropUrl":null,"inputArtifactsZipFileurl":null,"additionalUrls":[]}'
+      string: '{"value":[{"testId":"000002","description":"","displayName":"test","resourceId":"/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk",
+              "loadTestConfig":{"engineInstances":1,"splitAllCSVs":false},"passFailCriteria":{"passFailMetrics":{}},
+              "createdDateTime":"2022-06-21T13:45:53.627Z","createdBy":null,"lastModifiedDateTime":"2022-06-21T13:45:53.627Z",
+              "lastModifiedBy":null,"inputArtifacts":{"configUrl":null,"testScriptUrl":null,"userPropUrl":null,
+              "inputArtifactsZipFileurl":null,"additionalUrls":[]},"secrets":null,"environmentVariables":null,"subnetId":null,
+              "keyvaultReferenceIdentityType":"SystemAssigned","keyvaultReferenceIdentityId":null}],"nextLink":null}'
     headers:
       api-supported-versions: 2021-07-01-preview, 2022-04-15-preview, 2022-06-01-preview
       connection: keep-alive
-      content-length: '3617'
+      content-length: '743'
       content-type: application/json; charset=utf-8
-      date: Tue, 21 Jun 2022 12:14:14 GMT
-      mise-correlation-id: b546d0d0-e383-488e-8c66-1e79bd95a744
+      date: Tue, 21 Jun 2022 13:45:54 GMT
+      mise-correlation-id: 26cee0a5-8738-449a-a90b-f926c489c331
       strict-transport-security: max-age=15724800; includeSubDomains
       x-content-type-options: nosniff
     status:

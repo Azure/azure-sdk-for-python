@@ -23,13 +23,12 @@ interactions:
     uri: https://fake.loadtesting.azure.com/loadtests/000001?api-version=2022-06-01-preview
   response:
     body:
-      string: '{"testId":"000001","description":"","displayName":"test",
-              "resourceId":"/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk",
+      string: '{"testId":"000001","description":"","displayName":"test","resourceId":"/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk",
               "loadTestConfig":{"engineInstances":1,"splitAllCSVs":false},"passFailCriteria":{"passFailMetrics":{}},
-              "createdDateTime":"2022-06-21T12:14:10.058Z","createdBy":null,"lastModifiedDateTime":"2022-06-21T12:14:10.058Z",
-              "lastModifiedBy":null,"inputArtifacts":{"configUrl":null,"testScriptUrl":null,"userPropUrl":null,"inputArtifactsZipFileurl":null,
-              "additionalUrls":[]},"secrets":null,"environmentVariables":null,"subnetId":null,"keyvaultReferenceIdentityType":"SystemAssigned",
-              "keyvaultReferenceIdentityId":null}'
+              "createdDateTime":"2022-06-21T13:45:51.163Z","createdBy":null,"lastModifiedDateTime":"2022-06-21T13:45:51.163Z",
+              "lastModifiedBy":null,"inputArtifacts":{"configUrl":null,"testScriptUrl":null,"userPropUrl":null,
+              "inputArtifactsZipFileurl":null,"additionalUrls":[]},"secrets":null,"environmentVariables":null,"subnetId":null,
+              "keyvaultReferenceIdentityType":"SystemAssigned","keyvaultReferenceIdentityId":null}'
     headers:
       api-supported-versions:
       - 2021-07-01-preview, 2022-04-15-preview, 2022-06-01-preview
@@ -40,11 +39,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 21 Jun 2022 12:14:10 GMT
+      - Tue, 21 Jun 2022 13:45:51 GMT
       location:
       - https://fake.loadtesting.azure.com/loadtests/000001?resourceId=%2fsubscriptions%2f7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a%2fresourcegroups%2fyashika-rg%2fproviders%2fmicrosoft.loadtestservice%2floadtests%2floadtestsdk&api-version=2022-06-01-preview
       mise-correlation-id:
-      - 8cc207e2-c682-4163-ad80-50242773cce2
+      - 6e963a55-5bfa-4c03-bd4c-e46f96d95709
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       x-content-type-options:

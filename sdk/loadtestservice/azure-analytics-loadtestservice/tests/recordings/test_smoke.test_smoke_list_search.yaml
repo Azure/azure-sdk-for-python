@@ -14,26 +14,20 @@ interactions:
     uri: https://fake.loadtesting.azure.com/loadtests/sortAndFilter?maxPageSize=50&api-version=2022-06-01-preview
   response:
     body:
-      string: '{"value":[{"testId":"00000-000-0000-00000000","description":"","displayName":"Test_6/21/2022_1:43:50PM",
-              "resourceId":"/subscriptions/000000-00000-00000-0000/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk",
-              "loadTestConfig":{"engineInstances":1,"splitAllCSVs":false},"passFailCriteria":{"passFailMetrics":{}},"createdDateTime":"2022-06-21T08:14:17.269Z",
-              "createdBy":"t-yjain@microsoft.com","lastModifiedDateTime":"2022-06-21T08:14:18.022Z","lastModifiedBy":"t-yjain@microsoft.com",
-              "inputArtifacts":{"configUrl":null,"testScriptUrl":{"url":"https://fakeHA3XW8FXTbcMhO510JQ%3D",
-              "fileId":"00000000-0000-0000-0000-00000000000","filename":"NGINX-10s.jmx","fileType":0,"expireTime":"2022-06-21T12:24:13.926561+00:00",
-              "validationStatus":"VALIDATION_SUCCESS"},"userPropUrl":null,"inputArtifactsZipFileurl":null,"additionalUrls":[]}'
+      string: '{"value":[],"nextLink":null}'
     headers:
       api-supported-versions:
       - 2021-07-01-preview, 2022-04-15-preview, 2022-06-01-preview
       connection:
       - keep-alive
       content-length:
-      - '3618'
+      - '28'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 21 Jun 2022 12:14:13 GMT
+      - Tue, 21 Jun 2022 13:45:52 GMT
       mise-correlation-id:
-      - dc375ecc-0ba5-41b1-8e2a-23bd651c8c8a
+      - d1648cc2-1051-4d86-9ffa-4b036141df7f
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       x-content-type-options:
