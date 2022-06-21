@@ -64,6 +64,7 @@ class IssueProcess:
         self.target_date = ''
         self.date_from_target = 0
         self.is_open = True
+        print(f'**** issue {self.issue_package.issue.number}, language owner: {self.language_owner}, assignee_candidates: {self.assignee_candidates}')
 
     def get_issue_body(self) -> List[str]:
         return [i for i in self.issue_package.issue.body.split("\n") if i]
