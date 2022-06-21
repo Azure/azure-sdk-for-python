@@ -1,0 +1,1083 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2021-06-01-preview",
+    "title": "Api Documentation",
+    "description": "Api Documentation",
+    "contact": {}
+  },
+  "host": "bvtstglf7zn1c.oep.ppe.azure-int.net",
+  "basePath": "/",
+  "securityDefinitions": {
+    "Authorization": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/entitlements/v2/groups/{group_email}/members": {
+      "post": {
+        "description": "addMember",
+        "summary": "addMemberUsingPOST",
+        "tags": [
+          "add-member-api"
+        ],
+        "operationId": "addMemberUsingPOST",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "group_email",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "group_email"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": false,
+            "enum": [
+              "application/json"
+            ],
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/AddMemberDto"
+            },
+            "headers": {}
+          },
+          "201": {
+            "description": "Created",
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "addMemberUsingPOST_MaximumSet_Gen": {
+            "$ref": "./examples/addMemberUsingPOST_MaximumSet_Gen.json"
+          },
+          "addMemberUsingPOST_MinimumSet_Gen": {
+            "$ref": "./examples/addMemberUsingPOST_MinimumSet_Gen.json"
+          }
+        }
+      },
+      "get": {
+        "description": "listGroupMembers",
+        "summary": "listGroupMembersUsingGET",
+        "tags": [
+          "list-member-api"
+        ],
+        "operationId": "listGroupMembersUsingGET",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "group_email",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "group_email"
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "required": false,
+            "enum": [
+              "MEMBER",
+              "OWNER"
+            ],
+            "type": "string",
+            "description": "role"
+          },
+          {
+            "name": "includeType",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "description": "includeType"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ListMemberResponseDto"
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "listGroupMembersUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/listGroupMembersUsingGET_MaximumSet_Gen.json"
+          },
+          "listGroupMembersUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/listGroupMembersUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/entitlements/v2/groups": {
+      "post": {
+        "description": "createGroup",
+        "summary": "createGroupUsingPOST",
+        "tags": [
+          "create-group-api"
+        ],
+        "operationId": "createGroupUsingPOST",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": false,
+            "enum": [
+              "application/json"
+            ],
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/CreateGroupDto"
+            },
+            "headers": {}
+          },
+          "201": {
+            "description": "Created",
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "createGroupUsingPOST_MaximumSet_Gen": {
+            "$ref": "./examples/createGroupUsingPOST_MaximumSet_Gen.json"
+          },
+          "createGroupUsingPOST_MinimumSet_Gen": {
+            "$ref": "./examples/createGroupUsingPOST_MinimumSet_Gen.json"
+          }
+        }
+      },
+      "get": {
+        "description": "listGroups",
+        "summary": "listGroupsUsingGET",
+        "tags": [
+          "list-group-api"
+        ],
+        "operationId": "listGroupsUsingGET",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ListGroupResponseDto"
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "listGroupsUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/listGroupsUsingGET_MaximumSet_Gen.json"
+          },
+          "listGroupsUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/listGroupsUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/entitlements/v2/groups/{group_email}": {
+      "delete": {
+        "description": "deleteGroup",
+        "summary": "deleteGroupUsingDELETE",
+        "tags": [
+          "delete-group-api"
+        ],
+        "operationId": "deleteGroupUsingDELETE",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "group_email",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "group_email"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {}
+          },
+          "204": {
+            "description": "No Content",
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "deleteGroupUsingDELETE_MaximumSet_Gen": {
+            "$ref": "./examples/deleteGroupUsingDELETE_MaximumSet_Gen.json"
+          },
+          "deleteGroupUsingDELETE_MinimumSet_Gen": {
+            "$ref": "./examples/deleteGroupUsingDELETE_MinimumSet_Gen.json"
+          }
+        }
+      },
+      "patch": {
+        "description": "updateGroup",
+        "summary": "updateGroupUsingPATCH",
+        "tags": [
+          "update-group-api"
+        ],
+        "operationId": "updateGroupUsingPATCH",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "group_email",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "group_email"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": false,
+            "enum": [
+              "application/json"
+            ],
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/UpdateGroupResponseDto"
+            },
+            "headers": {}
+          },
+          "204": {
+            "description": "No Content",
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "updateGroupUsingPATCH_MaximumSet_Gen": {
+            "$ref": "./examples/updateGroupUsingPATCH_MaximumSet_Gen.json"
+          },
+          "updateGroupUsingPATCH_MinimumSet_Gen": {
+            "$ref": "./examples/updateGroupUsingPATCH_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/entitlements/v2/members/{member_email}": {
+      "delete": {
+        "description": "deleteMember",
+        "summary": "deleteMemberUsingDELETE",
+        "tags": [
+          "delete-member-api"
+        ],
+        "operationId": "deleteMemberUsingDELETE",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "member_email",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "member_email"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {}
+          },
+          "204": {
+            "description": "No Content",
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "deleteMemberUsingDELETE_MaximumSet_Gen": {
+            "$ref": "./examples/deleteMemberUsingDELETE_MaximumSet_Gen.json"
+          },
+          "deleteMemberUsingDELETE_MinimumSet_Gen": {
+            "$ref": "./examples/deleteMemberUsingDELETE_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/entitlements/v2/_ah/liveness_check": {
+      "get": {
+        "description": "livenessCheck",
+        "summary": "livenessCheckUsingGET",
+        "tags": [
+          "health-checks-api"
+        ],
+        "operationId": "livenessCheckUsingGET",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "livenessCheckUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/livenessCheckUsingGET_MaximumSet_Gen.json"
+          },
+          "livenessCheckUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/livenessCheckUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/entitlements/v2/_ah/readiness_check": {
+      "get": {
+        "description": "readinessCheck",
+        "summary": "readinessCheckUsingGET",
+        "tags": [
+          "health-checks-api"
+        ],
+        "operationId": "readinessCheckUsingGET",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "readinessCheckUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/readinessCheckUsingGET_MaximumSet_Gen.json"
+          },
+          "readinessCheckUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/readinessCheckUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/entitlements/v2/info": {
+      "get": {
+        "description": "info",
+        "summary": "infoUsingGET",
+        "tags": [
+          "info-api"
+        ],
+        "operationId": "infoUsingGET",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/VersionInfo"
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "infoUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/infoUsingGET_MaximumSet_Gen.json"
+          },
+          "infoUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/infoUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/entitlements/v2/tenant-provisioning": {
+      "post": {
+        "description": "initiateTenant",
+        "summary": "initiateTenantUsingPOST",
+        "tags": [
+          "init-api"
+        ],
+        "operationId": "initiateTenantUsingPOST",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {}
+          },
+          "201": {
+            "description": "Created",
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "initiateTenantUsingPOST_MaximumSet_Gen": {
+            "$ref": "./examples/initiateTenantUsingPOST_MaximumSet_Gen.json"
+          },
+          "initiateTenantUsingPOST_MinimumSet_Gen": {
+            "$ref": "./examples/initiateTenantUsingPOST_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/entitlements/v2/members/{member_email}/groups": {
+      "get": {
+        "description": "listGroupsOnBehalfOf",
+        "summary": "listGroupsOnBehalfOfUsingGET",
+        "tags": [
+          "list-group-on-behalf-of-api"
+        ],
+        "operationId": "listGroupsOnBehalfOfUsingGET",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "member_email",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "member_email"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "type"
+          },
+          {
+            "name": "appid",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "appid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ListGroupResponseDto"
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "listGroupsOnBehalfOfUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/listGroupsOnBehalfOfUsingGET_MaximumSet_Gen.json"
+          },
+          "listGroupsOnBehalfOfUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/listGroupsOnBehalfOfUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/entitlements/v2/groups/{group_email}/members/{member_email}": {
+      "delete": {
+        "description": "deleteMember",
+        "summary": "deleteMemberUsingDELETE_1",
+        "tags": [
+          "remove-member-api"
+        ],
+        "operationId": "deleteMemberUsingDELETE_1",
+        "deprecated": false,
+        "produces": [
+          "text/plain"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "group_email",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "group_email"
+          },
+          {
+            "name": "member_email",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "member_email"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "headers": {}
+          },
+          "204": {
+            "description": "No Content",
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "deleteMemberUsingDELETE_1_MaximumSet_Gen": {
+            "$ref": "./examples/deleteMemberUsingDELETE_1_MaximumSet_Gen.json"
+          },
+          "deleteMemberUsingDELETE_1_MinimumSet_Gen": {
+            "$ref": "./examples/deleteMemberUsingDELETE_1_MinimumSet_Gen.json"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "AddMemberDto": {
+      "type": "object"
+    },
+    "CreateGroupDto": {
+      "type": "object"
+    },
+    "GroupDto": {
+      "type": "object"
+    },
+    "ListGroupResponseDto": {
+      "type": "object"
+    },
+    "ListMemberResponseDto": {
+      "type": "object"
+    },
+    "UpdateGroupOperation": {
+      "type": "object"
+    },
+    "UpdateGroupResponseDto": {
+      "type": "object"
+    },
+    "VersionInfo": {
+      "type": "object",
+      "properties": {
+        "groupId": {
+          "type": "string",
+          "description": "Maven artifact group ID."
+        },
+        "artifactId": {
+          "type": "string",
+          "description": "Maven artifact ID."
+        },
+        "version": {
+          "type": "string",
+          "description": "Maven artifact version"
+        },
+        "buildTime": {
+          "type": "string",
+          "description": "Maven artifact build time"
+        },
+        "branch": {
+          "type": "string",
+          "description": "Current git branch"
+        },
+        "commitId": {
+          "type": "string",
+          "description": "Latest commit hash"
+        },
+        "commitMessage": {
+          "type": "string",
+          "description": "Latest commit message"
+        },
+        "connectedOuterServices": {
+          "type": "array",
+          "description": "Connected outer services information",
+          "items": {
+            "$ref": "#/definitions/ConnectedOuterService"
+          }
+        }
+      },
+      "description": "Version info."
+    },
+    "ConnectedOuterService": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Connected outer service name."
+        },
+        "version": {
+          "type": "string",
+          "description": "Connected outer service version."
+        }
+      },
+      "description": "Connected outer service information."
+    },
+    "role": {
+      "title": "role",
+      "example": "MEMBER",
+      "type": "string",
+      "enum": [
+        "MEMBER",
+        "OWNER"
+      ]
+    }
+  },
+  "security": [],
+  "tags": [
+    {
+      "name": "add-member-api",
+      "description": "Add Member Api"
+    },
+    {
+      "name": "create-group-api",
+      "description": "Create Group Api"
+    },
+    {
+      "name": "delete-group-api",
+      "description": "Delete Group Api"
+    },
+    {
+      "name": "delete-member-api",
+      "description": "Delete Member Api"
+    },
+    {
+      "name": "health-checks-api",
+      "description": "Health Checks Api"
+    },
+    {
+      "name": "info-api",
+      "description": "Info Api"
+    },
+    {
+      "name": "init-api",
+      "description": "Init Api"
+    },
+    {
+      "name": "list-group-api",
+      "description": "List Group Api"
+    },
+    {
+      "name": "list-group-on-behalf-of-api",
+      "description": "List Group On Behalf Of Api"
+    },
+    {
+      "name": "list-member-api",
+      "description": "List Member Api"
+    },
+    {
+      "name": "remove-member-api",
+      "description": "Remove Member Api"
+    },
+    {
+      "name": "update-group-api",
+      "description": "Update Group Api"
+    }
+  ]
+}
