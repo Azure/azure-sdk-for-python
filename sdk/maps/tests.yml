@@ -1,32 +1,17 @@
 trigger: none
 
 stages:
-  - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      BuildTargetingString: 'azure-maps-search'
-      JobName: search
+      BuildTargetingString: azure*
       ServiceDirectory: maps
       MatrixReplace:
         - TestSamples=.*/true
-      Clouds: Public,Int
-      CloudConfig:
-        Public:
-          SubscriptionConfigurations:
-            - $(sub-config-azure-cloud-test-resources)
-            - $(sub-config-maps-services-cloud-test-resources-common)
-            - $(sub-config-maps-services-cloud-test-resources-python)
-        Int:
-            SubscriptionConfigurations:
-              - $(sub-config-maps-int-test-resources-common)
-              - $(sub-config-maps-int-test-resources-python)
-            MatrixFilters:
-              - PythonVersion=^(?!pypy3).*
-              - PythonVersion=^(?!3.6).*
-              - PythonVersion=^(?!3.7).*
-              - PythonVersion=^(?!3.8).*
-              - PythonVersion=^(?!3.9).*
+      MaxParallel: 1
       EnvVars:
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
-        AZURE_TEST_RUN_LIVE: 'true'
-        TEST_MODE: 'RunLiveNoRecord'
-        AZURE_SKIP_LIVE_RECORDING: 'True'
+        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
+        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
+        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+        TEST_MODE: "RunLiveNoRecord" # use when allowing preparers to create the rgs for you
+        AZURE_TEST_RUN_LIVE: "true" # use when utilizing the New-TestResources Script
