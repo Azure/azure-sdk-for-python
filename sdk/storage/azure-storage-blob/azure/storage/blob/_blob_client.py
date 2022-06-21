@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines,no-self-use
+
 from functools import partial
 from io import BytesIO
 from typing import (
@@ -13,11 +14,11 @@ from typing import (
 from urllib.parse import urlparse, quote, unquote
 import warnings
 
+import six
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
-import six
 
 from ._shared import encode_base64
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, TransportWrapper
@@ -52,7 +53,7 @@ from ._deserialize import (
     deserialize_pipeline_response_into_cls
 )
 from ._download import StorageStreamDownloader
-from ._encryption import generate_blob_encryption_data
+from ._encryption import StorageEncryptionMixin
 from ._lease import BlobLeaseClient
 from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, QuickQueryDialect, \
     DelimitedJsonDialect, DelimitedTextDialect, PageRangePaged, PageRange
@@ -82,7 +83,7 @@ _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
 ClassType = TypeVar("ClassType")
 
 
-class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-methods
+class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific blob, although that blob may not yet exist.
 
     For more optional configuration, please click
@@ -184,6 +185,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self.configure_encryption(kwargs)
 
     def _format_url(self, hostname):
         container_name = self.container_name

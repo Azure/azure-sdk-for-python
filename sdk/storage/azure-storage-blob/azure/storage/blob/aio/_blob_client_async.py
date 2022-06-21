@@ -4,12 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines, invalid-overridden-method
+
+import warnings
 from functools import partial
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
+    Any, AnyStr, Dict, IO, Iterable, List, Tuple, Optional, Union,
     TYPE_CHECKING
 )
-import warnings
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
@@ -17,25 +18,28 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import return_response_headers, process_storage_error
-from .._deserialize import get_page_ranges_result, parse_tags, deserialize_pipeline_response_into_cls
-from .._serialize import get_modify_conditions, get_api_version, get_access_conditions
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import CpkInfo
-from .._deserialize import deserialize_blob_properties
 from .._blob_client import BlobClient as BlobClientBase
+from .._deserialize import (
+    deserialize_blob_properties,
+    deserialize_pipeline_response_into_cls,
+    get_page_ranges_result,
+    parse_tags
+)
+from .._encryption import StorageEncryptionMixin
+from .._models import BlobType, BlobBlock, BlobProperties, PageRange
+from .._serialize import get_modify_conditions, get_api_version, get_access_conditions
+from ._download_async import StorageStreamDownloader
+from ._lease_async import BlobLeaseClient
 from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
-    upload_page_blob)
-from .._models import BlobType, BlobBlock, BlobProperties, PageRange
-from ._models import PageRangePaged
-from ._lease_async import BlobLeaseClient
-from ._download_async import StorageStreamDownloader
-
+    upload_page_blob
+)
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -48,7 +52,7 @@ if TYPE_CHECKING:
     )
 
 
-class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disable=too-many-public-methods
+class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptionMixin):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific blob, although that blob may not yet exist.
 
     :param str account_url:
@@ -126,6 +130,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self.configure_encryption(kwargs)
 
     @distributed_trace_async
     async def get_account_information(self, **kwargs): # type: ignore
