@@ -79,6 +79,7 @@ class IssueProcessPython(IssueProcess):
                     self.log(f'{issue_number} run pipeline fail')
                 self.issue_package.issue.add_to_labels(_AUTO_ASK_FOR_CHECK)
             else:
+                print(f'*** issue {issue_number} need config readme')
                 self.log(f'issue {issue_number} need config readme')
 
     def auto_close(self) -> None:
