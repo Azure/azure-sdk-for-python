@@ -3,11 +3,10 @@ trigger: none
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      BuildTargetingString: azure*
+      BuildTargetingString: azure-maps*
       ServiceDirectory: maps
       MatrixReplace:
         - TestSamples=.*/true
-      MaxParallel: 1
       EnvVars:
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
