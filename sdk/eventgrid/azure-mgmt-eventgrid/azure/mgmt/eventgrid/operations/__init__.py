@@ -6,28 +6,48 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._channels_operations import ChannelsOperations
 from ._domains_operations import DomainsOperations
 from ._domain_topics_operations import DomainTopicsOperations
+from ._topic_event_subscriptions_operations import TopicEventSubscriptionsOperations
+from ._domain_event_subscriptions_operations import DomainEventSubscriptionsOperations
 from ._event_subscriptions_operations import EventSubscriptionsOperations
+from ._domain_topic_event_subscriptions_operations import DomainTopicEventSubscriptionsOperations
 from ._system_topic_event_subscriptions_operations import SystemTopicEventSubscriptionsOperations
+from ._partner_topic_event_subscriptions_operations import PartnerTopicEventSubscriptionsOperations
 from ._operations import Operations
 from ._topics_operations import TopicsOperations
+from ._partner_configurations_operations import PartnerConfigurationsOperations
+from ._partner_namespaces_operations import PartnerNamespacesOperations
+from ._partner_registrations_operations import PartnerRegistrationsOperations
+from ._partner_topics_operations import PartnerTopicsOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._system_topics_operations import SystemTopicsOperations
 from ._extension_topics_operations import ExtensionTopicsOperations
 from ._topic_types_operations import TopicTypesOperations
+from ._verified_partners_operations import VerifiedPartnersOperations
 
 __all__ = [
+    'ChannelsOperations',
     'DomainsOperations',
     'DomainTopicsOperations',
+    'TopicEventSubscriptionsOperations',
+    'DomainEventSubscriptionsOperations',
     'EventSubscriptionsOperations',
+    'DomainTopicEventSubscriptionsOperations',
     'SystemTopicEventSubscriptionsOperations',
+    'PartnerTopicEventSubscriptionsOperations',
     'Operations',
     'TopicsOperations',
+    'PartnerConfigurationsOperations',
+    'PartnerNamespacesOperations',
+    'PartnerRegistrationsOperations',
+    'PartnerTopicsOperations',
     'PrivateEndpointConnectionsOperations',
     'PrivateLinkResourcesOperations',
     'SystemTopicsOperations',
     'ExtensionTopicsOperations',
     'TopicTypesOperations',
+    'VerifiedPartnersOperations',
 ]

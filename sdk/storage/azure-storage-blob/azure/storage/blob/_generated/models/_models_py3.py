@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._azure_blob_storage_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AccessPolicy(msrest.serialization.Model):
@@ -121,7 +123,7 @@ class ArrowConfiguration(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        schema: List["ArrowField"],
+        schema: List["_models.ArrowField"],
         **kwargs
     ):
         """
@@ -210,7 +212,7 @@ class BlobFlatListSegment(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        blob_items: List["BlobItemInternal"],
+        blob_items: List["_models.BlobItemInternal"],
         **kwargs
     ):
         """
@@ -247,8 +249,8 @@ class BlobHierarchyListSegment(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        blob_items: List["BlobItemInternal"],
-        blob_prefixes: Optional[List["BlobPrefix"]] = None,
+        blob_items: List["_models.BlobItemInternal"],
+        blob_prefixes: Optional[List["_models.BlobPrefix"]] = None,
         **kwargs
     ):
         """
@@ -385,14 +387,14 @@ class BlobItemInternal(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: "BlobName",
+        name: "_models.BlobName",
         deleted: bool,
         snapshot: str,
-        properties: "BlobPropertiesInternal",
+        properties: "_models.BlobPropertiesInternal",
         version_id: Optional[str] = None,
         is_current_version: Optional[bool] = None,
-        metadata: Optional["BlobMetadata"] = None,
-        blob_tags: Optional["BlobTags"] = None,
+        metadata: Optional["_models.BlobMetadata"] = None,
+        blob_tags: Optional["_models.BlobTags"] = None,
         has_versions_only: Optional[bool] = None,
         object_replication_metadata: Optional[Dict[str, str]] = None,
         **kwargs
@@ -521,7 +523,7 @@ class BlobPrefix(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: "BlobName",
+        name: "_models.BlobName",
         **kwargs
     ):
         """
@@ -559,18 +561,17 @@ class BlobPropertiesInternal(msrest.serialization.Model):
     :vartype cache_control: str
     :ivar blob_sequence_number:
     :vartype blob_sequence_number: long
-    :ivar blob_type: Possible values include: "BlockBlob", "PageBlob", "AppendBlob".
+    :ivar blob_type: Known values are: "BlockBlob", "PageBlob", "AppendBlob".
     :vartype blob_type: str or ~azure.storage.blob.models.BlobType
-    :ivar lease_status: Possible values include: "locked", "unlocked".
+    :ivar lease_status: Known values are: "locked", "unlocked".
     :vartype lease_status: str or ~azure.storage.blob.models.LeaseStatusType
-    :ivar lease_state: Possible values include: "available", "leased", "expired", "breaking",
-     "broken".
+    :ivar lease_state: Known values are: "available", "leased", "expired", "breaking", "broken".
     :vartype lease_state: str or ~azure.storage.blob.models.LeaseStateType
-    :ivar lease_duration: Possible values include: "infinite", "fixed".
+    :ivar lease_duration: Known values are: "infinite", "fixed".
     :vartype lease_duration: str or ~azure.storage.blob.models.LeaseDurationType
     :ivar copy_id:
     :vartype copy_id: str
-    :ivar copy_status: Possible values include: "pending", "success", "aborted", "failed".
+    :ivar copy_status: Known values are: "pending", "success", "aborted", "failed".
     :vartype copy_status: str or ~azure.storage.blob.models.CopyStatusType
     :ivar copy_source:
     :vartype copy_source: str
@@ -590,12 +591,12 @@ class BlobPropertiesInternal(msrest.serialization.Model):
     :vartype deleted_time: ~datetime.datetime
     :ivar remaining_retention_days:
     :vartype remaining_retention_days: int
-    :ivar access_tier: Possible values include: "P4", "P6", "P10", "P15", "P20", "P30", "P40",
-     "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive".
+    :ivar access_tier: Known values are: "P4", "P6", "P10", "P15", "P20", "P30", "P40", "P50",
+     "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium".
     :vartype access_tier: str or ~azure.storage.blob.models.AccessTier
     :ivar access_tier_inferred:
     :vartype access_tier_inferred: bool
-    :ivar archive_status: Possible values include: "rehydrate-pending-to-hot",
+    :ivar archive_status: Known values are: "rehydrate-pending-to-hot",
      "rehydrate-pending-to-cool".
     :vartype archive_status: str or ~azure.storage.blob.models.ArchiveStatus
     :ivar customer_provided_key_sha256:
@@ -611,14 +612,14 @@ class BlobPropertiesInternal(msrest.serialization.Model):
     :ivar is_sealed:
     :vartype is_sealed: bool
     :ivar rehydrate_priority: If an object is in rehydrate pending state then this header is
-     returned with priority of rehydrate. Valid values are High and Standard. Possible values
-     include: "High", "Standard".
+     returned with priority of rehydrate. Valid values are High and Standard. Known values are:
+     "High", "Standard".
     :vartype rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
     :ivar last_accessed_on:
     :vartype last_accessed_on: ~datetime.datetime
     :ivar immutability_policy_expires_on:
     :vartype immutability_policy_expires_on: ~datetime.datetime
-    :ivar immutability_policy_mode: Possible values include: "Mutable", "Unlocked", "Locked".
+    :ivar immutability_policy_mode: Known values are: "Mutable", "Unlocked", "Locked".
     :vartype immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
     :ivar legal_hold:
     :vartype legal_hold: bool
@@ -689,12 +690,12 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         content_disposition: Optional[str] = None,
         cache_control: Optional[str] = None,
         blob_sequence_number: Optional[int] = None,
-        blob_type: Optional[Union[str, "BlobType"]] = None,
-        lease_status: Optional[Union[str, "LeaseStatusType"]] = None,
-        lease_state: Optional[Union[str, "LeaseStateType"]] = None,
-        lease_duration: Optional[Union[str, "LeaseDurationType"]] = None,
+        blob_type: Optional[Union[str, "_models.BlobType"]] = None,
+        lease_status: Optional[Union[str, "_models.LeaseStatusType"]] = None,
+        lease_state: Optional[Union[str, "_models.LeaseStateType"]] = None,
+        lease_duration: Optional[Union[str, "_models.LeaseDurationType"]] = None,
         copy_id: Optional[str] = None,
-        copy_status: Optional[Union[str, "CopyStatusType"]] = None,
+        copy_status: Optional[Union[str, "_models.CopyStatusType"]] = None,
         copy_source: Optional[str] = None,
         copy_progress: Optional[str] = None,
         copy_completion_time: Optional[datetime.datetime] = None,
@@ -704,19 +705,19 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         destination_snapshot: Optional[str] = None,
         deleted_time: Optional[datetime.datetime] = None,
         remaining_retention_days: Optional[int] = None,
-        access_tier: Optional[Union[str, "AccessTier"]] = None,
+        access_tier: Optional[Union[str, "_models.AccessTier"]] = None,
         access_tier_inferred: Optional[bool] = None,
-        archive_status: Optional[Union[str, "ArchiveStatus"]] = None,
+        archive_status: Optional[Union[str, "_models.ArchiveStatus"]] = None,
         customer_provided_key_sha256: Optional[str] = None,
         encryption_scope: Optional[str] = None,
         access_tier_change_time: Optional[datetime.datetime] = None,
         tag_count: Optional[int] = None,
         expires_on: Optional[datetime.datetime] = None,
         is_sealed: Optional[bool] = None,
-        rehydrate_priority: Optional[Union[str, "RehydratePriority"]] = None,
+        rehydrate_priority: Optional[Union[str, "_models.RehydratePriority"]] = None,
         last_accessed_on: Optional[datetime.datetime] = None,
         immutability_policy_expires_on: Optional[datetime.datetime] = None,
-        immutability_policy_mode: Optional[Union[str, "BlobImmutabilityPolicyMode"]] = None,
+        immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
         legal_hold: Optional[bool] = None,
         **kwargs
     ):
@@ -743,18 +744,17 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         :paramtype cache_control: str
         :keyword blob_sequence_number:
         :paramtype blob_sequence_number: long
-        :keyword blob_type: Possible values include: "BlockBlob", "PageBlob", "AppendBlob".
+        :keyword blob_type: Known values are: "BlockBlob", "PageBlob", "AppendBlob".
         :paramtype blob_type: str or ~azure.storage.blob.models.BlobType
-        :keyword lease_status: Possible values include: "locked", "unlocked".
+        :keyword lease_status: Known values are: "locked", "unlocked".
         :paramtype lease_status: str or ~azure.storage.blob.models.LeaseStatusType
-        :keyword lease_state: Possible values include: "available", "leased", "expired", "breaking",
-         "broken".
+        :keyword lease_state: Known values are: "available", "leased", "expired", "breaking", "broken".
         :paramtype lease_state: str or ~azure.storage.blob.models.LeaseStateType
-        :keyword lease_duration: Possible values include: "infinite", "fixed".
+        :keyword lease_duration: Known values are: "infinite", "fixed".
         :paramtype lease_duration: str or ~azure.storage.blob.models.LeaseDurationType
         :keyword copy_id:
         :paramtype copy_id: str
-        :keyword copy_status: Possible values include: "pending", "success", "aborted", "failed".
+        :keyword copy_status: Known values are: "pending", "success", "aborted", "failed".
         :paramtype copy_status: str or ~azure.storage.blob.models.CopyStatusType
         :keyword copy_source:
         :paramtype copy_source: str
@@ -774,12 +774,12 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         :paramtype deleted_time: ~datetime.datetime
         :keyword remaining_retention_days:
         :paramtype remaining_retention_days: int
-        :keyword access_tier: Possible values include: "P4", "P6", "P10", "P15", "P20", "P30", "P40",
-         "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive".
+        :keyword access_tier: Known values are: "P4", "P6", "P10", "P15", "P20", "P30", "P40", "P50",
+         "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium".
         :paramtype access_tier: str or ~azure.storage.blob.models.AccessTier
         :keyword access_tier_inferred:
         :paramtype access_tier_inferred: bool
-        :keyword archive_status: Possible values include: "rehydrate-pending-to-hot",
+        :keyword archive_status: Known values are: "rehydrate-pending-to-hot",
          "rehydrate-pending-to-cool".
         :paramtype archive_status: str or ~azure.storage.blob.models.ArchiveStatus
         :keyword customer_provided_key_sha256:
@@ -795,14 +795,14 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         :keyword is_sealed:
         :paramtype is_sealed: bool
         :keyword rehydrate_priority: If an object is in rehydrate pending state then this header is
-         returned with priority of rehydrate. Valid values are High and Standard. Possible values
-         include: "High", "Standard".
+         returned with priority of rehydrate. Valid values are High and Standard. Known values are:
+         "High", "Standard".
         :paramtype rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
         :keyword last_accessed_on:
         :paramtype last_accessed_on: ~datetime.datetime
         :keyword immutability_policy_expires_on:
         :paramtype immutability_policy_expires_on: ~datetime.datetime
-        :keyword immutability_policy_mode: Possible values include: "Mutable", "Unlocked", "Locked".
+        :keyword immutability_policy_mode: Known values are: "Mutable", "Unlocked", "Locked".
         :paramtype immutability_policy_mode: str or
          ~azure.storage.blob.models.BlobImmutabilityPolicyMode
         :keyword legal_hold:
@@ -916,7 +916,7 @@ class BlobTags(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        blob_tag_set: List["BlobTag"],
+        blob_tag_set: List["_models.BlobTag"],
         **kwargs
     ):
         """
@@ -983,8 +983,8 @@ class BlockList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        committed_blocks: Optional[List["Block"]] = None,
-        uncommitted_blocks: Optional[List["Block"]] = None,
+        committed_blocks: Optional[List["_models.Block"]] = None,
+        uncommitted_blocks: Optional[List["_models.Block"]] = None,
         **kwargs
     ):
         """
@@ -1157,7 +1157,7 @@ class ContainerItem(msrest.serialization.Model):
         self,
         *,
         name: str,
-        properties: "ContainerProperties",
+        properties: "_models.ContainerProperties",
         deleted: Optional[bool] = None,
         version: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -1192,14 +1192,13 @@ class ContainerProperties(msrest.serialization.Model):
     :vartype last_modified: ~datetime.datetime
     :ivar etag: Required.
     :vartype etag: str
-    :ivar lease_status: Possible values include: "locked", "unlocked".
+    :ivar lease_status: Known values are: "locked", "unlocked".
     :vartype lease_status: str or ~azure.storage.blob.models.LeaseStatusType
-    :ivar lease_state: Possible values include: "available", "leased", "expired", "breaking",
-     "broken".
+    :ivar lease_state: Known values are: "available", "leased", "expired", "breaking", "broken".
     :vartype lease_state: str or ~azure.storage.blob.models.LeaseStateType
-    :ivar lease_duration: Possible values include: "infinite", "fixed".
+    :ivar lease_duration: Known values are: "infinite", "fixed".
     :vartype lease_duration: str or ~azure.storage.blob.models.LeaseDurationType
-    :ivar public_access: Possible values include: "container", "blob".
+    :ivar public_access: Known values are: "container", "blob".
     :vartype public_access: str or ~azure.storage.blob.models.PublicAccessType
     :ivar has_immutability_policy:
     :vartype has_immutability_policy: bool
@@ -1244,10 +1243,10 @@ class ContainerProperties(msrest.serialization.Model):
         *,
         last_modified: datetime.datetime,
         etag: str,
-        lease_status: Optional[Union[str, "LeaseStatusType"]] = None,
-        lease_state: Optional[Union[str, "LeaseStateType"]] = None,
-        lease_duration: Optional[Union[str, "LeaseDurationType"]] = None,
-        public_access: Optional[Union[str, "PublicAccessType"]] = None,
+        lease_status: Optional[Union[str, "_models.LeaseStatusType"]] = None,
+        lease_state: Optional[Union[str, "_models.LeaseStateType"]] = None,
+        lease_duration: Optional[Union[str, "_models.LeaseDurationType"]] = None,
+        public_access: Optional[Union[str, "_models.PublicAccessType"]] = None,
         has_immutability_policy: Optional[bool] = None,
         has_legal_hold: Optional[bool] = None,
         default_encryption_scope: Optional[str] = None,
@@ -1262,14 +1261,13 @@ class ContainerProperties(msrest.serialization.Model):
         :paramtype last_modified: ~datetime.datetime
         :keyword etag: Required.
         :paramtype etag: str
-        :keyword lease_status: Possible values include: "locked", "unlocked".
+        :keyword lease_status: Known values are: "locked", "unlocked".
         :paramtype lease_status: str or ~azure.storage.blob.models.LeaseStatusType
-        :keyword lease_state: Possible values include: "available", "leased", "expired", "breaking",
-         "broken".
+        :keyword lease_state: Known values are: "available", "leased", "expired", "breaking", "broken".
         :paramtype lease_state: str or ~azure.storage.blob.models.LeaseStateType
-        :keyword lease_duration: Possible values include: "infinite", "fixed".
+        :keyword lease_duration: Known values are: "infinite", "fixed".
         :paramtype lease_duration: str or ~azure.storage.blob.models.LeaseDurationType
-        :keyword public_access: Possible values include: "container", "blob".
+        :keyword public_access: Known values are: "container", "blob".
         :paramtype public_access: str or ~azure.storage.blob.models.PublicAccessType
         :keyword has_immutability_policy:
         :paramtype has_immutability_policy: bool
@@ -1394,7 +1392,7 @@ class CpkInfo(msrest.serialization.Model):
     :vartype encryption_key_sha256: str
     :ivar encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
      the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
-     provided. Possible values include: "None", "AES256".
+     provided. Known values are: "None", "AES256".
     :vartype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
     """
 
@@ -1409,7 +1407,7 @@ class CpkInfo(msrest.serialization.Model):
         *,
         encryption_key: Optional[str] = None,
         encryption_key_sha256: Optional[str] = None,
-        encryption_algorithm: Optional[Union[str, "EncryptionAlgorithmType"]] = None,
+        encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
         **kwargs
     ):
         """
@@ -1422,7 +1420,7 @@ class CpkInfo(msrest.serialization.Model):
         :paramtype encryption_key_sha256: str
         :keyword encryption_algorithm: The algorithm used to produce the encryption key hash.
          Currently, the only accepted value is "AES256". Must be provided if the x-ms-encryption-key
-         header is provided. Possible values include: "None", "AES256".
+         header is provided. Known values are: "None", "AES256".
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         """
         super(CpkInfo, self).__init__(**kwargs)
@@ -1529,6 +1527,10 @@ class FilterBlobItem(msrest.serialization.Model):
     :vartype container_name: str
     :ivar tags: A set of tags. Blob tags.
     :vartype tags: ~azure.storage.blob.models.BlobTags
+    :ivar version_id:
+    :vartype version_id: str
+    :ivar is_current_version:
+    :vartype is_current_version: bool
     """
 
     _validation = {
@@ -1540,6 +1542,8 @@ class FilterBlobItem(msrest.serialization.Model):
         'name': {'key': 'Name', 'type': 'str'},
         'container_name': {'key': 'ContainerName', 'type': 'str'},
         'tags': {'key': 'Tags', 'type': 'BlobTags'},
+        'version_id': {'key': 'VersionId', 'type': 'str'},
+        'is_current_version': {'key': 'IsCurrentVersion', 'type': 'bool'},
     }
     _xml_map = {
         'name': 'Blob'
@@ -1550,7 +1554,9 @@ class FilterBlobItem(msrest.serialization.Model):
         *,
         name: str,
         container_name: str,
-        tags: Optional["BlobTags"] = None,
+        tags: Optional["_models.BlobTags"] = None,
+        version_id: Optional[str] = None,
+        is_current_version: Optional[bool] = None,
         **kwargs
     ):
         """
@@ -1560,11 +1566,17 @@ class FilterBlobItem(msrest.serialization.Model):
         :paramtype container_name: str
         :keyword tags: A set of tags. Blob tags.
         :paramtype tags: ~azure.storage.blob.models.BlobTags
+        :keyword version_id:
+        :paramtype version_id: str
+        :keyword is_current_version:
+        :paramtype is_current_version: bool
         """
         super(FilterBlobItem, self).__init__(**kwargs)
         self.name = name
         self.container_name = container_name
         self.tags = tags
+        self.version_id = version_id
+        self.is_current_version = is_current_version
 
 
 class FilterBlobSegment(msrest.serialization.Model):
@@ -1603,7 +1615,7 @@ class FilterBlobSegment(msrest.serialization.Model):
         *,
         service_endpoint: str,
         where: str,
-        blobs: List["FilterBlobItem"],
+        blobs: List["_models.FilterBlobItem"],
         next_marker: Optional[str] = None,
         **kwargs
     ):
@@ -1629,7 +1641,7 @@ class GeoReplication(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar status: Required. The status of the secondary location. Possible values include: "live",
+    :ivar status: Required. The status of the secondary location. Known values are: "live",
      "bootstrap", "unavailable".
     :vartype status: str or ~azure.storage.blob.models.GeoReplicationStatusType
     :ivar last_sync_time: Required. A GMT date/time value, to the second. All primary writes
@@ -1651,13 +1663,13 @@ class GeoReplication(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        status: Union[str, "GeoReplicationStatusType"],
+        status: Union[str, "_models.GeoReplicationStatusType"],
         last_sync_time: datetime.datetime,
         **kwargs
     ):
         """
-        :keyword status: Required. The status of the secondary location. Possible values include:
-         "live", "bootstrap", "unavailable".
+        :keyword status: Required. The status of the secondary location. Known values are: "live",
+         "bootstrap", "unavailable".
         :paramtype status: str or ~azure.storage.blob.models.GeoReplicationStatusType
         :keyword last_sync_time: Required. A GMT date/time value, to the second. All primary writes
          preceding this value are guaranteed to be available for read operations at the secondary.
@@ -1808,7 +1820,7 @@ class ListBlobsFlatSegmentResponse(msrest.serialization.Model):
         *,
         service_endpoint: str,
         container_name: str,
-        segment: "BlobFlatListSegment",
+        segment: "_models.BlobFlatListSegment",
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
@@ -1889,7 +1901,7 @@ class ListBlobsHierarchySegmentResponse(msrest.serialization.Model):
         *,
         service_endpoint: str,
         container_name: str,
-        segment: "BlobHierarchyListSegment",
+        segment: "_models.BlobHierarchyListSegment",
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
@@ -1966,7 +1978,7 @@ class ListContainersSegmentResponse(msrest.serialization.Model):
         self,
         *,
         service_endpoint: str,
-        container_items: List["ContainerItem"],
+        container_items: List["_models.ContainerItem"],
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
@@ -2037,7 +2049,7 @@ class Logging(msrest.serialization.Model):
         delete: bool,
         read: bool,
         write: bool,
-        retention_policy: "RetentionPolicy",
+        retention_policy: "_models.RetentionPolicy",
         **kwargs
     ):
         """
@@ -2095,7 +2107,7 @@ class Metrics(msrest.serialization.Model):
         enabled: bool,
         version: Optional[str] = None,
         include_apis: Optional[bool] = None,
-        retention_policy: Optional["RetentionPolicy"] = None,
+        retention_policy: Optional["_models.RetentionPolicy"] = None,
         **kwargs
     ):
         """
@@ -2184,18 +2196,22 @@ class PageList(msrest.serialization.Model):
     :vartype page_range: list[~azure.storage.blob.models.PageRange]
     :ivar clear_range:
     :vartype clear_range: list[~azure.storage.blob.models.ClearRange]
+    :ivar next_marker:
+    :vartype next_marker: str
     """
 
     _attribute_map = {
         'page_range': {'key': 'PageRange', 'type': '[PageRange]'},
         'clear_range': {'key': 'ClearRange', 'type': '[ClearRange]'},
+        'next_marker': {'key': 'NextMarker', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        page_range: Optional[List["PageRange"]] = None,
-        clear_range: Optional[List["ClearRange"]] = None,
+        page_range: Optional[List["_models.PageRange"]] = None,
+        clear_range: Optional[List["_models.ClearRange"]] = None,
+        next_marker: Optional[str] = None,
         **kwargs
     ):
         """
@@ -2203,10 +2219,13 @@ class PageList(msrest.serialization.Model):
         :paramtype page_range: list[~azure.storage.blob.models.PageRange]
         :keyword clear_range:
         :paramtype clear_range: list[~azure.storage.blob.models.ClearRange]
+        :keyword next_marker:
+        :paramtype next_marker: str
         """
         super(PageList, self).__init__(**kwargs)
         self.page_range = page_range
         self.clear_range = clear_range
+        self.next_marker = next_marker
 
 
 class PageRange(msrest.serialization.Model):
@@ -2256,8 +2275,8 @@ class QueryFormat(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The quick query format type. Possible values include: "delimited",
-     "json", "arrow", "parquet".
+    :ivar type: Required. The quick query format type. Known values are: "delimited", "json",
+     "arrow", "parquet".
     :vartype type: str or ~azure.storage.blob.models.QueryFormatType
     :ivar delimited_text_configuration: Groups the settings used for interpreting the blob data if
      the blob is delimited text formatted.
@@ -2286,16 +2305,16 @@ class QueryFormat(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Union[str, "QueryFormatType"],
-        delimited_text_configuration: Optional["DelimitedTextConfiguration"] = None,
-        json_text_configuration: Optional["JsonTextConfiguration"] = None,
-        arrow_configuration: Optional["ArrowConfiguration"] = None,
+        type: Union[str, "_models.QueryFormatType"],
+        delimited_text_configuration: Optional["_models.DelimitedTextConfiguration"] = None,
+        json_text_configuration: Optional["_models.JsonTextConfiguration"] = None,
+        arrow_configuration: Optional["_models.ArrowConfiguration"] = None,
         parquet_text_configuration: Optional[Any] = None,
         **kwargs
     ):
         """
-        :keyword type: Required. The quick query format type. Possible values include: "delimited",
-         "json", "arrow", "parquet".
+        :keyword type: Required. The quick query format type. Known values are: "delimited", "json",
+         "arrow", "parquet".
         :paramtype type: str or ~azure.storage.blob.models.QueryFormatType
         :keyword delimited_text_configuration: Groups the settings used for interpreting the blob data
          if the blob is delimited text formatted.
@@ -2356,8 +2375,8 @@ class QueryRequest(msrest.serialization.Model):
         self,
         *,
         expression: str,
-        input_serialization: Optional["QuerySerialization"] = None,
-        output_serialization: Optional["QuerySerialization"] = None,
+        input_serialization: Optional["_models.QuerySerialization"] = None,
+        output_serialization: Optional["_models.QuerySerialization"] = None,
         **kwargs
     ):
         """
@@ -2395,7 +2414,7 @@ class QuerySerialization(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        format: "QueryFormat",
+        format: "_models.QueryFormat",
         **kwargs
     ):
         """
@@ -2530,7 +2549,7 @@ class SignedIdentifier(msrest.serialization.Model):
         self,
         *,
         id: str,
-        access_policy: Optional["AccessPolicy"] = None,
+        access_policy: Optional["_models.AccessPolicy"] = None,
         **kwargs
     ):
         """
@@ -2719,13 +2738,13 @@ class StorageServiceProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        logging: Optional["Logging"] = None,
-        hour_metrics: Optional["Metrics"] = None,
-        minute_metrics: Optional["Metrics"] = None,
-        cors: Optional[List["CorsRule"]] = None,
+        logging: Optional["_models.Logging"] = None,
+        hour_metrics: Optional["_models.Metrics"] = None,
+        minute_metrics: Optional["_models.Metrics"] = None,
+        cors: Optional[List["_models.CorsRule"]] = None,
         default_service_version: Optional[str] = None,
-        delete_retention_policy: Optional["RetentionPolicy"] = None,
-        static_website: Optional["StaticWebsite"] = None,
+        delete_retention_policy: Optional["_models.RetentionPolicy"] = None,
+        static_website: Optional["_models.StaticWebsite"] = None,
         **kwargs
     ):
         """
@@ -2773,7 +2792,7 @@ class StorageServiceStats(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        geo_replication: Optional["GeoReplication"] = None,
+        geo_replication: Optional["_models.GeoReplication"] = None,
         **kwargs
     ):
         """

@@ -257,6 +257,23 @@ class AadClientBase(ABC):
         request = self._post(data, **kwargs)
         return request
 
+    def _get_refresh_token_on_behalf_of_request(self, scopes, client_credential, refresh_token, **kwargs):
+        # type: (Iterable[str], Union[str, AadClientCertificate], str, **Any) -> HttpRequest
+        data = {
+            "grant_type": "refresh_token",
+            "refresh_token": refresh_token,
+            "scope": " ".join(scopes),
+            "client_id": self._client_id,
+            "client_info": 1,  # request AAD include home_account_id in its response
+        }
+        if isinstance(client_credential, AadClientCertificate):
+            data["client_assertion"] = self._get_client_certificate_assertion(client_credential)
+            data["client_assertion_type"] = JWT_BEARER_ASSERTION
+        else:
+            data["client_secret"] = client_credential
+        request = self._post(data, **kwargs)
+        return request
+
     def _get_token_url(self, **kwargs):
         # type: (**Any) -> str
         tenant = resolve_tenant(self._tenant_id, **kwargs)

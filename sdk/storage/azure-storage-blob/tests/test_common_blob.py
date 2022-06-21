@@ -365,6 +365,19 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertDictEqual(md, metadata)
 
     @BlobPreparer()
+    def test_upload_blob_with_dictionary(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        blob_name = 'test_blob'
+        blob_data = {'hello': 'world'}
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Assert
+        with self.assertRaises(TypeError):
+            blob.upload_blob(blob_data)
+
+    @BlobPreparer()
     def test_upload_blob_from_generator(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -1332,7 +1345,6 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @BlobPreparer()
     def test_copy_blob_with_blob_tier_specified(self, storage_account_name, storage_account_key):
-        pytest.skip("Unable to set premium account")
         # Arrange
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._create_block_blob()
@@ -1355,7 +1367,6 @@ class StorageCommonBlobTest(StorageTestCase):
     @BlobPreparer()
     def test_copy_blob_with_rehydrate_priority(self, storage_account_name, storage_account_key):
         # Arrange
-        pytest.skip("Unabe to set up premium storage account type")
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._create_block_blob()
 

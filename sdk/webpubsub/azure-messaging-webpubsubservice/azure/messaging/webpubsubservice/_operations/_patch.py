@@ -14,7 +14,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import (
     WebPubSubServiceClientOperationsMixin as WebPubSubServiceClientOperationsMixinGenerated,
-    JSONType,
+    JSON,
 )
 
 
@@ -65,7 +65,7 @@ def get_token_by_key(endpoint: str, hub: str, key: str, **kwargs: Any) -> str:
 
 class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixinGenerated):
     @distributed_trace
-    def get_client_access_token(self, **kwargs: Any) -> JSONType:
+    def get_client_access_token(self, **kwargs: Any) -> JSON:
         """Build an authentication token.
         :keyword user_id: User Id.
         :paramtype user_id: str
@@ -75,7 +75,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :paramtype minutes_to_expire: int
         :keyword dict[str, any] jwt_headers: Any headers you want to pass to jwt encoding.
         :returns: JSON response containing the web socket endpoint, the token and a url with the generated access token.
-        :rtype: JSONType
+        :rtype: JSON
         Example:
         >>> get_client_access_token()
         {

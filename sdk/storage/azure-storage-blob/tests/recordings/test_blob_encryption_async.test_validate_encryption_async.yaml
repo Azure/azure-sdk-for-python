@@ -2,12 +2,14 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.12.1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 17:46:55 GMT
+      - Mon, 06 Jun 2022 23:55:11 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2021-06-08'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontaineraca917a4?restype=container
   response:
@@ -15,26 +17,21 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 25 Oct 2019 17:46:54 GMT
-      etag: '"0x8D7597353631504"'
-      last-modified: Fri, 25 Oct 2019 17:46:55 GMT
+      date: Mon, 06 Jun 2022 23:55:11 GMT
+      etag: '"0x8DA4817FE3E2721"'
+      last-modified: Mon, 06 Jun 2022 23:55:11 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2021-06-08'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoragehddhigausowa.blob.core.windows.net
-        - /utcontaineraca917a4
-        - restype=container
-        - ''
+    url: https://jalauzoncanary.blob.core.windows.net/utcontaineraca917a4?restype=container
 - request:
     body: !!binary |
-      pob6xfP0xrZ1vwR3TePOxQ==
+      kuWLKj9TEy8fy3FHNqWdWQ==
     headers:
+      Accept:
+      - application/xml
       Content-Length:
       - '16'
       Content-Type:
@@ -42,18 +39,18 @@ interactions:
       If-None-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.12.1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 25 Oct 2019 17:46:55 GMT
+      - Mon, 06 Jun 2022 23:55:11 GMT
       x-ms-meta-encryptiondata:
-      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "d/h1KYBeW+kpApT7voN6PV7l8zVqQPkTDPShGWI5XOFNINuwHqP7HQ==",
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "JWNNHwwFiGCXt18uc0xqUtewrriX+mgPEryO1fkn2IQ9i619kAytRA==",
         "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm":
-        "AES_CBC_256"}, "ContentEncryptionIV": "lkoY1UNFiUvbXzrsTuUddQ==", "KeyWrappingMetadata":
-        {"EncryptionLibrary": "Python 12.0.0b5"}, "EncryptionMode": "FullBlob"}'
+        "AES_CBC_256"}, "ContentEncryptionIV": "AIjAASvcsiMLFS+d+snAjA==", "KeyWrappingMetadata":
+        {"EncryptionLibrary": "Python 12.12.1"}, "EncryptionMode": "FullBlob"}'
       x-ms-version:
-      - '2019-02-02'
+      - '2021-06-08'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontaineraca917a4/encryption_block_blobaca917a4
   response:
@@ -61,74 +58,61 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      content-md5: vgQezzIngLMuOE5bTKRsxw==
-      date: Fri, 25 Oct 2019 17:46:54 GMT
-      etag: '"0x8D75973536BCB3A"'
-      last-modified: Fri, 25 Oct 2019 17:46:55 GMT
+      content-md5: OQNrT16w6OPZrhcXAL74ZA==
+      date: Mon, 06 Jun 2022 23:55:11 GMT
+      etag: '"0x8DA4817FE4DE4DA"'
+      last-modified: Mon, 06 Jun 2022 23:55:11 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-content-crc64: E9Pz30i0xM4=
+      x-ms-content-crc64: MC643Bdb9pk=
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2021-06-08'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoragehddhigausowa.blob.core.windows.net
-        - /utcontaineraca917a4/encryption_block_blobaca917a4
-        - ''
-        - ''
+    url: https://jalauzoncanary.blob.core.windows.net/utcontaineraca917a4/encryption_block_blobaca917a4
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.12.1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 17:46:55 GMT
+      - Mon, 06 Jun 2022 23:55:11 GMT
       x-ms-range:
       - bytes=0-4095
       x-ms-version:
-      - '2019-02-02'
+      - '2021-06-08'
     method: GET
     uri: https://storagename.blob.core.windows.net/utcontaineraca917a4/encryption_block_blobaca917a4
   response:
     body:
       string: !!binary |
-        pob6xfP0xrZ1vwR3TePOxQ==
+        kuWLKj9TEy8fy3FHNqWdWQ==
     headers:
       accept-ranges: bytes
       content-length: '16'
       content-range: bytes 0-15/16
       content-type: application/octet-stream
-      date: Fri, 25 Oct 2019 17:46:54 GMT
-      etag: '"0x8D75973536BCB3A"'
-      last-modified: Fri, 25 Oct 2019 17:46:55 GMT
+      date: Mon, 06 Jun 2022 23:55:11 GMT
+      etag: '"0x8DA4817FE4DE4DA"'
+      last-modified: Mon, 06 Jun 2022 23:55:11 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-blob-content-md5: vgQezzIngLMuOE5bTKRsxw==
+      vary: Origin
+      x-ms-blob-content-md5: OQNrT16w6OPZrhcXAL74ZA==
       x-ms-blob-type: BlockBlob
-      x-ms-creation-time: Fri, 25 Oct 2019 17:46:55 GMT
+      x-ms-creation-time: Mon, 06 Jun 2022 23:55:11 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
       x-ms-meta-encryptiondata: '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey":
-        "d/h1KYBeW+kpApT7voN6PV7l8zVqQPkTDPShGWI5XOFNINuwHqP7HQ==", "Algorithm": "A256KW"},
+        "JWNNHwwFiGCXt18uc0xqUtewrriX+mgPEryO1fkn2IQ9i619kAytRA==", "Algorithm": "A256KW"},
         "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm": "AES_CBC_256"},
-        "ContentEncryptionIV": "lkoY1UNFiUvbXzrsTuUddQ==", "KeyWrappingMetadata":
-        {"EncryptionLibrary": "Python 12.0.0b5"}, "EncryptionMode": "FullBlob"}'
+        "ContentEncryptionIV": "AIjAASvcsiMLFS+d+snAjA==", "KeyWrappingMetadata":
+        {"EncryptionLibrary": "Python 12.12.1"}, "EncryptionMode": "FullBlob"}'
       x-ms-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2021-06-08'
     status:
       code: 206
       message: Partial Content
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoragehddhigausowa.blob.core.windows.net
-        - /utcontaineraca917a4/encryption_block_blobaca917a4
-        - ''
-        - ''
+    url: https://jalauzoncanary.blob.core.windows.net/utcontaineraca917a4/encryption_block_blobaca917a4
 version: 1

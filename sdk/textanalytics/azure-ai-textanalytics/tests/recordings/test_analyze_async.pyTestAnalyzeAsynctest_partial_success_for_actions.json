@@ -1,89 +1,83 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "651",
+        "Content-Length": "416",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "bca2b1e8-5d0f-11ec-9693-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [], \u0022entityRecognitionPiiTasks\u0022: [{\u0022parameters\u0022: {\u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00221\u0022}], \u0022keyPhraseExtractionTasks\u0022: [], \u0022entityLinkingTasks\u0022: [], \u0022sentimentAnalysisTasks\u0022: [{\u0022parameters\u0022: {\u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00220\u0022}], \u0022extractiveSummarizationTasks\u0022: [], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: []}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022tr\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022en\u0022}]}}",
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "I did not like the hotel we stayed at.",
+              "language": "tr"
+            },
+            {
+              "id": "2",
+              "text": "I did not like the hotel we stayed at.",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "taskName": "0",
+            "kind": "SentimentAnalysis",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "1",
+            "kind": "PiiEntityRecognition",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          }
+        ]
+      },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "c754ec6d-e718-4769-abbd-9a629c1778b0",
-        "Date": "Tue, 14 Dec 2021 18:57:50 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/642456fa-877c-4a56-89df-d0299e3b117c",
+        "apim-request-id": "d2b87141-5455-44b3-a4c4-d1fa5755da04",
+        "Content-Length": "0",
+        "Date": "Thu, 09 Jun 2022 17:42:56 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8cd4253e-3435-4a9b-97e2-dbc9d731c8fc?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "197"
+        "x-envoy-upstream-service-time": "231"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/642456fa-877c-4a56-89df-d0299e3b117c",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8cd4253e-3435-4a9b-97e2-dbc9d731c8fc?api-version=2022-05-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "bca2b1e8-5d0f-11ec-9693-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "68c02d37-c6e2-4037-a59e-7c88658d8ff1",
+        "apim-request-id": "c0ecc12d-7dc0-4dd6-b6f6-f5fcec585c6e",
+        "Content-Length": "1680",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 18:57:55 GMT",
+        "Date": "Thu, 09 Jun 2022 17:43:01 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "10"
+        "x-envoy-upstream-service-time": "68"
       },
       "ResponseBody": {
-        "jobId": "642456fa-877c-4a56-89df-d0299e3b117c",
-        "lastUpdateDateTime": "2021-12-14T18:57:51Z",
-        "createdDateTime": "2021-12-14T18:57:51Z",
-        "expirationDateTime": "2021-12-15T18:57:51Z",
-        "status": "running",
-        "errors": [],
-        "tasks": {
-          "completed": 0,
-          "failed": 0,
-          "inProgress": 2,
-          "total": 2
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/642456fa-877c-4a56-89df-d0299e3b117c",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "bca2b1e8-5d0f-11ec-9693-b831b58100e8"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "27e88b25-fa96-482a-a79c-94616060913a",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 18:58:01 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "82"
-      },
-      "ResponseBody": {
-        "jobId": "642456fa-877c-4a56-89df-d0299e3b117c",
-        "lastUpdateDateTime": "2021-12-14T18:57:59Z",
-        "createdDateTime": "2021-12-14T18:57:51Z",
-        "expirationDateTime": "2021-12-15T18:57:51Z",
+        "jobId": "8cd4253e-3435-4a9b-97e2-dbc9d731c8fc",
+        "lastUpdatedDateTime": "2022-06-09T17:43:00Z",
+        "createdDateTime": "2022-06-09T17:42:56Z",
+        "expirationDateTime": "2022-06-10T17:42:56Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -91,42 +85,12 @@
           "failed": 0,
           "inProgress": 0,
           "total": 2,
-          "entityRecognitionPiiTasks": [
+          "items": [
             {
-              "lastUpdateDateTime": "2021-12-14T18:57:59.1787998Z",
-              "taskName": "1",
-              "state": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "redactedText": "I did not like the hotel we stayed at.",
-                    "id": "2",
-                    "entities": [],
-                    "warnings": []
-                  }
-                ],
-                "errors": [
-                  {
-                    "id": "1",
-                    "error": {
-                      "code": "InvalidArgument",
-                      "message": "Invalid Language Code.",
-                      "innererror": {
-                        "code": "UnsupportedLanguageCode",
-                        "message": "Invalid language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT. For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"
-                      }
-                    }
-                  }
-                ],
-                "modelVersion": "2021-01-15"
-              }
-            }
-          ],
-          "sentimentAnalysisTasks": [
-            {
-              "lastUpdateDateTime": "2021-12-14T18:57:58.9549782Z",
+              "kind": "SentimentAnalysisLROResults",
               "taskName": "0",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-06-09T17:43:00.0217577Z",
+              "status": "succeeded",
               "results": {
                 "documents": [
                   {
@@ -178,6 +142,36 @@
                 ],
                 "errors": [],
                 "modelVersion": "2020-04-01"
+              }
+            },
+            {
+              "kind": "PiiEntityRecognitionLROResults",
+              "taskName": "1",
+              "lastUpdateDateTime": "2022-06-09T17:42:58.819062Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "redactedText": "I did not like the hotel we stayed at.",
+                    "id": "2",
+                    "entities": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [
+                  {
+                    "id": "1",
+                    "error": {
+                      "code": "InvalidArgument",
+                      "message": "Invalid Language Code.",
+                      "innererror": {
+                        "code": "UnsupportedLanguageCode",
+                        "message": "Invalid language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT. For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"
+                      }
+                    }
+                  }
+                ],
+                "modelVersion": "2021-01-15"
               }
             }
           ]

@@ -36,7 +36,7 @@ def build_delete_request_initial(
     site_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}/sites/{siteName}')
@@ -73,7 +73,7 @@ def build_get_request(
     site_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}/sites/{siteName}')
@@ -115,7 +115,7 @@ def build_create_or_update_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}/sites/{siteName}')
@@ -161,7 +161,7 @@ def build_update_tags_request(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}/sites/{siteName}')
@@ -201,7 +201,7 @@ def build_list_by_mobile_network_request(
     mobile_network_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}/sites')
@@ -236,7 +236,7 @@ class SitesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~mobile_network_management_client.models
+    :type models: ~azure.mgmt.mobilenetwork.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -371,7 +371,7 @@ class SitesOperations(object):
         :type site_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Site, or the result of cls(response)
-        :rtype: ~mobile_network_management_client.models.Site
+        :rtype: ~azure.mgmt.mobilenetwork.models.Site
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Site"]
@@ -478,7 +478,7 @@ class SitesOperations(object):
         :param site_name: The name of the mobile network site.
         :type site_name: str
         :param parameters: Parameters supplied to the create or update mobile network site operation.
-        :type parameters: ~mobile_network_management_client.models.Site
+        :type parameters: ~azure.mgmt.mobilenetwork.models.Site
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -488,7 +488,7 @@ class SitesOperations(object):
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
         :return: An instance of LROPoller that returns either Site or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~mobile_network_management_client.models.Site]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mobilenetwork.models.Site]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -552,10 +552,10 @@ class SitesOperations(object):
         :param site_name: The name of the mobile network site.
         :type site_name: str
         :param parameters: Parameters supplied to update network site tags.
-        :type parameters: ~mobile_network_management_client.models.TagsObject
+        :type parameters: ~azure.mgmt.mobilenetwork.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Site, or the result of cls(response)
-        :rtype: ~mobile_network_management_client.models.Site
+        :rtype: ~azure.mgmt.mobilenetwork.models.Site
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Site"]
@@ -613,7 +613,7 @@ class SitesOperations(object):
         :type mobile_network_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SiteListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~mobile_network_management_client.models.SiteListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mobilenetwork.models.SiteListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteListResult"]

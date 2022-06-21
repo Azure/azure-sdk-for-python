@@ -1,274 +1,309 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs?stringIndexType=UnicodeCodePoint",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "105",
+        "Content-Length": "231",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "8fe6e295-5d10-11ec-95f7-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022patients must have histologically confirmed NHL\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "patients must have histologically confirmed NHL",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "taskName": "0",
+            "kind": "Healthcare",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          }
+        ]
+      },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "c9036964-00e2-4807-9b60-f94d1a53826b",
-        "Date": "Tue, 14 Dec 2021 19:03:45 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/1851d5da-df1f-444a-bd0f-085ce245f9f3",
+        "apim-request-id": "4a874d80-1f35-40cd-abec-c27dd772b854",
+        "Content-Length": "0",
+        "Date": "Thu, 09 Jun 2022 23:12:46 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/2349eb96-e41e-47d7-92a5-a054c7cedb11?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "206"
+        "x-envoy-upstream-service-time": "114"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/1851d5da-df1f-444a-bd0f-085ce245f9f3",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/2349eb96-e41e-47d7-92a5-a054c7cedb11?api-version=2022-05-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "8fe6e295-5d10-11ec-95f7-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "0a3b1239-f001-48df-915e-52ef7236a96f",
+        "apim-request-id": "9b4092d8-4abc-4e82-beec-a5d6e68dff59",
+        "Content-Length": "2686",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 19:03:50 GMT",
+        "Date": "Thu, 09 Jun 2022 23:12:52 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "38"
+        "x-envoy-upstream-service-time": "36"
       },
       "ResponseBody": {
-        "jobId": "1851d5da-df1f-444a-bd0f-085ce245f9f3",
-        "lastUpdateDateTime": "2021-12-14T19:03:46Z",
-        "createdDateTime": "2021-12-14T19:03:45Z",
-        "expirationDateTime": "2021-12-15T19:03:45Z",
+        "jobId": "2349eb96-e41e-47d7-92a5-a054c7cedb11",
+        "lastUpdatedDateTime": "2022-06-09T23:12:48Z",
+        "createdDateTime": "2022-06-09T23:12:47Z",
+        "expirationDateTime": "2022-06-10T23:12:47Z",
         "status": "succeeded",
         "errors": [],
-        "results": {
-          "documents": [
+        "tasks": {
+          "completed": 1,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 1,
+          "items": [
             {
-              "id": "0",
-              "entities": [
-                {
-                  "offset": 19,
-                  "length": 14,
-                  "text": "histologically",
-                  "category": "ExaminationName",
-                  "confidenceScore": 1.0,
-                  "name": "Histology Procedure",
-                  "links": [
-                    {
-                      "dataSource": "UMLS",
-                      "id": "C0344441"
-                    },
-                    {
-                      "dataSource": "CHV",
-                      "id": "0000030964"
-                    },
-                    {
-                      "dataSource": "LNC",
-                      "id": "MTHU010496"
-                    },
-                    {
-                      "dataSource": "MDR",
-                      "id": "10062005"
-                    },
-                    {
-                      "dataSource": "MTH",
-                      "id": "U002823"
-                    },
-                    {
-                      "dataSource": "MTHMST",
-                      "id": "MT140012"
-                    },
-                    {
-                      "dataSource": "NCI",
-                      "id": "C49131"
-                    },
-                    {
-                      "dataSource": "SNOMEDCT_US",
-                      "id": "714797009"
-                    }
-                  ]
-                },
-                {
-                  "offset": 44,
-                  "length": 3,
-                  "text": "NHL",
-                  "category": "Diagnosis",
-                  "confidenceScore": 1.0,
-                  "name": "Lymphoma, Non-Hodgkin",
-                  "links": [
-                    {
-                      "dataSource": "UMLS",
-                      "id": "C0024305"
-                    },
-                    {
-                      "dataSource": "BI",
-                      "id": "BI00323"
-                    },
-                    {
-                      "dataSource": "CCPSS",
-                      "id": "0001640"
-                    },
-                    {
-                      "dataSource": "CCS",
-                      "id": "2.10.2"
-                    },
-                    {
-                      "dataSource": "CCSR_10",
-                      "id": "NEO058"
-                    },
-                    {
-                      "dataSource": "CHV",
-                      "id": "0000007621"
-                    },
-                    {
-                      "dataSource": "COSTAR",
-                      "id": "U000045"
-                    },
-                    {
-                      "dataSource": "CSP",
-                      "id": "4001-0094"
-                    },
-                    {
-                      "dataSource": "DXP",
-                      "id": "U002830"
-                    },
-                    {
-                      "dataSource": "HPO",
-                      "id": "HP:0012539"
-                    },
-                    {
-                      "dataSource": "ICD10",
-                      "id": "C85.9"
-                    },
-                    {
-                      "dataSource": "ICD10AM",
-                      "id": "M9672/3"
-                    },
-                    {
-                      "dataSource": "ICD10CM",
-                      "id": "C85.9"
-                    },
-                    {
-                      "dataSource": "ICPC2ICD10ENG",
-                      "id": "MTHU053464"
-                    },
-                    {
-                      "dataSource": "ICPC2P",
-                      "id": "B74002"
-                    },
-                    {
-                      "dataSource": "MDR",
-                      "id": "10029547"
-                    },
-                    {
-                      "dataSource": "MEDCIN",
-                      "id": "35839"
-                    },
-                    {
-                      "dataSource": "MEDLINEPLUS",
-                      "id": "117"
-                    },
-                    {
-                      "dataSource": "MSH",
-                      "id": "D008228"
-                    },
-                    {
-                      "dataSource": "NCI",
-                      "id": "C3211"
-                    },
-                    {
-                      "dataSource": "NCI_CELLOSAURUS",
-                      "id": "C3211"
-                    },
-                    {
-                      "dataSource": "NCI_CPTAC",
-                      "id": "C3211"
-                    },
-                    {
-                      "dataSource": "NCI_CTEP-SDC",
-                      "id": "10029593"
-                    },
-                    {
-                      "dataSource": "NCI_CTRP",
-                      "id": "C3211"
-                    },
-                    {
-                      "dataSource": "NCI_GDC",
-                      "id": "C3211"
-                    },
-                    {
-                      "dataSource": "NCI_NCI-GLOSS",
-                      "id": "CDR0000045148"
-                    },
-                    {
-                      "dataSource": "NCI_NICHD",
-                      "id": "C3211"
-                    },
-                    {
-                      "dataSource": "OMIM",
-                      "id": "MTHU014311"
-                    },
-                    {
-                      "dataSource": "PDQ",
-                      "id": "CDR0000038957"
-                    },
-                    {
-                      "dataSource": "QMR",
-                      "id": "R0121804"
-                    },
-                    {
-                      "dataSource": "RCD",
-                      "id": "B627."
-                    },
-                    {
-                      "dataSource": "SNM",
-                      "id": "M-YYX54"
-                    },
-                    {
-                      "dataSource": "SNMI",
-                      "id": "M-96723"
-                    },
-                    {
-                      "dataSource": "SNOMEDCT_US",
-                      "id": "1929004"
-                    },
-                    {
-                      "dataSource": "WHO",
-                      "id": "1544"
-                    }
-                  ]
-                }
-              ],
-              "relations": [
-                {
-                  "relationType": "ExaminationFindsCondition",
-                  "entities": [
-                    {
-                      "ref": "#/results/documents/0/entities/0",
-                      "role": "Examination"
-                    },
-                    {
-                      "ref": "#/results/documents/0/entities/1",
-                      "role": "Condition"
-                    }
-                  ]
-                }
-              ],
-              "warnings": []
+              "kind": "HealthcareLROResults",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-06-09T23:12:48.7468032Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "entities": [
+                      {
+                        "offset": 19,
+                        "length": 14,
+                        "text": "histologically",
+                        "category": "ExaminationName",
+                        "confidenceScore": 1.0,
+                        "name": "Histology Procedure",
+                        "links": [
+                          {
+                            "dataSource": "UMLS",
+                            "id": "C0344441"
+                          },
+                          {
+                            "dataSource": "CHV",
+                            "id": "0000030964"
+                          },
+                          {
+                            "dataSource": "LNC",
+                            "id": "MTHU010496"
+                          },
+                          {
+                            "dataSource": "MDR",
+                            "id": "10062005"
+                          },
+                          {
+                            "dataSource": "MTH",
+                            "id": "U002823"
+                          },
+                          {
+                            "dataSource": "MTHMST",
+                            "id": "MT140012"
+                          },
+                          {
+                            "dataSource": "NCI",
+                            "id": "C49131"
+                          },
+                          {
+                            "dataSource": "SNOMEDCT_US",
+                            "id": "714797009"
+                          }
+                        ]
+                      },
+                      {
+                        "offset": 44,
+                        "length": 3,
+                        "text": "NHL",
+                        "category": "Diagnosis",
+                        "confidenceScore": 1.0,
+                        "name": "Lymphoma, Non-Hodgkin",
+                        "links": [
+                          {
+                            "dataSource": "UMLS",
+                            "id": "C0024305"
+                          },
+                          {
+                            "dataSource": "BI",
+                            "id": "BI00323"
+                          },
+                          {
+                            "dataSource": "CCPSS",
+                            "id": "0001640"
+                          },
+                          {
+                            "dataSource": "CCS",
+                            "id": "2.10.2"
+                          },
+                          {
+                            "dataSource": "CCSR_10",
+                            "id": "NEO058"
+                          },
+                          {
+                            "dataSource": "CCSR_ICD10CM",
+                            "id": "NEO058"
+                          },
+                          {
+                            "dataSource": "CHV",
+                            "id": "0000007621"
+                          },
+                          {
+                            "dataSource": "COSTAR",
+                            "id": "U000045"
+                          },
+                          {
+                            "dataSource": "CSP",
+                            "id": "4001-0094"
+                          },
+                          {
+                            "dataSource": "DXP",
+                            "id": "U002830"
+                          },
+                          {
+                            "dataSource": "HPO",
+                            "id": "HP:0012539"
+                          },
+                          {
+                            "dataSource": "ICD10",
+                            "id": "C85.9"
+                          },
+                          {
+                            "dataSource": "ICD10AM",
+                            "id": "M9672/3"
+                          },
+                          {
+                            "dataSource": "ICD10CM",
+                            "id": "C85.9"
+                          },
+                          {
+                            "dataSource": "ICPC2ICD10ENG",
+                            "id": "MTHU053464"
+                          },
+                          {
+                            "dataSource": "ICPC2P",
+                            "id": "B74002"
+                          },
+                          {
+                            "dataSource": "MDR",
+                            "id": "10029547"
+                          },
+                          {
+                            "dataSource": "MEDCIN",
+                            "id": "35839"
+                          },
+                          {
+                            "dataSource": "MEDLINEPLUS",
+                            "id": "117"
+                          },
+                          {
+                            "dataSource": "MSH",
+                            "id": "D008228"
+                          },
+                          {
+                            "dataSource": "NCI",
+                            "id": "C3211"
+                          },
+                          {
+                            "dataSource": "NCI_CELLOSAURUS",
+                            "id": "C3211"
+                          },
+                          {
+                            "dataSource": "NCI_CPTAC",
+                            "id": "C3211"
+                          },
+                          {
+                            "dataSource": "NCI_CTEP-SDC",
+                            "id": "10029593"
+                          },
+                          {
+                            "dataSource": "NCI_CTRP",
+                            "id": "C3211"
+                          },
+                          {
+                            "dataSource": "NCI_GDC",
+                            "id": "C3211"
+                          },
+                          {
+                            "dataSource": "NCI_NCI-GLOSS",
+                            "id": "CDR0000045148"
+                          },
+                          {
+                            "dataSource": "NCI_NICHD",
+                            "id": "C3211"
+                          },
+                          {
+                            "dataSource": "OMIM",
+                            "id": "MTHU014311"
+                          },
+                          {
+                            "dataSource": "PDQ",
+                            "id": "CDR0000038957"
+                          },
+                          {
+                            "dataSource": "QMR",
+                            "id": "R0121804"
+                          },
+                          {
+                            "dataSource": "RCD",
+                            "id": "B627."
+                          },
+                          {
+                            "dataSource": "SNM",
+                            "id": "M-YYX54"
+                          },
+                          {
+                            "dataSource": "SNMI",
+                            "id": "M-96723"
+                          },
+                          {
+                            "dataSource": "SNOMEDCT_US",
+                            "id": "1929004"
+                          },
+                          {
+                            "dataSource": "WHO",
+                            "id": "1544"
+                          }
+                        ]
+                      }
+                    ],
+                    "relations": [
+                      {
+                        "relationType": "ExaminationFindsCondition",
+                        "entities": [
+                          {
+                            "ref": "#/results/documents/0/entities/0",
+                            "role": "Examination"
+                          },
+                          {
+                            "ref": "#/results/documents/0/entities/1",
+                            "role": "Condition"
+                          }
+                        ]
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2022-03-01"
+              }
             }
-          ],
-          "errors": [],
-          "modelVersion": "2021-05-15"
+          ]
         }
       }
     }

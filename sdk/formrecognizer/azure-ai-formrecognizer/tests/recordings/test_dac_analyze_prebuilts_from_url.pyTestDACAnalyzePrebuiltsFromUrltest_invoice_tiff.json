@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-invoice:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2022-01-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-invoice:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2022-06-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,77 +9,73 @@
         "Connection": "keep-alive",
         "Content-Length": "36",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b4 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "5215dcdc-9b4e-11ec-8559-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
         "urlSource": "https://blob_sas_url"
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "ca47f4d7-456c-44f0-8b9b-6f0a8d9b9086",
+        "apim-request-id": "a3dda035-5cdc-4b50-8ae7-079bd110706a",
         "Content-Length": "0",
-        "Date": "Fri, 04 Mar 2022 00:02:03 GMT",
-        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-invoice/analyzeResults/ca47f4d7-456c-44f0-8b9b-6f0a8d9b9086?api-version=2022-01-30-preview",
-        "Server": "istio-envoy",
+        "Date": "Wed, 25 May 2022 21:38:30 GMT",
+        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-invoice/analyzeResults/a3dda035-5cdc-4b50-8ae7-079bd110706a?api-version=2022-06-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "1177"
+        "x-envoy-upstream-service-time": "236"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-invoice/analyzeResults/ca47f4d7-456c-44f0-8b9b-6f0a8d9b9086?api-version=2022-01-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-invoice/analyzeResults/a3dda035-5cdc-4b50-8ae7-079bd110706a?api-version=2022-06-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b4 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "5215dcdc-9b4e-11ec-8559-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "8d3ed80d-3ef2-4e3d-9111-ca3ddd68cd3c",
+        "apim-request-id": "106e8c73-4f5f-4d0c-ad05-8859c47cc55d",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 04 Mar 2022 00:02:08 GMT",
-        "Server": "istio-envoy",
+        "Date": "Wed, 25 May 2022 21:38:35 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "340"
+        "x-envoy-upstream-service-time": "54"
       },
       "ResponseBody": {
         "status": "succeeded",
-        "createdDateTime": "2022-03-04T00:02:03Z",
-        "lastUpdatedDateTime": "2022-03-04T00:02:06Z",
+        "createdDateTime": "2022-05-25T21:38:30Z",
+        "lastUpdatedDateTime": "2022-05-25T21:38:35Z",
         "analyzeResult": {
-          "apiVersion": "2022-01-30-preview",
+          "apiVersion": "2022-06-30-preview",
           "modelId": "prebuilt-invoice",
           "stringIndexType": "unicodeCodePoint",
           "content": "Contoso\nAddress:\n1 Redmond way Suite\n6000 Redmond, WA\n99243\nInvoice For: Microsoft\n1020 Enterprise Way\nSunnayvale, CA 87659\nInvoice Number\nInvoice Date\nInvoice Due Date\nCharges\nVAT ID\n34278587\n6/18/2017\n6/24/2017\n$56,651.49\nPT",
           "pages": [
             {
               "pageNumber": 1,
-              "angle": 0.2535,
+              "angle": 0,
               "width": 1700,
               "height": 2200,
               "unit": "pixel",
               "words": [
                 {
                   "content": "Contoso",
-                  "boundingBox": [
-                    105,
-                    230,
-                    283,
-                    234,
-                    282,
-                    277,
-                    103,
-                    273
+                  "polygon": [
+                    108,
+                    231,
+                    286,
+                    233,
+                    286,
+                    275,
+                    106,
+                    275
                   ],
-                  "confidence": 0.998,
+                  "confidence": 0.9966714,
                   "span": {
                     "offset": 0,
                     "length": 7
@@ -87,17 +83,17 @@
                 },
                 {
                   "content": "Address:",
-                  "boundingBox": [
-                    160,
-                    299,
-                    279,
+                  "polygon": [
+                    159,
                     300,
-                    279,
+                    280,
+                    301,
+                    281,
                     326,
-                    160,
+                    159,
                     325
                   ],
-                  "confidence": 0.997,
+                  "confidence": 0.9935534,
                   "span": {
                     "offset": 8,
                     "length": 8
@@ -105,17 +101,17 @@
                 },
                 {
                   "content": "1",
-                  "boundingBox": [
+                  "polygon": [
                     159,
                     337,
                     172,
                     337,
-                    171,
-                    369,
+                    172,
+                    365,
                     159,
-                    369
+                    365
                   ],
-                  "confidence": 0.994,
+                  "confidence": 0.9980585,
                   "span": {
                     "offset": 17,
                     "length": 1
@@ -123,17 +119,17 @@
                 },
                 {
                   "content": "Redmond",
-                  "boundingBox": [
+                  "polygon": [
                     178,
-                    337,
+                    338,
                     300,
-                    337,
+                    338,
                     299,
-                    369,
-                    178,
-                    369
+                    367,
+                    177,
+                    365
                   ],
-                  "confidence": 0.997,
+                  "confidence": 0.9965512,
                   "span": {
                     "offset": 19,
                     "length": 7
@@ -141,17 +137,17 @@
                 },
                 {
                   "content": "way",
-                  "boundingBox": [
+                  "polygon": [
                     306,
-                    337,
+                    338,
                     358,
-                    336,
-                    357,
-                    369,
-                    306,
-                    369
+                    338,
+                    358,
+                    367,
+                    305,
+                    367
                   ],
-                  "confidence": 0.998,
+                  "confidence": 0.9980585,
                   "span": {
                     "offset": 27,
                     "length": 3
@@ -159,17 +155,17 @@
                 },
                 {
                   "content": "Suite",
-                  "boundingBox": [
+                  "polygon": [
                     364,
-                    336,
-                    432,
-                    336,
-                    430,
-                    369,
-                    363,
-                    369
+                    338,
+                    429,
+                    338,
+                    429,
+                    367,
+                    364,
+                    367
                   ],
-                  "confidence": 0.999,
+                  "confidence": 0.9976061,
                   "span": {
                     "offset": 31,
                     "length": 5
@@ -177,17 +173,17 @@
                 },
                 {
                   "content": "6000",
-                  "boundingBox": [
+                  "polygon": [
                     158,
-                    375,
+                    377,
                     217,
-                    375,
-                    217,
-                    407,
-                    158,
-                    407
+                    377,
+                    216,
+                    403,
+                    157,
+                    403
                   ],
-                  "confidence": 0.994,
+                  "confidence": 0.9975488,
                   "span": {
                     "offset": 37,
                     "length": 4
@@ -195,17 +191,17 @@
                 },
                 {
                   "content": "Redmond,",
-                  "boundingBox": [
+                  "polygon": [
+                    225,
+                    377,
+                    355,
+                    376,
+                    355,
+                    405,
                     224,
-                    375,
-                    353,
-                    374,
-                    352,
-                    407,
-                    223,
-                    407
+                    403
                   ],
-                  "confidence": 0.996,
+                  "confidence": 0.9956564,
                   "span": {
                     "offset": 42,
                     "length": 8
@@ -213,17 +209,17 @@
                 },
                 {
                   "content": "WA",
-                  "boundingBox": [
-                    359,
-                    374,
-                    406,
-                    373,
+                  "polygon": [
+                    360,
+                    376,
+                    402,
+                    376,
+                    402,
                     405,
-                    407,
-                    359,
-                    407
+                    361,
+                    405
                   ],
-                  "confidence": 0.994,
+                  "confidence": 0.9975912,
                   "span": {
                     "offset": 51,
                     "length": 2
@@ -231,17 +227,17 @@
                 },
                 {
                   "content": "99243",
-                  "boundingBox": [
+                  "polygon": [
                     159,
-                    414,
-                    235,
                     415,
+                    233,
+                    414,
                     234,
-                    441,
+                    440,
                     159,
-                    441
+                    439
                   ],
-                  "confidence": 0.999,
+                  "confidence": 0.9937202,
                   "span": {
                     "offset": 54,
                     "length": 5
@@ -249,17 +245,17 @@
                 },
                 {
                   "content": "Invoice",
-                  "boundingBox": [
+                  "polygon": [
                     878,
-                    298,
+                    299,
                     962,
                     299,
                     962,
                     327,
-                    878,
-                    328
+                    877,
+                    327
                   ],
-                  "confidence": 0.985,
+                  "confidence": 0.9554825,
                   "span": {
                     "offset": 60,
                     "length": 7
@@ -267,17 +263,17 @@
                 },
                 {
                   "content": "For:",
-                  "boundingBox": [
-                    971,
+                  "polygon": [
+                    970,
                     299,
                     1029,
                     299,
                     1029,
                     327,
-                    970,
+                    969,
                     327
                   ],
-                  "confidence": 0.992,
+                  "confidence": 0.9913172,
                   "span": {
                     "offset": 68,
                     "length": 4
@@ -285,17 +281,17 @@
                 },
                 {
                   "content": "Microsoft",
-                  "boundingBox": [
-                    1034,
+                  "polygon": [
+                    1035,
                     299,
-                    1166,
-                    299,
-                    1166,
-                    328,
+                    1163,
+                    300,
+                    1163,
+                    326,
                     1034,
                     327
                   ],
-                  "confidence": 0.996,
+                  "confidence": 0.9954556,
                   "span": {
                     "offset": 73,
                     "length": 9
@@ -303,17 +299,17 @@
                 },
                 {
                   "content": "1020",
-                  "boundingBox": [
-                    1038,
-                    339,
-                    1096,
+                  "polygon": [
+                    1040,
                     340,
                     1097,
-                    370,
+                    340,
+                    1097,
+                    369,
                     1039,
                     369
                   ],
-                  "confidence": 0.993,
+                  "confidence": 0.9940026,
                   "span": {
                     "offset": 83,
                     "length": 4
@@ -321,17 +317,17 @@
                 },
                 {
                   "content": "Enterprise",
-                  "boundingBox": [
+                  "polygon": [
                     1103,
                     340,
-                    1242,
+                    1243,
                     341,
-                    1242,
+                    1243,
                     371,
-                    1104,
-                    370
+                    1103,
+                    369
                   ],
-                  "confidence": 0.995,
+                  "confidence": 0.9948032,
                   "span": {
                     "offset": 88,
                     "length": 10
@@ -339,17 +335,17 @@
                 },
                 {
                   "content": "Way",
-                  "boundingBox": [
+                  "polygon": [
                     1249,
                     341,
                     1307,
                     340,
-                    1307,
-                    372,
-                    1249,
+                    1308,
+                    373,
+                    1250,
                     371
                   ],
-                  "confidence": 0.998,
+                  "confidence": 0.9980407,
                   "span": {
                     "offset": 99,
                     "length": 3
@@ -357,17 +353,17 @@
                 },
                 {
                   "content": "Sunnayvale,",
-                  "boundingBox": [
+                  "polygon": [
                     1036,
-                    378,
+                    377,
                     1198,
-                    378,
-                    1197,
-                    409,
-                    1037,
-                    409
+                    379,
+                    1198,
+                    408,
+                    1035,
+                    407
                   ],
-                  "confidence": 0.995,
+                  "confidence": 0.9913172,
                   "span": {
                     "offset": 103,
                     "length": 11
@@ -375,17 +371,17 @@
                 },
                 {
                   "content": "CA",
-                  "boundingBox": [
+                  "polygon": [
                     1204,
-                    378,
+                    379,
                     1241,
                     378,
                     1241,
                     408,
                     1204,
-                    409
+                    408
                   ],
-                  "confidence": 0.998,
+                  "confidence": 0.9980108,
                   "span": {
                     "offset": 115,
                     "length": 2
@@ -393,17 +389,17 @@
                 },
                 {
                   "content": "87659",
-                  "boundingBox": [
+                  "polygon": [
                     1251,
                     378,
-                    1330,
-                    377,
-                    1329,
-                    407,
-                    1250,
+                    1331,
+                    376,
+                    1331,
+                    406,
+                    1251,
                     408
                   ],
-                  "confidence": 0.999,
+                  "confidence": 0.994067,
                   "span": {
                     "offset": 118,
                     "length": 5
@@ -411,17 +407,17 @@
                 },
                 {
                   "content": "Invoice",
-                  "boundingBox": [
-                    105,
-                    570,
-                    199,
-                    572,
-                    199,
+                  "polygon": [
+                    106,
+                    573,
+                    198,
+                    573,
+                    198,
                     599,
-                    105,
-                    599
+                    106,
+                    598
                   ],
-                  "confidence": 0.984,
+                  "confidence": 0.9913172,
                   "span": {
                     "offset": 124,
                     "length": 7
@@ -429,17 +425,17 @@
                 },
                 {
                   "content": "Number",
-                  "boundingBox": [
+                  "polygon": [
                     207,
                     572,
-                    316,
-                    572,
-                    316,
-                    599,
+                    314,
+                    571,
+                    315,
+                    598,
                     207,
                     599
                   ],
-                  "confidence": 0.994,
+                  "confidence": 0.9974179,
                   "span": {
                     "offset": 132,
                     "length": 6
@@ -447,17 +443,17 @@
                 },
                 {
                   "content": "Invoice",
-                  "boundingBox": [
-                    386,
-                    571,
+                  "polygon": [
+                    388,
+                    573,
                     480,
                     573,
                     480,
                     598,
-                    385,
+                    387,
                     598
                   ],
-                  "confidence": 0.985,
+                  "confidence": 0.9550841,
                   "span": {
                     "offset": 139,
                     "length": 7
@@ -465,17 +461,17 @@
                 },
                 {
                   "content": "Date",
-                  "boundingBox": [
-                    490,
+                  "polygon": [
+                    489,
                     573,
-                    549,
+                    548,
                     572,
-                    549,
+                    548,
                     598,
                     489,
                     598
                   ],
-                  "confidence": 0.994,
+                  "confidence": 0.9889184,
                   "span": {
                     "offset": 147,
                     "length": 4
@@ -483,17 +479,17 @@
                 },
                 {
                   "content": "Invoice",
-                  "boundingBox": [
+                  "polygon": [
                     666,
-                    570,
-                    759,
                     572,
-                    759,
-                    599,
+                    760,
+                    573,
+                    760,
+                    598,
                     666,
-                    599
+                    598
                   ],
-                  "confidence": 0.97,
+                  "confidence": 0.9410877,
                   "span": {
                     "offset": 152,
                     "length": 7
@@ -501,17 +497,17 @@
                 },
                 {
                   "content": "Due",
-                  "boundingBox": [
-                    769,
-                    572,
+                  "polygon": [
+                    767,
+                    573,
                     820,
-                    572,
+                    573,
                     820,
                     599,
-                    769,
-                    599
+                    767,
+                    598
                   ],
-                  "confidence": 0.998,
+                  "confidence": 0.9980022,
                   "span": {
                     "offset": 160,
                     "length": 3
@@ -519,17 +515,17 @@
                 },
                 {
                   "content": "Date",
-                  "boundingBox": [
-                    828,
+                  "polygon": [
+                    827,
+                    573,
+                    888,
                     572,
-                    890,
-                    572,
-                    890,
+                    889,
                     599,
-                    829,
+                    828,
                     599
                   ],
-                  "confidence": 0.994,
+                  "confidence": 0.9889593,
                   "span": {
                     "offset": 164,
                     "length": 4
@@ -537,17 +533,17 @@
                 },
                 {
                   "content": "Charges",
-                  "boundingBox": [
+                  "polygon": [
                     948,
-                    570,
-                    1060,
                     572,
-                    1059,
-                    605,
+                    1056,
+                    575,
+                    1055,
+                    602,
                     948,
-                    603
+                    601
                   ],
-                  "confidence": 0.992,
+                  "confidence": 0.9969338,
                   "span": {
                     "offset": 169,
                     "length": 7
@@ -555,17 +551,17 @@
                 },
                 {
                   "content": "VAT",
-                  "boundingBox": [
-                    1227,
+                  "polygon": [
+                    1226,
+                    573,
+                    1279,
                     572,
-                    1280,
-                    572,
-                    1281,
+                    1279,
                     597,
-                    1227,
+                    1226,
                     597
                   ],
-                  "confidence": 0.998,
+                  "confidence": 0.9979998,
                   "span": {
                     "offset": 177,
                     "length": 3
@@ -573,17 +569,17 @@
                 },
                 {
                   "content": "ID",
-                  "boundingBox": [
+                  "polygon": [
                     1288,
                     572,
-                    1310,
+                    1311,
                     572,
                     1311,
                     597,
                     1288,
                     597
                   ],
-                  "confidence": 0.997,
+                  "confidence": 0.9974499,
                   "span": {
                     "offset": 181,
                     "length": 2
@@ -591,17 +587,17 @@
                 },
                 {
                   "content": "34278587",
-                  "boundingBox": [
-                    105,
-                    680,
+                  "polygon": [
+                    107,
+                    679,
                     229,
-                    680,
+                    679,
                     229,
-                    705,
-                    105,
-                    706
+                    706,
+                    107,
+                    705
                   ],
-                  "confidence": 0.997,
+                  "confidence": 0.9956673,
                   "span": {
                     "offset": 184,
                     "length": 8
@@ -609,17 +605,17 @@
                 },
                 {
                   "content": "6/18/2017",
-                  "boundingBox": [
-                    387,
-                    680,
-                    510,
-                    680,
-                    509,
-                    705,
+                  "polygon": [
                     388,
+                    681,
+                    508,
+                    680,
+                    508,
+                    706,
+                    387,
                     705
                   ],
-                  "confidence": 0.994,
+                  "confidence": 0.9723536,
                   "span": {
                     "offset": 193,
                     "length": 9
@@ -627,17 +623,17 @@
                 },
                 {
                   "content": "6/24/2017",
-                  "boundingBox": [
-                    667,
+                  "polygon": [
+                    669,
                     680,
                     789,
                     679,
                     789,
                     705,
-                    667,
+                    668,
                     705
                   ],
-                  "confidence": 0.973,
+                  "confidence": 0.9845371,
                   "span": {
                     "offset": 203,
                     "length": 9
@@ -645,17 +641,17 @@
                 },
                 {
                   "content": "$56,651.49",
-                  "boundingBox": [
-                    1074,
+                  "polygon": [
+                    1075,
                     679,
                     1213,
-                    680,
-                    1214,
-                    706,
-                    1074,
-                    709
+                    679,
+                    1213,
+                    707,
+                    1075,
+                    708
                   ],
-                  "confidence": 0.99,
+                  "confidence": 0.9913172,
                   "span": {
                     "offset": 213,
                     "length": 10
@@ -663,36 +659,35 @@
                 },
                 {
                   "content": "PT",
-                  "boundingBox": [
-                    1242,
-                    676,
-                    1278,
-                    676,
-                    1278,
-                    709,
-                    1242,
+                  "polygon": [
+                    1237,
+                    674,
+                    1279,
+                    674,
+                    1279,
+                    708,
+                    1237,
                     708
                   ],
-                  "confidence": 0.997,
+                  "confidence": 0.9965499,
                   "span": {
                     "offset": 224,
                     "length": 2
                   }
                 }
               ],
-              "selectionMarks": [],
               "lines": [
                 {
                   "content": "Contoso",
-                  "boundingBox": [
-                    104,
-                    229,
-                    290,
-                    233,
-                    289,
-                    276,
-                    103,
-                    272
+                  "polygon": [
+                    106,
+                    231,
+                    287,
+                    231,
+                    287,
+                    274,
+                    106,
+                    274
                   ],
                   "spans": [
                     {
@@ -703,15 +698,15 @@
                 },
                 {
                   "content": "Address:",
-                  "boundingBox": [
-                    159,
-                    298,
-                    280,
-                    300,
-                    280,
+                  "polygon": [
+                    158,
+                    299,
+                    281,
+                    301,
+                    281,
                     326,
                     158,
-                    325
+                    324
                   ],
                   "spans": [
                     {
@@ -722,15 +717,15 @@
                 },
                 {
                   "content": "1 Redmond way Suite",
-                  "boundingBox": [
-                    157,
-                    336,
-                    431,
-                    336,
-                    431,
-                    368,
-                    157,
-                    369
+                  "polygon": [
+                    159,
+                    337,
+                    430,
+                    338,
+                    429,
+                    367,
+                    158,
+                    365
                   ],
                   "spans": [
                     {
@@ -741,15 +736,15 @@
                 },
                 {
                   "content": "6000 Redmond, WA",
-                  "boundingBox": [
+                  "polygon": [
                     157,
-                    373,
-                    410,
-                    373,
-                    411,
-                    406,
+                    375,
+                    407,
+                    375,
+                    407,
+                    404,
                     157,
-                    407
+                    404
                   ],
                   "spans": [
                     {
@@ -760,15 +755,15 @@
                 },
                 {
                   "content": "99243",
-                  "boundingBox": [
-                    157,
-                    413,
-                    238,
+                  "polygon": [
+                    159,
                     414,
-                    238,
-                    440,
-                    157,
-                    440
+                    237,
+                    414,
+                    237,
+                    439,
+                    159,
+                    439
                   ],
                   "spans": [
                     {
@@ -779,15 +774,15 @@
                 },
                 {
                   "content": "Invoice For: Microsoft",
-                  "boundingBox": [
+                  "polygon": [
                     877,
-                    298,
-                    1166,
-                    298,
-                    1166,
-                    327,
+                    299,
+                    1163,
+                    299,
+                    1163,
+                    326,
                     877,
-                    327
+                    326
                   ],
                   "spans": [
                     {
@@ -798,15 +793,15 @@
                 },
                 {
                   "content": "1020 Enterprise Way",
-                  "boundingBox": [
-                    1036,
-                    338,
+                  "polygon": [
+                    1039,
+                    339,
                     1310,
                     340,
-                    1309,
-                    371,
-                    1036,
-                    368
+                    1310,
+                    372,
+                    1039,
+                    369
                   ],
                   "spans": [
                     {
@@ -817,15 +812,15 @@
                 },
                 {
                   "content": "Sunnayvale, CA 87659",
-                  "boundingBox": [
-                    1035,
-                    377,
+                  "polygon": [
+                    1034,
+                    376,
                     1333,
-                    377,
+                    375,
                     1333,
                     407,
-                    1035,
-                    409
+                    1034,
+                    408
                   ],
                   "spans": [
                     {
@@ -836,13 +831,13 @@
                 },
                 {
                   "content": "Invoice Number",
-                  "boundingBox": [
+                  "polygon": [
                     105,
-                    570,
-                    316,
-                    570,
-                    316,
-                    598,
+                    572,
+                    315,
+                    571,
+                    315,
+                    597,
                     105,
                     598
                   ],
@@ -855,14 +850,14 @@
                 },
                 {
                   "content": "Invoice Date",
-                  "boundingBox": [
-                    385,
-                    570,
-                    550,
-                    571,
-                    550,
-                    598,
-                    385,
+                  "polygon": [
+                    387,
+                    572,
+                    551,
+                    572,
+                    551,
+                    597,
+                    387,
                     597
                   ],
                   "spans": [
@@ -874,14 +869,14 @@
                 },
                 {
                   "content": "Invoice Due Date",
-                  "boundingBox": [
-                    665,
-                    570,
-                    891,
+                  "polygon": [
+                    666,
                     571,
-                    891,
-                    599,
-                    665,
+                    892,
+                    571,
+                    892,
+                    598,
+                    666,
                     598
                   ],
                   "spans": [
@@ -893,15 +888,15 @@
                 },
                 {
                   "content": "Charges",
-                  "boundingBox": [
-                    947,
-                    570,
-                    1062,
+                  "polygon": [
+                    948,
                     571,
-                    1061,
-                    604,
-                    947,
-                    602
+                    1059,
+                    573,
+                    1059,
+                    602,
+                    948,
+                    600
                   ],
                   "spans": [
                     {
@@ -912,14 +907,14 @@
                 },
                 {
                   "content": "VAT ID",
-                  "boundingBox": [
-                    1226,
-                    571,
+                  "polygon": [
+                    1225,
+                    572,
                     1318,
                     571,
                     1318,
-                    597,
-                    1226,
+                    596,
+                    1225,
                     596
                   ],
                   "spans": [
@@ -931,14 +926,14 @@
                 },
                 {
                   "content": "34278587",
-                  "boundingBox": [
-                    104,
+                  "polygon": [
+                    105,
                     679,
-                    229,
+                    231,
                     679,
-                    229,
-                    705,
-                    104,
+                    231,
+                    706,
+                    105,
                     705
                   ],
                   "spans": [
@@ -950,14 +945,14 @@
                 },
                 {
                   "content": "6/18/2017",
-                  "boundingBox": [
-                    386,
-                    679,
-                    510,
+                  "polygon": [
+                    387,
                     680,
-                    510,
+                    511,
+                    680,
+                    511,
                     705,
-                    386,
+                    387,
                     705
                   ],
                   "spans": [
@@ -969,14 +964,14 @@
                 },
                 {
                   "content": "6/24/2017",
-                  "boundingBox": [
-                    666,
+                  "polygon": [
+                    667,
                     679,
-                    790,
-                    679,
-                    790,
-                    705,
-                    666,
+                    791,
+                    678,
+                    791,
+                    704,
+                    667,
                     705
                   ],
                   "spans": [
@@ -988,15 +983,15 @@
                 },
                 {
                   "content": "$56,651.49",
-                  "boundingBox": [
-                    1072,
-                    679,
-                    1220,
-                    679,
-                    1221,
-                    706,
-                    1072,
-                    708
+                  "polygon": [
+                    1074,
+                    678,
+                    1218,
+                    678,
+                    1218,
+                    707,
+                    1074,
+                    707
                   ],
                   "spans": [
                     {
@@ -1007,14 +1002,14 @@
                 },
                 {
                   "content": "PT",
-                  "boundingBox": [
-                    1241,
-                    676,
+                  "polygon": [
+                    1235,
+                    674,
+                    1281,
+                    674,
                     1282,
-                    676,
-                    1280,
-                    709,
-                    1241,
+                    708,
+                    1235,
                     708
                   ],
                   "spans": [
@@ -1030,7 +1025,8 @@
                   "offset": 0,
                   "length": 226
                 }
-              ]
+              ],
+              "kind": "document"
             }
           ],
           "tables": [
@@ -1042,19 +1038,17 @@
                   "kind": "columnHeader",
                   "rowIndex": 0,
                   "columnIndex": 0,
-                  "rowSpan": 1,
-                  "columnSpan": 1,
                   "content": "Invoice Number",
                   "boundingRegions": [
                     {
                       "pageNumber": 1,
-                      "boundingBox": [
-                        103,
-                        558,
-                        378,
-                        558,
-                        380,
-                        663,
+                      "polygon": [
+                        101,
+                        557,
+                        379,
+                        557,
+                        379,
+                        662,
                         101,
                         663
                       ]
@@ -1071,21 +1065,19 @@
                   "kind": "columnHeader",
                   "rowIndex": 0,
                   "columnIndex": 1,
-                  "rowSpan": 1,
-                  "columnSpan": 1,
                   "content": "Invoice Date",
                   "boundingRegions": [
                     {
                       "pageNumber": 1,
-                      "boundingBox": [
-                        378,
-                        558,
-                        658,
-                        558,
-                        659,
-                        663,
-                        380,
-                        663
+                      "polygon": [
+                        379,
+                        557,
+                        661,
+                        557,
+                        661,
+                        662,
+                        379,
+                        662
                       ]
                     }
                   ],
@@ -1100,21 +1092,19 @@
                   "kind": "columnHeader",
                   "rowIndex": 0,
                   "columnIndex": 2,
-                  "rowSpan": 1,
-                  "columnSpan": 1,
                   "content": "Invoice Due Date",
                   "boundingRegions": [
                     {
                       "pageNumber": 1,
-                      "boundingBox": [
-                        658,
-                        558,
-                        938,
-                        558,
-                        939,
-                        663,
-                        659,
-                        663
+                      "polygon": [
+                        661,
+                        557,
+                        941,
+                        557,
+                        941,
+                        662,
+                        661,
+                        662
                       ]
                     }
                   ],
@@ -1129,21 +1119,19 @@
                   "kind": "columnHeader",
                   "rowIndex": 0,
                   "columnIndex": 3,
-                  "rowSpan": 1,
-                  "columnSpan": 1,
                   "content": "Charges",
                   "boundingRegions": [
                     {
                       "pageNumber": 1,
-                      "boundingBox": [
-                        938,
-                        558,
-                        1217,
-                        558,
-                        1219,
+                      "polygon": [
+                        941,
+                        557,
+                        1221,
+                        557,
+                        1221,
                         663,
-                        939,
-                        663
+                        941,
+                        662
                       ]
                     }
                   ],
@@ -1158,20 +1146,18 @@
                   "kind": "columnHeader",
                   "rowIndex": 0,
                   "columnIndex": 4,
-                  "rowSpan": 1,
-                  "columnSpan": 1,
                   "content": "VAT ID",
                   "boundingRegions": [
                     {
                       "pageNumber": 1,
-                      "boundingBox": [
-                        1217,
-                        558,
+                      "polygon": [
+                        1221,
+                        557,
+                        1496,
+                        557,
                         1497,
-                        558,
-                        1497,
-                        662,
-                        1219,
+                        663,
+                        1221,
                         663
                       ]
                     }
@@ -1187,20 +1173,19 @@
                   "rowIndex": 1,
                   "columnIndex": 0,
                   "rowSpan": 2,
-                  "columnSpan": 1,
                   "content": "34278587",
                   "boundingRegions": [
                     {
                       "pageNumber": 1,
-                      "boundingBox": [
+                      "polygon": [
                         101,
                         663,
-                        380,
-                        663,
-                        380,
+                        379,
+                        662,
+                        379,
                         770,
-                        98,
-                        770
+                        101,
+                        771
                       ]
                     }
                   ],
@@ -1215,19 +1200,18 @@
                   "rowIndex": 1,
                   "columnIndex": 1,
                   "rowSpan": 2,
-                  "columnSpan": 1,
                   "content": "6/18/2017",
                   "boundingRegions": [
                     {
                       "pageNumber": 1,
-                      "boundingBox": [
-                        380,
-                        663,
-                        659,
-                        663,
+                      "polygon": [
+                        379,
+                        662,
+                        661,
+                        662,
                         661,
                         770,
-                        380,
+                        379,
                         770
                       ]
                     }
@@ -1243,16 +1227,15 @@
                   "rowIndex": 1,
                   "columnIndex": 2,
                   "rowSpan": 2,
-                  "columnSpan": 1,
                   "content": "6/24/2017",
                   "boundingRegions": [
                     {
                       "pageNumber": 1,
-                      "boundingBox": [
-                        659,
-                        663,
-                        939,
-                        663,
+                      "polygon": [
+                        661,
+                        662,
+                        941,
+                        662,
                         941,
                         770,
                         661,
@@ -1271,17 +1254,16 @@
                   "rowIndex": 1,
                   "columnIndex": 3,
                   "rowSpan": 2,
-                  "columnSpan": 1,
                   "content": "$56,651.49",
                   "boundingRegions": [
                     {
                       "pageNumber": 1,
-                      "boundingBox": [
-                        939,
+                      "polygon": [
+                        941,
+                        662,
+                        1221,
                         663,
-                        1219,
-                        663,
-                        1220,
+                        1221,
                         770,
                         941,
                         770
@@ -1299,19 +1281,18 @@
                   "rowIndex": 1,
                   "columnIndex": 4,
                   "rowSpan": 2,
-                  "columnSpan": 1,
                   "content": "PT",
                   "boundingRegions": [
                     {
                       "pageNumber": 1,
-                      "boundingBox": [
-                        1219,
+                      "polygon": [
+                        1221,
                         663,
                         1497,
-                        662,
+                        663,
                         1499,
-                        772,
-                        1220,
+                        771,
+                        1221,
                         770
                       ]
                     }
@@ -1327,7 +1308,7 @@
               "boundingRegions": [
                 {
                   "pageNumber": 1,
-                  "boundingBox": [
+                  "polygon": [
                     99,
                     556,
                     1499,
@@ -1347,6 +1328,775 @@
               ]
             }
           ],
+          "paragraphs": [
+            {
+              "spans": [
+                {
+                  "offset": 0,
+                  "length": 7
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    106,
+                    231,
+                    287,
+                    231,
+                    287,
+                    274,
+                    106,
+                    274
+                  ]
+                }
+              ],
+              "content": "Contoso"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 8,
+                  "length": 8
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    158,
+                    299,
+                    281,
+                    301,
+                    281,
+                    326,
+                    158,
+                    324
+                  ]
+                }
+              ],
+              "content": "Address:"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 17,
+                  "length": 19
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    159,
+                    337,
+                    430,
+                    338,
+                    429,
+                    367,
+                    158,
+                    365
+                  ]
+                }
+              ],
+              "content": "1 Redmond way Suite"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 37,
+                  "length": 16
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    157,
+                    375,
+                    407,
+                    375,
+                    407,
+                    404,
+                    157,
+                    404
+                  ]
+                }
+              ],
+              "content": "6000 Redmond, WA"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 54,
+                  "length": 5
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    159,
+                    414,
+                    237,
+                    414,
+                    237,
+                    439,
+                    159,
+                    439
+                  ]
+                }
+              ],
+              "content": "99243"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 60,
+                  "length": 22
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    877,
+                    299,
+                    1163,
+                    299,
+                    1163,
+                    326,
+                    877,
+                    326
+                  ]
+                }
+              ],
+              "content": "Invoice For: Microsoft"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 83,
+                  "length": 19
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    1039,
+                    339,
+                    1310,
+                    340,
+                    1310,
+                    372,
+                    1039,
+                    369
+                  ]
+                }
+              ],
+              "content": "1020 Enterprise Way"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 103,
+                  "length": 20
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    1034,
+                    376,
+                    1333,
+                    375,
+                    1333,
+                    407,
+                    1034,
+                    408
+                  ]
+                }
+              ],
+              "content": "Sunnayvale, CA 87659"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 124,
+                  "length": 14
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    101,
+                    557,
+                    379,
+                    557,
+                    379,
+                    662,
+                    101,
+                    663
+                  ]
+                }
+              ],
+              "content": "Invoice Number"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 139,
+                  "length": 12
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    379,
+                    557,
+                    661,
+                    557,
+                    661,
+                    662,
+                    379,
+                    662
+                  ]
+                }
+              ],
+              "content": "Invoice Date"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 152,
+                  "length": 16
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    661,
+                    557,
+                    941,
+                    557,
+                    941,
+                    662,
+                    661,
+                    662
+                  ]
+                }
+              ],
+              "content": "Invoice Due Date"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 169,
+                  "length": 7
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    941,
+                    557,
+                    1221,
+                    557,
+                    1221,
+                    663,
+                    941,
+                    662
+                  ]
+                }
+              ],
+              "content": "Charges"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 177,
+                  "length": 6
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    1221,
+                    557,
+                    1496,
+                    557,
+                    1497,
+                    663,
+                    1221,
+                    663
+                  ]
+                }
+              ],
+              "content": "VAT ID"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 184,
+                  "length": 8
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    101,
+                    663,
+                    379,
+                    662,
+                    379,
+                    770,
+                    101,
+                    771
+                  ]
+                }
+              ],
+              "content": "34278587"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 193,
+                  "length": 9
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    379,
+                    662,
+                    661,
+                    662,
+                    661,
+                    770,
+                    379,
+                    770
+                  ]
+                }
+              ],
+              "content": "6/18/2017"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 203,
+                  "length": 9
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    661,
+                    662,
+                    941,
+                    662,
+                    941,
+                    770,
+                    661,
+                    770
+                  ]
+                }
+              ],
+              "content": "6/24/2017"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 213,
+                  "length": 10
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    941,
+                    662,
+                    1221,
+                    663,
+                    1221,
+                    770,
+                    941,
+                    770
+                  ]
+                }
+              ],
+              "content": "$56,651.49"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 224,
+                  "length": 2
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    1221,
+                    663,
+                    1497,
+                    663,
+                    1499,
+                    771,
+                    1221,
+                    770
+                  ]
+                }
+              ],
+              "content": "PT"
+            }
+          ],
+          "keyValuePairs": [
+            {
+              "key": {
+                "content": "Address:",
+                "boundingRegions": [
+                  {
+                    "pageNumber": 1,
+                    "polygon": [
+                      159,
+                      300,
+                      280,
+                      301,
+                      281,
+                      326,
+                      159,
+                      325
+                    ]
+                  }
+                ],
+                "spans": [
+                  {
+                    "offset": 8,
+                    "length": 8
+                  }
+                ]
+              },
+              "value": {
+                "content": "1 Redmond way Suite\n6000 Redmond, WA\n99243",
+                "boundingRegions": [
+                  {
+                    "pageNumber": 1,
+                    "polygon": [
+                      157,
+                      337,
+                      429,
+                      337,
+                      429,
+                      440,
+                      157,
+                      440
+                    ]
+                  }
+                ],
+                "spans": [
+                  {
+                    "offset": 17,
+                    "length": 42
+                  }
+                ]
+              },
+              "confidence": 0.312
+            },
+            {
+              "key": {
+                "content": "Invoice For:",
+                "boundingRegions": [
+                  {
+                    "pageNumber": 1,
+                    "polygon": [
+                      877,
+                      299,
+                      1029,
+                      299,
+                      1029,
+                      327,
+                      877,
+                      327
+                    ]
+                  }
+                ],
+                "spans": [
+                  {
+                    "offset": 60,
+                    "length": 12
+                  }
+                ]
+              },
+              "value": {
+                "content": "Microsoft\n1020 Enterprise Way\nSunnayvale, CA 87659",
+                "boundingRegions": [
+                  {
+                    "pageNumber": 1,
+                    "polygon": [
+                      1034,
+                      299,
+                      1331,
+                      299,
+                      1331,
+                      408,
+                      1034,
+                      408
+                    ]
+                  }
+                ],
+                "spans": [
+                  {
+                    "offset": 73,
+                    "length": 50
+                  }
+                ]
+              },
+              "confidence": 0.683
+            },
+            {
+              "key": {
+                "content": "Invoice Number",
+                "boundingRegions": [
+                  {
+                    "pageNumber": 1,
+                    "polygon": [
+                      106,
+                      570,
+                      315,
+                      571,
+                      315,
+                      600,
+                      106,
+                      598
+                    ]
+                  }
+                ],
+                "spans": [
+                  {
+                    "offset": 124,
+                    "length": 14
+                  }
+                ]
+              },
+              "value": {
+                "content": "34278587",
+                "boundingRegions": [
+                  {
+                    "pageNumber": 1,
+                    "polygon": [
+                      107,
+                      679,
+                      229,
+                      679,
+                      229,
+                      706,
+                      107,
+                      705
+                    ]
+                  }
+                ],
+                "spans": [
+                  {
+                    "offset": 184,
+                    "length": 8
+                  }
+                ]
+              },
+              "confidence": 0.945
+            },
+            {
+              "key": {
+                "content": "Invoice Date",
+                "boundingRegions": [
+                  {
+                    "pageNumber": 1,
+                    "polygon": [
+                      387,
+                      572,
+                      548,
+                      572,
+                      548,
+                      598,
+                      387,
+                      598
+                    ]
+                  }
+                ],
+                "spans": [
+                  {
+                    "offset": 139,
+                    "length": 12
+                  }
+                ]
+              },
+              "value": {
+                "content": "6/18/2017",
+                "boundingRegions": [
+                  {
+                    "pageNumber": 1,
+                    "polygon": [
+                      388,
+                      681,
+                      508,
+                      680,
+                      508,
+                      706,
+                      387,
+                      705
+                    ]
+                  }
+                ],
+                "spans": [
+                  {
+                    "offset": 193,
+                    "length": 9
+                  }
+                ]
+              },
+              "confidence": 0.945
+            },
+            {
+              "key": {
+                "content": "Invoice Due Date",
+                "boundingRegions": [
+                  {
+                    "pageNumber": 1,
+                    "polygon": [
+                      666,
+                      571,
+                      889,
+                      572,
+                      889,
+                      599,
+                      666,
+                      598
+                    ]
+                  }
+                ],
+                "spans": [
+                  {
+                    "offset": 152,
+                    "length": 16
+                  }
+                ]
+              },
+              "value": {
+                "content": "6/24/2017",
+                "boundingRegions": [
+                  {
+                    "pageNumber": 1,
+                    "polygon": [
+                      669,
+                      680,
+                      789,
+                      679,
+                      789,
+                      705,
+                      668,
+                      705
+                    ]
+                  }
+                ],
+                "spans": [
+                  {
+                    "offset": 203,
+                    "length": 9
+                  }
+                ]
+              },
+              "confidence": 0.921
+            },
+            {
+              "key": {
+                "content": "Charges",
+                "boundingRegions": [
+                  {
+                    "pageNumber": 1,
+                    "polygon": [
+                      948,
+                      572,
+                      1056,
+                      575,
+                      1055,
+                      602,
+                      948,
+                      601
+                    ]
+                  }
+                ],
+                "spans": [
+                  {
+                    "offset": 169,
+                    "length": 7
+                  }
+                ]
+              },
+              "confidence": 0.779
+            },
+            {
+              "key": {
+                "content": "VAT ID",
+                "boundingRegions": [
+                  {
+                    "pageNumber": 1,
+                    "polygon": [
+                      1226,
+                      572,
+                      1311,
+                      572,
+                      1311,
+                      597,
+                      1226,
+                      597
+                    ]
+                  }
+                ],
+                "spans": [
+                  {
+                    "offset": 177,
+                    "length": 6
+                  }
+                ]
+              },
+              "value": {
+                "content": "$56,651.49\nPT",
+                "boundingRegions": [
+                  {
+                    "pageNumber": 1,
+                    "polygon": [
+                      1075,
+                      674,
+                      1279,
+                      674,
+                      1279,
+                      708,
+                      1075,
+                      708
+                    ]
+                  }
+                ],
+                "spans": [
+                  {
+                    "offset": 213,
+                    "length": 13
+                  }
+                ]
+              },
+              "confidence": 0.923
+            }
+          ],
           "styles": [],
           "documents": [
             {
@@ -1354,7 +2104,7 @@
               "boundingRegions": [
                 {
                   "pageNumber": 1,
-                  "boundingBox": [
+                  "polygon": [
                     0,
                     0,
                     1700,
@@ -1369,24 +2119,24 @@
               "fields": {
                 "CustomerAddress": {
                   "type": "string",
-                  "valueString": "1020 Enterprise Way Sunnayvale, CA 87659",
-                  "content": "1020 Enterprise Way Sunnayvale, CA 87659",
+                  "valueString": "1020 Enterprise Way\nSunnayvale, CA 87659",
+                  "content": "1020 Enterprise Way\nSunnayvale, CA 87659",
                   "boundingRegions": [
                     {
                       "pageNumber": 1,
-                      "boundingBox": [
+                      "polygon": [
                         1036,
-                        339,
-                        1330,
-                        339,
-                        1330,
-                        409,
-                        1036,
-                        409
+                        338,
+                        1332,
+                        340,
+                        1331,
+                        410,
+                        1035,
+                        407
                       ]
                     }
                   ],
-                  "confidence": 0.839,
+                  "confidence": 0.804,
                   "spans": [
                     {
                       "offset": 83,
@@ -1401,19 +2151,19 @@
                   "boundingRegions": [
                     {
                       "pageNumber": 1,
-                      "boundingBox": [
-                        1034,
+                      "polygon": [
+                        1035,
                         299,
-                        1166,
-                        299,
-                        1166,
-                        328,
+                        1163,
+                        300,
+                        1163,
+                        326,
                         1034,
                         327
                       ]
                     }
                   ],
-                  "confidence": 0.986,
+                  "confidence": 0.987,
                   "spans": [
                     {
                       "offset": 73,
@@ -1428,19 +2178,19 @@
                   "boundingRegions": [
                     {
                       "pageNumber": 1,
-                      "boundingBox": [
-                        1034,
+                      "polygon": [
+                        1035,
                         299,
-                        1166,
-                        299,
-                        1166,
-                        328,
+                        1163,
+                        300,
+                        1163,
+                        326,
                         1034,
                         327
                       ]
                     }
                   ],
-                  "confidence": 0.986,
+                  "confidence": 0.987,
                   "spans": [
                     {
                       "offset": 73,
@@ -1455,19 +2205,19 @@
                   "boundingRegions": [
                     {
                       "pageNumber": 1,
-                      "boundingBox": [
-                        667,
+                      "polygon": [
+                        669,
                         680,
                         789,
                         679,
                         789,
                         705,
-                        667,
+                        668,
                         705
                       ]
                     }
                   ],
-                  "confidence": 0.986,
+                  "confidence": 0.987,
                   "spans": [
                     {
                       "offset": 203,
@@ -1482,19 +2232,19 @@
                   "boundingRegions": [
                     {
                       "pageNumber": 1,
-                      "boundingBox": [
-                        387,
-                        680,
-                        510,
-                        680,
-                        509,
-                        705,
+                      "polygon": [
                         388,
+                        681,
+                        508,
+                        680,
+                        508,
+                        706,
+                        387,
                         705
                       ]
                     }
                   ],
-                  "confidence": 0.516,
+                  "confidence": 0.422,
                   "spans": [
                     {
                       "offset": 193,
@@ -1509,19 +2259,19 @@
                   "boundingRegions": [
                     {
                       "pageNumber": 1,
-                      "boundingBox": [
-                        105,
-                        680,
+                      "polygon": [
+                        107,
+                        679,
                         229,
-                        680,
+                        679,
                         229,
-                        705,
-                        105,
-                        706
+                        706,
+                        107,
+                        705
                       ]
                     }
                   ],
-                  "confidence": 0.985,
+                  "confidence": 0.986,
                   "spans": [
                     {
                       "offset": 184,
@@ -1539,19 +2289,19 @@
                   "boundingRegions": [
                     {
                       "pageNumber": 1,
-                      "boundingBox": [
-                        1074,
+                      "polygon": [
+                        1075,
                         679,
                         1213,
-                        680,
-                        1214,
-                        706,
-                        1074,
-                        709
+                        679,
+                        1213,
+                        707,
+                        1075,
+                        708
                       ]
                     }
                   ],
-                  "confidence": 0.416,
+                  "confidence": 0.448,
                   "spans": [
                     {
                       "offset": 213,
@@ -1575,19 +2325,19 @@
                           "boundingRegions": [
                             {
                               "pageNumber": 1,
-                              "boundingBox": [
-                                1074,
+                              "polygon": [
+                                1075,
                                 679,
                                 1213,
-                                680,
-                                1214,
-                                706,
-                                1074,
-                                709
+                                679,
+                                1213,
+                                707,
+                                1075,
+                                708
                               ]
                             }
                           ],
-                          "confidence": 0.875,
+                          "confidence": 0.984,
                           "spans": [
                             {
                               "offset": 213,
@@ -1602,19 +2352,19 @@
                           "boundingRegions": [
                             {
                               "pageNumber": 1,
-                              "boundingBox": [
-                                387,
-                                680,
-                                510,
-                                680,
-                                509,
-                                705,
+                              "polygon": [
                                 388,
+                                681,
+                                508,
+                                680,
+                                508,
+                                706,
+                                387,
                                 705
                               ]
                             }
                           ],
-                          "confidence": 0.877,
+                          "confidence": 0.984,
                           "spans": [
                             {
                               "offset": 193,
@@ -1629,71 +2379,44 @@
                           "boundingRegions": [
                             {
                               "pageNumber": 1,
-                              "boundingBox": [
-                                105,
-                                680,
+                              "polygon": [
+                                107,
+                                679,
                                 229,
-                                680,
+                                679,
                                 229,
-                                705,
-                                105,
-                                706
+                                706,
+                                107,
+                                705
                               ]
                             }
                           ],
-                          "confidence": 0.85,
+                          "confidence": 0.588,
                           "spans": [
                             {
                               "offset": 184,
                               "length": 8
                             }
                           ]
-                        },
-                        "Tax": {
-                          "type": "currency",
-                          "valueCurrency": {},
-                          "content": "PT",
-                          "boundingRegions": [
-                            {
-                              "pageNumber": 1,
-                              "boundingBox": [
-                                1242,
-                                676,
-                                1278,
-                                676,
-                                1278,
-                                709,
-                                1242,
-                                708
-                              ]
-                            }
-                          ],
-                          "confidence": 0.859,
-                          "spans": [
-                            {
-                              "offset": 224,
-                              "length": 2
-                            }
-                          ]
                         }
                       },
-                      "content": "34278587 6/18/2017 6/24/2017 $56,651.49 PT",
+                      "content": "34278587\n6/18/2017\n6/24/2017\n$56,651.49\nPT",
                       "boundingRegions": [
                         {
                           "pageNumber": 1,
-                          "boundingBox": [
-                            105,
-                            680,
-                            1278,
-                            675,
-                            1278,
-                            709,
-                            105,
-                            714
+                          "polygon": [
+                            107,
+                            674,
+                            1279,
+                            674,
+                            1279,
+                            708,
+                            107,
+                            708
                           ]
                         }
                       ],
-                      "confidence": 0.907,
+                      "confidence": 0.961,
                       "spans": [
                         {
                           "offset": 184,
@@ -1705,24 +2428,24 @@
                 },
                 "VendorAddress": {
                   "type": "string",
-                  "valueString": "1 Redmond way Suite 6000 Redmond, WA 99243",
-                  "content": "1 Redmond way Suite 6000 Redmond, WA 99243",
+                  "valueString": "1 Redmond way Suite\n6000 Redmond, WA\n99243",
+                  "content": "1 Redmond way Suite\n6000 Redmond, WA\n99243",
                   "boundingRegions": [
                     {
                       "pageNumber": 1,
-                      "boundingBox": [
-                        158,
-                        336,
-                        432,
-                        336,
-                        432,
-                        441,
-                        158,
-                        441
+                      "polygon": [
+                        157,
+                        337,
+                        429,
+                        337,
+                        429,
+                        440,
+                        157,
+                        440
                       ]
                     }
                   ],
-                  "confidence": 0.855,
+                  "confidence": 0.322,
                   "spans": [
                     {
                       "offset": 17,
@@ -1737,19 +2460,19 @@
                   "boundingRegions": [
                     {
                       "pageNumber": 1,
-                      "boundingBox": [
-                        105,
-                        230,
-                        283,
-                        234,
-                        282,
-                        277,
-                        103,
-                        273
+                      "polygon": [
+                        108,
+                        231,
+                        286,
+                        233,
+                        286,
+                        275,
+                        106,
+                        275
                       ]
                     }
                   ],
-                  "confidence": 0.984,
+                  "confidence": 0.662,
                   "spans": [
                     {
                       "offset": 0,

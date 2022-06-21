@@ -389,7 +389,6 @@ class ChangeFeedStreamer(object):
         self.object_position = self._chunk_file_start  # track the most recently read sync marker position
         self.event_index = 0
         self._point = self._chunk_file_start  # file cursor position relative to the whole chunk file, not the buffered
-        self._chunk_size = 4 * 1024 * 1024
         self._buf = b""
         self._buf_start = self._chunk_file_start  # the start position of the chunk file to buffer
         self._chunk_size_snapshot = blob_client.get_blob_properties().size

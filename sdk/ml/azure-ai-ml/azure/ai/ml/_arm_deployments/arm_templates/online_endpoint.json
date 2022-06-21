@@ -1,0 +1,15 @@
+{
+    "condition": "[equals(parameters('endpointCreateOrUpdate'),'create')]",
+    "type": "Microsoft.MachineLearningServices/workspaces/onlineEndpoints",
+    "apiVersion": "2021-10-01",
+    "location": "[parameters('location')]",
+    "name": "[concat(parameters('workspaceName'), '/', parameters('onlineEndpointName'))]",
+    "identity": "[parameters('onlineEndpointIdentity')]",
+    "tags": "[parameters('onlineEndpointTags')]",
+    "properties": "[parameters('onlineEndpointProperties')]",
+    "copy": {
+        "name": "onlineEndpointCopy",
+        "count": 1,
+        "mode": "serial"
+    }
+}

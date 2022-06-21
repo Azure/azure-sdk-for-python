@@ -1,0 +1,3 @@
+name: my-model
+version: 3
+path: ./model.pkl

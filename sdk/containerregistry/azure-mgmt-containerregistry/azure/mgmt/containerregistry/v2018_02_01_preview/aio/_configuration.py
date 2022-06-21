@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ContainerRegistryManagementClientConfiguration(Configuration):
+class ContainerRegistryManagementClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for ContainerRegistryManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -29,6 +29,9 @@ class ContainerRegistryManagementClientConfiguration(Configuration):
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The Microsoft Azure subscription ID.
     :type subscription_id: str
+    :keyword api_version: Api Version. Default value is "2018-02-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -38,6 +41,8 @@ class ContainerRegistryManagementClientConfiguration(Configuration):
         **kwargs: Any
     ) -> None:
         super(ContainerRegistryManagementClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2018-02-01-preview")  # type: str
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
@@ -45,7 +50,7 @@ class ContainerRegistryManagementClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2018-02-01-preview"
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-containerregistry/{}'.format(VERSION))
         self._configure(**kwargs)

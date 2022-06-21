@@ -15,11 +15,6 @@ from ._eventprocessor.common import LoadBalancingStrategy
 
 if TYPE_CHECKING:
     import datetime
-    from azure.core.credentials import (
-        TokenCredential,
-        AzureSasCredential,
-        AzureNamedKeyCredential,
-    )
     from typing import (  # pylint: disable=ungrouped-imports
         Any,
         Union,
@@ -31,11 +26,14 @@ if TYPE_CHECKING:
     )
     from ._eventprocessor.partition_context import PartitionContext
     from ._common import EventData
+    from ._client_base import CredentialTypes
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubConsumerClient(ClientBase):
+class EventHubConsumerClient(
+    ClientBase
+):  # pylint: disable=client-accepts-api-version-keyword
     """The EventHubConsumerClient class defines a high level interface for
     receiving events from the Azure Event Hubs service.
 
@@ -144,7 +142,7 @@ class EventHubConsumerClient(ClientBase):
         fully_qualified_namespace,  # type: str
         eventhub_name,  # type: str
         consumer_group,  # type: str
-        credential,  # type: Union[AzureSasCredential, TokenCredential, AzureNamedKeyCredential]
+        credential,  # type: CredentialTypes
         **kwargs  # type: Any
     ):
         # type: (...) -> None

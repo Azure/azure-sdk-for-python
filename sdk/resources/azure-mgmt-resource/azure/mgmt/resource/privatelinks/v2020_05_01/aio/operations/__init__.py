@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._private_link_association_operations import PrivateLinkAssociationOperations
-from ._resource_management_private_link_operations import ResourceManagementPrivateLinkOperations
+from ._operations import PrivateLinkAssociationOperations
+from ._operations import ResourceManagementPrivateLinkOperations
 
 __all__ = [
     'PrivateLinkAssociationOperations',

@@ -1,6 +1,3 @@
-## _Disclaimer_
-_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
-
 # Azure Storage Blobs client library for Python
 Azure Blob storage is Microsoft's object storage solution for the cloud. Blob storage is optimized for storing massive amounts of unstructured data, such as text or binary data.
 
@@ -334,6 +331,8 @@ Defaults to `False`.
 Use the following keyword arguments when instantiating a client to configure encryption:
 
 * __require_encryption__ (bool): If set to True, will enforce that objects are encrypted and decrypt them.
+* __encryption_version__ (str): Specifies the version of encryption to use. Current options are `'2.0'` or `'1.0'` and
+the default value is `'1.0'`. Version 1.0 is deprecated, and it is **highly recommended** to use version 2.0.
 * __key_encryption_key__ (object): The user-provided key-encryption-key. The instance must implement the following methods:
     - `wrap_key(key)`--wraps the specified key using an algorithm of the user's choice.
     - `get_key_wrap_algorithm()`--returns the algorithm used to wrap the specified symmetric key.
@@ -347,7 +346,8 @@ Other optional configuration keyword arguments that can be specified on the clie
 
 **Client keyword arguments:**
 
-* __connection_timeout__ (int): Optionally sets the connect and read timeout value, in seconds.
+* __connection_timeout__ (int): The number of seconds the client will wait to establish a connection to the server.
+* __read_timeout__ (int): The number of seconds the client will wait, after the connections has been established, for the server to send a response.
 * __transport__ (Any): User-provided transport to send the HTTP request.
 
 **Per-operation keyword arguments:**

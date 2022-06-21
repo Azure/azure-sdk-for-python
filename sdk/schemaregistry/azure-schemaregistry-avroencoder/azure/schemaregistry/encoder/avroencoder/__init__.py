@@ -29,10 +29,13 @@ __version__ = VERSION
 
 from ._schema_registry_avro_encoder import AvroEncoder  # pylint: disable=import-error
 from ._message_protocol import MessageType, MessageContent  # pylint: disable=import-error
+from ._exceptions import InvalidContentError, InvalidSchemaError # pylint: disable=import-error
 
 
 __all__ = [
     "AvroEncoder",
     "MessageType",
-    "MessageContent"
+    "MessageContent",
+    "InvalidContentError",
+    "InvalidSchemaError"
 ]

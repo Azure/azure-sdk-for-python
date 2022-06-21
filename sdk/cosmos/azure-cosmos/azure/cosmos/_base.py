@@ -30,6 +30,7 @@ import binascii
 from typing import Dict, Any
 
 from urllib.parse import quote as urllib_quote
+from urllib.parse import urlsplit
 
 from azure.core import MatchConditions
 
@@ -241,7 +242,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.XDate] = datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
 
     if cosmos_client_connection.master_key or cosmos_client_connection.resource_tokens:
-        authorization = auth.GetAuthorizationHeader(
+        authorization = auth._get_authorization_header(
             cosmos_client_connection, verb, path, resource_id, IsNameBased(resource_id), resource_type, headers
         )
         # urllib.quote throws when the input parameter is None
@@ -490,7 +491,7 @@ def IsItemContainerLink(link):  # pylint: disable=too-many-return-statements
 
 
 def GetItemContainerInfo(self_link, alt_content_path, id_from_response):
-    """Given the self link and alt_content_path from the reponse header and
+    """Given the self link and alt_content_path from the response header and
     result extract the collection name and collection id.
 
     Every response header has an alt-content-path that is the owner's path in
@@ -661,6 +662,11 @@ def ParsePaths(paths):
             tokens.append(token)
 
     return tokens
+
+
+def create_scope_from_url(url):
+    parsed_url = urlsplit(url)
+    return parsed_url.scheme + "://" + parsed_url.hostname + "/.default"
 
 
 def validate_cache_staleness_value(max_integrated_cache_staleness):

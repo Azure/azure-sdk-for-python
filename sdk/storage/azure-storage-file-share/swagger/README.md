@@ -16,7 +16,7 @@ autorest --v3 --python
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/preview/2021-04-10/file.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/preview/2021-06-08/file.json
 output-folder: ../azure/storage/fileshare/_generated
 namespace: azure.storage.fileshare
 no-namespace-folders: true
@@ -25,6 +25,7 @@ enable-xml: true
 vanilla: true
 clear-output-folder: true
 python: true
+version-tolerant: false
 ```
 
 ### Remove x-ms-pageable
@@ -55,6 +56,10 @@ directive:
     $.format = "str";
 - from: swagger-document
   where: $["x-ms-paths"]..responses..headers["x-ms-file-creation-time"]
+  transform: >
+    $.format = "str";
+- from: swagger-document
+  where: $.parameters.FileChangeTime
   transform: >
     $.format = "str";
 ```
@@ -94,7 +99,7 @@ directive:
         if (property.includes('/{shareName}/{directory}/{fileName}'))
         {
             $[property]["parameters"] = $[property]["parameters"].filter(function(param) { return (typeof param['$ref'] === "undefined") || (false == param['$ref'].endsWith("#/parameters/ShareName") && false == param['$ref'].endsWith("#/parameters/DirectoryPath") && false == param['$ref'].endsWith("#/parameters/FilePath"))});
-        } 
+        }
         else if (property.includes('/{shareName}/{directory}'))
         {
             $[property]["parameters"] = $[property]["parameters"].filter(function(param) { return (typeof param['$ref'] === "undefined") || (false == param['$ref'].endsWith("#/parameters/ShareName") && false == param['$ref'].endsWith("#/parameters/DirectoryPath"))});
@@ -115,7 +120,7 @@ directive:
     $["x-ms-parameterized-host"] = undefined;
 ```
 
-### Add url parameter to each operation and add it to the url
+### Add url parameter to each operation and add url to the path
 ``` yaml
 directive:
 - from: swagger-document
@@ -123,14 +128,21 @@ directive:
   transform: >
     for (const property in $)
     {
-        // Don't apply to service operations (where path is just '/')
-        if (property !== '/' && !property.startsWith('/?')) {
-            $[property]["parameters"].push({"$ref": "#/parameters/Url"});
-    
-            var oldName = property;
-            var newName = '{url}' + property;
-            $[newName] = $[oldName];
-            delete $[oldName];
+        $[property]["parameters"].push({"$ref": "#/parameters/Url"});
+
+        var oldName = property;
+        // For service operations (where the path is just '/') we need to
+        // remove the '/' at the begining to avoid having an extra '/' in
+        // the final URL.
+        if (property === '/' || property.startsWith('/?'))
+        {
+            var newName = '{url}' + property.substring(1);
         }
+        else
+        {
+            var newName = '{url}' + property;
+        }
+        $[newName] = $[oldName];
+        delete $[oldName];
     }
 ```

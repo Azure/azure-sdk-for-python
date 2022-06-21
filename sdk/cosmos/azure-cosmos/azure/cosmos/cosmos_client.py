@@ -23,7 +23,7 @@
 """
 
 from typing import Any, Dict, Optional, Union, cast, Iterable, List  # pylint: disable=unused-import
-
+import warnings
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
@@ -60,10 +60,13 @@ def _build_auth(credential):
         auth['resourceTokens'] = credential  # type: ignore
     elif hasattr(credential, '__iter__'):
         auth['permissionFeed'] = credential
+    elif hasattr(credential, 'get_token'):
+        auth['clientSecretCredential'] = credential
     else:
         raise TypeError(
-            "Unrecognized credential type. Please supply the master key as str, "
-            "or a dictionary or resource tokens, or a list of permissions.")
+            "Unrecognized credential type. Please supply the master key as a string "
+            "or a dictionary, or resource tokens, or a list of permissions, or any instance of a class implementing"
+            " TokenCredential (see azure.identity module for specific implementations such as ClientSecretCredential).")
     return auth
 
 
@@ -94,15 +97,23 @@ def _build_connection_policy(kwargs):
         policy.SSLConfiguration = ssl
 
     # Retry config
-    retry = kwargs.pop('retry_options', None) or policy.RetryOptions
+    retry_options = kwargs.pop('retry_options', None)
+    if retry_options is not None:
+        warnings.warn("This option has been deprecated and will be removed from the SDK in a future release.",
+                      DeprecationWarning)
+    retry_options = policy.RetryOptions
     total_retries = kwargs.pop('retry_total', None)
-    retry._max_retry_attempt_count = total_retries or retry._max_retry_attempt_count
-    retry._fixed_retry_interval_in_milliseconds = kwargs.pop('retry_fixed_interval', None) or \
-        retry._fixed_retry_interval_in_milliseconds
+    retry_options._max_retry_attempt_count = total_retries or retry_options._max_retry_attempt_count
+    retry_options._fixed_retry_interval_in_milliseconds = kwargs.pop('retry_fixed_interval', None) or \
+        retry_options._fixed_retry_interval_in_milliseconds
     max_backoff = kwargs.pop('retry_backoff_max', None)
-    retry._max_wait_time_in_seconds = max_backoff or retry._max_wait_time_in_seconds
-    policy.RetryOptions = retry
-    connection_retry = kwargs.pop('connection_retry_policy', None) or policy.ConnectionRetryConfiguration
+    retry_options._max_wait_time_in_seconds = max_backoff or retry_options._max_wait_time_in_seconds
+    policy.RetryOptions = retry_options
+    connection_retry = kwargs.pop('connection_retry_policy', None)
+    if connection_retry is not None:
+        warnings.warn("This option has been deprecated and will be removed from the SDK in a future release.",
+                      DeprecationWarning)
+    connection_retry = policy.ConnectionRetryConfiguration
     if not connection_retry:
         connection_retry = ConnectionRetryPolicy(
             retry_total=total_retries,
@@ -118,14 +129,14 @@ def _build_connection_policy(kwargs):
     return policy
 
 
-class CosmosClient(object):
+class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keyword
     """A client-side logical representation of an Azure Cosmos DB account.
 
     Use this client to configure and execute requests to the Azure Cosmos DB service.
 
     :param str url: The URL of the Cosmos DB account.
     :param credential: Can be the account key, or a dictionary of resource tokens.
-    :type credential: str or dict[str, str]
+    :type credential: Union[str, Dict[str, str], ~azure.core.credentials.TokenCredential]
     :param str consistency_level: Consistency level to use for the session. The default value is None (Account level).
     :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
     :keyword int request_timeout: The HTTP request timeout in milliseconds.
@@ -227,7 +238,6 @@ class CosmosClient(object):
         Create a new database with the given ID (name).
 
         :param id: ID (name) of the database to create.
-        :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :param int offer_throughput: The provisioned throughput for this offer.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
@@ -253,6 +263,10 @@ class CosmosClient(object):
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
             request_options["populateQueryMetrics"] = populate_query_metrics
         if offer_throughput is not None:
             request_options["offerThroughput"] = offer_throughput
@@ -339,7 +353,6 @@ class CosmosClient(object):
         """List the databases in a Cosmos DB SQL database account.
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -351,6 +364,10 @@ class CosmosClient(object):
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
         result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
@@ -376,7 +393,6 @@ class CosmosClient(object):
         :param bool enable_cross_partition_query: Allow scan on the queries which couldn't be
             served as indexing was opted out on the requested paths.
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -390,6 +406,10 @@ class CosmosClient(object):
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
         if query:
@@ -419,7 +439,6 @@ class CosmosClient(object):
         :param database: The ID (name), dict representing the properties or :class:`DatabaseProxy`
             instance of the database to delete.
         :type database: str or dict(str, str) or ~azure.cosmos.DatabaseProxy
-        :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -432,6 +451,10 @@ class CosmosClient(object):
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
             request_options["populateQueryMetrics"] = populate_query_metrics
 
         database_link = self._get_database_link(database)

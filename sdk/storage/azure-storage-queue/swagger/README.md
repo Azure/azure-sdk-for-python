@@ -28,6 +28,7 @@ enable-xml: true
 vanilla: true
 clear-output-folder: true
 python: true
+version-tolerant: false
 ```
 
 ### Remove x-ms-pageable
@@ -96,7 +97,7 @@ directive:
     $["x-ms-parameterized-host"] = undefined;
 ```
 
-### Add url parameter to each operation and add it to the url
+### Add url parameter to each operation and add url to the path
 ``` yaml
 directive:
 - from: swagger-document
@@ -104,14 +105,21 @@ directive:
   transform: >
     for (const property in $)
     {
-        // Don't apply to service operations (where path is just '/')
-        if (property !== '/' && !property.startsWith('/?')) {
-            $[property]["parameters"].push({"$ref": "#/parameters/Url"});
-    
-            var oldName = property;
-            var newName = '{url}' + property;
-            $[newName] = $[oldName];
-            delete $[oldName];
+        $[property]["parameters"].push({"$ref": "#/parameters/Url"});
+
+        var oldName = property;
+        // For service operations (where the path is just '/') we need to
+        // remove the '/' at the begining to avoid having an extra '/' in
+        // the final URL.
+        if (property === '/' || property.startsWith('/?'))
+        {
+            var newName = '{url}' + property.substring(1);
         }
+        else
+        {
+            var newName = '{url}' + property;
+        }
+        $[newName] = $[oldName];
+        delete $[oldName];
     }
 ```

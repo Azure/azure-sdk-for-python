@@ -19,8 +19,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class PolicyClientConfiguration(Configuration):
-    """Configuration for PolicyClient.
+class ResourcePrivateLinkClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+    """Configuration for ResourcePrivateLinkClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -29,6 +29,9 @@ class PolicyClientConfiguration(Configuration):
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
+    :keyword api_version: Api Version. Default value is "2020-05-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -37,7 +40,9 @@ class PolicyClientConfiguration(Configuration):
         subscription_id: str,
         **kwargs: Any
     ) -> None:
-        super(PolicyClientConfiguration, self).__init__(**kwargs)
+        super(ResourcePrivateLinkClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2020-05-01")  # type: str
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
@@ -45,7 +50,7 @@ class PolicyClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2020-05-01"
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-resource/{}'.format(VERSION))
         self._configure(**kwargs)

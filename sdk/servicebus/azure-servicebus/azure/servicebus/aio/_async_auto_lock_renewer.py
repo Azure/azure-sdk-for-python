@@ -175,8 +175,8 @@ class AutoLockRenewer:
         :type receiver: ~azure.servicebus.aio.ServiceBusReceiver
         :param renewable: A locked entity that needs to be renewed.
         :type renewable: Union[~azure.servicebus.aio.ServiceBusReceivedMessage,~azure.servicebus.aio.ServiceBusSession]
-        :param max_lock_renewal_duration: A time in seconds that locks registered to this renewer
-          should be maintained for. Default value is 300 (5 minutes).
+        :param max_lock_renewal_duration: A time in seconds that the lock should be maintained for.
+         Default value is None. If specified, this value will override the default value specified at the constructor.
         :type max_lock_renewal_duration: Optional[float]
         :param Optional[AsyncLockRenewFailureCallback] on_lock_renew_failure:
          An async callback may be specified to be called when the lock is lost on the renewable being registered.

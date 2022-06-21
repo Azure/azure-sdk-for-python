@@ -1,69 +1,101 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs?stringIndexType=UnicodeCodePoint\u0026loggingOptOut=true",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "82",
+        "Content-Length": "231",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "4e60a4dc-5d10-11ec-be66-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022Test for logging disable\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "Test for logging disable",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "taskName": "0",
+            "kind": "Healthcare",
+            "parameters": {
+              "loggingOptOut": true,
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          }
+        ]
+      },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "2cb8b07d-4218-4ac4-9f21-e9eece2319ab",
-        "Date": "Tue, 14 Dec 2021 19:01:55 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/8147a9cd-6858-4a37-8588-bf5fb7a30efd",
+        "apim-request-id": "2fbaae0e-a835-4668-b8b7-32d9caf490bd",
+        "Content-Length": "0",
+        "Date": "Thu, 09 Jun 2022 23:10:59 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/f55fa13f-320c-4995-b196-73107b2404f6?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "281"
+        "x-envoy-upstream-service-time": "129"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/8147a9cd-6858-4a37-8588-bf5fb7a30efd",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/f55fa13f-320c-4995-b196-73107b2404f6?api-version=2022-05-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "4e60a4dc-5d10-11ec-be66-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "cd9e98e8-7a1d-4070-a505-e22f803985a1",
+        "apim-request-id": "e5d1f55b-7496-40f3-a176-93f85633cec4",
+        "Content-Length": "521",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 19:02:00 GMT",
+        "Date": "Thu, 09 Jun 2022 23:11:04 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "36"
+        "x-envoy-upstream-service-time": "34"
       },
       "ResponseBody": {
-        "jobId": "8147a9cd-6858-4a37-8588-bf5fb7a30efd",
-        "lastUpdateDateTime": "2021-12-14T19:01:56Z",
-        "createdDateTime": "2021-12-14T19:01:55Z",
-        "expirationDateTime": "2021-12-15T19:01:55Z",
+        "jobId": "f55fa13f-320c-4995-b196-73107b2404f6",
+        "lastUpdatedDateTime": "2022-06-09T23:10:59Z",
+        "createdDateTime": "2022-06-09T23:10:59Z",
+        "expirationDateTime": "2022-06-10T23:10:59Z",
         "status": "succeeded",
         "errors": [],
-        "results": {
-          "documents": [
+        "tasks": {
+          "completed": 1,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 1,
+          "items": [
             {
-              "id": "0",
-              "entities": [],
-              "relations": [],
-              "warnings": []
+              "kind": "HealthcareLROResults",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-06-09T23:10:59.9630776Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "entities": [],
+                    "relations": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2022-03-01"
+              }
             }
-          ],
-          "errors": [],
-          "modelVersion": "2021-05-15"
+          ]
         }
       }
     }

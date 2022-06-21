@@ -8,7 +8,9 @@ import time
 import pkg_resources
 
 from opentelemetry.semconv.resource import ResourceAttributes
+from opentelemetry.sdk.util import ns_to_iso_str
 
+from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 
 
@@ -55,8 +57,8 @@ class PeriodicTask(threading.Thread):
     :param args: The kwargs passed in while calling `function`.
     """
 
-    def __init__(self, interval, function, args=None, kwargs=None):
-        super().__init__()
+    def __init__(self, interval, function, *args, **kwargs):
+        super().__init__(name=kwargs.pop('name', None))
         self.interval = interval
         self.function = function
         self.args = args or []
@@ -73,6 +75,14 @@ class PeriodicTask(threading.Thread):
 
     def cancel(self):
         self.finished.set()
+
+def _create_telemetry_item(timestamp):
+    return TelemetryItem(
+        name="",
+        instrumentation_key="",
+        tags=dict(azure_monitor_context),
+        time=ns_to_iso_str(timestamp),
+    )
 
 def _populate_part_a_fields(resource):
     tags = {}

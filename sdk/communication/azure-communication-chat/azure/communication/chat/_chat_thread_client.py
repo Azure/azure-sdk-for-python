@@ -41,7 +41,7 @@ if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
 
 
-class ChatThreadClient(object):
+class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with the AzureCommunicationService Chat gateway.
     Instances of this class is normally retrieved by ChatClient.get_chat_thread_client()
 

@@ -1,5 +1,13 @@
 # Release History
 
+## 1.1.0 (2022-03-28)
+
+**Features**
+
+  - Added operation group SignalRCustomCertificatesOperations
+  - Added operation group SignalRCustomDomainsOperations
+  - Model SignalRResource has a new parameter live_trace_configuration
+
 ## 1.0.0 (2021-11-01)
 
 **Features**

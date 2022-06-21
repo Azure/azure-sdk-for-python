@@ -1,3 +1,8 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See LICENSE.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
 import azure.cosmos.aio.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
@@ -210,7 +215,7 @@ async def manage_provisioned_throughput(db, id):
         container = db.get_container_client(id)
 
         # now use its _self to query for throughput offers
-        offer = await container.read_offer()
+        offer = await container.get_throughput()
 
         print('Found Offer \'{0}\' for Container \'{1}\' and its throughput is \'{2}\''.format(offer.properties['id'], container.id, offer.properties['content']['offerThroughput']))
 

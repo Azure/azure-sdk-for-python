@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=https://azuremlsdk2.blob.core.windows.net/latest/commandJob.schema.json
+command: echo ${{inputs.test1}}
+environment:
+  conda_file: "../environment/environment_files/environment.yml"
+  name: "DroppedEnvName"
+  version: 2
+  image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1
+code: "../python"
+name: "test1"
+compute: "azureml:testCompute"
+experiment_name: mfe-test1
+properties:
+   test_property: test_value
+inputs:
+  "test1":
+    path: https://path/to/blob

@@ -23,11 +23,35 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+"""
+FILE: encode_and_decode_with_message_content_async.py
+DESCRIPTION:
+    This sample demonstrates the following:
+     - Authenticating an async SchemaRegistryClient to be used by the AvroEncoder.
+     - Passing in content and schema to the AvroEncoder, which will return a dict containing
+      encoded content and corresponding content type.
+     - Passing in a dict containing Avro-encoded content and corresponding content type to
+      the AvroEncoder, which will return the decoded content.
+USAGE:
+    python encode_and_decode_with_message_content_async.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_TENANT_ID - The ID of the service principal's tenant. Also called its 'directory' ID.
+    2) AZURE_CLIENT_ID - The service principal's client ID. Also called its 'application' ID.
+    3) AZURE_CLIENT_SECRET - One of the service principal's client secrets.
+    4) SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
+     which should follow the format: `<your-namespace>.servicebus.windows.net`
+    5) SCHEMAREGISTRY_GROUP - The name of the schema group.
+
+This example uses ClientSecretCredential, which requests a token from Azure Active Directory.
+For more information on ClientSecretCredential, see:
+    https://docs.microsoft.com/python/api/azure-identity/azure.identity.clientsecretcredential?view=azure-python
+"""
 import os
 import asyncio
 
 from azure.identity.aio import ClientSecretCredential
 from azure.schemaregistry.aio import SchemaRegistryClient
+from azure.schemaregistry.encoder.avroencoder import MessageContent
 from azure.schemaregistry.encoder.avroencoder.aio import AvroEncoder
 from azure.eventhub import EventData
 
@@ -72,7 +96,7 @@ async def decode_with_content_and_content_type(encoder, event_data):
     for d in event_data.body:
         content += d
     content_bytes = bytes(content)
-    message_content = {"content": content_bytes, "content_type": event_data.content_type}
+    message_content = MessageContent({"content": content_bytes, "content_type": event_data.content_type})
     decoded_content = await encoder.decode(message_content)
 
     print("Decoded content is: ", decoded_content)
@@ -85,7 +109,7 @@ async def main():
         credential=token_credential,
     )
     encoder = AvroEncoder(
-        client=schema_registry, group_name=GROUP_NAME, auto_register_schemas=True
+        client=schema_registry, group_name=GROUP_NAME, auto_register=True
     )
     event_data = await encode_message_content_dict(encoder)
     decoded_content = await decode_with_content_and_content_type(encoder, event_data)

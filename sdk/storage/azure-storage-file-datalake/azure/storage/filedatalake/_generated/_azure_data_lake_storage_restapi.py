@@ -19,7 +19,7 @@ from .operations import FileSystemOperations, PathOperations, ServiceOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Optional
 
     from azure.core.rest import HttpRequest, HttpResponse
 
@@ -37,11 +37,15 @@ class AzureDataLakeStorageRESTAPI(object):
     :type url: str
     :param base_url: Service URL. Default value is "".
     :type base_url: str
+    :param x_ms_lease_duration: The lease duration is required to acquire a lease, and specifies
+     the duration of the lease in seconds.  The lease duration must be between 15 and 60 seconds or
+     -1 for infinite lease. Default value is None.
+    :type x_ms_lease_duration: int
     :keyword resource: The value must be "filesystem" for all filesystem operations. Default value
      is "filesystem". Note that overriding this default value may result in unsupported behavior.
     :paramtype resource: str
     :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2020-10-02". Note that overriding this default value may result in unsupported behavior.
+     is "2021-06-08". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     """
 
@@ -49,19 +53,26 @@ class AzureDataLakeStorageRESTAPI(object):
         self,
         url,  # type: str
         base_url="",  # type: str
+        x_ms_lease_duration=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        self._config = AzureDataLakeStorageRESTAPIConfiguration(url=url, **kwargs)
+        self._config = AzureDataLakeStorageRESTAPIConfiguration(url=url, x_ms_lease_duration=x_ms_lease_duration, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.file_system = FileSystemOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.path = PathOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.service = ServiceOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.file_system = FileSystemOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.path = PathOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(

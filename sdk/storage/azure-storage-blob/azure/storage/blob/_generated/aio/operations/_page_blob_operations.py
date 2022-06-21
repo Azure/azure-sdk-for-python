@@ -14,6 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
@@ -34,11 +35,11 @@ class PageBlobOperations:
     models = _models
 
     def __init__(self, *args, **kwargs) -> None:
-        args = list(args)
-        self._client = args.pop(0) if args else kwargs.pop("client")
-        self._config = args.pop(0) if args else kwargs.pop("config")
-        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
-        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
 
     @distributed_trace_async
@@ -55,11 +56,11 @@ class PageBlobOperations:
         immutability_policy_expiry: Optional[datetime.datetime] = None,
         immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
         legal_hold: Optional[bool] = None,
-        blob_http_headers: Optional["_models.BlobHTTPHeaders"] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        cpk_info: Optional["_models.CpkInfo"] = None,
-        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        cpk_info: Optional[_models.CpkInfo] = None,
+        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """The Create operation creates a new page blob.
@@ -122,13 +123,16 @@ class PageBlobOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        blob_type = kwargs.pop('blob_type', "PageBlob")  # type: str
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        blob_type = kwargs.pop('blob_type', _headers.pop('x-ms-blob-type', "PageBlob"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _blob_content_type = None
         _blob_content_encoding = None
@@ -201,11 +205,13 @@ class PageBlobOperations:
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
             template_url=self.create.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -247,11 +253,11 @@ class PageBlobOperations:
         timeout: Optional[int] = None,
         range: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        cpk_info: Optional["_models.CpkInfo"] = None,
-        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
-        sequence_number_access_conditions: Optional["_models.SequenceNumberAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        cpk_info: Optional[_models.CpkInfo] = None,
+        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
+        sequence_number_access_conditions: Optional[_models.SequenceNumberAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """The Upload Pages operation writes a range of pages to a page blob.
@@ -306,15 +312,18 @@ class PageBlobOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "page")  # type: str
-        page_write = kwargs.pop('page_write', "update")  # type: str
-        content_type = kwargs.pop('content_type', "application/octet-stream")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "page"))  # type: str
+        page_write = kwargs.pop('page_write', _headers.pop('x-ms-page-write', "update"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/octet-stream"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _lease_id = None
         _encryption_key = None
@@ -376,11 +385,13 @@ class PageBlobOperations:
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.upload_pages.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -420,11 +431,11 @@ class PageBlobOperations:
         timeout: Optional[int] = None,
         range: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        cpk_info: Optional["_models.CpkInfo"] = None,
-        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
-        sequence_number_access_conditions: Optional["_models.SequenceNumberAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        cpk_info: Optional[_models.CpkInfo] = None,
+        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
+        sequence_number_access_conditions: Optional[_models.SequenceNumberAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """The Clear Pages operation clears a set of pages from a page blob.
@@ -471,14 +482,17 @@ class PageBlobOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "page")  # type: str
-        page_write = kwargs.pop('page_write', "clear")  # type: str
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "page"))  # type: str
+        page_write = kwargs.pop('page_write', _headers.pop('x-ms-page-write', "clear"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _lease_id = None
         _encryption_key = None
@@ -535,11 +549,13 @@ class PageBlobOperations:
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.clear_pages.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -581,12 +597,12 @@ class PageBlobOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         copy_source_authorization: Optional[str] = None,
-        cpk_info: Optional["_models.CpkInfo"] = None,
-        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        sequence_number_access_conditions: Optional["_models.SequenceNumberAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
+        cpk_info: Optional[_models.CpkInfo] = None,
+        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        sequence_number_access_conditions: Optional[_models.SequenceNumberAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """The Upload Pages operation writes a range of pages to a page blob where the contents are read
@@ -652,14 +668,17 @@ class PageBlobOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "page")  # type: str
-        page_write = kwargs.pop('page_write', "update")  # type: str
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "page"))  # type: str
+        page_write = kwargs.pop('page_write', _headers.pop('x-ms-page-write', "update"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _encryption_key = None
         _encryption_key_sha256 = None
@@ -734,11 +753,13 @@ class PageBlobOperations:
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
             template_url=self.upload_pages_from_url.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -777,10 +798,12 @@ class PageBlobOperations:
         timeout: Optional[int] = None,
         range: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        marker: Optional[str] = None,
+        maxresults: Optional[int] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
-    ) -> "_models.PageList":
+    ) -> _models.PageList:
         """The Get Page Ranges operation returns the list of valid page ranges for a page blob or snapshot
         of a page blob.
 
@@ -801,6 +824,20 @@ class PageBlobOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
+        :param marker: A string value that identifies the portion of the list of containers to be
+         returned with the next listing operation. The operation returns the NextMarker value within the
+         response body if the listing operation did not return all containers remaining to be listed
+         with the current page. The NextMarker value can be used as the value for the marker parameter
+         in a subsequent call to request the next page of list items. The marker value is opaque to the
+         client. Default value is None.
+        :type marker: str
+        :param maxresults: Specifies the maximum number of containers to return. If the request does
+         not specify maxresults, or specifies a value greater than 5000, the server will return up to
+         5000 items. Note that if the listing operation crosses a partition boundary, then the service
+         will return a continuation token for retrieving the remainder of the results. For this reason,
+         it is possible that the service will return fewer results than specified by maxresults, or than
+         the default of 5000. Default value is None.
+        :type maxresults: int
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
@@ -813,13 +850,16 @@ class PageBlobOperations:
         :rtype: ~azure.storage.blob.models.PageList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PageList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "pagelist")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "pagelist"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PageList]
 
         _lease_id = None
         _if_modified_since = None
@@ -850,12 +890,16 @@ class PageBlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
+            marker=marker,
+            maxresults=maxresults,
             template_url=self.get_page_ranges.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -895,10 +939,12 @@ class PageBlobOperations:
         prev_snapshot_url: Optional[str] = None,
         range: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        marker: Optional[str] = None,
+        maxresults: Optional[int] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
-    ) -> "_models.PageList":
+    ) -> _models.PageList:
         """The Get Page Ranges Diff operation returns the list of valid page ranges for a page blob that
         were changed between target blob and previous snapshot.
 
@@ -931,6 +977,20 @@ class PageBlobOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
+        :param marker: A string value that identifies the portion of the list of containers to be
+         returned with the next listing operation. The operation returns the NextMarker value within the
+         response body if the listing operation did not return all containers remaining to be listed
+         with the current page. The NextMarker value can be used as the value for the marker parameter
+         in a subsequent call to request the next page of list items. The marker value is opaque to the
+         client. Default value is None.
+        :type marker: str
+        :param maxresults: Specifies the maximum number of containers to return. If the request does
+         not specify maxresults, or specifies a value greater than 5000, the server will return up to
+         5000 items. Note that if the listing operation crosses a partition boundary, then the service
+         will return a continuation token for retrieving the remainder of the results. For this reason,
+         it is possible that the service will return fewer results than specified by maxresults, or than
+         the default of 5000. Default value is None.
+        :type maxresults: int
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
@@ -943,13 +1003,16 @@ class PageBlobOperations:
         :rtype: ~azure.storage.blob.models.PageList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PageList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "pagelist")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "pagelist"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PageList]
 
         _lease_id = None
         _if_modified_since = None
@@ -982,12 +1045,16 @@ class PageBlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
+            marker=marker,
+            maxresults=maxresults,
             template_url=self.get_page_ranges_diff.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1024,10 +1091,10 @@ class PageBlobOperations:
         blob_content_length: int,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        cpk_info: Optional["_models.CpkInfo"] = None,
-        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        cpk_info: Optional[_models.CpkInfo] = None,
+        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """Resize the Blob.
@@ -1060,13 +1127,16 @@ class PageBlobOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "properties")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "properties"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _lease_id = None
         _encryption_key = None
@@ -1111,11 +1181,13 @@ class PageBlobOperations:
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.resize.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1150,8 +1222,8 @@ class PageBlobOperations:
         timeout: Optional[int] = None,
         blob_sequence_number: Optional[int] = 0,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """Update the sequence number of the blob.
@@ -1185,13 +1257,16 @@ class PageBlobOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "properties")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "properties"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _lease_id = None
         _if_modified_since = None
@@ -1223,11 +1298,13 @@ class PageBlobOperations:
             blob_sequence_number=blob_sequence_number,
             request_id_parameter=request_id_parameter,
             template_url=self.update_sequence_number.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1261,7 +1338,7 @@ class PageBlobOperations:
         copy_source: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """The Copy Incremental operation copies a snapshot of the source page blob to a destination page
@@ -1294,13 +1371,16 @@ class PageBlobOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "incrementalcopy")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "incrementalcopy"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -1327,11 +1407,13 @@ class PageBlobOperations:
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.copy_incremental.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
