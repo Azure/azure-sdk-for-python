@@ -38,7 +38,7 @@ class ApiDocumentationConfiguration(Configuration):  # pylint: disable=too-many-
             raise ValueError("Parameter 'credential' must not be None.")
 
         self.credential = credential
-        self.credential_scopes = kwargs.pop('credential_scopes', ['https://webpubsub.azure.com/.default'])
+        self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'oep/{}'.format(VERSION))
         self._configure(**kwargs)
 
