@@ -53,7 +53,7 @@ class IssueProcessPython(IssueProcess):
             return True
         if _CONFIGURED in self.issue_package.issue.labels:
             return False
-        readme_path = self.pattern_resource_manager.search(self.readme_link).group()
+        readme_path = self.pattern_resource_manager.search(self.readme_link).group() + '/readme.md'
         contents = str(self.issue_package.rest_repo.get_contents(readme_path).decoded_content)
         pattern_tag = re.compile(r'tag: package-[\w+-.]+')
         package_tags = pattern_tag.findall(contents)
