@@ -38,11 +38,10 @@ class AmqpTransport(ABC):
         """
 
     @abstractmethod
-    def create_link_properties(self, timeout_symbol, timeout):
+    def create_link_properties(self, link_properties):
         """
         Creates and returns the link properties.
-        :param bytes timeout_symbol: The timeout symbol.
-        :param int timeout: The timeout to set as value.
+        :param dict[bytes, int] link_properties: The dict of symbols and corresponding values.
         :rtype: dict
         """
 

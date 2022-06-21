@@ -10,15 +10,10 @@ import time
 import functools
 import collections
 from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
-from datetime import timedelta
 
-try:
-    from urlparse import urlparse
-    from urllib import quote_plus  # type: ignore
-except ImportError:
-    from urllib.parse import urlparse, quote_plus
+from urllib.parse import urlparse
 
-from uamqp import AMQPClient, Message, authentication, constants, errors, compat, utils
+from uamqp import AMQPClient, Message, authentication, constants, errors, compat
 import six
 from azure.core.credentials import (
     AccessToken,
@@ -29,6 +24,7 @@ from azure.core.utils import parse_connection_string as core_parse_connection_st
 from azure.core.pipeline.policies import RetryMode
 
 
+from ._transport._uamqp_transport import UamqpTransport, EventhubAzureNamedKeyTokenCredential
 from .exceptions import _handle_exception, ClientClosedError, ConnectError
 from ._configuration import Configuration
 from ._utils import utc_from_timestamp, parse_sas_credential
@@ -132,24 +128,6 @@ def _parse_conn_str(conn_str, **kwargs):
     )
 
 
-def _generate_sas_token(uri, policy, key, expiry=None):
-    # type: (str, str, str, Optional[timedelta]) -> AccessToken
-    """Create a shared access signature token as a string literal.
-    :returns: SAS token as string literal.
-    :rtype: str
-    """
-    if not expiry:
-        expiry = timedelta(hours=1)  # Default to 1 hour.
-
-    abs_expiry = int(time.time()) + expiry.seconds
-    encoded_uri = quote_plus(uri).encode("utf-8")  # pylint: disable=no-member
-    encoded_policy = quote_plus(policy).encode("utf-8")  # pylint: disable=no-member
-    encoded_key = key.encode("utf-8")
-
-    token = utils.create_sas_token(encoded_policy, encoded_key, encoded_uri, expiry)
-    return AccessToken(token=token, expires_on=abs_expiry)
-
-
 def _build_uri(address, entity):
     # type: (str, Optional[str]) -> str
     parsed = urlparse(address)
@@ -167,46 +145,6 @@ def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
     else:
         backoff_value = backoff_factor * (2 ** retried_times)
     return min(backoff_max, backoff_value)
-
-
-class EventHubSharedKeyCredential(object):
-    """The shared access key credential used for authentication.
-
-    :param str policy: The name of the shared access policy.
-    :param str key: The shared access key.
-    """
-
-    def __init__(self, policy, key):
-        # type: (str, str) -> None
-        self.policy = policy
-        self.key = key
-        self.token_type = b"servicebus.windows.net:sastoken"
-
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> AccessToken
-        if not scopes:
-            raise ValueError("No token scope provided.")
-        return _generate_sas_token(scopes[0], self.policy, self.key)
-
-
-class EventhubAzureNamedKeyTokenCredential(object):
-    """The named key credential used for authentication.
-
-    :param credential: The AzureNamedKeyCredential that should be used.
-    :type credential: ~azure.core.credentials.AzureNamedKeyCredential
-    """
-
-    def __init__(self, azure_named_key_credential):
-        # type: (AzureNamedKeyCredential) -> None
-        self._credential = azure_named_key_credential
-        self.token_type = b"servicebus.windows.net:sastoken"
-
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> AccessToken
-        if not scopes:
-            raise ValueError("No token scope provided.")
-        name, key = self._credential.named_key
-        return _generate_sas_token(scopes[0], name, key)
 
 
 class EventHubSASTokenCredential(object):
@@ -264,6 +202,7 @@ class EventhubAzureSasTokenCredential(object):
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+    from ._transport._uamqp_transport import EventHubSharedKeyCredential # TODO: update when pyamqp added
     CredentialTypes = Union[
         AzureSasCredential,
         AzureNamedKeyCredential,
@@ -275,6 +214,12 @@ if TYPE_CHECKING:
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
         # type: (str, str, CredentialTypes, Any) -> None
+        self._uamqp_transport = kwargs.pop("uamqp_transport", True)
+        if self._uamqp_transport:
+            self._amqp_transport = UamqpTransport()
+        else:
+            raise NotImplementedError('pyamqp transport')
+
         self.eventhub_name = eventhub_name
         if not eventhub_name:
             raise ValueError("The eventhub name can not be None or empty.")
@@ -284,7 +229,10 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         if isinstance(credential, AzureSasCredential):
             self._credential = EventhubAzureSasTokenCredential(credential)
         elif isinstance(credential, AzureNamedKeyCredential):
-            self._credential = EventhubAzureNamedKeyTokenCredential(credential)  # type: ignore
+            if self._uamqp_transport:
+                self._credential = UamqpTransport.create_named_key_token_credential(credential)  # type: ignore
+            else:
+                raise NotImplementedError('pyamqp named key token credential')
         else:
             self._credential = credential  # type: ignore
         self._keep_alive = kwargs.get("keep_alive", 30)
@@ -309,7 +257,8 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         if token and token_expiry:
             kwargs["credential"] = EventHubSASTokenCredential(token, token_expiry)
         elif policy and key:
-            kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
+            # TODO: pyamqp by default here, else uamqp
+            kwargs["credential"] = UamqpTransport.create_shared_key_credential(policy, key)
         return kwargs
 
     def _create_auth(self):

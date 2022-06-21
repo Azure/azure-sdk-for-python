@@ -10,7 +10,8 @@ __version__ = VERSION
 
 from ._producer_client import EventHubProducerClient
 from ._consumer_client import EventHubConsumerClient
-from ._client_base import EventHubSharedKeyCredential
+# TODO in pyamqp: from ._client_base import EventHubSharedKeyCredential
+from ._transport._uamqp_transport import EventHubSharedKeyCredential
 from ._eventprocessor.checkpoint_store import CheckpointStore
 from ._eventprocessor.common import CloseReason, LoadBalancingStrategy
 from ._eventprocessor.partition_context import PartitionContext

@@ -13,7 +13,6 @@ from ._client_base import ClientBase
 from ._producer import EventHubProducer
 from ._constants import ALL_PARTITIONS
 from ._common import EventDataBatch, EventData
-from ._transport._uamqp_transport import UamqpTransport
 
 if TYPE_CHECKING:
     from ._client_base import CredentialTypes
@@ -91,18 +90,11 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
         **kwargs  # type: Any
     ):
         # type:(...) -> None
-        self._uamqp_transport = kwargs.pop("uamqp_transport", True)
-        if self._uamqp_transport:
-            self._amqp_transport = UamqpTransport()
-        else:
-            raise NotImplementedError('pyamqp transport')
-
         super(EventHubProducerClient, self).__init__(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
             credential=credential,
             network_tracing=kwargs.get("logging_enable"),
-            amqp_transport=self._amqp_transport,
             **kwargs
         )
         self._producers = {

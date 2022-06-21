@@ -11,7 +11,6 @@ from ._consumer import EventHubConsumer
 from ._constants import ALL_PARTITIONS
 from ._eventprocessor.event_processor import EventProcessor
 from ._eventprocessor.common import LoadBalancingStrategy
-from ._transport._uamqp_transport import UamqpTransport
 
 
 if TYPE_CHECKING:
@@ -145,11 +144,6 @@ class EventHubConsumerClient(ClientBase):   # pylint: disable=client-accepts-api
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        self._uamqp_transport = kwargs.pop("uamqp_transport", True)
-        if self._uamqp_transport:
-            self._amqp_transport = UamqpTransport()
-        else:
-            raise NotImplementedError('pyamqp transport')
 
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", None)
