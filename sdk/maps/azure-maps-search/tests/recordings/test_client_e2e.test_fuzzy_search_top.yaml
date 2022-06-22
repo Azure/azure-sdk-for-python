@@ -9,58 +9,55 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-maps-search/1.0-preview Python/3.7.8 (Windows-10-10.0.19041-SP0)
-      subscription-key:
-      - <RealSubscriptionKey>
+      - azsdk-python-maps-search/1.0-preview Python/3.9.13 (Windows-10-10.0.22000-SP0)
       x-ms-client-id:
       - <RealClientId>
     method: GET
-    uri: https://atlas.microsoft.com/search/fuzzy/json?api-version=1.0&query=Taiwan%20High%20Speed%20Rail&limit=5
+    uri: https://atlas.microsoft.com/search/fuzzy/json?api-version=1.0&query=Taiwan%20High%20Speed%20Rail&limit=5&subscription-key=pryWmPOH5EtRpxLMlGoMFni8b5rgPnMSR3ZFtrDj0hY
   response:
     body:
-      string: "{\"summary\":{\"query\":\"taiwan high speed rail\",\"queryType\":\"NON_NEAR\",\"queryTime\":54,\"numResults\":5,\"offset\":0,\"totalResults\":18,\"fuzzyLevel\":1},\"results\":[{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDA4MTU4MDGhY6NUV06hdqdVbmlmaWVk\",\"score\":8.9105939865,\"info\":\"search:ta:158009000815801-TW\",\"poi\":{\"name\":\"Taiwan
+      string: "{\"summary\":{\"query\":\"taiwan high speed rail\",\"queryType\":\"NON_NEAR\",\"queryTime\":110,\"numResults\":5,\"offset\":0,\"totalResults\":21,\"fuzzyLevel\":1},\"results\":[{\"type\":\"POI\",\"id\":\"158009000815801\",\"score\":8.9105939865,\"info\":\"search:ta:158009000815801-TW\",\"poi\":{\"name\":\"Taiwan
         High Speed Rail Tainan Station\",\"phone\":\"+886 6 600 9000\",\"categorySet\":[{\"id\":7380002}],\"url\":\"www.thsrc.com.tw\",\"categories\":[\"international\",\"railway
-        station\"],\"classifications\":[{\"code\":\"RAILWAY_STATION\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"railway
-        station\"},{\"nameLocale\":\"en-US\",\"name\":\"international\"}]}]},\"address\":{\"streetNumber\":\"100\",\"streetName\":\"Guiren
+        station\"],\"classifications\":[{\"code\":\"RAILWAY_STATION\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"international\"},{\"nameLocale\":\"en-US\",\"name\":\"railway
+        station\"}]}]},\"address\":{\"streetNumber\":\"100\",\"streetName\":\"Guiren
         Boulevard\",\"municipalitySubdivision\":\"Guiren District\",\"municipality\":\"Tainan
         City\",\"countrySubdivision\":\"Tainan City\",\"postalCode\":\"711\",\"extendedPostalCode\":\"71151\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"100,
         Guiren Boulevard, Guiren District, Tainan City 71151\",\"localName\":\"Guiren
-        District\"},\"position\":{\"lat\":22.92469,\"lon\":120.28577},\"viewport\":{\"topLeftPoint\":{\"lat\":22.92572,\"lon\":120.28465},\"btmRightPoint\":{\"lat\":22.92366,\"lon\":120.28689}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":22.92456,\"lon\":120.28613}},{\"type\":\"minor\",\"position\":{\"lat\":22.92504,\"lon\":120.28588}},{\"type\":\"minor\",\"position\":{\"lat\":22.92516,\"lon\":120.28477}}],\"dataSources\":{\"poiDetails\":[{\"id\":\"Rm91cnNxdWFyZTo0YzViZDc2MGJmYTU5NTIxNzZiYzY5ZmY=\",\"sourceName\":\"Foursquare\"}]}},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDgwMDAwMjU1ODShY6NUV06hdqdVbmlmaWVk\",\"score\":8.9105939865,\"info\":\"search:ta:158008000025584-TW\",\"poi\":{\"name\":\"Taiwan
-        High Speed Rail Taichung Station\",\"categorySet\":[{\"id\":7380002}],\"categories\":[\"international\",\"railway
-        station\"],\"classifications\":[{\"code\":\"RAILWAY_STATION\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"railway
-        station\"},{\"nameLocale\":\"en-US\",\"name\":\"international\"}]}]},\"address\":{\"streetNumber\":\"8\",\"streetName\":\"Zhanqu
-        Second Road\",\"municipalitySubdivision\":\"Wuri District\",\"municipality\":\"Taichung
-        City\",\"countrySubdivision\":\"Taichung City\",\"postalCode\":\"414\",\"extendedPostalCode\":\"41456\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"8,
-        Zhanqu Second Road, Wuri District, Taichung City 41456\",\"localName\":\"Wuri
-        District\"},\"position\":{\"lat\":24.11145,\"lon\":120.61599},\"viewport\":{\"topLeftPoint\":{\"lat\":24.11235,\"lon\":120.615},\"btmRightPoint\":{\"lat\":24.11055,\"lon\":120.61698}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":24.11142,\"lon\":120.6162}}]},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDkwMDA4MjI5NzmhY6NUV06hdqdVbmlmaWVk\",\"score\":8.9105939865,\"info\":\"search:ta:158009000822979-TW\",\"poi\":{\"name\":\"Taiwan
-        High Speed Rail Hsinchu Station\",\"phone\":\"+886 3 612 1000\",\"categorySet\":[{\"id\":7380002}],\"url\":\"www.thsrc.com.tw\",\"categories\":[\"international\",\"railway
-        station\"],\"classifications\":[{\"code\":\"RAILWAY_STATION\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"railway
-        station\"},{\"nameLocale\":\"en-US\",\"name\":\"international\"}]}]},\"address\":{\"streetNumber\":\"6\",\"streetName\":\"Gaotie
-        7th Road\",\"municipalitySubdivision\":\"Zhubei City\",\"municipality\":\"Hsinchu
-        County\",\"countrySubdivision\":\"T\xE1iw\u0101n\",\"postalCode\":\"302\",\"extendedPostalCode\":\"30273\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"6,
-        Gaotie 7th Road, Zhubei City, Hsinchu County 30273\",\"localName\":\"Zhubei
-        City\"},\"position\":{\"lat\":24.8082,\"lon\":121.04025},\"viewport\":{\"topLeftPoint\":{\"lat\":24.80943,\"lon\":121.0389},\"btmRightPoint\":{\"lat\":24.80697,\"lon\":121.0416}},\"entryPoints\":[{\"type\":\"minor\",\"position\":{\"lat\":24.8092,\"lon\":121.03947}},{\"type\":\"minor\",\"position\":{\"lat\":24.80774,\"lon\":121.03901}},{\"type\":\"main\",\"position\":{\"lat\":24.80806,\"lon\":121.0407}}]},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDgwMDAwMjU1OTChY6NUV06hdqdVbmlmaWVk\",\"score\":8.9105939865,\"info\":\"search:ta:158008000025590-TW\",\"poi\":{\"name\":\"Taiwan
-        High Speed Rail Yunlin Station\",\"categorySet\":[{\"id\":7380002}],\"categories\":[\"international\",\"railway
-        station\"],\"classifications\":[{\"code\":\"RAILWAY_STATION\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"railway
-        station\"},{\"nameLocale\":\"en-US\",\"name\":\"international\"}]}]},\"address\":{\"streetNumber\":\"301\",\"streetName\":\"Zhanqian
-        East Road\",\"municipalitySubdivision\":\"Huwei Township\",\"municipality\":\"Yunlin
-        County\",\"countrySubdivision\":\"T\xE1iw\u0101n\",\"postalCode\":\"632\",\"extendedPostalCode\":\"63247\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"301,
-        Zhanqian East Road, Huwei Township, Yunlin County 63247\",\"localName\":\"Huwei
-        Township\"},\"position\":{\"lat\":23.7362,\"lon\":120.41702},\"viewport\":{\"topLeftPoint\":{\"lat\":23.73716,\"lon\":120.41597},\"btmRightPoint\":{\"lat\":23.73524,\"lon\":120.41807}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":23.73589,\"lon\":120.41801}}]},{\"type\":\"POI\",\"id\":\"g6JpZK8xNTgwMDgwMDAwMjU1ODWhY6NUV06hdqdVbmlmaWVk\",\"score\":8.9105939865,\"info\":\"search:ta:158008000025585-TW\",\"poi\":{\"name\":\"Taiwan
+        District\"},\"position\":{\"lat\":22.92469,\"lon\":120.28577},\"viewport\":{\"topLeftPoint\":{\"lat\":22.92572,\"lon\":120.28465},\"btmRightPoint\":{\"lat\":22.92366,\"lon\":120.28689}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":22.92456,\"lon\":120.28613}},{\"type\":\"minor\",\"position\":{\"lat\":22.92504,\"lon\":120.28588}},{\"type\":\"minor\",\"position\":{\"lat\":22.92516,\"lon\":120.28477}}]},{\"type\":\"POI\",\"id\":\"158009000689781\",\"score\":8.9105939865,\"info\":\"search:ta:158009000689781-TW\",\"poi\":{\"name\":\"Taiwan
+        High Speed Rail Miaoli Station\",\"categorySet\":[{\"id\":7380002}],\"url\":\"www.thsrc.com.tw\",\"categories\":[\"international\",\"railway
+        station\"],\"classifications\":[{\"code\":\"RAILWAY_STATION\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"international\"},{\"nameLocale\":\"en-US\",\"name\":\"railway
+        station\"}]}]},\"address\":{\"streetName\":\"Gaotie 3rd Road\",\"municipalitySubdivision\":\"Houlong
+        Township\",\"municipality\":\"Miaoli County\",\"countrySubdivision\":\"T\xE1iw\u0101n\",\"postalCode\":\"356\",\"extendedPostalCode\":\"35648\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"Gaotie
+        3rd Road, Houlong Township, Miaoli County 35648\",\"localName\":\"Houlong
+        Township\"},\"position\":{\"lat\":24.60544,\"lon\":120.82545},\"viewport\":{\"topLeftPoint\":{\"lat\":24.60634,\"lon\":120.82446},\"btmRightPoint\":{\"lat\":24.60454,\"lon\":120.82644}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":24.60598,\"lon\":120.82503}}]},{\"type\":\"POI\",\"id\":\"158008000025585\",\"score\":8.9105939865,\"info\":\"search:ta:158008000025585-TW\",\"poi\":{\"name\":\"Taiwan
         High Speed Rail Changhua Station\",\"categorySet\":[{\"id\":7380002}],\"categories\":[\"international\",\"railway
-        station\"],\"classifications\":[{\"code\":\"RAILWAY_STATION\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"railway
-        station\"},{\"nameLocale\":\"en-US\",\"name\":\"international\"}]}]},\"address\":{\"streetNumber\":\"99\",\"streetName\":\"Section
+        station\"],\"classifications\":[{\"code\":\"RAILWAY_STATION\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"international\"},{\"nameLocale\":\"en-US\",\"name\":\"railway
+        station\"}]}]},\"address\":{\"streetNumber\":\"99\",\"streetName\":\"Section
         2 of Zhanqu Road\",\"municipalitySubdivision\":\"Tianzhong Township\",\"municipality\":\"Changhua
         County\",\"countrySubdivision\":\"T\xE1iw\u0101n\",\"postalCode\":\"520\",\"extendedPostalCode\":\"52046\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"99,
         Section 2 of Zhanqu Road, Tianzhong Township, Changhua County 52046\",\"localName\":\"Tianzhong
-        Township\"},\"position\":{\"lat\":23.8741,\"lon\":120.57501},\"viewport\":{\"topLeftPoint\":{\"lat\":23.875,\"lon\":120.57403},\"btmRightPoint\":{\"lat\":23.8732,\"lon\":120.57599}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":23.8739,\"lon\":120.57527}}]}]}"
+        Township\"},\"position\":{\"lat\":23.8741,\"lon\":120.57501},\"viewport\":{\"topLeftPoint\":{\"lat\":23.875,\"lon\":120.57403},\"btmRightPoint\":{\"lat\":23.8732,\"lon\":120.57599}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":23.8739,\"lon\":120.57527}}]},{\"type\":\"POI\",\"id\":\"158007000005399\",\"score\":8.9105939865,\"info\":\"search:ta:158007000005399-TW\",\"poi\":{\"name\":\"Taiwan
+        High Speed Rail Taichung Station\",\"phone\":\"+886 4 3601 5000\",\"categorySet\":[{\"id\":7380002}],\"url\":\"www.thsrc.com.tw\",\"categories\":[\"international\",\"railway
+        station\"],\"classifications\":[{\"code\":\"RAILWAY_STATION\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"international\"},{\"nameLocale\":\"en-US\",\"name\":\"railway
+        station\"}]}]},\"address\":{\"streetNumber\":\"8\",\"streetName\":\"Zhanqu
+        2nd Road\",\"municipalitySubdivision\":\"Wuri District\",\"municipality\":\"Taichung
+        City\",\"countrySubdivision\":\"Taichung City\",\"postalCode\":\"414\",\"extendedPostalCode\":\"41456\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"8,
+        Zhanqu 2nd Road, Wuri District, Taichung City 41456\",\"localName\":\"Wuri
+        District\"},\"position\":{\"lat\":24.11171,\"lon\":120.61562},\"viewport\":{\"topLeftPoint\":{\"lat\":24.11313,\"lon\":120.61406},\"btmRightPoint\":{\"lat\":24.11029,\"lon\":120.61718}},\"entryPoints\":[{\"type\":\"minor\",\"position\":{\"lat\":24.11241,\"lon\":120.61632}},{\"type\":\"minor\",\"position\":{\"lat\":24.11153,\"lon\":120.61632}},{\"type\":\"minor\",\"position\":{\"lat\":24.11152,\"lon\":120.61621}},{\"type\":\"main\",\"position\":{\"lat\":24.11111,\"lon\":120.61538}},{\"type\":\"minor\",\"position\":{\"lat\":24.11197,\"lon\":120.61637}},{\"type\":\"minor\",\"position\":{\"lat\":24.11039,\"lon\":120.6162}}]},{\"type\":\"POI\",\"id\":\"158009000693619\",\"score\":8.9105939865,\"info\":\"search:ta:158009000693619-TW\",\"poi\":{\"name\":\"Taiwan
+        High Speed Rail Zuoying Station\",\"phone\":\"+886 7 960 5000\",\"categorySet\":[{\"id\":7380002}],\"url\":\"www.thsrc.com.tw\",\"categories\":[\"international\",\"railway
+        station\"],\"classifications\":[{\"code\":\"RAILWAY_STATION\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"international\"},{\"nameLocale\":\"en-US\",\"name\":\"railway
+        station\"}]}]},\"address\":{\"streetNumber\":\"105\",\"streetName\":\"Gaotie
+        Road\",\"municipalitySubdivision\":\"Zuoying District\",\"municipality\":\"Kaohsiung
+        City\",\"countrySubdivision\":\"Kaohsiung City\",\"postalCode\":\"813\",\"extendedPostalCode\":\"81361\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"105,
+        Gaotie Road, Zuoying District, Kaohsiung City 81361\",\"localName\":\"Zuoying
+        District\"},\"position\":{\"lat\":22.68664,\"lon\":120.30806},\"viewport\":{\"topLeftPoint\":{\"lat\":22.68798,\"lon\":120.30661},\"btmRightPoint\":{\"lat\":22.6853,\"lon\":120.30951}},\"entryPoints\":[{\"type\":\"minor\",\"position\":{\"lat\":22.68674,\"lon\":120.30661}},{\"type\":\"main\",\"position\":{\"lat\":22.68655,\"lon\":120.30814}}]}]}"
     headers:
       content-length:
-      - '5807'
+      - '5841'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Dec 2021 07:03:36 GMT
+      - Wed, 22 Jun 2022 06:39:17 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       vary:
@@ -72,7 +69,7 @@ interactions:
       x-ms-azuremaps-region:
       - West US 2
       x-msedge-ref:
-      - 'Ref A: 762DC47228DF46B2B04469ADC6A7501A Ref B: TYBEDGE0506 Ref C: 2021-12-10T07:03:36Z'
+      - 'Ref A: 36C3446359174A90B157ECC2C7A5CA7A Ref B: TPE30EDGE0512 Ref C: 2022-06-22T06:39:17Z'
     status:
       code: 200
       message: OK

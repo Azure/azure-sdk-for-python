@@ -16,7 +16,7 @@ interactions:
     uri: https://atlas.microsoft.com/search/fuzzy/json?api-version=1.0&query=Taiwan%20High%20Speed%20Rail&subscription-key=pryWmPOH5EtRpxLMlGoMFni8b5rgPnMSR3ZFtrDj0hY
   response:
     body:
-      string: "{\"summary\":{\"query\":\"taiwan high speed rail\",\"queryType\":\"NON_NEAR\",\"queryTime\":158,\"numResults\":10,\"offset\":0,\"totalResults\":21,\"fuzzyLevel\":1},\"results\":[{\"type\":\"POI\",\"id\":\"158009000815801\",\"score\":8.9105939865,\"info\":\"search:ta:158009000815801-TW\",\"poi\":{\"name\":\"Taiwan
+      string: "{\"summary\":{\"query\":\"taiwan high speed rail\",\"queryType\":\"NON_NEAR\",\"queryTime\":126,\"numResults\":10,\"offset\":0,\"totalResults\":21,\"fuzzyLevel\":1},\"results\":[{\"type\":\"POI\",\"id\":\"158009000815801\",\"score\":8.9105939865,\"info\":\"search:ta:158009000815801-TW\",\"poi\":{\"name\":\"Taiwan
         High Speed Rail Tainan Station\",\"phone\":\"+886 6 600 9000\",\"categorySet\":[{\"id\":7380002}],\"url\":\"www.thsrc.com.tw\",\"categories\":[\"international\",\"railway
         station\"],\"classifications\":[{\"code\":\"RAILWAY_STATION\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"international\"},{\"nameLocale\":\"en-US\",\"name\":\"railway
         station\"}]}]},\"address\":{\"streetNumber\":\"100\",\"streetName\":\"Guiren
@@ -92,7 +92,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 22 Jun 2022 06:39:16 GMT
+      - Wed, 22 Jun 2022 06:39:15 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       vary:
@@ -104,7 +104,7 @@ interactions:
       x-ms-azuremaps-region:
       - West US 2
       x-msedge-ref:
-      - 'Ref A: 58CA7C5436D5487E9AAD9D612F0D4515 Ref B: TPE30EDGE0919 Ref C: 2022-06-22T06:39:16Z'
+      - 'Ref A: 842A775C1DE74DE4A134B824B57288E7 Ref B: TPE30EDGE0516 Ref C: 2022-06-22T06:39:15Z'
     status:
       code: 200
       message: OK
@@ -125,7 +125,7 @@ interactions:
     uri: https://atlas.microsoft.com/search/fuzzy/json?api-version=1.0&query=Taiwan%20High%20Speed%20Rail&ofs=10&subscription-key=pryWmPOH5EtRpxLMlGoMFni8b5rgPnMSR3ZFtrDj0hY
   response:
     body:
-      string: "{\"summary\":{\"query\":\"taiwan high speed rail\",\"queryType\":\"NON_NEAR\",\"queryTime\":215,\"numResults\":10,\"offset\":10,\"totalResults\":21,\"fuzzyLevel\":1},\"results\":[{\"type\":\"POI\",\"id\":\"158009000694930\",\"score\":8.9105939865,\"info\":\"search:ta:158009000694930-TW\",\"poi\":{\"name\":\"Taiwan
+      string: "{\"summary\":{\"query\":\"taiwan high speed rail\",\"queryType\":\"NON_NEAR\",\"queryTime\":129,\"numResults\":10,\"offset\":10,\"totalResults\":21,\"fuzzyLevel\":1},\"results\":[{\"type\":\"POI\",\"id\":\"158009000694930\",\"score\":8.9105939865,\"info\":\"search:ta:158009000694930-TW\",\"poi\":{\"name\":\"Taiwan
         High Speed Rail Nangang Station\",\"categorySet\":[{\"id\":7380002}],\"url\":\"www.thsrc.com.tw\",\"categories\":[\"international\",\"railway
         station\"],\"classifications\":[{\"code\":\"RAILWAY_STATION\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"international\"},{\"nameLocale\":\"en-US\",\"name\":\"railway
         station\"}]}]},\"address\":{\"streetName\":\"Civic Boulevard Section 8\",\"municipalitySubdivision\":\"Nangang
@@ -203,7 +203,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 22 Jun 2022 06:39:17 GMT
+      - Wed, 22 Jun 2022 06:39:16 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       vary:
@@ -215,7 +215,7 @@ interactions:
       x-ms-azuremaps-region:
       - West US 2
       x-msedge-ref:
-      - 'Ref A: AFCDDF517A53469997C35169017A7C91 Ref B: TPE30EDGE0919 Ref C: 2022-06-22T06:39:17Z'
+      - 'Ref A: B1533C9DA157452494B03A76BF24E1B7 Ref B: TPE30EDGE0516 Ref C: 2022-06-22T06:39:16Z'
     status:
       code: 200
       message: OK

@@ -126,6 +126,7 @@ class SearchClient(object):
     def fuzzy_search(
         self,
         query,  # type: str
+        country_filter=None,
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -205,7 +206,7 @@ class SearchClient(object):
         """
 
         coordinates = kwargs.get("coordinates", LatLon())
-        country_filter = kwargs.get("country_filter", None)
+        # country_filter = kwargs.get("country_filter", None)
 
         return self._search_client.fuzzy_search(
             query,
@@ -672,6 +673,8 @@ class SearchClient(object):
     def search_point_of_interest_category(
         self,
         query,  # type: str
+        coordinates=LatLon(),
+        country_filter=None,
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -724,8 +727,8 @@ class SearchClient(object):
         :return: SearchAddressResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        coordinates = kwargs.get("coordinates", LatLon())
-        country_filter = kwargs.get("country_filter", None)
+        # coordinates = kwargs.get("coordinates", LatLon())
+        # country_filter = kwargs.get("country_filter", None)
 
         result = self._search_client.search_point_of_interest_category(
             query,

@@ -4,6 +4,8 @@ import pytest
 
 from devtools_testutils import AzureTestCase
 from azure_devtools.scenario_tests import RecordingProcessor
+from azure.core.credentials import AzureKeyCredential
+from _shared.utils import AzureKeyInQueryCredentialPolicy
 from azure.maps.search import SearchClient
 from azure.maps.search.models import LatLon, StructuredAddress
 
@@ -36,15 +38,17 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
 
     def setUp(self):
         super(AzureMapsSearchClientE2ETest, self).setUp()
-        self.client = self.create_client_from_credential(SearchClient,
+        # import pdb; pdb.set_trace()
+        self.client = SearchClient(
             credential='NotUsed',
-            client_id=self.get_settings_value("CLIENT_ID"),
-            authentication_policy = self.get_credential(SearchClient))
+            client_id=self.get_settings_value('CLIENT_ID'),
+            authentication_policy = AzureKeyInQueryCredentialPolicy(AzureKeyCredential(self.get_settings_value('SUBSCRIPTION_KEY')), "subscription-key")
+        )
         assert self.client is not None
 
-    @pytest.mark.live_test_only
+
     def test_fuzzy_search_poi_coordinates(self):
-        result = self.client.fuzzy_search("Taipei 101", coordinates=LatLon(25.0338053, 121.5640089))
+        result = self.client.fuzzy_search("Taipei 101")
         assert len(result.results) > 0
         top_answer = result.results[0]
         assert top_answer.point_of_interest.name == "Taipei 101"
@@ -54,20 +58,12 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
         assert top_answer.address.country_code_iso3 == "TWN"
         assert top_answer.position.lat == 25.03339 and top_answer.position.lon == 121.56437
 
-    @pytest.mark.live_test_only
+
     def test_fuzzy_search_poi_country_set(self):
         result = self.client.fuzzy_search("Taipei 101", country_filter=["TW"])
         assert len(result.results) > 0
         for item in result.results:
             assert item.address.country_code_iso3 == "TWN"
-
-        result = self.client.fuzzy_search("Taipei 101", country_filter=["US"])
-        assert len(result.results) > 0
-        for item in result.results:
-            assert item.address.country_code_iso3 == "USA"
-
-        result = self.client.fuzzy_search("Taipei 101", country_filter=["AQ"])
-        assert len(result.results) == 0
 
     @pytest.mark.live_test_only
     def test_fuzzy_search_address(self):
@@ -79,7 +75,7 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
         assert top_answer.address.municipality == "Taipei City"
         assert top_answer.address.postal_code == "111"
         assert top_answer.address.country_code_iso3 == "TWN"
-        assert top_answer.position.lat == 25.09735 and top_answer.position.lon == 121.54401
+        assert top_answer.position.lat == 25.09775 and top_answer.position.lon == 121.54639
 
     @pytest.mark.live_test_only
     def test_fuzzy_search_top(self):
@@ -127,11 +123,11 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
 
     @pytest.mark.live_test_only
     def test_search_point_of_interest_category(self):
-        result = self.client.search_point_of_interest_category("RESTAURANT", coordinates=LatLon(25.0338053, 121.5640089))
+        result = self.client.search_point_of_interest_category("CAFE_PUB", coordinates=LatLon(25.0338053, 121.5640089))
         assert len(result.results) > 0
         for item in result.results:
             assert item.type == "POI"
-            assert "RESTAURANT" in [category.code for category in item.point_of_interest.classifications]
+            assert "CAFE_PUB" in [category.code for category in item.point_of_interest.classifications]
 
     @pytest.mark.live_test_only
     def test_search_structured_address(self):
@@ -150,7 +146,7 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
         assert top_answer.address.municipality == "Taipei City"
         assert top_answer.address.postal_code == "111"
         assert top_answer.address.country_code_iso3 == "TWN"
-        assert top_answer.position.lat == 25.09735 and top_answer.position.lon == 121.54401
+        assert top_answer.position.lat == 25.10468 and top_answer.position.lon == 121.55715
 
 
 

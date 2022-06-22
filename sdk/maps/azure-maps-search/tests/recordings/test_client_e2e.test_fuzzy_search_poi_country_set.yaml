@@ -9,74 +9,77 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-maps-search/1.0-preview Python/3.7.8 (Windows-10-10.0.19041-SP0)
-      subscription-key:
-      - <RealSubscriptionKey>
+      - azsdk-python-maps-search/1.0-preview Python/3.9.13 (Windows-10-10.0.22000-SP0)
       x-ms-client-id:
       - <RealClientId>
     method: GET
-    uri: https://atlas.microsoft.com/search/fuzzy/json?api-version=1.0&query=Taipei%20101&countrySet=TW
+    uri: https://atlas.microsoft.com/search/fuzzy/json?api-version=1.0&query=Taipei%20101&countrySet=TW&subscription-key=pryWmPOH5EtRpxLMlGoMFni8b5rgPnMSR3ZFtrDj0hY
   response:
     body:
-      string: '{"summary":{"query":"taipei 101","queryType":"NON_NEAR","queryTime":53,"numResults":10,"offset":0,"totalResults":1633,"fuzzyLevel":1},"results":[{"type":"POI","id":"g6JpZK8xNTgwMDkwMDIwMTc5NjWhY6NUV06hdqdVbmlmaWVk","score":4.4091453552,"info":"search:ta:158009002017965-TW","poi":{"name":"Taipei
-        101","categorySet":[{"id":7315059}],"categories":["restaurant","taiwanese"],"classifications":[{"code":"RESTAURANT","names":[{"nameLocale":"en-US","name":"taiwanese"},{"nameLocale":"en-US","name":"restaurant"}]}]},"address":{"streetName":"Xinyi
-        Road Section 5","municipalitySubdivision":"Xinyi District","municipality":"Taipei
-        City","countrySubdivision":"Taipei City","postalCode":"110","extendedPostalCode":"11049","countryCode":"TW","country":"Taiwan","countryCodeISO3":"TWN","freeformAddress":"Xinyi
-        Road Section 5, Xinyi District, Taipei City 11049","localName":"Xinyi District"},"position":{"lat":25.03339,"lon":121.56437},"viewport":{"topLeftPoint":{"lat":25.03429,"lon":121.56338},"btmRightPoint":{"lat":25.03249,"lon":121.56536}},"entryPoints":[{"type":"main","position":{"lat":25.03298,"lon":121.56437}}],"dataSources":{"poiDetails":[{"id":"Rm91cnNxdWFyZTo1YzgyMDQyYTRhYzI4YTAwMmNiOWVjYzE=","sourceName":"Foursquare"}]}},{"type":"POI","id":"g6JpZK8xNTgwMDgwMDAwMTEwNTKhY6NUV06hdqdVbmlmaWVk","score":4.4091453552,"info":"search:ta:158008000011052-TW","poi":{"name":"Taipei
-        101","phone":"+886 2 8101 8960","categorySet":[{"id":9382}],"url":"www.taipei-101.com.tw","categories":["commercial
-        building"],"classifications":[{"code":"COMMERCIAL_BUILDING","names":[{"nameLocale":"en-US","name":"commercial
-        building"}]}]},"address":{"streetNumber":"7","streetName":"Xinyi Road Section
-        5","municipalitySubdivision":"Xinyi District","municipality":"Taipei City","countrySubdivision":"Taipei
-        City","postalCode":"110","extendedPostalCode":"11049","countryCode":"TW","country":"Taiwan","countryCodeISO3":"TWN","freeformAddress":"7,
-        Xinyi Road Section 5, Xinyi District, Taipei City 11049","localName":"Xinyi
-        District"},"position":{"lat":25.03454,"lon":121.56449},"viewport":{"topLeftPoint":{"lat":25.03611,"lon":121.56276},"btmRightPoint":{"lat":25.03297,"lon":121.56622}},"entryPoints":[{"type":"main","position":{"lat":25.03297,"lon":121.5645}}]},{"type":"POI","id":"g6JpZK8xNTgwMDkwMDIzNTE0NDehY6NUV06hdqdVbmlmaWVk","score":4.3663377762,"info":"search:ta:158009002351447-TW","poi":{"name":"Taipei
-        101 Mall","phone":"+886 2 8101 8800","categorySet":[{"id":7373}],"url":"www.taipei-101.com.tw/mall.aspx","categories":["shopping
-        center"],"classifications":[{"code":"SHOPPING_CENTER","names":[{"nameLocale":"en-US","name":"shopping
-        center"}]}]},"address":{"streetName":"Shifu Road","municipalitySubdivision":"Xinyi
-        District","municipality":"Taipei City","countrySubdivision":"Taipei City","postalCode":"110","extendedPostalCode":"11001","countryCode":"TW","country":"Taiwan","countryCodeISO3":"TWN","freeformAddress":"Shifu
-        Road, Xinyi District, Taipei City 11001","localName":"Xinyi District"},"position":{"lat":25.03419,"lon":121.56434},"viewport":{"topLeftPoint":{"lat":25.03509,"lon":121.56335},"btmRightPoint":{"lat":25.03329,"lon":121.56533}},"entryPoints":[{"type":"main","position":{"lat":25.0342,"lon":121.56356}}],"dataSources":{"poiDetails":[{"id":"Rm91cnNxdWFyZTo1MjljNWQ0NzExZDJjNTBlOTY0OTYxYWI=","sourceName":"Foursquare"}]}},{"type":"POI","id":"g6JpZK8xNTgwMDkwMDIxNzAwMDehY6NUV06hdqdVbmlmaWVk","score":4.3663377762,"info":"search:ta:158009002170007-TW","poi":{"name":"Apple
-        Taipei 101","phone":"+886 2 8726 3500","brands":[{"name":"Apple"}],"categorySet":[{"id":9361013}],"url":"https://www.apple.com/tw/retail/taipei101","categories":["electrical,
-        office it: consumer electronics","shop"],"classifications":[{"code":"SHOP","names":[{"nameLocale":"en-US","name":"shop"},{"nameLocale":"en-US","name":"electrical,
-        office it: consumer electronics"}]}]},"address":{"streetName":"Songzhi Road","municipalitySubdivision":"Xinyi
-        District","municipality":"Taipei City","countrySubdivision":"Taipei City","postalCode":"110","extendedPostalCode":"11047","countryCode":"TW","country":"Taiwan","countryCodeISO3":"TWN","freeformAddress":"Songzhi
-        Road, Xinyi District, Taipei City 11047","localName":"Xinyi District"},"position":{"lat":25.03399,"lon":121.56454},"viewport":{"topLeftPoint":{"lat":25.03489,"lon":121.56355},"btmRightPoint":{"lat":25.03309,"lon":121.56553}},"entryPoints":[{"type":"main","position":{"lat":25.03398,"lon":121.56532}}],"dataSources":{"poiDetails":[{"id":"Rm91cnNxdWFyZTo1OGVjYmUwNDcyMjBlNjM2NWVlYzY0MzU=","sourceName":"Foursquare"}]}},{"type":"POI","id":"g6JpZK8xNTgwMDkwMDIwNDM5MDihY6NUV06hdqdVbmlmaWVk","score":4.3243536949,"info":"search:ta:158009002043908-TW","poi":{"name":"Ermenegildo
-        Zegna Taipei 101","phone":"+886 2 8101 7978","categorySet":[{"id":9361006}],"url":"www.zegna.tw","categories":["clothing
-        accessories: general","shop"],"classifications":[{"code":"SHOP","names":[{"nameLocale":"en-US","name":"clothing
-        accessories: general"},{"nameLocale":"en-US","name":"shop"}]}]},"address":{"streetName":"Songlian
-        Road","municipalitySubdivision":"Xinyi District","municipality":"Taipei City","countrySubdivision":"Taipei
-        City","postalCode":"110","extendedPostalCode":"11047","countryCode":"TW","country":"Taiwan","countryCodeISO3":"TWN","freeformAddress":"Songlian
-        Road, Xinyi District, Taipei City 11047","localName":"Xinyi District"},"position":{"lat":25.034,"lon":121.56457},"viewport":{"topLeftPoint":{"lat":25.0349,"lon":121.56358},"btmRightPoint":{"lat":25.0331,"lon":121.56556}},"entryPoints":[{"type":"main","position":{"lat":25.03399,"lon":121.56532}}],"dataSources":{"poiDetails":[{"id":"Rm91cnNxdWFyZTo0ZmQzMTQxZWU0YjA2YTJkOGNlZjZiNzg=","sourceName":"Foursquare"}]}},{"type":"POI","id":"g6JpZK8xNTgwMDkwMDE3Njg1NjOhY6NUV06hdqdVbmlmaWVk","score":4.3243536949,"info":"search:ta:158009001768563-TW","poi":{"name":"Apple
-        Store Taipei 101","phone":"+886 2 8726 3500","categorySet":[{"id":9361075}],"url":"www.apple.com","categories":["mobile
-        phone shop","shop"],"classifications":[{"code":"SHOP","names":[{"nameLocale":"en-US","name":"shop"},{"nameLocale":"en-US","name":"mobile
-        phone shop"}]}]},"address":{"streetNumber":"45","streetName":"Shifu Road","municipalitySubdivision":"Xinyi
-        District","municipality":"Taipei City","countrySubdivision":"Taipei City","postalCode":"110","extendedPostalCode":"11001","countryCode":"TW","country":"Taiwan","countryCodeISO3":"TWN","freeformAddress":"45,
-        Shifu Road, Xinyi District, Taipei City 11001","localName":"Xinyi District"},"position":{"lat":25.03403,"lon":121.5639},"viewport":{"topLeftPoint":{"lat":25.03493,"lon":121.56291},"btmRightPoint":{"lat":25.03313,"lon":121.56489}},"entryPoints":[{"type":"main","position":{"lat":25.03404,"lon":121.56355}}]},{"type":"POI","id":"g6JpZK8xNTgwMDkwMDIwMzAxODahY6NUV06hdqdVbmlmaWVk","score":4.3243536949,"info":"search:ta:158009002030186-TW","poi":{"name":"Taipei
-        101 Wind Damper","categorySet":[{"id":9900}],"categories":["entertainment"],"classifications":[{"code":"ENTERTAINMENT","names":[{"nameLocale":"en-US","name":"entertainment"}]}]},"address":{"streetName":"Songzhi
-        Road","municipalitySubdivision":"Xinyi District","municipality":"Taipei City","countrySubdivision":"Taipei
-        City","postalCode":"110","extendedPostalCode":"11047","countryCode":"TW","country":"Taiwan","countryCodeISO3":"TWN","freeformAddress":"Songzhi
-        Road, Xinyi District, Taipei City 11047","localName":"Xinyi District"},"position":{"lat":25.03377,"lon":121.56478},"viewport":{"topLeftPoint":{"lat":25.03467,"lon":121.56379},"btmRightPoint":{"lat":25.03287,"lon":121.56577}},"entryPoints":[{"type":"main","position":{"lat":25.03372,"lon":121.56532}}],"dataSources":{"poiDetails":[{"id":"Rm91cnNxdWFyZTo1MWNkNDc0NDQ5OGU4NTQ2YzJjYWZmZTc=","sourceName":"Foursquare"}]}},{"type":"POI","id":"g6JpZK8xNTgwMDkwMDI0MTg0MjmhY6NUV06hdqdVbmlmaWVk","score":4.3243536949,"info":"search:ta:158009002418429-TW","poi":{"name":"Hotai
-        Leasing Taipei 101","phone":"+886 2 2651 7766","brands":[{"name":"Hotai Leasing"}],"categorySet":[{"id":7312}],"categories":["rent-a-car
-        facility"],"classifications":[{"code":"RENT_A_CAR_FACILITY","names":[{"nameLocale":"en-US","name":"rent-a-car
-        facility"}]}]},"address":{"streetName":"Songzhi Road","municipalitySubdivision":"Xinyi
-        District","municipality":"Taipei City","countrySubdivision":"Taipei City","postalCode":"110","extendedPostalCode":"11047","countryCode":"TW","country":"Taiwan","countryCodeISO3":"TWN","freeformAddress":"Songzhi
-        Road, Xinyi District, Taipei City 11047","localName":"Xinyi District"},"position":{"lat":25.0291,"lon":121.56515},"viewport":{"topLeftPoint":{"lat":25.03,"lon":121.56416},"btmRightPoint":{"lat":25.0282,"lon":121.56614}},"entryPoints":[{"type":"main","position":{"lat":25.02921,"lon":121.56499}}]},{"type":"POI","id":"g6JpZK8xNTgwMDkwMDE5OTczOTihY6NUV06hdqdVbmlmaWVk","score":4.3243536949,"info":"search:ta:158009001997398-TW","poi":{"name":"Taipei
-        101 Souvenir Shop","categorySet":[{"id":9361026}],"categories":["gifts, cards,
-        novelties souvenirs","shop"],"classifications":[{"code":"SHOP","names":[{"nameLocale":"en-US","name":"shop"},{"nameLocale":"en-US","name":"gifts,
-        cards, novelties souvenirs"}]}]},"address":{"streetName":"Shifu Road","municipalitySubdivision":"Xinyi
-        District","municipality":"Taipei City","countrySubdivision":"Taipei City","postalCode":"110","extendedPostalCode":"11001","countryCode":"TW","country":"Taiwan","countryCodeISO3":"TWN","freeformAddress":"Shifu
-        Road, Xinyi District, Taipei City 11001","localName":"Xinyi District"},"position":{"lat":25.03406,"lon":121.56439},"viewport":{"topLeftPoint":{"lat":25.03496,"lon":121.5634},"btmRightPoint":{"lat":25.03316,"lon":121.56538}},"entryPoints":[{"type":"main","position":{"lat":25.03407,"lon":121.56355}}],"dataSources":{"poiDetails":[{"id":"Rm91cnNxdWFyZTo1YTYzMDZiOWNhMThlYTdjNmJiMTU0ZjM=","sourceName":"Foursquare"}]}},{"type":"POI","id":"g6JpZK8xNTgwMDkwMDI0MTU0MjahY6NUV06hdqdVbmlmaWVk","score":4.3243536949,"info":"search:ta:158009002415426-TW","poi":{"name":"Taipei
-        101 Food Court","categorySet":[{"id":7315015}],"url":"www.taipei-101.com.tw/food-search.aspx?st=1&i=2&typ=39","categories":["fast
-        food","restaurant"],"classifications":[{"code":"RESTAURANT","names":[{"nameLocale":"en-US","name":"restaurant"},{"nameLocale":"en-US","name":"fast
-        food"}]}]},"address":{"streetName":"Xinyi Road Section 5","municipalitySubdivision":"Xinyi
-        District","municipality":"Taipei City","countrySubdivision":"Taipei City","postalCode":"110","extendedPostalCode":"11049","countryCode":"TW","country":"Taiwan","countryCodeISO3":"TWN","freeformAddress":"Xinyi
-        Road Section 5, Xinyi District, Taipei City 11049","localName":"Xinyi District"},"position":{"lat":25.0335,"lon":121.56441},"viewport":{"topLeftPoint":{"lat":25.0344,"lon":121.56342},"btmRightPoint":{"lat":25.0326,"lon":121.5654}},"entryPoints":[{"type":"main","position":{"lat":25.03297,"lon":121.56441}}],"dataSources":{"poiDetails":[{"id":"Rm91cnNxdWFyZTo0ZDY0OTI5ZmNmMmJiNjBjOWY0NDlkYmM=","sourceName":"Foursquare"}]}}]}'
+      string: "{\"summary\":{\"query\":\"taipei 101\",\"queryType\":\"NON_NEAR\",\"queryTime\":59,\"numResults\":10,\"offset\":0,\"totalResults\":1504,\"fuzzyLevel\":1},\"results\":[{\"type\":\"POI\",\"id\":\"158009002017965\",\"score\":4.4091453552,\"info\":\"search:ta:158009002017965-TW\",\"poi\":{\"name\":\"Taipei
+        101\",\"categorySet\":[{\"id\":7315059}],\"categories\":[\"restaurant\",\"taiwanese\"],\"classifications\":[{\"code\":\"RESTAURANT\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"taiwanese\"},{\"nameLocale\":\"en-US\",\"name\":\"restaurant\"}]}]},\"address\":{\"streetName\":\"Xinyi
+        Road Section 5\",\"municipalitySubdivision\":\"Xinyi District\",\"municipality\":\"Taipei
+        City\",\"countrySubdivision\":\"Taipei City\",\"postalCode\":\"110\",\"extendedPostalCode\":\"11049\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"Xinyi
+        Road Section 5, Xinyi District, Taipei City 11049\",\"localName\":\"Xinyi
+        District\"},\"position\":{\"lat\":25.03339,\"lon\":121.56437},\"viewport\":{\"topLeftPoint\":{\"lat\":25.03429,\"lon\":121.56338},\"btmRightPoint\":{\"lat\":25.03249,\"lon\":121.56536}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.03298,\"lon\":121.56437}}],\"dataSources\":{\"poiDetails\":[{\"id\":\"Rm91cnNxdWFyZTo1YzgyMDQyYTRhYzI4YTAwMmNiOWVjYzE=\",\"sourceName\":\"Foursquare\"}]}},{\"type\":\"POI\",\"id\":\"158008000011052\",\"score\":4.4091453552,\"info\":\"search:ta:158008000011052-TW\",\"poi\":{\"name\":\"Taipei
+        101\",\"phone\":\"+886 2 8101 8960\",\"categorySet\":[{\"id\":9382}],\"url\":\"www.taipei-101.com.tw\",\"categories\":[\"commercial
+        building\"],\"classifications\":[{\"code\":\"COMMERCIAL_BUILDING\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"commercial
+        building\"}]}]},\"address\":{\"streetNumber\":\"7\",\"streetName\":\"Xinyi
+        Road Section 5\",\"municipalitySubdivision\":\"Xinyi District\",\"municipality\":\"Taipei
+        City\",\"countrySubdivision\":\"Taipei City\",\"postalCode\":\"110\",\"extendedPostalCode\":\"11049\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"7,
+        Xinyi Road Section 5, Xinyi District, Taipei City 11049\",\"localName\":\"Xinyi
+        District\"},\"position\":{\"lat\":25.03454,\"lon\":121.56449},\"viewport\":{\"topLeftPoint\":{\"lat\":25.03611,\"lon\":121.56276},\"btmRightPoint\":{\"lat\":25.03297,\"lon\":121.56622}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.03297,\"lon\":121.5645}}]},{\"type\":\"POI\",\"id\":\"158009002170007\",\"score\":4.3663377762,\"info\":\"search:ta:158009002170007-TW\",\"poi\":{\"name\":\"Apple
+        Taipei 101\",\"phone\":\"+886 2 8726 3500\",\"brands\":[{\"name\":\"Apple\"}],\"categorySet\":[{\"id\":9361013}],\"url\":\"www.apple.com/tw/retail/taipei101\",\"categories\":[\"electrical,
+        office it: consumer electronics\",\"shop\"],\"classifications\":[{\"code\":\"SHOP\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"electrical,
+        office it: consumer electronics\"},{\"nameLocale\":\"en-US\",\"name\":\"shop\"}]}]},\"address\":{\"municipalitySubdivision\":\"\u4FE1\u7FA9\u5340\",\"municipality\":\"\u53F0\u5317\u5E02\",\"countrySubdivision\":\"\u53F0\u5317\u5E02\",\"postalCode\":\"110\",\"countryCode\":\"TW\",\"country\":\"\u53F0\u7063\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"\u4FE1\u7FA9\u5340,
+        \u53F0\u5317\u5E02 110\",\"localName\":\"\u4FE1\u7FA9\u5340\"},\"position\":{\"lat\":25.03399,\"lon\":121.56454},\"viewport\":{\"topLeftPoint\":{\"lat\":25.03489,\"lon\":121.56355},\"btmRightPoint\":{\"lat\":25.03309,\"lon\":121.56553}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.03456,\"lon\":121.5649}}],\"dataSources\":{\"poiDetails\":[{\"id\":\"Rm91cnNxdWFyZTo1OGVjYmUwNDcyMjBlNjM2NWVlYzY0MzU=\",\"sourceName\":\"Foursquare\"}]}},{\"type\":\"POI\",\"id\":\"158009002351447\",\"score\":4.3663377762,\"info\":\"search:ta:158009002351447-TW\",\"poi\":{\"name\":\"Taipei
+        101 Mall\",\"phone\":\"+886 2 8101 8800\",\"categorySet\":[{\"id\":7373}],\"url\":\"www.taipei-101.com.tw/mall.aspx\",\"categories\":[\"shopping
+        center\"],\"classifications\":[{\"code\":\"SHOPPING_CENTER\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"shopping
+        center\"}]}]},\"address\":{\"municipalitySubdivision\":\"Xinyi District\",\"municipality\":\"Taipei
+        City\",\"countrySubdivision\":\"Taipei City\",\"postalCode\":\"110\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"Xinyi
+        District, Taipei City 110\",\"localName\":\"Xinyi District\"},\"position\":{\"lat\":25.03419,\"lon\":121.56434},\"viewport\":{\"topLeftPoint\":{\"lat\":25.03509,\"lon\":121.56335},\"btmRightPoint\":{\"lat\":25.03329,\"lon\":121.56533}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.03401,\"lon\":121.5638}}],\"dataSources\":{\"poiDetails\":[{\"id\":\"Rm91cnNxdWFyZTo1MjljNWQ0NzExZDJjNTBlOTY0OTYxYWI=\",\"sourceName\":\"Foursquare\"}]}},{\"type\":\"POI\",\"id\":\"158009001994455\",\"score\":4.3243536949,\"info\":\"search:ta:158009001994455-TW\",\"poi\":{\"name\":\"Taipei
+        101 Observation Deck\",\"phone\":\"+886 2 8101 8898\",\"categorySet\":[{\"id\":7337}],\"url\":\"www.taipei-101.com.tw\",\"categories\":[\"scenic/panoramic
+        view\"],\"classifications\":[{\"code\":\"SCENIC_PANORAMIC_VIEW\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"scenic/panoramic
+        view\"}]}]},\"address\":{\"streetName\":\"Songzhi Road\",\"municipalitySubdivision\":\"Xinyi
+        District\",\"municipality\":\"Taipei City\",\"countrySubdivision\":\"Taipei
+        City\",\"postalCode\":\"110\",\"extendedPostalCode\":\"11047\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"Songzhi
+        Road, Xinyi District, Taipei City 11047\",\"localName\":\"Xinyi District\"},\"position\":{\"lat\":25.03373,\"lon\":121.56488},\"viewport\":{\"topLeftPoint\":{\"lat\":25.03463,\"lon\":121.56389},\"btmRightPoint\":{\"lat\":25.03283,\"lon\":121.56587}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.03363,\"lon\":121.56532}},{\"type\":\"main\",\"position\":{\"lat\":25.03366,\"lon\":121.56532}}],\"dataSources\":{\"poiDetails\":[{\"id\":\"Rm91cnNxdWFyZTo0ZDZmNDRjMjBkOTk2ZGNiZjJjZGIzOGU=\",\"sourceName\":\"Foursquare\"}]}},{\"type\":\"POI\",\"id\":\"158009002415426\",\"score\":4.3243536949,\"info\":\"search:ta:158009002415426-TW\",\"poi\":{\"name\":\"Taipei
+        101 Food Court\",\"categorySet\":[{\"id\":7315015}],\"url\":\"www.taipei-101.com.tw/food-search.aspx?st=1&i=2&typ=39\",\"categories\":[\"fast
+        food\",\"restaurant\"],\"classifications\":[{\"code\":\"RESTAURANT\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"fast
+        food\"},{\"nameLocale\":\"en-US\",\"name\":\"restaurant\"}]}]},\"address\":{\"streetName\":\"Xinyi
+        Road Section 5\",\"municipalitySubdivision\":\"Xinyi District\",\"municipality\":\"Taipei
+        City\",\"countrySubdivision\":\"Taipei City\",\"postalCode\":\"110\",\"extendedPostalCode\":\"11049\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"Xinyi
+        Road Section 5, Xinyi District, Taipei City 11049\",\"localName\":\"Xinyi
+        District\"},\"position\":{\"lat\":25.0335,\"lon\":121.56441},\"viewport\":{\"topLeftPoint\":{\"lat\":25.0344,\"lon\":121.56342},\"btmRightPoint\":{\"lat\":25.0326,\"lon\":121.5654}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.03297,\"lon\":121.56441}}],\"dataSources\":{\"poiDetails\":[{\"id\":\"Rm91cnNxdWFyZTo0ZDY0OTI5ZmNmMmJiNjBjOWY0NDlkYmM=\",\"sourceName\":\"Foursquare\"}]}},{\"type\":\"POI\",\"id\":\"158009001768563\",\"score\":4.3243536949,\"info\":\"search:ta:158009001768563-TW\",\"poi\":{\"name\":\"Apple
+        Store Taipei 101\",\"phone\":\"+886 2 8726 3500\",\"categorySet\":[{\"id\":9361075}],\"url\":\"www.apple.com\",\"categories\":[\"mobile
+        phone shop\",\"shop\"],\"classifications\":[{\"code\":\"SHOP\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"mobile
+        phone shop\"},{\"nameLocale\":\"en-US\",\"name\":\"shop\"}]}]},\"address\":{\"streetNumber\":\"45\",\"streetName\":\"Shifu
+        Road\",\"municipalitySubdivision\":\"Xinyi District\",\"municipality\":\"Taipei
+        City\",\"countrySubdivision\":\"Taipei City\",\"postalCode\":\"110\",\"extendedPostalCode\":\"11001\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"45,
+        Shifu Road, Xinyi District, Taipei City 11001\",\"localName\":\"Xinyi District\"},\"position\":{\"lat\":25.03403,\"lon\":121.5639},\"viewport\":{\"topLeftPoint\":{\"lat\":25.03493,\"lon\":121.56291},\"btmRightPoint\":{\"lat\":25.03313,\"lon\":121.56489}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.03404,\"lon\":121.56355}}]},{\"type\":\"POI\",\"id\":\"158009001997398\",\"score\":4.3243536949,\"info\":\"search:ta:158009001997398-TW\",\"poi\":{\"name\":\"Taipei
+        101 Souvenir Shop\",\"categorySet\":[{\"id\":9361026}],\"categories\":[\"gifts,
+        cards, novelties souvenirs\",\"shop\"],\"classifications\":[{\"code\":\"SHOP\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"gifts,
+        cards, novelties souvenirs\"},{\"nameLocale\":\"en-US\",\"name\":\"shop\"}]}]},\"address\":{\"municipalitySubdivision\":\"Xinyi
+        District\",\"municipality\":\"Taipei City\",\"countrySubdivision\":\"Taipei
+        City\",\"postalCode\":\"110\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"Xinyi
+        District, Taipei City 110\",\"localName\":\"Xinyi District\"},\"position\":{\"lat\":25.03406,\"lon\":121.56439},\"viewport\":{\"topLeftPoint\":{\"lat\":25.03496,\"lon\":121.5634},\"btmRightPoint\":{\"lat\":25.03316,\"lon\":121.56538}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.03401,\"lon\":121.5638}}],\"dataSources\":{\"poiDetails\":[{\"id\":\"Rm91cnNxdWFyZTo1YTYzMDZiOWNhMThlYTdjNmJiMTU0ZjM=\",\"sourceName\":\"Foursquare\"}]}},{\"type\":\"POI\",\"id\":\"158009002043908\",\"score\":4.3243536949,\"info\":\"search:ta:158009002043908-TW\",\"poi\":{\"name\":\"Ermenegildo
+        Zegna Taipei 101\",\"phone\":\"+886 2 8101 7978\",\"categorySet\":[{\"id\":9361006}],\"url\":\"www.zegna.tw\",\"categories\":[\"clothing
+        accessories: general\",\"shop\"],\"classifications\":[{\"code\":\"SHOP\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"clothing
+        accessories: general\"},{\"nameLocale\":\"en-US\",\"name\":\"shop\"}]}]},\"address\":{\"municipalitySubdivision\":\"Xinyi
+        District\",\"municipality\":\"Taipei City\",\"countrySubdivision\":\"Taipei
+        City\",\"postalCode\":\"110\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"Xinyi
+        District, Taipei City 110\",\"localName\":\"Xinyi District\"},\"position\":{\"lat\":25.034,\"lon\":121.56457},\"viewport\":{\"topLeftPoint\":{\"lat\":25.0349,\"lon\":121.56358},\"btmRightPoint\":{\"lat\":25.0331,\"lon\":121.56556}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.03456,\"lon\":121.5649}}],\"dataSources\":{\"poiDetails\":[{\"id\":\"Rm91cnNxdWFyZTo0ZmQzMTQxZWU0YjA2YTJkOGNlZjZiNzg=\",\"sourceName\":\"Foursquare\"}]}},{\"type\":\"POI\",\"id\":\"158009002030186\",\"score\":4.3243536949,\"info\":\"search:ta:158009002030186-TW\",\"poi\":{\"name\":\"Taipei
+        101 Wind Damper\",\"categorySet\":[{\"id\":9900}],\"categories\":[\"entertainment\"],\"classifications\":[{\"code\":\"ENTERTAINMENT\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"entertainment\"}]}]},\"address\":{\"streetName\":\"Songzhi
+        Road\",\"municipalitySubdivision\":\"Xinyi District\",\"municipality\":\"Taipei
+        City\",\"countrySubdivision\":\"Taipei City\",\"postalCode\":\"110\",\"extendedPostalCode\":\"11047\",\"countryCode\":\"TW\",\"country\":\"Taiwan\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"Songzhi
+        Road, Xinyi District, Taipei City 11047\",\"localName\":\"Xinyi District\"},\"position\":{\"lat\":25.03377,\"lon\":121.56478},\"viewport\":{\"topLeftPoint\":{\"lat\":25.03467,\"lon\":121.56379},\"btmRightPoint\":{\"lat\":25.03287,\"lon\":121.56577}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":25.03376,\"lon\":121.56532}}],\"dataSources\":{\"poiDetails\":[{\"id\":\"Rm91cnNxdWFyZTo1MWNkNDc0NDQ5OGU4NTQ2YzJjYWZmZTc=\",\"sourceName\":\"Foursquare\"}]}}]}"
     headers:
       content-length:
-      - '11012'
+      - '10547'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Dec 2021 07:03:35 GMT
+      - Wed, 22 Jun 2022 06:24:07 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       vary:
@@ -88,130 +91,7 @@ interactions:
       x-ms-azuremaps-region:
       - West US 2
       x-msedge-ref:
-      - 'Ref A: 7EEB3F87AD334A818E0CEABBEC7E5D7D Ref B: TYO01EDGE2208 Ref C: 2021-12-10T07:03:35Z'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-maps-search/1.0-preview Python/3.7.8 (Windows-10-10.0.19041-SP0)
-      subscription-key:
-      - <RealSubscriptionKey>
-      x-ms-client-id:
-      - <RealClientId>
-    method: GET
-    uri: https://atlas.microsoft.com/search/fuzzy/json?api-version=1.0&query=Taipei%20101&countrySet=US
-  response:
-    body:
-      string: "{\"summary\":{\"query\":\"taipei 101\",\"queryType\":\"NON_NEAR\",\"queryTime\":54,\"numResults\":10,\"offset\":0,\"totalResults\":111,\"fuzzyLevel\":1},\"results\":[{\"type\":\"POI\",\"id\":\"g6JpZK84NDAzNzkwMDMwNjU1NDGhY6NVU0GhdqdVbmlmaWVk\",\"score\":4.4091453552,\"info\":\"search:ta:840379003065541-US\",\"poi\":{\"name\":\"Taipei
-        101\",\"phone\":\"+1 919-388-5885\",\"categorySet\":[{\"id\":7315012}],\"url\":\"www.taipei101cary.com\",\"categories\":[\"chinese\",\"restaurant\"],\"classifications\":[{\"code\":\"RESTAURANT\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"chinese\"},{\"nameLocale\":\"en-US\",\"name\":\"restaurant\"}]}]},\"address\":{\"streetNumber\":\"121\",\"streetName\":\"East
-        Chatham Street\",\"municipalitySubdivision\":\"Downtown Cary\",\"municipality\":\"Cary\",\"countrySecondarySubdivision\":\"Wake\",\"countrySubdivision\":\"NC\",\"countrySubdivisionName\":\"North
-        Carolina\",\"postalCode\":\"27511\",\"extendedPostalCode\":\"27511-3321\",\"countryCode\":\"US\",\"country\":\"United
-        States\",\"countryCodeISO3\":\"USA\",\"freeformAddress\":\"121 East Chatham
-        Street, Cary, NC 27511\",\"localName\":\"Cary\"},\"position\":{\"lat\":35.78783,\"lon\":-78.78035},\"viewport\":{\"topLeftPoint\":{\"lat\":35.78873,\"lon\":-78.78146},\"btmRightPoint\":{\"lat\":35.78693,\"lon\":-78.77924}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":35.78737,\"lon\":-78.78032}}],\"dataSources\":{\"poiDetails\":[{\"id\":\"Rm91cnNxdWFyZTo0ZDY4NjYwNjM0MmI4Y2ZhYzBjY2I5MmM=\",\"sourceName\":\"Foursquare\"}]}},{\"type\":\"POI\",\"id\":\"g6JpZK84NDAwNjkwMDU0MTAwOTShY6NVU0GhdqdVbmlmaWVk\",\"score\":4.4091453552,\"info\":\"search:ta:840069005410094-US\",\"poi\":{\"name\":\"Taipei
-        101\",\"phone\":\"+1 559-323-4804\",\"categorySet\":[{\"id\":7315012}],\"categories\":[\"chinese\",\"restaurant\"],\"classifications\":[{\"code\":\"RESTAURANT\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"chinese\"},{\"nameLocale\":\"en-US\",\"name\":\"restaurant\"}]}]},\"address\":{\"streetNumber\":\"6702\",\"streetName\":\"North
-        Cedar Avenue\",\"municipality\":\"Fresno\",\"countrySecondarySubdivision\":\"Fresno\",\"countrySubdivision\":\"CA\",\"countrySubdivisionName\":\"California\",\"postalCode\":\"93710\",\"extendedPostalCode\":\"93710-4404\",\"countryCode\":\"US\",\"country\":\"United
-        States\",\"countryCodeISO3\":\"USA\",\"freeformAddress\":\"6702 North Cedar
-        Avenue, Fresno, CA 93710\",\"localName\":\"Fresno\"},\"position\":{\"lat\":36.83564,\"lon\":-119.75412},\"viewport\":{\"topLeftPoint\":{\"lat\":36.83654,\"lon\":-119.75524},\"btmRightPoint\":{\"lat\":36.83474,\"lon\":-119.753}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":36.83564,\"lon\":-119.75412}}]},{\"type\":\"POI\",\"id\":\"g6JpZK84NDAxMjkwMDg3NTAxNzehY6NVU0GhdqdVbmlmaWVk\",\"score\":4.4091453552,\"info\":\"search:ta:840129008750177-US\",\"poi\":{\"name\":\"Taipei
-        101\",\"phone\":\"+1 407-542-1527\",\"categorySet\":[{\"id\":7315012}],\"categories\":[\"chinese\",\"restaurant\"],\"classifications\":[{\"code\":\"RESTAURANT\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"chinese\"},{\"nameLocale\":\"en-US\",\"name\":\"restaurant\"}]}]},\"address\":{\"streetNumber\":\"3050\",\"streetName\":\"Alafaya
-        Trail\",\"municipality\":\"Oviedo\",\"countrySecondarySubdivision\":\"Seminole\",\"countrySubdivision\":\"FL\",\"countrySubdivisionName\":\"Florida\",\"postalCode\":\"32765\",\"extendedPostalCode\":\"32765-5050\",\"countryCode\":\"US\",\"country\":\"United
-        States\",\"countryCodeISO3\":\"USA\",\"freeformAddress\":\"3050 Alafaya Trail,
-        Oviedo, FL 32765\",\"localName\":\"Oviedo\"},\"position\":{\"lat\":28.62519,\"lon\":-81.20732},\"viewport\":{\"topLeftPoint\":{\"lat\":28.62609,\"lon\":-81.20834},\"btmRightPoint\":{\"lat\":28.62429,\"lon\":-81.2063}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":28.62546,\"lon\":-81.20778}},{\"type\":\"main\",\"position\":{\"lat\":28.62519,\"lon\":-81.20778}}],\"dataSources\":{\"poiDetails\":[{\"id\":\"Rm91cnNxdWFyZTo1MjkzODM1NDExZDJjZGM5ZTEzZWEyMDg=\",\"sourceName\":\"Foursquare\"}]}},{\"type\":\"POI\",\"id\":\"g6JpZK84NDAwNjkwMjEzMzE4ODihY6NVU0GhdqdVbmlmaWVk\",\"score\":4.3663377762,\"info\":\"search:ta:840069021331888-US\",\"poi\":{\"name\":\"Taipei
-        101 Fresno\",\"categorySet\":[{\"id\":9376005}],\"categories\":[\"caf\xE9/pub\",\"tea
-        house\"],\"classifications\":[{\"code\":\"CAFE_PUB\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"caf\xE9/pub\"},{\"nameLocale\":\"en-US\",\"name\":\"tea
-        house\"}]}]},\"address\":{\"municipality\":\"Fresno\",\"countrySecondarySubdivision\":\"Fresno\",\"countrySubdivision\":\"CA\",\"countrySubdivisionName\":\"California\",\"postalCode\":\"93720\",\"countryCode\":\"US\",\"country\":\"United
-        States\",\"countryCodeISO3\":\"USA\",\"freeformAddress\":\"Fresno, CA 93720\",\"localName\":\"Fresno\"},\"position\":{\"lat\":36.84141,\"lon\":-119.75044},\"viewport\":{\"topLeftPoint\":{\"lat\":36.84231,\"lon\":-119.75156},\"btmRightPoint\":{\"lat\":36.84051,\"lon\":-119.74932}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":36.84139,\"lon\":-119.75068}}],\"dataSources\":{\"poiDetails\":[{\"id\":\"Rm91cnNxdWFyZTo1NDFiNWNjMDQ5OGVhZDgzNGE3MThiMjI=\",\"sourceName\":\"Foursquare\"}]}},{\"type\":\"POI\",\"id\":\"g6JpZK84NDAyNjkwMDE2Mzk1MjihY6NVU0GhdqdVbmlmaWVk\",\"score\":4.2831697464,\"info\":\"search:ta:840269001639528-US\",\"poi\":{\"name\":\"Taipei
-        101 Asian Bar & Grill\",\"phone\":\"+1 248-380-6816\",\"categorySet\":[{\"id\":7315012}],\"url\":\"www.taipei101novi.com\",\"categories\":[\"chinese\",\"restaurant\"],\"classifications\":[{\"code\":\"RESTAURANT\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"chinese\"},{\"nameLocale\":\"en-US\",\"name\":\"restaurant\"}]}]},\"address\":{\"streetNumber\":\"44125\",\"streetName\":\"West
-        12 Mile Road\",\"municipality\":\"Novi\",\"countrySecondarySubdivision\":\"Oakland\",\"countrySubdivision\":\"MI\",\"countrySubdivisionName\":\"Michigan\",\"postalCode\":\"48377\",\"extendedPostalCode\":\"48377-2613\",\"countryCode\":\"US\",\"country\":\"United
-        States\",\"countryCodeISO3\":\"USA\",\"freeformAddress\":\"44125 West 12 Mile
-        Road, Novi, MI 48377\",\"localName\":\"Novi\"},\"position\":{\"lat\":42.49191,\"lon\":-83.48379},\"viewport\":{\"topLeftPoint\":{\"lat\":42.49528,\"lon\":-83.48836},\"btmRightPoint\":{\"lat\":42.48854,\"lon\":-83.47922}},\"entryPoints\":[{\"type\":\"minor\",\"position\":{\"lat\":42.49206,\"lon\":-83.48344}},{\"type\":\"main\",\"position\":{\"lat\":42.49526,\"lon\":-83.48331}},{\"type\":\"main\",\"position\":{\"lat\":42.4909,\"lon\":-83.48453}}],\"dataSources\":{\"poiDetails\":[{\"id\":\"Rm91cnNxdWFyZTo1OTNlZjNhODhjMzVkYzZlNDAzNzFhMDY=\",\"sourceName\":\"Foursquare\"}]}},{\"type\":\"POI\",\"id\":\"g6JpZK84NDAwMTkwMDE3NDQ1MjehY6NVU0GhdqdVbmlmaWVk\",\"score\":4.2831697464,\"info\":\"search:ta:840019001744527-US\",\"poi\":{\"name\":\"Taipei
-        101 Sushi & Asian Bistro\",\"phone\":\"+1 205-912-7037\",\"categorySet\":[{\"id\":7315148}],\"url\":\"taipei101bham.com/\",\"categories\":[\"restaurant\",\"sushi\"],\"classifications\":[{\"code\":\"RESTAURANT\",\"names\":[{\"nameLocale\":\"en-US\",\"name\":\"sushi\"},{\"nameLocale\":\"en-US\",\"name\":\"restaurant\"}]}]},\"address\":{\"streetNumber\":\"471\",\"streetName\":\"Green
-        Springs Highway\",\"municipality\":\"Homewood\",\"countrySecondarySubdivision\":\"Jefferson\",\"countrySubdivision\":\"AL\",\"countrySubdivisionName\":\"Alabama\",\"postalCode\":\"35209\",\"countryCode\":\"US\",\"country\":\"United
-        States\",\"countryCodeISO3\":\"USA\",\"freeformAddress\":\"471 Green Springs
-        Highway, Birmingham, AL 35209\",\"localName\":\"Birmingham\"},\"position\":{\"lat\":33.46303,\"lon\":-86.81909},\"viewport\":{\"topLeftPoint\":{\"lat\":33.46393,\"lon\":-86.82017},\"btmRightPoint\":{\"lat\":33.46213,\"lon\":-86.81801}},\"entryPoints\":[{\"type\":\"main\",\"position\":{\"lat\":33.46279,\"lon\":-86.81944}}],\"dataSources\":{\"poiDetails\":[{\"id\":\"Rm91cnNxdWFyZTo0YjRkNmM0OWY5NjRhNTIwMzFkMjI2ZTM=\",\"sourceName\":\"Foursquare\"}]}},{\"type\":\"Street\",\"id\":\"US/STR/p3/3657830\",\"score\":2.1169600487,\"address\":{\"streetName\":\"Taipei
-        Drive\",\"municipalitySubdivision\":\"Carmine Parkmont\",\"municipality\":\"San
-        Jose\",\"countrySecondarySubdivision\":\"Santa Clara\",\"countrySubdivision\":\"CA\",\"countrySubdivisionName\":\"California\",\"postalCode\":\"95131\",\"extendedPostalCode\":\"95131-2417,
-        95131-2421\",\"countryCode\":\"US\",\"country\":\"United States\",\"countryCodeISO3\":\"USA\",\"freeformAddress\":\"Taipei
-        Drive, San Jose, CA 95131\",\"localName\":\"San Jose\"},\"position\":{\"lat\":37.38338,\"lon\":-121.88989},\"viewport\":{\"topLeftPoint\":{\"lat\":37.38361,\"lon\":-121.89022},\"btmRightPoint\":{\"lat\":37.38312,\"lon\":-121.88954}}},{\"type\":\"Street\",\"id\":\"US/STR/p2/4245547\",\"score\":2.0962057114,\"address\":{\"streetName\":\"Taipei
-        Island Lane\",\"municipality\":\"Leesburg\",\"countrySecondarySubdivision\":\"Lake\",\"countrySubdivision\":\"FL\",\"countrySubdivisionName\":\"Florida\",\"postalCode\":\"34788\",\"extendedPostalCode\":\"34788-2973,
-        34788-2974, 34788-2975\",\"countryCode\":\"US\",\"country\":\"United States\",\"countryCodeISO3\":\"USA\",\"freeformAddress\":\"Taipei
-        Island Lane, Leesburg, FL 34788\",\"localName\":\"Leesburg\"},\"position\":{\"lat\":28.8607,\"lon\":-81.75625},\"viewport\":{\"topLeftPoint\":{\"lat\":28.8613,\"lon\":-81.75626},\"btmRightPoint\":{\"lat\":28.86017,\"lon\":-81.75625}}},{\"type\":\"Street\",\"id\":\"US/STR/p0/4742747\",\"score\":2.0959999561,\"address\":{\"streetName\":\"Taipei
-        Court\",\"municipality\":\"Fayetteville\",\"countrySecondarySubdivision\":\"Cumberland\",\"countrySubdivision\":\"NC\",\"countrySubdivisionName\":\"North
-        Carolina\",\"postalCode\":\"28303\",\"extendedPostalCode\":\"28303-6700, 28303-6701\",\"countryCode\":\"US\",\"country\":\"United
-        States\",\"countryCodeISO3\":\"USA\",\"freeformAddress\":\"Taipei Court, Fayetteville,
-        NC 28303\",\"localName\":\"Fayetteville\"},\"position\":{\"lat\":35.07239,\"lon\":-78.95108},\"viewport\":{\"topLeftPoint\":{\"lat\":35.0743,\"lon\":-78.95203},\"btmRightPoint\":{\"lat\":35.07239,\"lon\":-78.95108}}},{\"type\":\"Street\",\"id\":\"US/STR/p1/3821282\",\"score\":2.0959999561,\"address\":{\"streetName\":\"Taipei
-        Court\",\"municipality\":\"Punta Gorda\",\"countrySecondarySubdivision\":\"Charlotte\",\"countrySubdivision\":\"FL\",\"countrySubdivisionName\":\"Florida\",\"postalCode\":\"33983\",\"extendedPostalCode\":\"33983-8624\",\"countryCode\":\"US\",\"country\":\"United
-        States\",\"countryCodeISO3\":\"USA\",\"freeformAddress\":\"Taipei Court, Punta
-        Gorda, FL 33983\",\"localName\":\"Punta Gorda\"},\"position\":{\"lat\":26.99807,\"lon\":-82.01628},\"viewport\":{\"topLeftPoint\":{\"lat\":26.99888,\"lon\":-82.01635},\"btmRightPoint\":{\"lat\":26.99792,\"lon\":-82.01617}}}]}"
-    headers:
-      content-length:
-      - '9495'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 10 Dec 2021 07:03:35 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      vary:
-      - Accept-Encoding
-      x-cache:
-      - CONFIG_NOCACHE
-      x-content-type-options:
-      - nosniff
-      x-ms-azuremaps-region:
-      - West US 2
-      x-msedge-ref:
-      - 'Ref A: CE946FBBF9624FD8BFFAF3AF7F71643D Ref B: TYO01EDGE2208 Ref C: 2021-12-10T07:03:35Z'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-maps-search/1.0-preview Python/3.7.8 (Windows-10-10.0.19041-SP0)
-      subscription-key:
-      - <RealSubscriptionKey>
-      x-ms-client-id:
-      - <RealClientId>
-    method: GET
-    uri: https://atlas.microsoft.com/search/fuzzy/json?api-version=1.0&query=Taipei%20101&countrySet=AQ
-  response:
-    body:
-      string: '{"summary":{"query":"taipei 101","queryType":"NON_NEAR","queryTime":14,"numResults":0,"offset":0,"totalResults":0,"fuzzyLevel":2},"results":[]}'
-    headers:
-      content-length:
-      - '143'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 10 Dec 2021 07:03:36 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      vary:
-      - Accept-Encoding
-      x-cache:
-      - CONFIG_NOCACHE
-      x-content-type-options:
-      - nosniff
-      x-ms-azuremaps-region:
-      - West US 2
-      x-msedge-ref:
-      - 'Ref A: 3FB467D5052B48AC92652BAE55B4280C Ref B: TYO01EDGE2208 Ref C: 2021-12-10T07:03:36Z'
+      - 'Ref A: E3B9E34571244205834FC3081316084F Ref B: TPE30EDGE0912 Ref C: 2022-06-22T06:24:07Z'
     status:
       code: 200
       message: OK
