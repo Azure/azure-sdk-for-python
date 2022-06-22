@@ -478,7 +478,11 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         # check that fixed is less than 'exp'
         assert sleep_time_fixed < backoff * (2 ** 1)
 
-    def test_custom_client_id_sender(self):
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_custom_client_id_sender(self, servicebus_namespace_connection_string):
         servicebus_connection_str = "connection_string"
         queue_name = "queue_name"
         custom_id = "my_custom_id"
@@ -488,7 +492,11 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             assert queue_sender._name is not None
             assert queue_sender._name == custom_id
 
-    def test_default_client_id_sender(self):
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_default_client_id_sender(self, servicebus_namespace_connection_string):
         servicebus_connection_str = "connection_string"
         queue_name = "queue_name"
         servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
@@ -497,7 +505,11 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             assert queue_sender._name is not None
             assert "SBSender" in queue_sender._name
 
-    def test_custom_client_id_receiver(self):
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_custom_client_id_receiver(self, servicebus_namespace_connection_string):
         servicebus_connection_str = "connection_string"
         queue_name = "queue_name"
         custom_id = "my_custom_id"
@@ -507,7 +519,12 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             assert queue_sender._name is not None
             assert queue_sender._name == custom_id
 
-    def test_default_client_id_receiver(self):
+    
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_default_client_id_receiver(self, servicebus_namespace_connection_string):
         servicebus_connection_str = "connection_string"
         queue_name = "queue_name"
         servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
