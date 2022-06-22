@@ -50,12 +50,12 @@ def sample_hello_world():
     #                                               "Endian": "BIG",
     #                                               "DatasetProperties": {
     #                                                   "FileSourceInfo": {
-    #                                                       "FileSource": "/osdu-user/1655812177289-2022-06-21-11-49-37-289/53e7cef6117240ed9f34ebbeaec44c55"
+    #                                                       "FileSource": "/osdu-user/1655884402137-2022-06-22-07-53-22-137/8651127327c64b42a7fa0f8afb13d64d"
     #                                                   }
     #                                               }
     #                                           }
     #                                       })
-    # client.get_file_metadata_by_id_using_get(data_partition_id='bvtstglf7zn1c-testdata',frame_of_reference='fajba',id='bvtstglf7zn1c-testdata:dataset--File.Generic:246493bc-5e39-46e2-a55d-93a5713f356e')
-    client.download_url_using_get(data_partition_id='bvtstglf7zn1c-testdata',frame_of_reference='fajba',id='bvtstglf7zn1c-testdata:dataset--File.Generic:246493bc-5e39-46e2-a55d-93a5713f356e')
+    # client.get_file_metadata_by_id_using_get(data_partition_id='bvtstglf7zn1c-testdata',frame_of_reference='fajba',id='bvtstglf7zn1c-testdata:dataset--File.Generic:8ff6e7f0-deb1-4ac3-b499-c82658ed2353')
+    client.download_url_using_get(data_partition_id='bvtstglf7zn1c-testdata',frame_of_reference='fajba',id='bvtstglf7zn1c-testdata:dataset--File.Generic:8ff6e7f0-deb1-4ac3-b499-c82658ed2353')
 if __name__ == "__main__":
     sample_hello_world()
