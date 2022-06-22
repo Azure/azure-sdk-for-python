@@ -55,14 +55,8 @@ parameters:
     default:
       Public:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-        # TODO: Migrate location override into azure-sdk-tools eng/common
-        # See https://github.com/Azure/azure-sdk-tools/issues/3398
-        Location: 'westus'
       Preview:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
-        # TODO: Migrate location override into azure-sdk-tools eng/common
-        # See https://github.com/Azure/azure-sdk-tools/issues/3398
-        Location: 'westus'
       Canary:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
         Location: 'centraluseuap'
@@ -105,6 +99,9 @@ stages:
         jobs:
         - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
           parameters:
+            SparseCheckoutPaths:
+              # Python recording files are implicit excluded here since they are using '.yaml' file extension.
+              - "sdk/${{ parameters.ServiceDirectory }}/**/*.json"
             JobTemplatePath: /eng/pipelines/templates/jobs/live.tests.yml
             AdditionalParameters:
               ServiceDirectory: ${{ parameters.ServiceDirectory }}

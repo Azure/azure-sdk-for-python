@@ -159,7 +159,7 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
         cls, data: Dict, context: Dict, additional_message: str, inside_pipeline=False, **kwargs
     ) -> "AutoMLJob":
         from azure.ai.ml._schema.automl.nlp_vertical.text_classification_multilabel import (
-            TextClassificationMultilableSchema,
+            TextClassificationMultilabelSchema,
         )
 
         if inside_pipeline:
@@ -167,18 +167,18 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
 
             return load_from_dict(AutoMLTextClassificationMultilabelNode, data, context, additional_message, **kwargs)
 
-        return load_from_dict(TextClassificationMultilableSchema, data, context, additional_message, **kwargs)
+        return load_from_dict(TextClassificationMultilabelSchema, data, context, additional_message, **kwargs)
 
     def _to_dict(self, inside_pipeline=False) -> Dict:
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLTextClassificationMultilabelNode
         from azure.ai.ml._schema.automl.nlp_vertical.text_classification_multilabel import (
-            TextClassificationMultilableSchema,
+            TextClassificationMultilabelSchema,
         )
 
         if inside_pipeline:
             return AutoMLTextClassificationMultilabelNode(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         else:
-            return TextClassificationMultilableSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            return TextClassificationMultilabelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     def __eq__(self, other):
         if not isinstance(other, TextClassificationMultilabelJob):

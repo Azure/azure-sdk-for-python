@@ -6,7 +6,7 @@ import uuid
 import os
 from pathlib import Path
 
-from azure.ai.ml._operations.run_history_constants import RunHistoryConstants
+from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml._scope_dependent_operations import OperationScope
 import pytest
 from pytest_mock import MockFixture
@@ -51,7 +51,7 @@ def mock_workspace_scope() -> OperationScope:
 @pytest.fixture
 def mock_machinelearning_client(mocker: MockFixture) -> MLClient:
     # TODO(1628638): remove when 2022_02 api is available in ARM
-    mocker.patch("azure.ai.ml._operations.JobOperations._get_workspace_url", return_value="xxx")
+    mocker.patch("azure.ai.ml.operations.JobOperations._get_workspace_url", return_value="xxx")
     yield MLClient(
         credential=Mock(spec_set=DefaultAzureCredential),
         subscription_id=Test_Subscription,

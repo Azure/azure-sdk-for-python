@@ -61,7 +61,7 @@ from typing import Union, Sequence, Iterable
 from enum import EnumMeta, Enum as PyEnum
 from inspect import Parameter, signature
 
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException, DSLComponentDefiningError
+from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException, MldesignerComponentDefiningError
 from azure.ai.ml.entities._component.input_output import ComponentInput, ComponentOutput
 from azure.ai.ml.constants import InputOutputModes, AssetTypes
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorTarget, ErrorCategory, ComponentException
@@ -89,6 +89,8 @@ class Input(DictMixin):
     :type min: Union[integer, float]
     :param max: The max value -- if a larger value is passed to a job, the job execution will fail
     :type max: Union[integer, float]
+    :param optional: Determine if this input is optional
+    :type optional: bool
     :param description: Description of the input
     :type description: str
     """
@@ -115,7 +117,16 @@ class Input(DictMixin):
     _EMPTY = Parameter.empty
 
     @overload
-    def __init__(self, type: str = "uri_folder", path: str = None, mode: str = "ro_mount", description: str = None):
+    def __init__(
+        self,
+        *,
+        type: str = "uri_folder",
+        path: str = None,
+        mode: str = "ro_mount",
+        optional: bool = None,
+        description: str = None,
+        **kwargs,
+    ):
         """Initialize an input.
 
         :param type: The type of the data input. Possible values include:
@@ -128,6 +139,8 @@ class Input(DictMixin):
                             'download': Download the data to the compute target,
                             'direct': Pass in the URI as a string
         :type mode: str
+        :param optional: Determine if this input is optional
+        :type optional: bool
         :param description: Description of the input
         :type description: str
         """
@@ -135,7 +148,15 @@ class Input(DictMixin):
 
     @overload
     def __init__(
-        self, type: str = "number", default: float = None, min: float = None, max: float = None, description: str = None
+        self,
+        *,
+        type: str = "number",
+        default: float = None,
+        min: float = None,
+        max: float = None,
+        optional: bool = None,
+        description: str = None,
+        **kwargs,
     ):
         """Initialize a number input.
 
@@ -147,6 +168,8 @@ class Input(DictMixin):
         :type min: float
         :param max: The max value -- if a larger value is passed to a job, the job execution will fail
         :type max: float
+        :param optional: Determine if this input is optional
+        :type optional: bool
         :param description: Description of the input
         :type description: str
         """
@@ -154,7 +177,15 @@ class Input(DictMixin):
 
     @overload
     def __init__(
-        self, type: str = "integer", default: int = None, min: int = None, max: int = None, description: str = None
+        self,
+        *,
+        type: str = "integer",
+        default: int = None,
+        min: int = None,
+        max: int = None,
+        optional: bool = None,
+        description: str = None,
+        **kwargs,
     ):
         """Initialize an integer input.
 
@@ -166,32 +197,54 @@ class Input(DictMixin):
         :type min: integer
         :param max: The max value -- if a larger value is passed to a job, the job execution will fail
         :type max: integer
+        :param optional: Determine if this input is optional
+        :type optional: bool
         :param description: Description of the input
         :type description: str
         """
         pass
 
     @overload
-    def __init__(self, type: str = "string", default: str = None, description: str = None):
+    def __init__(
+        self,
+        *,
+        type: str = "string",
+        default: str = None,
+        optional: bool = None,
+        description: str = None,
+        **kwargs,
+    ):
         """Initialize a string input.
 
         :param type: The type of the data input. Can only be set to "string".
         :type type: str
         :param default: The default value of this input. When a `default` is set, the input will be optional
         :type default: str
+        :param optional: Determine if this input is optional
+        :type optional: bool
         :param description: Description of the input
         :type description: str
         """
         pass
 
     @overload
-    def __init__(self, type: str = "boolean", default: bool = None, description: str = None):
+    def __init__(
+        self,
+        *,
+        type: str = "boolean",
+        default: bool = None,
+        optional: bool = None,
+        description: str = None,
+        **kwargs,
+    ):
         """Initialize a bool input.
 
         :param type: The type of the data input. Can only be set to "boolean".
         :type type: str
         :param default: The default value of this input. When a `default` is set, input will be optional
         :type default: bool
+        :param optional: Determine if this input is optional
+        :type optional: bool
         :param description: Description of the input
         :type description: str
         """
@@ -204,6 +257,7 @@ class Input(DictMixin):
         path: str = None,
         mode: str = "ro_mount",
         default: Union[str, int, float, bool] = None,
+        optional: bool = None,
         min: Union[int, float] = None,
         max: Union[int, float] = None,
         enum=None,
@@ -225,16 +279,12 @@ class Input(DictMixin):
             self.path = path
         self.mode = None if self._is_parameter_type else mode
         self.default = default
+        self.optional = True if optional is True else None
         self.min = min
         self.max = max
         self.enum = enum
         self._allowed_types = self._ALLOWED_TYPES.get(self.type)
         self._validate_parameter_combinations()
-
-    @property
-    def optional(self) -> bool:
-        """Return whether the parameter is optional."""
-        return True if self.default is not None else None
 
     def _to_dict(self, remove_name=True):
         """Convert the Input object to a dict."""
@@ -315,7 +365,7 @@ class Input(DictMixin):
                             default_value,
                             type(default_value),
                         )
-                    raise DSLComponentDefiningError(cause=msg) from e
+                    raise MldesignerComponentDefiningError(cause=msg) from e
             self.default = default_value
 
     def _validate_or_throw(self, value):
@@ -387,6 +437,10 @@ class Input(DictMixin):
     @classmethod
     def _get_default_string_input(cls):
         return cls(type="string")
+
+    @classmethod
+    def _get_param_with_standard_annotation(cls, func):
+        return _get_param_with_standard_annotation(func, is_func=True)
 
 
 class Output(DictMixin):
@@ -687,7 +741,7 @@ def _get_param_with_standard_annotation(
     annotations = _filter_pipeline_parameters(getattr(cls_or_func, "__annotations__", {}))
     annotations = _update_io_from_mldesigner(annotations)
     annotation_fields = _get_fields(annotations)
-    # Update fields use class field with defaults from class dict or signuration(func).paramters
+    # Update fields use class field with defaults from class dict or signature(func).paramters
     if not is_func:
         # Only consider public fields in class dict
         defaults_dict = {key: val for key, val in cls_or_func.__dict__.items() if not key.startswith("_")}

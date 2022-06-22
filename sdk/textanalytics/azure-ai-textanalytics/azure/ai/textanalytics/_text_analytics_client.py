@@ -61,9 +61,8 @@ from ._models import (
     RecognizeCustomEntitiesAction,
     RecognizeCustomEntitiesResult,
     SingleCategoryClassifyAction,
-    SingleCategoryClassifyResult,
     MultiCategoryClassifyAction,
-    MultiCategoryClassifyResult,
+    ClassifyDocumentResult,
     AnalyzeHealthcareEntitiesAction,
     _AnalyzeActionsType,
 )
@@ -82,8 +81,7 @@ AnalyzeActionsResponse = AnalyzeActionsLROPoller[
                 ExtractKeyPhrasesResult,
                 AnalyzeSentimentResult,
                 RecognizeCustomEntitiesResult,
-                SingleCategoryClassifyResult,
-                MultiCategoryClassifyResult,
+                ClassifyDocumentResult,
                 AnalyzeHealthcareEntitiesResult,
                 DocumentError,
             ]
@@ -618,7 +616,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     @validate_multiapi_args(
         version_method_added="v3.1",
-        args_mapping={"2022-05-01": ["display_name", "fhir_version"]}
+        args_mapping={"2022-05-01": ["display_name"]}
     )
     def begin_analyze_healthcare_entities(
         self,
@@ -651,9 +649,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             take precedence over whole batch language. See https://aka.ms/talangs for
             supported languages in Language API.
         :keyword str display_name: An optional display name to set for the requested analysis.
-        :keyword str fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle
-            on the result object. For additional information see https://www.hl7.org/fhir/overview.html.
-            The only acceptable values to pass in are None and "4.0.1". The default value is None.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
             you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
@@ -683,7 +678,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         .. versionadded:: v3.1
             The *begin_analyze_healthcare_entities* client method.
         .. versionadded:: 2022-04-01-preview
-            The *display_name* and *fhir_version* keyword arguments.
+            The *display_name* keyword arguments.
 
         .. admonition:: Example:
 
@@ -703,7 +698,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         string_index_type = kwargs.pop("string_index_type", self._string_index_type_default)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         display_name = kwargs.pop("display_name", None)
-        fhir_version = kwargs.pop("fhir_version", None)
 
         if continuation_token:
             def get_result_from_cont_token(initial_response, pipeline_response):
@@ -759,7 +753,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                                         model_version=model_version,
                                         logging_opt_out=disable_service_logs,
                                         string_index_type=string_index_type_compatibility(string_index_type),
-                                        fhir_version=fhir_version,
                                     )
                                 )
                             ]
@@ -1086,8 +1079,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     ExtractKeyPhrasesResult,
                     AnalyzeSentimentResult,
                     RecognizeCustomEntitiesResult,
-                    SingleCategoryClassifyResult,
-                    MultiCategoryClassifyResult,
+                    ClassifyDocumentResult,
                     AnalyzeHealthcareEntitiesResult,
                     DocumentError,
                 ]
@@ -1146,8 +1138,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
             list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
             ExtractKeyPhrasesResult or AnalyzeSentimentResult or RecognizeCustomEntitiesResult
-            or SingleCategoryClassifyResult or MultiCategoryClassifyResult or AnalyzeHealthcareEntitiesResult or
-            DocumentError]]]
+            or ClassifyDocumentResult or AnalyzeHealthcareEntitiesResult or DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -1155,8 +1146,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         .. versionadded:: 2022-04-01-preview
             The *RecognizeCustomEntitiesAction*, *SingleCategoryClassifyAction*,
             *MultiCategoryClassifyAction*, and *AnalyzeHealthcareEntitiesAction* input options and the
-            corresponding *RecognizeCustomEntitiesResult*, *SingleCategoryClassifyResult*,
-            *MultiCategoryClassifyResult*, and *AnalyzeHealthcareEntitiesResult* result objects
+            corresponding *RecognizeCustomEntitiesResult*, *ClassifyDocumentResult*,
+            and *AnalyzeHealthcareEntitiesResult* result objects
 
         .. admonition:: Example:
 

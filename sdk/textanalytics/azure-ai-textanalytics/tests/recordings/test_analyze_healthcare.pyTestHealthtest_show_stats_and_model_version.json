@@ -1,15 +1,15 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-04-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "397",
+        "Content-Length": "393",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -46,7 +46,7 @@
             "taskName": "0",
             "kind": "Healthcare",
             "parameters": {
-              "modelVersion": "2022-03-01",
+              "modelVersion": "latest",
               "stringIndexType": "UnicodeCodePoint"
             }
           }
@@ -54,41 +54,41 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "48222cd6-36bc-4ab7-8e29-dbac54a2ce46",
+        "apim-request-id": "e4cbd6cb-c27e-4f9a-bbba-c3d14fe89a17",
         "Content-Length": "0",
-        "Date": "Tue, 03 May 2022 00:11:07 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/6f18560e-ba31-4234-a211-ec750b19d911?api-version=2022-04-01-preview",
+        "Date": "Thu, 09 Jun 2022 23:38:44 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/028680bc-2400-4ba6-b651-1e2c9b1774d1?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "284"
+        "x-envoy-upstream-service-time": "371"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/6f18560e-ba31-4234-a211-ec750b19d911?api-version=2022-04-01-preview\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/028680bc-2400-4ba6-b651-1e2c9b1774d1?api-version=2022-05-01\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "49747107-b342-4cd1-a8b2-b3f6c789a29e",
-        "Content-Length": "1183",
+        "apim-request-id": "f1889bd8-e1a4-455d-8348-98bc71f0f8c1",
+        "Content-Length": "1184",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 03 May 2022 00:11:12 GMT",
+        "Date": "Thu, 09 Jun 2022 23:38:48 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "98"
+        "x-envoy-upstream-service-time": "86"
       },
       "ResponseBody": {
-        "jobId": "6f18560e-ba31-4234-a211-ec750b19d911",
-        "lastUpdateDateTime": "2022-05-03T00:11:09Z",
-        "createdDateTime": "2022-05-03T00:11:07Z",
-        "expirationDateTime": "2022-05-04T00:11:07Z",
+        "jobId": "028680bc-2400-4ba6-b651-1e2c9b1774d1",
+        "lastUpdatedDateTime": "2022-06-09T23:38:45Z",
+        "createdDateTime": "2022-06-09T23:38:44Z",
+        "expirationDateTime": "2022-06-10T23:38:44Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -100,7 +100,7 @@
             {
               "kind": "HealthcareLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-05-03T00:11:09.4793906Z",
+              "lastUpdateDateTime": "2022-06-09T23:38:45.3494015Z",
               "status": "succeeded",
               "results": {
                 "statistics": {

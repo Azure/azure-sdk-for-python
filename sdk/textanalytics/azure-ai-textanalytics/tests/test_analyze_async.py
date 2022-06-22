@@ -38,8 +38,7 @@ from azure.ai.textanalytics import (
     SingleCategoryClassifyAction,
     MultiCategoryClassifyAction,
     RecognizeCustomEntitiesAction,
-    SingleCategoryClassifyResult,
-    MultiCategoryClassifyResult,
+    ClassifyDocumentResult,
     RecognizeCustomEntitiesResult,
     AnalyzeHealthcareEntitiesAction
 )
@@ -172,12 +171,12 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             elif idx == 1:
                 assert document_result.sentiment == "negative"
                 assert len(document_result.sentences) == 2
-                assert document_result.sentences[0].text == "I did not like the hotel we stayed at."
+                assert document_result.sentences[0].text == "I did not like the hotel we stayed at. "  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14208842
                 assert document_result.sentences[1].text == "It was too expensive."
             else:
                 assert document_result.sentiment == "positive"
                 assert len(document_result.sentences) == 2
-                assert document_result.sentences[0].text == "The restaurant had really good food."
+                assert document_result.sentences[0].text == "The restaurant had really good food. "  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14208842
                 assert document_result.sentences[1].text == "I recommend you try it."
 
     @TextAnalyticsPreparer()
@@ -225,13 +224,13 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         assert 9 == sleek_opinion.offset
                         assert not sleek_opinion.is_negated
 
-                        premium_opinion = mined_opinion.assessments[1]
-                        assert 'premium' == premium_opinion.text
-                        assert 'positive' == premium_opinion.sentiment
-                        assert 0.0 == premium_opinion.confidence_scores.neutral
-                        self.validateConfidenceScores(premium_opinion.confidence_scores)
-                        assert 15 == premium_opinion.offset
-                        assert not premium_opinion.is_negated
+                        beautiful_opinion = mined_opinion.assessments[1]
+                        assert 'beautiful' == beautiful_opinion.text
+                        assert 'positive' == beautiful_opinion.sentiment
+                        assert 0.0 == beautiful_opinion.confidence_scores.neutral
+                        self.validateConfidenceScores(beautiful_opinion.confidence_scores)
+                        assert 53 == beautiful_opinion.offset
+                        assert not beautiful_opinion.is_negated
                 else:
                     food_target = sentence.mined_opinions[0].target
                     service_target = sentence.mined_opinions[1].target
@@ -239,7 +238,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     assert 4 == food_target.offset
 
                     assert 'service' == service_target.text
-                    assert 'negative' == service_target.sentiment
+                    assert 'positive' == service_target.sentiment
                     assert 0.0 == service_target.confidence_scores.neutral
                     self.validateConfidenceScores(service_target.confidence_scores)
                     assert 13 == service_target.offset
@@ -1027,8 +1026,9 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 assert not result.is_error
                 assert not result.warnings
                 assert result.statistics
-                assert result.classification.category
-                assert result.classification.confidence_score
+                for classification in result.classifications:
+                    assert classification.category
+                    assert classification.confidence_score
 
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
@@ -1170,8 +1170,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 document_results.append(doc)
 
         assert len(document_results) == 2
-        assert isinstance(document_results[0][0], SingleCategoryClassifyResult)
-        assert isinstance(document_results[0][1], MultiCategoryClassifyResult)
+        assert isinstance(document_results[0][0], ClassifyDocumentResult)
+        assert isinstance(document_results[0][1], ClassifyDocumentResult)
         assert isinstance(document_results[0][2], RecognizeCustomEntitiesResult)
         assert document_results[1][0].is_error
         assert document_results[1][1].is_error
@@ -1778,7 +1778,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 actions=[
                     AnalyzeHealthcareEntitiesAction(
                         model_version="latest",
-                        fhir_version="4.0.1"
                     )
                 ],
                 show_stats=True,
@@ -1795,5 +1794,4 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         assert res.error.code == "InvalidDocument"
                     else:
                         assert res.entities
-                        assert res.fhir_bundle
                         assert res.statistics

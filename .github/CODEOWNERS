@@ -33,7 +33,7 @@
 /sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
 
 # PRLabel: %Storage
-/sdk/storage/                                                        @annatisch @tasherif-msft @jalauzon-msft @vincenttran-msft
+/sdk/storage/                                                        @annatisch @jalauzon-msft @vincenttran-msft
 
 # PRLabel: %App Configuration
 /sdk/appconfiguration/                                               @xiangyan99 @YalinLi0312

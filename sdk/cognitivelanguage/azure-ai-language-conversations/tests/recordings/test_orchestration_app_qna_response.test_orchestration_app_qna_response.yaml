@@ -2,8 +2,8 @@ interactions:
 - request:
     body: '{"kind": "Conversation", "analysisInput": {"conversationItem": {"participantId":
       "1", "id": "1", "modality": "text", "language": "en", "text": "How are you?"},
-      "isLoggingEnabled": false}, "parameters": {"projectName": "OrchScriptDeployed1",
-      "deploymentName": "dep_test", "verbose": true, "stringIndexType": "UnicodeCodePoint"}}'
+      "isLoggingEnabled": false}, "parameters": {"projectName": "orch_test", "deploymentName":
+      "dep_test", "verbose": true}}'
     headers:
       Accept:
       - application/json
@@ -12,13 +12,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '329'
+      - '290'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-conversations/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-conversations/1.0GA Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: POST
-    uri: https://languagesdktest.cognitiveservices.azure.com/language/:analyze-conversations?api-version=2022-05-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?api-version=2022-05-01
   response:
     body:
       string: '{"kind":"ConversationResult","result":{"query":"How are you?","prediction":{"topIntent":"ChitChat-QnA","projectKind":"Orchestration","intents":{"ChitChat-QnA":{"confidenceScore":1,"targetProjectKind":"QuestionAnswering","result":{"answers":[{"questions":["How''d
@@ -34,7 +34,7 @@ interactions:
         doing great, thanks for asking!","confidenceScore":1.0,"id":72,"source":"qna_chitchat_friendly.tsv","metadata":{"editorial":"chitchat"},"dialog":{"isContextOnly":false,"prompts":[]}}]}},"RestaurantIntent":{"confidenceScore":0.52488816,"targetProjectKind":"Luis"},"EmailIntent":{"confidenceScore":0.20137204,"targetProjectKind":"Conversation"},"None":{"confidenceScore":0.16740131,"targetProjectKind":"NonLinked"}}}}}'
     headers:
       apim-request-id:
-      - 2ba07287-7762-4c73-ab0b-02b0dbf49eca
+      - 15dc08e3-2188-4f0b-846a-a00294a9f4fa
       cache-control:
       - no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type:
@@ -42,11 +42,11 @@ interactions:
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.Language.OrchestrationWorkflow.Prediction=1
       date:
-      - Thu, 26 May 2022 16:35:22 GMT
+      - Tue, 31 May 2022 14:25:19 GMT
       pragma:
       - no-cache
       request-id:
-      - 2ba07287-7762-4c73-ab0b-02b0dbf49eca
+      - 15dc08e3-2188-4f0b-846a-a00294a9f4fa
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -54,7 +54,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '2056'
+      - '1296'
     status:
       code: 200
       message: OK
