@@ -70,7 +70,7 @@ class IssueProcessPython(IssueProcess):
                 release_pipeline_url = get_python_release_pipeline(self.output_folder)
                 res_run = run_pipeline(issue_link=issue_link,
                                        pipeline_url=release_pipeline_url,
-                                       spec_readme=self.readme_link
+                                       spec_readme=self.readme_link + '/readme.md'
                                        )
                 if res_run:
                     self.log(f'{issue_number} run pipeline successfully')
