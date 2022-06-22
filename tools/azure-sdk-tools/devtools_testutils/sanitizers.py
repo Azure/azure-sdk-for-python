@@ -50,6 +50,19 @@ def set_custom_default_matcher(**kwargs):
     _send_matcher_request("CustomDefaultMatcher", {"x-recording-id": x_recording_id}, request_args)
 
 
+def set_default_settings():
+    # type: () -> None
+    """Resets all active sanitizers, matchers, and transforms for the test proxy to their default settings.
+
+    This will reset any setting customizations for a single test if it is called during test case execution, rather than
+    at a session, module, or class level. Otherwise, it will reset setting customizations at the session level (i.e. for
+    all tests).
+    """
+
+    x_recording_id = get_recording_id()
+    _send_reset_request({"x-recording-id": x_recording_id})
+
+
 def add_body_key_sanitizer(**kwargs):
     # type: (**Any) -> None
     """Registers a sanitizer that offers regex update of a specific JTokenPath within a returned body.
@@ -228,8 +241,7 @@ def _send_matcher_request(matcher, headers, parameters=None):
     # type: (str, Dict, Optional[Dict]) -> None
     """Sends a POST request to the test proxy endpoint to register the specified matcher.
 
-    If live tests are being run with recording turned off via the AZURE_SKIP_LIVE_RECORDING environment variable, no
-    request will be sent.
+    If live tests are being run, no request will be sent.
 
     :param str matcher: The name of the matcher to set.
     :param dict headers: Any matcher headers, as a dictionary.
@@ -244,6 +256,26 @@ def _send_matcher_request(matcher, headers, parameters=None):
         "{}/Admin/SetMatcher".format(PROXY_URL),
         headers=headers_to_send,
         json=parameters
+    )
+    response.raise_for_status()
+
+
+def _send_reset_request(headers):
+    # type: (Dict) -> None
+    """Sends a POST request to the test proxy endpoint to reset setting customizations.
+
+    If live tests are being run with recording turned off via the AZURE_SKIP_LIVE_RECORDING environment variable, no
+    request will be sent.
+
+    :param dict headers: Any reset request headers, as a dictionary.
+    """
+
+    if is_live_and_not_recording():
+        return
+
+    response = requests.post(
+        "{}/Admin/Reset".format(PROXY_URL),
+        headers=headers
     )
     response.raise_for_status()
 
