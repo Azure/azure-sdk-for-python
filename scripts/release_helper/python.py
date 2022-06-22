@@ -60,6 +60,7 @@ class IssueProcessPython(IssueProcess):
         package_tags = pattern_tag.findall(contents)
         whether_same_tag = self.target_readme_tag in package_tags
         whether_change_readme = not whether_same_tag or self.is_multiapi
+        self.log(f'**** whether_change_readme: {whether_change_readme}')
         return whether_change_readme
 
     def auto_reply(self) -> None:
