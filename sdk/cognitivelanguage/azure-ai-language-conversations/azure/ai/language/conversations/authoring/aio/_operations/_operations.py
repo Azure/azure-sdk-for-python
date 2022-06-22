@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------
 import sys
 from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -70,7 +71,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_projects(
-        self, *, top: Optional[int] = None, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Lists the existing projects.
 
@@ -80,9 +81,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -130,7 +128,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 request = build_list_projects_request(
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -143,7 +140,11 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -1746,13 +1747,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @distributed_trace
     def list_deployments(
-        self,
-        project_name: str,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Lists the deployments belonging to a project.
 
@@ -1764,9 +1759,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1803,7 +1795,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     project_name=project_name,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1816,7 +1807,11 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -3182,13 +3177,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @distributed_trace
     def list_trained_models(
-        self,
-        project_name: str,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Lists the trained models belonging to a project.
 
@@ -3200,9 +3189,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3238,7 +3224,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     project_name=project_name,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3251,7 +3236,11 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -3408,7 +3397,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         string_index_type: str,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Gets the detailed results of the evaluation for a trained model. This includes the raw
@@ -3427,9 +3415,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3490,7 +3475,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     string_index_type=string_index_type,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3503,7 +3487,11 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -3681,13 +3669,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @distributed_trace
     def list_training_jobs(
-        self,
-        project_name: str,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Lists the non-expired training jobs created for a project.
 
@@ -3699,9 +3681,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3812,7 +3791,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     project_name=project_name,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3825,7 +3803,11 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -4319,13 +4301,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @distributed_trace
     def list_supported_languages(
-        self,
-        *,
-        project_kind: str,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Lists the supported languages for the given project type.
 
@@ -4338,9 +4314,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4371,7 +4344,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     project_kind=project_kind,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -4384,7 +4356,11 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -4425,7 +4401,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         multilingual: Optional[bool] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Lists the supported prebuilt entities that can be used while creating composed entities.
@@ -4443,9 +4418,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4476,7 +4448,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     multilingual=multilingual,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -4489,7 +4460,11 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -4524,13 +4499,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @distributed_trace
     def list_training_config_versions(
-        self,
-        *,
-        project_kind: str,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Lists the support training config version for a given project type.
 
@@ -4543,9 +4512,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4576,7 +4542,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     project_kind=project_kind,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -4589,7 +4554,11 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
