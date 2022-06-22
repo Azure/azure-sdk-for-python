@@ -13,7 +13,9 @@ from .._generated.models import (
     LocalizedMapView,
     ElectricVehicleConnector,
     OperatingHoursRange,
-    GeoJsonObject
+    GeoJsonObject,
+    RoadUseType,
+    PointOfInterestExtendedPostalCodes
 )
 
 from ._models import (
@@ -33,6 +35,7 @@ from ._models import (
 
 
 __all__ = [
+    'RoadUseType',
     'BatchRequest',
     'LatLon',
     'AddressRanges',
@@ -58,5 +61,6 @@ __all__ = [
     'LocalizedMapView',
     'ElectricVehicleConnector',
     'OperatingHoursRange',
-    'GeoJsonObject'
+    'GeoJsonObject',
+    'PointOfInterestExtendedPostalCodes'
 ]

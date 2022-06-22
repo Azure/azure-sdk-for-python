@@ -276,7 +276,7 @@ class SearchClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         result = self._search_client.reverse_search_address(
-            query=[coordinates.lat, coordinates.lat]
+            query=[coordinates.lat, coordinates.lat],
             ** kwargs
         )
         return ReverseSearchAddressResult(summary=result.summary, results=result.addresses)
@@ -317,7 +317,7 @@ class SearchClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.reverse_search_cross_street_address(
-            [coordinates.lat, coordinates.lat],
+            query=[coordinates.lat, coordinates.lat],
             **kwargs
         )
 
