@@ -96,7 +96,6 @@ def build_package(**kwargs) -> None:
     #generate ci
     generate_ci(_TEMPLATE_CI, Path(output_folder).parent, package_name)
 
-
     # generate swagger readme
     env = Environment(loader=FileSystemLoader(_TEMPLATE), keep_trailing_newline=True)
     swagger_readme = generate_swagger_readme(output_folder, env, **kwargs)
