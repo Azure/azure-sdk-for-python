@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,14 +8,16 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from ... import _serialization
 
-from ._compute_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class ApiError(msrest.serialization.Model):
+class ApiError(_serialization.Model):
     """Api error.
 
     :ivar details: The Api error details.
@@ -30,18 +33,18 @@ class ApiError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'details': {'key': 'details', 'type': '[ApiErrorBase]'},
-        'innererror': {'key': 'innererror', 'type': 'InnerError'},
-        'code': {'key': 'code', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "details": {"key": "details", "type": "[ApiErrorBase]"},
+        "innererror": {"key": "innererror", "type": "InnerError"},
+        "code": {"key": "code", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        details: Optional[List["ApiErrorBase"]] = None,
-        innererror: Optional["InnerError"] = None,
+        details: Optional[List["_models.ApiErrorBase"]] = None,
+        innererror: Optional["_models.InnerError"] = None,
         code: Optional[str] = None,
         target: Optional[str] = None,
         message: Optional[str] = None,
@@ -59,7 +62,7 @@ class ApiError(msrest.serialization.Model):
         :keyword message: The error message.
         :paramtype message: str
         """
-        super(ApiError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.details = details
         self.innererror = innererror
         self.code = code
@@ -67,7 +70,7 @@ class ApiError(msrest.serialization.Model):
         self.message = message
 
 
-class ApiErrorBase(msrest.serialization.Model):
+class ApiErrorBase(_serialization.Model):
     """Api error base.
 
     :ivar code: The error code.
@@ -79,18 +82,13 @@ class ApiErrorBase(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        target: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
+        self, *, code: Optional[str] = None, target: Optional[str] = None, message: Optional[str] = None, **kwargs
     ):
         """
         :keyword code: The error code.
@@ -100,13 +98,13 @@ class ApiErrorBase(msrest.serialization.Model):
         :keyword message: The error message.
         :paramtype message: str
         """
-        super(ApiErrorBase, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.target = target
         self.message = message
 
 
-class PirCommunityGalleryResource(msrest.serialization.Model):
+class PirCommunityGalleryResource(_serialization.Model):
     """Base information about the community gallery resource in pir.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -122,29 +120,24 @@ class PirCommunityGalleryResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'location': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "location": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'unique_id': {'key': 'identifier.uniqueId', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "unique_id": {"key": "identifier.uniqueId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        unique_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, unique_id: Optional[str] = None, **kwargs):
         """
         :keyword unique_id: The unique id of this community gallery.
         :paramtype unique_id: str
         """
-        super(PirCommunityGalleryResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.location = None
         self.type = None
@@ -167,32 +160,27 @@ class CommunityGallery(PirCommunityGalleryResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'location': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "location": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'unique_id': {'key': 'identifier.uniqueId', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "unique_id": {"key": "identifier.uniqueId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        unique_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, unique_id: Optional[str] = None, **kwargs):
         """
         :keyword unique_id: The unique id of this community gallery.
         :paramtype unique_id: str
         """
-        super(CommunityGallery, self).__init__(unique_id=unique_id, **kwargs)
+        super().__init__(unique_id=unique_id, **kwargs)
 
 
-class CommunityGalleryImage(PirCommunityGalleryResource):
+class CommunityGalleryImage(PirCommunityGalleryResource):  # pylint: disable=too-many-instance-attributes
     """Specifies information about the gallery image definition that you want to create or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -207,11 +195,11 @@ class CommunityGalleryImage(PirCommunityGalleryResource):
     :vartype unique_id: str
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
      disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-     include: "Windows", "Linux".
+     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+     "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     :ivar os_state: This property allows the user to specify whether the virtual machines created
-     under this image are 'Generalized' or 'Specialized'. Possible values include: "Generalized",
+     under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized" and
      "Specialized".
     :vartype os_state: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemStateTypes
     :ivar end_of_life_date: The end of life date of the gallery image definition. This property can
@@ -225,15 +213,15 @@ class CommunityGalleryImage(PirCommunityGalleryResource):
     :ivar disallowed: Describes the disallowed disk types.
     :vartype disallowed: ~azure.mgmt.compute.v2022_01_03.models.Disallowed
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Possible values include: "V1", "V2".
+     disks only. Known values are: "V1" and "V2".
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2022_01_03.models.HyperVGeneration
     :ivar features: A list of gallery image features.
     :vartype features: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImageFeature]
     :ivar purchase_plan: Describes the gallery image definition purchase plan. This is used by
      marketplace images.
     :vartype purchase_plan: ~azure.mgmt.compute.v2022_01_03.models.ImagePurchasePlan
-    :ivar architecture: The architecture of the image. Applicable to OS disks only. Possible values
-     include: "x64", "Arm64".
+    :ivar architecture: The architecture of the image. Applicable to OS disks only. Known values
+     are: "x64" and "Arm64".
     :vartype architecture: str or ~azure.mgmt.compute.v2022_01_03.models.Architecture
     :ivar privacy_statement_uri: Privacy statement uri for the current community gallery image.
     :vartype privacy_statement_uri: str
@@ -242,44 +230,44 @@ class CommunityGalleryImage(PirCommunityGalleryResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'location': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "location": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'unique_id': {'key': 'identifier.uniqueId', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'os_state': {'key': 'properties.osState', 'type': 'str'},
-        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
-        'identifier': {'key': 'properties.identifier', 'type': 'GalleryImageIdentifier'},
-        'recommended': {'key': 'properties.recommended', 'type': 'RecommendedMachineConfiguration'},
-        'disallowed': {'key': 'properties.disallowed', 'type': 'Disallowed'},
-        'hyper_v_generation': {'key': 'properties.hyperVGeneration', 'type': 'str'},
-        'features': {'key': 'properties.features', 'type': '[GalleryImageFeature]'},
-        'purchase_plan': {'key': 'properties.purchasePlan', 'type': 'ImagePurchasePlan'},
-        'architecture': {'key': 'properties.architecture', 'type': 'str'},
-        'privacy_statement_uri': {'key': 'properties.privacyStatementUri', 'type': 'str'},
-        'eula': {'key': 'properties.eula', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "unique_id": {"key": "identifier.uniqueId", "type": "str"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "os_state": {"key": "properties.osState", "type": "str"},
+        "end_of_life_date": {"key": "properties.endOfLifeDate", "type": "iso-8601"},
+        "identifier": {"key": "properties.identifier", "type": "GalleryImageIdentifier"},
+        "recommended": {"key": "properties.recommended", "type": "RecommendedMachineConfiguration"},
+        "disallowed": {"key": "properties.disallowed", "type": "Disallowed"},
+        "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
+        "features": {"key": "properties.features", "type": "[GalleryImageFeature]"},
+        "purchase_plan": {"key": "properties.purchasePlan", "type": "ImagePurchasePlan"},
+        "architecture": {"key": "properties.architecture", "type": "str"},
+        "privacy_statement_uri": {"key": "properties.privacyStatementUri", "type": "str"},
+        "eula": {"key": "properties.eula", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         unique_id: Optional[str] = None,
-        os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
-        os_state: Optional[Union[str, "OperatingSystemStateTypes"]] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
+        os_state: Optional[Union[str, "_models.OperatingSystemStateTypes"]] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
-        identifier: Optional["GalleryImageIdentifier"] = None,
-        recommended: Optional["RecommendedMachineConfiguration"] = None,
-        disallowed: Optional["Disallowed"] = None,
-        hyper_v_generation: Optional[Union[str, "HyperVGeneration"]] = None,
-        features: Optional[List["GalleryImageFeature"]] = None,
-        purchase_plan: Optional["ImagePurchasePlan"] = None,
-        architecture: Optional[Union[str, "Architecture"]] = None,
+        identifier: Optional["_models.GalleryImageIdentifier"] = None,
+        recommended: Optional["_models.RecommendedMachineConfiguration"] = None,
+        disallowed: Optional["_models.Disallowed"] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
+        features: Optional[List["_models.GalleryImageFeature"]] = None,
+        purchase_plan: Optional["_models.ImagePurchasePlan"] = None,
+        architecture: Optional[Union[str, "_models.Architecture"]] = None,
         privacy_statement_uri: Optional[str] = None,
         eula: Optional[str] = None,
         **kwargs
@@ -289,12 +277,12 @@ class CommunityGalleryImage(PirCommunityGalleryResource):
         :paramtype unique_id: str
         :keyword os_type: This property allows you to specify the type of the OS that is included in
          the disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-         include: "Windows", "Linux".
+         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+         "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         :keyword os_state: This property allows the user to specify whether the virtual machines
-         created under this image are 'Generalized' or 'Specialized'. Possible values include:
-         "Generalized", "Specialized".
+         created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized"
+         and "Specialized".
         :paramtype os_state: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemStateTypes
         :keyword end_of_life_date: The end of life date of the gallery image definition. This property
          can be used for decommissioning purposes. This property is updatable.
@@ -307,22 +295,22 @@ class CommunityGalleryImage(PirCommunityGalleryResource):
         :keyword disallowed: Describes the disallowed disk types.
         :paramtype disallowed: ~azure.mgmt.compute.v2022_01_03.models.Disallowed
         :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-         disks only. Possible values include: "V1", "V2".
+         disks only. Known values are: "V1" and "V2".
         :paramtype hyper_v_generation: str or ~azure.mgmt.compute.v2022_01_03.models.HyperVGeneration
         :keyword features: A list of gallery image features.
         :paramtype features: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImageFeature]
         :keyword purchase_plan: Describes the gallery image definition purchase plan. This is used by
          marketplace images.
         :paramtype purchase_plan: ~azure.mgmt.compute.v2022_01_03.models.ImagePurchasePlan
-        :keyword architecture: The architecture of the image. Applicable to OS disks only. Possible
-         values include: "x64", "Arm64".
+        :keyword architecture: The architecture of the image. Applicable to OS disks only. Known values
+         are: "x64" and "Arm64".
         :paramtype architecture: str or ~azure.mgmt.compute.v2022_01_03.models.Architecture
         :keyword privacy_statement_uri: Privacy statement uri for the current community gallery image.
         :paramtype privacy_statement_uri: str
         :keyword eula: End-user license agreement for the current community gallery image.
         :paramtype eula: str
         """
-        super(CommunityGalleryImage, self).__init__(unique_id=unique_id, **kwargs)
+        super().__init__(unique_id=unique_id, **kwargs)
         self.os_type = os_type
         self.os_state = os_state
         self.end_of_life_date = end_of_life_date
@@ -337,12 +325,12 @@ class CommunityGalleryImage(PirCommunityGalleryResource):
         self.eula = eula
 
 
-class CommunityGalleryImageList(msrest.serialization.Model):
+class CommunityGalleryImageList(_serialization.Model):
     """The List Community Gallery Images operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of community gallery images.
+    :ivar value: A list of community gallery images. Required.
     :vartype value: list[~azure.mgmt.compute.v2022_01_03.models.CommunityGalleryImage]
     :ivar next_link: The uri to fetch the next page of community gallery images. Call ListNext()
      with this to fetch the next page of community gallery images.
@@ -350,29 +338,23 @@ class CommunityGalleryImageList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CommunityGalleryImage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CommunityGalleryImage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["CommunityGalleryImage"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.CommunityGalleryImage"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of community gallery images.
+        :keyword value: A list of community gallery images. Required.
         :paramtype value: list[~azure.mgmt.compute.v2022_01_03.models.CommunityGalleryImage]
         :keyword next_link: The uri to fetch the next page of community gallery images. Call ListNext()
          with this to fetch the next page of community gallery images.
         :paramtype next_link: str
         """
-        super(CommunityGalleryImageList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -405,20 +387,20 @@ class CommunityGalleryImageVersion(PirCommunityGalleryResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'location': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "location": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'unique_id': {'key': 'identifier.uniqueId', 'type': 'str'},
-        'published_date': {'key': 'properties.publishedDate', 'type': 'iso-8601'},
-        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
-        'exclude_from_latest': {'key': 'properties.excludeFromLatest', 'type': 'bool'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'SharedGalleryImageVersionStorageProfile'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "unique_id": {"key": "identifier.uniqueId", "type": "str"},
+        "published_date": {"key": "properties.publishedDate", "type": "iso-8601"},
+        "end_of_life_date": {"key": "properties.endOfLifeDate", "type": "iso-8601"},
+        "exclude_from_latest": {"key": "properties.excludeFromLatest", "type": "bool"},
+        "storage_profile": {"key": "properties.storageProfile", "type": "SharedGalleryImageVersionStorageProfile"},
     }
 
     def __init__(
@@ -428,7 +410,7 @@ class CommunityGalleryImageVersion(PirCommunityGalleryResource):
         published_date: Optional[datetime.datetime] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
         exclude_from_latest: Optional[bool] = None,
-        storage_profile: Optional["SharedGalleryImageVersionStorageProfile"] = None,
+        storage_profile: Optional["_models.SharedGalleryImageVersionStorageProfile"] = None,
         **kwargs
     ):
         """
@@ -447,19 +429,19 @@ class CommunityGalleryImageVersion(PirCommunityGalleryResource):
         :paramtype storage_profile:
          ~azure.mgmt.compute.v2022_01_03.models.SharedGalleryImageVersionStorageProfile
         """
-        super(CommunityGalleryImageVersion, self).__init__(unique_id=unique_id, **kwargs)
+        super().__init__(unique_id=unique_id, **kwargs)
         self.published_date = published_date
         self.end_of_life_date = end_of_life_date
         self.exclude_from_latest = exclude_from_latest
         self.storage_profile = storage_profile
 
 
-class CommunityGalleryImageVersionList(msrest.serialization.Model):
+class CommunityGalleryImageVersionList(_serialization.Model):
     """The List Community Gallery Image versions operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of community gallery image versions.
+    :ivar value: A list of community gallery image versions. Required.
     :vartype value: list[~azure.mgmt.compute.v2022_01_03.models.CommunityGalleryImageVersion]
     :ivar next_link: The uri to fetch the next page of community gallery image versions. Call
      ListNext() with this to fetch the next page of community gallery image versions.
@@ -467,34 +449,30 @@ class CommunityGalleryImageVersionList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CommunityGalleryImageVersion]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CommunityGalleryImageVersion]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: List["CommunityGalleryImageVersion"],
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: List["_models.CommunityGalleryImageVersion"], next_link: Optional[str] = None, **kwargs
     ):
         """
-        :keyword value: Required. A list of community gallery image versions.
+        :keyword value: A list of community gallery image versions. Required.
         :paramtype value: list[~azure.mgmt.compute.v2022_01_03.models.CommunityGalleryImageVersion]
         :keyword next_link: The uri to fetch the next page of community gallery image versions. Call
          ListNext() with this to fetch the next page of community gallery image versions.
         :paramtype next_link: str
         """
-        super(CommunityGalleryImageVersionList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class CommunityGalleryInfo(msrest.serialization.Model):
+class CommunityGalleryInfo(_serialization.Model):
     """Information of community gallery if current gallery is shared to community.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -517,17 +495,17 @@ class CommunityGalleryInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'community_gallery_enabled': {'readonly': True},
-        'public_names': {'readonly': True},
+        "community_gallery_enabled": {"readonly": True},
+        "public_names": {"readonly": True},
     }
 
     _attribute_map = {
-        'publisher_uri': {'key': 'publisherUri', 'type': 'str'},
-        'publisher_contact': {'key': 'publisherContact', 'type': 'str'},
-        'eula': {'key': 'eula', 'type': 'str'},
-        'public_name_prefix': {'key': 'publicNamePrefix', 'type': 'str'},
-        'community_gallery_enabled': {'key': 'communityGalleryEnabled', 'type': 'bool'},
-        'public_names': {'key': 'publicNames', 'type': '[str]'},
+        "publisher_uri": {"key": "publisherUri", "type": "str"},
+        "publisher_contact": {"key": "publisherContact", "type": "str"},
+        "eula": {"key": "eula", "type": "str"},
+        "public_name_prefix": {"key": "publicNamePrefix", "type": "str"},
+        "community_gallery_enabled": {"key": "communityGalleryEnabled", "type": "bool"},
+        "public_names": {"key": "publicNames", "type": "[str]"},
     }
 
     def __init__(
@@ -551,7 +529,7 @@ class CommunityGalleryInfo(msrest.serialization.Model):
          Visible to all users.
         :paramtype public_name_prefix: str
         """
-        super(CommunityGalleryInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.publisher_uri = publisher_uri
         self.publisher_contact = publisher_contact
         self.eula = eula
@@ -560,7 +538,7 @@ class CommunityGalleryInfo(msrest.serialization.Model):
         self.public_names = None
 
 
-class DiskImageEncryption(msrest.serialization.Model):
+class DiskImageEncryption(_serialization.Model):
     """This is the disk image encryption base class.
 
     :ivar disk_encryption_set_id: A relative URI containing the resource ID of the disk encryption
@@ -569,21 +547,16 @@ class DiskImageEncryption(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'disk_encryption_set_id': {'key': 'diskEncryptionSetId', 'type': 'str'},
+        "disk_encryption_set_id": {"key": "diskEncryptionSetId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        disk_encryption_set_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, disk_encryption_set_id: Optional[str] = None, **kwargs):
         """
         :keyword disk_encryption_set_id: A relative URI containing the resource ID of the disk
          encryption set.
         :paramtype disk_encryption_set_id: str
         """
-        super(DiskImageEncryption, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.disk_encryption_set_id = disk_encryption_set_id
 
 
@@ -595,42 +568,36 @@ class DataDiskImageEncryption(DiskImageEncryption):
     :ivar disk_encryption_set_id: A relative URI containing the resource ID of the disk encryption
      set.
     :vartype disk_encryption_set_id: str
-    :ivar lun: Required. This property specifies the logical unit number of the data disk. This
-     value is used to identify data disks within the Virtual Machine and therefore must be unique
-     for each data disk attached to the Virtual Machine.
+    :ivar lun: This property specifies the logical unit number of the data disk. This value is used
+     to identify data disks within the Virtual Machine and therefore must be unique for each data
+     disk attached to the Virtual Machine. Required.
     :vartype lun: int
     """
 
     _validation = {
-        'lun': {'required': True},
+        "lun": {"required": True},
     }
 
     _attribute_map = {
-        'disk_encryption_set_id': {'key': 'diskEncryptionSetId', 'type': 'str'},
-        'lun': {'key': 'lun', 'type': 'int'},
+        "disk_encryption_set_id": {"key": "diskEncryptionSetId", "type": "str"},
+        "lun": {"key": "lun", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        lun: int,
-        disk_encryption_set_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, lun: int, disk_encryption_set_id: Optional[str] = None, **kwargs):
         """
         :keyword disk_encryption_set_id: A relative URI containing the resource ID of the disk
          encryption set.
         :paramtype disk_encryption_set_id: str
-        :keyword lun: Required. This property specifies the logical unit number of the data disk. This
-         value is used to identify data disks within the Virtual Machine and therefore must be unique
-         for each data disk attached to the Virtual Machine.
+        :keyword lun: This property specifies the logical unit number of the data disk. This value is
+         used to identify data disks within the Virtual Machine and therefore must be unique for each
+         data disk attached to the Virtual Machine. Required.
         :paramtype lun: int
         """
-        super(DataDiskImageEncryption, self).__init__(disk_encryption_set_id=disk_encryption_set_id, **kwargs)
+        super().__init__(disk_encryption_set_id=disk_encryption_set_id, **kwargs)
         self.lun = lun
 
 
-class Disallowed(msrest.serialization.Model):
+class Disallowed(_serialization.Model):
     """Describes the disallowed disk types.
 
     :ivar disk_types: A list of disk types.
@@ -638,24 +605,19 @@ class Disallowed(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'disk_types': {'key': 'diskTypes', 'type': '[str]'},
+        "disk_types": {"key": "diskTypes", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        disk_types: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, disk_types: Optional[List[str]] = None, **kwargs):
         """
         :keyword disk_types: A list of disk types.
         :paramtype disk_types: list[str]
         """
-        super(Disallowed, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.disk_types = disk_types
 
 
-class EncryptionImages(msrest.serialization.Model):
+class EncryptionImages(_serialization.Model):
     """Optional. Allows users to provide customer managed keys for encrypting the OS and data disks in the gallery artifact.
 
     :ivar os_disk_image: Contains encryption settings for an OS disk image.
@@ -665,15 +627,15 @@ class EncryptionImages(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'os_disk_image': {'key': 'osDiskImage', 'type': 'OSDiskImageEncryption'},
-        'data_disk_images': {'key': 'dataDiskImages', 'type': '[DataDiskImageEncryption]'},
+        "os_disk_image": {"key": "osDiskImage", "type": "OSDiskImageEncryption"},
+        "data_disk_images": {"key": "dataDiskImages", "type": "[DataDiskImageEncryption]"},
     }
 
     def __init__(
         self,
         *,
-        os_disk_image: Optional["OSDiskImageEncryption"] = None,
-        data_disk_images: Optional[List["DataDiskImageEncryption"]] = None,
+        os_disk_image: Optional["_models.OSDiskImageEncryption"] = None,
+        data_disk_images: Optional[List["_models.DataDiskImageEncryption"]] = None,
         **kwargs
     ):
         """
@@ -683,44 +645,44 @@ class EncryptionImages(msrest.serialization.Model):
         :paramtype data_disk_images:
          list[~azure.mgmt.compute.v2022_01_03.models.DataDiskImageEncryption]
         """
-        super(EncryptionImages, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.os_disk_image = os_disk_image
         self.data_disk_images = data_disk_images
 
 
-class ExtendedLocation(msrest.serialization.Model):
+class ExtendedLocation(_serialization.Model):
     """The complex type of the extended location.
 
     :ivar name: The name of the extended location.
     :vartype name: str
-    :ivar type: The type of the extended location. Possible values include: "EdgeZone".
+    :ivar type: The type of the extended location. "EdgeZone"
     :vartype type: str or ~azure.mgmt.compute.v2022_01_03.models.ExtendedLocationTypes
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        type: Optional[Union[str, "ExtendedLocationTypes"]] = None,
+        type: Optional[Union[str, "_models.ExtendedLocationTypes"]] = None,
         **kwargs
     ):
         """
         :keyword name: The name of the extended location.
         :paramtype name: str
-        :keyword type: The type of the extended location. Possible values include: "EdgeZone".
+        :keyword type: The type of the extended location. "EdgeZone"
         :paramtype type: str or ~azure.mgmt.compute.v2022_01_03.models.ExtendedLocationTypes
         """
-        super(ExtendedLocation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """The Resource model definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -733,41 +695,35 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(Resource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -775,7 +731,7 @@ class Resource(msrest.serialization.Model):
         self.tags = tags
 
 
-class Gallery(Resource):
+class Gallery(Resource):  # pylint: disable=too-many-instance-attributes
     """Specifies information about the Shared Image Gallery that you want to create or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -788,17 +744,17 @@ class Gallery(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar description: The description of this Shared Image Gallery resource. This property is
      updatable.
     :vartype description: str
     :ivar identifier: Describes the gallery unique name.
     :vartype identifier: ~azure.mgmt.compute.v2022_01_03.models.GalleryIdentifier
-    :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
-     values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2022_01_03.models.GalleryProvisioningState
     :ivar sharing_profile: Profile for gallery sharing to subscription or tenant.
@@ -810,26 +766,26 @@ class Gallery(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'sharing_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "sharing_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'identifier': {'key': 'properties.identifier', 'type': 'GalleryIdentifier'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'sharing_profile': {'key': 'properties.sharingProfile', 'type': 'SharingProfile'},
-        'soft_delete_policy': {'key': 'properties.softDeletePolicy', 'type': 'SoftDeletePolicy'},
-        'sharing_status': {'key': 'properties.sharingStatus', 'type': 'SharingStatus'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "description": {"key": "properties.description", "type": "str"},
+        "identifier": {"key": "properties.identifier", "type": "GalleryIdentifier"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "sharing_profile": {"key": "properties.sharingProfile", "type": "SharingProfile"},
+        "soft_delete_policy": {"key": "properties.softDeletePolicy", "type": "SoftDeletePolicy"},
+        "sharing_status": {"key": "properties.sharingStatus", "type": "SharingStatus"},
     }
 
     def __init__(
@@ -838,15 +794,15 @@ class Gallery(Resource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
-        identifier: Optional["GalleryIdentifier"] = None,
-        sharing_profile: Optional["SharingProfile"] = None,
-        soft_delete_policy: Optional["SoftDeletePolicy"] = None,
+        identifier: Optional["_models.GalleryIdentifier"] = None,
+        sharing_profile: Optional["_models.SharingProfile"] = None,
+        soft_delete_policy: Optional["_models.SoftDeletePolicy"] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword description: The description of this Shared Image Gallery resource. This property is
          updatable.
@@ -859,7 +815,7 @@ class Gallery(Resource):
          gallery.
         :paramtype soft_delete_policy: ~azure.mgmt.compute.v2022_01_03.models.SoftDeletePolicy
         """
-        super(Gallery, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.description = description
         self.identifier = identifier
         self.provisioning_state = None
@@ -868,7 +824,7 @@ class Gallery(Resource):
         self.sharing_status = None
 
 
-class GalleryApplication(Resource):
+class GalleryApplication(Resource):  # pylint: disable=too-many-instance-attributes
     """Specifies information about the gallery Application Definition that you want to create or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -881,9 +837,9 @@ class GalleryApplication(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar description: The description of this gallery Application Definition resource. This
      property is updatable.
@@ -899,30 +855,30 @@ class GalleryApplication(Resource):
     :vartype end_of_life_date: ~datetime.datetime
     :ivar supported_os_type: This property allows you to specify the supported type of the OS that
      application is built for. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-     include: "Windows", "Linux".
+     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+     "Windows" and "Linux".
     :vartype supported_os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'eula': {'key': 'properties.eula', 'type': 'str'},
-        'privacy_statement_uri': {'key': 'properties.privacyStatementUri', 'type': 'str'},
-        'release_note_uri': {'key': 'properties.releaseNoteUri', 'type': 'str'},
-        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
-        'supported_os_type': {'key': 'properties.supportedOSType', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "description": {"key": "properties.description", "type": "str"},
+        "eula": {"key": "properties.eula", "type": "str"},
+        "privacy_statement_uri": {"key": "properties.privacyStatementUri", "type": "str"},
+        "release_note_uri": {"key": "properties.releaseNoteUri", "type": "str"},
+        "end_of_life_date": {"key": "properties.endOfLifeDate", "type": "iso-8601"},
+        "supported_os_type": {"key": "properties.supportedOSType", "type": "str"},
     }
 
     def __init__(
@@ -935,13 +891,13 @@ class GalleryApplication(Resource):
         privacy_statement_uri: Optional[str] = None,
         release_note_uri: Optional[str] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
-        supported_os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
+        supported_os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword description: The description of this gallery Application Definition resource. This
          property is updatable.
@@ -957,12 +913,12 @@ class GalleryApplication(Resource):
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword supported_os_type: This property allows you to specify the supported type of the OS
          that application is built for. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-         include: "Windows", "Linux".
+         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+         "Windows" and "Linux".
         :paramtype supported_os_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         """
-        super(GalleryApplication, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.description = description
         self.eula = eula
         self.privacy_statement_uri = privacy_statement_uri
@@ -971,12 +927,12 @@ class GalleryApplication(Resource):
         self.supported_os_type = supported_os_type
 
 
-class GalleryApplicationList(msrest.serialization.Model):
+class GalleryApplicationList(_serialization.Model):
     """The List Gallery Applications operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of Gallery Applications.
+    :ivar value: A list of Gallery Applications. Required.
     :vartype value: list[~azure.mgmt.compute.v2022_01_03.models.GalleryApplication]
     :ivar next_link: The uri to fetch the next page of Application Definitions in the Application
      Gallery. Call ListNext() with this to fetch the next page of gallery Application Definitions.
@@ -984,35 +940,29 @@ class GalleryApplicationList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[GalleryApplication]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[GalleryApplication]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["GalleryApplication"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.GalleryApplication"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of Gallery Applications.
+        :keyword value: A list of Gallery Applications. Required.
         :paramtype value: list[~azure.mgmt.compute.v2022_01_03.models.GalleryApplication]
         :keyword next_link: The uri to fetch the next page of Application Definitions in the
          Application Gallery. Call ListNext() with this to fetch the next page of gallery Application
          Definitions.
         :paramtype next_link: str
         """
-        super(GalleryApplicationList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class UpdateResourceDefinition(msrest.serialization.Model):
+class UpdateResourceDefinition(_serialization.Model):
     """The Update Resource model definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1023,34 +973,29 @@ class UpdateResourceDefinition(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(UpdateResourceDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -1068,7 +1013,7 @@ class GalleryApplicationUpdate(UpdateResourceDefinition):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar description: The description of this gallery Application Definition resource. This
      property is updatable.
@@ -1084,28 +1029,28 @@ class GalleryApplicationUpdate(UpdateResourceDefinition):
     :vartype end_of_life_date: ~datetime.datetime
     :ivar supported_os_type: This property allows you to specify the supported type of the OS that
      application is built for. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-     include: "Windows", "Linux".
+     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+     "Windows" and "Linux".
     :vartype supported_os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'eula': {'key': 'properties.eula', 'type': 'str'},
-        'privacy_statement_uri': {'key': 'properties.privacyStatementUri', 'type': 'str'},
-        'release_note_uri': {'key': 'properties.releaseNoteUri', 'type': 'str'},
-        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
-        'supported_os_type': {'key': 'properties.supportedOSType', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "description": {"key": "properties.description", "type": "str"},
+        "eula": {"key": "properties.eula", "type": "str"},
+        "privacy_statement_uri": {"key": "properties.privacyStatementUri", "type": "str"},
+        "release_note_uri": {"key": "properties.releaseNoteUri", "type": "str"},
+        "end_of_life_date": {"key": "properties.endOfLifeDate", "type": "iso-8601"},
+        "supported_os_type": {"key": "properties.supportedOSType", "type": "str"},
     }
 
     def __init__(
@@ -1117,11 +1062,11 @@ class GalleryApplicationUpdate(UpdateResourceDefinition):
         privacy_statement_uri: Optional[str] = None,
         release_note_uri: Optional[str] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
-        supported_os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
+        supported_os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword description: The description of this gallery Application Definition resource. This
          property is updatable.
@@ -1137,12 +1082,12 @@ class GalleryApplicationUpdate(UpdateResourceDefinition):
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword supported_os_type: This property allows you to specify the supported type of the OS
          that application is built for. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-         include: "Windows", "Linux".
+         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+         "Windows" and "Linux".
         :paramtype supported_os_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         """
-        super(GalleryApplicationUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.description = description
         self.eula = eula
         self.privacy_statement_uri = privacy_statement_uri
@@ -1164,15 +1109,15 @@ class GalleryApplicationVersion(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar publishing_profile: The publishing profile of a gallery image version.
     :vartype publishing_profile:
      ~azure.mgmt.compute.v2022_01_03.models.GalleryApplicationVersionPublishingProfile
-    :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
-     values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2022_01_03.models.GalleryProvisioningState
     :ivar replication_status: This is the replication status of the gallery image version.
@@ -1180,23 +1125,26 @@ class GalleryApplicationVersion(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'replication_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "replication_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryApplicationVersionPublishingProfile'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "publishing_profile": {
+            "key": "properties.publishingProfile",
+            "type": "GalleryApplicationVersionPublishingProfile",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "replication_status": {"key": "properties.replicationStatus", "type": "ReplicationStatus"},
     }
 
     def __init__(
@@ -1204,30 +1152,30 @@ class GalleryApplicationVersion(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        publishing_profile: Optional["GalleryApplicationVersionPublishingProfile"] = None,
+        publishing_profile: Optional["_models.GalleryApplicationVersionPublishingProfile"] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword publishing_profile: The publishing profile of a gallery image version.
         :paramtype publishing_profile:
          ~azure.mgmt.compute.v2022_01_03.models.GalleryApplicationVersionPublishingProfile
         """
-        super(GalleryApplicationVersion, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.publishing_profile = publishing_profile
         self.provisioning_state = None
         self.replication_status = None
 
 
-class GalleryApplicationVersionList(msrest.serialization.Model):
+class GalleryApplicationVersionList(_serialization.Model):
     """The List Gallery Application version operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of gallery Application Versions.
+    :ivar value: A list of gallery Application Versions. Required.
     :vartype value: list[~azure.mgmt.compute.v2022_01_03.models.GalleryApplicationVersion]
     :ivar next_link: The uri to fetch the next page of gallery Application Versions. Call
      ListNext() with this to fetch the next page of gallery Application Versions.
@@ -1235,34 +1183,28 @@ class GalleryApplicationVersionList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[GalleryApplicationVersion]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[GalleryApplicationVersion]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["GalleryApplicationVersion"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.GalleryApplicationVersion"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of gallery Application Versions.
+        :keyword value: A list of gallery Application Versions. Required.
         :paramtype value: list[~azure.mgmt.compute.v2022_01_03.models.GalleryApplicationVersion]
         :keyword next_link: The uri to fetch the next page of gallery Application Versions. Call
          ListNext() with this to fetch the next page of gallery Application Versions.
         :paramtype next_link: str
         """
-        super(GalleryApplicationVersionList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class GalleryArtifactPublishingProfileBase(msrest.serialization.Model):
+class GalleryArtifactPublishingProfileBase(_serialization.Model):
     """Describes the basic gallery artifact publishing profile.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1283,11 +1225,11 @@ class GalleryArtifactPublishingProfileBase(msrest.serialization.Model):
      used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Possible values include: "Standard_LRS", "Standard_ZRS",
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
      "Premium_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2022_01_03.models.StorageAccountType
     :ivar replication_mode: Optional parameter which specifies the mode to be used for replication.
-     This property is not updatable. Possible values include: "Full", "Shallow".
+     This property is not updatable. Known values are: "Full" and "Shallow".
     :vartype replication_mode: str or ~azure.mgmt.compute.v2022_01_03.models.ReplicationMode
     :ivar target_extended_locations: The target extended locations where the Image Version is going
      to be replicated to. This property is updatable.
@@ -1296,30 +1238,30 @@ class GalleryArtifactPublishingProfileBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'published_date': {'readonly': True},
+        "published_date": {"readonly": True},
     }
 
     _attribute_map = {
-        'target_regions': {'key': 'targetRegions', 'type': '[TargetRegion]'},
-        'replica_count': {'key': 'replicaCount', 'type': 'int'},
-        'exclude_from_latest': {'key': 'excludeFromLatest', 'type': 'bool'},
-        'published_date': {'key': 'publishedDate', 'type': 'iso-8601'},
-        'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'replication_mode': {'key': 'replicationMode', 'type': 'str'},
-        'target_extended_locations': {'key': 'targetExtendedLocations', 'type': '[GalleryTargetExtendedLocation]'},
+        "target_regions": {"key": "targetRegions", "type": "[TargetRegion]"},
+        "replica_count": {"key": "replicaCount", "type": "int"},
+        "exclude_from_latest": {"key": "excludeFromLatest", "type": "bool"},
+        "published_date": {"key": "publishedDate", "type": "iso-8601"},
+        "end_of_life_date": {"key": "endOfLifeDate", "type": "iso-8601"},
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
+        "replication_mode": {"key": "replicationMode", "type": "str"},
+        "target_extended_locations": {"key": "targetExtendedLocations", "type": "[GalleryTargetExtendedLocation]"},
     }
 
     def __init__(
         self,
         *,
-        target_regions: Optional[List["TargetRegion"]] = None,
+        target_regions: Optional[List["_models.TargetRegion"]] = None,
         replica_count: Optional[int] = None,
         exclude_from_latest: Optional[bool] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountType"]] = None,
-        replication_mode: Optional[Union[str, "ReplicationMode"]] = None,
-        target_extended_locations: Optional[List["GalleryTargetExtendedLocation"]] = None,
+        storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
+        replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = None,
+        target_extended_locations: Optional[List["_models.GalleryTargetExtendedLocation"]] = None,
         **kwargs
     ):
         """
@@ -1337,19 +1279,19 @@ class GalleryArtifactPublishingProfileBase(msrest.serialization.Model):
          be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Possible values include: "Standard_LRS", "Standard_ZRS",
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
          "Premium_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.StorageAccountType
         :keyword replication_mode: Optional parameter which specifies the mode to be used for
-         replication. This property is not updatable. Possible values include: "Full", "Shallow".
+         replication. This property is not updatable. Known values are: "Full" and "Shallow".
         :paramtype replication_mode: str or ~azure.mgmt.compute.v2022_01_03.models.ReplicationMode
         :keyword target_extended_locations: The target extended locations where the Image Version is
          going to be replicated to. This property is updatable.
         :paramtype target_extended_locations:
          list[~azure.mgmt.compute.v2022_01_03.models.GalleryTargetExtendedLocation]
         """
-        super(GalleryArtifactPublishingProfileBase, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.target_regions = target_regions
         self.replica_count = replica_count
         self.exclude_from_latest = exclude_from_latest
@@ -1360,7 +1302,9 @@ class GalleryArtifactPublishingProfileBase(msrest.serialization.Model):
         self.target_extended_locations = target_extended_locations
 
 
-class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfileBase):
+class GalleryApplicationVersionPublishingProfile(
+    GalleryArtifactPublishingProfileBase
+):  # pylint: disable=too-many-instance-attributes
     """The publishing profile of a gallery image version.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1383,17 +1327,17 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
      used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Possible values include: "Standard_LRS", "Standard_ZRS",
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
      "Premium_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2022_01_03.models.StorageAccountType
     :ivar replication_mode: Optional parameter which specifies the mode to be used for replication.
-     This property is not updatable. Possible values include: "Full", "Shallow".
+     This property is not updatable. Known values are: "Full" and "Shallow".
     :vartype replication_mode: str or ~azure.mgmt.compute.v2022_01_03.models.ReplicationMode
     :ivar target_extended_locations: The target extended locations where the Image Version is going
      to be replicated to. This property is updatable.
     :vartype target_extended_locations:
      list[~azure.mgmt.compute.v2022_01_03.models.GalleryTargetExtendedLocation]
-    :ivar source: Required. The source image from which the Image Version is going to be created.
+    :ivar source: The source image from which the Image Version is going to be created. Required.
     :vartype source: ~azure.mgmt.compute.v2022_01_03.models.UserArtifactSource
     :ivar manage_actions:
     :vartype manage_actions: ~azure.mgmt.compute.v2022_01_03.models.UserArtifactManage
@@ -1408,39 +1352,39 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
     """
 
     _validation = {
-        'published_date': {'readonly': True},
-        'source': {'required': True},
+        "published_date": {"readonly": True},
+        "source": {"required": True},
     }
 
     _attribute_map = {
-        'target_regions': {'key': 'targetRegions', 'type': '[TargetRegion]'},
-        'replica_count': {'key': 'replicaCount', 'type': 'int'},
-        'exclude_from_latest': {'key': 'excludeFromLatest', 'type': 'bool'},
-        'published_date': {'key': 'publishedDate', 'type': 'iso-8601'},
-        'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'replication_mode': {'key': 'replicationMode', 'type': 'str'},
-        'target_extended_locations': {'key': 'targetExtendedLocations', 'type': '[GalleryTargetExtendedLocation]'},
-        'source': {'key': 'source', 'type': 'UserArtifactSource'},
-        'manage_actions': {'key': 'manageActions', 'type': 'UserArtifactManage'},
-        'settings': {'key': 'settings', 'type': 'UserArtifactSettings'},
-        'advanced_settings': {'key': 'advancedSettings', 'type': '{str}'},
-        'enable_health_check': {'key': 'enableHealthCheck', 'type': 'bool'},
+        "target_regions": {"key": "targetRegions", "type": "[TargetRegion]"},
+        "replica_count": {"key": "replicaCount", "type": "int"},
+        "exclude_from_latest": {"key": "excludeFromLatest", "type": "bool"},
+        "published_date": {"key": "publishedDate", "type": "iso-8601"},
+        "end_of_life_date": {"key": "endOfLifeDate", "type": "iso-8601"},
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
+        "replication_mode": {"key": "replicationMode", "type": "str"},
+        "target_extended_locations": {"key": "targetExtendedLocations", "type": "[GalleryTargetExtendedLocation]"},
+        "source": {"key": "source", "type": "UserArtifactSource"},
+        "manage_actions": {"key": "manageActions", "type": "UserArtifactManage"},
+        "settings": {"key": "settings", "type": "UserArtifactSettings"},
+        "advanced_settings": {"key": "advancedSettings", "type": "{str}"},
+        "enable_health_check": {"key": "enableHealthCheck", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        source: "UserArtifactSource",
-        target_regions: Optional[List["TargetRegion"]] = None,
+        source: "_models.UserArtifactSource",
+        target_regions: Optional[List["_models.TargetRegion"]] = None,
         replica_count: Optional[int] = None,
         exclude_from_latest: Optional[bool] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountType"]] = None,
-        replication_mode: Optional[Union[str, "ReplicationMode"]] = None,
-        target_extended_locations: Optional[List["GalleryTargetExtendedLocation"]] = None,
-        manage_actions: Optional["UserArtifactManage"] = None,
-        settings: Optional["UserArtifactSettings"] = None,
+        storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
+        replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = None,
+        target_extended_locations: Optional[List["_models.GalleryTargetExtendedLocation"]] = None,
+        manage_actions: Optional["_models.UserArtifactManage"] = None,
+        settings: Optional["_models.UserArtifactSettings"] = None,
         advanced_settings: Optional[Dict[str, str]] = None,
         enable_health_check: Optional[bool] = None,
         **kwargs
@@ -1460,19 +1404,19 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
          be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Possible values include: "Standard_LRS", "Standard_ZRS",
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
          "Premium_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.StorageAccountType
         :keyword replication_mode: Optional parameter which specifies the mode to be used for
-         replication. This property is not updatable. Possible values include: "Full", "Shallow".
+         replication. This property is not updatable. Known values are: "Full" and "Shallow".
         :paramtype replication_mode: str or ~azure.mgmt.compute.v2022_01_03.models.ReplicationMode
         :keyword target_extended_locations: The target extended locations where the Image Version is
          going to be replicated to. This property is updatable.
         :paramtype target_extended_locations:
          list[~azure.mgmt.compute.v2022_01_03.models.GalleryTargetExtendedLocation]
-        :keyword source: Required. The source image from which the Image Version is going to be
-         created.
+        :keyword source: The source image from which the Image Version is going to be created.
+         Required.
         :paramtype source: ~azure.mgmt.compute.v2022_01_03.models.UserArtifactSource
         :keyword manage_actions:
         :paramtype manage_actions: ~azure.mgmt.compute.v2022_01_03.models.UserArtifactManage
@@ -1485,7 +1429,16 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
         :keyword enable_health_check: Optional. Whether or not this application reports health.
         :paramtype enable_health_check: bool
         """
-        super(GalleryApplicationVersionPublishingProfile, self).__init__(target_regions=target_regions, replica_count=replica_count, exclude_from_latest=exclude_from_latest, end_of_life_date=end_of_life_date, storage_account_type=storage_account_type, replication_mode=replication_mode, target_extended_locations=target_extended_locations, **kwargs)
+        super().__init__(
+            target_regions=target_regions,
+            replica_count=replica_count,
+            exclude_from_latest=exclude_from_latest,
+            end_of_life_date=end_of_life_date,
+            storage_account_type=storage_account_type,
+            replication_mode=replication_mode,
+            target_extended_locations=target_extended_locations,
+            **kwargs
+        )
         self.source = source
         self.manage_actions = manage_actions
         self.settings = settings
@@ -1504,13 +1457,13 @@ class GalleryApplicationVersionUpdate(UpdateResourceDefinition):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar publishing_profile: The publishing profile of a gallery image version.
     :vartype publishing_profile:
      ~azure.mgmt.compute.v2022_01_03.models.GalleryApplicationVersionPublishingProfile
-    :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
-     values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2022_01_03.models.GalleryProvisioningState
     :ivar replication_status: This is the replication status of the gallery image version.
@@ -1518,75 +1471,73 @@ class GalleryApplicationVersionUpdate(UpdateResourceDefinition):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'replication_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "replication_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryApplicationVersionPublishingProfile'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "publishing_profile": {
+            "key": "properties.publishingProfile",
+            "type": "GalleryApplicationVersionPublishingProfile",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "replication_status": {"key": "properties.replicationStatus", "type": "ReplicationStatus"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        publishing_profile: Optional["GalleryApplicationVersionPublishingProfile"] = None,
+        publishing_profile: Optional["_models.GalleryApplicationVersionPublishingProfile"] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword publishing_profile: The publishing profile of a gallery image version.
         :paramtype publishing_profile:
          ~azure.mgmt.compute.v2022_01_03.models.GalleryApplicationVersionPublishingProfile
         """
-        super(GalleryApplicationVersionUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.publishing_profile = publishing_profile
         self.provisioning_state = None
         self.replication_status = None
 
 
-class GalleryArtifactSource(msrest.serialization.Model):
+class GalleryArtifactSource(_serialization.Model):
     """The source image from which the Image Version is going to be created.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar managed_image: Required. The managed artifact.
+    :ivar managed_image: The managed artifact. Required.
     :vartype managed_image: ~azure.mgmt.compute.v2022_01_03.models.ManagedArtifact
     """
 
     _validation = {
-        'managed_image': {'required': True},
+        "managed_image": {"required": True},
     }
 
     _attribute_map = {
-        'managed_image': {'key': 'managedImage', 'type': 'ManagedArtifact'},
+        "managed_image": {"key": "managedImage", "type": "ManagedArtifact"},
     }
 
-    def __init__(
-        self,
-        *,
-        managed_image: "ManagedArtifact",
-        **kwargs
-    ):
+    def __init__(self, *, managed_image: "_models.ManagedArtifact", **kwargs):
         """
-        :keyword managed_image: Required. The managed artifact.
+        :keyword managed_image: The managed artifact. Required.
         :paramtype managed_image: ~azure.mgmt.compute.v2022_01_03.models.ManagedArtifact
         """
-        super(GalleryArtifactSource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.managed_image = managed_image
 
 
-class GalleryArtifactVersionSource(msrest.serialization.Model):
+class GalleryArtifactVersionSource(_serialization.Model):
     """The gallery artifact version source.
 
     :ivar id: The id of the gallery artifact version source. Can specify a disk uri, snapshot uri,
@@ -1598,16 +1549,12 @@ class GalleryArtifactVersionSource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        uri: Optional[str] = None,
-        **kwargs
+        self, *, id: Optional[str] = None, uri: Optional[str] = None, **kwargs  # pylint: disable=redefined-builtin
     ):
         """
         :keyword id: The id of the gallery artifact version source. Can specify a disk uri, snapshot
@@ -1617,12 +1564,12 @@ class GalleryArtifactVersionSource(msrest.serialization.Model):
          vhd/blob source.
         :paramtype uri: str
         """
-        super(GalleryArtifactVersionSource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.uri = uri
 
 
-class GalleryDiskImage(msrest.serialization.Model):
+class GalleryDiskImage(_serialization.Model):
     """This is the disk image base class.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1630,37 +1577,37 @@ class GalleryDiskImage(msrest.serialization.Model):
     :ivar size_in_gb: This property indicates the size of the VHD to be created.
     :vartype size_in_gb: int
     :ivar host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-     'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+     'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.HostCaching
     :ivar source: The gallery artifact version source.
     :vartype source: ~azure.mgmt.compute.v2022_01_03.models.GalleryArtifactVersionSource
     """
 
     _validation = {
-        'size_in_gb': {'readonly': True},
+        "size_in_gb": {"readonly": True},
     }
 
     _attribute_map = {
-        'size_in_gb': {'key': 'sizeInGB', 'type': 'int'},
-        'host_caching': {'key': 'hostCaching', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'GalleryArtifactVersionSource'},
+        "size_in_gb": {"key": "sizeInGB", "type": "int"},
+        "host_caching": {"key": "hostCaching", "type": "str"},
+        "source": {"key": "source", "type": "GalleryArtifactVersionSource"},
     }
 
     def __init__(
         self,
         *,
-        host_caching: Optional[Union[str, "HostCaching"]] = None,
-        source: Optional["GalleryArtifactVersionSource"] = None,
+        host_caching: Optional[Union[str, "_models.HostCaching"]] = None,
+        source: Optional["_models.GalleryArtifactVersionSource"] = None,
         **kwargs
     ):
         """
         :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-         'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+         'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
         :paramtype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.HostCaching
         :keyword source: The gallery artifact version source.
         :paramtype source: ~azure.mgmt.compute.v2022_01_03.models.GalleryArtifactVersionSource
         """
-        super(GalleryDiskImage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.size_in_gb = None
         self.host_caching = host_caching
         self.source = source
@@ -1676,86 +1623,84 @@ class GalleryDataDiskImage(GalleryDiskImage):
     :ivar size_in_gb: This property indicates the size of the VHD to be created.
     :vartype size_in_gb: int
     :ivar host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-     'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+     'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.HostCaching
     :ivar source: The gallery artifact version source.
     :vartype source: ~azure.mgmt.compute.v2022_01_03.models.GalleryArtifactVersionSource
-    :ivar lun: Required. This property specifies the logical unit number of the data disk. This
-     value is used to identify data disks within the Virtual Machine and therefore must be unique
-     for each data disk attached to the Virtual Machine.
+    :ivar lun: This property specifies the logical unit number of the data disk. This value is used
+     to identify data disks within the Virtual Machine and therefore must be unique for each data
+     disk attached to the Virtual Machine. Required.
     :vartype lun: int
     """
 
     _validation = {
-        'size_in_gb': {'readonly': True},
-        'lun': {'required': True},
+        "size_in_gb": {"readonly": True},
+        "lun": {"required": True},
     }
 
     _attribute_map = {
-        'size_in_gb': {'key': 'sizeInGB', 'type': 'int'},
-        'host_caching': {'key': 'hostCaching', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'GalleryArtifactVersionSource'},
-        'lun': {'key': 'lun', 'type': 'int'},
+        "size_in_gb": {"key": "sizeInGB", "type": "int"},
+        "host_caching": {"key": "hostCaching", "type": "str"},
+        "source": {"key": "source", "type": "GalleryArtifactVersionSource"},
+        "lun": {"key": "lun", "type": "int"},
     }
 
     def __init__(
         self,
         *,
         lun: int,
-        host_caching: Optional[Union[str, "HostCaching"]] = None,
-        source: Optional["GalleryArtifactVersionSource"] = None,
+        host_caching: Optional[Union[str, "_models.HostCaching"]] = None,
+        source: Optional["_models.GalleryArtifactVersionSource"] = None,
         **kwargs
     ):
         """
         :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-         'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+         'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
         :paramtype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.HostCaching
         :keyword source: The gallery artifact version source.
         :paramtype source: ~azure.mgmt.compute.v2022_01_03.models.GalleryArtifactVersionSource
-        :keyword lun: Required. This property specifies the logical unit number of the data disk. This
-         value is used to identify data disks within the Virtual Machine and therefore must be unique
-         for each data disk attached to the Virtual Machine.
+        :keyword lun: This property specifies the logical unit number of the data disk. This value is
+         used to identify data disks within the Virtual Machine and therefore must be unique for each
+         data disk attached to the Virtual Machine. Required.
         :paramtype lun: int
         """
-        super(GalleryDataDiskImage, self).__init__(host_caching=host_caching, source=source, **kwargs)
+        super().__init__(host_caching=host_caching, source=source, **kwargs)
         self.lun = lun
 
 
-class GalleryExtendedLocation(msrest.serialization.Model):
+class GalleryExtendedLocation(_serialization.Model):
     """The name of the extended location.
 
     :ivar name:
     :vartype name: str
-    :ivar type: It is type of the extended location. Possible values include: "EdgeZone",
-     "Unknown".
+    :ivar type: It is type of the extended location. Known values are: "EdgeZone" and "Unknown".
     :vartype type: str or ~azure.mgmt.compute.v2022_01_03.models.GalleryExtendedLocationType
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        type: Optional[Union[str, "GalleryExtendedLocationType"]] = None,
+        type: Optional[Union[str, "_models.GalleryExtendedLocationType"]] = None,
         **kwargs
     ):
         """
         :keyword name:
         :paramtype name: str
-        :keyword type: It is type of the extended location. Possible values include: "EdgeZone",
-         "Unknown".
+        :keyword type: It is type of the extended location. Known values are: "EdgeZone" and "Unknown".
         :paramtype type: str or ~azure.mgmt.compute.v2022_01_03.models.GalleryExtendedLocationType
         """
-        super(GalleryExtendedLocation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
 
 
-class GalleryIdentifier(msrest.serialization.Model):
+class GalleryIdentifier(_serialization.Model):
     """Describes the gallery unique name.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1766,24 +1711,20 @@ class GalleryIdentifier(msrest.serialization.Model):
     """
 
     _validation = {
-        'unique_name': {'readonly': True},
+        "unique_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'unique_name': {'key': 'uniqueName', 'type': 'str'},
+        "unique_name": {"key": "uniqueName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(GalleryIdentifier, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.unique_name = None
 
 
-class GalleryImage(Resource):
+class GalleryImage(Resource):  # pylint: disable=too-many-instance-attributes
     """Specifies information about the gallery image definition that you want to create or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1796,9 +1737,9 @@ class GalleryImage(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar description: The description of this gallery image definition resource. This property is
      updatable.
@@ -1811,15 +1752,15 @@ class GalleryImage(Resource):
     :vartype release_note_uri: str
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
      disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-     include: "Windows", "Linux".
+     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+     "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     :ivar os_state: This property allows the user to specify whether the virtual machines created
-     under this image are 'Generalized' or 'Specialized'. Possible values include: "Generalized",
+     under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized" and
      "Specialized".
     :vartype os_state: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemStateTypes
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Possible values include: "V1", "V2".
+     disks only. Known values are: "V1" and "V2".
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2022_01_03.models.HyperVGeneration
     :ivar end_of_life_date: The end of life date of the gallery image definition. This property can
      be used for decommissioning purposes. This property is updatable.
@@ -1834,46 +1775,46 @@ class GalleryImage(Resource):
     :ivar purchase_plan: Describes the gallery image definition purchase plan. This is used by
      marketplace images.
     :vartype purchase_plan: ~azure.mgmt.compute.v2022_01_03.models.ImagePurchasePlan
-    :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
-     values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2022_01_03.models.GalleryProvisioningState
     :ivar features: A list of gallery image features.
     :vartype features: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImageFeature]
-    :ivar architecture: The architecture of the image. Applicable to OS disks only. Possible values
-     include: "x64", "Arm64".
+    :ivar architecture: The architecture of the image. Applicable to OS disks only. Known values
+     are: "x64" and "Arm64".
     :vartype architecture: str or ~azure.mgmt.compute.v2022_01_03.models.Architecture
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'eula': {'key': 'properties.eula', 'type': 'str'},
-        'privacy_statement_uri': {'key': 'properties.privacyStatementUri', 'type': 'str'},
-        'release_note_uri': {'key': 'properties.releaseNoteUri', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'os_state': {'key': 'properties.osState', 'type': 'str'},
-        'hyper_v_generation': {'key': 'properties.hyperVGeneration', 'type': 'str'},
-        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
-        'identifier': {'key': 'properties.identifier', 'type': 'GalleryImageIdentifier'},
-        'recommended': {'key': 'properties.recommended', 'type': 'RecommendedMachineConfiguration'},
-        'disallowed': {'key': 'properties.disallowed', 'type': 'Disallowed'},
-        'purchase_plan': {'key': 'properties.purchasePlan', 'type': 'ImagePurchasePlan'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'features': {'key': 'properties.features', 'type': '[GalleryImageFeature]'},
-        'architecture': {'key': 'properties.architecture', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "description": {"key": "properties.description", "type": "str"},
+        "eula": {"key": "properties.eula", "type": "str"},
+        "privacy_statement_uri": {"key": "properties.privacyStatementUri", "type": "str"},
+        "release_note_uri": {"key": "properties.releaseNoteUri", "type": "str"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "os_state": {"key": "properties.osState", "type": "str"},
+        "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
+        "end_of_life_date": {"key": "properties.endOfLifeDate", "type": "iso-8601"},
+        "identifier": {"key": "properties.identifier", "type": "GalleryImageIdentifier"},
+        "recommended": {"key": "properties.recommended", "type": "RecommendedMachineConfiguration"},
+        "disallowed": {"key": "properties.disallowed", "type": "Disallowed"},
+        "purchase_plan": {"key": "properties.purchasePlan", "type": "ImagePurchasePlan"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "features": {"key": "properties.features", "type": "[GalleryImageFeature]"},
+        "architecture": {"key": "properties.architecture", "type": "str"},
     }
 
     def __init__(
@@ -1885,22 +1826,22 @@ class GalleryImage(Resource):
         eula: Optional[str] = None,
         privacy_statement_uri: Optional[str] = None,
         release_note_uri: Optional[str] = None,
-        os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
-        os_state: Optional[Union[str, "OperatingSystemStateTypes"]] = None,
-        hyper_v_generation: Optional[Union[str, "HyperVGeneration"]] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
+        os_state: Optional[Union[str, "_models.OperatingSystemStateTypes"]] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
-        identifier: Optional["GalleryImageIdentifier"] = None,
-        recommended: Optional["RecommendedMachineConfiguration"] = None,
-        disallowed: Optional["Disallowed"] = None,
-        purchase_plan: Optional["ImagePurchasePlan"] = None,
-        features: Optional[List["GalleryImageFeature"]] = None,
-        architecture: Optional[Union[str, "Architecture"]] = None,
+        identifier: Optional["_models.GalleryImageIdentifier"] = None,
+        recommended: Optional["_models.RecommendedMachineConfiguration"] = None,
+        disallowed: Optional["_models.Disallowed"] = None,
+        purchase_plan: Optional["_models.ImagePurchasePlan"] = None,
+        features: Optional[List["_models.GalleryImageFeature"]] = None,
+        architecture: Optional[Union[str, "_models.Architecture"]] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword description: The description of this gallery image definition resource. This property
          is updatable.
@@ -1913,15 +1854,15 @@ class GalleryImage(Resource):
         :paramtype release_note_uri: str
         :keyword os_type: This property allows you to specify the type of the OS that is included in
          the disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-         include: "Windows", "Linux".
+         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+         "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         :keyword os_state: This property allows the user to specify whether the virtual machines
-         created under this image are 'Generalized' or 'Specialized'. Possible values include:
-         "Generalized", "Specialized".
+         created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized"
+         and "Specialized".
         :paramtype os_state: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemStateTypes
         :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-         disks only. Possible values include: "V1", "V2".
+         disks only. Known values are: "V1" and "V2".
         :paramtype hyper_v_generation: str or ~azure.mgmt.compute.v2022_01_03.models.HyperVGeneration
         :keyword end_of_life_date: The end of life date of the gallery image definition. This property
          can be used for decommissioning purposes. This property is updatable.
@@ -1938,11 +1879,11 @@ class GalleryImage(Resource):
         :paramtype purchase_plan: ~azure.mgmt.compute.v2022_01_03.models.ImagePurchasePlan
         :keyword features: A list of gallery image features.
         :paramtype features: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImageFeature]
-        :keyword architecture: The architecture of the image. Applicable to OS disks only. Possible
-         values include: "x64", "Arm64".
+        :keyword architecture: The architecture of the image. Applicable to OS disks only. Known values
+         are: "x64" and "Arm64".
         :paramtype architecture: str or ~azure.mgmt.compute.v2022_01_03.models.Architecture
         """
-        super(GalleryImage, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.description = description
         self.eula = eula
         self.privacy_statement_uri = privacy_statement_uri
@@ -1960,7 +1901,7 @@ class GalleryImage(Resource):
         self.architecture = architecture
 
 
-class GalleryImageFeature(msrest.serialization.Model):
+class GalleryImageFeature(_serialization.Model):
     """A feature for gallery image.
 
     :ivar name: The name of the gallery image feature.
@@ -1970,81 +1911,68 @@ class GalleryImageFeature(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
         """
         :keyword name: The name of the gallery image feature.
         :paramtype name: str
         :keyword value: The value of the gallery image feature.
         :paramtype value: str
         """
-        super(GalleryImageFeature, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
 
-class GalleryImageIdentifier(msrest.serialization.Model):
+class GalleryImageIdentifier(_serialization.Model):
     """This is the gallery image definition identifier.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar publisher: Required. The name of the gallery image definition publisher.
+    :ivar publisher: The name of the gallery image definition publisher. Required.
     :vartype publisher: str
-    :ivar offer: Required. The name of the gallery image definition offer.
+    :ivar offer: The name of the gallery image definition offer. Required.
     :vartype offer: str
-    :ivar sku: Required. The name of the gallery image definition SKU.
+    :ivar sku: The name of the gallery image definition SKU. Required.
     :vartype sku: str
     """
 
     _validation = {
-        'publisher': {'required': True},
-        'offer': {'required': True},
-        'sku': {'required': True},
+        "publisher": {"required": True},
+        "offer": {"required": True},
+        "sku": {"required": True},
     }
 
     _attribute_map = {
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'offer': {'key': 'offer', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
+        "publisher": {"key": "publisher", "type": "str"},
+        "offer": {"key": "offer", "type": "str"},
+        "sku": {"key": "sku", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        publisher: str,
-        offer: str,
-        sku: str,
-        **kwargs
-    ):
+    def __init__(self, *, publisher: str, offer: str, sku: str, **kwargs):
         """
-        :keyword publisher: Required. The name of the gallery image definition publisher.
+        :keyword publisher: The name of the gallery image definition publisher. Required.
         :paramtype publisher: str
-        :keyword offer: Required. The name of the gallery image definition offer.
+        :keyword offer: The name of the gallery image definition offer. Required.
         :paramtype offer: str
-        :keyword sku: Required. The name of the gallery image definition SKU.
+        :keyword sku: The name of the gallery image definition SKU. Required.
         :paramtype sku: str
         """
-        super(GalleryImageIdentifier, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.publisher = publisher
         self.offer = offer
         self.sku = sku
 
 
-class GalleryImageList(msrest.serialization.Model):
+class GalleryImageList(_serialization.Model):
     """The List Gallery Images operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of Shared Image Gallery images.
+    :ivar value: A list of Shared Image Gallery images. Required.
     :vartype value: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImage]
     :ivar next_link: The uri to fetch the next page of Image Definitions in the Shared Image
      Gallery. Call ListNext() with this to fetch the next page of gallery image definitions.
@@ -2052,34 +1980,28 @@ class GalleryImageList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[GalleryImage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[GalleryImage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["GalleryImage"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.GalleryImage"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of Shared Image Gallery images.
+        :keyword value: A list of Shared Image Gallery images. Required.
         :paramtype value: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImage]
         :keyword next_link: The uri to fetch the next page of Image Definitions in the Shared Image
          Gallery. Call ListNext() with this to fetch the next page of gallery image definitions.
         :paramtype next_link: str
         """
-        super(GalleryImageList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class GalleryImageUpdate(UpdateResourceDefinition):
+class GalleryImageUpdate(UpdateResourceDefinition):  # pylint: disable=too-many-instance-attributes
     """Specifies information about the gallery image definition that you want to update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2090,7 +2012,7 @@ class GalleryImageUpdate(UpdateResourceDefinition):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar description: The description of this gallery image definition resource. This property is
      updatable.
@@ -2103,15 +2025,15 @@ class GalleryImageUpdate(UpdateResourceDefinition):
     :vartype release_note_uri: str
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
      disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-     include: "Windows", "Linux".
+     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+     "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     :ivar os_state: This property allows the user to specify whether the virtual machines created
-     under this image are 'Generalized' or 'Specialized'. Possible values include: "Generalized",
+     under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized" and
      "Specialized".
     :vartype os_state: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemStateTypes
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Possible values include: "V1", "V2".
+     disks only. Known values are: "V1" and "V2".
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2022_01_03.models.HyperVGeneration
     :ivar end_of_life_date: The end of life date of the gallery image definition. This property can
      be used for decommissioning purposes. This property is updatable.
@@ -2126,44 +2048,44 @@ class GalleryImageUpdate(UpdateResourceDefinition):
     :ivar purchase_plan: Describes the gallery image definition purchase plan. This is used by
      marketplace images.
     :vartype purchase_plan: ~azure.mgmt.compute.v2022_01_03.models.ImagePurchasePlan
-    :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
-     values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2022_01_03.models.GalleryProvisioningState
     :ivar features: A list of gallery image features.
     :vartype features: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImageFeature]
-    :ivar architecture: The architecture of the image. Applicable to OS disks only. Possible values
-     include: "x64", "Arm64".
+    :ivar architecture: The architecture of the image. Applicable to OS disks only. Known values
+     are: "x64" and "Arm64".
     :vartype architecture: str or ~azure.mgmt.compute.v2022_01_03.models.Architecture
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'eula': {'key': 'properties.eula', 'type': 'str'},
-        'privacy_statement_uri': {'key': 'properties.privacyStatementUri', 'type': 'str'},
-        'release_note_uri': {'key': 'properties.releaseNoteUri', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'os_state': {'key': 'properties.osState', 'type': 'str'},
-        'hyper_v_generation': {'key': 'properties.hyperVGeneration', 'type': 'str'},
-        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
-        'identifier': {'key': 'properties.identifier', 'type': 'GalleryImageIdentifier'},
-        'recommended': {'key': 'properties.recommended', 'type': 'RecommendedMachineConfiguration'},
-        'disallowed': {'key': 'properties.disallowed', 'type': 'Disallowed'},
-        'purchase_plan': {'key': 'properties.purchasePlan', 'type': 'ImagePurchasePlan'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'features': {'key': 'properties.features', 'type': '[GalleryImageFeature]'},
-        'architecture': {'key': 'properties.architecture', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "description": {"key": "properties.description", "type": "str"},
+        "eula": {"key": "properties.eula", "type": "str"},
+        "privacy_statement_uri": {"key": "properties.privacyStatementUri", "type": "str"},
+        "release_note_uri": {"key": "properties.releaseNoteUri", "type": "str"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "os_state": {"key": "properties.osState", "type": "str"},
+        "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
+        "end_of_life_date": {"key": "properties.endOfLifeDate", "type": "iso-8601"},
+        "identifier": {"key": "properties.identifier", "type": "GalleryImageIdentifier"},
+        "recommended": {"key": "properties.recommended", "type": "RecommendedMachineConfiguration"},
+        "disallowed": {"key": "properties.disallowed", "type": "Disallowed"},
+        "purchase_plan": {"key": "properties.purchasePlan", "type": "ImagePurchasePlan"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "features": {"key": "properties.features", "type": "[GalleryImageFeature]"},
+        "architecture": {"key": "properties.architecture", "type": "str"},
     }
 
     def __init__(
@@ -2174,20 +2096,20 @@ class GalleryImageUpdate(UpdateResourceDefinition):
         eula: Optional[str] = None,
         privacy_statement_uri: Optional[str] = None,
         release_note_uri: Optional[str] = None,
-        os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
-        os_state: Optional[Union[str, "OperatingSystemStateTypes"]] = None,
-        hyper_v_generation: Optional[Union[str, "HyperVGeneration"]] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
+        os_state: Optional[Union[str, "_models.OperatingSystemStateTypes"]] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
-        identifier: Optional["GalleryImageIdentifier"] = None,
-        recommended: Optional["RecommendedMachineConfiguration"] = None,
-        disallowed: Optional["Disallowed"] = None,
-        purchase_plan: Optional["ImagePurchasePlan"] = None,
-        features: Optional[List["GalleryImageFeature"]] = None,
-        architecture: Optional[Union[str, "Architecture"]] = None,
+        identifier: Optional["_models.GalleryImageIdentifier"] = None,
+        recommended: Optional["_models.RecommendedMachineConfiguration"] = None,
+        disallowed: Optional["_models.Disallowed"] = None,
+        purchase_plan: Optional["_models.ImagePurchasePlan"] = None,
+        features: Optional[List["_models.GalleryImageFeature"]] = None,
+        architecture: Optional[Union[str, "_models.Architecture"]] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword description: The description of this gallery image definition resource. This property
          is updatable.
@@ -2200,15 +2122,15 @@ class GalleryImageUpdate(UpdateResourceDefinition):
         :paramtype release_note_uri: str
         :keyword os_type: This property allows you to specify the type of the OS that is included in
          the disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-         include: "Windows", "Linux".
+         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+         "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         :keyword os_state: This property allows the user to specify whether the virtual machines
-         created under this image are 'Generalized' or 'Specialized'. Possible values include:
-         "Generalized", "Specialized".
+         created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized"
+         and "Specialized".
         :paramtype os_state: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemStateTypes
         :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-         disks only. Possible values include: "V1", "V2".
+         disks only. Known values are: "V1" and "V2".
         :paramtype hyper_v_generation: str or ~azure.mgmt.compute.v2022_01_03.models.HyperVGeneration
         :keyword end_of_life_date: The end of life date of the gallery image definition. This property
          can be used for decommissioning purposes. This property is updatable.
@@ -2225,11 +2147,11 @@ class GalleryImageUpdate(UpdateResourceDefinition):
         :paramtype purchase_plan: ~azure.mgmt.compute.v2022_01_03.models.ImagePurchasePlan
         :keyword features: A list of gallery image features.
         :paramtype features: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImageFeature]
-        :keyword architecture: The architecture of the image. Applicable to OS disks only. Possible
-         values include: "x64", "Arm64".
+        :keyword architecture: The architecture of the image. Applicable to OS disks only. Known values
+         are: "x64" and "Arm64".
         :paramtype architecture: str or ~azure.mgmt.compute.v2022_01_03.models.Architecture
         """
-        super(GalleryImageUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.description = description
         self.eula = eula
         self.privacy_statement_uri = privacy_statement_uri
@@ -2260,15 +2182,15 @@ class GalleryImageVersion(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar publishing_profile: The publishing profile of a gallery image Version.
     :vartype publishing_profile:
      ~azure.mgmt.compute.v2022_01_03.models.GalleryImageVersionPublishingProfile
-    :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
-     values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2022_01_03.models.GalleryProvisioningState
     :ivar storage_profile: This is the storage profile of a Gallery Image Version.
@@ -2279,24 +2201,24 @@ class GalleryImageVersion(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'replication_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "replication_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryImageVersionPublishingProfile'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'GalleryImageVersionStorageProfile'},
-        'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "publishing_profile": {"key": "properties.publishingProfile", "type": "GalleryImageVersionPublishingProfile"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "storage_profile": {"key": "properties.storageProfile", "type": "GalleryImageVersionStorageProfile"},
+        "replication_status": {"key": "properties.replicationStatus", "type": "ReplicationStatus"},
     }
 
     def __init__(
@@ -2304,14 +2226,14 @@ class GalleryImageVersion(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        publishing_profile: Optional["GalleryImageVersionPublishingProfile"] = None,
-        storage_profile: Optional["GalleryImageVersionStorageProfile"] = None,
+        publishing_profile: Optional["_models.GalleryImageVersionPublishingProfile"] = None,
+        storage_profile: Optional["_models.GalleryImageVersionStorageProfile"] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword publishing_profile: The publishing profile of a gallery image Version.
         :paramtype publishing_profile:
@@ -2320,19 +2242,19 @@ class GalleryImageVersion(Resource):
         :paramtype storage_profile:
          ~azure.mgmt.compute.v2022_01_03.models.GalleryImageVersionStorageProfile
         """
-        super(GalleryImageVersion, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.publishing_profile = publishing_profile
         self.provisioning_state = None
         self.storage_profile = storage_profile
         self.replication_status = None
 
 
-class GalleryImageVersionList(msrest.serialization.Model):
+class GalleryImageVersionList(_serialization.Model):
     """The List Gallery Image version operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of gallery image versions.
+    :ivar value: A list of gallery image versions. Required.
     :vartype value: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImageVersion]
     :ivar next_link: The uri to fetch the next page of gallery image versions. Call ListNext() with
      this to fetch the next page of gallery image versions.
@@ -2340,29 +2262,23 @@ class GalleryImageVersionList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[GalleryImageVersion]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[GalleryImageVersion]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["GalleryImageVersion"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.GalleryImageVersion"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of gallery image versions.
+        :keyword value: A list of gallery image versions. Required.
         :paramtype value: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImageVersion]
         :keyword next_link: The uri to fetch the next page of gallery image versions. Call ListNext()
          with this to fetch the next page of gallery image versions.
         :paramtype next_link: str
         """
-        super(GalleryImageVersionList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -2388,11 +2304,11 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
      used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Possible values include: "Standard_LRS", "Standard_ZRS",
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
      "Premium_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2022_01_03.models.StorageAccountType
     :ivar replication_mode: Optional parameter which specifies the mode to be used for replication.
-     This property is not updatable. Possible values include: "Full", "Shallow".
+     This property is not updatable. Known values are: "Full" and "Shallow".
     :vartype replication_mode: str or ~azure.mgmt.compute.v2022_01_03.models.ReplicationMode
     :ivar target_extended_locations: The target extended locations where the Image Version is going
      to be replicated to. This property is updatable.
@@ -2401,30 +2317,30 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
     """
 
     _validation = {
-        'published_date': {'readonly': True},
+        "published_date": {"readonly": True},
     }
 
     _attribute_map = {
-        'target_regions': {'key': 'targetRegions', 'type': '[TargetRegion]'},
-        'replica_count': {'key': 'replicaCount', 'type': 'int'},
-        'exclude_from_latest': {'key': 'excludeFromLatest', 'type': 'bool'},
-        'published_date': {'key': 'publishedDate', 'type': 'iso-8601'},
-        'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'replication_mode': {'key': 'replicationMode', 'type': 'str'},
-        'target_extended_locations': {'key': 'targetExtendedLocations', 'type': '[GalleryTargetExtendedLocation]'},
+        "target_regions": {"key": "targetRegions", "type": "[TargetRegion]"},
+        "replica_count": {"key": "replicaCount", "type": "int"},
+        "exclude_from_latest": {"key": "excludeFromLatest", "type": "bool"},
+        "published_date": {"key": "publishedDate", "type": "iso-8601"},
+        "end_of_life_date": {"key": "endOfLifeDate", "type": "iso-8601"},
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
+        "replication_mode": {"key": "replicationMode", "type": "str"},
+        "target_extended_locations": {"key": "targetExtendedLocations", "type": "[GalleryTargetExtendedLocation]"},
     }
 
     def __init__(
         self,
         *,
-        target_regions: Optional[List["TargetRegion"]] = None,
+        target_regions: Optional[List["_models.TargetRegion"]] = None,
         replica_count: Optional[int] = None,
         exclude_from_latest: Optional[bool] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountType"]] = None,
-        replication_mode: Optional[Union[str, "ReplicationMode"]] = None,
-        target_extended_locations: Optional[List["GalleryTargetExtendedLocation"]] = None,
+        storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
+        replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = None,
+        target_extended_locations: Optional[List["_models.GalleryTargetExtendedLocation"]] = None,
         **kwargs
     ):
         """
@@ -2442,22 +2358,31 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
          be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Possible values include: "Standard_LRS", "Standard_ZRS",
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
          "Premium_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.StorageAccountType
         :keyword replication_mode: Optional parameter which specifies the mode to be used for
-         replication. This property is not updatable. Possible values include: "Full", "Shallow".
+         replication. This property is not updatable. Known values are: "Full" and "Shallow".
         :paramtype replication_mode: str or ~azure.mgmt.compute.v2022_01_03.models.ReplicationMode
         :keyword target_extended_locations: The target extended locations where the Image Version is
          going to be replicated to. This property is updatable.
         :paramtype target_extended_locations:
          list[~azure.mgmt.compute.v2022_01_03.models.GalleryTargetExtendedLocation]
         """
-        super(GalleryImageVersionPublishingProfile, self).__init__(target_regions=target_regions, replica_count=replica_count, exclude_from_latest=exclude_from_latest, end_of_life_date=end_of_life_date, storage_account_type=storage_account_type, replication_mode=replication_mode, target_extended_locations=target_extended_locations, **kwargs)
+        super().__init__(
+            target_regions=target_regions,
+            replica_count=replica_count,
+            exclude_from_latest=exclude_from_latest,
+            end_of_life_date=end_of_life_date,
+            storage_account_type=storage_account_type,
+            replication_mode=replication_mode,
+            target_extended_locations=target_extended_locations,
+            **kwargs
+        )
 
 
-class GalleryImageVersionStorageProfile(msrest.serialization.Model):
+class GalleryImageVersionStorageProfile(_serialization.Model):
     """This is the storage profile of a Gallery Image Version.
 
     :ivar source: The gallery artifact version source.
@@ -2469,17 +2394,17 @@ class GalleryImageVersionStorageProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source': {'key': 'source', 'type': 'GalleryArtifactVersionSource'},
-        'os_disk_image': {'key': 'osDiskImage', 'type': 'GalleryOSDiskImage'},
-        'data_disk_images': {'key': 'dataDiskImages', 'type': '[GalleryDataDiskImage]'},
+        "source": {"key": "source", "type": "GalleryArtifactVersionSource"},
+        "os_disk_image": {"key": "osDiskImage", "type": "GalleryOSDiskImage"},
+        "data_disk_images": {"key": "dataDiskImages", "type": "[GalleryDataDiskImage]"},
     }
 
     def __init__(
         self,
         *,
-        source: Optional["GalleryArtifactVersionSource"] = None,
-        os_disk_image: Optional["GalleryOSDiskImage"] = None,
-        data_disk_images: Optional[List["GalleryDataDiskImage"]] = None,
+        source: Optional["_models.GalleryArtifactVersionSource"] = None,
+        os_disk_image: Optional["_models.GalleryOSDiskImage"] = None,
+        data_disk_images: Optional[List["_models.GalleryDataDiskImage"]] = None,
         **kwargs
     ):
         """
@@ -2490,7 +2415,7 @@ class GalleryImageVersionStorageProfile(msrest.serialization.Model):
         :keyword data_disk_images: A list of data disk images.
         :paramtype data_disk_images: list[~azure.mgmt.compute.v2022_01_03.models.GalleryDataDiskImage]
         """
-        super(GalleryImageVersionStorageProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.source = source
         self.os_disk_image = os_disk_image
         self.data_disk_images = data_disk_images
@@ -2507,13 +2432,13 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar publishing_profile: The publishing profile of a gallery image Version.
     :vartype publishing_profile:
      ~azure.mgmt.compute.v2022_01_03.models.GalleryImageVersionPublishingProfile
-    :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
-     values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2022_01_03.models.GalleryProvisioningState
     :ivar storage_profile: This is the storage profile of a Gallery Image Version.
@@ -2524,34 +2449,34 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'replication_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "replication_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryImageVersionPublishingProfile'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'GalleryImageVersionStorageProfile'},
-        'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "publishing_profile": {"key": "properties.publishingProfile", "type": "GalleryImageVersionPublishingProfile"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "storage_profile": {"key": "properties.storageProfile", "type": "GalleryImageVersionStorageProfile"},
+        "replication_status": {"key": "properties.replicationStatus", "type": "ReplicationStatus"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        publishing_profile: Optional["GalleryImageVersionPublishingProfile"] = None,
-        storage_profile: Optional["GalleryImageVersionStorageProfile"] = None,
+        publishing_profile: Optional["_models.GalleryImageVersionPublishingProfile"] = None,
+        storage_profile: Optional["_models.GalleryImageVersionStorageProfile"] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword publishing_profile: The publishing profile of a gallery image Version.
         :paramtype publishing_profile:
@@ -2560,19 +2485,19 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
         :paramtype storage_profile:
          ~azure.mgmt.compute.v2022_01_03.models.GalleryImageVersionStorageProfile
         """
-        super(GalleryImageVersionUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.publishing_profile = publishing_profile
         self.provisioning_state = None
         self.storage_profile = storage_profile
         self.replication_status = None
 
 
-class GalleryList(msrest.serialization.Model):
+class GalleryList(_serialization.Model):
     """The List Galleries operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of galleries.
+    :ivar value: A list of galleries. Required.
     :vartype value: list[~azure.mgmt.compute.v2022_01_03.models.Gallery]
     :ivar next_link: The uri to fetch the next page of galleries. Call ListNext() with this to
      fetch the next page of galleries.
@@ -2580,29 +2505,23 @@ class GalleryList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Gallery]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Gallery]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["Gallery"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.Gallery"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of galleries.
+        :keyword value: A list of galleries. Required.
         :paramtype value: list[~azure.mgmt.compute.v2022_01_03.models.Gallery]
         :keyword next_link: The uri to fetch the next page of galleries. Call ListNext() with this to
          fetch the next page of galleries.
         :paramtype next_link: str
         """
-        super(GalleryList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -2615,40 +2534,40 @@ class GalleryOSDiskImage(GalleryDiskImage):
     :ivar size_in_gb: This property indicates the size of the VHD to be created.
     :vartype size_in_gb: int
     :ivar host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-     'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+     'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.HostCaching
     :ivar source: The gallery artifact version source.
     :vartype source: ~azure.mgmt.compute.v2022_01_03.models.GalleryArtifactVersionSource
     """
 
     _validation = {
-        'size_in_gb': {'readonly': True},
+        "size_in_gb": {"readonly": True},
     }
 
     _attribute_map = {
-        'size_in_gb': {'key': 'sizeInGB', 'type': 'int'},
-        'host_caching': {'key': 'hostCaching', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'GalleryArtifactVersionSource'},
+        "size_in_gb": {"key": "sizeInGB", "type": "int"},
+        "host_caching": {"key": "hostCaching", "type": "str"},
+        "source": {"key": "source", "type": "GalleryArtifactVersionSource"},
     }
 
     def __init__(
         self,
         *,
-        host_caching: Optional[Union[str, "HostCaching"]] = None,
-        source: Optional["GalleryArtifactVersionSource"] = None,
+        host_caching: Optional[Union[str, "_models.HostCaching"]] = None,
+        source: Optional["_models.GalleryArtifactVersionSource"] = None,
         **kwargs
     ):
         """
         :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-         'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+         'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
         :paramtype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.HostCaching
         :keyword source: The gallery artifact version source.
         :paramtype source: ~azure.mgmt.compute.v2022_01_03.models.GalleryArtifactVersionSource
         """
-        super(GalleryOSDiskImage, self).__init__(host_caching=host_caching, source=source, **kwargs)
+        super().__init__(host_caching=host_caching, source=source, **kwargs)
 
 
-class GalleryTargetExtendedLocation(msrest.serialization.Model):
+class GalleryTargetExtendedLocation(_serialization.Model):
     """GalleryTargetExtendedLocation.
 
     :ivar name: The name of the region.
@@ -2659,7 +2578,7 @@ class GalleryTargetExtendedLocation(msrest.serialization.Model):
      created per extended location. This property is updatable.
     :vartype extended_location_replica_count: int
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Possible values include: "Standard_LRS", "Standard_ZRS",
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
      "Premium_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2022_01_03.models.StorageAccountType
     :ivar encryption: Optional. Allows users to provide customer managed keys for encrypting the OS
@@ -2668,21 +2587,21 @@ class GalleryTargetExtendedLocation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'extended_location': {'key': 'extendedLocation', 'type': 'GalleryExtendedLocation'},
-        'extended_location_replica_count': {'key': 'extendedLocationReplicaCount', 'type': 'int'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'encryption': {'key': 'encryption', 'type': 'EncryptionImages'},
+        "name": {"key": "name", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "GalleryExtendedLocation"},
+        "extended_location_replica_count": {"key": "extendedLocationReplicaCount", "type": "int"},
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
+        "encryption": {"key": "encryption", "type": "EncryptionImages"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        extended_location: Optional["GalleryExtendedLocation"] = None,
+        extended_location: Optional["_models.GalleryExtendedLocation"] = None,
         extended_location_replica_count: Optional[int] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountType"]] = None,
-        encryption: Optional["EncryptionImages"] = None,
+        storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
+        encryption: Optional["_models.EncryptionImages"] = None,
         **kwargs
     ):
         """
@@ -2694,7 +2613,7 @@ class GalleryTargetExtendedLocation(msrest.serialization.Model):
          created per extended location. This property is updatable.
         :paramtype extended_location_replica_count: int
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Possible values include: "Standard_LRS", "Standard_ZRS",
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
          "Premium_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.StorageAccountType
@@ -2702,7 +2621,7 @@ class GalleryTargetExtendedLocation(msrest.serialization.Model):
          OS and data disks in the gallery artifact.
         :paramtype encryption: ~azure.mgmt.compute.v2022_01_03.models.EncryptionImages
         """
-        super(GalleryTargetExtendedLocation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.extended_location = extended_location
         self.extended_location_replica_count = extended_location_replica_count
@@ -2721,15 +2640,15 @@ class GalleryUpdate(UpdateResourceDefinition):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar description: The description of this Shared Image Gallery resource. This property is
      updatable.
     :vartype description: str
     :ivar identifier: Describes the gallery unique name.
     :vartype identifier: ~azure.mgmt.compute.v2022_01_03.models.GalleryIdentifier
-    :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
-     values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2022_01_03.models.GalleryProvisioningState
     :ivar sharing_profile: Profile for gallery sharing to subscription or tenant.
@@ -2741,24 +2660,24 @@ class GalleryUpdate(UpdateResourceDefinition):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'sharing_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "sharing_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'identifier': {'key': 'properties.identifier', 'type': 'GalleryIdentifier'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'sharing_profile': {'key': 'properties.sharingProfile', 'type': 'SharingProfile'},
-        'soft_delete_policy': {'key': 'properties.softDeletePolicy', 'type': 'SoftDeletePolicy'},
-        'sharing_status': {'key': 'properties.sharingStatus', 'type': 'SharingStatus'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "description": {"key": "properties.description", "type": "str"},
+        "identifier": {"key": "properties.identifier", "type": "GalleryIdentifier"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "sharing_profile": {"key": "properties.sharingProfile", "type": "SharingProfile"},
+        "soft_delete_policy": {"key": "properties.softDeletePolicy", "type": "SoftDeletePolicy"},
+        "sharing_status": {"key": "properties.sharingStatus", "type": "SharingStatus"},
     }
 
     def __init__(
@@ -2766,13 +2685,13 @@ class GalleryUpdate(UpdateResourceDefinition):
         *,
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
-        identifier: Optional["GalleryIdentifier"] = None,
-        sharing_profile: Optional["SharingProfile"] = None,
-        soft_delete_policy: Optional["SoftDeletePolicy"] = None,
+        identifier: Optional["_models.GalleryIdentifier"] = None,
+        sharing_profile: Optional["_models.SharingProfile"] = None,
+        soft_delete_policy: Optional["_models.SoftDeletePolicy"] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword description: The description of this Shared Image Gallery resource. This property is
          updatable.
@@ -2785,7 +2704,7 @@ class GalleryUpdate(UpdateResourceDefinition):
          gallery.
         :paramtype soft_delete_policy: ~azure.mgmt.compute.v2022_01_03.models.SoftDeletePolicy
         """
-        super(GalleryUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.description = description
         self.identifier = identifier
         self.provisioning_state = None
@@ -2794,7 +2713,7 @@ class GalleryUpdate(UpdateResourceDefinition):
         self.sharing_status = None
 
 
-class ImagePurchasePlan(msrest.serialization.Model):
+class ImagePurchasePlan(_serialization.Model):
     """Describes the gallery image definition purchase plan. This is used by marketplace images.
 
     :ivar name: The plan ID.
@@ -2806,18 +2725,13 @@ class ImagePurchasePlan(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'product': {'key': 'product', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "product": {"key": "product", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        publisher: Optional[str] = None,
-        product: Optional[str] = None,
-        **kwargs
+        self, *, name: Optional[str] = None, publisher: Optional[str] = None, product: Optional[str] = None, **kwargs
     ):
         """
         :keyword name: The plan ID.
@@ -2827,13 +2741,13 @@ class ImagePurchasePlan(msrest.serialization.Model):
         :keyword product: The product ID.
         :paramtype product: str
         """
-        super(ImagePurchasePlan, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.publisher = publisher
         self.product = product
 
 
-class InnerError(msrest.serialization.Model):
+class InnerError(_serialization.Model):
     """Inner error details.
 
     :ivar exceptiontype: The exception type.
@@ -2843,56 +2757,45 @@ class InnerError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'exceptiontype': {'key': 'exceptiontype', 'type': 'str'},
-        'errordetail': {'key': 'errordetail', 'type': 'str'},
+        "exceptiontype": {"key": "exceptiontype", "type": "str"},
+        "errordetail": {"key": "errordetail", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        exceptiontype: Optional[str] = None,
-        errordetail: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, exceptiontype: Optional[str] = None, errordetail: Optional[str] = None, **kwargs):
         """
         :keyword exceptiontype: The exception type.
         :paramtype exceptiontype: str
         :keyword errordetail: The internal error message or exception dump.
         :paramtype errordetail: str
         """
-        super(InnerError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.exceptiontype = exceptiontype
         self.errordetail = errordetail
 
 
-class ManagedArtifact(msrest.serialization.Model):
+class ManagedArtifact(_serialization.Model):
     """The managed artifact.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. The managed artifact id.
+    :ivar id: The managed artifact id. Required.
     :vartype id: str
     """
 
     _validation = {
-        'id': {'required': True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: str,
-        **kwargs
-    ):
+    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
         """
-        :keyword id: Required. The managed artifact id.
+        :keyword id: The managed artifact id. Required.
         :paramtype id: str
         """
-        super(ManagedArtifact, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
@@ -2907,15 +2810,15 @@ class OSDiskImageEncryption(DiskImageEncryption):
     """
 
     _attribute_map = {
-        'disk_encryption_set_id': {'key': 'diskEncryptionSetId', 'type': 'str'},
-        'security_profile': {'key': 'securityProfile', 'type': 'OSDiskImageSecurityProfile'},
+        "disk_encryption_set_id": {"key": "diskEncryptionSetId", "type": "str"},
+        "security_profile": {"key": "securityProfile", "type": "OSDiskImageSecurityProfile"},
     }
 
     def __init__(
         self,
         *,
         disk_encryption_set_id: Optional[str] = None,
-        security_profile: Optional["OSDiskImageSecurityProfile"] = None,
+        security_profile: Optional["_models.OSDiskImageSecurityProfile"] = None,
         **kwargs
     ):
         """
@@ -2925,15 +2828,15 @@ class OSDiskImageEncryption(DiskImageEncryption):
         :keyword security_profile: This property specifies the security profile of an OS disk image.
         :paramtype security_profile: ~azure.mgmt.compute.v2022_01_03.models.OSDiskImageSecurityProfile
         """
-        super(OSDiskImageEncryption, self).__init__(disk_encryption_set_id=disk_encryption_set_id, **kwargs)
+        super().__init__(disk_encryption_set_id=disk_encryption_set_id, **kwargs)
         self.security_profile = security_profile
 
 
-class OSDiskImageSecurityProfile(msrest.serialization.Model):
+class OSDiskImageSecurityProfile(_serialization.Model):
     """Contains security profile for an OS disk image.
 
-    :ivar confidential_vm_encryption_type: confidential VM encryption types. Possible values
-     include: "EncryptedVMGuestStateOnlyWithPmk", "EncryptedWithPmk", "EncryptedWithCmk".
+    :ivar confidential_vm_encryption_type: confidential VM encryption types. Known values are:
+     "EncryptedVMGuestStateOnlyWithPmk", "EncryptedWithPmk", and "EncryptedWithCmk".
     :vartype confidential_vm_encryption_type: str or
      ~azure.mgmt.compute.v2022_01_03.models.ConfidentialVMEncryptionType
     :ivar secure_vm_disk_encryption_set_id: secure VM disk encryption set id.
@@ -2941,31 +2844,31 @@ class OSDiskImageSecurityProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'confidential_vm_encryption_type': {'key': 'confidentialVMEncryptionType', 'type': 'str'},
-        'secure_vm_disk_encryption_set_id': {'key': 'secureVMDiskEncryptionSetId', 'type': 'str'},
+        "confidential_vm_encryption_type": {"key": "confidentialVMEncryptionType", "type": "str"},
+        "secure_vm_disk_encryption_set_id": {"key": "secureVMDiskEncryptionSetId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        confidential_vm_encryption_type: Optional[Union[str, "ConfidentialVMEncryptionType"]] = None,
+        confidential_vm_encryption_type: Optional[Union[str, "_models.ConfidentialVMEncryptionType"]] = None,
         secure_vm_disk_encryption_set_id: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword confidential_vm_encryption_type: confidential VM encryption types. Possible values
-         include: "EncryptedVMGuestStateOnlyWithPmk", "EncryptedWithPmk", "EncryptedWithCmk".
+        :keyword confidential_vm_encryption_type: confidential VM encryption types. Known values are:
+         "EncryptedVMGuestStateOnlyWithPmk", "EncryptedWithPmk", and "EncryptedWithCmk".
         :paramtype confidential_vm_encryption_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.ConfidentialVMEncryptionType
         :keyword secure_vm_disk_encryption_set_id: secure VM disk encryption set id.
         :paramtype secure_vm_disk_encryption_set_id: str
         """
-        super(OSDiskImageSecurityProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.confidential_vm_encryption_type = confidential_vm_encryption_type
         self.secure_vm_disk_encryption_set_id = secure_vm_disk_encryption_set_id
 
 
-class PirResource(msrest.serialization.Model):
+class PirResource(_serialization.Model):
     """The Resource model definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2977,22 +2880,18 @@ class PirResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'location': {'readonly': True},
+        "name": {"readonly": True},
+        "location": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(PirResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.location = None
 
@@ -3011,31 +2910,26 @@ class PirSharedGalleryResource(PirResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'location': {'readonly': True},
+        "name": {"readonly": True},
+        "location": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'unique_id': {'key': 'identifier.uniqueId', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "unique_id": {"key": "identifier.uniqueId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        unique_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, unique_id: Optional[str] = None, **kwargs):
         """
         :keyword unique_id: The unique id of this shared gallery.
         :paramtype unique_id: str
         """
-        super(PirSharedGalleryResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.unique_id = unique_id
 
 
-class RecommendedMachineConfiguration(msrest.serialization.Model):
+class RecommendedMachineConfiguration(_serialization.Model):
     """The properties describe the recommended machine configuration for this Image Definition. These properties are updatable.
 
     :ivar v_cp_us: Describes the resource range.
@@ -3045,15 +2939,15 @@ class RecommendedMachineConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'v_cp_us': {'key': 'vCPUs', 'type': 'ResourceRange'},
-        'memory': {'key': 'memory', 'type': 'ResourceRange'},
+        "v_cp_us": {"key": "vCPUs", "type": "ResourceRange"},
+        "memory": {"key": "memory", "type": "ResourceRange"},
     }
 
     def __init__(
         self,
         *,
-        v_cp_us: Optional["ResourceRange"] = None,
-        memory: Optional["ResourceRange"] = None,
+        v_cp_us: Optional["_models.ResourceRange"] = None,
+        memory: Optional["_models.ResourceRange"] = None,
         **kwargs
     ):
         """
@@ -3062,20 +2956,20 @@ class RecommendedMachineConfiguration(msrest.serialization.Model):
         :keyword memory: Describes the resource range.
         :paramtype memory: ~azure.mgmt.compute.v2022_01_03.models.ResourceRange
         """
-        super(RecommendedMachineConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.v_cp_us = v_cp_us
         self.memory = memory
 
 
-class RegionalReplicationStatus(msrest.serialization.Model):
+class RegionalReplicationStatus(_serialization.Model):
     """This is the regional replication status.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar region: The region to which the gallery image version is being replicated to.
     :vartype region: str
-    :ivar state: This is the regional replication state. Possible values include: "Unknown",
-     "Replicating", "Completed", "Failed".
+    :ivar state: This is the regional replication state. Known values are: "Unknown",
+     "Replicating", "Completed", and "Failed".
     :vartype state: str or ~azure.mgmt.compute.v2022_01_03.models.ReplicationState
     :ivar details: The details of the replication status.
     :vartype details: str
@@ -3084,83 +2978,72 @@ class RegionalReplicationStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'region': {'readonly': True},
-        'state': {'readonly': True},
-        'details': {'readonly': True},
-        'progress': {'readonly': True},
+        "region": {"readonly": True},
+        "state": {"readonly": True},
+        "details": {"readonly": True},
+        "progress": {"readonly": True},
     }
 
     _attribute_map = {
-        'region': {'key': 'region', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'details': {'key': 'details', 'type': 'str'},
-        'progress': {'key': 'progress', 'type': 'int'},
+        "region": {"key": "region", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "details": {"key": "details", "type": "str"},
+        "progress": {"key": "progress", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(RegionalReplicationStatus, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.region = None
         self.state = None
         self.details = None
         self.progress = None
 
 
-class RegionalSharingStatus(msrest.serialization.Model):
+class RegionalSharingStatus(_serialization.Model):
     """Gallery regional sharing status.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar region: Region name.
     :vartype region: str
-    :ivar state: Gallery sharing state in current region. Possible values include: "Succeeded",
-     "InProgress", "Failed", "Unknown".
+    :ivar state: Gallery sharing state in current region. Known values are: "Succeeded",
+     "InProgress", "Failed", and "Unknown".
     :vartype state: str or ~azure.mgmt.compute.v2022_01_03.models.SharingState
     :ivar details: Details of gallery regional sharing failure.
     :vartype details: str
     """
 
     _validation = {
-        'state': {'readonly': True},
+        "state": {"readonly": True},
     }
 
     _attribute_map = {
-        'region': {'key': 'region', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'details': {'key': 'details', 'type': 'str'},
+        "region": {"key": "region", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "details": {"key": "details", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        region: Optional[str] = None,
-        details: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, region: Optional[str] = None, details: Optional[str] = None, **kwargs):
         """
         :keyword region: Region name.
         :paramtype region: str
         :keyword details: Details of gallery regional sharing failure.
         :paramtype details: str
         """
-        super(RegionalSharingStatus, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.region = region
         self.state = None
         self.details = details
 
 
-class ReplicationStatus(msrest.serialization.Model):
+class ReplicationStatus(_serialization.Model):
     """This is the replication status of the gallery image version.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar aggregated_state: This is the aggregated replication status based on all the regional
-     replication status flags. Possible values include: "Unknown", "InProgress", "Completed",
-     "Failed".
+     replication status flags. Known values are: "Unknown", "InProgress", "Completed", and "Failed".
     :vartype aggregated_state: str or
      ~azure.mgmt.compute.v2022_01_03.models.AggregatedReplicationState
     :ivar summary: This is a summary of replication status for each region.
@@ -3168,27 +3051,23 @@ class ReplicationStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'aggregated_state': {'readonly': True},
-        'summary': {'readonly': True},
+        "aggregated_state": {"readonly": True},
+        "summary": {"readonly": True},
     }
 
     _attribute_map = {
-        'aggregated_state': {'key': 'aggregatedState', 'type': 'str'},
-        'summary': {'key': 'summary', 'type': '[RegionalReplicationStatus]'},
+        "aggregated_state": {"key": "aggregatedState", "type": "str"},
+        "summary": {"key": "summary", "type": "[RegionalReplicationStatus]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ReplicationStatus, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.aggregated_state = None
         self.summary = None
 
 
-class ResourceRange(msrest.serialization.Model):
+class ResourceRange(_serialization.Model):
     """Describes the resource range.
 
     :ivar min: The minimum number of the resource.
@@ -3198,15 +3077,15 @@ class ResourceRange(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'min': {'key': 'min', 'type': 'int'},
-        'max': {'key': 'max', 'type': 'int'},
+        "min": {"key": "min", "type": "int"},
+        "max": {"key": "max", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        min: Optional[int] = None,
-        max: Optional[int] = None,
+        min: Optional[int] = None,  # pylint: disable=redefined-builtin
+        max: Optional[int] = None,  # pylint: disable=redefined-builtin
         **kwargs
     ):
         """
@@ -3215,12 +3094,12 @@ class ResourceRange(msrest.serialization.Model):
         :keyword max: The maximum number of the resource.
         :paramtype max: int
         """
-        super(ResourceRange, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.min = min
         self.max = max
 
 
-class ResourceWithOptionalLocation(msrest.serialization.Model):
+class ResourceWithOptionalLocation(_serialization.Model):
     """The Resource model definition with location property as optional.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3233,38 +3112,32 @@ class ResourceWithOptionalLocation(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "location": {"key": "location", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(ResourceWithOptionalLocation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.location = location
         self.id = None
         self.name = None
@@ -3286,30 +3159,25 @@ class SharedGallery(PirSharedGalleryResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'location': {'readonly': True},
+        "name": {"readonly": True},
+        "location": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'unique_id': {'key': 'identifier.uniqueId', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "unique_id": {"key": "identifier.uniqueId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        unique_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, unique_id: Optional[str] = None, **kwargs):
         """
         :keyword unique_id: The unique id of this shared gallery.
         :paramtype unique_id: str
         """
-        super(SharedGallery, self).__init__(unique_id=unique_id, **kwargs)
+        super().__init__(unique_id=unique_id, **kwargs)
 
 
-class SharedGalleryDiskImage(msrest.serialization.Model):
+class SharedGalleryDiskImage(_serialization.Model):
     """This is the disk image base class.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3317,31 +3185,26 @@ class SharedGalleryDiskImage(msrest.serialization.Model):
     :ivar disk_size_gb: This property indicates the size of the VHD to be created.
     :vartype disk_size_gb: int
     :ivar host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-     'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+     'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.SharedGalleryHostCaching
     """
 
     _validation = {
-        'disk_size_gb': {'readonly': True},
+        "disk_size_gb": {"readonly": True},
     }
 
     _attribute_map = {
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'host_caching': {'key': 'hostCaching', 'type': 'str'},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "host_caching": {"key": "hostCaching", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        host_caching: Optional[Union[str, "SharedGalleryHostCaching"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, host_caching: Optional[Union[str, "_models.SharedGalleryHostCaching"]] = None, **kwargs):
         """
         :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-         'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+         'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
         :paramtype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.SharedGalleryHostCaching
         """
-        super(SharedGalleryDiskImage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.disk_size_gb = None
         self.host_caching = host_caching
 
@@ -3356,46 +3219,42 @@ class SharedGalleryDataDiskImage(SharedGalleryDiskImage):
     :ivar disk_size_gb: This property indicates the size of the VHD to be created.
     :vartype disk_size_gb: int
     :ivar host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-     'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+     'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.SharedGalleryHostCaching
-    :ivar lun: Required. This property specifies the logical unit number of the data disk. This
-     value is used to identify data disks within the Virtual Machine and therefore must be unique
-     for each data disk attached to the Virtual Machine.
+    :ivar lun: This property specifies the logical unit number of the data disk. This value is used
+     to identify data disks within the Virtual Machine and therefore must be unique for each data
+     disk attached to the Virtual Machine. Required.
     :vartype lun: int
     """
 
     _validation = {
-        'disk_size_gb': {'readonly': True},
-        'lun': {'required': True},
+        "disk_size_gb": {"readonly": True},
+        "lun": {"required": True},
     }
 
     _attribute_map = {
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'host_caching': {'key': 'hostCaching', 'type': 'str'},
-        'lun': {'key': 'lun', 'type': 'int'},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "host_caching": {"key": "hostCaching", "type": "str"},
+        "lun": {"key": "lun", "type": "int"},
     }
 
     def __init__(
-        self,
-        *,
-        lun: int,
-        host_caching: Optional[Union[str, "SharedGalleryHostCaching"]] = None,
-        **kwargs
+        self, *, lun: int, host_caching: Optional[Union[str, "_models.SharedGalleryHostCaching"]] = None, **kwargs
     ):
         """
         :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-         'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+         'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
         :paramtype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.SharedGalleryHostCaching
-        :keyword lun: Required. This property specifies the logical unit number of the data disk. This
-         value is used to identify data disks within the Virtual Machine and therefore must be unique
-         for each data disk attached to the Virtual Machine.
+        :keyword lun: This property specifies the logical unit number of the data disk. This value is
+         used to identify data disks within the Virtual Machine and therefore must be unique for each
+         data disk attached to the Virtual Machine. Required.
         :paramtype lun: int
         """
-        super(SharedGalleryDataDiskImage, self).__init__(host_caching=host_caching, **kwargs)
+        super().__init__(host_caching=host_caching, **kwargs)
         self.lun = lun
 
 
-class SharedGalleryImage(PirSharedGalleryResource):
+class SharedGalleryImage(PirSharedGalleryResource):  # pylint: disable=too-many-instance-attributes
     """Specifies information about the gallery image definition that you want to create or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3408,11 +3267,11 @@ class SharedGalleryImage(PirSharedGalleryResource):
     :vartype unique_id: str
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
      disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-     include: "Windows", "Linux".
+     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+     "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     :ivar os_state: This property allows the user to specify whether the virtual machines created
-     under this image are 'Generalized' or 'Specialized'. Possible values include: "Generalized",
+     under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized" and
      "Specialized".
     :vartype os_state: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemStateTypes
     :ivar end_of_life_date: The end of life date of the gallery image definition. This property can
@@ -3426,53 +3285,53 @@ class SharedGalleryImage(PirSharedGalleryResource):
     :ivar disallowed: Describes the disallowed disk types.
     :vartype disallowed: ~azure.mgmt.compute.v2022_01_03.models.Disallowed
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Possible values include: "V1", "V2".
+     disks only. Known values are: "V1" and "V2".
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2022_01_03.models.HyperVGeneration
     :ivar features: A list of gallery image features.
     :vartype features: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImageFeature]
     :ivar purchase_plan: Describes the gallery image definition purchase plan. This is used by
      marketplace images.
     :vartype purchase_plan: ~azure.mgmt.compute.v2022_01_03.models.ImagePurchasePlan
-    :ivar architecture: The architecture of the image. Applicable to OS disks only. Possible values
-     include: "x64", "Arm64".
+    :ivar architecture: The architecture of the image. Applicable to OS disks only. Known values
+     are: "x64" and "Arm64".
     :vartype architecture: str or ~azure.mgmt.compute.v2022_01_03.models.Architecture
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'location': {'readonly': True},
+        "name": {"readonly": True},
+        "location": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'unique_id': {'key': 'identifier.uniqueId', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'os_state': {'key': 'properties.osState', 'type': 'str'},
-        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
-        'identifier': {'key': 'properties.identifier', 'type': 'GalleryImageIdentifier'},
-        'recommended': {'key': 'properties.recommended', 'type': 'RecommendedMachineConfiguration'},
-        'disallowed': {'key': 'properties.disallowed', 'type': 'Disallowed'},
-        'hyper_v_generation': {'key': 'properties.hyperVGeneration', 'type': 'str'},
-        'features': {'key': 'properties.features', 'type': '[GalleryImageFeature]'},
-        'purchase_plan': {'key': 'properties.purchasePlan', 'type': 'ImagePurchasePlan'},
-        'architecture': {'key': 'properties.architecture', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "unique_id": {"key": "identifier.uniqueId", "type": "str"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "os_state": {"key": "properties.osState", "type": "str"},
+        "end_of_life_date": {"key": "properties.endOfLifeDate", "type": "iso-8601"},
+        "identifier": {"key": "properties.identifier", "type": "GalleryImageIdentifier"},
+        "recommended": {"key": "properties.recommended", "type": "RecommendedMachineConfiguration"},
+        "disallowed": {"key": "properties.disallowed", "type": "Disallowed"},
+        "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
+        "features": {"key": "properties.features", "type": "[GalleryImageFeature]"},
+        "purchase_plan": {"key": "properties.purchasePlan", "type": "ImagePurchasePlan"},
+        "architecture": {"key": "properties.architecture", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         unique_id: Optional[str] = None,
-        os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
-        os_state: Optional[Union[str, "OperatingSystemStateTypes"]] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
+        os_state: Optional[Union[str, "_models.OperatingSystemStateTypes"]] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
-        identifier: Optional["GalleryImageIdentifier"] = None,
-        recommended: Optional["RecommendedMachineConfiguration"] = None,
-        disallowed: Optional["Disallowed"] = None,
-        hyper_v_generation: Optional[Union[str, "HyperVGeneration"]] = None,
-        features: Optional[List["GalleryImageFeature"]] = None,
-        purchase_plan: Optional["ImagePurchasePlan"] = None,
-        architecture: Optional[Union[str, "Architecture"]] = None,
+        identifier: Optional["_models.GalleryImageIdentifier"] = None,
+        recommended: Optional["_models.RecommendedMachineConfiguration"] = None,
+        disallowed: Optional["_models.Disallowed"] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
+        features: Optional[List["_models.GalleryImageFeature"]] = None,
+        purchase_plan: Optional["_models.ImagePurchasePlan"] = None,
+        architecture: Optional[Union[str, "_models.Architecture"]] = None,
         **kwargs
     ):
         """
@@ -3480,12 +3339,12 @@ class SharedGalleryImage(PirSharedGalleryResource):
         :paramtype unique_id: str
         :keyword os_type: This property allows you to specify the type of the OS that is included in
          the disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-         include: "Windows", "Linux".
+         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+         "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         :keyword os_state: This property allows the user to specify whether the virtual machines
-         created under this image are 'Generalized' or 'Specialized'. Possible values include:
-         "Generalized", "Specialized".
+         created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized"
+         and "Specialized".
         :paramtype os_state: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemStateTypes
         :keyword end_of_life_date: The end of life date of the gallery image definition. This property
          can be used for decommissioning purposes. This property is updatable.
@@ -3498,18 +3357,18 @@ class SharedGalleryImage(PirSharedGalleryResource):
         :keyword disallowed: Describes the disallowed disk types.
         :paramtype disallowed: ~azure.mgmt.compute.v2022_01_03.models.Disallowed
         :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-         disks only. Possible values include: "V1", "V2".
+         disks only. Known values are: "V1" and "V2".
         :paramtype hyper_v_generation: str or ~azure.mgmt.compute.v2022_01_03.models.HyperVGeneration
         :keyword features: A list of gallery image features.
         :paramtype features: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImageFeature]
         :keyword purchase_plan: Describes the gallery image definition purchase plan. This is used by
          marketplace images.
         :paramtype purchase_plan: ~azure.mgmt.compute.v2022_01_03.models.ImagePurchasePlan
-        :keyword architecture: The architecture of the image. Applicable to OS disks only. Possible
-         values include: "x64", "Arm64".
+        :keyword architecture: The architecture of the image. Applicable to OS disks only. Known values
+         are: "x64" and "Arm64".
         :paramtype architecture: str or ~azure.mgmt.compute.v2022_01_03.models.Architecture
         """
-        super(SharedGalleryImage, self).__init__(unique_id=unique_id, **kwargs)
+        super().__init__(unique_id=unique_id, **kwargs)
         self.os_type = os_type
         self.os_state = os_state
         self.end_of_life_date = end_of_life_date
@@ -3522,12 +3381,12 @@ class SharedGalleryImage(PirSharedGalleryResource):
         self.architecture = architecture
 
 
-class SharedGalleryImageList(msrest.serialization.Model):
+class SharedGalleryImageList(_serialization.Model):
     """The List Shared Gallery Images operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of shared gallery images.
+    :ivar value: A list of shared gallery images. Required.
     :vartype value: list[~azure.mgmt.compute.v2022_01_03.models.SharedGalleryImage]
     :ivar next_link: The uri to fetch the next page of shared gallery images. Call ListNext() with
      this to fetch the next page of shared gallery images.
@@ -3535,29 +3394,23 @@ class SharedGalleryImageList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SharedGalleryImage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SharedGalleryImage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["SharedGalleryImage"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.SharedGalleryImage"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of shared gallery images.
+        :keyword value: A list of shared gallery images. Required.
         :paramtype value: list[~azure.mgmt.compute.v2022_01_03.models.SharedGalleryImage]
         :keyword next_link: The uri to fetch the next page of shared gallery images. Call ListNext()
          with this to fetch the next page of shared gallery images.
         :paramtype next_link: str
         """
-        super(SharedGalleryImageList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -3588,18 +3441,18 @@ class SharedGalleryImageVersion(PirSharedGalleryResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'location': {'readonly': True},
+        "name": {"readonly": True},
+        "location": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'unique_id': {'key': 'identifier.uniqueId', 'type': 'str'},
-        'published_date': {'key': 'properties.publishedDate', 'type': 'iso-8601'},
-        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
-        'exclude_from_latest': {'key': 'properties.excludeFromLatest', 'type': 'bool'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'SharedGalleryImageVersionStorageProfile'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "unique_id": {"key": "identifier.uniqueId", "type": "str"},
+        "published_date": {"key": "properties.publishedDate", "type": "iso-8601"},
+        "end_of_life_date": {"key": "properties.endOfLifeDate", "type": "iso-8601"},
+        "exclude_from_latest": {"key": "properties.excludeFromLatest", "type": "bool"},
+        "storage_profile": {"key": "properties.storageProfile", "type": "SharedGalleryImageVersionStorageProfile"},
     }
 
     def __init__(
@@ -3609,7 +3462,7 @@ class SharedGalleryImageVersion(PirSharedGalleryResource):
         published_date: Optional[datetime.datetime] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
         exclude_from_latest: Optional[bool] = None,
-        storage_profile: Optional["SharedGalleryImageVersionStorageProfile"] = None,
+        storage_profile: Optional["_models.SharedGalleryImageVersionStorageProfile"] = None,
         **kwargs
     ):
         """
@@ -3628,19 +3481,19 @@ class SharedGalleryImageVersion(PirSharedGalleryResource):
         :paramtype storage_profile:
          ~azure.mgmt.compute.v2022_01_03.models.SharedGalleryImageVersionStorageProfile
         """
-        super(SharedGalleryImageVersion, self).__init__(unique_id=unique_id, **kwargs)
+        super().__init__(unique_id=unique_id, **kwargs)
         self.published_date = published_date
         self.end_of_life_date = end_of_life_date
         self.exclude_from_latest = exclude_from_latest
         self.storage_profile = storage_profile
 
 
-class SharedGalleryImageVersionList(msrest.serialization.Model):
+class SharedGalleryImageVersionList(_serialization.Model):
     """The List Shared Gallery Image versions operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of shared gallery images versions.
+    :ivar value: A list of shared gallery images versions. Required.
     :vartype value: list[~azure.mgmt.compute.v2022_01_03.models.SharedGalleryImageVersion]
     :ivar next_link: The uri to fetch the next page of shared gallery image versions. Call
      ListNext() with this to fetch the next page of shared gallery image versions.
@@ -3648,34 +3501,28 @@ class SharedGalleryImageVersionList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SharedGalleryImageVersion]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SharedGalleryImageVersion]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["SharedGalleryImageVersion"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.SharedGalleryImageVersion"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of shared gallery images versions.
+        :keyword value: A list of shared gallery images versions. Required.
         :paramtype value: list[~azure.mgmt.compute.v2022_01_03.models.SharedGalleryImageVersion]
         :keyword next_link: The uri to fetch the next page of shared gallery image versions. Call
          ListNext() with this to fetch the next page of shared gallery image versions.
         :paramtype next_link: str
         """
-        super(SharedGalleryImageVersionList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SharedGalleryImageVersionStorageProfile(msrest.serialization.Model):
+class SharedGalleryImageVersionStorageProfile(_serialization.Model):
     """This is the storage profile of a Gallery Image Version.
 
     :ivar os_disk_image: This is the OS disk image.
@@ -3686,15 +3533,15 @@ class SharedGalleryImageVersionStorageProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'os_disk_image': {'key': 'osDiskImage', 'type': 'SharedGalleryOSDiskImage'},
-        'data_disk_images': {'key': 'dataDiskImages', 'type': '[SharedGalleryDataDiskImage]'},
+        "os_disk_image": {"key": "osDiskImage", "type": "SharedGalleryOSDiskImage"},
+        "data_disk_images": {"key": "dataDiskImages", "type": "[SharedGalleryDataDiskImage]"},
     }
 
     def __init__(
         self,
         *,
-        os_disk_image: Optional["SharedGalleryOSDiskImage"] = None,
-        data_disk_images: Optional[List["SharedGalleryDataDiskImage"]] = None,
+        os_disk_image: Optional["_models.SharedGalleryOSDiskImage"] = None,
+        data_disk_images: Optional[List["_models.SharedGalleryDataDiskImage"]] = None,
         **kwargs
     ):
         """
@@ -3704,17 +3551,17 @@ class SharedGalleryImageVersionStorageProfile(msrest.serialization.Model):
         :paramtype data_disk_images:
          list[~azure.mgmt.compute.v2022_01_03.models.SharedGalleryDataDiskImage]
         """
-        super(SharedGalleryImageVersionStorageProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.os_disk_image = os_disk_image
         self.data_disk_images = data_disk_images
 
 
-class SharedGalleryList(msrest.serialization.Model):
+class SharedGalleryList(_serialization.Model):
     """The List Shared Galleries operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of shared galleries.
+    :ivar value: A list of shared galleries. Required.
     :vartype value: list[~azure.mgmt.compute.v2022_01_03.models.SharedGallery]
     :ivar next_link: The uri to fetch the next page of shared galleries. Call ListNext() with this
      to fetch the next page of shared galleries.
@@ -3722,29 +3569,23 @@ class SharedGalleryList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SharedGallery]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SharedGallery]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["SharedGallery"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.SharedGallery"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of shared galleries.
+        :keyword value: A list of shared galleries. Required.
         :paramtype value: list[~azure.mgmt.compute.v2022_01_03.models.SharedGallery]
         :keyword next_link: The uri to fetch the next page of shared galleries. Call ListNext() with
          this to fetch the next page of shared galleries.
         :paramtype next_link: str
         """
-        super(SharedGalleryList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -3757,42 +3598,37 @@ class SharedGalleryOSDiskImage(SharedGalleryDiskImage):
     :ivar disk_size_gb: This property indicates the size of the VHD to be created.
     :vartype disk_size_gb: int
     :ivar host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-     'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+     'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.SharedGalleryHostCaching
     """
 
     _validation = {
-        'disk_size_gb': {'readonly': True},
+        "disk_size_gb": {"readonly": True},
     }
 
     _attribute_map = {
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'host_caching': {'key': 'hostCaching', 'type': 'str'},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "host_caching": {"key": "hostCaching", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        host_caching: Optional[Union[str, "SharedGalleryHostCaching"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, host_caching: Optional[Union[str, "_models.SharedGalleryHostCaching"]] = None, **kwargs):
         """
         :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-         'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+         'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
         :paramtype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.SharedGalleryHostCaching
         """
-        super(SharedGalleryOSDiskImage, self).__init__(host_caching=host_caching, **kwargs)
+        super().__init__(host_caching=host_caching, **kwargs)
 
 
-class SharingProfile(msrest.serialization.Model):
+class SharingProfile(_serialization.Model):
     """Profile for gallery sharing to subscription or tenant.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar permissions: This property allows you to specify the permission of sharing gallery.
      :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Private**
-     :code:`<br>`:code:`<br>` **Groups** :code:`<br>`:code:`<br>` **Community**. Possible values
-     include: "Private", "Groups", "Community".
+     :code:`<br>`:code:`<br>` **Groups** :code:`<br>`:code:`<br>` **Community**. Known values are:
+     "Private", "Groups", and "Community".
     :vartype permissions: str or
      ~azure.mgmt.compute.v2022_01_03.models.GallerySharingPermissionTypes
     :ivar groups: A list of sharing profile groups.
@@ -3803,122 +3639,115 @@ class SharingProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'groups': {'readonly': True},
+        "groups": {"readonly": True},
     }
 
     _attribute_map = {
-        'permissions': {'key': 'permissions', 'type': 'str'},
-        'groups': {'key': 'groups', 'type': '[SharingProfileGroup]'},
-        'community_gallery_info': {'key': 'communityGalleryInfo', 'type': 'object'},
+        "permissions": {"key": "permissions", "type": "str"},
+        "groups": {"key": "groups", "type": "[SharingProfileGroup]"},
+        "community_gallery_info": {"key": "communityGalleryInfo", "type": "object"},
     }
 
     def __init__(
         self,
         *,
-        permissions: Optional[Union[str, "GallerySharingPermissionTypes"]] = None,
+        permissions: Optional[Union[str, "_models.GallerySharingPermissionTypes"]] = None,
         community_gallery_info: Optional[Any] = None,
         **kwargs
     ):
         """
         :keyword permissions: This property allows you to specify the permission of sharing gallery.
          :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Private**
-         :code:`<br>`:code:`<br>` **Groups** :code:`<br>`:code:`<br>` **Community**. Possible values
-         include: "Private", "Groups", "Community".
+         :code:`<br>`:code:`<br>` **Groups** :code:`<br>`:code:`<br>` **Community**. Known values are:
+         "Private", "Groups", and "Community".
         :paramtype permissions: str or
          ~azure.mgmt.compute.v2022_01_03.models.GallerySharingPermissionTypes
         :keyword community_gallery_info: Information of community gallery if current gallery is shared
          to community.
         :paramtype community_gallery_info: any
         """
-        super(SharingProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.permissions = permissions
         self.groups = None
         self.community_gallery_info = community_gallery_info
 
 
-class SharingProfileGroup(msrest.serialization.Model):
+class SharingProfileGroup(_serialization.Model):
     """Group of the gallery sharing profile.
 
     :ivar type: This property allows you to specify the type of sharing group.
      :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Subscriptions**
-     :code:`<br>`:code:`<br>` **AADTenants**. Possible values include: "Subscriptions",
-     "AADTenants".
+     :code:`<br>`:code:`<br>` **AADTenants**. Known values are: "Subscriptions" and "AADTenants".
     :vartype type: str or ~azure.mgmt.compute.v2022_01_03.models.SharingProfileGroupTypes
     :ivar ids: A list of subscription/tenant ids the gallery is aimed to be shared to.
     :vartype ids: list[str]
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'ids': {'key': 'ids', 'type': '[str]'},
+        "type": {"key": "type", "type": "str"},
+        "ids": {"key": "ids", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "SharingProfileGroupTypes"]] = None,
+        type: Optional[Union[str, "_models.SharingProfileGroupTypes"]] = None,
         ids: Optional[List[str]] = None,
         **kwargs
     ):
         """
         :keyword type: This property allows you to specify the type of sharing group.
          :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Subscriptions**
-         :code:`<br>`:code:`<br>` **AADTenants**. Possible values include: "Subscriptions",
-         "AADTenants".
+         :code:`<br>`:code:`<br>` **AADTenants**. Known values are: "Subscriptions" and "AADTenants".
         :paramtype type: str or ~azure.mgmt.compute.v2022_01_03.models.SharingProfileGroupTypes
         :keyword ids: A list of subscription/tenant ids the gallery is aimed to be shared to.
         :paramtype ids: list[str]
         """
-        super(SharingProfileGroup, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.ids = ids
 
 
-class SharingStatus(msrest.serialization.Model):
+class SharingStatus(_serialization.Model):
     """Sharing status of current gallery.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar aggregated_state: Aggregated sharing state of current gallery. Possible values include:
-     "Succeeded", "InProgress", "Failed", "Unknown".
+    :ivar aggregated_state: Aggregated sharing state of current gallery. Known values are:
+     "Succeeded", "InProgress", "Failed", and "Unknown".
     :vartype aggregated_state: str or ~azure.mgmt.compute.v2022_01_03.models.SharingState
     :ivar summary: Summary of all regional sharing status.
     :vartype summary: list[~azure.mgmt.compute.v2022_01_03.models.RegionalSharingStatus]
     """
 
     _validation = {
-        'aggregated_state': {'readonly': True},
+        "aggregated_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'aggregated_state': {'key': 'aggregatedState', 'type': 'str'},
-        'summary': {'key': 'summary', 'type': '[RegionalSharingStatus]'},
+        "aggregated_state": {"key": "aggregatedState", "type": "str"},
+        "summary": {"key": "summary", "type": "[RegionalSharingStatus]"},
     }
 
-    def __init__(
-        self,
-        *,
-        summary: Optional[List["RegionalSharingStatus"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, summary: Optional[List["_models.RegionalSharingStatus"]] = None, **kwargs):
         """
         :keyword summary: Summary of all regional sharing status.
         :paramtype summary: list[~azure.mgmt.compute.v2022_01_03.models.RegionalSharingStatus]
         """
-        super(SharingStatus, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.aggregated_state = None
         self.summary = summary
 
 
-class SharingUpdate(msrest.serialization.Model):
+class SharingUpdate(_serialization.Model):
     """Specifies information about the gallery sharing profile update.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar operation_type: Required. This property allows you to specify the operation type of
-     gallery sharing update. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>`
-     **Add** :code:`<br>`:code:`<br>` **Remove** :code:`<br>`:code:`<br>` **Reset**. Possible values
-     include: "Add", "Remove", "Reset", "EnableCommunity".
+    :ivar operation_type: This property allows you to specify the operation type of gallery sharing
+     update. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Add**
+     :code:`<br>`:code:`<br>` **Remove** :code:`<br>`:code:`<br>` **Reset**. Required. Known values
+     are: "Add", "Remove", "Reset", and "EnableCommunity".
     :vartype operation_type: str or
      ~azure.mgmt.compute.v2022_01_03.models.SharingUpdateOperationTypes
     :ivar groups: A list of sharing profile groups.
@@ -3926,37 +3755,37 @@ class SharingUpdate(msrest.serialization.Model):
     """
 
     _validation = {
-        'operation_type': {'required': True},
+        "operation_type": {"required": True},
     }
 
     _attribute_map = {
-        'operation_type': {'key': 'operationType', 'type': 'str'},
-        'groups': {'key': 'groups', 'type': '[SharingProfileGroup]'},
+        "operation_type": {"key": "operationType", "type": "str"},
+        "groups": {"key": "groups", "type": "[SharingProfileGroup]"},
     }
 
     def __init__(
         self,
         *,
-        operation_type: Union[str, "SharingUpdateOperationTypes"],
-        groups: Optional[List["SharingProfileGroup"]] = None,
+        operation_type: Union[str, "_models.SharingUpdateOperationTypes"],
+        groups: Optional[List["_models.SharingProfileGroup"]] = None,
         **kwargs
     ):
         """
-        :keyword operation_type: Required. This property allows you to specify the operation type of
-         gallery sharing update. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>`
-         **Add** :code:`<br>`:code:`<br>` **Remove** :code:`<br>`:code:`<br>` **Reset**. Possible values
-         include: "Add", "Remove", "Reset", "EnableCommunity".
+        :keyword operation_type: This property allows you to specify the operation type of gallery
+         sharing update. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Add**
+         :code:`<br>`:code:`<br>` **Remove** :code:`<br>`:code:`<br>` **Reset**. Required. Known values
+         are: "Add", "Remove", "Reset", and "EnableCommunity".
         :paramtype operation_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.SharingUpdateOperationTypes
         :keyword groups: A list of sharing profile groups.
         :paramtype groups: list[~azure.mgmt.compute.v2022_01_03.models.SharingProfileGroup]
         """
-        super(SharingUpdate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.operation_type = operation_type
         self.groups = groups
 
 
-class SoftDeletePolicy(msrest.serialization.Model):
+class SoftDeletePolicy(_serialization.Model):
     """Contains information about the soft deletion policy of the gallery.
 
     :ivar is_soft_delete_enabled: Enables soft-deletion for resources in this gallery, allowing
@@ -3965,25 +3794,20 @@ class SoftDeletePolicy(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'is_soft_delete_enabled': {'key': 'isSoftDeleteEnabled', 'type': 'bool'},
+        "is_soft_delete_enabled": {"key": "isSoftDeleteEnabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        is_soft_delete_enabled: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, is_soft_delete_enabled: Optional[bool] = None, **kwargs):
         """
         :keyword is_soft_delete_enabled: Enables soft-deletion for resources in this gallery, allowing
          them to be recovered within retention time.
         :paramtype is_soft_delete_enabled: bool
         """
-        super(SoftDeletePolicy, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.is_soft_delete_enabled = is_soft_delete_enabled
 
 
-class SubResource(msrest.serialization.Model):
+class SubResource(_serialization.Model):
     """SubResource.
 
     :ivar id: Resource Id.
@@ -3991,24 +3815,19 @@ class SubResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource Id.
         :paramtype id: str
         """
-        super(SubResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
-class SubResourceReadOnly(msrest.serialization.Model):
+class SubResourceReadOnly(_serialization.Model):
     """SubResourceReadOnly.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4018,35 +3837,31 @@ class SubResourceReadOnly(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SubResourceReadOnly, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
 
 
-class TargetRegion(msrest.serialization.Model):
+class TargetRegion(_serialization.Model):
     """Describes the target region information.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the region.
+    :ivar name: The name of the region. Required.
     :vartype name: str
     :ivar regional_replica_count: The number of replicas of the Image Version to be created per
      region. This property is updatable.
     :vartype regional_replica_count: int
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Possible values include: "Standard_LRS", "Standard_ZRS",
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
      "Premium_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2022_01_03.models.StorageAccountType
     :ivar encryption: Optional. Allows users to provide customer managed keys for encrypting the OS
@@ -4055,14 +3870,14 @@ class TargetRegion(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'regional_replica_count': {'key': 'regionalReplicaCount', 'type': 'int'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'encryption': {'key': 'encryption', 'type': 'EncryptionImages'},
+        "name": {"key": "name", "type": "str"},
+        "regional_replica_count": {"key": "regionalReplicaCount", "type": "int"},
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
+        "encryption": {"key": "encryption", "type": "EncryptionImages"},
     }
 
     def __init__(
@@ -4070,18 +3885,18 @@ class TargetRegion(msrest.serialization.Model):
         *,
         name: str,
         regional_replica_count: Optional[int] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountType"]] = None,
-        encryption: Optional["EncryptionImages"] = None,
+        storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
+        encryption: Optional["_models.EncryptionImages"] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. The name of the region.
+        :keyword name: The name of the region. Required.
         :paramtype name: str
         :keyword regional_replica_count: The number of replicas of the Image Version to be created per
          region. This property is updatable.
         :paramtype regional_replica_count: int
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Possible values include: "Standard_LRS", "Standard_ZRS",
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
          "Premium_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.StorageAccountType
@@ -4089,23 +3904,23 @@ class TargetRegion(msrest.serialization.Model):
          OS and data disks in the gallery artifact.
         :paramtype encryption: ~azure.mgmt.compute.v2022_01_03.models.EncryptionImages
         """
-        super(TargetRegion, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.regional_replica_count = regional_replica_count
         self.storage_account_type = storage_account_type
         self.encryption = encryption
 
 
-class UserArtifactManage(msrest.serialization.Model):
+class UserArtifactManage(_serialization.Model):
     """UserArtifactManage.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar install: Required. Required. The path and arguments to install the gallery application.
-     This is limited to 4096 characters.
+    :ivar install: Required. The path and arguments to install the gallery application. This is
+     limited to 4096 characters. Required.
     :vartype install: str
-    :ivar remove: Required. Required. The path and arguments to remove the gallery application.
-     This is limited to 4096 characters.
+    :ivar remove: Required. The path and arguments to remove the gallery application. This is
+     limited to 4096 characters. Required.
     :vartype remove: str
     :ivar update: Optional. The path and arguments to update the gallery application. If not
      present, then update operation will invoke remove command on the previous version and install
@@ -4114,43 +3929,36 @@ class UserArtifactManage(msrest.serialization.Model):
     """
 
     _validation = {
-        'install': {'required': True},
-        'remove': {'required': True},
+        "install": {"required": True},
+        "remove": {"required": True},
     }
 
     _attribute_map = {
-        'install': {'key': 'install', 'type': 'str'},
-        'remove': {'key': 'remove', 'type': 'str'},
-        'update': {'key': 'update', 'type': 'str'},
+        "install": {"key": "install", "type": "str"},
+        "remove": {"key": "remove", "type": "str"},
+        "update": {"key": "update", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        install: str,
-        remove: str,
-        update: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, install: str, remove: str, update: Optional[str] = None, **kwargs):
         """
-        :keyword install: Required. Required. The path and arguments to install the gallery
-         application. This is limited to 4096 characters.
+        :keyword install: Required. The path and arguments to install the gallery application. This is
+         limited to 4096 characters. Required.
         :paramtype install: str
-        :keyword remove: Required. Required. The path and arguments to remove the gallery application.
-         This is limited to 4096 characters.
+        :keyword remove: Required. The path and arguments to remove the gallery application. This is
+         limited to 4096 characters. Required.
         :paramtype remove: str
         :keyword update: Optional. The path and arguments to update the gallery application. If not
          present, then update operation will invoke remove command on the previous version and install
          command on the current version of the gallery application. This is limited to 4096 characters.
         :paramtype update: str
         """
-        super(UserArtifactManage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.install = install
         self.remove = remove
         self.update = update
 
 
-class UserArtifactSettings(msrest.serialization.Model):
+class UserArtifactSettings(_serialization.Model):
     """Additional settings for the VM app that contains the target package and config file name when it is deployed to target VM or VM scale set.
 
     :ivar package_file_name: Optional. The name to assign the downloaded package file on the VM.
@@ -4164,17 +3972,11 @@ class UserArtifactSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'package_file_name': {'key': 'packageFileName', 'type': 'str'},
-        'config_file_name': {'key': 'configFileName', 'type': 'str'},
+        "package_file_name": {"key": "packageFileName", "type": "str"},
+        "config_file_name": {"key": "configFileName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        package_file_name: Optional[str] = None,
-        config_file_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, package_file_name: Optional[str] = None, config_file_name: Optional[str] = None, **kwargs):
         """
         :keyword package_file_name: Optional. The name to assign the downloaded package file on the VM.
          This is limited to 4096 characters. If not specified, the package file will be named the same
@@ -4185,18 +3987,18 @@ class UserArtifactSettings(msrest.serialization.Model):
          Application name appended with "_config".
         :paramtype config_file_name: str
         """
-        super(UserArtifactSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.package_file_name = package_file_name
         self.config_file_name = config_file_name
 
 
-class UserArtifactSource(msrest.serialization.Model):
+class UserArtifactSource(_serialization.Model):
     """The source image from which the Image Version is going to be created.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar media_link: Required. Required. The mediaLink of the artifact, must be a readable storage
-     page blob.
+    :ivar media_link: Required. The mediaLink of the artifact, must be a readable storage page
+     blob. Required.
     :vartype media_link: str
     :ivar default_configuration_link: Optional. The defaultConfigurationLink of the artifact, must
      be a readable storage page blob.
@@ -4204,35 +4006,29 @@ class UserArtifactSource(msrest.serialization.Model):
     """
 
     _validation = {
-        'media_link': {'required': True},
+        "media_link": {"required": True},
     }
 
     _attribute_map = {
-        'media_link': {'key': 'mediaLink', 'type': 'str'},
-        'default_configuration_link': {'key': 'defaultConfigurationLink', 'type': 'str'},
+        "media_link": {"key": "mediaLink", "type": "str"},
+        "default_configuration_link": {"key": "defaultConfigurationLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        media_link: str,
-        default_configuration_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, media_link: str, default_configuration_link: Optional[str] = None, **kwargs):
         """
-        :keyword media_link: Required. Required. The mediaLink of the artifact, must be a readable
-         storage page blob.
+        :keyword media_link: Required. The mediaLink of the artifact, must be a readable storage page
+         blob. Required.
         :paramtype media_link: str
         :keyword default_configuration_link: Optional. The defaultConfigurationLink of the artifact,
          must be a readable storage page blob.
         :paramtype default_configuration_link: str
         """
-        super(UserArtifactSource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.media_link = media_link
         self.default_configuration_link = default_configuration_link
 
 
-class UserAssignedIdentitiesValue(msrest.serialization.Model):
+class UserAssignedIdentitiesValue(_serialization.Model):
     """UserAssignedIdentitiesValue.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4244,21 +4040,17 @@ class UserAssignedIdentitiesValue(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(UserAssignedIdentitiesValue, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.client_id = None

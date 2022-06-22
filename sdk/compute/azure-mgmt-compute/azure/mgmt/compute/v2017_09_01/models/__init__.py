@@ -15,23 +15,25 @@ from ._models_py3 import ResourceSkuRestrictionInfo
 from ._models_py3 import ResourceSkuRestrictions
 from ._models_py3 import ResourceSkusResult
 
-
-from ._compute_management_client_enums import (
-    ResourceSkuCapacityScaleType,
-    ResourceSkuRestrictionsReasonCode,
-    ResourceSkuRestrictionsType,
-)
+from ._compute_management_client_enums import ResourceSkuCapacityScaleType
+from ._compute_management_client_enums import ResourceSkuRestrictionsReasonCode
+from ._compute_management_client_enums import ResourceSkuRestrictionsType
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ResourceSku',
-    'ResourceSkuCapabilities',
-    'ResourceSkuCapacity',
-    'ResourceSkuCosts',
-    'ResourceSkuLocationInfo',
-    'ResourceSkuRestrictionInfo',
-    'ResourceSkuRestrictions',
-    'ResourceSkusResult',
-    'ResourceSkuCapacityScaleType',
-    'ResourceSkuRestrictionsReasonCode',
-    'ResourceSkuRestrictionsType',
+    "ResourceSku",
+    "ResourceSkuCapabilities",
+    "ResourceSkuCapacity",
+    "ResourceSkuCosts",
+    "ResourceSkuLocationInfo",
+    "ResourceSkuRestrictionInfo",
+    "ResourceSkuRestrictions",
+    "ResourceSkusResult",
+    "ResourceSkuCapacityScaleType",
+    "ResourceSkuRestrictionsReasonCode",
+    "ResourceSkuRestrictionsType",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

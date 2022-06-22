@@ -7,22 +7,22 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CachingTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CachingTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values are:
     :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
     :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-    storage. ReadOnly for Premium storage**
+    storage. ReadOnly for Premium storage**.
     """
 
     NONE = "None"
     READ_ONLY = "ReadOnly"
     READ_WRITE = "ReadWrite"
 
-class DiskCreateOptionTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class DiskCreateOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies how the virtual machine should be created.:code:`<br>`:code:`<br>` Possible values
     are::code:`<br>`:code:`<br>` **Attach** \u2013 This value is used when you are using a
     specialized disk to create the virtual machine.:code:`<br>`:code:`<br>` **FromImage** \u2013
@@ -35,22 +35,24 @@ class DiskCreateOptionTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     EMPTY = "Empty"
     ATTACH = "Attach"
 
-class OperatingSystemTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The operating system of the osDiskImage.
-    """
+
+class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operating system of the osDiskImage."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
-class ProtocolTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ProtocolTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the protocol of listener. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`\
-    **http** :code:`<br>`:code:`<br>` **https**
+    **http** :code:`<br>`:code:`<br>` **https**.
     """
 
     HTTP = "Http"
     HTTPS = "Https"
 
-class SettingNames(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class SettingNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the name of the setting to which the content applies. Possible values are:
     FirstLogonCommands and AutoLogon.
     """
@@ -58,15 +60,16 @@ class SettingNames(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AUTO_LOGON = "AutoLogon"
     FIRST_LOGON_COMMANDS = "FirstLogonCommands"
 
-class StatusLevelTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The level code.
-    """
+
+class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The level code."""
 
     INFO = "Info"
     WARNING = "Warning"
     ERROR = "Error"
 
-class UpgradeMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class UpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br />`:code:`<br
     />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control the application
     of updates to virtual machines in the scale set. You do this by using the manualUpgrade
@@ -77,14 +80,15 @@ class UpgradeMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AUTOMATIC = "Automatic"
     MANUAL = "Manual"
 
-class VirtualMachineScaleSetSkuScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The scale type applicable to the sku.
-    """
+
+class VirtualMachineScaleSetSkuScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The scale type applicable to the sku."""
 
     AUTOMATIC = "Automatic"
     NONE = "None"
 
-class VirtualMachineSizeTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class VirtualMachineSizeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the size of the virtual machine. For more information about virtual machine sizes,
     see `Sizes for virtual machines
     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-sizes?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
@@ -95,7 +99,7 @@ class VirtualMachineSizeTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     :code:`<br>`:code:`<br>` `List all available virtual machine sizes in a region
     <https://docs.microsoft.com/rest/api/compute/virtualmachinesizes/list>`_
     :code:`<br>`:code:`<br>` `List all available virtual machine sizes for resizing
-    <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_
+    <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_.
     """
 
     BASIC_A0 = "Basic_A0"

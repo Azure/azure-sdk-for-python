@@ -19,17 +19,23 @@ from ._community_galleries_operations import CommunityGalleriesOperations
 from ._community_gallery_images_operations import CommunityGalleryImagesOperations
 from ._community_gallery_image_versions_operations import CommunityGalleryImageVersionsOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'GalleriesOperations',
-    'GalleryImagesOperations',
-    'GalleryImageVersionsOperations',
-    'GalleryApplicationsOperations',
-    'GalleryApplicationVersionsOperations',
-    'GallerySharingProfileOperations',
-    'SharedGalleriesOperations',
-    'SharedGalleryImagesOperations',
-    'SharedGalleryImageVersionsOperations',
-    'CommunityGalleriesOperations',
-    'CommunityGalleryImagesOperations',
-    'CommunityGalleryImageVersionsOperations',
+    "GalleriesOperations",
+    "GalleryImagesOperations",
+    "GalleryImageVersionsOperations",
+    "GalleryApplicationsOperations",
+    "GalleryApplicationVersionsOperations",
+    "GallerySharingProfileOperations",
+    "SharedGalleriesOperations",
+    "SharedGalleryImagesOperations",
+    "SharedGalleryImageVersionsOperations",
+    "CommunityGalleriesOperations",
+    "CommunityGalleryImagesOperations",
+    "CommunityGalleryImageVersionsOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

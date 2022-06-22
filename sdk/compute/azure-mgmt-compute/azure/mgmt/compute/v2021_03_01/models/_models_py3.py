@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,15 +8,22 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
-from ._compute_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class AdditionalCapabilities(msrest.serialization.Model):
+class AdditionalCapabilities(_serialization.Model):
     """Enables or disables a capability on the virtual machine or virtual machine scale set.
 
     :ivar ultra_ssd_enabled: The flag that enables or disables a capability to have one or more
@@ -26,15 +34,10 @@ class AdditionalCapabilities(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'ultra_ssd_enabled': {'key': 'ultraSSDEnabled', 'type': 'bool'},
+        "ultra_ssd_enabled": {"key": "ultraSSDEnabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        ultra_ssd_enabled: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, ultra_ssd_enabled: Optional[bool] = None, **kwargs):
         """
         :keyword ultra_ssd_enabled: The flag that enables or disables a capability to have one or more
          managed data disks with UltraSSD_LRS storage account type on the VM or VMSS. Managed disks with
@@ -42,22 +45,21 @@ class AdditionalCapabilities(msrest.serialization.Model):
          set only if this property is enabled.
         :paramtype ultra_ssd_enabled: bool
         """
-        super(AdditionalCapabilities, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.ultra_ssd_enabled = ultra_ssd_enabled
 
 
-class AdditionalUnattendContent(msrest.serialization.Model):
+class AdditionalUnattendContent(_serialization.Model):
     """Specifies additional XML formatted information that can be included in the Unattend.xml file, which is used by Windows Setup. Contents are defined by setting name, component name, and the pass in which the content is applied.
 
-    :ivar pass_name: The pass name. Currently, the only allowable value is OobeSystem. The only
-     acceptable values to pass in are None and "OobeSystem". The default value is None.
+    :ivar pass_name: The pass name. Currently, the only allowable value is OobeSystem. Default
+     value is "OobeSystem".
     :vartype pass_name: str
     :ivar component_name: The component name. Currently, the only allowable value is
-     Microsoft-Windows-Shell-Setup. The only acceptable values to pass in are None and
-     "Microsoft-Windows-Shell-Setup". The default value is None.
+     Microsoft-Windows-Shell-Setup. Default value is "Microsoft-Windows-Shell-Setup".
     :vartype component_name: str
     :ivar setting_name: Specifies the name of the setting to which the content applies. Possible
-     values are: FirstLogonCommands and AutoLogon. Possible values include: "AutoLogon",
+     values are: FirstLogonCommands and AutoLogon. Known values are: "AutoLogon" and
      "FirstLogonCommands".
     :vartype setting_name: str or ~azure.mgmt.compute.v2021_03_01.models.SettingNames
     :ivar content: Specifies the XML formatted content that is added to the unattend.xml file for
@@ -67,10 +69,10 @@ class AdditionalUnattendContent(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'pass_name': {'key': 'passName', 'type': 'str'},
-        'component_name': {'key': 'componentName', 'type': 'str'},
-        'setting_name': {'key': 'settingName', 'type': 'str'},
-        'content': {'key': 'content', 'type': 'str'},
+        "pass_name": {"key": "passName", "type": "str"},
+        "component_name": {"key": "componentName", "type": "str"},
+        "setting_name": {"key": "settingName", "type": "str"},
+        "content": {"key": "content", "type": "str"},
     }
 
     def __init__(
@@ -78,20 +80,19 @@ class AdditionalUnattendContent(msrest.serialization.Model):
         *,
         pass_name: Optional[str] = None,
         component_name: Optional[str] = None,
-        setting_name: Optional[Union[str, "SettingNames"]] = None,
+        setting_name: Optional[Union[str, "_models.SettingNames"]] = None,
         content: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword pass_name: The pass name. Currently, the only allowable value is OobeSystem. The only
-         acceptable values to pass in are None and "OobeSystem". The default value is None.
+        :keyword pass_name: The pass name. Currently, the only allowable value is OobeSystem. Default
+         value is "OobeSystem".
         :paramtype pass_name: str
         :keyword component_name: The component name. Currently, the only allowable value is
-         Microsoft-Windows-Shell-Setup. The only acceptable values to pass in are None and
-         "Microsoft-Windows-Shell-Setup". The default value is None.
+         Microsoft-Windows-Shell-Setup. Default value is "Microsoft-Windows-Shell-Setup".
         :paramtype component_name: str
         :keyword setting_name: Specifies the name of the setting to which the content applies. Possible
-         values are: FirstLogonCommands and AutoLogon. Possible values include: "AutoLogon",
+         values are: FirstLogonCommands and AutoLogon. Known values are: "AutoLogon" and
          "FirstLogonCommands".
         :paramtype setting_name: str or ~azure.mgmt.compute.v2021_03_01.models.SettingNames
         :keyword content: Specifies the XML formatted content that is added to the unattend.xml file
@@ -99,14 +100,14 @@ class AdditionalUnattendContent(msrest.serialization.Model):
          element for the setting or feature that is being inserted.
         :paramtype content: str
         """
-        super(AdditionalUnattendContent, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.pass_name = pass_name
         self.component_name = component_name
         self.setting_name = setting_name
         self.content = content
 
 
-class ApiEntityReference(msrest.serialization.Model):
+class ApiEntityReference(_serialization.Model):
     """The API entity reference.
 
     :ivar id: The ARM resource id in the form of
@@ -115,25 +116,20 @@ class ApiEntityReference(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: The ARM resource id in the form of
          /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/...
         :paramtype id: str
         """
-        super(ApiEntityReference, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
-class ApiError(msrest.serialization.Model):
+class ApiError(_serialization.Model):
     """Api error.
 
     :ivar details: The Api error details.
@@ -149,18 +145,18 @@ class ApiError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'details': {'key': 'details', 'type': '[ApiErrorBase]'},
-        'innererror': {'key': 'innererror', 'type': 'InnerError'},
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        "details": {"key": "details", "type": "[ApiErrorBase]"},
+        "innererror": {"key": "innererror", "type": "InnerError"},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        details: Optional[List["ApiErrorBase"]] = None,
-        innererror: Optional["InnerError"] = None,
+        details: Optional[List["_models.ApiErrorBase"]] = None,
+        innererror: Optional["_models.InnerError"] = None,
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
@@ -178,7 +174,7 @@ class ApiError(msrest.serialization.Model):
         :keyword target: The target of the particular error.
         :paramtype target: str
         """
-        super(ApiError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.details = details
         self.innererror = innererror
         self.code = code
@@ -186,7 +182,7 @@ class ApiError(msrest.serialization.Model):
         self.target = target
 
 
-class ApiErrorAutoGenerated(msrest.serialization.Model):
+class ApiErrorAutoGenerated(_serialization.Model):
     """Api error.
 
     :ivar details: The Api error details.
@@ -202,18 +198,18 @@ class ApiErrorAutoGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'details': {'key': 'details', 'type': '[ApiErrorBase]'},
-        'innererror': {'key': 'innererror', 'type': 'InnerError'},
-        'code': {'key': 'code', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "details": {"key": "details", "type": "[ApiErrorBase]"},
+        "innererror": {"key": "innererror", "type": "InnerError"},
+        "code": {"key": "code", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        details: Optional[List["ApiErrorBase"]] = None,
-        innererror: Optional["InnerError"] = None,
+        details: Optional[List["_models.ApiErrorBase"]] = None,
+        innererror: Optional["_models.InnerError"] = None,
         code: Optional[str] = None,
         target: Optional[str] = None,
         message: Optional[str] = None,
@@ -231,7 +227,7 @@ class ApiErrorAutoGenerated(msrest.serialization.Model):
         :keyword message: The error message.
         :paramtype message: str
         """
-        super(ApiErrorAutoGenerated, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.details = details
         self.innererror = innererror
         self.code = code
@@ -239,7 +235,7 @@ class ApiErrorAutoGenerated(msrest.serialization.Model):
         self.message = message
 
 
-class ApiErrorAutoGenerated2(msrest.serialization.Model):
+class ApiErrorAutoGenerated2(_serialization.Model):
     """Api error.
 
     :ivar details: The Api error details.
@@ -255,18 +251,18 @@ class ApiErrorAutoGenerated2(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'details': {'key': 'details', 'type': '[ApiErrorBase]'},
-        'innererror': {'key': 'innererror', 'type': 'InnerError'},
-        'code': {'key': 'code', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "details": {"key": "details", "type": "[ApiErrorBase]"},
+        "innererror": {"key": "innererror", "type": "InnerError"},
+        "code": {"key": "code", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        details: Optional[List["ApiErrorBase"]] = None,
-        innererror: Optional["InnerError"] = None,
+        details: Optional[List["_models.ApiErrorBase"]] = None,
+        innererror: Optional["_models.InnerError"] = None,
         code: Optional[str] = None,
         target: Optional[str] = None,
         message: Optional[str] = None,
@@ -284,7 +280,7 @@ class ApiErrorAutoGenerated2(msrest.serialization.Model):
         :keyword message: The error message.
         :paramtype message: str
         """
-        super(ApiErrorAutoGenerated2, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.details = details
         self.innererror = innererror
         self.code = code
@@ -292,7 +288,7 @@ class ApiErrorAutoGenerated2(msrest.serialization.Model):
         self.message = message
 
 
-class ApiErrorBase(msrest.serialization.Model):
+class ApiErrorBase(_serialization.Model):
     """Api error base.
 
     :ivar code: The error code.
@@ -304,18 +300,13 @@ class ApiErrorBase(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        target: Optional[str] = None,
-        **kwargs
+        self, *, code: Optional[str] = None, message: Optional[str] = None, target: Optional[str] = None, **kwargs
     ):
         """
         :keyword code: The error code.
@@ -325,13 +316,13 @@ class ApiErrorBase(msrest.serialization.Model):
         :keyword target: The target of the particular error.
         :paramtype target: str
         """
-        super(ApiErrorBase, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = target
 
 
-class AutomaticOSUpgradePolicy(msrest.serialization.Model):
+class AutomaticOSUpgradePolicy(_serialization.Model):
     """The configuration parameters used for performing automatic OS upgrade.
 
     :ivar enable_automatic_os_upgrade: Indicates whether OS upgrades should automatically be
@@ -347,8 +338,8 @@ class AutomaticOSUpgradePolicy(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enable_automatic_os_upgrade': {'key': 'enableAutomaticOSUpgrade', 'type': 'bool'},
-        'disable_automatic_rollback': {'key': 'disableAutomaticRollback', 'type': 'bool'},
+        "enable_automatic_os_upgrade": {"key": "enableAutomaticOSUpgrade", "type": "bool"},
+        "disable_automatic_rollback": {"key": "disableAutomaticRollback", "type": "bool"},
     }
 
     def __init__(
@@ -370,45 +361,40 @@ class AutomaticOSUpgradePolicy(msrest.serialization.Model):
          Default value is false.
         :paramtype disable_automatic_rollback: bool
         """
-        super(AutomaticOSUpgradePolicy, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.enable_automatic_os_upgrade = enable_automatic_os_upgrade
         self.disable_automatic_rollback = disable_automatic_rollback
 
 
-class AutomaticOSUpgradeProperties(msrest.serialization.Model):
+class AutomaticOSUpgradeProperties(_serialization.Model):
     """Describes automatic OS upgrade properties on the image.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar automatic_os_upgrade_supported: Required. Specifies whether automatic OS upgrade is
-     supported on the image.
+    :ivar automatic_os_upgrade_supported: Specifies whether automatic OS upgrade is supported on
+     the image. Required.
     :vartype automatic_os_upgrade_supported: bool
     """
 
     _validation = {
-        'automatic_os_upgrade_supported': {'required': True},
+        "automatic_os_upgrade_supported": {"required": True},
     }
 
     _attribute_map = {
-        'automatic_os_upgrade_supported': {'key': 'automaticOSUpgradeSupported', 'type': 'bool'},
+        "automatic_os_upgrade_supported": {"key": "automaticOSUpgradeSupported", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        automatic_os_upgrade_supported: bool,
-        **kwargs
-    ):
+    def __init__(self, *, automatic_os_upgrade_supported: bool, **kwargs):
         """
-        :keyword automatic_os_upgrade_supported: Required. Specifies whether automatic OS upgrade is
-         supported on the image.
+        :keyword automatic_os_upgrade_supported: Specifies whether automatic OS upgrade is supported on
+         the image. Required.
         :paramtype automatic_os_upgrade_supported: bool
         """
-        super(AutomaticOSUpgradeProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.automatic_os_upgrade_supported = automatic_os_upgrade_supported
 
 
-class AutomaticRepairsPolicy(msrest.serialization.Model):
+class AutomaticRepairsPolicy(_serialization.Model):
     """Specifies the configuration parameters for automatic repairs on the virtual machine scale set.
 
     :ivar enabled: Specifies whether automatic repairs should be enabled on the virtual machine
@@ -423,17 +409,11 @@ class AutomaticRepairsPolicy(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'grace_period': {'key': 'gracePeriod', 'type': 'str'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "grace_period": {"key": "gracePeriod", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: Optional[bool] = None,
-        grace_period: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: Optional[bool] = None, grace_period: Optional[str] = None, **kwargs):
         """
         :keyword enabled: Specifies whether automatic repairs should be enabled on the virtual machine
          scale set. The default value is false.
@@ -445,12 +425,12 @@ class AutomaticRepairsPolicy(msrest.serialization.Model):
          value. The maximum allowed grace period is 90 minutes (PT90M).
         :paramtype grace_period: str
         """
-        super(AutomaticRepairsPolicy, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.enabled = enabled
         self.grace_period = grace_period
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """The Resource model definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -463,41 +443,35 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(Resource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -505,7 +479,7 @@ class Resource(msrest.serialization.Model):
         self.tags = tags
 
 
-class AvailabilitySet(Resource):
+class AvailabilitySet(Resource):  # pylint: disable=too-many-instance-attributes
     """Specifies information about the availability set that the virtual machine should be assigned to. Virtual machines specified in the same availability set are allocated to different nodes to maximize availability. For more information about availability sets, see `Availability sets overview <https://docs.microsoft.com/azure/virtual-machines/availability-set-overview>`_. :code:`<br>`:code:`<br>` For more information on Azure planned maintenance, see `Maintenance and updates for Virtual Machines in Azure <https://docs.microsoft.com/azure/virtual-machines/maintenance-and-updates>`_ :code:`<br>`:code:`<br>` Currently, a VM can only be added to availability set at creation time. An existing VM cannot be added to an availability set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -518,9 +492,9 @@ class AvailabilitySet(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: Sku of the availability set, only name is required to be set. See
      AvailabilitySetSkuTypes for possible set of values. Use 'Aligned' for virtual machines with
@@ -542,25 +516,25 @@ class AvailabilitySet(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'statuses': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "statuses": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'platform_update_domain_count': {'key': 'properties.platformUpdateDomainCount', 'type': 'int'},
-        'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
-        'virtual_machines': {'key': 'properties.virtualMachines', 'type': '[SubResource]'},
-        'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
-        'statuses': {'key': 'properties.statuses', 'type': '[InstanceViewStatus]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "platform_update_domain_count": {"key": "properties.platformUpdateDomainCount", "type": "int"},
+        "platform_fault_domain_count": {"key": "properties.platformFaultDomainCount", "type": "int"},
+        "virtual_machines": {"key": "properties.virtualMachines", "type": "[SubResource]"},
+        "proximity_placement_group": {"key": "properties.proximityPlacementGroup", "type": "SubResource"},
+        "statuses": {"key": "properties.statuses", "type": "[InstanceViewStatus]"},
     }
 
     def __init__(
@@ -568,17 +542,17 @@ class AvailabilitySet(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         platform_update_domain_count: Optional[int] = None,
         platform_fault_domain_count: Optional[int] = None,
-        virtual_machines: Optional[List["SubResource"]] = None,
-        proximity_placement_group: Optional["SubResource"] = None,
+        virtual_machines: Optional[List["_models.SubResource"]] = None,
+        proximity_placement_group: Optional["_models.SubResource"] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: Sku of the availability set, only name is required to be set. See
          AvailabilitySetSkuTypes for possible set of values. Use 'Aligned' for virtual machines with
@@ -597,7 +571,7 @@ class AvailabilitySet(Resource):
          2018-04-01.
         :paramtype proximity_placement_group: ~azure.mgmt.compute.v2021_03_01.models.SubResource
         """
-        super(AvailabilitySet, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.platform_update_domain_count = platform_update_domain_count
         self.platform_fault_domain_count = platform_fault_domain_count
@@ -606,12 +580,12 @@ class AvailabilitySet(Resource):
         self.statuses = None
 
 
-class AvailabilitySetListResult(msrest.serialization.Model):
+class AvailabilitySetListResult(_serialization.Model):
     """The List Availability Set operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. The list of availability sets.
+    :ivar value: The list of availability sets. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.AvailabilitySet]
     :ivar next_link: The URI to fetch the next page of AvailabilitySets. Call ListNext() with this
      URI to fetch the next page of AvailabilitySets.
@@ -619,55 +593,44 @@ class AvailabilitySetListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AvailabilitySet]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AvailabilitySet]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["AvailabilitySet"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.AvailabilitySet"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. The list of availability sets.
+        :keyword value: The list of availability sets. Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.AvailabilitySet]
         :keyword next_link: The URI to fetch the next page of AvailabilitySets. Call ListNext() with
          this URI to fetch the next page of AvailabilitySets.
         :paramtype next_link: str
         """
-        super(AvailabilitySetListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class UpdateResource(msrest.serialization.Model):
+class UpdateResource(_serialization.Model):
     """The Update Resource model definition.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(UpdateResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
 
 
@@ -676,7 +639,7 @@ class AvailabilitySetUpdate(UpdateResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: Sku of the availability set.
     :vartype sku: ~azure.mgmt.compute.v2021_03_01.models.Sku
@@ -695,32 +658,32 @@ class AvailabilitySetUpdate(UpdateResource):
     """
 
     _validation = {
-        'statuses': {'readonly': True},
+        "statuses": {"readonly": True},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'platform_update_domain_count': {'key': 'properties.platformUpdateDomainCount', 'type': 'int'},
-        'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
-        'virtual_machines': {'key': 'properties.virtualMachines', 'type': '[SubResource]'},
-        'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
-        'statuses': {'key': 'properties.statuses', 'type': '[InstanceViewStatus]'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "platform_update_domain_count": {"key": "properties.platformUpdateDomainCount", "type": "int"},
+        "platform_fault_domain_count": {"key": "properties.platformFaultDomainCount", "type": "int"},
+        "virtual_machines": {"key": "properties.virtualMachines", "type": "[SubResource]"},
+        "proximity_placement_group": {"key": "properties.proximityPlacementGroup", "type": "SubResource"},
+        "statuses": {"key": "properties.statuses", "type": "[InstanceViewStatus]"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         platform_update_domain_count: Optional[int] = None,
         platform_fault_domain_count: Optional[int] = None,
-        virtual_machines: Optional[List["SubResource"]] = None,
-        proximity_placement_group: Optional["SubResource"] = None,
+        virtual_machines: Optional[List["_models.SubResource"]] = None,
+        proximity_placement_group: Optional["_models.SubResource"] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: Sku of the availability set.
         :paramtype sku: ~azure.mgmt.compute.v2021_03_01.models.Sku
@@ -736,7 +699,7 @@ class AvailabilitySetUpdate(UpdateResource):
          2018-04-01.
         :paramtype proximity_placement_group: ~azure.mgmt.compute.v2021_03_01.models.SubResource
         """
-        super(AvailabilitySetUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.sku = sku
         self.platform_update_domain_count = platform_update_domain_count
         self.platform_fault_domain_count = platform_fault_domain_count
@@ -745,15 +708,15 @@ class AvailabilitySetUpdate(UpdateResource):
         self.statuses = None
 
 
-class AvailablePatchSummary(msrest.serialization.Model):
+class AvailablePatchSummary(_serialization.Model):
     """Describes the properties of an virtual machine instance view for available patch summary.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar status: The overall success or failure status of the operation. It remains "InProgress"
      until the operation completes. At that point it will become "Unknown", "Failed", "Succeeded",
-     or "CompletedWithWarnings.". Possible values include: "Unknown", "InProgress", "Failed",
-     "Succeeded", "CompletedWithWarnings".
+     or "CompletedWithWarnings.". Known values are: "Unknown", "InProgress", "Failed", "Succeeded",
+     and "CompletedWithWarnings".
     :vartype status: str or ~azure.mgmt.compute.v2021_03_01.models.PatchOperationStatus
     :ivar assessment_activity_id: The activity ID of the operation that produced this result. It is
      used to correlate across CRP and extension logs.
@@ -777,34 +740,30 @@ class AvailablePatchSummary(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'readonly': True},
-        'assessment_activity_id': {'readonly': True},
-        'reboot_pending': {'readonly': True},
-        'critical_and_security_patch_count': {'readonly': True},
-        'other_patch_count': {'readonly': True},
-        'start_time': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'error': {'readonly': True},
+        "status": {"readonly": True},
+        "assessment_activity_id": {"readonly": True},
+        "reboot_pending": {"readonly": True},
+        "critical_and_security_patch_count": {"readonly": True},
+        "other_patch_count": {"readonly": True},
+        "start_time": {"readonly": True},
+        "last_modified_time": {"readonly": True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'assessment_activity_id': {'key': 'assessmentActivityId', 'type': 'str'},
-        'reboot_pending': {'key': 'rebootPending', 'type': 'bool'},
-        'critical_and_security_patch_count': {'key': 'criticalAndSecurityPatchCount', 'type': 'int'},
-        'other_patch_count': {'key': 'otherPatchCount', 'type': 'int'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
-        'error': {'key': 'error', 'type': 'ApiErrorAutoGenerated'},
+        "status": {"key": "status", "type": "str"},
+        "assessment_activity_id": {"key": "assessmentActivityId", "type": "str"},
+        "reboot_pending": {"key": "rebootPending", "type": "bool"},
+        "critical_and_security_patch_count": {"key": "criticalAndSecurityPatchCount", "type": "int"},
+        "other_patch_count": {"key": "otherPatchCount", "type": "int"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "lastModifiedTime", "type": "iso-8601"},
+        "error": {"key": "error", "type": "ApiErrorAutoGenerated"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AvailablePatchSummary, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.status = None
         self.assessment_activity_id = None
         self.reboot_pending = None
@@ -815,7 +774,7 @@ class AvailablePatchSummary(msrest.serialization.Model):
         self.error = None
 
 
-class BillingProfile(msrest.serialization.Model):
+class BillingProfile(_serialization.Model):
     """Specifies the billing related details of a Azure Spot VM or VMSS. :code:`<br>`:code:`<br>`Minimum api-version: 2019-03-01.
 
     :ivar max_price: Specifies the maximum price you are willing to pay for a Azure Spot VM/VMSS.
@@ -834,15 +793,10 @@ class BillingProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'max_price': {'key': 'maxPrice', 'type': 'float'},
+        "max_price": {"key": "maxPrice", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        max_price: Optional[float] = None,
-        **kwargs
-    ):
+    def __init__(self, *, max_price: Optional[float] = None, **kwargs):
         """
         :keyword max_price: Specifies the maximum price you are willing to pay for a Azure Spot
          VM/VMSS. This price is in US Dollars. :code:`<br>`:code:`<br>` This price will be compared with
@@ -858,11 +812,11 @@ class BillingProfile(msrest.serialization.Model):
          provided by you. :code:`<br>`:code:`<br>`Minimum api-version: 2019-03-01.
         :paramtype max_price: float
         """
-        super(BillingProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.max_price = max_price
 
 
-class BootDiagnostics(msrest.serialization.Model):
+class BootDiagnostics(_serialization.Model):
     """Boot Diagnostics is a debugging feature which allows you to view Console Output and Screenshot to diagnose VM status. :code:`<br>`:code:`<br>` You can easily view the output of your console log. :code:`<br>`:code:`<br>` Azure also enables you to see a screenshot of the VM from the hypervisor.
 
     :ivar enabled: Whether boot diagnostics should be enabled on the Virtual Machine.
@@ -874,17 +828,11 @@ class BootDiagnostics(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'storage_uri': {'key': 'storageUri', 'type': 'str'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "storage_uri": {"key": "storageUri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: Optional[bool] = None,
-        storage_uri: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: Optional[bool] = None, storage_uri: Optional[str] = None, **kwargs):
         """
         :keyword enabled: Whether boot diagnostics should be enabled on the Virtual Machine.
         :paramtype enabled: bool
@@ -893,12 +841,12 @@ class BootDiagnostics(msrest.serialization.Model):
          diagnostics, managed storage will be used.
         :paramtype storage_uri: str
         """
-        super(BootDiagnostics, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.enabled = enabled
         self.storage_uri = storage_uri
 
 
-class BootDiagnosticsInstanceView(msrest.serialization.Model):
+class BootDiagnosticsInstanceView(_serialization.Model):
     """The instance view of a virtual machine boot diagnostics.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -917,30 +865,26 @@ class BootDiagnosticsInstanceView(msrest.serialization.Model):
     """
 
     _validation = {
-        'console_screenshot_blob_uri': {'readonly': True},
-        'serial_console_log_blob_uri': {'readonly': True},
-        'status': {'readonly': True},
+        "console_screenshot_blob_uri": {"readonly": True},
+        "serial_console_log_blob_uri": {"readonly": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'console_screenshot_blob_uri': {'key': 'consoleScreenshotBlobUri', 'type': 'str'},
-        'serial_console_log_blob_uri': {'key': 'serialConsoleLogBlobUri', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'InstanceViewStatus'},
+        "console_screenshot_blob_uri": {"key": "consoleScreenshotBlobUri", "type": "str"},
+        "serial_console_log_blob_uri": {"key": "serialConsoleLogBlobUri", "type": "str"},
+        "status": {"key": "status", "type": "InstanceViewStatus"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(BootDiagnosticsInstanceView, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.console_screenshot_blob_uri = None
         self.serial_console_log_blob_uri = None
         self.status = None
 
 
-class CloudErrorAutoGenerated(msrest.serialization.Model):
+class CloudErrorAutoGenerated(_serialization.Model):
     """An error response from the Compute service.
 
     :ivar error: Api error.
@@ -948,24 +892,19 @@ class CloudErrorAutoGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ApiErrorAutoGenerated'},
+        "error": {"key": "error", "type": "ApiErrorAutoGenerated"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ApiErrorAutoGenerated"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ApiErrorAutoGenerated"] = None, **kwargs):
         """
         :keyword error: Api error.
         :paramtype error: ~azure.mgmt.compute.v2021_03_01.models.ApiErrorAutoGenerated
         """
-        super(CloudErrorAutoGenerated, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class CloudErrorAutoGenerated2(msrest.serialization.Model):
+class CloudErrorAutoGenerated2(_serialization.Model):
     """An error response from the Compute service.
 
     :ivar error: Api error.
@@ -973,24 +912,19 @@ class CloudErrorAutoGenerated2(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ApiErrorAutoGenerated2'},
+        "error": {"key": "error", "type": "ApiErrorAutoGenerated2"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ApiErrorAutoGenerated2"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ApiErrorAutoGenerated2"] = None, **kwargs):
         """
         :keyword error: Api error.
         :paramtype error: ~azure.mgmt.compute.v2021_03_01.models.ApiErrorAutoGenerated2
         """
-        super(CloudErrorAutoGenerated2, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class CloudService(msrest.serialization.Model):
+class CloudService(_serialization.Model):
     """Describes the cloud service.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1003,28 +937,28 @@ class CloudService(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar properties: Cloud service properties.
     :vartype properties: ~azure.mgmt.compute.v2021_03_01.models.CloudServiceProperties
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'CloudServiceProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "CloudServiceProperties"},
     }
 
     def __init__(
@@ -1032,18 +966,18 @@ class CloudService(msrest.serialization.Model):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        properties: Optional["CloudServiceProperties"] = None,
+        properties: Optional["_models.CloudServiceProperties"] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword properties: Cloud service properties.
         :paramtype properties: ~azure.mgmt.compute.v2021_03_01.models.CloudServiceProperties
         """
-        super(CloudService, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -1052,7 +986,7 @@ class CloudService(msrest.serialization.Model):
         self.properties = properties
 
 
-class CloudServiceExtensionProfile(msrest.serialization.Model):
+class CloudServiceExtensionProfile(_serialization.Model):
     """Describes a cloud service extension profile.
 
     :ivar extensions: List of extensions for the cloud service.
@@ -1060,24 +994,19 @@ class CloudServiceExtensionProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'extensions': {'key': 'extensions', 'type': '[Extension]'},
+        "extensions": {"key": "extensions", "type": "[Extension]"},
     }
 
-    def __init__(
-        self,
-        *,
-        extensions: Optional[List["Extension"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, extensions: Optional[List["_models.Extension"]] = None, **kwargs):
         """
         :keyword extensions: List of extensions for the cloud service.
         :paramtype extensions: list[~azure.mgmt.compute.v2021_03_01.models.Extension]
         """
-        super(CloudServiceExtensionProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.extensions = extensions
 
 
-class CloudServiceExtensionProperties(msrest.serialization.Model):
+class CloudServiceExtensionProperties(_serialization.Model):
     """Extension Properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1124,20 +1053,23 @@ class CloudServiceExtensionProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'type_handler_version': {'key': 'typeHandlerVersion', 'type': 'str'},
-        'auto_upgrade_minor_version': {'key': 'autoUpgradeMinorVersion', 'type': 'bool'},
-        'settings': {'key': 'settings', 'type': 'str'},
-        'protected_settings': {'key': 'protectedSettings', 'type': 'str'},
-        'protected_settings_from_key_vault': {'key': 'protectedSettingsFromKeyVault', 'type': 'CloudServiceVaultAndSecretReference'},
-        'force_update_tag': {'key': 'forceUpdateTag', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'roles_applied_to': {'key': 'rolesAppliedTo', 'type': '[str]'},
+        "publisher": {"key": "publisher", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "type_handler_version": {"key": "typeHandlerVersion", "type": "str"},
+        "auto_upgrade_minor_version": {"key": "autoUpgradeMinorVersion", "type": "bool"},
+        "settings": {"key": "settings", "type": "str"},
+        "protected_settings": {"key": "protectedSettings", "type": "str"},
+        "protected_settings_from_key_vault": {
+            "key": "protectedSettingsFromKeyVault",
+            "type": "CloudServiceVaultAndSecretReference",
+        },
+        "force_update_tag": {"key": "forceUpdateTag", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "roles_applied_to": {"key": "rolesAppliedTo", "type": "[str]"},
     }
 
     def __init__(
@@ -1149,7 +1081,7 @@ class CloudServiceExtensionProperties(msrest.serialization.Model):
         auto_upgrade_minor_version: Optional[bool] = None,
         settings: Optional[str] = None,
         protected_settings: Optional[str] = None,
-        protected_settings_from_key_vault: Optional["CloudServiceVaultAndSecretReference"] = None,
+        protected_settings_from_key_vault: Optional["_models.CloudServiceVaultAndSecretReference"] = None,
         force_update_tag: Optional[str] = None,
         roles_applied_to: Optional[List[str]] = None,
         **kwargs
@@ -1193,7 +1125,7 @@ class CloudServiceExtensionProperties(msrest.serialization.Model):
          specified or '*' is specified, extension is applied to all roles in the cloud service.
         :paramtype roles_applied_to: list[str]
         """
-        super(CloudServiceExtensionProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.publisher = publisher
         self.type = type
         self.type_handler_version = type_handler_version
@@ -1206,7 +1138,7 @@ class CloudServiceExtensionProperties(msrest.serialization.Model):
         self.roles_applied_to = roles_applied_to
 
 
-class CloudServiceInstanceView(msrest.serialization.Model):
+class CloudServiceInstanceView(_serialization.Model):
     """InstanceView of CloudService as a whole.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1225,36 +1157,31 @@ class CloudServiceInstanceView(msrest.serialization.Model):
     """
 
     _validation = {
-        'sdk_version': {'readonly': True},
-        'private_ids': {'readonly': True},
-        'statuses': {'readonly': True},
+        "sdk_version": {"readonly": True},
+        "private_ids": {"readonly": True},
+        "statuses": {"readonly": True},
     }
 
     _attribute_map = {
-        'role_instance': {'key': 'roleInstance', 'type': 'InstanceViewStatusesSummary'},
-        'sdk_version': {'key': 'sdkVersion', 'type': 'str'},
-        'private_ids': {'key': 'privateIds', 'type': '[str]'},
-        'statuses': {'key': 'statuses', 'type': '[ResourceInstanceViewStatus]'},
+        "role_instance": {"key": "roleInstance", "type": "InstanceViewStatusesSummary"},
+        "sdk_version": {"key": "sdkVersion", "type": "str"},
+        "private_ids": {"key": "privateIds", "type": "[str]"},
+        "statuses": {"key": "statuses", "type": "[ResourceInstanceViewStatus]"},
     }
 
-    def __init__(
-        self,
-        *,
-        role_instance: Optional["InstanceViewStatusesSummary"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, role_instance: Optional["_models.InstanceViewStatusesSummary"] = None, **kwargs):
         """
         :keyword role_instance: Instance view statuses.
         :paramtype role_instance: ~azure.mgmt.compute.v2021_03_01.models.InstanceViewStatusesSummary
         """
-        super(CloudServiceInstanceView, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.role_instance = role_instance
         self.sdk_version = None
         self.private_ids = None
         self.statuses = None
 
 
-class CloudServiceListResult(msrest.serialization.Model):
+class CloudServiceListResult(_serialization.Model):
     """CloudServiceListResult.
 
     All required parameters must be populated in order to send to Azure.
@@ -1266,33 +1193,27 @@ class CloudServiceListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CloudService]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CloudService]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["CloudService"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.CloudService"], next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.CloudService]
         :keyword next_link:
         :paramtype next_link: str
         """
-        super(CloudServiceListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class CloudServiceNetworkProfile(msrest.serialization.Model):
+class CloudServiceNetworkProfile(_serialization.Model):
     """Network Profile for the cloud service.
 
     :ivar load_balancer_configurations: List of Load balancer configurations. Cloud service can
@@ -1308,15 +1229,15 @@ class CloudServiceNetworkProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'load_balancer_configurations': {'key': 'loadBalancerConfigurations', 'type': '[LoadBalancerConfiguration]'},
-        'swappable_cloud_service': {'key': 'swappableCloudService', 'type': 'SubResource'},
+        "load_balancer_configurations": {"key": "loadBalancerConfigurations", "type": "[LoadBalancerConfiguration]"},
+        "swappable_cloud_service": {"key": "swappableCloudService", "type": "SubResource"},
     }
 
     def __init__(
         self,
         *,
-        load_balancer_configurations: Optional[List["LoadBalancerConfiguration"]] = None,
-        swappable_cloud_service: Optional["SubResource"] = None,
+        load_balancer_configurations: Optional[List["_models.LoadBalancerConfiguration"]] = None,
+        swappable_cloud_service: Optional["_models.SubResource"] = None,
         **kwargs
     ):
         """
@@ -1331,12 +1252,12 @@ class CloudServiceNetworkProfile(msrest.serialization.Model):
          error will be thrown.
         :paramtype swappable_cloud_service: ~azure.mgmt.compute.v2021_03_01.models.SubResource
         """
-        super(CloudServiceNetworkProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.load_balancer_configurations = load_balancer_configurations
         self.swappable_cloud_service = swappable_cloud_service
 
 
-class CloudServiceOsProfile(msrest.serialization.Model):
+class CloudServiceOsProfile(_serialization.Model):
     """Describes the OS profile for the cloud service.
 
     :ivar secrets: Specifies set of certificates that should be installed onto the role instances.
@@ -1344,25 +1265,20 @@ class CloudServiceOsProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'secrets': {'key': 'secrets', 'type': '[CloudServiceVaultSecretGroup]'},
+        "secrets": {"key": "secrets", "type": "[CloudServiceVaultSecretGroup]"},
     }
 
-    def __init__(
-        self,
-        *,
-        secrets: Optional[List["CloudServiceVaultSecretGroup"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, secrets: Optional[List["_models.CloudServiceVaultSecretGroup"]] = None, **kwargs):
         """
         :keyword secrets: Specifies set of certificates that should be installed onto the role
          instances.
         :paramtype secrets: list[~azure.mgmt.compute.v2021_03_01.models.CloudServiceVaultSecretGroup]
         """
-        super(CloudServiceOsProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.secrets = secrets
 
 
-class CloudServiceProperties(msrest.serialization.Model):
+class CloudServiceProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Cloud service properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1397,7 +1313,7 @@ class CloudServiceProperties(msrest.serialization.Model):
      **Manual** :code:`<br />`:code:`<br />`\ **Simultaneous**\ :code:`<br />`:code:`<br />`
      If not specified, the default value is Auto. If set to Manual, PUT UpdateDomain must be called
      to apply the update. If set to Auto, the update is automatically applied to each update domain
-     in sequence. Possible values include: "Auto", "Manual", "Simultaneous".
+     in sequence. Known values are: "Auto", "Manual", and "Simultaneous".
     :vartype upgrade_mode: str or ~azure.mgmt.compute.v2021_03_01.models.CloudServiceUpgradeMode
     :ivar role_profile: Describes the role profile for the cloud service.
     :vartype role_profile: ~azure.mgmt.compute.v2021_03_01.models.CloudServiceRoleProfile
@@ -1414,23 +1330,23 @@ class CloudServiceProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'unique_id': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "unique_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'package_url': {'key': 'packageUrl', 'type': 'str'},
-        'configuration': {'key': 'configuration', 'type': 'str'},
-        'configuration_url': {'key': 'configurationUrl', 'type': 'str'},
-        'start_cloud_service': {'key': 'startCloudService', 'type': 'bool'},
-        'allow_model_override': {'key': 'allowModelOverride', 'type': 'bool'},
-        'upgrade_mode': {'key': 'upgradeMode', 'type': 'str'},
-        'role_profile': {'key': 'roleProfile', 'type': 'CloudServiceRoleProfile'},
-        'os_profile': {'key': 'osProfile', 'type': 'CloudServiceOsProfile'},
-        'network_profile': {'key': 'networkProfile', 'type': 'CloudServiceNetworkProfile'},
-        'extension_profile': {'key': 'extensionProfile', 'type': 'CloudServiceExtensionProfile'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'unique_id': {'key': 'uniqueId', 'type': 'str'},
+        "package_url": {"key": "packageUrl", "type": "str"},
+        "configuration": {"key": "configuration", "type": "str"},
+        "configuration_url": {"key": "configurationUrl", "type": "str"},
+        "start_cloud_service": {"key": "startCloudService", "type": "bool"},
+        "allow_model_override": {"key": "allowModelOverride", "type": "bool"},
+        "upgrade_mode": {"key": "upgradeMode", "type": "str"},
+        "role_profile": {"key": "roleProfile", "type": "CloudServiceRoleProfile"},
+        "os_profile": {"key": "osProfile", "type": "CloudServiceOsProfile"},
+        "network_profile": {"key": "networkProfile", "type": "CloudServiceNetworkProfile"},
+        "extension_profile": {"key": "extensionProfile", "type": "CloudServiceExtensionProfile"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "unique_id": {"key": "uniqueId", "type": "str"},
     }
 
     def __init__(
@@ -1441,11 +1357,11 @@ class CloudServiceProperties(msrest.serialization.Model):
         configuration_url: Optional[str] = None,
         start_cloud_service: Optional[bool] = None,
         allow_model_override: Optional[bool] = None,
-        upgrade_mode: Optional[Union[str, "CloudServiceUpgradeMode"]] = None,
-        role_profile: Optional["CloudServiceRoleProfile"] = None,
-        os_profile: Optional["CloudServiceOsProfile"] = None,
-        network_profile: Optional["CloudServiceNetworkProfile"] = None,
-        extension_profile: Optional["CloudServiceExtensionProfile"] = None,
+        upgrade_mode: Optional[Union[str, "_models.CloudServiceUpgradeMode"]] = None,
+        role_profile: Optional["_models.CloudServiceRoleProfile"] = None,
+        os_profile: Optional["_models.CloudServiceOsProfile"] = None,
+        network_profile: Optional["_models.CloudServiceNetworkProfile"] = None,
+        extension_profile: Optional["_models.CloudServiceExtensionProfile"] = None,
         **kwargs
     ):
         """
@@ -1479,7 +1395,7 @@ class CloudServiceProperties(msrest.serialization.Model):
          **Manual** :code:`<br />`:code:`<br />`\ **Simultaneous**\ :code:`<br />`:code:`<br />`
          If not specified, the default value is Auto. If set to Manual, PUT UpdateDomain must be called
          to apply the update. If set to Auto, the update is automatically applied to each update domain
-         in sequence. Possible values include: "Auto", "Manual", "Simultaneous".
+         in sequence. Known values are: "Auto", "Manual", and "Simultaneous".
         :paramtype upgrade_mode: str or ~azure.mgmt.compute.v2021_03_01.models.CloudServiceUpgradeMode
         :keyword role_profile: Describes the role profile for the cloud service.
         :paramtype role_profile: ~azure.mgmt.compute.v2021_03_01.models.CloudServiceRoleProfile
@@ -1491,7 +1407,7 @@ class CloudServiceProperties(msrest.serialization.Model):
         :paramtype extension_profile:
          ~azure.mgmt.compute.v2021_03_01.models.CloudServiceExtensionProfile
         """
-        super(CloudServiceProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.package_url = package_url
         self.configuration = configuration
         self.configuration_url = configuration_url
@@ -1506,7 +1422,7 @@ class CloudServiceProperties(msrest.serialization.Model):
         self.unique_id = None
 
 
-class CloudServiceRole(msrest.serialization.Model):
+class CloudServiceRole(_serialization.Model):
     """Describes a role of the cloud service.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1526,26 +1442,26 @@ class CloudServiceRole(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'CloudServiceRoleSku'},
-        'properties': {'key': 'properties', 'type': 'CloudServiceRoleProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "sku": {"key": "sku", "type": "CloudServiceRoleSku"},
+        "properties": {"key": "properties", "type": "CloudServiceRoleProperties"},
     }
 
     def __init__(
         self,
         *,
-        sku: Optional["CloudServiceRoleSku"] = None,
-        properties: Optional["CloudServiceRoleProperties"] = None,
+        sku: Optional["_models.CloudServiceRoleSku"] = None,
+        properties: Optional["_models.CloudServiceRoleProperties"] = None,
         **kwargs
     ):
         """
@@ -1554,7 +1470,7 @@ class CloudServiceRole(msrest.serialization.Model):
         :keyword properties:
         :paramtype properties: ~azure.mgmt.compute.v2021_03_01.models.CloudServiceRoleProperties
         """
-        super(CloudServiceRole, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -1563,7 +1479,7 @@ class CloudServiceRole(msrest.serialization.Model):
         self.properties = properties
 
 
-class CloudServiceRoleListResult(msrest.serialization.Model):
+class CloudServiceRoleListResult(_serialization.Model):
     """CloudServiceRoleListResult.
 
     All required parameters must be populated in order to send to Azure.
@@ -1575,33 +1491,27 @@ class CloudServiceRoleListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CloudServiceRole]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CloudServiceRole]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["CloudServiceRole"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.CloudServiceRole"], next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.CloudServiceRole]
         :keyword next_link:
         :paramtype next_link: str
         """
-        super(CloudServiceRoleListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class CloudServiceRoleProfile(msrest.serialization.Model):
+class CloudServiceRoleProfile(_serialization.Model):
     """Describes the role profile for the cloud service.
 
     :ivar roles: List of roles for the cloud service.
@@ -1609,25 +1519,20 @@ class CloudServiceRoleProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'roles': {'key': 'roles', 'type': '[CloudServiceRoleProfileProperties]'},
+        "roles": {"key": "roles", "type": "[CloudServiceRoleProfileProperties]"},
     }
 
-    def __init__(
-        self,
-        *,
-        roles: Optional[List["CloudServiceRoleProfileProperties"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, roles: Optional[List["_models.CloudServiceRoleProfileProperties"]] = None, **kwargs):
         """
         :keyword roles: List of roles for the cloud service.
         :paramtype roles:
          list[~azure.mgmt.compute.v2021_03_01.models.CloudServiceRoleProfileProperties]
         """
-        super(CloudServiceRoleProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.roles = roles
 
 
-class CloudServiceRoleProfileProperties(msrest.serialization.Model):
+class CloudServiceRoleProfileProperties(_serialization.Model):
     """Describes the role properties.
 
     :ivar name: Resource name.
@@ -1637,29 +1542,23 @@ class CloudServiceRoleProfileProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'CloudServiceRoleSku'},
+        "name": {"key": "name", "type": "str"},
+        "sku": {"key": "sku", "type": "CloudServiceRoleSku"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        sku: Optional["CloudServiceRoleSku"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, sku: Optional["_models.CloudServiceRoleSku"] = None, **kwargs):
         """
         :keyword name: Resource name.
         :paramtype name: str
         :keyword sku: Describes the cloud service role sku.
         :paramtype sku: ~azure.mgmt.compute.v2021_03_01.models.CloudServiceRoleSku
         """
-        super(CloudServiceRoleProfileProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.sku = sku
 
 
-class CloudServiceRoleProperties(msrest.serialization.Model):
+class CloudServiceRoleProperties(_serialization.Model):
     """CloudServiceRoleProperties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1669,24 +1568,20 @@ class CloudServiceRoleProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'unique_id': {'readonly': True},
+        "unique_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'unique_id': {'key': 'uniqueId', 'type': 'str'},
+        "unique_id": {"key": "uniqueId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CloudServiceRoleProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.unique_id = None
 
 
-class CloudServiceRoleSku(msrest.serialization.Model):
+class CloudServiceRoleSku(_serialization.Model):
     """Describes the cloud service role sku.
 
     :ivar name: The sku name. NOTE: If the new SKU is not supported on the hardware the cloud
@@ -1697,22 +1592,17 @@ class CloudServiceRoleSku(msrest.serialization.Model):
      />`:code:`<br />` **Standard** :code:`<br />`:code:`<br />` **Basic**.
     :vartype tier: str
     :ivar capacity: Specifies the number of role instances in the cloud service.
-    :vartype capacity: long
+    :vartype capacity: int
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'long'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
     def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        tier: Optional[str] = None,
-        capacity: Optional[int] = None,
-        **kwargs
+        self, *, name: Optional[str] = None, tier: Optional[str] = None, capacity: Optional[int] = None, **kwargs
     ):
         """
         :keyword name: The sku name. NOTE: If the new SKU is not supported on the hardware the cloud
@@ -1723,40 +1613,35 @@ class CloudServiceRoleSku(msrest.serialization.Model):
          />`:code:`<br />` **Standard** :code:`<br />`:code:`<br />` **Basic**.
         :paramtype tier: str
         :keyword capacity: Specifies the number of role instances in the cloud service.
-        :paramtype capacity: long
+        :paramtype capacity: int
         """
-        super(CloudServiceRoleSku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.tier = tier
         self.capacity = capacity
 
 
-class CloudServiceUpdate(msrest.serialization.Model):
+class CloudServiceUpdate(_serialization.Model):
     """CloudServiceUpdate.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(CloudServiceUpdate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
 
 
-class CloudServiceVaultAndSecretReference(msrest.serialization.Model):
+class CloudServiceVaultAndSecretReference(_serialization.Model):
     """CloudServiceVaultAndSecretReference.
 
     :ivar source_vault:
@@ -1766,16 +1651,12 @@ class CloudServiceVaultAndSecretReference(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
-        'secret_url': {'key': 'secretUrl', 'type': 'str'},
+        "source_vault": {"key": "sourceVault", "type": "SubResource"},
+        "secret_url": {"key": "secretUrl", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        source_vault: Optional["SubResource"] = None,
-        secret_url: Optional[str] = None,
-        **kwargs
+        self, *, source_vault: Optional["_models.SubResource"] = None, secret_url: Optional[str] = None, **kwargs
     ):
         """
         :keyword source_vault:
@@ -1783,12 +1664,12 @@ class CloudServiceVaultAndSecretReference(msrest.serialization.Model):
         :keyword secret_url:
         :paramtype secret_url: str
         """
-        super(CloudServiceVaultAndSecretReference, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.source_vault = source_vault
         self.secret_url = secret_url
 
 
-class CloudServiceVaultCertificate(msrest.serialization.Model):
+class CloudServiceVaultCertificate(_serialization.Model):
     """Describes a single certificate reference in a Key Vault, and where the certificate should reside on the role instance.
 
     :ivar certificate_url: This is the URL of a certificate that has been uploaded to Key Vault as
@@ -1797,25 +1678,20 @@ class CloudServiceVaultCertificate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'certificate_url': {'key': 'certificateUrl', 'type': 'str'},
+        "certificate_url": {"key": "certificateUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        certificate_url: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, certificate_url: Optional[str] = None, **kwargs):
         """
         :keyword certificate_url: This is the URL of a certificate that has been uploaded to Key Vault
          as a secret.
         :paramtype certificate_url: str
         """
-        super(CloudServiceVaultCertificate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.certificate_url = certificate_url
 
 
-class CloudServiceVaultSecretGroup(msrest.serialization.Model):
+class CloudServiceVaultSecretGroup(_serialization.Model):
     """Describes a set of certificates which are all in the same Key Vault.
 
     :ivar source_vault: The relative URL of the Key Vault containing all of the certificates in
@@ -1828,15 +1704,15 @@ class CloudServiceVaultSecretGroup(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
-        'vault_certificates': {'key': 'vaultCertificates', 'type': '[CloudServiceVaultCertificate]'},
+        "source_vault": {"key": "sourceVault", "type": "SubResource"},
+        "vault_certificates": {"key": "vaultCertificates", "type": "[CloudServiceVaultCertificate]"},
     }
 
     def __init__(
         self,
         *,
-        source_vault: Optional["SubResource"] = None,
-        vault_certificates: Optional[List["CloudServiceVaultCertificate"]] = None,
+        source_vault: Optional["_models.SubResource"] = None,
+        vault_certificates: Optional[List["_models.CloudServiceVaultCertificate"]] = None,
         **kwargs
     ):
         """
@@ -1848,12 +1724,12 @@ class CloudServiceVaultSecretGroup(msrest.serialization.Model):
         :paramtype vault_certificates:
          list[~azure.mgmt.compute.v2021_03_01.models.CloudServiceVaultCertificate]
         """
-        super(CloudServiceVaultSecretGroup, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.source_vault = source_vault
         self.vault_certificates = vault_certificates
 
 
-class ComputeOperationListResult(msrest.serialization.Model):
+class ComputeOperationListResult(_serialization.Model):
     """The List Compute Operation operation response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1863,24 +1739,20 @@ class ComputeOperationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ComputeOperationValue]'},
+        "value": {"key": "value", "type": "[ComputeOperationValue]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ComputeOperationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
 
 
-class ComputeOperationValue(msrest.serialization.Model):
+class ComputeOperationValue(_serialization.Model):
     """Describes the properties of a Compute Operation value.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1900,30 +1772,26 @@ class ComputeOperationValue(msrest.serialization.Model):
     """
 
     _validation = {
-        'origin': {'readonly': True},
-        'name': {'readonly': True},
-        'operation': {'readonly': True},
-        'resource': {'readonly': True},
-        'description': {'readonly': True},
-        'provider': {'readonly': True},
+        "origin": {"readonly": True},
+        "name": {"readonly": True},
+        "operation": {"readonly": True},
+        "resource": {"readonly": True},
+        "description": {"readonly": True},
+        "provider": {"readonly": True},
     }
 
     _attribute_map = {
-        'origin': {'key': 'origin', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'operation': {'key': 'display.operation', 'type': 'str'},
-        'resource': {'key': 'display.resource', 'type': 'str'},
-        'description': {'key': 'display.description', 'type': 'str'},
-        'provider': {'key': 'display.provider', 'type': 'str'},
+        "origin": {"key": "origin", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "operation": {"key": "display.operation", "type": "str"},
+        "resource": {"key": "display.resource", "type": "str"},
+        "description": {"key": "display.description", "type": "str"},
+        "provider": {"key": "display.provider", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ComputeOperationValue, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.origin = None
         self.name = None
         self.operation = None
@@ -1932,16 +1800,16 @@ class ComputeOperationValue(msrest.serialization.Model):
         self.provider = None
 
 
-class DataDisk(msrest.serialization.Model):
+class DataDisk(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Describes a data disk.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar lun: Required. Specifies the logical unit number of the data disk. This value is used to
-     identify data disks within the VM and therefore must be unique for each data disk attached to a
-     VM.
+    :ivar lun: Specifies the logical unit number of the data disk. This value is used to identify
+     data disks within the VM and therefore must be unique for each data disk attached to a VM.
+     Required.
     :vartype lun: int
     :ivar name: The disk name.
     :vartype name: str
@@ -1954,19 +1822,19 @@ class DataDisk(msrest.serialization.Model):
     :ivar caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
      are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-     storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-     "ReadWrite".
+     storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype caching: str or ~azure.mgmt.compute.v2021_03_01.models.CachingTypes
     :ivar write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
      disabled on the disk.
     :vartype write_accelerator_enabled: bool
-    :ivar create_option: Required. Specifies how the virtual machine should be
+    :ivar create_option: Specifies how the virtual machine should be
      created.:code:`<br>`:code:`<br>` Possible values are::code:`<br>`:code:`<br>` **Attach** \u2013
      This value is used when you are using a specialized disk to create the virtual
      machine.:code:`<br>`:code:`<br>` **FromImage** \u2013 This value is used when you are using an
      image to create the virtual machine. If you are using a platform image, you also use the
      imageReference element described above. If you are using a marketplace image, you  also use the
-     plan element previously described. Possible values include: "FromImage", "Empty", "Attach".
+     plan element previously described. Required. Known values are: "FromImage", "Empty", and
+     "Attach".
     :vartype create_option: str or ~azure.mgmt.compute.v2021_03_01.models.DiskCreateOptionTypes
     :ivar disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can be
      used to overwrite the size of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
@@ -1980,11 +1848,11 @@ class DataDisk(msrest.serialization.Model):
     :ivar disk_iops_read_write: Specifies the Read-Write IOPS for the managed disk when
      StorageAccountType is UltraSSD_LRS. Returned only for VirtualMachine ScaleSet VM disks. Can be
      updated only via updates to the VirtualMachine Scale Set.
-    :vartype disk_iops_read_write: long
+    :vartype disk_iops_read_write: int
     :ivar disk_m_bps_read_write: Specifies the bandwidth in MB per second for the managed disk when
      StorageAccountType is UltraSSD_LRS. Returned only for VirtualMachine ScaleSet VM disks. Can be
      updated only via updates to the VirtualMachine Scale Set.
-    :vartype disk_m_bps_read_write: long
+    :vartype disk_m_bps_read_write: int
     :ivar detach_option: Specifies the detach behavior to be used while detaching a disk or which
      is already in the process of detachment from the virtual machine. Supported values:
      **ForceDetach**. :code:`<br>`:code:`<br>` detachOption: **ForceDetach** is applicable only for
@@ -1993,62 +1861,62 @@ class DataDisk(msrest.serialization.Model):
      force-detach as a last resort option to detach the disk forcibly from the VM. All writes might
      not have been flushed when using this detach behavior. :code:`<br>`:code:`<br>` This feature is
      still in preview mode and is not supported for VirtualMachineScaleSet. To force-detach a data
-     disk update toBeDetached to 'true' along with setting detachOption: 'ForceDetach'. Possible
-     values include: "ForceDetach".
+     disk update toBeDetached to 'true' along with setting detachOption: 'ForceDetach'.
+     "ForceDetach"
     :vartype detach_option: str or ~azure.mgmt.compute.v2021_03_01.models.DiskDetachOptionTypes
     :ivar delete_option: Specifies whether data disk should be deleted or detached upon VM
      deletion.:code:`<br>`:code:`<br>` Possible values: :code:`<br>`:code:`<br>` **Delete** If this
      value is used, the data disk is deleted when VM is deleted.:code:`<br>`:code:`<br>` **Detach**
      If this value is used, the data disk is retained after VM is deleted.:code:`<br>`:code:`<br>`
-     The default value is set to **detach**. Possible values include: "Delete", "Detach".
+     The default value is set to **detach**. Known values are: "Delete" and "Detach".
     :vartype delete_option: str or ~azure.mgmt.compute.v2021_03_01.models.DiskDeleteOptionTypes
     """
 
     _validation = {
-        'lun': {'required': True},
-        'create_option': {'required': True},
-        'disk_iops_read_write': {'readonly': True},
-        'disk_m_bps_read_write': {'readonly': True},
+        "lun": {"required": True},
+        "create_option": {"required": True},
+        "disk_iops_read_write": {"readonly": True},
+        "disk_m_bps_read_write": {"readonly": True},
     }
 
     _attribute_map = {
-        'lun': {'key': 'lun', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'str'},
-        'vhd': {'key': 'vhd', 'type': 'VirtualHardDisk'},
-        'image': {'key': 'image', 'type': 'VirtualHardDisk'},
-        'caching': {'key': 'caching', 'type': 'str'},
-        'write_accelerator_enabled': {'key': 'writeAcceleratorEnabled', 'type': 'bool'},
-        'create_option': {'key': 'createOption', 'type': 'str'},
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'managed_disk': {'key': 'managedDisk', 'type': 'ManagedDiskParameters'},
-        'to_be_detached': {'key': 'toBeDetached', 'type': 'bool'},
-        'disk_iops_read_write': {'key': 'diskIOPSReadWrite', 'type': 'long'},
-        'disk_m_bps_read_write': {'key': 'diskMBpsReadWrite', 'type': 'long'},
-        'detach_option': {'key': 'detachOption', 'type': 'str'},
-        'delete_option': {'key': 'deleteOption', 'type': 'str'},
+        "lun": {"key": "lun", "type": "int"},
+        "name": {"key": "name", "type": "str"},
+        "vhd": {"key": "vhd", "type": "VirtualHardDisk"},
+        "image": {"key": "image", "type": "VirtualHardDisk"},
+        "caching": {"key": "caching", "type": "str"},
+        "write_accelerator_enabled": {"key": "writeAcceleratorEnabled", "type": "bool"},
+        "create_option": {"key": "createOption", "type": "str"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "managed_disk": {"key": "managedDisk", "type": "ManagedDiskParameters"},
+        "to_be_detached": {"key": "toBeDetached", "type": "bool"},
+        "disk_iops_read_write": {"key": "diskIOPSReadWrite", "type": "int"},
+        "disk_m_bps_read_write": {"key": "diskMBpsReadWrite", "type": "int"},
+        "detach_option": {"key": "detachOption", "type": "str"},
+        "delete_option": {"key": "deleteOption", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         lun: int,
-        create_option: Union[str, "DiskCreateOptionTypes"],
+        create_option: Union[str, "_models.DiskCreateOptionTypes"],
         name: Optional[str] = None,
-        vhd: Optional["VirtualHardDisk"] = None,
-        image: Optional["VirtualHardDisk"] = None,
-        caching: Optional[Union[str, "CachingTypes"]] = None,
+        vhd: Optional["_models.VirtualHardDisk"] = None,
+        image: Optional["_models.VirtualHardDisk"] = None,
+        caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         write_accelerator_enabled: Optional[bool] = None,
         disk_size_gb: Optional[int] = None,
-        managed_disk: Optional["ManagedDiskParameters"] = None,
+        managed_disk: Optional["_models.ManagedDiskParameters"] = None,
         to_be_detached: Optional[bool] = None,
-        detach_option: Optional[Union[str, "DiskDetachOptionTypes"]] = None,
-        delete_option: Optional[Union[str, "DiskDeleteOptionTypes"]] = None,
+        detach_option: Optional[Union[str, "_models.DiskDetachOptionTypes"]] = None,
+        delete_option: Optional[Union[str, "_models.DiskDeleteOptionTypes"]] = None,
         **kwargs
     ):
         """
-        :keyword lun: Required. Specifies the logical unit number of the data disk. This value is used
-         to identify data disks within the VM and therefore must be unique for each data disk attached
-         to a VM.
+        :keyword lun: Specifies the logical unit number of the data disk. This value is used to
+         identify data disks within the VM and therefore must be unique for each data disk attached to a
+         VM. Required.
         :paramtype lun: int
         :keyword name: The disk name.
         :paramtype name: str
@@ -2061,19 +1929,19 @@ class DataDisk(msrest.serialization.Model):
         :keyword caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
          are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
          :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-         storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-         "ReadWrite".
+         storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", and "ReadWrite".
         :paramtype caching: str or ~azure.mgmt.compute.v2021_03_01.models.CachingTypes
         :keyword write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
          disabled on the disk.
         :paramtype write_accelerator_enabled: bool
-        :keyword create_option: Required. Specifies how the virtual machine should be
+        :keyword create_option: Specifies how the virtual machine should be
          created.:code:`<br>`:code:`<br>` Possible values are::code:`<br>`:code:`<br>` **Attach** \u2013
          This value is used when you are using a specialized disk to create the virtual
          machine.:code:`<br>`:code:`<br>` **FromImage** \u2013 This value is used when you are using an
          image to create the virtual machine. If you are using a platform image, you also use the
          imageReference element described above. If you are using a marketplace image, you  also use the
-         plan element previously described. Possible values include: "FromImage", "Empty", "Attach".
+         plan element previously described. Required. Known values are: "FromImage", "Empty", and
+         "Attach".
         :paramtype create_option: str or ~azure.mgmt.compute.v2021_03_01.models.DiskCreateOptionTypes
         :keyword disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can
          be used to overwrite the size of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
@@ -2092,17 +1960,17 @@ class DataDisk(msrest.serialization.Model):
          force-detach as a last resort option to detach the disk forcibly from the VM. All writes might
          not have been flushed when using this detach behavior. :code:`<br>`:code:`<br>` This feature is
          still in preview mode and is not supported for VirtualMachineScaleSet. To force-detach a data
-         disk update toBeDetached to 'true' along with setting detachOption: 'ForceDetach'. Possible
-         values include: "ForceDetach".
+         disk update toBeDetached to 'true' along with setting detachOption: 'ForceDetach'.
+         "ForceDetach"
         :paramtype detach_option: str or ~azure.mgmt.compute.v2021_03_01.models.DiskDetachOptionTypes
         :keyword delete_option: Specifies whether data disk should be deleted or detached upon VM
          deletion.:code:`<br>`:code:`<br>` Possible values: :code:`<br>`:code:`<br>` **Delete** If this
          value is used, the data disk is deleted when VM is deleted.:code:`<br>`:code:`<br>` **Detach**
          If this value is used, the data disk is retained after VM is deleted.:code:`<br>`:code:`<br>`
-         The default value is set to **detach**. Possible values include: "Delete", "Detach".
+         The default value is set to **detach**. Known values are: "Delete" and "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2021_03_01.models.DiskDeleteOptionTypes
         """
-        super(DataDisk, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.lun = lun
         self.name = name
         self.vhd = vhd
@@ -2119,7 +1987,7 @@ class DataDisk(msrest.serialization.Model):
         self.delete_option = delete_option
 
 
-class DataDiskImage(msrest.serialization.Model):
+class DataDiskImage(_serialization.Model):
     """Contains the data disk images information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2130,24 +1998,20 @@ class DataDiskImage(msrest.serialization.Model):
     """
 
     _validation = {
-        'lun': {'readonly': True},
+        "lun": {"readonly": True},
     }
 
     _attribute_map = {
-        'lun': {'key': 'lun', 'type': 'int'},
+        "lun": {"key": "lun", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DataDiskImage, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.lun = None
 
 
-class DedicatedHost(Resource):
+class DedicatedHost(Resource):  # pylint: disable=too-many-instance-attributes
     """Specifies information about the Dedicated host.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2160,12 +2024,12 @@ class DedicatedHost(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar sku: Required. SKU of the dedicated host for Hardware Generation and VM family. Only name
-     is required to be set. List Microsoft.Compute SKUs for a list of possible values.
+    :ivar sku: SKU of the dedicated host for Hardware Generation and VM family. Only name is
+     required to be set. List Microsoft.Compute SKUs for a list of possible values. Required.
     :vartype sku: ~azure.mgmt.compute.v2021_03_01.models.Sku
     :ivar platform_fault_domain: Fault domain of the dedicated host within a dedicated host group.
     :vartype platform_fault_domain: int
@@ -2181,7 +2045,7 @@ class DedicatedHost(Resource):
      deployed on the dedicated host. :code:`<br>`:code:`<br>` Possible values are:
      :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **Windows_Server_Hybrid**
      :code:`<br>`:code:`<br>` **Windows_Server_Perpetual** :code:`<br>`:code:`<br>` Default:
-     **None**. Possible values include: "None", "Windows_Server_Hybrid", "Windows_Server_Perpetual".
+     **None**. Known values are: "None", "Windows_Server_Hybrid", and "Windows_Server_Perpetual".
     :vartype license_type: str or ~azure.mgmt.compute.v2021_03_01.models.DedicatedHostLicenseTypes
     :ivar provisioning_time: The date when the host was first provisioned.
     :vartype provisioning_time: ~datetime.datetime
@@ -2192,54 +2056,54 @@ class DedicatedHost(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'sku': {'required': True},
-        'platform_fault_domain': {'minimum': 0},
-        'host_id': {'readonly': True},
-        'virtual_machines': {'readonly': True},
-        'provisioning_time': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'instance_view': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "sku": {"required": True},
+        "platform_fault_domain": {"minimum": 0},
+        "host_id": {"readonly": True},
+        "virtual_machines": {"readonly": True},
+        "provisioning_time": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "instance_view": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'platform_fault_domain': {'key': 'properties.platformFaultDomain', 'type': 'int'},
-        'auto_replace_on_failure': {'key': 'properties.autoReplaceOnFailure', 'type': 'bool'},
-        'host_id': {'key': 'properties.hostId', 'type': 'str'},
-        'virtual_machines': {'key': 'properties.virtualMachines', 'type': '[SubResourceReadOnly]'},
-        'license_type': {'key': 'properties.licenseType', 'type': 'str'},
-        'provisioning_time': {'key': 'properties.provisioningTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'DedicatedHostInstanceView'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "platform_fault_domain": {"key": "properties.platformFaultDomain", "type": "int"},
+        "auto_replace_on_failure": {"key": "properties.autoReplaceOnFailure", "type": "bool"},
+        "host_id": {"key": "properties.hostId", "type": "str"},
+        "virtual_machines": {"key": "properties.virtualMachines", "type": "[SubResourceReadOnly]"},
+        "license_type": {"key": "properties.licenseType", "type": "str"},
+        "provisioning_time": {"key": "properties.provisioningTime", "type": "iso-8601"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "instance_view": {"key": "properties.instanceView", "type": "DedicatedHostInstanceView"},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        sku: "Sku",
+        sku: "_models.Sku",
         tags: Optional[Dict[str, str]] = None,
         platform_fault_domain: Optional[int] = None,
         auto_replace_on_failure: Optional[bool] = None,
-        license_type: Optional[Union[str, "DedicatedHostLicenseTypes"]] = None,
+        license_type: Optional[Union[str, "_models.DedicatedHostLicenseTypes"]] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword sku: Required. SKU of the dedicated host for Hardware Generation and VM family. Only
-         name is required to be set. List Microsoft.Compute SKUs for a list of possible values.
+        :keyword sku: SKU of the dedicated host for Hardware Generation and VM family. Only name is
+         required to be set. List Microsoft.Compute SKUs for a list of possible values. Required.
         :paramtype sku: ~azure.mgmt.compute.v2021_03_01.models.Sku
         :keyword platform_fault_domain: Fault domain of the dedicated host within a dedicated host
          group.
@@ -2251,11 +2115,11 @@ class DedicatedHost(Resource):
          deployed on the dedicated host. :code:`<br>`:code:`<br>` Possible values are:
          :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **Windows_Server_Hybrid**
          :code:`<br>`:code:`<br>` **Windows_Server_Perpetual** :code:`<br>`:code:`<br>` Default:
-         **None**. Possible values include: "None", "Windows_Server_Hybrid", "Windows_Server_Perpetual".
+         **None**. Known values are: "None", "Windows_Server_Hybrid", and "Windows_Server_Perpetual".
         :paramtype license_type: str or
          ~azure.mgmt.compute.v2021_03_01.models.DedicatedHostLicenseTypes
         """
-        super(DedicatedHost, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.platform_fault_domain = platform_fault_domain
         self.auto_replace_on_failure = auto_replace_on_failure
@@ -2267,7 +2131,7 @@ class DedicatedHost(Resource):
         self.instance_view = None
 
 
-class DedicatedHostAllocatableVM(msrest.serialization.Model):
+class DedicatedHostAllocatableVM(_serialization.Model):
     """Represents the dedicated host unutilized capacity in terms of a specific VM size.
 
     :ivar vm_size: VM size in terms of which the unutilized capacity is represented.
@@ -2278,17 +2142,11 @@ class DedicatedHostAllocatableVM(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'float'},
+        "vm_size": {"key": "vmSize", "type": "str"},
+        "count": {"key": "count", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        vm_size: Optional[str] = None,
-        count: Optional[float] = None,
-        **kwargs
-    ):
+    def __init__(self, *, vm_size: Optional[str] = None, count: Optional[float] = None, **kwargs):
         """
         :keyword vm_size: VM size in terms of which the unutilized capacity is represented.
         :paramtype vm_size: str
@@ -2296,12 +2154,12 @@ class DedicatedHostAllocatableVM(msrest.serialization.Model):
          remaining capacity.
         :paramtype count: float
         """
-        super(DedicatedHostAllocatableVM, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.vm_size = vm_size
         self.count = count
 
 
-class DedicatedHostAvailableCapacity(msrest.serialization.Model):
+class DedicatedHostAvailableCapacity(_serialization.Model):
     """Dedicated host unutilized capacity.
 
     :ivar allocatable_v_ms: The unutilized capacity of the dedicated host represented in terms of
@@ -2311,22 +2169,17 @@ class DedicatedHostAvailableCapacity(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'allocatable_v_ms': {'key': 'allocatableVMs', 'type': '[DedicatedHostAllocatableVM]'},
+        "allocatable_v_ms": {"key": "allocatableVMs", "type": "[DedicatedHostAllocatableVM]"},
     }
 
-    def __init__(
-        self,
-        *,
-        allocatable_v_ms: Optional[List["DedicatedHostAllocatableVM"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, allocatable_v_ms: Optional[List["_models.DedicatedHostAllocatableVM"]] = None, **kwargs):
         """
         :keyword allocatable_v_ms: The unutilized capacity of the dedicated host represented in terms
          of each VM size that is allowed to be deployed to the dedicated host.
         :paramtype allocatable_v_ms:
          list[~azure.mgmt.compute.v2021_03_01.models.DedicatedHostAllocatableVM]
         """
-        super(DedicatedHostAvailableCapacity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.allocatable_v_ms = allocatable_v_ms
 
 
@@ -2343,9 +2196,9 @@ class DedicatedHostGroup(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar zones: Availability Zone to use for this host group. Only single zone is supported. The
      zone can be assigned only during creation. If not provided, the group supports all zones in the
@@ -2367,26 +2220,26 @@ class DedicatedHostGroup(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'platform_fault_domain_count': {'minimum': 1},
-        'hosts': {'readonly': True},
-        'instance_view': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "platform_fault_domain_count": {"minimum": 1},
+        "hosts": {"readonly": True},
+        "instance_view": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
-        'hosts': {'key': 'properties.hosts', 'type': '[SubResourceReadOnly]'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'DedicatedHostGroupInstanceView'},
-        'support_automatic_placement': {'key': 'properties.supportAutomaticPlacement', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "platform_fault_domain_count": {"key": "properties.platformFaultDomainCount", "type": "int"},
+        "hosts": {"key": "properties.hosts", "type": "[SubResourceReadOnly]"},
+        "instance_view": {"key": "properties.instanceView", "type": "DedicatedHostGroupInstanceView"},
+        "support_automatic_placement": {"key": "properties.supportAutomaticPlacement", "type": "bool"},
     }
 
     def __init__(
@@ -2400,9 +2253,9 @@ class DedicatedHostGroup(Resource):
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword zones: Availability Zone to use for this host group. Only single zone is supported.
          The zone can be assigned only during creation. If not provided, the group supports all zones in
@@ -2417,7 +2270,7 @@ class DedicatedHostGroup(Resource):
          api-version: 2020-06-01.
         :paramtype support_automatic_placement: bool
         """
-        super(DedicatedHostGroup, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.zones = zones
         self.platform_fault_domain_count = platform_fault_domain_count
         self.hosts = None
@@ -2425,7 +2278,7 @@ class DedicatedHostGroup(Resource):
         self.support_automatic_placement = support_automatic_placement
 
 
-class DedicatedHostGroupInstanceView(msrest.serialization.Model):
+class DedicatedHostGroupInstanceView(_serialization.Model):
     """DedicatedHostGroupInstanceView.
 
     :ivar hosts: List of instance view of the dedicated hosts under the dedicated host group.
@@ -2433,30 +2286,25 @@ class DedicatedHostGroupInstanceView(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'hosts': {'key': 'hosts', 'type': '[DedicatedHostInstanceViewWithName]'},
+        "hosts": {"key": "hosts", "type": "[DedicatedHostInstanceViewWithName]"},
     }
 
-    def __init__(
-        self,
-        *,
-        hosts: Optional[List["DedicatedHostInstanceViewWithName"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, hosts: Optional[List["_models.DedicatedHostInstanceViewWithName"]] = None, **kwargs):
         """
         :keyword hosts: List of instance view of the dedicated hosts under the dedicated host group.
         :paramtype hosts:
          list[~azure.mgmt.compute.v2021_03_01.models.DedicatedHostInstanceViewWithName]
         """
-        super(DedicatedHostGroupInstanceView, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.hosts = hosts
 
 
-class DedicatedHostGroupListResult(msrest.serialization.Model):
+class DedicatedHostGroupListResult(_serialization.Model):
     """The List Dedicated Host Group with resource group response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. The list of dedicated host groups.
+    :ivar value: The list of dedicated host groups. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.DedicatedHostGroup]
     :ivar next_link: The URI to fetch the next page of Dedicated Host Groups. Call ListNext() with
      this URI to fetch the next page of Dedicated Host Groups.
@@ -2464,29 +2312,23 @@ class DedicatedHostGroupListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DedicatedHostGroup]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DedicatedHostGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["DedicatedHostGroup"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.DedicatedHostGroup"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. The list of dedicated host groups.
+        :keyword value: The list of dedicated host groups. Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.DedicatedHostGroup]
         :keyword next_link: The URI to fetch the next page of Dedicated Host Groups. Call ListNext()
          with this URI to fetch the next page of Dedicated Host Groups.
         :paramtype next_link: str
         """
-        super(DedicatedHostGroupListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -2496,7 +2338,7 @@ class DedicatedHostGroupUpdate(UpdateResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar zones: Availability Zone to use for this host group. Only single zone is supported. The
      zone can be assigned only during creation. If not provided, the group supports all zones in the
@@ -2518,18 +2360,18 @@ class DedicatedHostGroupUpdate(UpdateResource):
     """
 
     _validation = {
-        'platform_fault_domain_count': {'minimum': 1},
-        'hosts': {'readonly': True},
-        'instance_view': {'readonly': True},
+        "platform_fault_domain_count": {"minimum": 1},
+        "hosts": {"readonly": True},
+        "instance_view": {"readonly": True},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
-        'hosts': {'key': 'properties.hosts', 'type': '[SubResourceReadOnly]'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'DedicatedHostGroupInstanceView'},
-        'support_automatic_placement': {'key': 'properties.supportAutomaticPlacement', 'type': 'bool'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "platform_fault_domain_count": {"key": "properties.platformFaultDomainCount", "type": "int"},
+        "hosts": {"key": "properties.hosts", "type": "[SubResourceReadOnly]"},
+        "instance_view": {"key": "properties.instanceView", "type": "DedicatedHostGroupInstanceView"},
+        "support_automatic_placement": {"key": "properties.supportAutomaticPlacement", "type": "bool"},
     }
 
     def __init__(
@@ -2542,7 +2384,7 @@ class DedicatedHostGroupUpdate(UpdateResource):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword zones: Availability Zone to use for this host group. Only single zone is supported.
          The zone can be assigned only during creation. If not provided, the group supports all zones in
@@ -2557,7 +2399,7 @@ class DedicatedHostGroupUpdate(UpdateResource):
          api-version: 2020-06-01.
         :paramtype support_automatic_placement: bool
         """
-        super(DedicatedHostGroupUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.zones = zones
         self.platform_fault_domain_count = platform_fault_domain_count
         self.hosts = None
@@ -2565,7 +2407,7 @@ class DedicatedHostGroupUpdate(UpdateResource):
         self.support_automatic_placement = support_automatic_placement
 
 
-class DedicatedHostInstanceView(msrest.serialization.Model):
+class DedicatedHostInstanceView(_serialization.Model):
     """The instance view of a dedicated host.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2581,20 +2423,20 @@ class DedicatedHostInstanceView(msrest.serialization.Model):
     """
 
     _validation = {
-        'asset_id': {'readonly': True},
+        "asset_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'asset_id': {'key': 'assetId', 'type': 'str'},
-        'available_capacity': {'key': 'availableCapacity', 'type': 'DedicatedHostAvailableCapacity'},
-        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
+        "asset_id": {"key": "assetId", "type": "str"},
+        "available_capacity": {"key": "availableCapacity", "type": "DedicatedHostAvailableCapacity"},
+        "statuses": {"key": "statuses", "type": "[InstanceViewStatus]"},
     }
 
     def __init__(
         self,
         *,
-        available_capacity: Optional["DedicatedHostAvailableCapacity"] = None,
-        statuses: Optional[List["InstanceViewStatus"]] = None,
+        available_capacity: Optional["_models.DedicatedHostAvailableCapacity"] = None,
+        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
         **kwargs
     ):
         """
@@ -2604,7 +2446,7 @@ class DedicatedHostInstanceView(msrest.serialization.Model):
         :keyword statuses: The resource status information.
         :paramtype statuses: list[~azure.mgmt.compute.v2021_03_01.models.InstanceViewStatus]
         """
-        super(DedicatedHostInstanceView, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.asset_id = None
         self.available_capacity = available_capacity
         self.statuses = statuses
@@ -2628,22 +2470,22 @@ class DedicatedHostInstanceViewWithName(DedicatedHostInstanceView):
     """
 
     _validation = {
-        'asset_id': {'readonly': True},
-        'name': {'readonly': True},
+        "asset_id": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'asset_id': {'key': 'assetId', 'type': 'str'},
-        'available_capacity': {'key': 'availableCapacity', 'type': 'DedicatedHostAvailableCapacity'},
-        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
-        'name': {'key': 'name', 'type': 'str'},
+        "asset_id": {"key": "assetId", "type": "str"},
+        "available_capacity": {"key": "availableCapacity", "type": "DedicatedHostAvailableCapacity"},
+        "statuses": {"key": "statuses", "type": "[InstanceViewStatus]"},
+        "name": {"key": "name", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        available_capacity: Optional["DedicatedHostAvailableCapacity"] = None,
-        statuses: Optional[List["InstanceViewStatus"]] = None,
+        available_capacity: Optional["_models.DedicatedHostAvailableCapacity"] = None,
+        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
         **kwargs
     ):
         """
@@ -2653,16 +2495,16 @@ class DedicatedHostInstanceViewWithName(DedicatedHostInstanceView):
         :keyword statuses: The resource status information.
         :paramtype statuses: list[~azure.mgmt.compute.v2021_03_01.models.InstanceViewStatus]
         """
-        super(DedicatedHostInstanceViewWithName, self).__init__(available_capacity=available_capacity, statuses=statuses, **kwargs)
+        super().__init__(available_capacity=available_capacity, statuses=statuses, **kwargs)
         self.name = None
 
 
-class DedicatedHostListResult(msrest.serialization.Model):
+class DedicatedHostListResult(_serialization.Model):
     """The list dedicated host operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. The list of dedicated hosts.
+    :ivar value: The list of dedicated hosts. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.DedicatedHost]
     :ivar next_link: The URI to fetch the next page of dedicated hosts. Call ListNext() with this
      URI to fetch the next page of dedicated hosts.
@@ -2670,29 +2512,23 @@ class DedicatedHostListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DedicatedHost]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DedicatedHost]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["DedicatedHost"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.DedicatedHost"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. The list of dedicated hosts.
+        :keyword value: The list of dedicated hosts. Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.DedicatedHost]
         :keyword next_link: The URI to fetch the next page of dedicated hosts. Call ListNext() with
          this URI to fetch the next page of dedicated hosts.
         :paramtype next_link: str
         """
-        super(DedicatedHostListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -2702,7 +2538,7 @@ class DedicatedHostUpdate(UpdateResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar platform_fault_domain: Fault domain of the dedicated host within a dedicated host group.
     :vartype platform_fault_domain: int
@@ -2718,7 +2554,7 @@ class DedicatedHostUpdate(UpdateResource):
      deployed on the dedicated host. :code:`<br>`:code:`<br>` Possible values are:
      :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **Windows_Server_Hybrid**
      :code:`<br>`:code:`<br>` **Windows_Server_Perpetual** :code:`<br>`:code:`<br>` Default:
-     **None**. Possible values include: "None", "Windows_Server_Hybrid", "Windows_Server_Perpetual".
+     **None**. Known values are: "None", "Windows_Server_Hybrid", and "Windows_Server_Perpetual".
     :vartype license_type: str or ~azure.mgmt.compute.v2021_03_01.models.DedicatedHostLicenseTypes
     :ivar provisioning_time: The date when the host was first provisioned.
     :vartype provisioning_time: ~datetime.datetime
@@ -2729,24 +2565,24 @@ class DedicatedHostUpdate(UpdateResource):
     """
 
     _validation = {
-        'platform_fault_domain': {'minimum': 0},
-        'host_id': {'readonly': True},
-        'virtual_machines': {'readonly': True},
-        'provisioning_time': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'instance_view': {'readonly': True},
+        "platform_fault_domain": {"minimum": 0},
+        "host_id": {"readonly": True},
+        "virtual_machines": {"readonly": True},
+        "provisioning_time": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "instance_view": {"readonly": True},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'platform_fault_domain': {'key': 'properties.platformFaultDomain', 'type': 'int'},
-        'auto_replace_on_failure': {'key': 'properties.autoReplaceOnFailure', 'type': 'bool'},
-        'host_id': {'key': 'properties.hostId', 'type': 'str'},
-        'virtual_machines': {'key': 'properties.virtualMachines', 'type': '[SubResourceReadOnly]'},
-        'license_type': {'key': 'properties.licenseType', 'type': 'str'},
-        'provisioning_time': {'key': 'properties.provisioningTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'DedicatedHostInstanceView'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "platform_fault_domain": {"key": "properties.platformFaultDomain", "type": "int"},
+        "auto_replace_on_failure": {"key": "properties.autoReplaceOnFailure", "type": "bool"},
+        "host_id": {"key": "properties.hostId", "type": "str"},
+        "virtual_machines": {"key": "properties.virtualMachines", "type": "[SubResourceReadOnly]"},
+        "license_type": {"key": "properties.licenseType", "type": "str"},
+        "provisioning_time": {"key": "properties.provisioningTime", "type": "iso-8601"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "instance_view": {"key": "properties.instanceView", "type": "DedicatedHostInstanceView"},
     }
 
     def __init__(
@@ -2755,11 +2591,11 @@ class DedicatedHostUpdate(UpdateResource):
         tags: Optional[Dict[str, str]] = None,
         platform_fault_domain: Optional[int] = None,
         auto_replace_on_failure: Optional[bool] = None,
-        license_type: Optional[Union[str, "DedicatedHostLicenseTypes"]] = None,
+        license_type: Optional[Union[str, "_models.DedicatedHostLicenseTypes"]] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword platform_fault_domain: Fault domain of the dedicated host within a dedicated host
          group.
@@ -2771,11 +2607,11 @@ class DedicatedHostUpdate(UpdateResource):
          deployed on the dedicated host. :code:`<br>`:code:`<br>` Possible values are:
          :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **Windows_Server_Hybrid**
          :code:`<br>`:code:`<br>` **Windows_Server_Perpetual** :code:`<br>`:code:`<br>` Default:
-         **None**. Possible values include: "None", "Windows_Server_Hybrid", "Windows_Server_Perpetual".
+         **None**. Known values are: "None", "Windows_Server_Hybrid", and "Windows_Server_Perpetual".
         :paramtype license_type: str or
          ~azure.mgmt.compute.v2021_03_01.models.DedicatedHostLicenseTypes
         """
-        super(DedicatedHostUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.platform_fault_domain = platform_fault_domain
         self.auto_replace_on_failure = auto_replace_on_failure
         self.host_id = None
@@ -2786,7 +2622,7 @@ class DedicatedHostUpdate(UpdateResource):
         self.instance_view = None
 
 
-class DiagnosticsProfile(msrest.serialization.Model):
+class DiagnosticsProfile(_serialization.Model):
     """Specifies the boot diagnostic settings state. :code:`<br>`:code:`<br>`Minimum api-version: 2015-06-15.
 
     :ivar boot_diagnostics: Boot Diagnostics is a debugging feature which allows you to view
@@ -2797,15 +2633,10 @@ class DiagnosticsProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'boot_diagnostics': {'key': 'bootDiagnostics', 'type': 'BootDiagnostics'},
+        "boot_diagnostics": {"key": "bootDiagnostics", "type": "BootDiagnostics"},
     }
 
-    def __init__(
-        self,
-        *,
-        boot_diagnostics: Optional["BootDiagnostics"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, boot_diagnostics: Optional["_models.BootDiagnostics"] = None, **kwargs):
         """
         :keyword boot_diagnostics: Boot Diagnostics is a debugging feature which allows you to view
          Console Output and Screenshot to diagnose VM status. :code:`<br>`:code:`<br>` You can easily
@@ -2813,15 +2644,14 @@ class DiagnosticsProfile(msrest.serialization.Model):
          screenshot of the VM from the hypervisor.
         :paramtype boot_diagnostics: ~azure.mgmt.compute.v2021_03_01.models.BootDiagnostics
         """
-        super(DiagnosticsProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.boot_diagnostics = boot_diagnostics
 
 
-class DiffDiskSettings(msrest.serialization.Model):
+class DiffDiskSettings(_serialization.Model):
     """Describes the parameters of ephemeral disk settings that can be specified for operating system disk. :code:`<br>`:code:`<br>` NOTE: The ephemeral disk settings can only be specified for managed disk.
 
-    :ivar option: Specifies the ephemeral disk settings for operating system disk. Possible values
-     include: "Local".
+    :ivar option: Specifies the ephemeral disk settings for operating system disk. "Local"
     :vartype option: str or ~azure.mgmt.compute.v2021_03_01.models.DiffDiskOptions
     :ivar placement: Specifies the ephemeral disk placement for operating system
      disk.:code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **CacheDisk**
@@ -2830,25 +2660,24 @@ class DiffDiskSettings(msrest.serialization.Model):
      Refer to VM size documentation for Windows VM at
      https://docs.microsoft.com/azure/virtual-machines/windows/sizes and Linux VM at
      https://docs.microsoft.com/azure/virtual-machines/linux/sizes to check which VM sizes exposes a
-     cache disk. Possible values include: "CacheDisk", "ResourceDisk".
+     cache disk. Known values are: "CacheDisk" and "ResourceDisk".
     :vartype placement: str or ~azure.mgmt.compute.v2021_03_01.models.DiffDiskPlacement
     """
 
     _attribute_map = {
-        'option': {'key': 'option', 'type': 'str'},
-        'placement': {'key': 'placement', 'type': 'str'},
+        "option": {"key": "option", "type": "str"},
+        "placement": {"key": "placement", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        option: Optional[Union[str, "DiffDiskOptions"]] = None,
-        placement: Optional[Union[str, "DiffDiskPlacement"]] = None,
+        option: Optional[Union[str, "_models.DiffDiskOptions"]] = None,
+        placement: Optional[Union[str, "_models.DiffDiskPlacement"]] = None,
         **kwargs
     ):
         """
-        :keyword option: Specifies the ephemeral disk settings for operating system disk. Possible
-         values include: "Local".
+        :keyword option: Specifies the ephemeral disk settings for operating system disk. "Local"
         :paramtype option: str or ~azure.mgmt.compute.v2021_03_01.models.DiffDiskOptions
         :keyword placement: Specifies the ephemeral disk placement for operating system
          disk.:code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **CacheDisk**
@@ -2857,42 +2686,37 @@ class DiffDiskSettings(msrest.serialization.Model):
          Refer to VM size documentation for Windows VM at
          https://docs.microsoft.com/azure/virtual-machines/windows/sizes and Linux VM at
          https://docs.microsoft.com/azure/virtual-machines/linux/sizes to check which VM sizes exposes a
-         cache disk. Possible values include: "CacheDisk", "ResourceDisk".
+         cache disk. Known values are: "CacheDisk" and "ResourceDisk".
         :paramtype placement: str or ~azure.mgmt.compute.v2021_03_01.models.DiffDiskPlacement
         """
-        super(DiffDiskSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.option = option
         self.placement = placement
 
 
-class DisallowedConfiguration(msrest.serialization.Model):
+class DisallowedConfiguration(_serialization.Model):
     """Specifies the disallowed configuration for a virtual machine image.
 
-    :ivar vm_disk_type: VM disk types which are disallowed. Possible values include: "None",
+    :ivar vm_disk_type: VM disk types which are disallowed. Known values are: "None" and
      "Unmanaged".
     :vartype vm_disk_type: str or ~azure.mgmt.compute.v2021_03_01.models.VmDiskTypes
     """
 
     _attribute_map = {
-        'vm_disk_type': {'key': 'vmDiskType', 'type': 'str'},
+        "vm_disk_type": {"key": "vmDiskType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        vm_disk_type: Optional[Union[str, "VmDiskTypes"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, vm_disk_type: Optional[Union[str, "_models.VmDiskTypes"]] = None, **kwargs):
         """
-        :keyword vm_disk_type: VM disk types which are disallowed. Possible values include: "None",
+        :keyword vm_disk_type: VM disk types which are disallowed. Known values are: "None" and
          "Unmanaged".
         :paramtype vm_disk_type: str or ~azure.mgmt.compute.v2021_03_01.models.VmDiskTypes
         """
-        super(DisallowedConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.vm_disk_type = vm_disk_type
 
 
-class SubResource(msrest.serialization.Model):
+class SubResource(_serialization.Model):
     """SubResource.
 
     :ivar id: Resource Id.
@@ -2900,20 +2724,15 @@ class SubResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource Id.
         :paramtype id: str
         """
-        super(SubResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
@@ -2925,23 +2744,18 @@ class DiskEncryptionSetParameters(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource Id.
         :paramtype id: str
         """
-        super(DiskEncryptionSetParameters, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
 
 
-class DiskEncryptionSettings(msrest.serialization.Model):
+class DiskEncryptionSettings(_serialization.Model):
     """Describes a Encryption Settings for a Disk.
 
     :ivar disk_encryption_key: Specifies the location of the disk encryption key, which is a Key
@@ -2954,16 +2768,16 @@ class DiskEncryptionSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'disk_encryption_key': {'key': 'diskEncryptionKey', 'type': 'KeyVaultSecretReference'},
-        'key_encryption_key': {'key': 'keyEncryptionKey', 'type': 'KeyVaultKeyReference'},
-        'enabled': {'key': 'enabled', 'type': 'bool'},
+        "disk_encryption_key": {"key": "diskEncryptionKey", "type": "KeyVaultSecretReference"},
+        "key_encryption_key": {"key": "keyEncryptionKey", "type": "KeyVaultKeyReference"},
+        "enabled": {"key": "enabled", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        disk_encryption_key: Optional["KeyVaultSecretReference"] = None,
-        key_encryption_key: Optional["KeyVaultKeyReference"] = None,
+        disk_encryption_key: Optional["_models.KeyVaultSecretReference"] = None,
+        key_encryption_key: Optional["_models.KeyVaultKeyReference"] = None,
         enabled: Optional[bool] = None,
         **kwargs
     ):
@@ -2976,13 +2790,13 @@ class DiskEncryptionSettings(msrest.serialization.Model):
         :keyword enabled: Specifies whether disk encryption should be enabled on the virtual machine.
         :paramtype enabled: bool
         """
-        super(DiskEncryptionSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.disk_encryption_key = disk_encryption_key
         self.key_encryption_key = key_encryption_key
         self.enabled = enabled
 
 
-class DiskInstanceView(msrest.serialization.Model):
+class DiskInstanceView(_serialization.Model):
     """The instance view of the disk.
 
     :ivar name: The disk name.
@@ -2996,17 +2810,17 @@ class DiskInstanceView(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'encryption_settings': {'key': 'encryptionSettings', 'type': '[DiskEncryptionSettings]'},
-        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
+        "name": {"key": "name", "type": "str"},
+        "encryption_settings": {"key": "encryptionSettings", "type": "[DiskEncryptionSettings]"},
+        "statuses": {"key": "statuses", "type": "[InstanceViewStatus]"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        encryption_settings: Optional[List["DiskEncryptionSettings"]] = None,
-        statuses: Optional[List["InstanceViewStatus"]] = None,
+        encryption_settings: Optional[List["_models.DiskEncryptionSettings"]] = None,
+        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
         **kwargs
     ):
         """
@@ -3019,45 +2833,45 @@ class DiskInstanceView(msrest.serialization.Model):
         :keyword statuses: The resource status information.
         :paramtype statuses: list[~azure.mgmt.compute.v2021_03_01.models.InstanceViewStatus]
         """
-        super(DiskInstanceView, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.encryption_settings = encryption_settings
         self.statuses = statuses
 
 
-class ExtendedLocation(msrest.serialization.Model):
+class ExtendedLocation(_serialization.Model):
     """The complex type of the extended location.
 
     :ivar name: The name of the extended location.
     :vartype name: str
-    :ivar type: The type of the extended location. Possible values include: "EdgeZone".
+    :ivar type: The type of the extended location. "EdgeZone"
     :vartype type: str or ~azure.mgmt.compute.v2021_03_01.models.ExtendedLocationTypes
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        type: Optional[Union[str, "ExtendedLocationTypes"]] = None,
+        type: Optional[Union[str, "_models.ExtendedLocationTypes"]] = None,
         **kwargs
     ):
         """
         :keyword name: The name of the extended location.
         :paramtype name: str
-        :keyword type: The type of the extended location. Possible values include: "EdgeZone".
+        :keyword type: The type of the extended location. "EdgeZone"
         :paramtype type: str or ~azure.mgmt.compute.v2021_03_01.models.ExtendedLocationTypes
         """
-        super(ExtendedLocation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
 
 
-class Extension(msrest.serialization.Model):
+class Extension(_serialization.Model):
     """Describes a cloud service Extension.
 
     :ivar name: The name of the extension.
@@ -3067,15 +2881,15 @@ class Extension(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'CloudServiceExtensionProperties'},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "CloudServiceExtensionProperties"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        properties: Optional["CloudServiceExtensionProperties"] = None,
+        properties: Optional["_models.CloudServiceExtensionProperties"] = None,
         **kwargs
     ):
         """
@@ -3084,12 +2898,12 @@ class Extension(msrest.serialization.Model):
         :keyword properties: Extension Properties.
         :paramtype properties: ~azure.mgmt.compute.v2021_03_01.models.CloudServiceExtensionProperties
         """
-        super(Extension, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.properties = properties
 
 
-class HardwareProfile(msrest.serialization.Model):
+class HardwareProfile(_serialization.Model):
     """Specifies the hardware settings for the virtual machine.
 
     :ivar vm_size: Specifies the size of the virtual machine. :code:`<br>`:code:`<br>` The enum
@@ -3103,7 +2917,7 @@ class HardwareProfile(msrest.serialization.Model):
      <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. For more
      information about virtual machine sizes, see `Sizes for virtual machines
      <https://docs.microsoft.com/azure/virtual-machines/sizes>`_. :code:`<br>`:code:`<br>` The
-     available VM sizes depend on region and availability set. Possible values include: "Basic_A0",
+     available VM sizes depend on region and availability set. Known values are: "Basic_A0",
      "Basic_A1", "Basic_A2", "Basic_A3", "Basic_A4", "Standard_A0", "Standard_A1", "Standard_A2",
      "Standard_A3", "Standard_A4", "Standard_A5", "Standard_A6", "Standard_A7", "Standard_A8",
      "Standard_A9", "Standard_A10", "Standard_A11", "Standard_A1_v2", "Standard_A2_v2",
@@ -3136,21 +2950,16 @@ class HardwareProfile(msrest.serialization.Model):
      "Standard_NC6", "Standard_NC12", "Standard_NC24", "Standard_NC24r", "Standard_NC6s_v2",
      "Standard_NC12s_v2", "Standard_NC24s_v2", "Standard_NC24rs_v2", "Standard_NC6s_v3",
      "Standard_NC12s_v3", "Standard_NC24s_v3", "Standard_NC24rs_v3", "Standard_ND6s",
-     "Standard_ND12s", "Standard_ND24s", "Standard_ND24rs", "Standard_NV6", "Standard_NV12",
+     "Standard_ND12s", "Standard_ND24s", "Standard_ND24rs", "Standard_NV6", "Standard_NV12", and
      "Standard_NV24".
     :vartype vm_size: str or ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineSizeTypes
     """
 
     _attribute_map = {
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
+        "vm_size": {"key": "vmSize", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        vm_size: Optional[Union[str, "VirtualMachineSizeTypes"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, vm_size: Optional[Union[str, "_models.VirtualMachineSizeTypes"]] = None, **kwargs):
         """
         :keyword vm_size: Specifies the size of the virtual machine. :code:`<br>`:code:`<br>` The enum
          data type is currently deprecated and will be removed by December 23rd 2023.
@@ -3163,7 +2972,7 @@ class HardwareProfile(msrest.serialization.Model):
          <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. For more
          information about virtual machine sizes, see `Sizes for virtual machines
          <https://docs.microsoft.com/azure/virtual-machines/sizes>`_. :code:`<br>`:code:`<br>` The
-         available VM sizes depend on region and availability set. Possible values include: "Basic_A0",
+         available VM sizes depend on region and availability set. Known values are: "Basic_A0",
          "Basic_A1", "Basic_A2", "Basic_A3", "Basic_A4", "Standard_A0", "Standard_A1", "Standard_A2",
          "Standard_A3", "Standard_A4", "Standard_A5", "Standard_A6", "Standard_A7", "Standard_A8",
          "Standard_A9", "Standard_A10", "Standard_A11", "Standard_A1_v2", "Standard_A2_v2",
@@ -3196,11 +3005,11 @@ class HardwareProfile(msrest.serialization.Model):
          "Standard_NC6", "Standard_NC12", "Standard_NC24", "Standard_NC24r", "Standard_NC6s_v2",
          "Standard_NC12s_v2", "Standard_NC24s_v2", "Standard_NC24rs_v2", "Standard_NC6s_v3",
          "Standard_NC12s_v3", "Standard_NC24s_v3", "Standard_NC24rs_v3", "Standard_ND6s",
-         "Standard_ND12s", "Standard_ND24s", "Standard_ND24rs", "Standard_NV6", "Standard_NV12",
+         "Standard_ND12s", "Standard_ND24s", "Standard_ND24rs", "Standard_NV6", "Standard_NV12", and
          "Standard_NV24".
         :paramtype vm_size: str or ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineSizeTypes
         """
-        super(HardwareProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.vm_size = vm_size
 
 
@@ -3217,9 +3026,9 @@ class Image(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar extended_location: The extended location of the Image.
     :vartype extended_location: ~azure.mgmt.compute.v2021_03_01.models.ExtendedLocation
@@ -3232,31 +3041,31 @@ class Image(Resource):
     :ivar hyper_v_generation: Specifies the HyperVGenerationType of the VirtualMachine created from
      the image. From API Version 2019-03-01 if the image source is a blob, then we need the user to
      specify the value, if the source is managed resource like disk or snapshot, we may require the
-     user to specify the property if we cannot deduce it from the source managed resource. Possible
-     values include: "V1", "V2".
+     user to specify the property if we cannot deduce it from the source managed resource. Known
+     values are: "V1" and "V2".
     :vartype hyper_v_generation: str or
      ~azure.mgmt.compute.v2021_03_01.models.HyperVGenerationTypes
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
-        'source_virtual_machine': {'key': 'properties.sourceVirtualMachine', 'type': 'SubResource'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'ImageStorageProfile'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'hyper_v_generation': {'key': 'properties.hyperVGeneration', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "source_virtual_machine": {"key": "properties.sourceVirtualMachine", "type": "SubResource"},
+        "storage_profile": {"key": "properties.storageProfile", "type": "ImageStorageProfile"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
     }
 
     def __init__(
@@ -3264,16 +3073,16 @@ class Image(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        extended_location: Optional["ExtendedLocation"] = None,
-        source_virtual_machine: Optional["SubResource"] = None,
-        storage_profile: Optional["ImageStorageProfile"] = None,
-        hyper_v_generation: Optional[Union[str, "HyperVGenerationTypes"]] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        source_virtual_machine: Optional["_models.SubResource"] = None,
+        storage_profile: Optional["_models.ImageStorageProfile"] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGenerationTypes"]] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword extended_location: The extended location of the Image.
         :paramtype extended_location: ~azure.mgmt.compute.v2021_03_01.models.ExtendedLocation
@@ -3285,11 +3094,11 @@ class Image(Resource):
          from the image. From API Version 2019-03-01 if the image source is a blob, then we need the
          user to specify the value, if the source is managed resource like disk or snapshot, we may
          require the user to specify the property if we cannot deduce it from the source managed
-         resource. Possible values include: "V1", "V2".
+         resource. Known values are: "V1" and "V2".
         :paramtype hyper_v_generation: str or
          ~azure.mgmt.compute.v2021_03_01.models.HyperVGenerationTypes
         """
-        super(Image, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.extended_location = extended_location
         self.source_virtual_machine = source_virtual_machine
         self.storage_profile = storage_profile
@@ -3297,7 +3106,7 @@ class Image(Resource):
         self.hyper_v_generation = hyper_v_generation
 
 
-class ImageDisk(msrest.serialization.Model):
+class ImageDisk(_serialization.Model):
     """Describes a image disk.
 
     :ivar snapshot: The snapshot.
@@ -3309,16 +3118,15 @@ class ImageDisk(msrest.serialization.Model):
     :ivar caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
      are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-     storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-     "ReadWrite".
+     storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype caching: str or ~azure.mgmt.compute.v2021_03_01.models.CachingTypes
     :ivar disk_size_gb: Specifies the size of empty data disks in gigabytes. This element can be
      used to overwrite the name of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
      This value cannot be larger than 1023 GB.
     :vartype disk_size_gb: int
     :ivar storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
+     are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS", and
      "StandardSSD_ZRS".
     :vartype storage_account_type: str or
      ~azure.mgmt.compute.v2021_03_01.models.StorageAccountTypes
@@ -3329,25 +3137,25 @@ class ImageDisk(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'snapshot': {'key': 'snapshot', 'type': 'SubResource'},
-        'managed_disk': {'key': 'managedDisk', 'type': 'SubResource'},
-        'blob_uri': {'key': 'blobUri', 'type': 'str'},
-        'caching': {'key': 'caching', 'type': 'str'},
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'DiskEncryptionSetParameters'},
+        "snapshot": {"key": "snapshot", "type": "SubResource"},
+        "managed_disk": {"key": "managedDisk", "type": "SubResource"},
+        "blob_uri": {"key": "blobUri", "type": "str"},
+        "caching": {"key": "caching", "type": "str"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
+        "disk_encryption_set": {"key": "diskEncryptionSet", "type": "DiskEncryptionSetParameters"},
     }
 
     def __init__(
         self,
         *,
-        snapshot: Optional["SubResource"] = None,
-        managed_disk: Optional["SubResource"] = None,
+        snapshot: Optional["_models.SubResource"] = None,
+        managed_disk: Optional["_models.SubResource"] = None,
         blob_uri: Optional[str] = None,
-        caching: Optional[Union[str, "CachingTypes"]] = None,
+        caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         disk_size_gb: Optional[int] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountTypes"]] = None,
-        disk_encryption_set: Optional["DiskEncryptionSetParameters"] = None,
+        storage_account_type: Optional[Union[str, "_models.StorageAccountTypes"]] = None,
+        disk_encryption_set: Optional["_models.DiskEncryptionSetParameters"] = None,
         **kwargs
     ):
         """
@@ -3360,16 +3168,15 @@ class ImageDisk(msrest.serialization.Model):
         :keyword caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
          are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
          :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-         storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-         "ReadWrite".
+         storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", and "ReadWrite".
         :paramtype caching: str or ~azure.mgmt.compute.v2021_03_01.models.CachingTypes
         :keyword disk_size_gb: Specifies the size of empty data disks in gigabytes. This element can be
          used to overwrite the name of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
          This value cannot be larger than 1023 GB.
         :paramtype disk_size_gb: int
         :keyword storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-         UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-         include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+         UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
+         are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS", and
          "StandardSSD_ZRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2021_03_01.models.StorageAccountTypes
@@ -3378,7 +3185,7 @@ class ImageDisk(msrest.serialization.Model):
         :paramtype disk_encryption_set:
          ~azure.mgmt.compute.v2021_03_01.models.DiskEncryptionSetParameters
         """
-        super(ImageDisk, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.snapshot = snapshot
         self.managed_disk = managed_disk
         self.blob_uri = blob_uri
@@ -3402,16 +3209,15 @@ class ImageDataDisk(ImageDisk):
     :ivar caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
      are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-     storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-     "ReadWrite".
+     storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype caching: str or ~azure.mgmt.compute.v2021_03_01.models.CachingTypes
     :ivar disk_size_gb: Specifies the size of empty data disks in gigabytes. This element can be
      used to overwrite the name of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
      This value cannot be larger than 1023 GB.
     :vartype disk_size_gb: int
     :ivar storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
+     are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS", and
      "StandardSSD_ZRS".
     :vartype storage_account_type: str or
      ~azure.mgmt.compute.v2021_03_01.models.StorageAccountTypes
@@ -3419,38 +3225,38 @@ class ImageDataDisk(ImageDisk):
      the managed image disk.
     :vartype disk_encryption_set:
      ~azure.mgmt.compute.v2021_03_01.models.DiskEncryptionSetParameters
-    :ivar lun: Required. Specifies the logical unit number of the data disk. This value is used to
-     identify data disks within the VM and therefore must be unique for each data disk attached to a
-     VM.
+    :ivar lun: Specifies the logical unit number of the data disk. This value is used to identify
+     data disks within the VM and therefore must be unique for each data disk attached to a VM.
+     Required.
     :vartype lun: int
     """
 
     _validation = {
-        'lun': {'required': True},
+        "lun": {"required": True},
     }
 
     _attribute_map = {
-        'snapshot': {'key': 'snapshot', 'type': 'SubResource'},
-        'managed_disk': {'key': 'managedDisk', 'type': 'SubResource'},
-        'blob_uri': {'key': 'blobUri', 'type': 'str'},
-        'caching': {'key': 'caching', 'type': 'str'},
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'DiskEncryptionSetParameters'},
-        'lun': {'key': 'lun', 'type': 'int'},
+        "snapshot": {"key": "snapshot", "type": "SubResource"},
+        "managed_disk": {"key": "managedDisk", "type": "SubResource"},
+        "blob_uri": {"key": "blobUri", "type": "str"},
+        "caching": {"key": "caching", "type": "str"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
+        "disk_encryption_set": {"key": "diskEncryptionSet", "type": "DiskEncryptionSetParameters"},
+        "lun": {"key": "lun", "type": "int"},
     }
 
     def __init__(
         self,
         *,
         lun: int,
-        snapshot: Optional["SubResource"] = None,
-        managed_disk: Optional["SubResource"] = None,
+        snapshot: Optional["_models.SubResource"] = None,
+        managed_disk: Optional["_models.SubResource"] = None,
         blob_uri: Optional[str] = None,
-        caching: Optional[Union[str, "CachingTypes"]] = None,
+        caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         disk_size_gb: Optional[int] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountTypes"]] = None,
-        disk_encryption_set: Optional["DiskEncryptionSetParameters"] = None,
+        storage_account_type: Optional[Union[str, "_models.StorageAccountTypes"]] = None,
+        disk_encryption_set: Optional["_models.DiskEncryptionSetParameters"] = None,
         **kwargs
     ):
         """
@@ -3463,16 +3269,15 @@ class ImageDataDisk(ImageDisk):
         :keyword caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
          are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
          :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-         storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-         "ReadWrite".
+         storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", and "ReadWrite".
         :paramtype caching: str or ~azure.mgmt.compute.v2021_03_01.models.CachingTypes
         :keyword disk_size_gb: Specifies the size of empty data disks in gigabytes. This element can be
          used to overwrite the name of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
          This value cannot be larger than 1023 GB.
         :paramtype disk_size_gb: int
         :keyword storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-         UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-         include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+         UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
+         are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS", and
          "StandardSSD_ZRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2021_03_01.models.StorageAccountTypes
@@ -3480,21 +3285,30 @@ class ImageDataDisk(ImageDisk):
          for the managed image disk.
         :paramtype disk_encryption_set:
          ~azure.mgmt.compute.v2021_03_01.models.DiskEncryptionSetParameters
-        :keyword lun: Required. Specifies the logical unit number of the data disk. This value is used
-         to identify data disks within the VM and therefore must be unique for each data disk attached
-         to a VM.
+        :keyword lun: Specifies the logical unit number of the data disk. This value is used to
+         identify data disks within the VM and therefore must be unique for each data disk attached to a
+         VM. Required.
         :paramtype lun: int
         """
-        super(ImageDataDisk, self).__init__(snapshot=snapshot, managed_disk=managed_disk, blob_uri=blob_uri, caching=caching, disk_size_gb=disk_size_gb, storage_account_type=storage_account_type, disk_encryption_set=disk_encryption_set, **kwargs)
+        super().__init__(
+            snapshot=snapshot,
+            managed_disk=managed_disk,
+            blob_uri=blob_uri,
+            caching=caching,
+            disk_size_gb=disk_size_gb,
+            storage_account_type=storage_account_type,
+            disk_encryption_set=disk_encryption_set,
+            **kwargs
+        )
         self.lun = lun
 
 
-class ImageListResult(msrest.serialization.Model):
+class ImageListResult(_serialization.Model):
     """The List Image operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. The list of Images.
+    :ivar value: The list of Images. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.Image]
     :ivar next_link: The uri to fetch the next page of Images. Call ListNext() with this to fetch
      the next page of Images.
@@ -3502,29 +3316,23 @@ class ImageListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Image]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Image]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["Image"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.Image"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. The list of Images.
+        :keyword value: The list of Images. Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.Image]
         :keyword next_link: The uri to fetch the next page of Images. Call ListNext() with this to
          fetch the next page of Images.
         :paramtype next_link: str
         """
-        super(ImageListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -3543,16 +3351,15 @@ class ImageOSDisk(ImageDisk):
     :ivar caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
      are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-     storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-     "ReadWrite".
+     storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype caching: str or ~azure.mgmt.compute.v2021_03_01.models.CachingTypes
     :ivar disk_size_gb: Specifies the size of empty data disks in gigabytes. This element can be
      used to overwrite the name of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
      This value cannot be larger than 1023 GB.
     :vartype disk_size_gb: int
     :ivar storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
+     are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS", and
      "StandardSSD_ZRS".
     :vartype storage_account_type: str or
      ~azure.mgmt.compute.v2021_03_01.models.StorageAccountTypes
@@ -3560,44 +3367,44 @@ class ImageOSDisk(ImageDisk):
      the managed image disk.
     :vartype disk_encryption_set:
      ~azure.mgmt.compute.v2021_03_01.models.DiskEncryptionSetParameters
-    :ivar os_type: Required. This property allows you to specify the type of the OS that is
-     included in the disk if creating a VM from a custom image. :code:`<br>`:code:`<br>` Possible
-     values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible
-     values include: "Windows", "Linux".
+    :ivar os_type: This property allows you to specify the type of the OS that is included in the
+     disk if creating a VM from a custom image. :code:`<br>`:code:`<br>` Possible values are:
+     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Required. Known values
+     are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2021_03_01.models.OperatingSystemTypes
-    :ivar os_state: Required. The OS State. Possible values include: "Generalized", "Specialized".
+    :ivar os_state: The OS State. Required. Known values are: "Generalized" and "Specialized".
     :vartype os_state: str or ~azure.mgmt.compute.v2021_03_01.models.OperatingSystemStateTypes
     """
 
     _validation = {
-        'os_type': {'required': True},
-        'os_state': {'required': True},
+        "os_type": {"required": True},
+        "os_state": {"required": True},
     }
 
     _attribute_map = {
-        'snapshot': {'key': 'snapshot', 'type': 'SubResource'},
-        'managed_disk': {'key': 'managedDisk', 'type': 'SubResource'},
-        'blob_uri': {'key': 'blobUri', 'type': 'str'},
-        'caching': {'key': 'caching', 'type': 'str'},
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'DiskEncryptionSetParameters'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'os_state': {'key': 'osState', 'type': 'str'},
+        "snapshot": {"key": "snapshot", "type": "SubResource"},
+        "managed_disk": {"key": "managedDisk", "type": "SubResource"},
+        "blob_uri": {"key": "blobUri", "type": "str"},
+        "caching": {"key": "caching", "type": "str"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
+        "disk_encryption_set": {"key": "diskEncryptionSet", "type": "DiskEncryptionSetParameters"},
+        "os_type": {"key": "osType", "type": "str"},
+        "os_state": {"key": "osState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        os_type: Union[str, "OperatingSystemTypes"],
-        os_state: Union[str, "OperatingSystemStateTypes"],
-        snapshot: Optional["SubResource"] = None,
-        managed_disk: Optional["SubResource"] = None,
+        os_type: Union[str, "_models.OperatingSystemTypes"],
+        os_state: Union[str, "_models.OperatingSystemStateTypes"],
+        snapshot: Optional["_models.SubResource"] = None,
+        managed_disk: Optional["_models.SubResource"] = None,
         blob_uri: Optional[str] = None,
-        caching: Optional[Union[str, "CachingTypes"]] = None,
+        caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         disk_size_gb: Optional[int] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountTypes"]] = None,
-        disk_encryption_set: Optional["DiskEncryptionSetParameters"] = None,
+        storage_account_type: Optional[Union[str, "_models.StorageAccountTypes"]] = None,
+        disk_encryption_set: Optional["_models.DiskEncryptionSetParameters"] = None,
         **kwargs
     ):
         """
@@ -3610,16 +3417,15 @@ class ImageOSDisk(ImageDisk):
         :keyword caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
          are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
          :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-         storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-         "ReadWrite".
+         storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", and "ReadWrite".
         :paramtype caching: str or ~azure.mgmt.compute.v2021_03_01.models.CachingTypes
         :keyword disk_size_gb: Specifies the size of empty data disks in gigabytes. This element can be
          used to overwrite the name of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
          This value cannot be larger than 1023 GB.
         :paramtype disk_size_gb: int
         :keyword storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-         UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-         include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+         UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
+         are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS", and
          "StandardSSD_ZRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2021_03_01.models.StorageAccountTypes
@@ -3627,16 +3433,24 @@ class ImageOSDisk(ImageDisk):
          for the managed image disk.
         :paramtype disk_encryption_set:
          ~azure.mgmt.compute.v2021_03_01.models.DiskEncryptionSetParameters
-        :keyword os_type: Required. This property allows you to specify the type of the OS that is
-         included in the disk if creating a VM from a custom image. :code:`<br>`:code:`<br>` Possible
-         values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible
-         values include: "Windows", "Linux".
+        :keyword os_type: This property allows you to specify the type of the OS that is included in
+         the disk if creating a VM from a custom image. :code:`<br>`:code:`<br>` Possible values are:
+         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Required. Known values
+         are: "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2021_03_01.models.OperatingSystemTypes
-        :keyword os_state: Required. The OS State. Possible values include: "Generalized",
-         "Specialized".
+        :keyword os_state: The OS State. Required. Known values are: "Generalized" and "Specialized".
         :paramtype os_state: str or ~azure.mgmt.compute.v2021_03_01.models.OperatingSystemStateTypes
         """
-        super(ImageOSDisk, self).__init__(snapshot=snapshot, managed_disk=managed_disk, blob_uri=blob_uri, caching=caching, disk_size_gb=disk_size_gb, storage_account_type=storage_account_type, disk_encryption_set=disk_encryption_set, **kwargs)
+        super().__init__(
+            snapshot=snapshot,
+            managed_disk=managed_disk,
+            blob_uri=blob_uri,
+            caching=caching,
+            disk_size_gb=disk_size_gb,
+            storage_account_type=storage_account_type,
+            disk_encryption_set=disk_encryption_set,
+            **kwargs
+        )
         self.os_type = os_type
         self.os_state = os_state
 
@@ -3668,22 +3482,22 @@ class ImageReference(SubResource):
     """
 
     _validation = {
-        'exact_version': {'readonly': True},
+        "exact_version": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'offer': {'key': 'offer', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-        'exact_version': {'key': 'exactVersion', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "offer": {"key": "offer", "type": "str"},
+        "sku": {"key": "sku", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+        "exact_version": {"key": "exactVersion", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         publisher: Optional[str] = None,
         offer: Optional[str] = None,
         sku: Optional[str] = None,
@@ -3707,7 +3521,7 @@ class ImageReference(SubResource):
          after deploy time even if a new version becomes available.
         :paramtype version: str
         """
-        super(ImageReference, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.publisher = publisher
         self.offer = offer
         self.sku = sku
@@ -3715,7 +3529,7 @@ class ImageReference(SubResource):
         self.exact_version = None
 
 
-class ImageStorageProfile(msrest.serialization.Model):
+class ImageStorageProfile(_serialization.Model):
     """Describes a storage profile.
 
     :ivar os_disk: Specifies information about the operating system disk used by the virtual
@@ -3734,16 +3548,16 @@ class ImageStorageProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'os_disk': {'key': 'osDisk', 'type': 'ImageOSDisk'},
-        'data_disks': {'key': 'dataDisks', 'type': '[ImageDataDisk]'},
-        'zone_resilient': {'key': 'zoneResilient', 'type': 'bool'},
+        "os_disk": {"key": "osDisk", "type": "ImageOSDisk"},
+        "data_disks": {"key": "dataDisks", "type": "[ImageDataDisk]"},
+        "zone_resilient": {"key": "zoneResilient", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        os_disk: Optional["ImageOSDisk"] = None,
-        data_disks: Optional[List["ImageDataDisk"]] = None,
+        os_disk: Optional["_models.ImageOSDisk"] = None,
+        data_disks: Optional[List["_models.ImageDataDisk"]] = None,
         zone_resilient: Optional[bool] = None,
         **kwargs
     ):
@@ -3762,7 +3576,7 @@ class ImageStorageProfile(msrest.serialization.Model):
          Zone resilient images can be created only in regions that provide Zone Redundant Storage (ZRS).
         :paramtype zone_resilient: bool
         """
-        super(ImageStorageProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.os_disk = os_disk
         self.data_disks = data_disks
         self.zone_resilient = zone_resilient
@@ -3773,7 +3587,7 @@ class ImageUpdate(UpdateResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar source_virtual_machine: The source virtual machine from which Image is created.
     :vartype source_virtual_machine: ~azure.mgmt.compute.v2021_03_01.models.SubResource
@@ -3784,35 +3598,35 @@ class ImageUpdate(UpdateResource):
     :ivar hyper_v_generation: Specifies the HyperVGenerationType of the VirtualMachine created from
      the image. From API Version 2019-03-01 if the image source is a blob, then we need the user to
      specify the value, if the source is managed resource like disk or snapshot, we may require the
-     user to specify the property if we cannot deduce it from the source managed resource. Possible
-     values include: "V1", "V2".
+     user to specify the property if we cannot deduce it from the source managed resource. Known
+     values are: "V1" and "V2".
     :vartype hyper_v_generation: str or
      ~azure.mgmt.compute.v2021_03_01.models.HyperVGenerationTypes
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'source_virtual_machine': {'key': 'properties.sourceVirtualMachine', 'type': 'SubResource'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'ImageStorageProfile'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'hyper_v_generation': {'key': 'properties.hyperVGeneration', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "source_virtual_machine": {"key": "properties.sourceVirtualMachine", "type": "SubResource"},
+        "storage_profile": {"key": "properties.storageProfile", "type": "ImageStorageProfile"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        source_virtual_machine: Optional["SubResource"] = None,
-        storage_profile: Optional["ImageStorageProfile"] = None,
-        hyper_v_generation: Optional[Union[str, "HyperVGenerationTypes"]] = None,
+        source_virtual_machine: Optional["_models.SubResource"] = None,
+        storage_profile: Optional["_models.ImageStorageProfile"] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGenerationTypes"]] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword source_virtual_machine: The source virtual machine from which Image is created.
         :paramtype source_virtual_machine: ~azure.mgmt.compute.v2021_03_01.models.SubResource
@@ -3822,18 +3636,18 @@ class ImageUpdate(UpdateResource):
          from the image. From API Version 2019-03-01 if the image source is a blob, then we need the
          user to specify the value, if the source is managed resource like disk or snapshot, we may
          require the user to specify the property if we cannot deduce it from the source managed
-         resource. Possible values include: "V1", "V2".
+         resource. Known values are: "V1" and "V2".
         :paramtype hyper_v_generation: str or
          ~azure.mgmt.compute.v2021_03_01.models.HyperVGenerationTypes
         """
-        super(ImageUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.source_virtual_machine = source_virtual_machine
         self.storage_profile = storage_profile
         self.provisioning_state = None
         self.hyper_v_generation = hyper_v_generation
 
 
-class InnerError(msrest.serialization.Model):
+class InnerError(_serialization.Model):
     """Inner error details.
 
     :ivar exceptiontype: The exception type.
@@ -3843,29 +3657,23 @@ class InnerError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'exceptiontype': {'key': 'exceptiontype', 'type': 'str'},
-        'errordetail': {'key': 'errordetail', 'type': 'str'},
+        "exceptiontype": {"key": "exceptiontype", "type": "str"},
+        "errordetail": {"key": "errordetail", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        exceptiontype: Optional[str] = None,
-        errordetail: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, exceptiontype: Optional[str] = None, errordetail: Optional[str] = None, **kwargs):
         """
         :keyword exceptiontype: The exception type.
         :paramtype exceptiontype: str
         :keyword errordetail: The internal error message or exception dump.
         :paramtype errordetail: str
         """
-        super(InnerError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.exceptiontype = exceptiontype
         self.errordetail = errordetail
 
 
-class InstanceSku(msrest.serialization.Model):
+class InstanceSku(_serialization.Model):
     """InstanceSku.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3877,32 +3685,28 @@ class InstanceSku(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'tier': {'readonly': True},
+        "name": {"readonly": True},
+        "tier": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(InstanceSku, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.tier = None
 
 
-class InstanceViewStatus(msrest.serialization.Model):
+class InstanceViewStatus(_serialization.Model):
     """Instance view status.
 
     :ivar code: The status code.
     :vartype code: str
-    :ivar level: The level code. Possible values include: "Info", "Warning", "Error".
+    :ivar level: The level code. Known values are: "Info", "Warning", and "Error".
     :vartype level: str or ~azure.mgmt.compute.v2021_03_01.models.StatusLevelTypes
     :ivar display_status: The short localizable label for the status.
     :vartype display_status: str
@@ -3913,18 +3717,18 @@ class InstanceViewStatus(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'level': {'key': 'level', 'type': 'str'},
-        'display_status': {'key': 'displayStatus', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'iso-8601'},
+        "code": {"key": "code", "type": "str"},
+        "level": {"key": "level", "type": "str"},
+        "display_status": {"key": "displayStatus", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "time": {"key": "time", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         code: Optional[str] = None,
-        level: Optional[Union[str, "StatusLevelTypes"]] = None,
+        level: Optional[Union[str, "_models.StatusLevelTypes"]] = None,
         display_status: Optional[str] = None,
         message: Optional[str] = None,
         time: Optional[datetime.datetime] = None,
@@ -3933,7 +3737,7 @@ class InstanceViewStatus(msrest.serialization.Model):
         """
         :keyword code: The status code.
         :paramtype code: str
-        :keyword level: The level code. Possible values include: "Info", "Warning", "Error".
+        :keyword level: The level code. Known values are: "Info", "Warning", and "Error".
         :paramtype level: str or ~azure.mgmt.compute.v2021_03_01.models.StatusLevelTypes
         :keyword display_status: The short localizable label for the status.
         :paramtype display_status: str
@@ -3942,7 +3746,7 @@ class InstanceViewStatus(msrest.serialization.Model):
         :keyword time: The time of the status.
         :paramtype time: ~datetime.datetime
         """
-        super(InstanceViewStatus, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.level = level
         self.display_status = display_status
@@ -3950,7 +3754,7 @@ class InstanceViewStatus(msrest.serialization.Model):
         self.time = time
 
 
-class InstanceViewStatusesSummary(msrest.serialization.Model):
+class InstanceViewStatusesSummary(_serialization.Model):
     """Instance view statuses.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3960,110 +3764,94 @@ class InstanceViewStatusesSummary(msrest.serialization.Model):
     """
 
     _validation = {
-        'statuses_summary': {'readonly': True},
+        "statuses_summary": {"readonly": True},
     }
 
     _attribute_map = {
-        'statuses_summary': {'key': 'statusesSummary', 'type': '[StatusCodeCount]'},
+        "statuses_summary": {"key": "statusesSummary", "type": "[StatusCodeCount]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(InstanceViewStatusesSummary, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.statuses_summary = None
 
 
-class KeyVaultKeyReference(msrest.serialization.Model):
+class KeyVaultKeyReference(_serialization.Model):
     """Describes a reference to Key Vault Key.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar key_url: Required. The URL referencing a key encryption key in Key Vault.
+    :ivar key_url: The URL referencing a key encryption key in Key Vault. Required.
     :vartype key_url: str
-    :ivar source_vault: Required. The relative URL of the Key Vault containing the key.
+    :ivar source_vault: The relative URL of the Key Vault containing the key. Required.
     :vartype source_vault: ~azure.mgmt.compute.v2021_03_01.models.SubResource
     """
 
     _validation = {
-        'key_url': {'required': True},
-        'source_vault': {'required': True},
+        "key_url": {"required": True},
+        "source_vault": {"required": True},
     }
 
     _attribute_map = {
-        'key_url': {'key': 'keyUrl', 'type': 'str'},
-        'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
+        "key_url": {"key": "keyUrl", "type": "str"},
+        "source_vault": {"key": "sourceVault", "type": "SubResource"},
     }
 
-    def __init__(
-        self,
-        *,
-        key_url: str,
-        source_vault: "SubResource",
-        **kwargs
-    ):
+    def __init__(self, *, key_url: str, source_vault: "_models.SubResource", **kwargs):
         """
-        :keyword key_url: Required. The URL referencing a key encryption key in Key Vault.
+        :keyword key_url: The URL referencing a key encryption key in Key Vault. Required.
         :paramtype key_url: str
-        :keyword source_vault: Required. The relative URL of the Key Vault containing the key.
+        :keyword source_vault: The relative URL of the Key Vault containing the key. Required.
         :paramtype source_vault: ~azure.mgmt.compute.v2021_03_01.models.SubResource
         """
-        super(KeyVaultKeyReference, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key_url = key_url
         self.source_vault = source_vault
 
 
-class KeyVaultSecretReference(msrest.serialization.Model):
+class KeyVaultSecretReference(_serialization.Model):
     """Describes a reference to Key Vault Secret.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar secret_url: Required. The URL referencing a secret in a Key Vault.
+    :ivar secret_url: The URL referencing a secret in a Key Vault. Required.
     :vartype secret_url: str
-    :ivar source_vault: Required. The relative URL of the Key Vault containing the secret.
+    :ivar source_vault: The relative URL of the Key Vault containing the secret. Required.
     :vartype source_vault: ~azure.mgmt.compute.v2021_03_01.models.SubResource
     """
 
     _validation = {
-        'secret_url': {'required': True},
-        'source_vault': {'required': True},
+        "secret_url": {"required": True},
+        "source_vault": {"required": True},
     }
 
     _attribute_map = {
-        'secret_url': {'key': 'secretUrl', 'type': 'str'},
-        'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
+        "secret_url": {"key": "secretUrl", "type": "str"},
+        "source_vault": {"key": "sourceVault", "type": "SubResource"},
     }
 
-    def __init__(
-        self,
-        *,
-        secret_url: str,
-        source_vault: "SubResource",
-        **kwargs
-    ):
+    def __init__(self, *, secret_url: str, source_vault: "_models.SubResource", **kwargs):
         """
-        :keyword secret_url: Required. The URL referencing a secret in a Key Vault.
+        :keyword secret_url: The URL referencing a secret in a Key Vault. Required.
         :paramtype secret_url: str
-        :keyword source_vault: Required. The relative URL of the Key Vault containing the secret.
+        :keyword source_vault: The relative URL of the Key Vault containing the secret. Required.
         :paramtype source_vault: ~azure.mgmt.compute.v2021_03_01.models.SubResource
         """
-        super(KeyVaultSecretReference, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.secret_url = secret_url
         self.source_vault = source_vault
 
 
-class LastPatchInstallationSummary(msrest.serialization.Model):
+class LastPatchInstallationSummary(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Describes the properties of the last installed patch summary.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar status: The overall success or failure status of the operation. It remains "InProgress"
      until the operation completes. At that point it will become "Unknown", "Failed", "Succeeded",
-     or "CompletedWithWarnings.". Possible values include: "Unknown", "InProgress", "Failed",
-     "Succeeded", "CompletedWithWarnings".
+     or "CompletedWithWarnings.". Known values are: "Unknown", "InProgress", "Failed", "Succeeded",
+     and "CompletedWithWarnings".
     :vartype status: str or ~azure.mgmt.compute.v2021_03_01.models.PatchOperationStatus
     :ivar installation_activity_id: The activity ID of the operation that produced this result. It
      is used to correlate across CRP and extension logs.
@@ -4094,40 +3882,36 @@ class LastPatchInstallationSummary(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'readonly': True},
-        'installation_activity_id': {'readonly': True},
-        'maintenance_window_exceeded': {'readonly': True},
-        'not_selected_patch_count': {'readonly': True},
-        'excluded_patch_count': {'readonly': True},
-        'pending_patch_count': {'readonly': True},
-        'installed_patch_count': {'readonly': True},
-        'failed_patch_count': {'readonly': True},
-        'start_time': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'error': {'readonly': True},
+        "status": {"readonly": True},
+        "installation_activity_id": {"readonly": True},
+        "maintenance_window_exceeded": {"readonly": True},
+        "not_selected_patch_count": {"readonly": True},
+        "excluded_patch_count": {"readonly": True},
+        "pending_patch_count": {"readonly": True},
+        "installed_patch_count": {"readonly": True},
+        "failed_patch_count": {"readonly": True},
+        "start_time": {"readonly": True},
+        "last_modified_time": {"readonly": True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'installation_activity_id': {'key': 'installationActivityId', 'type': 'str'},
-        'maintenance_window_exceeded': {'key': 'maintenanceWindowExceeded', 'type': 'bool'},
-        'not_selected_patch_count': {'key': 'notSelectedPatchCount', 'type': 'int'},
-        'excluded_patch_count': {'key': 'excludedPatchCount', 'type': 'int'},
-        'pending_patch_count': {'key': 'pendingPatchCount', 'type': 'int'},
-        'installed_patch_count': {'key': 'installedPatchCount', 'type': 'int'},
-        'failed_patch_count': {'key': 'failedPatchCount', 'type': 'int'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
-        'error': {'key': 'error', 'type': 'ApiErrorAutoGenerated'},
+        "status": {"key": "status", "type": "str"},
+        "installation_activity_id": {"key": "installationActivityId", "type": "str"},
+        "maintenance_window_exceeded": {"key": "maintenanceWindowExceeded", "type": "bool"},
+        "not_selected_patch_count": {"key": "notSelectedPatchCount", "type": "int"},
+        "excluded_patch_count": {"key": "excludedPatchCount", "type": "int"},
+        "pending_patch_count": {"key": "pendingPatchCount", "type": "int"},
+        "installed_patch_count": {"key": "installedPatchCount", "type": "int"},
+        "failed_patch_count": {"key": "failedPatchCount", "type": "int"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "lastModifiedTime", "type": "iso-8601"},
+        "error": {"key": "error", "type": "ApiErrorAutoGenerated"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(LastPatchInstallationSummary, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.status = None
         self.installation_activity_id = None
         self.maintenance_window_exceeded = None
@@ -4141,7 +3925,7 @@ class LastPatchInstallationSummary(msrest.serialization.Model):
         self.error = None
 
 
-class LinuxConfiguration(msrest.serialization.Model):
+class LinuxConfiguration(_serialization.Model):
     """Specifies the Linux operating system settings on the virtual machine. :code:`<br>`:code:`<br>`For a list of supported Linux distributions, see `Linux on Azure-Endorsed Distributions <https://docs.microsoft.com/azure/virtual-machines/linux/endorsed-distros>`_.
 
     :ivar disable_password_authentication: Specifies whether password authentication should be
@@ -4160,19 +3944,19 @@ class LinuxConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'disable_password_authentication': {'key': 'disablePasswordAuthentication', 'type': 'bool'},
-        'ssh': {'key': 'ssh', 'type': 'SshConfiguration'},
-        'provision_vm_agent': {'key': 'provisionVMAgent', 'type': 'bool'},
-        'patch_settings': {'key': 'patchSettings', 'type': 'LinuxPatchSettings'},
+        "disable_password_authentication": {"key": "disablePasswordAuthentication", "type": "bool"},
+        "ssh": {"key": "ssh", "type": "SshConfiguration"},
+        "provision_vm_agent": {"key": "provisionVMAgent", "type": "bool"},
+        "patch_settings": {"key": "patchSettings", "type": "LinuxPatchSettings"},
     }
 
     def __init__(
         self,
         *,
         disable_password_authentication: Optional[bool] = None,
-        ssh: Optional["SshConfiguration"] = None,
+        ssh: Optional["_models.SshConfiguration"] = None,
         provision_vm_agent: Optional[bool] = None,
-        patch_settings: Optional["LinuxPatchSettings"] = None,
+        patch_settings: Optional["_models.LinuxPatchSettings"] = None,
         **kwargs
     ):
         """
@@ -4190,14 +3974,14 @@ class LinuxConfiguration(msrest.serialization.Model):
          Linux.
         :paramtype patch_settings: ~azure.mgmt.compute.v2021_03_01.models.LinuxPatchSettings
         """
-        super(LinuxConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.disable_password_authentication = disable_password_authentication
         self.ssh = ssh
         self.provision_vm_agent = provision_vm_agent
         self.patch_settings = patch_settings
 
 
-class LinuxParameters(msrest.serialization.Model):
+class LinuxParameters(_serialization.Model):
     """Input for InstallPatches on a Linux VM, as directly received by the API.
 
     :ivar classifications_to_include: The update classifications to select when installing patches
@@ -4216,16 +4000,16 @@ class LinuxParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'classifications_to_include': {'key': 'classificationsToInclude', 'type': '[str]'},
-        'package_name_masks_to_include': {'key': 'packageNameMasksToInclude', 'type': '[str]'},
-        'package_name_masks_to_exclude': {'key': 'packageNameMasksToExclude', 'type': '[str]'},
-        'maintenance_run_id': {'key': 'maintenanceRunId', 'type': 'str'},
+        "classifications_to_include": {"key": "classificationsToInclude", "type": "[str]"},
+        "package_name_masks_to_include": {"key": "packageNameMasksToInclude", "type": "[str]"},
+        "package_name_masks_to_exclude": {"key": "packageNameMasksToExclude", "type": "[str]"},
+        "maintenance_run_id": {"key": "maintenanceRunId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        classifications_to_include: Optional[List[Union[str, "VMGuestPatchClassificationLinux"]]] = None,
+        classifications_to_include: Optional[List[Union[str, "_models.VMGuestPatchClassificationLinux"]]] = None,
         package_name_masks_to_include: Optional[List[str]] = None,
         package_name_masks_to_exclude: Optional[List[str]] = None,
         maintenance_run_id: Optional[str] = None,
@@ -4246,14 +4030,14 @@ class LinuxParameters(msrest.serialization.Model):
          Patching in Linux.
         :paramtype maintenance_run_id: str
         """
-        super(LinuxParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.classifications_to_include = classifications_to_include
         self.package_name_masks_to_include = package_name_masks_to_include
         self.package_name_masks_to_exclude = package_name_masks_to_exclude
         self.maintenance_run_id = maintenance_run_id
 
 
-class LinuxPatchSettings(msrest.serialization.Model):
+class LinuxPatchSettings(_serialization.Model):
     """Specifies settings related to VM Guest Patching on Linux.
 
     :ivar patch_mode: Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual
@@ -4261,29 +4045,29 @@ class LinuxPatchSettings(msrest.serialization.Model):
      />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **ImageDefault** - The
      virtual machine's default patching configuration is used. :code:`<br />`:code:`<br />`
      **AutomaticByPlatform** - The virtual machine will be automatically updated by the platform.
-     The property provisionVMAgent must be true. Possible values include: "ImageDefault",
+     The property provisionVMAgent must be true. Known values are: "ImageDefault" and
      "AutomaticByPlatform".
     :vartype patch_mode: str or ~azure.mgmt.compute.v2021_03_01.models.LinuxVMGuestPatchMode
     :ivar assessment_mode: Specifies the mode of VM Guest Patch Assessment for the IaaS virtual
      machine.:code:`<br />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />`
      **ImageDefault** - You control the timing of patch assessments on a virtual machine. :code:`<br
      />`:code:`<br />` **AutomaticByPlatform** - The platform will trigger periodic patch
-     assessments. The property provisionVMAgent must be true. Possible values include:
-     "ImageDefault", "AutomaticByPlatform".
+     assessments. The property provisionVMAgent must be true. Known values are: "ImageDefault" and
+     "AutomaticByPlatform".
     :vartype assessment_mode: str or
      ~azure.mgmt.compute.v2021_03_01.models.LinuxPatchAssessmentMode
     """
 
     _attribute_map = {
-        'patch_mode': {'key': 'patchMode', 'type': 'str'},
-        'assessment_mode': {'key': 'assessmentMode', 'type': 'str'},
+        "patch_mode": {"key": "patchMode", "type": "str"},
+        "assessment_mode": {"key": "assessmentMode", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        patch_mode: Optional[Union[str, "LinuxVMGuestPatchMode"]] = None,
-        assessment_mode: Optional[Union[str, "LinuxPatchAssessmentMode"]] = None,
+        patch_mode: Optional[Union[str, "_models.LinuxVMGuestPatchMode"]] = None,
+        assessment_mode: Optional[Union[str, "_models.LinuxPatchAssessmentMode"]] = None,
         **kwargs
     ):
         """
@@ -4292,29 +4076,29 @@ class LinuxPatchSettings(msrest.serialization.Model):
          />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **ImageDefault** - The
          virtual machine's default patching configuration is used. :code:`<br />`:code:`<br />`
          **AutomaticByPlatform** - The virtual machine will be automatically updated by the platform.
-         The property provisionVMAgent must be true. Possible values include: "ImageDefault",
+         The property provisionVMAgent must be true. Known values are: "ImageDefault" and
          "AutomaticByPlatform".
         :paramtype patch_mode: str or ~azure.mgmt.compute.v2021_03_01.models.LinuxVMGuestPatchMode
         :keyword assessment_mode: Specifies the mode of VM Guest Patch Assessment for the IaaS virtual
          machine.:code:`<br />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />`
          **ImageDefault** - You control the timing of patch assessments on a virtual machine. :code:`<br
          />`:code:`<br />` **AutomaticByPlatform** - The platform will trigger periodic patch
-         assessments. The property provisionVMAgent must be true. Possible values include:
-         "ImageDefault", "AutomaticByPlatform".
+         assessments. The property provisionVMAgent must be true. Known values are: "ImageDefault" and
+         "AutomaticByPlatform".
         :paramtype assessment_mode: str or
          ~azure.mgmt.compute.v2021_03_01.models.LinuxPatchAssessmentMode
         """
-        super(LinuxPatchSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.patch_mode = patch_mode
         self.assessment_mode = assessment_mode
 
 
-class ListUsagesResult(msrest.serialization.Model):
+class ListUsagesResult(_serialization.Model):
     """The List Usages operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. The list of compute resource usages.
+    :ivar value: The list of compute resource usages. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.Usage]
     :ivar next_link: The URI to fetch the next page of compute resource usage information. Call
      ListNext() with this to fetch the next page of compute resource usage information.
@@ -4322,161 +4106,149 @@ class ListUsagesResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Usage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Usage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["Usage"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.Usage"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. The list of compute resource usages.
+        :keyword value: The list of compute resource usages. Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.Usage]
         :keyword next_link: The URI to fetch the next page of compute resource usage information. Call
          ListNext() with this to fetch the next page of compute resource usage information.
         :paramtype next_link: str
         """
-        super(ListUsagesResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class LoadBalancerConfiguration(msrest.serialization.Model):
+class LoadBalancerConfiguration(_serialization.Model):
     """Describes the load balancer configuration.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar id: Resource Id.
     :vartype id: str
-    :ivar name: Required. The name of the Load balancer.
+    :ivar name: The name of the Load balancer. Required.
     :vartype name: str
-    :ivar properties: Required. Properties of the load balancer configuration.
+    :ivar properties: Properties of the load balancer configuration. Required.
     :vartype properties: ~azure.mgmt.compute.v2021_03_01.models.LoadBalancerConfigurationProperties
     """
 
     _validation = {
-        'name': {'required': True},
-        'properties': {'required': True},
+        "name": {"required": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'LoadBalancerConfigurationProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "LoadBalancerConfigurationProperties"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        properties: "LoadBalancerConfigurationProperties",
-        id: Optional[str] = None,
+        properties: "_models.LoadBalancerConfigurationProperties",
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         **kwargs
     ):
         """
         :keyword id: Resource Id.
         :paramtype id: str
-        :keyword name: Required. The name of the Load balancer.
+        :keyword name: The name of the Load balancer. Required.
         :paramtype name: str
-        :keyword properties: Required. Properties of the load balancer configuration.
+        :keyword properties: Properties of the load balancer configuration. Required.
         :paramtype properties:
          ~azure.mgmt.compute.v2021_03_01.models.LoadBalancerConfigurationProperties
         """
-        super(LoadBalancerConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
         self.properties = properties
 
 
-class LoadBalancerConfigurationProperties(msrest.serialization.Model):
+class LoadBalancerConfigurationProperties(_serialization.Model):
     """LoadBalancerConfigurationProperties.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar frontend_ip_configurations: Required. Specifies the frontend IP to be used for the load
-     balancer. Only IPv4 frontend IP address is supported. Each load balancer configuration must
-     have exactly one frontend IP configuration.
+    :ivar frontend_ip_configurations: Specifies the frontend IP to be used for the load balancer.
+     Only IPv4 frontend IP address is supported. Each load balancer configuration must have exactly
+     one frontend IP configuration. Required.
     :vartype frontend_ip_configurations:
      list[~azure.mgmt.compute.v2021_03_01.models.LoadBalancerFrontendIPConfiguration]
     """
 
     _validation = {
-        'frontend_ip_configurations': {'required': True},
+        "frontend_ip_configurations": {"required": True},
     }
 
     _attribute_map = {
-        'frontend_ip_configurations': {'key': 'frontendIPConfigurations', 'type': '[LoadBalancerFrontendIPConfiguration]'},
+        "frontend_ip_configurations": {
+            "key": "frontendIPConfigurations",
+            "type": "[LoadBalancerFrontendIPConfiguration]",
+        },
     }
 
-    def __init__(
-        self,
-        *,
-        frontend_ip_configurations: List["LoadBalancerFrontendIPConfiguration"],
-        **kwargs
-    ):
+    def __init__(self, *, frontend_ip_configurations: List["_models.LoadBalancerFrontendIPConfiguration"], **kwargs):
         """
-        :keyword frontend_ip_configurations: Required. Specifies the frontend IP to be used for the
-         load balancer. Only IPv4 frontend IP address is supported. Each load balancer configuration
-         must have exactly one frontend IP configuration.
+        :keyword frontend_ip_configurations: Specifies the frontend IP to be used for the load
+         balancer. Only IPv4 frontend IP address is supported. Each load balancer configuration must
+         have exactly one frontend IP configuration. Required.
         :paramtype frontend_ip_configurations:
          list[~azure.mgmt.compute.v2021_03_01.models.LoadBalancerFrontendIPConfiguration]
         """
-        super(LoadBalancerConfigurationProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.frontend_ip_configurations = frontend_ip_configurations
 
 
-class LoadBalancerFrontendIPConfiguration(msrest.serialization.Model):
+class LoadBalancerFrontendIPConfiguration(_serialization.Model):
     """LoadBalancerFrontendIPConfiguration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the resource that is unique within the set of frontend IP
+    :ivar name: The name of the resource that is unique within the set of frontend IP
      configurations used by the load balancer. This name can be used to access the resource.
+     Required.
     :vartype name: str
-    :ivar properties: Required. Properties of load balancer frontend ip configuration.
+    :ivar properties: Properties of load balancer frontend ip configuration. Required.
     :vartype properties:
      ~azure.mgmt.compute.v2021_03_01.models.LoadBalancerFrontendIPConfigurationProperties
     """
 
     _validation = {
-        'name': {'required': True},
-        'properties': {'required': True},
+        "name": {"required": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'LoadBalancerFrontendIPConfigurationProperties'},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "LoadBalancerFrontendIPConfigurationProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        properties: "LoadBalancerFrontendIPConfigurationProperties",
-        **kwargs
-    ):
+    def __init__(self, *, name: str, properties: "_models.LoadBalancerFrontendIPConfigurationProperties", **kwargs):
         """
-        :keyword name: Required. The name of the resource that is unique within the set of frontend IP
+        :keyword name: The name of the resource that is unique within the set of frontend IP
          configurations used by the load balancer. This name can be used to access the resource.
+         Required.
         :paramtype name: str
-        :keyword properties: Required. Properties of load balancer frontend ip configuration.
+        :keyword properties: Properties of load balancer frontend ip configuration. Required.
         :paramtype properties:
          ~azure.mgmt.compute.v2021_03_01.models.LoadBalancerFrontendIPConfigurationProperties
         """
-        super(LoadBalancerFrontendIPConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.properties = properties
 
 
-class LoadBalancerFrontendIPConfigurationProperties(msrest.serialization.Model):
+class LoadBalancerFrontendIPConfigurationProperties(_serialization.Model):
     """Describes a cloud service IP Configuration.
 
     :ivar public_ip_address: The reference to the public ip address resource.
@@ -4488,16 +4260,16 @@ class LoadBalancerFrontendIPConfigurationProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'public_ip_address': {'key': 'publicIPAddress', 'type': 'SubResource'},
-        'subnet': {'key': 'subnet', 'type': 'SubResource'},
-        'private_ip_address': {'key': 'privateIPAddress', 'type': 'str'},
+        "public_ip_address": {"key": "publicIPAddress", "type": "SubResource"},
+        "subnet": {"key": "subnet", "type": "SubResource"},
+        "private_ip_address": {"key": "privateIPAddress", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        public_ip_address: Optional["SubResource"] = None,
-        subnet: Optional["SubResource"] = None,
+        public_ip_address: Optional["_models.SubResource"] = None,
+        subnet: Optional["_models.SubResource"] = None,
         private_ip_address: Optional[str] = None,
         **kwargs
     ):
@@ -4509,23 +4281,23 @@ class LoadBalancerFrontendIPConfigurationProperties(msrest.serialization.Model):
         :keyword private_ip_address: The virtual network private IP address of the IP configuration.
         :paramtype private_ip_address: str
         """
-        super(LoadBalancerFrontendIPConfigurationProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.public_ip_address = public_ip_address
         self.subnet = subnet
         self.private_ip_address = private_ip_address
 
 
-class LogAnalyticsInputBase(msrest.serialization.Model):
+class LogAnalyticsInputBase(_serialization.Model):
     """Api input base class for LogAnalytics Api.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar blob_container_sas_uri: Required. SAS Uri of the logging blob container to which
-     LogAnalytics Api writes output logs to.
+    :ivar blob_container_sas_uri: SAS Uri of the logging blob container to which LogAnalytics Api
+     writes output logs to. Required.
     :vartype blob_container_sas_uri: str
-    :ivar from_time: Required. From time of the query.
+    :ivar from_time: From time of the query. Required.
     :vartype from_time: ~datetime.datetime
-    :ivar to_time: Required. To time of the query.
+    :ivar to_time: To time of the query. Required.
     :vartype to_time: ~datetime.datetime
     :ivar group_by_throttle_policy: Group query result by Throttle Policy applied.
     :vartype group_by_throttle_policy: bool
@@ -4540,20 +4312,20 @@ class LogAnalyticsInputBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'blob_container_sas_uri': {'required': True},
-        'from_time': {'required': True},
-        'to_time': {'required': True},
+        "blob_container_sas_uri": {"required": True},
+        "from_time": {"required": True},
+        "to_time": {"required": True},
     }
 
     _attribute_map = {
-        'blob_container_sas_uri': {'key': 'blobContainerSasUri', 'type': 'str'},
-        'from_time': {'key': 'fromTime', 'type': 'iso-8601'},
-        'to_time': {'key': 'toTime', 'type': 'iso-8601'},
-        'group_by_throttle_policy': {'key': 'groupByThrottlePolicy', 'type': 'bool'},
-        'group_by_operation_name': {'key': 'groupByOperationName', 'type': 'bool'},
-        'group_by_resource_name': {'key': 'groupByResourceName', 'type': 'bool'},
-        'group_by_client_application_id': {'key': 'groupByClientApplicationId', 'type': 'bool'},
-        'group_by_user_agent': {'key': 'groupByUserAgent', 'type': 'bool'},
+        "blob_container_sas_uri": {"key": "blobContainerSasUri", "type": "str"},
+        "from_time": {"key": "fromTime", "type": "iso-8601"},
+        "to_time": {"key": "toTime", "type": "iso-8601"},
+        "group_by_throttle_policy": {"key": "groupByThrottlePolicy", "type": "bool"},
+        "group_by_operation_name": {"key": "groupByOperationName", "type": "bool"},
+        "group_by_resource_name": {"key": "groupByResourceName", "type": "bool"},
+        "group_by_client_application_id": {"key": "groupByClientApplicationId", "type": "bool"},
+        "group_by_user_agent": {"key": "groupByUserAgent", "type": "bool"},
     }
 
     def __init__(
@@ -4570,12 +4342,12 @@ class LogAnalyticsInputBase(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword blob_container_sas_uri: Required. SAS Uri of the logging blob container to which
-         LogAnalytics Api writes output logs to.
+        :keyword blob_container_sas_uri: SAS Uri of the logging blob container to which LogAnalytics
+         Api writes output logs to. Required.
         :paramtype blob_container_sas_uri: str
-        :keyword from_time: Required. From time of the query.
+        :keyword from_time: From time of the query. Required.
         :paramtype from_time: ~datetime.datetime
-        :keyword to_time: Required. To time of the query.
+        :keyword to_time: To time of the query. Required.
         :paramtype to_time: ~datetime.datetime
         :keyword group_by_throttle_policy: Group query result by Throttle Policy applied.
         :paramtype group_by_throttle_policy: bool
@@ -4588,7 +4360,7 @@ class LogAnalyticsInputBase(msrest.serialization.Model):
         :keyword group_by_user_agent: Group query result by User Agent.
         :paramtype group_by_user_agent: bool
         """
-        super(LogAnalyticsInputBase, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.blob_container_sas_uri = blob_container_sas_uri
         self.from_time = from_time
         self.to_time = to_time
@@ -4599,7 +4371,7 @@ class LogAnalyticsInputBase(msrest.serialization.Model):
         self.group_by_user_agent = group_by_user_agent
 
 
-class LogAnalyticsOperationResult(msrest.serialization.Model):
+class LogAnalyticsOperationResult(_serialization.Model):
     """LogAnalytics operation status response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4609,24 +4381,20 @@ class LogAnalyticsOperationResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'properties': {'readonly': True},
+        "properties": {"readonly": True},
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'LogAnalyticsOutput'},
+        "properties": {"key": "properties", "type": "LogAnalyticsOutput"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(LogAnalyticsOperationResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.properties = None
 
 
-class LogAnalyticsOutput(msrest.serialization.Model):
+class LogAnalyticsOutput(_serialization.Model):
     """LogAnalytics output properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4636,24 +4404,20 @@ class LogAnalyticsOutput(msrest.serialization.Model):
     """
 
     _validation = {
-        'output': {'readonly': True},
+        "output": {"readonly": True},
     }
 
     _attribute_map = {
-        'output': {'key': 'output', 'type': 'str'},
+        "output": {"key": "output", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(LogAnalyticsOutput, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.output = None
 
 
-class MaintenanceRedeployStatus(msrest.serialization.Model):
+class MaintenanceRedeployStatus(_serialization.Model):
     """Maintenance Operation Status.
 
     :ivar is_customer_initiated_maintenance_allowed: True, if customer is allowed to perform
@@ -4667,8 +4431,8 @@ class MaintenanceRedeployStatus(msrest.serialization.Model):
     :vartype maintenance_window_start_time: ~datetime.datetime
     :ivar maintenance_window_end_time: End Time for the Maintenance Window.
     :vartype maintenance_window_end_time: ~datetime.datetime
-    :ivar last_operation_result_code: The Last Maintenance Operation Result Code. Possible values
-     include: "None", "RetryLater", "MaintenanceAborted", "MaintenanceCompleted".
+    :ivar last_operation_result_code: The Last Maintenance Operation Result Code. Known values are:
+     "None", "RetryLater", "MaintenanceAborted", and "MaintenanceCompleted".
     :vartype last_operation_result_code: str or
      ~azure.mgmt.compute.v2021_03_01.models.MaintenanceOperationResultCodeTypes
     :ivar last_operation_message: Message returned for the last Maintenance Operation.
@@ -4676,13 +4440,13 @@ class MaintenanceRedeployStatus(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'is_customer_initiated_maintenance_allowed': {'key': 'isCustomerInitiatedMaintenanceAllowed', 'type': 'bool'},
-        'pre_maintenance_window_start_time': {'key': 'preMaintenanceWindowStartTime', 'type': 'iso-8601'},
-        'pre_maintenance_window_end_time': {'key': 'preMaintenanceWindowEndTime', 'type': 'iso-8601'},
-        'maintenance_window_start_time': {'key': 'maintenanceWindowStartTime', 'type': 'iso-8601'},
-        'maintenance_window_end_time': {'key': 'maintenanceWindowEndTime', 'type': 'iso-8601'},
-        'last_operation_result_code': {'key': 'lastOperationResultCode', 'type': 'str'},
-        'last_operation_message': {'key': 'lastOperationMessage', 'type': 'str'},
+        "is_customer_initiated_maintenance_allowed": {"key": "isCustomerInitiatedMaintenanceAllowed", "type": "bool"},
+        "pre_maintenance_window_start_time": {"key": "preMaintenanceWindowStartTime", "type": "iso-8601"},
+        "pre_maintenance_window_end_time": {"key": "preMaintenanceWindowEndTime", "type": "iso-8601"},
+        "maintenance_window_start_time": {"key": "maintenanceWindowStartTime", "type": "iso-8601"},
+        "maintenance_window_end_time": {"key": "maintenanceWindowEndTime", "type": "iso-8601"},
+        "last_operation_result_code": {"key": "lastOperationResultCode", "type": "str"},
+        "last_operation_message": {"key": "lastOperationMessage", "type": "str"},
     }
 
     def __init__(
@@ -4693,7 +4457,7 @@ class MaintenanceRedeployStatus(msrest.serialization.Model):
         pre_maintenance_window_end_time: Optional[datetime.datetime] = None,
         maintenance_window_start_time: Optional[datetime.datetime] = None,
         maintenance_window_end_time: Optional[datetime.datetime] = None,
-        last_operation_result_code: Optional[Union[str, "MaintenanceOperationResultCodeTypes"]] = None,
+        last_operation_result_code: Optional[Union[str, "_models.MaintenanceOperationResultCodeTypes"]] = None,
         last_operation_message: Optional[str] = None,
         **kwargs
     ):
@@ -4709,14 +4473,14 @@ class MaintenanceRedeployStatus(msrest.serialization.Model):
         :paramtype maintenance_window_start_time: ~datetime.datetime
         :keyword maintenance_window_end_time: End Time for the Maintenance Window.
         :paramtype maintenance_window_end_time: ~datetime.datetime
-        :keyword last_operation_result_code: The Last Maintenance Operation Result Code. Possible
-         values include: "None", "RetryLater", "MaintenanceAborted", "MaintenanceCompleted".
+        :keyword last_operation_result_code: The Last Maintenance Operation Result Code. Known values
+         are: "None", "RetryLater", "MaintenanceAborted", and "MaintenanceCompleted".
         :paramtype last_operation_result_code: str or
          ~azure.mgmt.compute.v2021_03_01.models.MaintenanceOperationResultCodeTypes
         :keyword last_operation_message: Message returned for the last Maintenance Operation.
         :paramtype last_operation_message: str
         """
-        super(MaintenanceRedeployStatus, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.is_customer_initiated_maintenance_allowed = is_customer_initiated_maintenance_allowed
         self.pre_maintenance_window_start_time = pre_maintenance_window_start_time
         self.pre_maintenance_window_end_time = pre_maintenance_window_end_time
@@ -4733,9 +4497,8 @@ class ManagedDiskParameters(SubResource):
     :vartype id: str
     :ivar storage_account_type: Specifies the storage account type for the managed disk. Managed OS
      disk storage account type can only be set when you create the scale set. NOTE: UltraSSD_LRS can
-     only be used with data disks, it cannot be used with OS Disk. Possible values include:
-     "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
-     "StandardSSD_ZRS".
+     only be used with data disks, it cannot be used with OS Disk. Known values are: "Standard_LRS",
+     "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS", and "StandardSSD_ZRS".
     :vartype storage_account_type: str or
      ~azure.mgmt.compute.v2021_03_01.models.StorageAccountTypes
     :ivar disk_encryption_set: Specifies the customer managed disk encryption set resource id for
@@ -4745,17 +4508,17 @@ class ManagedDiskParameters(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'DiskEncryptionSetParameters'},
+        "id": {"key": "id", "type": "str"},
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
+        "disk_encryption_set": {"key": "diskEncryptionSet", "type": "DiskEncryptionSetParameters"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountTypes"]] = None,
-        disk_encryption_set: Optional["DiskEncryptionSetParameters"] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        storage_account_type: Optional[Union[str, "_models.StorageAccountTypes"]] = None,
+        disk_encryption_set: Optional["_models.DiskEncryptionSetParameters"] = None,
         **kwargs
     ):
         """
@@ -4763,8 +4526,8 @@ class ManagedDiskParameters(SubResource):
         :paramtype id: str
         :keyword storage_account_type: Specifies the storage account type for the managed disk. Managed
          OS disk storage account type can only be set when you create the scale set. NOTE: UltraSSD_LRS
-         can only be used with data disks, it cannot be used with OS Disk. Possible values include:
-         "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+         can only be used with data disks, it cannot be used with OS Disk. Known values are:
+         "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS", and
          "StandardSSD_ZRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2021_03_01.models.StorageAccountTypes
@@ -4773,7 +4536,7 @@ class ManagedDiskParameters(SubResource):
         :paramtype disk_encryption_set:
          ~azure.mgmt.compute.v2021_03_01.models.DiskEncryptionSetParameters
         """
-        super(ManagedDiskParameters, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.storage_account_type = storage_account_type
         self.disk_encryption_set = disk_encryption_set
 
@@ -4787,22 +4550,22 @@ class NetworkInterfaceReference(SubResource):
      than 1 network interface.
     :vartype primary: bool
     :ivar delete_option: Specify what happens to the network interface when the VM is deleted.
-     Possible values include: "Delete", "Detach".
+     Known values are: "Delete" and "Detach".
     :vartype delete_option: str or ~azure.mgmt.compute.v2021_03_01.models.DeleteOptions
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'primary': {'key': 'properties.primary', 'type': 'bool'},
-        'delete_option': {'key': 'properties.deleteOption', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "primary": {"key": "properties.primary", "type": "bool"},
+        "delete_option": {"key": "properties.deleteOption", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         primary: Optional[bool] = None,
-        delete_option: Optional[Union[str, "DeleteOptions"]] = None,
+        delete_option: Optional[Union[str, "_models.DeleteOptions"]] = None,
         **kwargs
     ):
         """
@@ -4812,15 +4575,15 @@ class NetworkInterfaceReference(SubResource):
          than 1 network interface.
         :paramtype primary: bool
         :keyword delete_option: Specify what happens to the network interface when the VM is deleted.
-         Possible values include: "Delete", "Detach".
+         Known values are: "Delete" and "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2021_03_01.models.DeleteOptions
         """
-        super(NetworkInterfaceReference, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.primary = primary
         self.delete_option = delete_option
 
 
-class NetworkProfile(msrest.serialization.Model):
+class NetworkProfile(_serialization.Model):
     """Specifies the network interfaces or the networking configuration of the virtual machine.
 
     :ivar network_interfaces: Specifies the list of resource Ids for the network interfaces
@@ -4828,8 +4591,7 @@ class NetworkProfile(msrest.serialization.Model):
     :vartype network_interfaces:
      list[~azure.mgmt.compute.v2021_03_01.models.NetworkInterfaceReference]
     :ivar network_api_version: specifies the Microsoft.Network API version used when creating
-     networking resources in the Network Interface Configurations. Possible values include:
-     "2020-11-01".
+     networking resources in the Network Interface Configurations. "2020-11-01"
     :vartype network_api_version: str or ~azure.mgmt.compute.v2021_03_01.models.NetworkApiVersion
     :ivar network_interface_configurations: Specifies the networking configurations that will be
      used to create the virtual machine networking resources.
@@ -4838,17 +4600,20 @@ class NetworkProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'network_interfaces': {'key': 'networkInterfaces', 'type': '[NetworkInterfaceReference]'},
-        'network_api_version': {'key': 'networkApiVersion', 'type': 'str'},
-        'network_interface_configurations': {'key': 'networkInterfaceConfigurations', 'type': '[VirtualMachineNetworkInterfaceConfiguration]'},
+        "network_interfaces": {"key": "networkInterfaces", "type": "[NetworkInterfaceReference]"},
+        "network_api_version": {"key": "networkApiVersion", "type": "str"},
+        "network_interface_configurations": {
+            "key": "networkInterfaceConfigurations",
+            "type": "[VirtualMachineNetworkInterfaceConfiguration]",
+        },
     }
 
     def __init__(
         self,
         *,
-        network_interfaces: Optional[List["NetworkInterfaceReference"]] = None,
-        network_api_version: Optional[Union[str, "NetworkApiVersion"]] = None,
-        network_interface_configurations: Optional[List["VirtualMachineNetworkInterfaceConfiguration"]] = None,
+        network_interfaces: Optional[List["_models.NetworkInterfaceReference"]] = None,
+        network_api_version: Optional[Union[str, "_models.NetworkApiVersion"]] = None,
+        network_interface_configurations: Optional[List["_models.VirtualMachineNetworkInterfaceConfiguration"]] = None,
         **kwargs
     ):
         """
@@ -4857,107 +4622,99 @@ class NetworkProfile(msrest.serialization.Model):
         :paramtype network_interfaces:
          list[~azure.mgmt.compute.v2021_03_01.models.NetworkInterfaceReference]
         :keyword network_api_version: specifies the Microsoft.Network API version used when creating
-         networking resources in the Network Interface Configurations. Possible values include:
-         "2020-11-01".
+         networking resources in the Network Interface Configurations. "2020-11-01"
         :paramtype network_api_version: str or ~azure.mgmt.compute.v2021_03_01.models.NetworkApiVersion
         :keyword network_interface_configurations: Specifies the networking configurations that will be
          used to create the virtual machine networking resources.
         :paramtype network_interface_configurations:
          list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineNetworkInterfaceConfiguration]
         """
-        super(NetworkProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.network_interfaces = network_interfaces
         self.network_api_version = network_api_version
         self.network_interface_configurations = network_interface_configurations
 
 
-class OrchestrationServiceStateInput(msrest.serialization.Model):
+class OrchestrationServiceStateInput(_serialization.Model):
     """The input for OrchestrationServiceState.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar service_name: Required. The name of the service. Possible values include:
-     "AutomaticRepairs".
+    :ivar service_name: The name of the service. Required. "AutomaticRepairs"
     :vartype service_name: str or ~azure.mgmt.compute.v2021_03_01.models.OrchestrationServiceNames
-    :ivar action: Required. The action to be performed. Possible values include: "Resume",
-     "Suspend".
+    :ivar action: The action to be performed. Required. Known values are: "Resume" and "Suspend".
     :vartype action: str or ~azure.mgmt.compute.v2021_03_01.models.OrchestrationServiceStateAction
     """
 
     _validation = {
-        'service_name': {'required': True},
-        'action': {'required': True},
+        "service_name": {"required": True},
+        "action": {"required": True},
     }
 
     _attribute_map = {
-        'service_name': {'key': 'serviceName', 'type': 'str'},
-        'action': {'key': 'action', 'type': 'str'},
+        "service_name": {"key": "serviceName", "type": "str"},
+        "action": {"key": "action", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        service_name: Union[str, "OrchestrationServiceNames"],
-        action: Union[str, "OrchestrationServiceStateAction"],
+        service_name: Union[str, "_models.OrchestrationServiceNames"],
+        action: Union[str, "_models.OrchestrationServiceStateAction"],
         **kwargs
     ):
         """
-        :keyword service_name: Required. The name of the service. Possible values include:
-         "AutomaticRepairs".
+        :keyword service_name: The name of the service. Required. "AutomaticRepairs"
         :paramtype service_name: str or
          ~azure.mgmt.compute.v2021_03_01.models.OrchestrationServiceNames
-        :keyword action: Required. The action to be performed. Possible values include: "Resume",
+        :keyword action: The action to be performed. Required. Known values are: "Resume" and
          "Suspend".
         :paramtype action: str or
          ~azure.mgmt.compute.v2021_03_01.models.OrchestrationServiceStateAction
         """
-        super(OrchestrationServiceStateInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.service_name = service_name
         self.action = action
 
 
-class OrchestrationServiceSummary(msrest.serialization.Model):
+class OrchestrationServiceSummary(_serialization.Model):
     """Summary for an orchestration service of a virtual machine scale set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar service_name: The name of the service. Possible values include: "AutomaticRepairs".
+    :ivar service_name: The name of the service. "AutomaticRepairs"
     :vartype service_name: str or ~azure.mgmt.compute.v2021_03_01.models.OrchestrationServiceNames
-    :ivar service_state: The current state of the service. Possible values include: "NotRunning",
-     "Running", "Suspended".
+    :ivar service_state: The current state of the service. Known values are: "NotRunning",
+     "Running", and "Suspended".
     :vartype service_state: str or ~azure.mgmt.compute.v2021_03_01.models.OrchestrationServiceState
     """
 
     _validation = {
-        'service_name': {'readonly': True},
-        'service_state': {'readonly': True},
+        "service_name": {"readonly": True},
+        "service_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'service_name': {'key': 'serviceName', 'type': 'str'},
-        'service_state': {'key': 'serviceState', 'type': 'str'},
+        "service_name": {"key": "serviceName", "type": "str"},
+        "service_state": {"key": "serviceState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OrchestrationServiceSummary, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.service_name = None
         self.service_state = None
 
 
-class OSDisk(msrest.serialization.Model):
+class OSDisk(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Specifies information about the operating system disk used by the virtual machine. :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs for Azure virtual machines <https://docs.microsoft.com/azure/virtual-machines/managed-disks-overview>`_.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
      disk if creating a VM from user-image or a specialized VHD. :code:`<br>`:code:`<br>` Possible
-     values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible
-     values include: "Windows", "Linux".
+     values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known
+     values are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2021_03_01.models.OperatingSystemTypes
     :ivar encryption_settings: Specifies the encryption settings for the OS Disk.
      :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
@@ -4973,7 +4730,7 @@ class OSDisk(msrest.serialization.Model):
     :ivar caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
      are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None** for Standard
-     storage. **ReadOnly** for Premium storage. Possible values include: "None", "ReadOnly",
+     storage. **ReadOnly** for Premium storage. Known values are: "None", "ReadOnly", and
      "ReadWrite".
     :vartype caching: str or ~azure.mgmt.compute.v2021_03_01.models.CachingTypes
     :ivar write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
@@ -4982,13 +4739,14 @@ class OSDisk(msrest.serialization.Model):
     :ivar diff_disk_settings: Specifies the ephemeral Disk Settings for the operating system disk
      used by the virtual machine.
     :vartype diff_disk_settings: ~azure.mgmt.compute.v2021_03_01.models.DiffDiskSettings
-    :ivar create_option: Required. Specifies how the virtual machine should be
+    :ivar create_option: Specifies how the virtual machine should be
      created.:code:`<br>`:code:`<br>` Possible values are::code:`<br>`:code:`<br>` **Attach** \u2013
      This value is used when you are using a specialized disk to create the virtual
      machine.:code:`<br>`:code:`<br>` **FromImage** \u2013 This value is used when you are using an
      image to create the virtual machine. If you are using a platform image, you also use the
      imageReference element described above. If you are using a marketplace image, you  also use the
-     plan element previously described. Possible values include: "FromImage", "Empty", "Attach".
+     plan element previously described. Required. Known values are: "FromImage", "Empty", and
+     "Attach".
     :vartype create_option: str or ~azure.mgmt.compute.v2021_03_01.models.DiskCreateOptionTypes
     :ivar disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can be
      used to overwrite the size of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
@@ -5001,52 +4759,52 @@ class OSDisk(msrest.serialization.Model):
      used, the OS disk is deleted when VM is deleted.:code:`<br>`:code:`<br>` **Detach** If this
      value is used, the os disk is retained after VM is deleted. :code:`<br>`:code:`<br>` The
      default value is set to **detach**. For an ephemeral OS Disk, the default value is set to
-     **Delete**. User cannot change the delete option for ephemeral OS Disk. Possible values
-     include: "Delete", "Detach".
+     **Delete**. User cannot change the delete option for ephemeral OS Disk. Known values are:
+     "Delete" and "Detach".
     :vartype delete_option: str or ~azure.mgmt.compute.v2021_03_01.models.DiskDeleteOptionTypes
     """
 
     _validation = {
-        'create_option': {'required': True},
+        "create_option": {"required": True},
     }
 
     _attribute_map = {
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'encryption_settings': {'key': 'encryptionSettings', 'type': 'DiskEncryptionSettings'},
-        'name': {'key': 'name', 'type': 'str'},
-        'vhd': {'key': 'vhd', 'type': 'VirtualHardDisk'},
-        'image': {'key': 'image', 'type': 'VirtualHardDisk'},
-        'caching': {'key': 'caching', 'type': 'str'},
-        'write_accelerator_enabled': {'key': 'writeAcceleratorEnabled', 'type': 'bool'},
-        'diff_disk_settings': {'key': 'diffDiskSettings', 'type': 'DiffDiskSettings'},
-        'create_option': {'key': 'createOption', 'type': 'str'},
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'managed_disk': {'key': 'managedDisk', 'type': 'ManagedDiskParameters'},
-        'delete_option': {'key': 'deleteOption', 'type': 'str'},
+        "os_type": {"key": "osType", "type": "str"},
+        "encryption_settings": {"key": "encryptionSettings", "type": "DiskEncryptionSettings"},
+        "name": {"key": "name", "type": "str"},
+        "vhd": {"key": "vhd", "type": "VirtualHardDisk"},
+        "image": {"key": "image", "type": "VirtualHardDisk"},
+        "caching": {"key": "caching", "type": "str"},
+        "write_accelerator_enabled": {"key": "writeAcceleratorEnabled", "type": "bool"},
+        "diff_disk_settings": {"key": "diffDiskSettings", "type": "DiffDiskSettings"},
+        "create_option": {"key": "createOption", "type": "str"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "managed_disk": {"key": "managedDisk", "type": "ManagedDiskParameters"},
+        "delete_option": {"key": "deleteOption", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        create_option: Union[str, "DiskCreateOptionTypes"],
-        os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
-        encryption_settings: Optional["DiskEncryptionSettings"] = None,
+        create_option: Union[str, "_models.DiskCreateOptionTypes"],
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
+        encryption_settings: Optional["_models.DiskEncryptionSettings"] = None,
         name: Optional[str] = None,
-        vhd: Optional["VirtualHardDisk"] = None,
-        image: Optional["VirtualHardDisk"] = None,
-        caching: Optional[Union[str, "CachingTypes"]] = None,
+        vhd: Optional["_models.VirtualHardDisk"] = None,
+        image: Optional["_models.VirtualHardDisk"] = None,
+        caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         write_accelerator_enabled: Optional[bool] = None,
-        diff_disk_settings: Optional["DiffDiskSettings"] = None,
+        diff_disk_settings: Optional["_models.DiffDiskSettings"] = None,
         disk_size_gb: Optional[int] = None,
-        managed_disk: Optional["ManagedDiskParameters"] = None,
-        delete_option: Optional[Union[str, "DiskDeleteOptionTypes"]] = None,
+        managed_disk: Optional["_models.ManagedDiskParameters"] = None,
+        delete_option: Optional[Union[str, "_models.DiskDeleteOptionTypes"]] = None,
         **kwargs
     ):
         """
         :keyword os_type: This property allows you to specify the type of the OS that is included in
          the disk if creating a VM from user-image or a specialized VHD. :code:`<br>`:code:`<br>`
          Possible values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**.
-         Possible values include: "Windows", "Linux".
+         Known values are: "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2021_03_01.models.OperatingSystemTypes
         :keyword encryption_settings: Specifies the encryption settings for the OS Disk.
          :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
@@ -5062,7 +4820,7 @@ class OSDisk(msrest.serialization.Model):
         :keyword caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
          are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
          :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None** for Standard
-         storage. **ReadOnly** for Premium storage. Possible values include: "None", "ReadOnly",
+         storage. **ReadOnly** for Premium storage. Known values are: "None", "ReadOnly", and
          "ReadWrite".
         :paramtype caching: str or ~azure.mgmt.compute.v2021_03_01.models.CachingTypes
         :keyword write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
@@ -5071,13 +4829,14 @@ class OSDisk(msrest.serialization.Model):
         :keyword diff_disk_settings: Specifies the ephemeral Disk Settings for the operating system
          disk used by the virtual machine.
         :paramtype diff_disk_settings: ~azure.mgmt.compute.v2021_03_01.models.DiffDiskSettings
-        :keyword create_option: Required. Specifies how the virtual machine should be
+        :keyword create_option: Specifies how the virtual machine should be
          created.:code:`<br>`:code:`<br>` Possible values are::code:`<br>`:code:`<br>` **Attach** \u2013
          This value is used when you are using a specialized disk to create the virtual
          machine.:code:`<br>`:code:`<br>` **FromImage** \u2013 This value is used when you are using an
          image to create the virtual machine. If you are using a platform image, you also use the
          imageReference element described above. If you are using a marketplace image, you  also use the
-         plan element previously described. Possible values include: "FromImage", "Empty", "Attach".
+         plan element previously described. Required. Known values are: "FromImage", "Empty", and
+         "Attach".
         :paramtype create_option: str or ~azure.mgmt.compute.v2021_03_01.models.DiskCreateOptionTypes
         :keyword disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can
          be used to overwrite the size of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
@@ -5090,11 +4849,11 @@ class OSDisk(msrest.serialization.Model):
          value is used, the OS disk is deleted when VM is deleted.:code:`<br>`:code:`<br>` **Detach** If
          this value is used, the os disk is retained after VM is deleted. :code:`<br>`:code:`<br>` The
          default value is set to **detach**. For an ephemeral OS Disk, the default value is set to
-         **Delete**. User cannot change the delete option for ephemeral OS Disk. Possible values
-         include: "Delete", "Detach".
+         **Delete**. User cannot change the delete option for ephemeral OS Disk. Known values are:
+         "Delete" and "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2021_03_01.models.DiskDeleteOptionTypes
         """
-        super(OSDisk, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.os_type = os_type
         self.encryption_settings = encryption_settings
         self.name = name
@@ -5109,40 +4868,35 @@ class OSDisk(msrest.serialization.Model):
         self.delete_option = delete_option
 
 
-class OSDiskImage(msrest.serialization.Model):
+class OSDiskImage(_serialization.Model):
     """Contains the os disk image information.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar operating_system: Required. The operating system of the osDiskImage. Possible values
-     include: "Windows", "Linux".
+    :ivar operating_system: The operating system of the osDiskImage. Required. Known values are:
+     "Windows" and "Linux".
     :vartype operating_system: str or ~azure.mgmt.compute.v2021_03_01.models.OperatingSystemTypes
     """
 
     _validation = {
-        'operating_system': {'required': True},
+        "operating_system": {"required": True},
     }
 
     _attribute_map = {
-        'operating_system': {'key': 'operatingSystem', 'type': 'str'},
+        "operating_system": {"key": "operatingSystem", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        operating_system: Union[str, "OperatingSystemTypes"],
-        **kwargs
-    ):
+    def __init__(self, *, operating_system: Union[str, "_models.OperatingSystemTypes"], **kwargs):
         """
-        :keyword operating_system: Required. The operating system of the osDiskImage. Possible values
-         include: "Windows", "Linux".
+        :keyword operating_system: The operating system of the osDiskImage. Required. Known values are:
+         "Windows" and "Linux".
         :paramtype operating_system: str or ~azure.mgmt.compute.v2021_03_01.models.OperatingSystemTypes
         """
-        super(OSDiskImage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.operating_system = operating_system
 
 
-class OSFamily(msrest.serialization.Model):
+class OSFamily(_serialization.Model):
     """Describes a cloud service OS family.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5160,31 +4914,26 @@ class OSFamily(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'OSFamilyProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "OSFamilyProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["OSFamilyProperties"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, properties: Optional["_models.OSFamilyProperties"] = None, **kwargs):
         """
         :keyword properties: OS family properties.
         :paramtype properties: ~azure.mgmt.compute.v2021_03_01.models.OSFamilyProperties
         """
-        super(OSFamily, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -5192,7 +4941,7 @@ class OSFamily(msrest.serialization.Model):
         self.properties = properties
 
 
-class OSFamilyListResult(msrest.serialization.Model):
+class OSFamilyListResult(_serialization.Model):
     """OSFamilyListResult.
 
     All required parameters must be populated in order to send to Azure.
@@ -5204,33 +4953,27 @@ class OSFamilyListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OSFamily]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OSFamily]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["OSFamily"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.OSFamily"], next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.OSFamily]
         :keyword next_link:
         :paramtype next_link: str
         """
-        super(OSFamilyListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class OSFamilyProperties(msrest.serialization.Model):
+class OSFamilyProperties(_serialization.Model):
     """OS family properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5244,30 +4987,26 @@ class OSFamilyProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'label': {'readonly': True},
-        'versions': {'readonly': True},
+        "name": {"readonly": True},
+        "label": {"readonly": True},
+        "versions": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'versions': {'key': 'versions', 'type': '[OSVersionPropertiesBase]'},
+        "name": {"key": "name", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "versions": {"key": "versions", "type": "[OSVersionPropertiesBase]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OSFamilyProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.label = None
         self.versions = None
 
 
-class OSProfile(msrest.serialization.Model):
+class OSProfile(_serialization.Model):
     """Specifies the operating system settings for the virtual machine. Some of the settings cannot be changed once VM is provisioned.
 
     :ivar computer_name: Specifies the host OS name of the virtual machine.
@@ -5339,15 +5078,15 @@ class OSProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'computer_name': {'key': 'computerName', 'type': 'str'},
-        'admin_username': {'key': 'adminUsername', 'type': 'str'},
-        'admin_password': {'key': 'adminPassword', 'type': 'str'},
-        'custom_data': {'key': 'customData', 'type': 'str'},
-        'windows_configuration': {'key': 'windowsConfiguration', 'type': 'WindowsConfiguration'},
-        'linux_configuration': {'key': 'linuxConfiguration', 'type': 'LinuxConfiguration'},
-        'secrets': {'key': 'secrets', 'type': '[VaultSecretGroup]'},
-        'allow_extension_operations': {'key': 'allowExtensionOperations', 'type': 'bool'},
-        'require_guest_provision_signal': {'key': 'requireGuestProvisionSignal', 'type': 'bool'},
+        "computer_name": {"key": "computerName", "type": "str"},
+        "admin_username": {"key": "adminUsername", "type": "str"},
+        "admin_password": {"key": "adminPassword", "type": "str"},
+        "custom_data": {"key": "customData", "type": "str"},
+        "windows_configuration": {"key": "windowsConfiguration", "type": "WindowsConfiguration"},
+        "linux_configuration": {"key": "linuxConfiguration", "type": "LinuxConfiguration"},
+        "secrets": {"key": "secrets", "type": "[VaultSecretGroup]"},
+        "allow_extension_operations": {"key": "allowExtensionOperations", "type": "bool"},
+        "require_guest_provision_signal": {"key": "requireGuestProvisionSignal", "type": "bool"},
     }
 
     def __init__(
@@ -5357,9 +5096,9 @@ class OSProfile(msrest.serialization.Model):
         admin_username: Optional[str] = None,
         admin_password: Optional[str] = None,
         custom_data: Optional[str] = None,
-        windows_configuration: Optional["WindowsConfiguration"] = None,
-        linux_configuration: Optional["LinuxConfiguration"] = None,
-        secrets: Optional[List["VaultSecretGroup"]] = None,
+        windows_configuration: Optional["_models.WindowsConfiguration"] = None,
+        linux_configuration: Optional["_models.LinuxConfiguration"] = None,
+        secrets: Optional[List["_models.VaultSecretGroup"]] = None,
         allow_extension_operations: Optional[bool] = None,
         require_guest_provision_signal: Optional[bool] = None,
         **kwargs
@@ -5433,7 +5172,7 @@ class OSProfile(msrest.serialization.Model):
          private testing only, and all customers must not set the property to false.**.
         :paramtype require_guest_provision_signal: bool
         """
-        super(OSProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.computer_name = computer_name
         self.admin_username = admin_username
         self.admin_password = admin_password
@@ -5445,7 +5184,7 @@ class OSProfile(msrest.serialization.Model):
         self.require_guest_provision_signal = require_guest_provision_signal
 
 
-class OSVersion(msrest.serialization.Model):
+class OSVersion(_serialization.Model):
     """Describes a cloud service OS version.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5463,31 +5202,26 @@ class OSVersion(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'OSVersionProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "OSVersionProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["OSVersionProperties"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, properties: Optional["_models.OSVersionProperties"] = None, **kwargs):
         """
         :keyword properties: OS version properties.
         :paramtype properties: ~azure.mgmt.compute.v2021_03_01.models.OSVersionProperties
         """
-        super(OSVersion, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -5495,7 +5229,7 @@ class OSVersion(msrest.serialization.Model):
         self.properties = properties
 
 
-class OSVersionListResult(msrest.serialization.Model):
+class OSVersionListResult(_serialization.Model):
     """OSVersionListResult.
 
     All required parameters must be populated in order to send to Azure.
@@ -5507,33 +5241,27 @@ class OSVersionListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OSVersion]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OSVersion]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["OSVersion"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.OSVersion"], next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.OSVersion]
         :keyword next_link:
         :paramtype next_link: str
         """
-        super(OSVersionListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class OSVersionProperties(msrest.serialization.Model):
+class OSVersionProperties(_serialization.Model):
     """OS version properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5553,30 +5281,26 @@ class OSVersionProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'family': {'readonly': True},
-        'family_label': {'readonly': True},
-        'version': {'readonly': True},
-        'label': {'readonly': True},
-        'is_default': {'readonly': True},
-        'is_active': {'readonly': True},
+        "family": {"readonly": True},
+        "family_label": {"readonly": True},
+        "version": {"readonly": True},
+        "label": {"readonly": True},
+        "is_default": {"readonly": True},
+        "is_active": {"readonly": True},
     }
 
     _attribute_map = {
-        'family': {'key': 'family', 'type': 'str'},
-        'family_label': {'key': 'familyLabel', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'is_default': {'key': 'isDefault', 'type': 'bool'},
-        'is_active': {'key': 'isActive', 'type': 'bool'},
+        "family": {"key": "family", "type": "str"},
+        "family_label": {"key": "familyLabel", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "is_default": {"key": "isDefault", "type": "bool"},
+        "is_active": {"key": "isActive", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OSVersionProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.family = None
         self.family_label = None
         self.version = None
@@ -5585,7 +5309,7 @@ class OSVersionProperties(msrest.serialization.Model):
         self.is_active = None
 
 
-class OSVersionPropertiesBase(msrest.serialization.Model):
+class OSVersionPropertiesBase(_serialization.Model):
     """Configuration view of an OS version.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5601,33 +5325,29 @@ class OSVersionPropertiesBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'version': {'readonly': True},
-        'label': {'readonly': True},
-        'is_default': {'readonly': True},
-        'is_active': {'readonly': True},
+        "version": {"readonly": True},
+        "label": {"readonly": True},
+        "is_default": {"readonly": True},
+        "is_active": {"readonly": True},
     }
 
     _attribute_map = {
-        'version': {'key': 'version', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'is_default': {'key': 'isDefault', 'type': 'bool'},
-        'is_active': {'key': 'isActive', 'type': 'bool'},
+        "version": {"key": "version", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "is_default": {"key": "isDefault", "type": "bool"},
+        "is_active": {"key": "isActive", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OSVersionPropertiesBase, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.version = None
         self.label = None
         self.is_default = None
         self.is_active = None
 
 
-class PatchInstallationDetail(msrest.serialization.Model):
+class PatchInstallationDetail(_serialization.Model):
     """Information about a specific patch that was encountered during an installation action.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5644,37 +5364,32 @@ class PatchInstallationDetail(msrest.serialization.Model):
     :ivar classifications: The classification(s) of the patch as provided by the patch publisher.
     :vartype classifications: list[str]
     :ivar installation_state: The state of the patch after the installation operation completed.
-     Possible values include: "Unknown", "Installed", "Failed", "Excluded", "NotSelected",
-     "Pending".
+     Known values are: "Unknown", "Installed", "Failed", "Excluded", "NotSelected", and "Pending".
     :vartype installation_state: str or
      ~azure.mgmt.compute.v2021_03_01.models.PatchInstallationState
     """
 
     _validation = {
-        'patch_id': {'readonly': True},
-        'name': {'readonly': True},
-        'version': {'readonly': True},
-        'kb_id': {'readonly': True},
-        'classifications': {'readonly': True},
-        'installation_state': {'readonly': True},
+        "patch_id": {"readonly": True},
+        "name": {"readonly": True},
+        "version": {"readonly": True},
+        "kb_id": {"readonly": True},
+        "classifications": {"readonly": True},
+        "installation_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'patch_id': {'key': 'patchId', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-        'kb_id': {'key': 'kbId', 'type': 'str'},
-        'classifications': {'key': 'classifications', 'type': '[str]'},
-        'installation_state': {'key': 'installationState', 'type': 'str'},
+        "patch_id": {"key": "patchId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+        "kb_id": {"key": "kbId", "type": "str"},
+        "classifications": {"key": "classifications", "type": "[str]"},
+        "installation_state": {"key": "installationState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(PatchInstallationDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.patch_id = None
         self.name = None
         self.version = None
@@ -5683,7 +5398,7 @@ class PatchInstallationDetail(msrest.serialization.Model):
         self.installation_state = None
 
 
-class PatchSettings(msrest.serialization.Model):
+class PatchSettings(_serialization.Model):
     """Specifies settings related to VM Guest Patching on Windows.
 
     :ivar patch_mode: Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual
@@ -5695,8 +5410,8 @@ class PatchSettings(msrest.serialization.Model):
      **AutomaticByOS** - The virtual machine will automatically be updated by the OS. The property
      WindowsConfiguration.enableAutomaticUpdates must be true. :code:`<br />`:code:`<br />`
      **AutomaticByPlatform** - the virtual machine will automatically updated by the platform. The
-     properties provisionVMAgent and WindowsConfiguration.enableAutomaticUpdates must be true.
-     Possible values include: "Manual", "AutomaticByOS", "AutomaticByPlatform".
+     properties provisionVMAgent and WindowsConfiguration.enableAutomaticUpdates must be true. Known
+     values are: "Manual", "AutomaticByOS", and "AutomaticByPlatform".
     :vartype patch_mode: str or ~azure.mgmt.compute.v2021_03_01.models.WindowsVMGuestPatchMode
     :ivar enable_hotpatching: Enables customers to patch their Azure VMs without requiring a
      reboot. For enableHotpatching, the 'provisionVMAgent' must be set to true and 'patchMode' must
@@ -5706,24 +5421,24 @@ class PatchSettings(msrest.serialization.Model):
      machine.:code:`<br />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />`
      **ImageDefault** - You control the timing of patch assessments on a virtual machine.:code:`<br
      />`:code:`<br />` **AutomaticByPlatform** - The platform will trigger periodic patch
-     assessments. The property provisionVMAgent must be true. Possible values include:
-     "ImageDefault", "AutomaticByPlatform".
+     assessments. The property provisionVMAgent must be true. Known values are: "ImageDefault" and
+     "AutomaticByPlatform".
     :vartype assessment_mode: str or
      ~azure.mgmt.compute.v2021_03_01.models.WindowsPatchAssessmentMode
     """
 
     _attribute_map = {
-        'patch_mode': {'key': 'patchMode', 'type': 'str'},
-        'enable_hotpatching': {'key': 'enableHotpatching', 'type': 'bool'},
-        'assessment_mode': {'key': 'assessmentMode', 'type': 'str'},
+        "patch_mode": {"key": "patchMode", "type": "str"},
+        "enable_hotpatching": {"key": "enableHotpatching", "type": "bool"},
+        "assessment_mode": {"key": "assessmentMode", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        patch_mode: Optional[Union[str, "WindowsVMGuestPatchMode"]] = None,
+        patch_mode: Optional[Union[str, "_models.WindowsVMGuestPatchMode"]] = None,
         enable_hotpatching: Optional[bool] = None,
-        assessment_mode: Optional[Union[str, "WindowsPatchAssessmentMode"]] = None,
+        assessment_mode: Optional[Union[str, "_models.WindowsPatchAssessmentMode"]] = None,
         **kwargs
     ):
         """
@@ -5736,8 +5451,8 @@ class PatchSettings(msrest.serialization.Model):
          **AutomaticByOS** - The virtual machine will automatically be updated by the OS. The property
          WindowsConfiguration.enableAutomaticUpdates must be true. :code:`<br />`:code:`<br />`
          **AutomaticByPlatform** - the virtual machine will automatically updated by the platform. The
-         properties provisionVMAgent and WindowsConfiguration.enableAutomaticUpdates must be true.
-         Possible values include: "Manual", "AutomaticByOS", "AutomaticByPlatform".
+         properties provisionVMAgent and WindowsConfiguration.enableAutomaticUpdates must be true. Known
+         values are: "Manual", "AutomaticByOS", and "AutomaticByPlatform".
         :paramtype patch_mode: str or ~azure.mgmt.compute.v2021_03_01.models.WindowsVMGuestPatchMode
         :keyword enable_hotpatching: Enables customers to patch their Azure VMs without requiring a
          reboot. For enableHotpatching, the 'provisionVMAgent' must be set to true and 'patchMode' must
@@ -5747,18 +5462,18 @@ class PatchSettings(msrest.serialization.Model):
          machine.:code:`<br />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />`
          **ImageDefault** - You control the timing of patch assessments on a virtual machine.:code:`<br
          />`:code:`<br />` **AutomaticByPlatform** - The platform will trigger periodic patch
-         assessments. The property provisionVMAgent must be true. Possible values include:
-         "ImageDefault", "AutomaticByPlatform".
+         assessments. The property provisionVMAgent must be true. Known values are: "ImageDefault" and
+         "AutomaticByPlatform".
         :paramtype assessment_mode: str or
          ~azure.mgmt.compute.v2021_03_01.models.WindowsPatchAssessmentMode
         """
-        super(PatchSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.patch_mode = patch_mode
         self.enable_hotpatching = enable_hotpatching
         self.assessment_mode = assessment_mode
 
 
-class Plan(msrest.serialization.Model):
+class Plan(_serialization.Model):
     """Specifies information about the marketplace image used to create the virtual machine. This element is only used for marketplace images. Before you can use a marketplace image from an API, you must enable the image for programmatic use.  In the Azure portal, find the marketplace image that you want to use and then click **Want to deploy programmatically, Get Started ->**. Enter any required information and then click **Save**.
 
     :ivar name: The plan ID.
@@ -5773,10 +5488,10 @@ class Plan(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'product': {'key': 'product', 'type': 'str'},
-        'promotion_code': {'key': 'promotionCode', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "product": {"key": "product", "type": "str"},
+        "promotion_code": {"key": "promotionCode", "type": "str"},
     }
 
     def __init__(
@@ -5799,7 +5514,7 @@ class Plan(msrest.serialization.Model):
         :keyword promotion_code: The promotion code.
         :paramtype promotion_code: str
         """
-        super(Plan, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.publisher = publisher
         self.product = product
@@ -5819,14 +5534,14 @@ class ProximityPlacementGroup(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar proximity_placement_group_type: Specifies the type of the proximity placement group.
      :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Standard** : Co-locate
      resources within an Azure region or Availability Zone. :code:`<br>`:code:`<br>` **Ultra** : For
-     future use. Possible values include: "Standard", "Ultra".
+     future use. Known values are: "Standard" and "Ultra".
     :vartype proximity_placement_group_type: str or
      ~azure.mgmt.compute.v2021_03_01.models.ProximityPlacementGroupType
     :ivar virtual_machines: A list of references to all virtual machines in the proximity placement
@@ -5846,26 +5561,29 @@ class ProximityPlacementGroup(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'virtual_machines': {'readonly': True},
-        'virtual_machine_scale_sets': {'readonly': True},
-        'availability_sets': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "virtual_machines": {"readonly": True},
+        "virtual_machine_scale_sets": {"readonly": True},
+        "availability_sets": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'proximity_placement_group_type': {'key': 'properties.proximityPlacementGroupType', 'type': 'str'},
-        'virtual_machines': {'key': 'properties.virtualMachines', 'type': '[SubResourceWithColocationStatus]'},
-        'virtual_machine_scale_sets': {'key': 'properties.virtualMachineScaleSets', 'type': '[SubResourceWithColocationStatus]'},
-        'availability_sets': {'key': 'properties.availabilitySets', 'type': '[SubResourceWithColocationStatus]'},
-        'colocation_status': {'key': 'properties.colocationStatus', 'type': 'InstanceViewStatus'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "proximity_placement_group_type": {"key": "properties.proximityPlacementGroupType", "type": "str"},
+        "virtual_machines": {"key": "properties.virtualMachines", "type": "[SubResourceWithColocationStatus]"},
+        "virtual_machine_scale_sets": {
+            "key": "properties.virtualMachineScaleSets",
+            "type": "[SubResourceWithColocationStatus]",
+        },
+        "availability_sets": {"key": "properties.availabilitySets", "type": "[SubResourceWithColocationStatus]"},
+        "colocation_status": {"key": "properties.colocationStatus", "type": "InstanceViewStatus"},
     }
 
     def __init__(
@@ -5873,25 +5591,25 @@ class ProximityPlacementGroup(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        proximity_placement_group_type: Optional[Union[str, "ProximityPlacementGroupType"]] = None,
-        colocation_status: Optional["InstanceViewStatus"] = None,
+        proximity_placement_group_type: Optional[Union[str, "_models.ProximityPlacementGroupType"]] = None,
+        colocation_status: Optional["_models.InstanceViewStatus"] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword proximity_placement_group_type: Specifies the type of the proximity placement group.
          :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Standard** : Co-locate
          resources within an Azure region or Availability Zone. :code:`<br>`:code:`<br>` **Ultra** : For
-         future use. Possible values include: "Standard", "Ultra".
+         future use. Known values are: "Standard" and "Ultra".
         :paramtype proximity_placement_group_type: str or
          ~azure.mgmt.compute.v2021_03_01.models.ProximityPlacementGroupType
         :keyword colocation_status: Describes colocation status of the Proximity Placement Group.
         :paramtype colocation_status: ~azure.mgmt.compute.v2021_03_01.models.InstanceViewStatus
         """
-        super(ProximityPlacementGroup, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.proximity_placement_group_type = proximity_placement_group_type
         self.virtual_machines = None
         self.virtual_machine_scale_sets = None
@@ -5899,40 +5617,34 @@ class ProximityPlacementGroup(Resource):
         self.colocation_status = colocation_status
 
 
-class ProximityPlacementGroupListResult(msrest.serialization.Model):
+class ProximityPlacementGroupListResult(_serialization.Model):
     """The List Proximity Placement Group operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. The list of proximity placement groups.
+    :ivar value: The list of proximity placement groups. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.ProximityPlacementGroup]
     :ivar next_link: The URI to fetch the next page of proximity placement groups.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ProximityPlacementGroup]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ProximityPlacementGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["ProximityPlacementGroup"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.ProximityPlacementGroup"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. The list of proximity placement groups.
+        :keyword value: The list of proximity placement groups. Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.ProximityPlacementGroup]
         :keyword next_link: The URI to fetch the next page of proximity placement groups.
         :paramtype next_link: str
         """
-        super(ProximityPlacementGroupListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -5940,28 +5652,23 @@ class ProximityPlacementGroupListResult(msrest.serialization.Model):
 class ProximityPlacementGroupUpdate(UpdateResource):
     """Specifies information about the proximity placement group.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(ProximityPlacementGroupUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
 
 
-class ProxyResource(msrest.serialization.Model):
+class ProxyResource(_serialization.Model):
     """The resource model definition for an Azure Resource Manager proxy resource. It will not have tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5975,111 +5682,100 @@ class ProxyResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
-class PublicIPAddressSku(msrest.serialization.Model):
+class PublicIPAddressSku(_serialization.Model):
     """Describes the public IP Sku.
 
-    :ivar name: Specify public IP sku name. Possible values include: "Basic", "Standard".
+    :ivar name: Specify public IP sku name. Known values are: "Basic" and "Standard".
     :vartype name: str or ~azure.mgmt.compute.v2021_03_01.models.PublicIPAddressSkuName
-    :ivar tier: Specify public IP sku tier. Possible values include: "Regional", "Global".
+    :ivar tier: Specify public IP sku tier. Known values are: "Regional" and "Global".
     :vartype tier: str or ~azure.mgmt.compute.v2021_03_01.models.PublicIPAddressSkuTier
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        name: Optional[Union[str, "PublicIPAddressSkuName"]] = None,
-        tier: Optional[Union[str, "PublicIPAddressSkuTier"]] = None,
+        name: Optional[Union[str, "_models.PublicIPAddressSkuName"]] = None,
+        tier: Optional[Union[str, "_models.PublicIPAddressSkuTier"]] = None,
         **kwargs
     ):
         """
-        :keyword name: Specify public IP sku name. Possible values include: "Basic", "Standard".
+        :keyword name: Specify public IP sku name. Known values are: "Basic" and "Standard".
         :paramtype name: str or ~azure.mgmt.compute.v2021_03_01.models.PublicIPAddressSkuName
-        :keyword tier: Specify public IP sku tier. Possible values include: "Regional", "Global".
+        :keyword tier: Specify public IP sku tier. Known values are: "Regional" and "Global".
         :paramtype tier: str or ~azure.mgmt.compute.v2021_03_01.models.PublicIPAddressSkuTier
         """
-        super(PublicIPAddressSku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.tier = tier
 
 
-class PurchasePlan(msrest.serialization.Model):
+class PurchasePlan(_serialization.Model):
     """Used for establishing the purchase context of any 3rd Party artifact through MarketPlace.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar publisher: Required. The publisher ID.
+    :ivar publisher: The publisher ID. Required.
     :vartype publisher: str
-    :ivar name: Required. The plan ID.
+    :ivar name: The plan ID. Required.
     :vartype name: str
-    :ivar product: Required. Specifies the product of the image from the marketplace. This is the
-     same value as Offer under the imageReference element.
+    :ivar product: Specifies the product of the image from the marketplace. This is the same value
+     as Offer under the imageReference element. Required.
     :vartype product: str
     """
 
     _validation = {
-        'publisher': {'required': True},
-        'name': {'required': True},
-        'product': {'required': True},
+        "publisher": {"required": True},
+        "name": {"required": True},
+        "product": {"required": True},
     }
 
     _attribute_map = {
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'product': {'key': 'product', 'type': 'str'},
+        "publisher": {"key": "publisher", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "product": {"key": "product", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        publisher: str,
-        name: str,
-        product: str,
-        **kwargs
-    ):
+    def __init__(self, *, publisher: str, name: str, product: str, **kwargs):
         """
-        :keyword publisher: Required. The publisher ID.
+        :keyword publisher: The publisher ID. Required.
         :paramtype publisher: str
-        :keyword name: Required. The plan ID.
+        :keyword name: The plan ID. Required.
         :paramtype name: str
-        :keyword product: Required. Specifies the product of the image from the marketplace. This is
-         the same value as Offer under the imageReference element.
+        :keyword product: Specifies the product of the image from the marketplace. This is the same
+         value as Offer under the imageReference element. Required.
         :paramtype product: str
         """
-        super(PurchasePlan, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.publisher = publisher
         self.name = name
         self.product = product
 
 
-class RecoveryWalkResponse(msrest.serialization.Model):
+class RecoveryWalkResponse(_serialization.Model):
     """Response after calling a manual recovery walk.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6092,22 +5788,18 @@ class RecoveryWalkResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'walk_performed': {'readonly': True},
-        'next_platform_update_domain': {'readonly': True},
+        "walk_performed": {"readonly": True},
+        "next_platform_update_domain": {"readonly": True},
     }
 
     _attribute_map = {
-        'walk_performed': {'key': 'walkPerformed', 'type': 'bool'},
-        'next_platform_update_domain': {'key': 'nextPlatformUpdateDomain', 'type': 'int'},
+        "walk_performed": {"key": "walkPerformed", "type": "bool"},
+        "next_platform_update_domain": {"key": "nextPlatformUpdateDomain", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(RecoveryWalkResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.walk_performed = None
         self.next_platform_update_domain = None
 
@@ -6117,12 +5809,12 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar blob_container_sas_uri: Required. SAS Uri of the logging blob container to which
-     LogAnalytics Api writes output logs to.
+    :ivar blob_container_sas_uri: SAS Uri of the logging blob container to which LogAnalytics Api
+     writes output logs to. Required.
     :vartype blob_container_sas_uri: str
-    :ivar from_time: Required. From time of the query.
+    :ivar from_time: From time of the query. Required.
     :vartype from_time: ~datetime.datetime
-    :ivar to_time: Required. To time of the query.
+    :ivar to_time: To time of the query. Required.
     :vartype to_time: ~datetime.datetime
     :ivar group_by_throttle_policy: Group query result by Throttle Policy applied.
     :vartype group_by_throttle_policy: bool
@@ -6134,28 +5826,28 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
     :vartype group_by_client_application_id: bool
     :ivar group_by_user_agent: Group query result by User Agent.
     :vartype group_by_user_agent: bool
-    :ivar interval_length: Required. Interval value in minutes used to create LogAnalytics call
-     rate logs. Possible values include: "ThreeMins", "FiveMins", "ThirtyMins", "SixtyMins".
+    :ivar interval_length: Interval value in minutes used to create LogAnalytics call rate logs.
+     Required. Known values are: "ThreeMins", "FiveMins", "ThirtyMins", and "SixtyMins".
     :vartype interval_length: str or ~azure.mgmt.compute.v2021_03_01.models.IntervalInMins
     """
 
     _validation = {
-        'blob_container_sas_uri': {'required': True},
-        'from_time': {'required': True},
-        'to_time': {'required': True},
-        'interval_length': {'required': True},
+        "blob_container_sas_uri": {"required": True},
+        "from_time": {"required": True},
+        "to_time": {"required": True},
+        "interval_length": {"required": True},
     }
 
     _attribute_map = {
-        'blob_container_sas_uri': {'key': 'blobContainerSasUri', 'type': 'str'},
-        'from_time': {'key': 'fromTime', 'type': 'iso-8601'},
-        'to_time': {'key': 'toTime', 'type': 'iso-8601'},
-        'group_by_throttle_policy': {'key': 'groupByThrottlePolicy', 'type': 'bool'},
-        'group_by_operation_name': {'key': 'groupByOperationName', 'type': 'bool'},
-        'group_by_resource_name': {'key': 'groupByResourceName', 'type': 'bool'},
-        'group_by_client_application_id': {'key': 'groupByClientApplicationId', 'type': 'bool'},
-        'group_by_user_agent': {'key': 'groupByUserAgent', 'type': 'bool'},
-        'interval_length': {'key': 'intervalLength', 'type': 'str'},
+        "blob_container_sas_uri": {"key": "blobContainerSasUri", "type": "str"},
+        "from_time": {"key": "fromTime", "type": "iso-8601"},
+        "to_time": {"key": "toTime", "type": "iso-8601"},
+        "group_by_throttle_policy": {"key": "groupByThrottlePolicy", "type": "bool"},
+        "group_by_operation_name": {"key": "groupByOperationName", "type": "bool"},
+        "group_by_resource_name": {"key": "groupByResourceName", "type": "bool"},
+        "group_by_client_application_id": {"key": "groupByClientApplicationId", "type": "bool"},
+        "group_by_user_agent": {"key": "groupByUserAgent", "type": "bool"},
+        "interval_length": {"key": "intervalLength", "type": "str"},
     }
 
     def __init__(
@@ -6164,7 +5856,7 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
         blob_container_sas_uri: str,
         from_time: datetime.datetime,
         to_time: datetime.datetime,
-        interval_length: Union[str, "IntervalInMins"],
+        interval_length: Union[str, "_models.IntervalInMins"],
         group_by_throttle_policy: Optional[bool] = None,
         group_by_operation_name: Optional[bool] = None,
         group_by_resource_name: Optional[bool] = None,
@@ -6173,12 +5865,12 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
         **kwargs
     ):
         """
-        :keyword blob_container_sas_uri: Required. SAS Uri of the logging blob container to which
-         LogAnalytics Api writes output logs to.
+        :keyword blob_container_sas_uri: SAS Uri of the logging blob container to which LogAnalytics
+         Api writes output logs to. Required.
         :paramtype blob_container_sas_uri: str
-        :keyword from_time: Required. From time of the query.
+        :keyword from_time: From time of the query. Required.
         :paramtype from_time: ~datetime.datetime
-        :keyword to_time: Required. To time of the query.
+        :keyword to_time: To time of the query. Required.
         :paramtype to_time: ~datetime.datetime
         :keyword group_by_throttle_policy: Group query result by Throttle Policy applied.
         :paramtype group_by_throttle_policy: bool
@@ -6190,15 +5882,25 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
         :paramtype group_by_client_application_id: bool
         :keyword group_by_user_agent: Group query result by User Agent.
         :paramtype group_by_user_agent: bool
-        :keyword interval_length: Required. Interval value in minutes used to create LogAnalytics call
-         rate logs. Possible values include: "ThreeMins", "FiveMins", "ThirtyMins", "SixtyMins".
+        :keyword interval_length: Interval value in minutes used to create LogAnalytics call rate logs.
+         Required. Known values are: "ThreeMins", "FiveMins", "ThirtyMins", and "SixtyMins".
         :paramtype interval_length: str or ~azure.mgmt.compute.v2021_03_01.models.IntervalInMins
         """
-        super(RequestRateByIntervalInput, self).__init__(blob_container_sas_uri=blob_container_sas_uri, from_time=from_time, to_time=to_time, group_by_throttle_policy=group_by_throttle_policy, group_by_operation_name=group_by_operation_name, group_by_resource_name=group_by_resource_name, group_by_client_application_id=group_by_client_application_id, group_by_user_agent=group_by_user_agent, **kwargs)
+        super().__init__(
+            blob_container_sas_uri=blob_container_sas_uri,
+            from_time=from_time,
+            to_time=to_time,
+            group_by_throttle_policy=group_by_throttle_policy,
+            group_by_operation_name=group_by_operation_name,
+            group_by_resource_name=group_by_resource_name,
+            group_by_client_application_id=group_by_client_application_id,
+            group_by_user_agent=group_by_user_agent,
+            **kwargs
+        )
         self.interval_length = interval_length
 
 
-class ResourceInstanceViewStatus(msrest.serialization.Model):
+class ResourceInstanceViewStatus(_serialization.Model):
     """Instance view status.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6211,36 +5913,31 @@ class ResourceInstanceViewStatus(msrest.serialization.Model):
     :vartype message: str
     :ivar time: The time of the status.
     :vartype time: ~datetime.datetime
-    :ivar level: The level code. Possible values include: "Info", "Warning", "Error".
+    :ivar level: The level code. Known values are: "Info", "Warning", and "Error".
     :vartype level: str or ~azure.mgmt.compute.v2021_03_01.models.StatusLevelTypes
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'display_status': {'readonly': True},
-        'message': {'readonly': True},
-        'time': {'readonly': True},
+        "code": {"readonly": True},
+        "display_status": {"readonly": True},
+        "message": {"readonly": True},
+        "time": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'display_status': {'key': 'displayStatus', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'iso-8601'},
-        'level': {'key': 'level', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "display_status": {"key": "displayStatus", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "time": {"key": "time", "type": "iso-8601"},
+        "level": {"key": "level", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        level: Optional[Union[str, "StatusLevelTypes"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, level: Optional[Union[str, "_models.StatusLevelTypes"]] = None, **kwargs):
         """
-        :keyword level: The level code. Possible values include: "Info", "Warning", "Error".
+        :keyword level: The level code. Known values are: "Info", "Warning", and "Error".
         :paramtype level: str or ~azure.mgmt.compute.v2021_03_01.models.StatusLevelTypes
         """
-        super(ResourceInstanceViewStatus, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = None
         self.display_status = None
         self.message = None
@@ -6268,37 +5965,37 @@ class RestorePoint(ProxyResource):
     :ivar provisioning_state: Gets the provisioning state of the restore point.
     :vartype provisioning_state: str
     :ivar consistency_mode: Gets the consistency mode for the restore point. Please refer to
-     https://aka.ms/RestorePoints for more details. Possible values include: "CrashConsistent",
-     "FileSystemConsistent", "ApplicationConsistent".
+     https://aka.ms/RestorePoints for more details. Known values are: "CrashConsistent",
+     "FileSystemConsistent", and "ApplicationConsistent".
     :vartype consistency_mode: str or ~azure.mgmt.compute.v2021_03_01.models.ConsistencyModeTypes
     :ivar time_created: Gets the creation time of the restore point.
     :vartype time_created: ~datetime.datetime
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'source_metadata': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'consistency_mode': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "source_metadata": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "consistency_mode": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'exclude_disks': {'key': 'properties.excludeDisks', 'type': '[ApiEntityReference]'},
-        'source_metadata': {'key': 'properties.sourceMetadata', 'type': 'RestorePointSourceMetadata'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'consistency_mode': {'key': 'properties.consistencyMode', 'type': 'str'},
-        'time_created': {'key': 'properties.timeCreated', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "exclude_disks": {"key": "properties.excludeDisks", "type": "[ApiEntityReference]"},
+        "source_metadata": {"key": "properties.sourceMetadata", "type": "RestorePointSourceMetadata"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "consistency_mode": {"key": "properties.consistencyMode", "type": "str"},
+        "time_created": {"key": "properties.timeCreated", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
-        exclude_disks: Optional[List["ApiEntityReference"]] = None,
+        exclude_disks: Optional[List["_models.ApiEntityReference"]] = None,
         time_created: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -6309,7 +6006,7 @@ class RestorePoint(ProxyResource):
         :keyword time_created: Gets the creation time of the restore point.
         :paramtype time_created: ~datetime.datetime
         """
-        super(RestorePoint, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.exclude_disks = exclude_disks
         self.source_metadata = None
         self.provisioning_state = None
@@ -6330,9 +6027,9 @@ class RestorePointCollection(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar source: The properties of the source resource that this restore point collection is
      created from.
@@ -6347,25 +6044,25 @@ class RestorePointCollection(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'restore_point_collection_id': {'readonly': True},
-        'restore_points': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "restore_point_collection_id": {"readonly": True},
+        "restore_points": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'source': {'key': 'properties.source', 'type': 'RestorePointCollectionSourceProperties'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'restore_point_collection_id': {'key': 'properties.restorePointCollectionId', 'type': 'str'},
-        'restore_points': {'key': 'properties.restorePoints', 'type': '[RestorePoint]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "source": {"key": "properties.source", "type": "RestorePointCollectionSourceProperties"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "restore_point_collection_id": {"key": "properties.restorePointCollectionId", "type": "str"},
+        "restore_points": {"key": "properties.restorePoints", "type": "[RestorePoint]"},
     }
 
     def __init__(
@@ -6373,27 +6070,27 @@ class RestorePointCollection(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        source: Optional["RestorePointCollectionSourceProperties"] = None,
+        source: Optional["_models.RestorePointCollectionSourceProperties"] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword source: The properties of the source resource that this restore point collection is
          created from.
         :paramtype source:
          ~azure.mgmt.compute.v2021_03_01.models.RestorePointCollectionSourceProperties
         """
-        super(RestorePointCollection, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.source = source
         self.provisioning_state = None
         self.restore_point_collection_id = None
         self.restore_points = None
 
 
-class RestorePointCollectionListResult(msrest.serialization.Model):
+class RestorePointCollectionListResult(_serialization.Model):
     """The List restore point collection operation response.
 
     :ivar value: Gets the list of restore point collections.
@@ -6404,14 +6101,14 @@ class RestorePointCollectionListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RestorePointCollection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RestorePointCollection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["RestorePointCollection"]] = None,
+        value: Optional[List["_models.RestorePointCollection"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -6422,12 +6119,12 @@ class RestorePointCollectionListResult(msrest.serialization.Model):
          with this to fetch the next page of RestorePointCollections.
         :paramtype next_link: str
         """
-        super(RestorePointCollectionListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class RestorePointCollectionSourceProperties(msrest.serialization.Model):
+class RestorePointCollectionSourceProperties(_serialization.Model):
     """The properties of the source resource that this restore point collection is created from.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6439,25 +6136,20 @@ class RestorePointCollectionSourceProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'location': {'readonly': True},
+        "location": {"readonly": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
+        "location": {"key": "location", "type": "str"},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource Id of the source resource used to create this restore point collection.
         :paramtype id: str
         """
-        super(RestorePointCollectionSourceProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.location = None
         self.id = id
 
@@ -6467,7 +6159,7 @@ class RestorePointCollectionUpdate(UpdateResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar source: The properties of the source resource that this restore point collection is
      created from.
@@ -6482,42 +6174,42 @@ class RestorePointCollectionUpdate(UpdateResource):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'restore_point_collection_id': {'readonly': True},
-        'restore_points': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "restore_point_collection_id": {"readonly": True},
+        "restore_points": {"readonly": True},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'source': {'key': 'properties.source', 'type': 'RestorePointCollectionSourceProperties'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'restore_point_collection_id': {'key': 'properties.restorePointCollectionId', 'type': 'str'},
-        'restore_points': {'key': 'properties.restorePoints', 'type': '[RestorePoint]'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "source": {"key": "properties.source", "type": "RestorePointCollectionSourceProperties"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "restore_point_collection_id": {"key": "properties.restorePointCollectionId", "type": "str"},
+        "restore_points": {"key": "properties.restorePoints", "type": "[RestorePoint]"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        source: Optional["RestorePointCollectionSourceProperties"] = None,
+        source: Optional["_models.RestorePointCollectionSourceProperties"] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword source: The properties of the source resource that this restore point collection is
          created from.
         :paramtype source:
          ~azure.mgmt.compute.v2021_03_01.models.RestorePointCollectionSourceProperties
         """
-        super(RestorePointCollectionUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.source = source
         self.provisioning_state = None
         self.restore_point_collection_id = None
         self.restore_points = None
 
 
-class RestorePointSourceMetadata(msrest.serialization.Model):
+class RestorePointSourceMetadata(_serialization.Model):
     """Describes the properties of the Virtual Machine for which the restore point was created. The properties provided are a subset and the snapshot of the overall Virtual Machine properties captured at the time of the restore point creation.
 
     :ivar hardware_profile: Gets the hardware profile.
@@ -6540,26 +6232,26 @@ class RestorePointSourceMetadata(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'hardware_profile': {'key': 'hardwareProfile', 'type': 'HardwareProfile'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'RestorePointSourceVMStorageProfile'},
-        'os_profile': {'key': 'osProfile', 'type': 'OSProfile'},
-        'diagnostics_profile': {'key': 'diagnosticsProfile', 'type': 'DiagnosticsProfile'},
-        'license_type': {'key': 'licenseType', 'type': 'str'},
-        'vm_id': {'key': 'vmId', 'type': 'str'},
-        'security_profile': {'key': 'securityProfile', 'type': 'SecurityProfile'},
-        'location': {'key': 'location', 'type': 'str'},
+        "hardware_profile": {"key": "hardwareProfile", "type": "HardwareProfile"},
+        "storage_profile": {"key": "storageProfile", "type": "RestorePointSourceVMStorageProfile"},
+        "os_profile": {"key": "osProfile", "type": "OSProfile"},
+        "diagnostics_profile": {"key": "diagnosticsProfile", "type": "DiagnosticsProfile"},
+        "license_type": {"key": "licenseType", "type": "str"},
+        "vm_id": {"key": "vmId", "type": "str"},
+        "security_profile": {"key": "securityProfile", "type": "SecurityProfile"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        hardware_profile: Optional["HardwareProfile"] = None,
-        storage_profile: Optional["RestorePointSourceVMStorageProfile"] = None,
-        os_profile: Optional["OSProfile"] = None,
-        diagnostics_profile: Optional["DiagnosticsProfile"] = None,
+        hardware_profile: Optional["_models.HardwareProfile"] = None,
+        storage_profile: Optional["_models.RestorePointSourceVMStorageProfile"] = None,
+        os_profile: Optional["_models.OSProfile"] = None,
+        diagnostics_profile: Optional["_models.DiagnosticsProfile"] = None,
         license_type: Optional[str] = None,
         vm_id: Optional[str] = None,
-        security_profile: Optional["SecurityProfile"] = None,
+        security_profile: Optional["_models.SecurityProfile"] = None,
         location: Optional[str] = None,
         **kwargs
     ):
@@ -6582,7 +6274,7 @@ class RestorePointSourceMetadata(msrest.serialization.Model):
         :keyword location: Location of the VM from which the restore point was created.
         :paramtype location: str
         """
-        super(RestorePointSourceMetadata, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.hardware_profile = hardware_profile
         self.storage_profile = storage_profile
         self.os_profile = os_profile
@@ -6593,14 +6285,14 @@ class RestorePointSourceMetadata(msrest.serialization.Model):
         self.location = location
 
 
-class RestorePointSourceVMDataDisk(msrest.serialization.Model):
+class RestorePointSourceVMDataDisk(_serialization.Model):
     """Describes a data disk.
 
     :ivar lun: Gets the logical unit number.
     :vartype lun: int
     :ivar name: Gets the disk name.
     :vartype name: str
-    :ivar caching: Gets the caching type. Possible values include: "None", "ReadOnly", "ReadWrite".
+    :ivar caching: Gets the caching type. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype caching: str or ~azure.mgmt.compute.v2021_03_01.models.CachingTypes
     :ivar disk_size_gb: Gets the initial disk size in GB for blank data disks, and the new desired
      size for existing OS and Data disks.
@@ -6612,12 +6304,12 @@ class RestorePointSourceVMDataDisk(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'lun': {'key': 'lun', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'str'},
-        'caching': {'key': 'caching', 'type': 'str'},
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'managed_disk': {'key': 'managedDisk', 'type': 'ManagedDiskParameters'},
-        'disk_restore_point': {'key': 'diskRestorePoint', 'type': 'ApiEntityReference'},
+        "lun": {"key": "lun", "type": "int"},
+        "name": {"key": "name", "type": "str"},
+        "caching": {"key": "caching", "type": "str"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "managed_disk": {"key": "managedDisk", "type": "ManagedDiskParameters"},
+        "disk_restore_point": {"key": "diskRestorePoint", "type": "ApiEntityReference"},
     }
 
     def __init__(
@@ -6625,10 +6317,10 @@ class RestorePointSourceVMDataDisk(msrest.serialization.Model):
         *,
         lun: Optional[int] = None,
         name: Optional[str] = None,
-        caching: Optional[Union[str, "CachingTypes"]] = None,
+        caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         disk_size_gb: Optional[int] = None,
-        managed_disk: Optional["ManagedDiskParameters"] = None,
-        disk_restore_point: Optional["ApiEntityReference"] = None,
+        managed_disk: Optional["_models.ManagedDiskParameters"] = None,
+        disk_restore_point: Optional["_models.ApiEntityReference"] = None,
         **kwargs
     ):
         """
@@ -6636,8 +6328,7 @@ class RestorePointSourceVMDataDisk(msrest.serialization.Model):
         :paramtype lun: int
         :keyword name: Gets the disk name.
         :paramtype name: str
-        :keyword caching: Gets the caching type. Possible values include: "None", "ReadOnly",
-         "ReadWrite".
+        :keyword caching: Gets the caching type. Known values are: "None", "ReadOnly", and "ReadWrite".
         :paramtype caching: str or ~azure.mgmt.compute.v2021_03_01.models.CachingTypes
         :keyword disk_size_gb: Gets the initial disk size in GB for blank data disks, and the new
          desired size for existing OS and Data disks.
@@ -6647,7 +6338,7 @@ class RestorePointSourceVMDataDisk(msrest.serialization.Model):
         :keyword disk_restore_point: Gets the disk restore point Id.
         :paramtype disk_restore_point: ~azure.mgmt.compute.v2021_03_01.models.ApiEntityReference
         """
-        super(RestorePointSourceVMDataDisk, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.lun = lun
         self.name = name
         self.caching = caching
@@ -6656,16 +6347,16 @@ class RestorePointSourceVMDataDisk(msrest.serialization.Model):
         self.disk_restore_point = disk_restore_point
 
 
-class RestorePointSourceVMOSDisk(msrest.serialization.Model):
+class RestorePointSourceVMOSDisk(_serialization.Model):
     """Describes an Operating System disk.
 
-    :ivar os_type: Gets the Operating System type. Possible values include: "Windows", "Linux".
+    :ivar os_type: Gets the Operating System type. Known values are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2021_03_01.models.OperatingSystemType
     :ivar encryption_settings: Gets the disk encryption settings.
     :vartype encryption_settings: ~azure.mgmt.compute.v2021_03_01.models.DiskEncryptionSettings
     :ivar name: Gets the disk name.
     :vartype name: str
-    :ivar caching: Gets the caching type. Possible values include: "None", "ReadOnly", "ReadWrite".
+    :ivar caching: Gets the caching type. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype caching: str or ~azure.mgmt.compute.v2021_03_01.models.CachingTypes
     :ivar disk_size_gb: Gets the disk size in GB.
     :vartype disk_size_gb: int
@@ -6676,36 +6367,35 @@ class RestorePointSourceVMOSDisk(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'encryption_settings': {'key': 'encryptionSettings', 'type': 'DiskEncryptionSettings'},
-        'name': {'key': 'name', 'type': 'str'},
-        'caching': {'key': 'caching', 'type': 'str'},
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'managed_disk': {'key': 'managedDisk', 'type': 'ManagedDiskParameters'},
-        'disk_restore_point': {'key': 'diskRestorePoint', 'type': 'ApiEntityReference'},
+        "os_type": {"key": "osType", "type": "str"},
+        "encryption_settings": {"key": "encryptionSettings", "type": "DiskEncryptionSettings"},
+        "name": {"key": "name", "type": "str"},
+        "caching": {"key": "caching", "type": "str"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "managed_disk": {"key": "managedDisk", "type": "ManagedDiskParameters"},
+        "disk_restore_point": {"key": "diskRestorePoint", "type": "ApiEntityReference"},
     }
 
     def __init__(
         self,
         *,
-        os_type: Optional[Union[str, "OperatingSystemType"]] = None,
-        encryption_settings: Optional["DiskEncryptionSettings"] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemType"]] = None,
+        encryption_settings: Optional["_models.DiskEncryptionSettings"] = None,
         name: Optional[str] = None,
-        caching: Optional[Union[str, "CachingTypes"]] = None,
+        caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         disk_size_gb: Optional[int] = None,
-        managed_disk: Optional["ManagedDiskParameters"] = None,
-        disk_restore_point: Optional["ApiEntityReference"] = None,
+        managed_disk: Optional["_models.ManagedDiskParameters"] = None,
+        disk_restore_point: Optional["_models.ApiEntityReference"] = None,
         **kwargs
     ):
         """
-        :keyword os_type: Gets the Operating System type. Possible values include: "Windows", "Linux".
+        :keyword os_type: Gets the Operating System type. Known values are: "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2021_03_01.models.OperatingSystemType
         :keyword encryption_settings: Gets the disk encryption settings.
         :paramtype encryption_settings: ~azure.mgmt.compute.v2021_03_01.models.DiskEncryptionSettings
         :keyword name: Gets the disk name.
         :paramtype name: str
-        :keyword caching: Gets the caching type. Possible values include: "None", "ReadOnly",
-         "ReadWrite".
+        :keyword caching: Gets the caching type. Known values are: "None", "ReadOnly", and "ReadWrite".
         :paramtype caching: str or ~azure.mgmt.compute.v2021_03_01.models.CachingTypes
         :keyword disk_size_gb: Gets the disk size in GB.
         :paramtype disk_size_gb: int
@@ -6714,7 +6404,7 @@ class RestorePointSourceVMOSDisk(msrest.serialization.Model):
         :keyword disk_restore_point: Gets the disk restore point Id.
         :paramtype disk_restore_point: ~azure.mgmt.compute.v2021_03_01.models.ApiEntityReference
         """
-        super(RestorePointSourceVMOSDisk, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.os_type = os_type
         self.encryption_settings = encryption_settings
         self.name = name
@@ -6724,7 +6414,7 @@ class RestorePointSourceVMOSDisk(msrest.serialization.Model):
         self.disk_restore_point = disk_restore_point
 
 
-class RestorePointSourceVMStorageProfile(msrest.serialization.Model):
+class RestorePointSourceVMStorageProfile(_serialization.Model):
     """Describes the storage profile.
 
     :ivar os_disk: Gets the OS disk of the VM captured at the time of the restore point creation.
@@ -6735,15 +6425,15 @@ class RestorePointSourceVMStorageProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'os_disk': {'key': 'osDisk', 'type': 'RestorePointSourceVMOSDisk'},
-        'data_disks': {'key': 'dataDisks', 'type': '[RestorePointSourceVMDataDisk]'},
+        "os_disk": {"key": "osDisk", "type": "RestorePointSourceVMOSDisk"},
+        "data_disks": {"key": "dataDisks", "type": "[RestorePointSourceVMDataDisk]"},
     }
 
     def __init__(
         self,
         *,
-        os_disk: Optional["RestorePointSourceVMOSDisk"] = None,
-        data_disks: Optional[List["RestorePointSourceVMDataDisk"]] = None,
+        os_disk: Optional["_models.RestorePointSourceVMOSDisk"] = None,
+        data_disks: Optional[List["_models.RestorePointSourceVMDataDisk"]] = None,
         **kwargs
     ):
         """
@@ -6755,12 +6445,12 @@ class RestorePointSourceVMStorageProfile(msrest.serialization.Model):
         :paramtype data_disks:
          list[~azure.mgmt.compute.v2021_03_01.models.RestorePointSourceVMDataDisk]
         """
-        super(RestorePointSourceVMStorageProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.os_disk = os_disk
         self.data_disks = data_disks
 
 
-class RetrieveBootDiagnosticsDataResult(msrest.serialization.Model):
+class RetrieveBootDiagnosticsDataResult(_serialization.Model):
     """The SAS URIs of the console screenshot and serial log blobs.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6772,27 +6462,23 @@ class RetrieveBootDiagnosticsDataResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'console_screenshot_blob_uri': {'readonly': True},
-        'serial_console_log_blob_uri': {'readonly': True},
+        "console_screenshot_blob_uri": {"readonly": True},
+        "serial_console_log_blob_uri": {"readonly": True},
     }
 
     _attribute_map = {
-        'console_screenshot_blob_uri': {'key': 'consoleScreenshotBlobUri', 'type': 'str'},
-        'serial_console_log_blob_uri': {'key': 'serialConsoleLogBlobUri', 'type': 'str'},
+        "console_screenshot_blob_uri": {"key": "consoleScreenshotBlobUri", "type": "str"},
+        "serial_console_log_blob_uri": {"key": "serialConsoleLogBlobUri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(RetrieveBootDiagnosticsDataResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.console_screenshot_blob_uri = None
         self.serial_console_log_blob_uri = None
 
 
-class RoleInstance(msrest.serialization.Model):
+class RoleInstance(_serialization.Model):
     """RoleInstance.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6805,7 +6491,7 @@ class RoleInstance(msrest.serialization.Model):
     :vartype type: str
     :ivar location: Resource Location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku:
     :vartype sku: ~azure.mgmt.compute.v2021_03_01.models.InstanceSku
@@ -6814,28 +6500,28 @@ class RoleInstance(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'tags': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
+        "tags": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'InstanceSku'},
-        'properties': {'key': 'properties', 'type': 'RoleInstanceProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "InstanceSku"},
+        "properties": {"key": "properties", "type": "RoleInstanceProperties"},
     }
 
     def __init__(
         self,
         *,
-        sku: Optional["InstanceSku"] = None,
-        properties: Optional["RoleInstanceProperties"] = None,
+        sku: Optional["_models.InstanceSku"] = None,
+        properties: Optional["_models.RoleInstanceProperties"] = None,
         **kwargs
     ):
         """
@@ -6844,7 +6530,7 @@ class RoleInstance(msrest.serialization.Model):
         :keyword properties:
         :paramtype properties: ~azure.mgmt.compute.v2021_03_01.models.RoleInstanceProperties
         """
-        super(RoleInstance, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -6854,7 +6540,7 @@ class RoleInstance(msrest.serialization.Model):
         self.properties = properties
 
 
-class RoleInstanceListResult(msrest.serialization.Model):
+class RoleInstanceListResult(_serialization.Model):
     """RoleInstanceListResult.
 
     All required parameters must be populated in order to send to Azure.
@@ -6866,33 +6552,27 @@ class RoleInstanceListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RoleInstance]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RoleInstance]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["RoleInstance"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.RoleInstance"], next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.RoleInstance]
         :keyword next_link:
         :paramtype next_link: str
         """
-        super(RoleInstanceListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class RoleInstanceNetworkProfile(msrest.serialization.Model):
+class RoleInstanceNetworkProfile(_serialization.Model):
     """Describes the network profile for the role instance.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6903,24 +6583,20 @@ class RoleInstanceNetworkProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'network_interfaces': {'readonly': True},
+        "network_interfaces": {"readonly": True},
     }
 
     _attribute_map = {
-        'network_interfaces': {'key': 'networkInterfaces', 'type': '[SubResource]'},
+        "network_interfaces": {"key": "networkInterfaces", "type": "[SubResource]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(RoleInstanceNetworkProfile, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.network_interfaces = None
 
 
-class RoleInstanceProperties(msrest.serialization.Model):
+class RoleInstanceProperties(_serialization.Model):
     """RoleInstanceProperties.
 
     :ivar network_profile: Describes the network profile for the role instance.
@@ -6930,15 +6606,15 @@ class RoleInstanceProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'network_profile': {'key': 'networkProfile', 'type': 'RoleInstanceNetworkProfile'},
-        'instance_view': {'key': 'instanceView', 'type': 'RoleInstanceView'},
+        "network_profile": {"key": "networkProfile", "type": "RoleInstanceNetworkProfile"},
+        "instance_view": {"key": "instanceView", "type": "RoleInstanceView"},
     }
 
     def __init__(
         self,
         *,
-        network_profile: Optional["RoleInstanceNetworkProfile"] = None,
-        instance_view: Optional["RoleInstanceView"] = None,
+        network_profile: Optional["_models.RoleInstanceNetworkProfile"] = None,
+        instance_view: Optional["_models.RoleInstanceView"] = None,
         **kwargs
     ):
         """
@@ -6947,45 +6623,40 @@ class RoleInstanceProperties(msrest.serialization.Model):
         :keyword instance_view: The instance view of the role instance.
         :paramtype instance_view: ~azure.mgmt.compute.v2021_03_01.models.RoleInstanceView
         """
-        super(RoleInstanceProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.network_profile = network_profile
         self.instance_view = instance_view
 
 
-class RoleInstances(msrest.serialization.Model):
+class RoleInstances(_serialization.Model):
     """Specifies a list of role instances from the cloud service.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar role_instances: Required. List of cloud service role instance names. Value of '*' will
-     signify all role instances of the cloud service.
+    :ivar role_instances: List of cloud service role instance names. Value of '*' will signify all
+     role instances of the cloud service. Required.
     :vartype role_instances: list[str]
     """
 
     _validation = {
-        'role_instances': {'required': True},
+        "role_instances": {"required": True},
     }
 
     _attribute_map = {
-        'role_instances': {'key': 'roleInstances', 'type': '[str]'},
+        "role_instances": {"key": "roleInstances", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        role_instances: List[str],
-        **kwargs
-    ):
+    def __init__(self, *, role_instances: List[str], **kwargs):
         """
-        :keyword role_instances: Required. List of cloud service role instance names. Value of '*' will
-         signify all role instances of the cloud service.
+        :keyword role_instances: List of cloud service role instance names. Value of '*' will signify
+         all role instances of the cloud service. Required.
         :paramtype role_instances: list[str]
         """
-        super(RoleInstances, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.role_instances = role_instances
 
 
-class RoleInstanceView(msrest.serialization.Model):
+class RoleInstanceView(_serialization.Model):
     """The instance view of the role instance.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7003,33 +6674,29 @@ class RoleInstanceView(msrest.serialization.Model):
     """
 
     _validation = {
-        'platform_update_domain': {'readonly': True},
-        'platform_fault_domain': {'readonly': True},
-        'private_id': {'readonly': True},
-        'statuses': {'readonly': True},
+        "platform_update_domain": {"readonly": True},
+        "platform_fault_domain": {"readonly": True},
+        "private_id": {"readonly": True},
+        "statuses": {"readonly": True},
     }
 
     _attribute_map = {
-        'platform_update_domain': {'key': 'platformUpdateDomain', 'type': 'int'},
-        'platform_fault_domain': {'key': 'platformFaultDomain', 'type': 'int'},
-        'private_id': {'key': 'privateId', 'type': 'str'},
-        'statuses': {'key': 'statuses', 'type': '[ResourceInstanceViewStatus]'},
+        "platform_update_domain": {"key": "platformUpdateDomain", "type": "int"},
+        "platform_fault_domain": {"key": "platformFaultDomain", "type": "int"},
+        "private_id": {"key": "privateId", "type": "str"},
+        "statuses": {"key": "statuses", "type": "[ResourceInstanceViewStatus]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(RoleInstanceView, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.platform_update_domain = None
         self.platform_fault_domain = None
         self.private_id = None
         self.statuses = None
 
 
-class RollbackStatusInfo(msrest.serialization.Model):
+class RollbackStatusInfo(_serialization.Model):
     """Information about rollback on failed VM instances after a OS Upgrade operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7044,30 +6711,26 @@ class RollbackStatusInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'successfully_rolledback_instance_count': {'readonly': True},
-        'failed_rolledback_instance_count': {'readonly': True},
-        'rollback_error': {'readonly': True},
+        "successfully_rolledback_instance_count": {"readonly": True},
+        "failed_rolledback_instance_count": {"readonly": True},
+        "rollback_error": {"readonly": True},
     }
 
     _attribute_map = {
-        'successfully_rolledback_instance_count': {'key': 'successfullyRolledbackInstanceCount', 'type': 'int'},
-        'failed_rolledback_instance_count': {'key': 'failedRolledbackInstanceCount', 'type': 'int'},
-        'rollback_error': {'key': 'rollbackError', 'type': 'ApiErrorAutoGenerated'},
+        "successfully_rolledback_instance_count": {"key": "successfullyRolledbackInstanceCount", "type": "int"},
+        "failed_rolledback_instance_count": {"key": "failedRolledbackInstanceCount", "type": "int"},
+        "rollback_error": {"key": "rollbackError", "type": "ApiErrorAutoGenerated"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(RollbackStatusInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.successfully_rolledback_instance_count = None
         self.failed_rolledback_instance_count = None
         self.rollback_error = None
 
 
-class RollingUpgradePolicy(msrest.serialization.Model):
+class RollingUpgradePolicy(_serialization.Model):
     """The configuration parameters used while performing a rolling upgrade.
 
     :ivar max_batch_instance_percent: The maximum percent of total virtual machine instances that
@@ -7100,18 +6763,18 @@ class RollingUpgradePolicy(msrest.serialization.Model):
     """
 
     _validation = {
-        'max_batch_instance_percent': {'maximum': 100, 'minimum': 5},
-        'max_unhealthy_instance_percent': {'maximum': 100, 'minimum': 5},
-        'max_unhealthy_upgraded_instance_percent': {'maximum': 100, 'minimum': 0},
+        "max_batch_instance_percent": {"maximum": 100, "minimum": 5},
+        "max_unhealthy_instance_percent": {"maximum": 100, "minimum": 5},
+        "max_unhealthy_upgraded_instance_percent": {"maximum": 100, "minimum": 0},
     }
 
     _attribute_map = {
-        'max_batch_instance_percent': {'key': 'maxBatchInstancePercent', 'type': 'int'},
-        'max_unhealthy_instance_percent': {'key': 'maxUnhealthyInstancePercent', 'type': 'int'},
-        'max_unhealthy_upgraded_instance_percent': {'key': 'maxUnhealthyUpgradedInstancePercent', 'type': 'int'},
-        'pause_time_between_batches': {'key': 'pauseTimeBetweenBatches', 'type': 'str'},
-        'enable_cross_zone_upgrade': {'key': 'enableCrossZoneUpgrade', 'type': 'bool'},
-        'prioritize_unhealthy_instances': {'key': 'prioritizeUnhealthyInstances', 'type': 'bool'},
+        "max_batch_instance_percent": {"key": "maxBatchInstancePercent", "type": "int"},
+        "max_unhealthy_instance_percent": {"key": "maxUnhealthyInstancePercent", "type": "int"},
+        "max_unhealthy_upgraded_instance_percent": {"key": "maxUnhealthyUpgradedInstancePercent", "type": "int"},
+        "pause_time_between_batches": {"key": "pauseTimeBetweenBatches", "type": "str"},
+        "enable_cross_zone_upgrade": {"key": "enableCrossZoneUpgrade", "type": "bool"},
+        "prioritize_unhealthy_instances": {"key": "prioritizeUnhealthyInstances", "type": "bool"},
     }
 
     def __init__(
@@ -7154,7 +6817,7 @@ class RollingUpgradePolicy(msrest.serialization.Model):
          any healthy instances.
         :paramtype prioritize_unhealthy_instances: bool
         """
-        super(RollingUpgradePolicy, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.max_batch_instance_percent = max_batch_instance_percent
         self.max_unhealthy_instance_percent = max_unhealthy_instance_percent
         self.max_unhealthy_upgraded_instance_percent = max_unhealthy_upgraded_instance_percent
@@ -7163,7 +6826,7 @@ class RollingUpgradePolicy(msrest.serialization.Model):
         self.prioritize_unhealthy_instances = prioritize_unhealthy_instances
 
 
-class RollingUpgradeProgressInfo(msrest.serialization.Model):
+class RollingUpgradeProgressInfo(_serialization.Model):
     """Information about the number of virtual machine instances in each upgrade state.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7180,70 +6843,62 @@ class RollingUpgradeProgressInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'successful_instance_count': {'readonly': True},
-        'failed_instance_count': {'readonly': True},
-        'in_progress_instance_count': {'readonly': True},
-        'pending_instance_count': {'readonly': True},
+        "successful_instance_count": {"readonly": True},
+        "failed_instance_count": {"readonly": True},
+        "in_progress_instance_count": {"readonly": True},
+        "pending_instance_count": {"readonly": True},
     }
 
     _attribute_map = {
-        'successful_instance_count': {'key': 'successfulInstanceCount', 'type': 'int'},
-        'failed_instance_count': {'key': 'failedInstanceCount', 'type': 'int'},
-        'in_progress_instance_count': {'key': 'inProgressInstanceCount', 'type': 'int'},
-        'pending_instance_count': {'key': 'pendingInstanceCount', 'type': 'int'},
+        "successful_instance_count": {"key": "successfulInstanceCount", "type": "int"},
+        "failed_instance_count": {"key": "failedInstanceCount", "type": "int"},
+        "in_progress_instance_count": {"key": "inProgressInstanceCount", "type": "int"},
+        "pending_instance_count": {"key": "pendingInstanceCount", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(RollingUpgradeProgressInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.successful_instance_count = None
         self.failed_instance_count = None
         self.in_progress_instance_count = None
         self.pending_instance_count = None
 
 
-class RollingUpgradeRunningStatus(msrest.serialization.Model):
+class RollingUpgradeRunningStatus(_serialization.Model):
     """Information about the current running state of the overall upgrade.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar code: Code indicating the current status of the upgrade. Possible values include:
-     "RollingForward", "Cancelled", "Completed", "Faulted".
+    :ivar code: Code indicating the current status of the upgrade. Known values are:
+     "RollingForward", "Cancelled", "Completed", and "Faulted".
     :vartype code: str or ~azure.mgmt.compute.v2021_03_01.models.RollingUpgradeStatusCode
     :ivar start_time: Start time of the upgrade.
     :vartype start_time: ~datetime.datetime
-    :ivar last_action: The last action performed on the rolling upgrade. Possible values include:
-     "Start", "Cancel".
+    :ivar last_action: The last action performed on the rolling upgrade. Known values are: "Start"
+     and "Cancel".
     :vartype last_action: str or ~azure.mgmt.compute.v2021_03_01.models.RollingUpgradeActionType
     :ivar last_action_time: Last action time of the upgrade.
     :vartype last_action_time: ~datetime.datetime
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'start_time': {'readonly': True},
-        'last_action': {'readonly': True},
-        'last_action_time': {'readonly': True},
+        "code": {"readonly": True},
+        "start_time": {"readonly": True},
+        "last_action": {"readonly": True},
+        "last_action_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'last_action': {'key': 'lastAction', 'type': 'str'},
-        'last_action_time': {'key': 'lastActionTime', 'type': 'iso-8601'},
+        "code": {"key": "code", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "last_action": {"key": "lastAction", "type": "str"},
+        "last_action_time": {"key": "lastActionTime", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(RollingUpgradeRunningStatus, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.start_time = None
         self.last_action = None
@@ -7263,9 +6918,9 @@ class RollingUpgradeStatusInfo(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar policy: The rolling upgrade policies applied for this upgrade.
     :vartype policy: ~azure.mgmt.compute.v2021_03_01.models.RollingUpgradePolicy
@@ -7279,106 +6934,98 @@ class RollingUpgradeStatusInfo(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'policy': {'readonly': True},
-        'running_status': {'readonly': True},
-        'progress': {'readonly': True},
-        'error': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "policy": {"readonly": True},
+        "running_status": {"readonly": True},
+        "progress": {"readonly": True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'policy': {'key': 'properties.policy', 'type': 'RollingUpgradePolicy'},
-        'running_status': {'key': 'properties.runningStatus', 'type': 'RollingUpgradeRunningStatus'},
-        'progress': {'key': 'properties.progress', 'type': 'RollingUpgradeProgressInfo'},
-        'error': {'key': 'properties.error', 'type': 'ApiErrorAutoGenerated'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "policy": {"key": "properties.policy", "type": "RollingUpgradePolicy"},
+        "running_status": {"key": "properties.runningStatus", "type": "RollingUpgradeRunningStatus"},
+        "progress": {"key": "properties.progress", "type": "RollingUpgradeProgressInfo"},
+        "error": {"key": "properties.error", "type": "ApiErrorAutoGenerated"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(RollingUpgradeStatusInfo, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.policy = None
         self.running_status = None
         self.progress = None
         self.error = None
 
 
-class RunCommandDocumentBase(msrest.serialization.Model):
+class RunCommandDocumentBase(_serialization.Model):
     """Describes the properties of a Run Command metadata.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar schema: Required. The VM run command schema.
+    :ivar schema: The VM run command schema. Required.
     :vartype schema: str
-    :ivar id: Required. The VM run command id.
+    :ivar id: The VM run command id. Required.
     :vartype id: str
-    :ivar os_type: Required. The Operating System type. Possible values include: "Windows",
-     "Linux".
+    :ivar os_type: The Operating System type. Required. Known values are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2021_03_01.models.OperatingSystemTypes
-    :ivar label: Required. The VM run command label.
+    :ivar label: The VM run command label. Required.
     :vartype label: str
-    :ivar description: Required. The VM run command description.
+    :ivar description: The VM run command description. Required.
     :vartype description: str
     """
 
     _validation = {
-        'schema': {'required': True},
-        'id': {'required': True},
-        'os_type': {'required': True},
-        'label': {'required': True},
-        'description': {'required': True},
+        "schema": {"required": True},
+        "id": {"required": True},
+        "os_type": {"required": True},
+        "label": {"required": True},
+        "description": {"required": True},
     }
 
     _attribute_map = {
-        'schema': {'key': '$schema', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "schema": {"key": "$schema", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "os_type": {"key": "osType", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         schema: str,
-        id: str,
-        os_type: Union[str, "OperatingSystemTypes"],
+        id: str,  # pylint: disable=redefined-builtin
+        os_type: Union[str, "_models.OperatingSystemTypes"],
         label: str,
         description: str,
         **kwargs
     ):
         """
-        :keyword schema: Required. The VM run command schema.
+        :keyword schema: The VM run command schema. Required.
         :paramtype schema: str
-        :keyword id: Required. The VM run command id.
+        :keyword id: The VM run command id. Required.
         :paramtype id: str
-        :keyword os_type: Required. The Operating System type. Possible values include: "Windows",
-         "Linux".
+        :keyword os_type: The Operating System type. Required. Known values are: "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2021_03_01.models.OperatingSystemTypes
-        :keyword label: Required. The VM run command label.
+        :keyword label: The VM run command label. Required.
         :paramtype label: str
-        :keyword description: Required. The VM run command description.
+        :keyword description: The VM run command description. Required.
         :paramtype description: str
         """
-        super(RunCommandDocumentBase, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.schema = schema
         self.id = id
         self.os_type = os_type
@@ -7391,83 +7038,81 @@ class RunCommandDocument(RunCommandDocumentBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar schema: Required. The VM run command schema.
+    :ivar schema: The VM run command schema. Required.
     :vartype schema: str
-    :ivar id: Required. The VM run command id.
+    :ivar id: The VM run command id. Required.
     :vartype id: str
-    :ivar os_type: Required. The Operating System type. Possible values include: "Windows",
-     "Linux".
+    :ivar os_type: The Operating System type. Required. Known values are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2021_03_01.models.OperatingSystemTypes
-    :ivar label: Required. The VM run command label.
+    :ivar label: The VM run command label. Required.
     :vartype label: str
-    :ivar description: Required. The VM run command description.
+    :ivar description: The VM run command description. Required.
     :vartype description: str
-    :ivar script: Required. The script to be executed.
+    :ivar script: The script to be executed. Required.
     :vartype script: list[str]
     :ivar parameters: The parameters used by the script.
     :vartype parameters: list[~azure.mgmt.compute.v2021_03_01.models.RunCommandParameterDefinition]
     """
 
     _validation = {
-        'schema': {'required': True},
-        'id': {'required': True},
-        'os_type': {'required': True},
-        'label': {'required': True},
-        'description': {'required': True},
-        'script': {'required': True},
+        "schema": {"required": True},
+        "id": {"required": True},
+        "os_type": {"required": True},
+        "label": {"required": True},
+        "description": {"required": True},
+        "script": {"required": True},
     }
 
     _attribute_map = {
-        'schema': {'key': '$schema', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'script': {'key': 'script', 'type': '[str]'},
-        'parameters': {'key': 'parameters', 'type': '[RunCommandParameterDefinition]'},
+        "schema": {"key": "$schema", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "os_type": {"key": "osType", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "script": {"key": "script", "type": "[str]"},
+        "parameters": {"key": "parameters", "type": "[RunCommandParameterDefinition]"},
     }
 
     def __init__(
         self,
         *,
         schema: str,
-        id: str,
-        os_type: Union[str, "OperatingSystemTypes"],
+        id: str,  # pylint: disable=redefined-builtin
+        os_type: Union[str, "_models.OperatingSystemTypes"],
         label: str,
         description: str,
         script: List[str],
-        parameters: Optional[List["RunCommandParameterDefinition"]] = None,
+        parameters: Optional[List["_models.RunCommandParameterDefinition"]] = None,
         **kwargs
     ):
         """
-        :keyword schema: Required. The VM run command schema.
+        :keyword schema: The VM run command schema. Required.
         :paramtype schema: str
-        :keyword id: Required. The VM run command id.
+        :keyword id: The VM run command id. Required.
         :paramtype id: str
-        :keyword os_type: Required. The Operating System type. Possible values include: "Windows",
-         "Linux".
+        :keyword os_type: The Operating System type. Required. Known values are: "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2021_03_01.models.OperatingSystemTypes
-        :keyword label: Required. The VM run command label.
+        :keyword label: The VM run command label. Required.
         :paramtype label: str
-        :keyword description: Required. The VM run command description.
+        :keyword description: The VM run command description. Required.
         :paramtype description: str
-        :keyword script: Required. The script to be executed.
+        :keyword script: The script to be executed. Required.
         :paramtype script: list[str]
         :keyword parameters: The parameters used by the script.
         :paramtype parameters:
          list[~azure.mgmt.compute.v2021_03_01.models.RunCommandParameterDefinition]
         """
-        super(RunCommandDocument, self).__init__(schema=schema, id=id, os_type=os_type, label=label, description=description, **kwargs)
+        super().__init__(schema=schema, id=id, os_type=os_type, label=label, description=description, **kwargs)
         self.script = script
         self.parameters = parameters
 
 
-class RunCommandInput(msrest.serialization.Model):
+class RunCommandInput(_serialization.Model):
     """Capture Virtual Machine parameters.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar command_id: Required. The run command id.
+    :ivar command_id: The run command id. Required.
     :vartype command_id: str
     :ivar script: Optional. The script to be executed.  When this value is given, the given script
      will override the default script of the command.
@@ -7477,13 +7122,13 @@ class RunCommandInput(msrest.serialization.Model):
     """
 
     _validation = {
-        'command_id': {'required': True},
+        "command_id": {"required": True},
     }
 
     _attribute_map = {
-        'command_id': {'key': 'commandId', 'type': 'str'},
-        'script': {'key': 'script', 'type': '[str]'},
-        'parameters': {'key': 'parameters', 'type': '[RunCommandInputParameter]'},
+        "command_id": {"key": "commandId", "type": "str"},
+        "script": {"key": "script", "type": "[str]"},
+        "parameters": {"key": "parameters", "type": "[RunCommandInputParameter]"},
     }
 
     def __init__(
@@ -7491,11 +7136,11 @@ class RunCommandInput(msrest.serialization.Model):
         *,
         command_id: str,
         script: Optional[List[str]] = None,
-        parameters: Optional[List["RunCommandInputParameter"]] = None,
+        parameters: Optional[List["_models.RunCommandInputParameter"]] = None,
         **kwargs
     ):
         """
-        :keyword command_id: Required. The run command id.
+        :keyword command_id: The run command id. Required.
         :paramtype command_id: str
         :keyword script: Optional. The script to be executed.  When this value is given, the given
          script will override the default script of the command.
@@ -7503,57 +7148,51 @@ class RunCommandInput(msrest.serialization.Model):
         :keyword parameters: The run command parameters.
         :paramtype parameters: list[~azure.mgmt.compute.v2021_03_01.models.RunCommandInputParameter]
         """
-        super(RunCommandInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.command_id = command_id
         self.script = script
         self.parameters = parameters
 
 
-class RunCommandInputParameter(msrest.serialization.Model):
+class RunCommandInputParameter(_serialization.Model):
     """Describes the properties of a run command parameter.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The run command parameter name.
+    :ivar name: The run command parameter name. Required.
     :vartype name: str
-    :ivar value: Required. The run command parameter value.
+    :ivar value: The run command parameter value. Required.
     :vartype value: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'value': {'required': True},
+        "name": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        value: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, value: str, **kwargs):
         """
-        :keyword name: Required. The run command parameter name.
+        :keyword name: The run command parameter name. Required.
         :paramtype name: str
-        :keyword value: Required. The run command parameter value.
+        :keyword value: The run command parameter value. Required.
         :paramtype value: str
         """
-        super(RunCommandInputParameter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
 
-class RunCommandListResult(msrest.serialization.Model):
+class RunCommandListResult(_serialization.Model):
     """The List Virtual Machine operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. The list of virtual machine run commands.
+    :ivar value: The list of virtual machine run commands. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.RunCommandDocumentBase]
     :ivar next_link: The uri to fetch the next page of run commands. Call ListNext() with this to
      fetch the next page of run commands.
@@ -7561,41 +7200,35 @@ class RunCommandListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RunCommandDocumentBase]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RunCommandDocumentBase]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["RunCommandDocumentBase"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.RunCommandDocumentBase"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. The list of virtual machine run commands.
+        :keyword value: The list of virtual machine run commands. Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.RunCommandDocumentBase]
         :keyword next_link: The uri to fetch the next page of run commands. Call ListNext() with this
          to fetch the next page of run commands.
         :paramtype next_link: str
         """
-        super(RunCommandListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class RunCommandParameterDefinition(msrest.serialization.Model):
+class RunCommandParameterDefinition(_serialization.Model):
     """Describes the properties of a run command parameter.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The run command parameter name.
+    :ivar name: The run command parameter name. Required.
     :vartype name: str
-    :ivar type: Required. The run command parameter type.
+    :ivar type: The run command parameter type. Required.
     :vartype type: str
     :ivar default_value: The run command parameter default value.
     :vartype default_value: str
@@ -7604,44 +7237,36 @@ class RunCommandParameterDefinition(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'type': {'required': True},
+        "name": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'default_value': {'key': 'defaultValue', 'type': 'str'},
-        'required': {'key': 'required', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "default_value": {"key": "defaultValue", "type": "str"},
+        "required": {"key": "required", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        type: str,
-        default_value: Optional[str] = None,
-        required: Optional[bool] = False,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, type: str, default_value: Optional[str] = None, required: bool = False, **kwargs):
         """
-        :keyword name: Required. The run command parameter name.
+        :keyword name: The run command parameter name. Required.
         :paramtype name: str
-        :keyword type: Required. The run command parameter type.
+        :keyword type: The run command parameter type. Required.
         :paramtype type: str
         :keyword default_value: The run command parameter default value.
         :paramtype default_value: str
         :keyword required: The run command parameter required.
         :paramtype required: bool
         """
-        super(RunCommandParameterDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
         self.default_value = default_value
         self.required = required
 
 
-class RunCommandResult(msrest.serialization.Model):
+class RunCommandResult(_serialization.Model):
     """RunCommandResult.
 
     :ivar value: Run command operation response.
@@ -7649,24 +7274,19 @@ class RunCommandResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[InstanceViewStatus]'},
+        "value": {"key": "value", "type": "[InstanceViewStatus]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["InstanceViewStatus"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.InstanceViewStatus"]] = None, **kwargs):
         """
         :keyword value: Run command operation response.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.InstanceViewStatus]
         """
-        super(RunCommandResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class ScaleInPolicy(msrest.serialization.Model):
+class ScaleInPolicy(_serialization.Model):
     """Describes a scale-in policy for a virtual machine scale set.
 
     :ivar rules: The rules to be followed when scaling-in a virtual machine scale set.
@@ -7688,14 +7308,11 @@ class ScaleInPolicy(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'rules': {'key': 'rules', 'type': '[str]'},
+        "rules": {"key": "rules", "type": "[str]"},
     }
 
     def __init__(
-        self,
-        *,
-        rules: Optional[List[Union[str, "VirtualMachineScaleSetScaleInRules"]]] = None,
-        **kwargs
+        self, *, rules: Optional[List[Union[str, "_models.VirtualMachineScaleSetScaleInRules"]]] = None, **kwargs
     ):
         """
         :keyword rules: The rules to be followed when scaling-in a virtual machine scale set.
@@ -7715,11 +7332,11 @@ class ScaleInPolicy(msrest.serialization.Model):
         :paramtype rules: list[str or
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetScaleInRules]
         """
-        super(ScaleInPolicy, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.rules = rules
 
 
-class ScheduledEventsProfile(msrest.serialization.Model):
+class ScheduledEventsProfile(_serialization.Model):
     """ScheduledEventsProfile.
 
     :ivar terminate_notification_profile: Specifies Terminate Scheduled Event related
@@ -7729,14 +7346,14 @@ class ScheduledEventsProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'terminate_notification_profile': {'key': 'terminateNotificationProfile', 'type': 'TerminateNotificationProfile'},
+        "terminate_notification_profile": {
+            "key": "terminateNotificationProfile",
+            "type": "TerminateNotificationProfile",
+        },
     }
 
     def __init__(
-        self,
-        *,
-        terminate_notification_profile: Optional["TerminateNotificationProfile"] = None,
-        **kwargs
+        self, *, terminate_notification_profile: Optional["_models.TerminateNotificationProfile"] = None, **kwargs
     ):
         """
         :keyword terminate_notification_profile: Specifies Terminate Scheduled Event related
@@ -7744,11 +7361,11 @@ class ScheduledEventsProfile(msrest.serialization.Model):
         :paramtype terminate_notification_profile:
          ~azure.mgmt.compute.v2021_03_01.models.TerminateNotificationProfile
         """
-        super(ScheduledEventsProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.terminate_notification_profile = terminate_notification_profile
 
 
-class SecurityProfile(msrest.serialization.Model):
+class SecurityProfile(_serialization.Model):
     """Specifies the Security profile settings for the virtual machine or virtual machine scale set.
 
     :ivar uefi_settings: Specifies the security settings like secure boot and vTPM used while
@@ -7762,23 +7379,22 @@ class SecurityProfile(msrest.serialization.Model):
     :vartype encryption_at_host: bool
     :ivar security_type: Specifies the SecurityType of the virtual machine. It is set as
      TrustedLaunch to enable UefiSettings. :code:`<br>`:code:`<br>` Default: UefiSettings will not
-     be enabled unless this property is set as TrustedLaunch. Possible values include:
-     "TrustedLaunch".
+     be enabled unless this property is set as TrustedLaunch. "TrustedLaunch"
     :vartype security_type: str or ~azure.mgmt.compute.v2021_03_01.models.SecurityTypes
     """
 
     _attribute_map = {
-        'uefi_settings': {'key': 'uefiSettings', 'type': 'UefiSettings'},
-        'encryption_at_host': {'key': 'encryptionAtHost', 'type': 'bool'},
-        'security_type': {'key': 'securityType', 'type': 'str'},
+        "uefi_settings": {"key": "uefiSettings", "type": "UefiSettings"},
+        "encryption_at_host": {"key": "encryptionAtHost", "type": "bool"},
+        "security_type": {"key": "securityType", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        uefi_settings: Optional["UefiSettings"] = None,
+        uefi_settings: Optional["_models.UefiSettings"] = None,
         encryption_at_host: Optional[bool] = None,
-        security_type: Optional[Union[str, "SecurityTypes"]] = None,
+        security_type: Optional[Union[str, "_models.SecurityTypes"]] = None,
         **kwargs
     ):
         """
@@ -7793,17 +7409,16 @@ class SecurityProfile(msrest.serialization.Model):
         :paramtype encryption_at_host: bool
         :keyword security_type: Specifies the SecurityType of the virtual machine. It is set as
          TrustedLaunch to enable UefiSettings. :code:`<br>`:code:`<br>` Default: UefiSettings will not
-         be enabled unless this property is set as TrustedLaunch. Possible values include:
-         "TrustedLaunch".
+         be enabled unless this property is set as TrustedLaunch. "TrustedLaunch"
         :paramtype security_type: str or ~azure.mgmt.compute.v2021_03_01.models.SecurityTypes
         """
-        super(SecurityProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.uefi_settings = uefi_settings
         self.encryption_at_host = encryption_at_host
         self.security_type = security_type
 
 
-class Sku(msrest.serialization.Model):
+class Sku(_serialization.Model):
     """Describes a virtual machine scale set sku. NOTE: If the new VM SKU is not supported on the hardware the scale set is currently on, you need to deallocate the VMs in the scale set before you modify the SKU name.
 
     :ivar name: The sku name.
@@ -7813,22 +7428,17 @@ class Sku(msrest.serialization.Model):
      **Basic**.
     :vartype tier: str
     :ivar capacity: Specifies the number of virtual machines in the scale set.
-    :vartype capacity: long
+    :vartype capacity: int
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'long'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
     def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        tier: Optional[str] = None,
-        capacity: Optional[int] = None,
-        **kwargs
+        self, *, name: Optional[str] = None, tier: Optional[str] = None, capacity: Optional[int] = None, **kwargs
     ):
         """
         :keyword name: The sku name.
@@ -7838,15 +7448,15 @@ class Sku(msrest.serialization.Model):
          **Basic**.
         :paramtype tier: str
         :keyword capacity: Specifies the number of virtual machines in the scale set.
-        :paramtype capacity: long
+        :paramtype capacity: int
         """
-        super(Sku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.tier = tier
         self.capacity = capacity
 
 
-class SshConfiguration(msrest.serialization.Model):
+class SshConfiguration(_serialization.Model):
     """SSH configuration for Linux based VMs running on Azure.
 
     :ivar public_keys: The list of SSH public keys used to authenticate with linux based VMs.
@@ -7854,24 +7464,19 @@ class SshConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'public_keys': {'key': 'publicKeys', 'type': '[SshPublicKey]'},
+        "public_keys": {"key": "publicKeys", "type": "[SshPublicKey]"},
     }
 
-    def __init__(
-        self,
-        *,
-        public_keys: Optional[List["SshPublicKey"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, public_keys: Optional[List["_models.SshPublicKey"]] = None, **kwargs):
         """
         :keyword public_keys: The list of SSH public keys used to authenticate with linux based VMs.
         :paramtype public_keys: list[~azure.mgmt.compute.v2021_03_01.models.SshPublicKey]
         """
-        super(SshConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.public_keys = public_keys
 
 
-class SshPublicKey(msrest.serialization.Model):
+class SshPublicKey(_serialization.Model):
     """Contains information about SSH certificate public key and the path on the Linux VM where the public key is placed.
 
     :ivar path: Specifies the full path on the created VM where ssh public key is stored. If the
@@ -7886,17 +7491,11 @@ class SshPublicKey(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'path': {'key': 'path', 'type': 'str'},
-        'key_data': {'key': 'keyData', 'type': 'str'},
+        "path": {"key": "path", "type": "str"},
+        "key_data": {"key": "keyData", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        path: Optional[str] = None,
-        key_data: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, path: Optional[str] = None, key_data: Optional[str] = None, **kwargs):
         """
         :keyword path: Specifies the full path on the created VM where ssh public key is stored. If the
          file already exists, the specified key is appended to the file. Example:
@@ -7908,61 +7507,56 @@ class SshPublicKey(msrest.serialization.Model):
          Azure]https://docs.microsoft.com/azure/virtual-machines/linux/create-ssh-keys-detailed).
         :paramtype key_data: str
         """
-        super(SshPublicKey, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.path = path
         self.key_data = key_data
 
 
-class SshPublicKeyGenerateKeyPairResult(msrest.serialization.Model):
+class SshPublicKeyGenerateKeyPairResult(_serialization.Model):
     """Response from generation of an SSH key pair.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar private_key: Required. Private key portion of the key pair used to authenticate to a
-     virtual machine through ssh. The private key is returned in RFC3447 format and should be
-     treated as a secret.
+    :ivar private_key: Private key portion of the key pair used to authenticate to a virtual
+     machine through ssh. The private key is returned in RFC3447 format and should be treated as a
+     secret. Required.
     :vartype private_key: str
-    :ivar public_key: Required. Public key portion of the key pair used to authenticate to a
-     virtual machine through ssh. The public key is in ssh-rsa format.
+    :ivar public_key: Public key portion of the key pair used to authenticate to a virtual machine
+     through ssh. The public key is in ssh-rsa format. Required.
     :vartype public_key: str
-    :ivar id: Required. The ARM resource id in the form of
+    :ivar id: The ARM resource id in the form of
      /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/sshPublicKeys/{SshPublicKeyName}.
+     Required.
     :vartype id: str
     """
 
     _validation = {
-        'private_key': {'required': True},
-        'public_key': {'required': True},
-        'id': {'required': True},
+        "private_key": {"required": True},
+        "public_key": {"required": True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
-        'private_key': {'key': 'privateKey', 'type': 'str'},
-        'public_key': {'key': 'publicKey', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
+        "private_key": {"key": "privateKey", "type": "str"},
+        "public_key": {"key": "publicKey", "type": "str"},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        private_key: str,
-        public_key: str,
-        id: str,
-        **kwargs
-    ):
+    def __init__(self, *, private_key: str, public_key: str, id: str, **kwargs):  # pylint: disable=redefined-builtin
         """
-        :keyword private_key: Required. Private key portion of the key pair used to authenticate to a
-         virtual machine through ssh. The private key is returned in RFC3447 format and should be
-         treated as a secret.
+        :keyword private_key: Private key portion of the key pair used to authenticate to a virtual
+         machine through ssh. The private key is returned in RFC3447 format and should be treated as a
+         secret. Required.
         :paramtype private_key: str
-        :keyword public_key: Required. Public key portion of the key pair used to authenticate to a
-         virtual machine through ssh. The public key is in ssh-rsa format.
+        :keyword public_key: Public key portion of the key pair used to authenticate to a virtual
+         machine through ssh. The public key is in ssh-rsa format. Required.
         :paramtype public_key: str
-        :keyword id: Required. The ARM resource id in the form of
+        :keyword id: The ARM resource id in the form of
          /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/sshPublicKeys/{SshPublicKeyName}.
+         Required.
         :paramtype id: str
         """
-        super(SshPublicKeyGenerateKeyPairResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.private_key = private_key
         self.public_key = public_key
         self.id = id
@@ -7981,9 +7575,9 @@ class SshPublicKeyResource(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar public_key: SSH public key used to authenticate to a virtual machine through ssh. If this
      property is not initially provided when the resource is created, the publicKey property will be
@@ -7993,33 +7587,28 @@ class SshPublicKeyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'public_key': {'key': 'properties.publicKey', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "public_key": {"key": "properties.publicKey", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        public_key: Optional[str] = None,
-        **kwargs
+        self, *, location: str, tags: Optional[Dict[str, str]] = None, public_key: Optional[str] = None, **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword public_key: SSH public key used to authenticate to a virtual machine through ssh. If
          this property is not initially provided when the resource is created, the publicKey property
@@ -8027,16 +7616,16 @@ class SshPublicKeyResource(Resource):
          creation, the provided public key needs to be at least 2048-bit and in ssh-rsa format.
         :paramtype public_key: str
         """
-        super(SshPublicKeyResource, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.public_key = public_key
 
 
-class SshPublicKeysGroupListResult(msrest.serialization.Model):
+class SshPublicKeysGroupListResult(_serialization.Model):
     """The list SSH public keys operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. The list of SSH public keys.
+    :ivar value: The list of SSH public keys. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.SshPublicKeyResource]
     :ivar next_link: The URI to fetch the next page of SSH public keys. Call ListNext() with this
      URI to fetch the next page of SSH public keys.
@@ -8044,29 +7633,23 @@ class SshPublicKeysGroupListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SshPublicKeyResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SshPublicKeyResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["SshPublicKeyResource"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.SshPublicKeyResource"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. The list of SSH public keys.
+        :keyword value: The list of SSH public keys. Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.SshPublicKeyResource]
         :keyword next_link: The URI to fetch the next page of SSH public keys. Call ListNext() with
          this URI to fetch the next page of SSH public keys.
         :paramtype next_link: str
         """
-        super(SshPublicKeysGroupListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -8074,7 +7657,7 @@ class SshPublicKeysGroupListResult(msrest.serialization.Model):
 class SshPublicKeyUpdateResource(UpdateResource):
     """Specifies information about the SSH public key.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar public_key: SSH public key used to authenticate to a virtual machine through ssh. If this
      property is not initially provided when the resource is created, the publicKey property will be
@@ -8084,19 +7667,13 @@ class SshPublicKeyUpdateResource(UpdateResource):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'public_key': {'key': 'properties.publicKey', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "public_key": {"key": "properties.publicKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        public_key: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, public_key: Optional[str] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword public_key: SSH public key used to authenticate to a virtual machine through ssh. If
          this property is not initially provided when the resource is created, the publicKey property
@@ -8104,11 +7681,11 @@ class SshPublicKeyUpdateResource(UpdateResource):
          creation, the provided public key needs to be at least 2048-bit and in ssh-rsa format.
         :paramtype public_key: str
         """
-        super(SshPublicKeyUpdateResource, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.public_key = public_key
 
 
-class StatusCodeCount(msrest.serialization.Model):
+class StatusCodeCount(_serialization.Model):
     """StatusCodeCount.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8120,27 +7697,23 @@ class StatusCodeCount(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'count': {'readonly': True},
+        "code": {"readonly": True},
+        "count": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'int'},
+        "code": {"key": "code", "type": "str"},
+        "count": {"key": "count", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(StatusCodeCount, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.count = None
 
 
-class StorageProfile(msrest.serialization.Model):
+class StorageProfile(_serialization.Model):
     """Specifies the storage settings for the virtual machine disks.
 
     :ivar image_reference: Specifies information about the image to use. You can specify
@@ -8161,17 +7734,17 @@ class StorageProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
-        'os_disk': {'key': 'osDisk', 'type': 'OSDisk'},
-        'data_disks': {'key': 'dataDisks', 'type': '[DataDisk]'},
+        "image_reference": {"key": "imageReference", "type": "ImageReference"},
+        "os_disk": {"key": "osDisk", "type": "OSDisk"},
+        "data_disks": {"key": "dataDisks", "type": "[DataDisk]"},
     }
 
     def __init__(
         self,
         *,
-        image_reference: Optional["ImageReference"] = None,
-        os_disk: Optional["OSDisk"] = None,
-        data_disks: Optional[List["DataDisk"]] = None,
+        image_reference: Optional["_models.ImageReference"] = None,
+        os_disk: Optional["_models.OSDisk"] = None,
+        data_disks: Optional[List["_models.DataDisk"]] = None,
         **kwargs
     ):
         """
@@ -8191,13 +7764,13 @@ class StorageProfile(msrest.serialization.Model):
          <https://docs.microsoft.com/azure/virtual-machines/managed-disks-overview>`_.
         :paramtype data_disks: list[~azure.mgmt.compute.v2021_03_01.models.DataDisk]
         """
-        super(StorageProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.image_reference = image_reference
         self.os_disk = os_disk
         self.data_disks = data_disks
 
 
-class SubResourceReadOnly(msrest.serialization.Model):
+class SubResourceReadOnly(_serialization.Model):
     """SubResourceReadOnly.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8207,20 +7780,16 @@ class SubResourceReadOnly(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SubResourceReadOnly, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
 
 
@@ -8235,15 +7804,15 @@ class SubResourceWithColocationStatus(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'colocation_status': {'key': 'colocationStatus', 'type': 'InstanceViewStatus'},
+        "id": {"key": "id", "type": "str"},
+        "colocation_status": {"key": "colocationStatus", "type": "InstanceViewStatus"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
-        colocation_status: Optional["InstanceViewStatus"] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        colocation_status: Optional["_models.InstanceViewStatus"] = None,
         **kwargs
     ):
         """
@@ -8253,11 +7822,11 @@ class SubResourceWithColocationStatus(SubResource):
          Placement Group.
         :paramtype colocation_status: ~azure.mgmt.compute.v2021_03_01.models.InstanceViewStatus
         """
-        super(SubResourceWithColocationStatus, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.colocation_status = colocation_status
 
 
-class TerminateNotificationProfile(msrest.serialization.Model):
+class TerminateNotificationProfile(_serialization.Model):
     """TerminateNotificationProfile.
 
     :ivar not_before_timeout: Configurable length of time a Virtual Machine being deleted will have
@@ -8270,17 +7839,11 @@ class TerminateNotificationProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'not_before_timeout': {'key': 'notBeforeTimeout', 'type': 'str'},
-        'enable': {'key': 'enable', 'type': 'bool'},
+        "not_before_timeout": {"key": "notBeforeTimeout", "type": "str"},
+        "enable": {"key": "enable", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        not_before_timeout: Optional[str] = None,
-        enable: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, not_before_timeout: Optional[str] = None, enable: Optional[bool] = None, **kwargs):
         """
         :keyword not_before_timeout: Configurable length of time a Virtual Machine being deleted will
          have to potentially approve the Terminate Scheduled Event before the event is auto approved
@@ -8290,7 +7853,7 @@ class TerminateNotificationProfile(msrest.serialization.Model):
         :keyword enable: Specifies whether the Terminate Scheduled event is enabled or disabled.
         :paramtype enable: bool
         """
-        super(TerminateNotificationProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.not_before_timeout = not_before_timeout
         self.enable = enable
 
@@ -8300,12 +7863,12 @@ class ThrottledRequestsInput(LogAnalyticsInputBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar blob_container_sas_uri: Required. SAS Uri of the logging blob container to which
-     LogAnalytics Api writes output logs to.
+    :ivar blob_container_sas_uri: SAS Uri of the logging blob container to which LogAnalytics Api
+     writes output logs to. Required.
     :vartype blob_container_sas_uri: str
-    :ivar from_time: Required. From time of the query.
+    :ivar from_time: From time of the query. Required.
     :vartype from_time: ~datetime.datetime
-    :ivar to_time: Required. To time of the query.
+    :ivar to_time: To time of the query. Required.
     :vartype to_time: ~datetime.datetime
     :ivar group_by_throttle_policy: Group query result by Throttle Policy applied.
     :vartype group_by_throttle_policy: bool
@@ -8320,20 +7883,20 @@ class ThrottledRequestsInput(LogAnalyticsInputBase):
     """
 
     _validation = {
-        'blob_container_sas_uri': {'required': True},
-        'from_time': {'required': True},
-        'to_time': {'required': True},
+        "blob_container_sas_uri": {"required": True},
+        "from_time": {"required": True},
+        "to_time": {"required": True},
     }
 
     _attribute_map = {
-        'blob_container_sas_uri': {'key': 'blobContainerSasUri', 'type': 'str'},
-        'from_time': {'key': 'fromTime', 'type': 'iso-8601'},
-        'to_time': {'key': 'toTime', 'type': 'iso-8601'},
-        'group_by_throttle_policy': {'key': 'groupByThrottlePolicy', 'type': 'bool'},
-        'group_by_operation_name': {'key': 'groupByOperationName', 'type': 'bool'},
-        'group_by_resource_name': {'key': 'groupByResourceName', 'type': 'bool'},
-        'group_by_client_application_id': {'key': 'groupByClientApplicationId', 'type': 'bool'},
-        'group_by_user_agent': {'key': 'groupByUserAgent', 'type': 'bool'},
+        "blob_container_sas_uri": {"key": "blobContainerSasUri", "type": "str"},
+        "from_time": {"key": "fromTime", "type": "iso-8601"},
+        "to_time": {"key": "toTime", "type": "iso-8601"},
+        "group_by_throttle_policy": {"key": "groupByThrottlePolicy", "type": "bool"},
+        "group_by_operation_name": {"key": "groupByOperationName", "type": "bool"},
+        "group_by_resource_name": {"key": "groupByResourceName", "type": "bool"},
+        "group_by_client_application_id": {"key": "groupByClientApplicationId", "type": "bool"},
+        "group_by_user_agent": {"key": "groupByUserAgent", "type": "bool"},
     }
 
     def __init__(
@@ -8350,12 +7913,12 @@ class ThrottledRequestsInput(LogAnalyticsInputBase):
         **kwargs
     ):
         """
-        :keyword blob_container_sas_uri: Required. SAS Uri of the logging blob container to which
-         LogAnalytics Api writes output logs to.
+        :keyword blob_container_sas_uri: SAS Uri of the logging blob container to which LogAnalytics
+         Api writes output logs to. Required.
         :paramtype blob_container_sas_uri: str
-        :keyword from_time: Required. From time of the query.
+        :keyword from_time: From time of the query. Required.
         :paramtype from_time: ~datetime.datetime
-        :keyword to_time: Required. To time of the query.
+        :keyword to_time: To time of the query. Required.
         :paramtype to_time: ~datetime.datetime
         :keyword group_by_throttle_policy: Group query result by Throttle Policy applied.
         :paramtype group_by_throttle_policy: bool
@@ -8368,10 +7931,20 @@ class ThrottledRequestsInput(LogAnalyticsInputBase):
         :keyword group_by_user_agent: Group query result by User Agent.
         :paramtype group_by_user_agent: bool
         """
-        super(ThrottledRequestsInput, self).__init__(blob_container_sas_uri=blob_container_sas_uri, from_time=from_time, to_time=to_time, group_by_throttle_policy=group_by_throttle_policy, group_by_operation_name=group_by_operation_name, group_by_resource_name=group_by_resource_name, group_by_client_application_id=group_by_client_application_id, group_by_user_agent=group_by_user_agent, **kwargs)
+        super().__init__(
+            blob_container_sas_uri=blob_container_sas_uri,
+            from_time=from_time,
+            to_time=to_time,
+            group_by_throttle_policy=group_by_throttle_policy,
+            group_by_operation_name=group_by_operation_name,
+            group_by_resource_name=group_by_resource_name,
+            group_by_client_application_id=group_by_client_application_id,
+            group_by_user_agent=group_by_user_agent,
+            **kwargs
+        )
 
 
-class UefiSettings(msrest.serialization.Model):
+class UefiSettings(_serialization.Model):
     """Specifies the security settings like secure boot and vTPM used while creating the virtual machine. :code:`<br>`:code:`<br>`Minimum api-version: 2020-12-01.
 
     :ivar secure_boot_enabled: Specifies whether secure boot should be enabled on the virtual
@@ -8383,17 +7956,11 @@ class UefiSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'secure_boot_enabled': {'key': 'secureBootEnabled', 'type': 'bool'},
-        'v_tpm_enabled': {'key': 'vTpmEnabled', 'type': 'bool'},
+        "secure_boot_enabled": {"key": "secureBootEnabled", "type": "bool"},
+        "v_tpm_enabled": {"key": "vTpmEnabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        secure_boot_enabled: Optional[bool] = None,
-        v_tpm_enabled: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, secure_boot_enabled: Optional[bool] = None, v_tpm_enabled: Optional[bool] = None, **kwargs):
         """
         :keyword secure_boot_enabled: Specifies whether secure boot should be enabled on the virtual
          machine. :code:`<br>`:code:`<br>`Minimum api-version: 2020-12-01.
@@ -8402,12 +7969,12 @@ class UefiSettings(msrest.serialization.Model):
          :code:`<br>`:code:`<br>`Minimum api-version: 2020-12-01.
         :paramtype v_tpm_enabled: bool
         """
-        super(UefiSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.secure_boot_enabled = secure_boot_enabled
         self.v_tpm_enabled = v_tpm_enabled
 
 
-class UpdateDomain(msrest.serialization.Model):
+class UpdateDomain(_serialization.Model):
     """Defines an update domain for the cloud service.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8419,27 +7986,23 @@ class UpdateDomain(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(UpdateDomain, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
 
 
-class UpdateDomainListResult(msrest.serialization.Model):
+class UpdateDomainListResult(_serialization.Model):
     """UpdateDomainListResult.
 
     All required parameters must be populated in order to send to Azure.
@@ -8451,33 +8014,27 @@ class UpdateDomainListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[UpdateDomain]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[UpdateDomain]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["UpdateDomain"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.UpdateDomain"], next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.UpdateDomain]
         :keyword next_link:
         :paramtype next_link: str
         """
-        super(UpdateDomainListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class UpgradeOperationHistoricalStatusInfo(msrest.serialization.Model):
+class UpgradeOperationHistoricalStatusInfo(_serialization.Model):
     """Virtual Machine Scale Set OS Upgrade History operation response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8492,30 +8049,26 @@ class UpgradeOperationHistoricalStatusInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'properties': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
+        "properties": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'UpgradeOperationHistoricalStatusInfoProperties'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
+        "properties": {"key": "properties", "type": "UpgradeOperationHistoricalStatusInfoProperties"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(UpgradeOperationHistoricalStatusInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.properties = None
         self.type = None
         self.location = None
 
 
-class UpgradeOperationHistoricalStatusInfoProperties(msrest.serialization.Model):
+class UpgradeOperationHistoricalStatusInfoProperties(_serialization.Model):
     """Describes each OS upgrade on the Virtual Machine Scale Set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8526,7 +8079,7 @@ class UpgradeOperationHistoricalStatusInfoProperties(msrest.serialization.Model)
     :vartype progress: ~azure.mgmt.compute.v2021_03_01.models.RollingUpgradeProgressInfo
     :ivar error: Error Details for this upgrade if there are any.
     :vartype error: ~azure.mgmt.compute.v2021_03_01.models.ApiErrorAutoGenerated
-    :ivar started_by: Invoker of the Upgrade Operation. Possible values include: "Unknown", "User",
+    :ivar started_by: Invoker of the Upgrade Operation. Known values are: "Unknown", "User", and
      "Platform".
     :vartype started_by: str or ~azure.mgmt.compute.v2021_03_01.models.UpgradeOperationInvoker
     :ivar target_image_reference: Image Reference details.
@@ -8536,30 +8089,26 @@ class UpgradeOperationHistoricalStatusInfoProperties(msrest.serialization.Model)
     """
 
     _validation = {
-        'running_status': {'readonly': True},
-        'progress': {'readonly': True},
-        'error': {'readonly': True},
-        'started_by': {'readonly': True},
-        'target_image_reference': {'readonly': True},
-        'rollback_info': {'readonly': True},
+        "running_status": {"readonly": True},
+        "progress": {"readonly": True},
+        "error": {"readonly": True},
+        "started_by": {"readonly": True},
+        "target_image_reference": {"readonly": True},
+        "rollback_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'running_status': {'key': 'runningStatus', 'type': 'UpgradeOperationHistoryStatus'},
-        'progress': {'key': 'progress', 'type': 'RollingUpgradeProgressInfo'},
-        'error': {'key': 'error', 'type': 'ApiErrorAutoGenerated'},
-        'started_by': {'key': 'startedBy', 'type': 'str'},
-        'target_image_reference': {'key': 'targetImageReference', 'type': 'ImageReference'},
-        'rollback_info': {'key': 'rollbackInfo', 'type': 'RollbackStatusInfo'},
+        "running_status": {"key": "runningStatus", "type": "UpgradeOperationHistoryStatus"},
+        "progress": {"key": "progress", "type": "RollingUpgradeProgressInfo"},
+        "error": {"key": "error", "type": "ApiErrorAutoGenerated"},
+        "started_by": {"key": "startedBy", "type": "str"},
+        "target_image_reference": {"key": "targetImageReference", "type": "ImageReference"},
+        "rollback_info": {"key": "rollbackInfo", "type": "RollbackStatusInfo"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(UpgradeOperationHistoricalStatusInfoProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.running_status = None
         self.progress = None
         self.error = None
@@ -8568,13 +8117,13 @@ class UpgradeOperationHistoricalStatusInfoProperties(msrest.serialization.Model)
         self.rollback_info = None
 
 
-class UpgradeOperationHistoryStatus(msrest.serialization.Model):
+class UpgradeOperationHistoryStatus(_serialization.Model):
     """Information about the current running state of the overall upgrade.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar code: Code indicating the current status of the upgrade. Possible values include:
-     "RollingForward", "Cancelled", "Completed", "Faulted".
+    :ivar code: Code indicating the current status of the upgrade. Known values are:
+     "RollingForward", "Cancelled", "Completed", and "Faulted".
     :vartype code: str or ~azure.mgmt.compute.v2021_03_01.models.UpgradeState
     :ivar start_time: Start time of the upgrade.
     :vartype start_time: ~datetime.datetime
@@ -8583,38 +8132,34 @@ class UpgradeOperationHistoryStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
+        "code": {"readonly": True},
+        "start_time": {"readonly": True},
+        "end_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        "code": {"key": "code", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(UpgradeOperationHistoryStatus, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.start_time = None
         self.end_time = None
 
 
-class UpgradePolicy(msrest.serialization.Model):
+class UpgradePolicy(_serialization.Model):
     """Describes an upgrade policy - automatic, manual, or rolling.
 
     :ivar mode: Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br
      />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control
      the application of updates to virtual machines in the scale set. You do this by using the
      manualUpgrade action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the
-     scale set are  automatically updated at the same time. Possible values include: "Automatic",
-     "Manual", "Rolling".
+     scale set are  automatically updated at the same time. Known values are: "Automatic", "Manual",
+     and "Rolling".
     :vartype mode: str or ~azure.mgmt.compute.v2021_03_01.models.UpgradeMode
     :ivar rolling_upgrade_policy: The configuration parameters used while performing a rolling
      upgrade.
@@ -8626,17 +8171,17 @@ class UpgradePolicy(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'rolling_upgrade_policy': {'key': 'rollingUpgradePolicy', 'type': 'RollingUpgradePolicy'},
-        'automatic_os_upgrade_policy': {'key': 'automaticOSUpgradePolicy', 'type': 'AutomaticOSUpgradePolicy'},
+        "mode": {"key": "mode", "type": "str"},
+        "rolling_upgrade_policy": {"key": "rollingUpgradePolicy", "type": "RollingUpgradePolicy"},
+        "automatic_os_upgrade_policy": {"key": "automaticOSUpgradePolicy", "type": "AutomaticOSUpgradePolicy"},
     }
 
     def __init__(
         self,
         *,
-        mode: Optional[Union[str, "UpgradeMode"]] = None,
-        rolling_upgrade_policy: Optional["RollingUpgradePolicy"] = None,
-        automatic_os_upgrade_policy: Optional["AutomaticOSUpgradePolicy"] = None,
+        mode: Optional[Union[str, "_models.UpgradeMode"]] = None,
+        rolling_upgrade_policy: Optional["_models.RollingUpgradePolicy"] = None,
+        automatic_os_upgrade_policy: Optional["_models.AutomaticOSUpgradePolicy"] = None,
         **kwargs
     ):
         """
@@ -8644,8 +8189,8 @@ class UpgradePolicy(msrest.serialization.Model):
          />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control
          the application of updates to virtual machines in the scale set. You do this by using the
          manualUpgrade action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the
-         scale set are  automatically updated at the same time. Possible values include: "Automatic",
-         "Manual", "Rolling".
+         scale set are  automatically updated at the same time. Known values are: "Automatic", "Manual",
+         and "Rolling".
         :paramtype mode: str or ~azure.mgmt.compute.v2021_03_01.models.UpgradeMode
         :keyword rolling_upgrade_policy: The configuration parameters used while performing a rolling
          upgrade.
@@ -8655,68 +8200,62 @@ class UpgradePolicy(msrest.serialization.Model):
         :paramtype automatic_os_upgrade_policy:
          ~azure.mgmt.compute.v2021_03_01.models.AutomaticOSUpgradePolicy
         """
-        super(UpgradePolicy, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.mode = mode
         self.rolling_upgrade_policy = rolling_upgrade_policy
         self.automatic_os_upgrade_policy = automatic_os_upgrade_policy
 
 
-class Usage(msrest.serialization.Model):
+class Usage(_serialization.Model):
     """Describes Compute Resource Usage.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar unit: An enum describing the unit of usage measurement. Has constant value: "Count".
+    :ivar unit: An enum describing the unit of usage measurement. Required. Default value is
+     "Count".
     :vartype unit: str
-    :ivar current_value: Required. The current usage of the resource.
+    :ivar current_value: The current usage of the resource. Required.
     :vartype current_value: int
-    :ivar limit: Required. The maximum permitted usage of the resource.
-    :vartype limit: long
-    :ivar name: Required. The name of the type of usage.
+    :ivar limit: The maximum permitted usage of the resource. Required.
+    :vartype limit: int
+    :ivar name: The name of the type of usage. Required.
     :vartype name: ~azure.mgmt.compute.v2021_03_01.models.UsageName
     """
 
     _validation = {
-        'unit': {'required': True, 'constant': True},
-        'current_value': {'required': True},
-        'limit': {'required': True},
-        'name': {'required': True},
+        "unit": {"required": True, "constant": True},
+        "current_value": {"required": True},
+        "limit": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'unit': {'key': 'unit', 'type': 'str'},
-        'current_value': {'key': 'currentValue', 'type': 'int'},
-        'limit': {'key': 'limit', 'type': 'long'},
-        'name': {'key': 'name', 'type': 'UsageName'},
+        "unit": {"key": "unit", "type": "str"},
+        "current_value": {"key": "currentValue", "type": "int"},
+        "limit": {"key": "limit", "type": "int"},
+        "name": {"key": "name", "type": "UsageName"},
     }
 
     unit = "Count"
 
-    def __init__(
-        self,
-        *,
-        current_value: int,
-        limit: int,
-        name: "UsageName",
-        **kwargs
-    ):
+    def __init__(self, *, current_value: int, limit: int, name: "_models.UsageName", **kwargs):
         """
-        :keyword current_value: Required. The current usage of the resource.
+        :keyword current_value: The current usage of the resource. Required.
         :paramtype current_value: int
-        :keyword limit: Required. The maximum permitted usage of the resource.
-        :paramtype limit: long
-        :keyword name: Required. The name of the type of usage.
+        :keyword limit: The maximum permitted usage of the resource. Required.
+        :paramtype limit: int
+        :keyword name: The name of the type of usage. Required.
         :paramtype name: ~azure.mgmt.compute.v2021_03_01.models.UsageName
         """
-        super(Usage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.current_value = current_value
         self.limit = limit
         self.name = name
 
 
-class UsageName(msrest.serialization.Model):
+class UsageName(_serialization.Model):
     """The Usage Names.
 
     :ivar value: The name of the resource.
@@ -8726,29 +8265,23 @@ class UsageName(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[str] = None,
-        localized_value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs):
         """
         :keyword value: The name of the resource.
         :paramtype value: str
         :keyword localized_value: The localized name of the resource.
         :paramtype localized_value: str
         """
-        super(UsageName, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
 
 
-class UserAssignedIdentitiesValue(msrest.serialization.Model):
+class UserAssignedIdentitiesValue(_serialization.Model):
     """UserAssignedIdentitiesValue.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8760,27 +8293,23 @@ class UserAssignedIdentitiesValue(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(UserAssignedIdentitiesValue, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
 
 
-class VaultCertificate(msrest.serialization.Model):
+class VaultCertificate(_serialization.Model):
     """Describes a single certificate reference in a Key Vault, and where the certificate should reside on the VM.
 
     :ivar certificate_url: This is the URL of a certificate that has been uploaded to Key Vault as
@@ -8805,17 +8334,11 @@ class VaultCertificate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'certificate_url': {'key': 'certificateUrl', 'type': 'str'},
-        'certificate_store': {'key': 'certificateStore', 'type': 'str'},
+        "certificate_url": {"key": "certificateUrl", "type": "str"},
+        "certificate_store": {"key": "certificateStore", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        certificate_url: Optional[str] = None,
-        certificate_store: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, certificate_url: Optional[str] = None, certificate_store: Optional[str] = None, **kwargs):
         """
         :keyword certificate_url: This is the URL of a certificate that has been uploaded to Key Vault
          as a secret. For adding a secret to the Key Vault, see `Add a key or secret to the key vault
@@ -8837,12 +8360,12 @@ class VaultCertificate(msrest.serialization.Model):
          these files are .pem formatted.
         :paramtype certificate_store: str
         """
-        super(VaultCertificate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.certificate_url = certificate_url
         self.certificate_store = certificate_store
 
 
-class VaultSecretGroup(msrest.serialization.Model):
+class VaultSecretGroup(_serialization.Model):
     """Describes a set of certificates which are all in the same Key Vault.
 
     :ivar source_vault: The relative URL of the Key Vault containing all of the certificates in
@@ -8854,15 +8377,15 @@ class VaultSecretGroup(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
-        'vault_certificates': {'key': 'vaultCertificates', 'type': '[VaultCertificate]'},
+        "source_vault": {"key": "sourceVault", "type": "SubResource"},
+        "vault_certificates": {"key": "vaultCertificates", "type": "[VaultCertificate]"},
     }
 
     def __init__(
         self,
         *,
-        source_vault: Optional["SubResource"] = None,
-        vault_certificates: Optional[List["VaultCertificate"]] = None,
+        source_vault: Optional["_models.SubResource"] = None,
+        vault_certificates: Optional[List["_models.VaultCertificate"]] = None,
         **kwargs
     ):
         """
@@ -8873,12 +8396,12 @@ class VaultSecretGroup(msrest.serialization.Model):
          certificates.
         :paramtype vault_certificates: list[~azure.mgmt.compute.v2021_03_01.models.VaultCertificate]
         """
-        super(VaultSecretGroup, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.source_vault = source_vault
         self.vault_certificates = vault_certificates
 
 
-class VirtualHardDisk(msrest.serialization.Model):
+class VirtualHardDisk(_serialization.Model):
     """Describes the uri of a disk.
 
     :ivar uri: Specifies the virtual hard disk's uri.
@@ -8886,24 +8409,19 @@ class VirtualHardDisk(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'uri': {'key': 'uri', 'type': 'str'},
+        "uri": {"key": "uri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        uri: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, uri: Optional[str] = None, **kwargs):
         """
         :keyword uri: Specifies the virtual hard disk's uri.
         :paramtype uri: str
         """
-        super(VirtualHardDisk, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.uri = uri
 
 
-class VirtualMachine(Resource):
+class VirtualMachine(Resource):  # pylint: disable=too-many-instance-attributes
     """Describes a Virtual Machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8916,9 +8434,9 @@ class VirtualMachine(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar plan: Specifies information about the marketplace image used to create the virtual
      machine. This element is only used for marketplace images. Before you can use a marketplace
@@ -8979,14 +8497,13 @@ class VirtualMachine(Resource):
      2018-04-01.
     :vartype proximity_placement_group: ~azure.mgmt.compute.v2021_03_01.models.SubResource
     :ivar priority: Specifies the priority for the virtual machine. :code:`<br>`:code:`<br>`Minimum
-     api-version: 2019-03-01. Possible values include: "Regular", "Low", "Spot".
+     api-version: 2019-03-01. Known values are: "Regular", "Low", and "Spot".
     :vartype priority: str or ~azure.mgmt.compute.v2021_03_01.models.VirtualMachinePriorityTypes
     :ivar eviction_policy: Specifies the eviction policy for the Azure Spot virtual machine and
      Azure Spot scale set. :code:`<br>`:code:`<br>`For Azure Spot virtual machines, both
      'Deallocate' and 'Delete' are supported and the minimum api-version is 2019-03-01.
      :code:`<br>`:code:`<br>`For Azure Spot scale sets, both 'Deallocate' and 'Delete' are supported
-     and the minimum api-version is 2017-10-30-preview. Possible values include: "Deallocate",
-     "Delete".
+     and the minimum api-version is 2017-10-30-preview. Known values are: "Deallocate" and "Delete".
     :vartype eviction_policy: str or
      ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineEvictionPolicyTypes
     :ivar billing_profile: Specifies the billing related details of a Azure Spot virtual machine.
@@ -9040,87 +8557,87 @@ class VirtualMachine(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'resources': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'instance_view': {'readonly': True},
-        'vm_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "resources": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "instance_view": {"readonly": True},
+        "vm_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'plan': {'key': 'plan', 'type': 'Plan'},
-        'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
-        'identity': {'key': 'identity', 'type': 'VirtualMachineIdentity'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
-        'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
-        'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
-        'os_profile': {'key': 'properties.osProfile', 'type': 'OSProfile'},
-        'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
-        'security_profile': {'key': 'properties.securityProfile', 'type': 'SecurityProfile'},
-        'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
-        'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
-        'virtual_machine_scale_set': {'key': 'properties.virtualMachineScaleSet', 'type': 'SubResource'},
-        'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
-        'priority': {'key': 'properties.priority', 'type': 'str'},
-        'eviction_policy': {'key': 'properties.evictionPolicy', 'type': 'str'},
-        'billing_profile': {'key': 'properties.billingProfile', 'type': 'BillingProfile'},
-        'host': {'key': 'properties.host', 'type': 'SubResource'},
-        'host_group': {'key': 'properties.hostGroup', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
-        'license_type': {'key': 'properties.licenseType', 'type': 'str'},
-        'vm_id': {'key': 'properties.vmId', 'type': 'str'},
-        'extensions_time_budget': {'key': 'properties.extensionsTimeBudget', 'type': 'str'},
-        'platform_fault_domain': {'key': 'properties.platformFaultDomain', 'type': 'int'},
-        'scheduled_events_profile': {'key': 'properties.scheduledEventsProfile', 'type': 'ScheduledEventsProfile'},
-        'user_data': {'key': 'properties.userData', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "plan": {"key": "plan", "type": "Plan"},
+        "resources": {"key": "resources", "type": "[VirtualMachineExtension]"},
+        "identity": {"key": "identity", "type": "VirtualMachineIdentity"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "hardware_profile": {"key": "properties.hardwareProfile", "type": "HardwareProfile"},
+        "storage_profile": {"key": "properties.storageProfile", "type": "StorageProfile"},
+        "additional_capabilities": {"key": "properties.additionalCapabilities", "type": "AdditionalCapabilities"},
+        "os_profile": {"key": "properties.osProfile", "type": "OSProfile"},
+        "network_profile": {"key": "properties.networkProfile", "type": "NetworkProfile"},
+        "security_profile": {"key": "properties.securityProfile", "type": "SecurityProfile"},
+        "diagnostics_profile": {"key": "properties.diagnosticsProfile", "type": "DiagnosticsProfile"},
+        "availability_set": {"key": "properties.availabilitySet", "type": "SubResource"},
+        "virtual_machine_scale_set": {"key": "properties.virtualMachineScaleSet", "type": "SubResource"},
+        "proximity_placement_group": {"key": "properties.proximityPlacementGroup", "type": "SubResource"},
+        "priority": {"key": "properties.priority", "type": "str"},
+        "eviction_policy": {"key": "properties.evictionPolicy", "type": "str"},
+        "billing_profile": {"key": "properties.billingProfile", "type": "BillingProfile"},
+        "host": {"key": "properties.host", "type": "SubResource"},
+        "host_group": {"key": "properties.hostGroup", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "instance_view": {"key": "properties.instanceView", "type": "VirtualMachineInstanceView"},
+        "license_type": {"key": "properties.licenseType", "type": "str"},
+        "vm_id": {"key": "properties.vmId", "type": "str"},
+        "extensions_time_budget": {"key": "properties.extensionsTimeBudget", "type": "str"},
+        "platform_fault_domain": {"key": "properties.platformFaultDomain", "type": "int"},
+        "scheduled_events_profile": {"key": "properties.scheduledEventsProfile", "type": "ScheduledEventsProfile"},
+        "user_data": {"key": "properties.userData", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        plan: Optional["Plan"] = None,
-        identity: Optional["VirtualMachineIdentity"] = None,
+        plan: Optional["_models.Plan"] = None,
+        identity: Optional["_models.VirtualMachineIdentity"] = None,
         zones: Optional[List[str]] = None,
-        extended_location: Optional["ExtendedLocation"] = None,
-        hardware_profile: Optional["HardwareProfile"] = None,
-        storage_profile: Optional["StorageProfile"] = None,
-        additional_capabilities: Optional["AdditionalCapabilities"] = None,
-        os_profile: Optional["OSProfile"] = None,
-        network_profile: Optional["NetworkProfile"] = None,
-        security_profile: Optional["SecurityProfile"] = None,
-        diagnostics_profile: Optional["DiagnosticsProfile"] = None,
-        availability_set: Optional["SubResource"] = None,
-        virtual_machine_scale_set: Optional["SubResource"] = None,
-        proximity_placement_group: Optional["SubResource"] = None,
-        priority: Optional[Union[str, "VirtualMachinePriorityTypes"]] = None,
-        eviction_policy: Optional[Union[str, "VirtualMachineEvictionPolicyTypes"]] = None,
-        billing_profile: Optional["BillingProfile"] = None,
-        host: Optional["SubResource"] = None,
-        host_group: Optional["SubResource"] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        hardware_profile: Optional["_models.HardwareProfile"] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
+        additional_capabilities: Optional["_models.AdditionalCapabilities"] = None,
+        os_profile: Optional["_models.OSProfile"] = None,
+        network_profile: Optional["_models.NetworkProfile"] = None,
+        security_profile: Optional["_models.SecurityProfile"] = None,
+        diagnostics_profile: Optional["_models.DiagnosticsProfile"] = None,
+        availability_set: Optional["_models.SubResource"] = None,
+        virtual_machine_scale_set: Optional["_models.SubResource"] = None,
+        proximity_placement_group: Optional["_models.SubResource"] = None,
+        priority: Optional[Union[str, "_models.VirtualMachinePriorityTypes"]] = None,
+        eviction_policy: Optional[Union[str, "_models.VirtualMachineEvictionPolicyTypes"]] = None,
+        billing_profile: Optional["_models.BillingProfile"] = None,
+        host: Optional["_models.SubResource"] = None,
+        host_group: Optional["_models.SubResource"] = None,
         license_type: Optional[str] = None,
         extensions_time_budget: Optional[str] = None,
         platform_fault_domain: Optional[int] = None,
-        scheduled_events_profile: Optional["ScheduledEventsProfile"] = None,
+        scheduled_events_profile: Optional["_models.ScheduledEventsProfile"] = None,
         user_data: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword plan: Specifies information about the marketplace image used to create the virtual
          machine. This element is only used for marketplace images. Before you can use a marketplace
@@ -9180,15 +8697,14 @@ class VirtualMachine(Resource):
          2018-04-01.
         :paramtype proximity_placement_group: ~azure.mgmt.compute.v2021_03_01.models.SubResource
         :keyword priority: Specifies the priority for the virtual machine.
-         :code:`<br>`:code:`<br>`Minimum api-version: 2019-03-01. Possible values include: "Regular",
-         "Low", "Spot".
+         :code:`<br>`:code:`<br>`Minimum api-version: 2019-03-01. Known values are: "Regular", "Low",
+         and "Spot".
         :paramtype priority: str or ~azure.mgmt.compute.v2021_03_01.models.VirtualMachinePriorityTypes
         :keyword eviction_policy: Specifies the eviction policy for the Azure Spot virtual machine and
          Azure Spot scale set. :code:`<br>`:code:`<br>`For Azure Spot virtual machines, both
          'Deallocate' and 'Delete' are supported and the minimum api-version is 2019-03-01.
          :code:`<br>`:code:`<br>`For Azure Spot scale sets, both 'Deallocate' and 'Delete' are supported
-         and the minimum api-version is 2017-10-30-preview. Possible values include: "Deallocate",
-         "Delete".
+         and the minimum api-version is 2017-10-30-preview. Known values are: "Deallocate" and "Delete".
         :paramtype eviction_policy: str or
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineEvictionPolicyTypes
         :keyword billing_profile: Specifies the billing related details of a Azure Spot virtual
@@ -9233,7 +8749,7 @@ class VirtualMachine(Resource):
          pass any secrets in here. :code:`<br>`:code:`<br>`Minimum api-version: 2021-03-01.
         :paramtype user_data: str
         """
-        super(VirtualMachine, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.plan = plan
         self.resources = None
         self.identity = identity
@@ -9264,7 +8780,7 @@ class VirtualMachine(Resource):
         self.user_data = user_data
 
 
-class VirtualMachineAgentInstanceView(msrest.serialization.Model):
+class VirtualMachineAgentInstanceView(_serialization.Model):
     """The instance view of the VM Agent running on the virtual machine.
 
     :ivar vm_agent_version: The VM Agent full version.
@@ -9277,17 +8793,17 @@ class VirtualMachineAgentInstanceView(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'vm_agent_version': {'key': 'vmAgentVersion', 'type': 'str'},
-        'extension_handlers': {'key': 'extensionHandlers', 'type': '[VirtualMachineExtensionHandlerInstanceView]'},
-        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
+        "vm_agent_version": {"key": "vmAgentVersion", "type": "str"},
+        "extension_handlers": {"key": "extensionHandlers", "type": "[VirtualMachineExtensionHandlerInstanceView]"},
+        "statuses": {"key": "statuses", "type": "[InstanceViewStatus]"},
     }
 
     def __init__(
         self,
         *,
         vm_agent_version: Optional[str] = None,
-        extension_handlers: Optional[List["VirtualMachineExtensionHandlerInstanceView"]] = None,
-        statuses: Optional[List["InstanceViewStatus"]] = None,
+        extension_handlers: Optional[List["_models.VirtualMachineExtensionHandlerInstanceView"]] = None,
+        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
         **kwargs
     ):
         """
@@ -9299,21 +8815,21 @@ class VirtualMachineAgentInstanceView(msrest.serialization.Model):
         :keyword statuses: The resource status information.
         :paramtype statuses: list[~azure.mgmt.compute.v2021_03_01.models.InstanceViewStatus]
         """
-        super(VirtualMachineAgentInstanceView, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.vm_agent_version = vm_agent_version
         self.extension_handlers = extension_handlers
         self.statuses = statuses
 
 
-class VirtualMachineAssessPatchesResult(msrest.serialization.Model):
+class VirtualMachineAssessPatchesResult(_serialization.Model):
     """Describes the properties of an AssessPatches result.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar status: The overall success or failure status of the operation. It remains "InProgress"
      until the operation completes. At that point it will become "Unknown", "Failed", "Succeeded",
-     or "CompletedWithWarnings.". Possible values include: "Unknown", "InProgress", "Failed",
-     "Succeeded", "CompletedWithWarnings".
+     or "CompletedWithWarnings.". Known values are: "Unknown", "InProgress", "Failed", "Succeeded",
+     and "CompletedWithWarnings".
     :vartype status: str or ~azure.mgmt.compute.v2021_03_01.models.PatchOperationStatus
     :ivar assessment_activity_id: The activity ID of the operation that produced this result. It is
      used to correlate across CRP and extension logs.
@@ -9339,34 +8855,30 @@ class VirtualMachineAssessPatchesResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'readonly': True},
-        'assessment_activity_id': {'readonly': True},
-        'reboot_pending': {'readonly': True},
-        'critical_and_security_patch_count': {'readonly': True},
-        'other_patch_count': {'readonly': True},
-        'start_date_time': {'readonly': True},
-        'available_patches': {'readonly': True},
-        'error': {'readonly': True},
+        "status": {"readonly": True},
+        "assessment_activity_id": {"readonly": True},
+        "reboot_pending": {"readonly": True},
+        "critical_and_security_patch_count": {"readonly": True},
+        "other_patch_count": {"readonly": True},
+        "start_date_time": {"readonly": True},
+        "available_patches": {"readonly": True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'assessment_activity_id': {'key': 'assessmentActivityId', 'type': 'str'},
-        'reboot_pending': {'key': 'rebootPending', 'type': 'bool'},
-        'critical_and_security_patch_count': {'key': 'criticalAndSecurityPatchCount', 'type': 'int'},
-        'other_patch_count': {'key': 'otherPatchCount', 'type': 'int'},
-        'start_date_time': {'key': 'startDateTime', 'type': 'iso-8601'},
-        'available_patches': {'key': 'availablePatches', 'type': '[VirtualMachineSoftwarePatchProperties]'},
-        'error': {'key': 'error', 'type': 'ApiErrorAutoGenerated'},
+        "status": {"key": "status", "type": "str"},
+        "assessment_activity_id": {"key": "assessmentActivityId", "type": "str"},
+        "reboot_pending": {"key": "rebootPending", "type": "bool"},
+        "critical_and_security_patch_count": {"key": "criticalAndSecurityPatchCount", "type": "int"},
+        "other_patch_count": {"key": "otherPatchCount", "type": "int"},
+        "start_date_time": {"key": "startDateTime", "type": "iso-8601"},
+        "available_patches": {"key": "availablePatches", "type": "[VirtualMachineSoftwarePatchProperties]"},
+        "error": {"key": "error", "type": "ApiErrorAutoGenerated"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(VirtualMachineAssessPatchesResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.status = None
         self.assessment_activity_id = None
         self.reboot_pending = None
@@ -9377,50 +8889,43 @@ class VirtualMachineAssessPatchesResult(msrest.serialization.Model):
         self.error = None
 
 
-class VirtualMachineCaptureParameters(msrest.serialization.Model):
+class VirtualMachineCaptureParameters(_serialization.Model):
     """Capture Virtual Machine parameters.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar vhd_prefix: Required. The captured virtual hard disk's name prefix.
+    :ivar vhd_prefix: The captured virtual hard disk's name prefix. Required.
     :vartype vhd_prefix: str
-    :ivar destination_container_name: Required. The destination container name.
+    :ivar destination_container_name: The destination container name. Required.
     :vartype destination_container_name: str
-    :ivar overwrite_vhds: Required. Specifies whether to overwrite the destination virtual hard
-     disk, in case of conflict.
+    :ivar overwrite_vhds: Specifies whether to overwrite the destination virtual hard disk, in case
+     of conflict. Required.
     :vartype overwrite_vhds: bool
     """
 
     _validation = {
-        'vhd_prefix': {'required': True},
-        'destination_container_name': {'required': True},
-        'overwrite_vhds': {'required': True},
+        "vhd_prefix": {"required": True},
+        "destination_container_name": {"required": True},
+        "overwrite_vhds": {"required": True},
     }
 
     _attribute_map = {
-        'vhd_prefix': {'key': 'vhdPrefix', 'type': 'str'},
-        'destination_container_name': {'key': 'destinationContainerName', 'type': 'str'},
-        'overwrite_vhds': {'key': 'overwriteVhds', 'type': 'bool'},
+        "vhd_prefix": {"key": "vhdPrefix", "type": "str"},
+        "destination_container_name": {"key": "destinationContainerName", "type": "str"},
+        "overwrite_vhds": {"key": "overwriteVhds", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        vhd_prefix: str,
-        destination_container_name: str,
-        overwrite_vhds: bool,
-        **kwargs
-    ):
+    def __init__(self, *, vhd_prefix: str, destination_container_name: str, overwrite_vhds: bool, **kwargs):
         """
-        :keyword vhd_prefix: Required. The captured virtual hard disk's name prefix.
+        :keyword vhd_prefix: The captured virtual hard disk's name prefix. Required.
         :paramtype vhd_prefix: str
-        :keyword destination_container_name: Required. The destination container name.
+        :keyword destination_container_name: The destination container name. Required.
         :paramtype destination_container_name: str
-        :keyword overwrite_vhds: Required. Specifies whether to overwrite the destination virtual hard
-         disk, in case of conflict.
+        :keyword overwrite_vhds: Specifies whether to overwrite the destination virtual hard disk, in
+         case of conflict. Required.
         :paramtype overwrite_vhds: bool
         """
-        super(VirtualMachineCaptureParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.vhd_prefix = vhd_prefix
         self.destination_container_name = destination_container_name
         self.overwrite_vhds = overwrite_vhds
@@ -9438,44 +8943,39 @@ class VirtualMachineCaptureResult(SubResource):
     :ivar content_version: the version of the content.
     :vartype content_version: str
     :ivar parameters: parameters of the captured virtual machine.
-    :vartype parameters: any
+    :vartype parameters: JSON
     :ivar resources: a list of resource items of the captured virtual machine.
-    :vartype resources: list[any]
+    :vartype resources: list[JSON]
     """
 
     _validation = {
-        'schema': {'readonly': True},
-        'content_version': {'readonly': True},
-        'parameters': {'readonly': True},
-        'resources': {'readonly': True},
+        "schema": {"readonly": True},
+        "content_version": {"readonly": True},
+        "parameters": {"readonly": True},
+        "resources": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'schema': {'key': '$schema', 'type': 'str'},
-        'content_version': {'key': 'contentVersion', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'object'},
-        'resources': {'key': 'resources', 'type': '[object]'},
+        "id": {"key": "id", "type": "str"},
+        "schema": {"key": "$schema", "type": "str"},
+        "content_version": {"key": "contentVersion", "type": "str"},
+        "parameters": {"key": "parameters", "type": "object"},
+        "resources": {"key": "resources", "type": "[object]"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource Id.
         :paramtype id: str
         """
-        super(VirtualMachineCaptureResult, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.schema = None
         self.content_version = None
         self.parameters = None
         self.resources = None
 
 
-class VirtualMachineExtension(Resource):
+class VirtualMachineExtension(Resource):  # pylint: disable=too-many-instance-attributes
     """Describes a Virtual Machine Extension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9488,9 +8988,9 @@ class VirtualMachineExtension(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar force_update_tag: How the extension handler should be forced to update even if the
      extension configuration has not changed.
@@ -9510,10 +9010,10 @@ class VirtualMachineExtension(Resource):
      upgraded by the platform if there is a newer version of the extension available.
     :vartype enable_automatic_upgrade: bool
     :ivar settings: Json formatted public settings for the extension.
-    :vartype settings: any
+    :vartype settings: JSON
     :ivar protected_settings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :vartype protected_settings: any
+    :vartype protected_settings: JSON
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :ivar instance_view: The virtual machine extension instance view.
@@ -9522,29 +9022,29 @@ class VirtualMachineExtension(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
-        'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
-        'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
-        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
-        'enable_automatic_upgrade': {'key': 'properties.enableAutomaticUpgrade', 'type': 'bool'},
-        'settings': {'key': 'properties.settings', 'type': 'object'},
-        'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineExtensionInstanceView'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "force_update_tag": {"key": "properties.forceUpdateTag", "type": "str"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "type_handler_version": {"key": "properties.typeHandlerVersion", "type": "str"},
+        "auto_upgrade_minor_version": {"key": "properties.autoUpgradeMinorVersion", "type": "bool"},
+        "enable_automatic_upgrade": {"key": "properties.enableAutomaticUpgrade", "type": "bool"},
+        "settings": {"key": "properties.settings", "type": "object"},
+        "protected_settings": {"key": "properties.protectedSettings", "type": "object"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "instance_view": {"key": "properties.instanceView", "type": "VirtualMachineExtensionInstanceView"},
     }
 
     def __init__(
@@ -9558,15 +9058,15 @@ class VirtualMachineExtension(Resource):
         type_handler_version: Optional[str] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
         enable_automatic_upgrade: Optional[bool] = None,
-        settings: Optional[Any] = None,
-        protected_settings: Optional[Any] = None,
-        instance_view: Optional["VirtualMachineExtensionInstanceView"] = None,
+        settings: Optional[JSON] = None,
+        protected_settings: Optional[JSON] = None,
+        instance_view: Optional["_models.VirtualMachineExtensionInstanceView"] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword force_update_tag: How the extension handler should be forced to update even if the
          extension configuration has not changed.
@@ -9586,15 +9086,15 @@ class VirtualMachineExtension(Resource):
          upgraded by the platform if there is a newer version of the extension available.
         :paramtype enable_automatic_upgrade: bool
         :keyword settings: Json formatted public settings for the extension.
-        :paramtype settings: any
+        :paramtype settings: JSON
         :keyword protected_settings: The extension can contain either protectedSettings or
          protectedSettingsFromKeyVault or no protected settings at all.
-        :paramtype protected_settings: any
+        :paramtype protected_settings: JSON
         :keyword instance_view: The virtual machine extension instance view.
         :paramtype instance_view:
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineExtensionInstanceView
         """
-        super(VirtualMachineExtension, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.force_update_tag = force_update_tag
         self.publisher = publisher
         self.type_properties_type = type_properties_type
@@ -9607,7 +9107,7 @@ class VirtualMachineExtension(Resource):
         self.instance_view = instance_view
 
 
-class VirtualMachineExtensionHandlerInstanceView(msrest.serialization.Model):
+class VirtualMachineExtensionHandlerInstanceView(_serialization.Model):
     """The instance view of a virtual machine extension handler.
 
     :ivar type: Specifies the type of the extension; an example is "CustomScriptExtension".
@@ -9619,9 +9119,9 @@ class VirtualMachineExtensionHandlerInstanceView(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'type_handler_version': {'key': 'typeHandlerVersion', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'InstanceViewStatus'},
+        "type": {"key": "type", "type": "str"},
+        "type_handler_version": {"key": "typeHandlerVersion", "type": "str"},
+        "status": {"key": "status", "type": "InstanceViewStatus"},
     }
 
     def __init__(
@@ -9629,7 +9129,7 @@ class VirtualMachineExtensionHandlerInstanceView(msrest.serialization.Model):
         *,
         type: Optional[str] = None,
         type_handler_version: Optional[str] = None,
-        status: Optional["InstanceViewStatus"] = None,
+        status: Optional["_models.InstanceViewStatus"] = None,
         **kwargs
     ):
         """
@@ -9640,7 +9140,7 @@ class VirtualMachineExtensionHandlerInstanceView(msrest.serialization.Model):
         :keyword status: The extension handler status.
         :paramtype status: ~azure.mgmt.compute.v2021_03_01.models.InstanceViewStatus
         """
-        super(VirtualMachineExtensionHandlerInstanceView, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.type_handler_version = type_handler_version
         self.status = status
@@ -9659,9 +9159,9 @@ class VirtualMachineExtensionImage(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar operating_system: The operating system this extension supports.
     :vartype operating_system: str
@@ -9679,23 +9179,23 @@ class VirtualMachineExtensionImage(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'operating_system': {'key': 'properties.operatingSystem', 'type': 'str'},
-        'compute_role': {'key': 'properties.computeRole', 'type': 'str'},
-        'handler_schema': {'key': 'properties.handlerSchema', 'type': 'str'},
-        'vm_scale_set_enabled': {'key': 'properties.vmScaleSetEnabled', 'type': 'bool'},
-        'supports_multiple_extensions': {'key': 'properties.supportsMultipleExtensions', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "operating_system": {"key": "properties.operatingSystem", "type": "str"},
+        "compute_role": {"key": "properties.computeRole", "type": "str"},
+        "handler_schema": {"key": "properties.handlerSchema", "type": "str"},
+        "vm_scale_set_enabled": {"key": "properties.vmScaleSetEnabled", "type": "bool"},
+        "supports_multiple_extensions": {"key": "properties.supportsMultipleExtensions", "type": "bool"},
     }
 
     def __init__(
@@ -9711,9 +9211,9 @@ class VirtualMachineExtensionImage(Resource):
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword operating_system: The operating system this extension supports.
         :paramtype operating_system: str
@@ -9729,7 +9229,7 @@ class VirtualMachineExtensionImage(Resource):
         :keyword supports_multiple_extensions: Whether the handler can support multiple extensions.
         :paramtype supports_multiple_extensions: bool
         """
-        super(VirtualMachineExtensionImage, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.operating_system = operating_system
         self.compute_role = compute_role
         self.handler_schema = handler_schema
@@ -9737,7 +9237,7 @@ class VirtualMachineExtensionImage(Resource):
         self.supports_multiple_extensions = supports_multiple_extensions
 
 
-class VirtualMachineExtensionInstanceView(msrest.serialization.Model):
+class VirtualMachineExtensionInstanceView(_serialization.Model):
     """The instance view of a virtual machine extension.
 
     :ivar name: The virtual machine extension name.
@@ -9753,11 +9253,11 @@ class VirtualMachineExtensionInstanceView(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'type_handler_version': {'key': 'typeHandlerVersion', 'type': 'str'},
-        'substatuses': {'key': 'substatuses', 'type': '[InstanceViewStatus]'},
-        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "type_handler_version": {"key": "typeHandlerVersion", "type": "str"},
+        "substatuses": {"key": "substatuses", "type": "[InstanceViewStatus]"},
+        "statuses": {"key": "statuses", "type": "[InstanceViewStatus]"},
     }
 
     def __init__(
@@ -9766,8 +9266,8 @@ class VirtualMachineExtensionInstanceView(msrest.serialization.Model):
         name: Optional[str] = None,
         type: Optional[str] = None,
         type_handler_version: Optional[str] = None,
-        substatuses: Optional[List["InstanceViewStatus"]] = None,
-        statuses: Optional[List["InstanceViewStatus"]] = None,
+        substatuses: Optional[List["_models.InstanceViewStatus"]] = None,
+        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
         **kwargs
     ):
         """
@@ -9782,7 +9282,7 @@ class VirtualMachineExtensionInstanceView(msrest.serialization.Model):
         :keyword statuses: The resource status information.
         :paramtype statuses: list[~azure.mgmt.compute.v2021_03_01.models.InstanceViewStatus]
         """
-        super(VirtualMachineExtensionInstanceView, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
         self.type_handler_version = type_handler_version
@@ -9790,7 +9290,7 @@ class VirtualMachineExtensionInstanceView(msrest.serialization.Model):
         self.statuses = statuses
 
 
-class VirtualMachineExtensionsListResult(msrest.serialization.Model):
+class VirtualMachineExtensionsListResult(_serialization.Model):
     """The List Extension operation response.
 
     :ivar value: The list of extensions.
@@ -9798,27 +9298,22 @@ class VirtualMachineExtensionsListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualMachineExtension]'},
+        "value": {"key": "value", "type": "[VirtualMachineExtension]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["VirtualMachineExtension"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.VirtualMachineExtension"]] = None, **kwargs):
         """
         :keyword value: The list of extensions.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineExtension]
         """
-        super(VirtualMachineExtensionsListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
 class VirtualMachineExtensionUpdate(UpdateResource):
     """Describes a Virtual Machine Extension.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar force_update_tag: How the extension handler should be forced to update even if the
      extension configuration has not changed.
@@ -9837,22 +9332,22 @@ class VirtualMachineExtensionUpdate(UpdateResource):
      upgraded by the platform if there is a newer version of the extension available.
     :vartype enable_automatic_upgrade: bool
     :ivar settings: Json formatted public settings for the extension.
-    :vartype settings: any
+    :vartype settings: JSON
     :ivar protected_settings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :vartype protected_settings: any
+    :vartype protected_settings: JSON
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
-        'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'type': {'key': 'properties.type', 'type': 'str'},
-        'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
-        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
-        'enable_automatic_upgrade': {'key': 'properties.enableAutomaticUpgrade', 'type': 'bool'},
-        'settings': {'key': 'properties.settings', 'type': 'object'},
-        'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "force_update_tag": {"key": "properties.forceUpdateTag", "type": "str"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "type": {"key": "properties.type", "type": "str"},
+        "type_handler_version": {"key": "properties.typeHandlerVersion", "type": "str"},
+        "auto_upgrade_minor_version": {"key": "properties.autoUpgradeMinorVersion", "type": "bool"},
+        "enable_automatic_upgrade": {"key": "properties.enableAutomaticUpgrade", "type": "bool"},
+        "settings": {"key": "properties.settings", "type": "object"},
+        "protected_settings": {"key": "properties.protectedSettings", "type": "object"},
     }
 
     def __init__(
@@ -9865,12 +9360,12 @@ class VirtualMachineExtensionUpdate(UpdateResource):
         type_handler_version: Optional[str] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
         enable_automatic_upgrade: Optional[bool] = None,
-        settings: Optional[Any] = None,
-        protected_settings: Optional[Any] = None,
+        settings: Optional[JSON] = None,
+        protected_settings: Optional[JSON] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword force_update_tag: How the extension handler should be forced to update even if the
          extension configuration has not changed.
@@ -9889,12 +9384,12 @@ class VirtualMachineExtensionUpdate(UpdateResource):
          upgraded by the platform if there is a newer version of the extension available.
         :paramtype enable_automatic_upgrade: bool
         :keyword settings: Json formatted public settings for the extension.
-        :paramtype settings: any
+        :paramtype settings: JSON
         :keyword protected_settings: The extension can contain either protectedSettings or
          protectedSettingsFromKeyVault or no protected settings at all.
-        :paramtype protected_settings: any
+        :paramtype protected_settings: JSON
         """
-        super(VirtualMachineExtensionUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.force_update_tag = force_update_tag
         self.publisher = publisher
         self.type = type
@@ -9905,7 +9400,7 @@ class VirtualMachineExtensionUpdate(UpdateResource):
         self.protected_settings = protected_settings
 
 
-class VirtualMachineHealthStatus(msrest.serialization.Model):
+class VirtualMachineHealthStatus(_serialization.Model):
     """The health status of the VM.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9915,24 +9410,20 @@ class VirtualMachineHealthStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'readonly': True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'InstanceViewStatus'},
+        "status": {"key": "status", "type": "InstanceViewStatus"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(VirtualMachineHealthStatus, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.status = None
 
 
-class VirtualMachineIdentity(msrest.serialization.Model):
+class VirtualMachineIdentity(_serialization.Model):
     """Identity for the virtual machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9945,8 +9436,8 @@ class VirtualMachineIdentity(msrest.serialization.Model):
     :vartype tenant_id: str
     :ivar type: The type of identity used for the virtual machine. The type 'SystemAssigned,
      UserAssigned' includes both an implicitly created identity and a set of user assigned
-     identities. The type 'None' will remove any identities from the virtual machine. Possible
-     values include: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", "None".
+     identities. The type 'None' will remove any identities from the virtual machine. Known values
+     are: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", and "None".
     :vartype type: str or ~azure.mgmt.compute.v2021_03_01.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the Virtual
      Machine. The user identity dictionary key references will be ARM resource ids in the form:
@@ -9956,29 +9447,29 @@ class VirtualMachineIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentitiesValue}'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentitiesValue}"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "UserAssignedIdentitiesValue"]] = None,
+        type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentitiesValue"]] = None,
         **kwargs
     ):
         """
         :keyword type: The type of identity used for the virtual machine. The type 'SystemAssigned,
          UserAssigned' includes both an implicitly created identity and a set of user assigned
-         identities. The type 'None' will remove any identities from the virtual machine. Possible
-         values include: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", "None".
+         identities. The type 'None' will remove any identities from the virtual machine. Known values
+         are: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", and "None".
         :paramtype type: str or ~azure.mgmt.compute.v2021_03_01.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user identities associated with the Virtual
          Machine. The user identity dictionary key references will be ARM resource ids in the form:
@@ -9986,7 +9477,7 @@ class VirtualMachineIdentity(msrest.serialization.Model):
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.compute.v2021_03_01.models.UserAssignedIdentitiesValue]
         """
-        super(VirtualMachineIdentity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
@@ -10000,12 +9491,12 @@ class VirtualMachineImageResource(SubResource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :ivar name: Required. The name of the resource.
+    :ivar name: The name of the resource. Required.
     :vartype name: str
-    :ivar location: Required. The supported Azure location of the resource.
+    :ivar location: The supported Azure location of the resource. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Specifies the tags that are assigned to the virtual machine. For
-     more information about using tags, see `Using tags to organize your Azure resources
+    :ivar tags: Specifies the tags that are assigned to the virtual machine. For more information
+     about using tags, see `Using tags to organize your Azure resources
      <https://docs.microsoft.com/azure/azure-resource-manager/resource-group-using-tags.md>`_.
     :vartype tags: dict[str, str]
     :ivar extended_location: The extended location of the Virtual Machine.
@@ -10013,16 +9504,16 @@ class VirtualMachineImageResource(SubResource):
     """
 
     _validation = {
-        'name': {'required': True},
-        'location': {'required': True},
+        "name": {"required": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
     }
 
     def __init__(
@@ -10030,45 +9521,45 @@ class VirtualMachineImageResource(SubResource):
         *,
         name: str,
         location: str,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         tags: Optional[Dict[str, str]] = None,
-        extended_location: Optional["ExtendedLocation"] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
         **kwargs
     ):
         """
         :keyword id: Resource Id.
         :paramtype id: str
-        :keyword name: Required. The name of the resource.
+        :keyword name: The name of the resource. Required.
         :paramtype name: str
-        :keyword location: Required. The supported Azure location of the resource.
+        :keyword location: The supported Azure location of the resource. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Specifies the tags that are assigned to the virtual machine. For
-         more information about using tags, see `Using tags to organize your Azure resources
+        :keyword tags: Specifies the tags that are assigned to the virtual machine. For more
+         information about using tags, see `Using tags to organize your Azure resources
          <https://docs.microsoft.com/azure/azure-resource-manager/resource-group-using-tags.md>`_.
         :paramtype tags: dict[str, str]
         :keyword extended_location: The extended location of the Virtual Machine.
         :paramtype extended_location: ~azure.mgmt.compute.v2021_03_01.models.ExtendedLocation
         """
-        super(VirtualMachineImageResource, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.location = location
         self.tags = tags
         self.extended_location = extended_location
 
 
-class VirtualMachineImage(VirtualMachineImageResource):
+class VirtualMachineImage(VirtualMachineImageResource):  # pylint: disable=too-many-instance-attributes
     """Describes a Virtual Machine Image.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar id: Resource Id.
     :vartype id: str
-    :ivar name: Required. The name of the resource.
+    :ivar name: The name of the resource. Required.
     :vartype name: str
-    :ivar location: Required. The supported Azure location of the resource.
+    :ivar location: The supported Azure location of the resource. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Specifies the tags that are assigned to the virtual machine. For
-     more information about using tags, see `Using tags to organize your Azure resources
+    :ivar tags: Specifies the tags that are assigned to the virtual machine. For more information
+     about using tags, see `Using tags to organize your Azure resources
      <https://docs.microsoft.com/azure/azure-resource-manager/resource-group-using-tags.md>`_.
     :vartype tags: dict[str, str]
     :ivar extended_location: The extended location of the Virtual Machine.
@@ -10083,8 +9574,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
     :ivar automatic_os_upgrade_properties: Describes automatic OS upgrade properties on the image.
     :vartype automatic_os_upgrade_properties:
      ~azure.mgmt.compute.v2021_03_01.models.AutomaticOSUpgradeProperties
-    :ivar hyper_v_generation: Specifies the HyperVGeneration Type. Possible values include: "V1",
-     "V2".
+    :ivar hyper_v_generation: Specifies the HyperVGeneration Type. Known values are: "V1" and "V2".
     :vartype hyper_v_generation: str or
      ~azure.mgmt.compute.v2021_03_01.models.HyperVGenerationTypes
     :ivar disallowed: Specifies disallowed configuration for the VirtualMachine created from the
@@ -10095,23 +9585,26 @@ class VirtualMachineImage(VirtualMachineImageResource):
     """
 
     _validation = {
-        'name': {'required': True},
-        'location': {'required': True},
+        "name": {"required": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
-        'plan': {'key': 'properties.plan', 'type': 'PurchasePlan'},
-        'os_disk_image': {'key': 'properties.osDiskImage', 'type': 'OSDiskImage'},
-        'data_disk_images': {'key': 'properties.dataDiskImages', 'type': '[DataDiskImage]'},
-        'automatic_os_upgrade_properties': {'key': 'properties.automaticOSUpgradeProperties', 'type': 'AutomaticOSUpgradeProperties'},
-        'hyper_v_generation': {'key': 'properties.hyperVGeneration', 'type': 'str'},
-        'disallowed': {'key': 'properties.disallowed', 'type': 'DisallowedConfiguration'},
-        'features': {'key': 'properties.features', 'type': '[VirtualMachineImageFeature]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "plan": {"key": "properties.plan", "type": "PurchasePlan"},
+        "os_disk_image": {"key": "properties.osDiskImage", "type": "OSDiskImage"},
+        "data_disk_images": {"key": "properties.dataDiskImages", "type": "[DataDiskImage]"},
+        "automatic_os_upgrade_properties": {
+            "key": "properties.automaticOSUpgradeProperties",
+            "type": "AutomaticOSUpgradeProperties",
+        },
+        "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
+        "disallowed": {"key": "properties.disallowed", "type": "DisallowedConfiguration"},
+        "features": {"key": "properties.features", "type": "[VirtualMachineImageFeature]"},
     }
 
     def __init__(
@@ -10119,27 +9612,27 @@ class VirtualMachineImage(VirtualMachineImageResource):
         *,
         name: str,
         location: str,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         tags: Optional[Dict[str, str]] = None,
-        extended_location: Optional["ExtendedLocation"] = None,
-        plan: Optional["PurchasePlan"] = None,
-        os_disk_image: Optional["OSDiskImage"] = None,
-        data_disk_images: Optional[List["DataDiskImage"]] = None,
-        automatic_os_upgrade_properties: Optional["AutomaticOSUpgradeProperties"] = None,
-        hyper_v_generation: Optional[Union[str, "HyperVGenerationTypes"]] = None,
-        disallowed: Optional["DisallowedConfiguration"] = None,
-        features: Optional[List["VirtualMachineImageFeature"]] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        plan: Optional["_models.PurchasePlan"] = None,
+        os_disk_image: Optional["_models.OSDiskImage"] = None,
+        data_disk_images: Optional[List["_models.DataDiskImage"]] = None,
+        automatic_os_upgrade_properties: Optional["_models.AutomaticOSUpgradeProperties"] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGenerationTypes"]] = None,
+        disallowed: Optional["_models.DisallowedConfiguration"] = None,
+        features: Optional[List["_models.VirtualMachineImageFeature"]] = None,
         **kwargs
     ):
         """
         :keyword id: Resource Id.
         :paramtype id: str
-        :keyword name: Required. The name of the resource.
+        :keyword name: The name of the resource. Required.
         :paramtype name: str
-        :keyword location: Required. The supported Azure location of the resource.
+        :keyword location: The supported Azure location of the resource. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Specifies the tags that are assigned to the virtual machine. For
-         more information about using tags, see `Using tags to organize your Azure resources
+        :keyword tags: Specifies the tags that are assigned to the virtual machine. For more
+         information about using tags, see `Using tags to organize your Azure resources
          <https://docs.microsoft.com/azure/azure-resource-manager/resource-group-using-tags.md>`_.
         :paramtype tags: dict[str, str]
         :keyword extended_location: The extended location of the Virtual Machine.
@@ -10155,8 +9648,8 @@ class VirtualMachineImage(VirtualMachineImageResource):
          image.
         :paramtype automatic_os_upgrade_properties:
          ~azure.mgmt.compute.v2021_03_01.models.AutomaticOSUpgradeProperties
-        :keyword hyper_v_generation: Specifies the HyperVGeneration Type. Possible values include:
-         "V1", "V2".
+        :keyword hyper_v_generation: Specifies the HyperVGeneration Type. Known values are: "V1" and
+         "V2".
         :paramtype hyper_v_generation: str or
          ~azure.mgmt.compute.v2021_03_01.models.HyperVGenerationTypes
         :keyword disallowed: Specifies disallowed configuration for the VirtualMachine created from the
@@ -10165,7 +9658,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
         :keyword features:
         :paramtype features: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineImageFeature]
         """
-        super(VirtualMachineImage, self).__init__(id=id, name=name, location=location, tags=tags, extended_location=extended_location, **kwargs)
+        super().__init__(id=id, name=name, location=location, tags=tags, extended_location=extended_location, **kwargs)
         self.plan = plan
         self.os_disk_image = os_disk_image
         self.data_disk_images = data_disk_images
@@ -10175,7 +9668,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
         self.features = features
 
 
-class VirtualMachineImageFeature(msrest.serialization.Model):
+class VirtualMachineImageFeature(_serialization.Model):
     """Specifies additional capabilities supported by the image.
 
     :ivar name: The name of the feature.
@@ -10185,38 +9678,32 @@ class VirtualMachineImageFeature(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
         """
         :keyword name: The name of the feature.
         :paramtype name: str
         :keyword value: The corresponding value for the feature.
         :paramtype value: str
         """
-        super(VirtualMachineImageFeature, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
 
-class VirtualMachineInstallPatchesParameters(msrest.serialization.Model):
+class VirtualMachineInstallPatchesParameters(_serialization.Model):
     """Input for InstallPatches as directly received by the API.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar maximum_duration: Required. Specifies the maximum amount of time that the operation will
-     run. It must be an ISO 8601-compliant duration string such as PT4H (4 hours).
+    :ivar maximum_duration: Specifies the maximum amount of time that the operation will run. It
+     must be an ISO 8601-compliant duration string such as PT4H (4 hours). Required.
     :vartype maximum_duration: str
-    :ivar reboot_setting: Required. Defines when it is acceptable to reboot a VM during a software
-     update operation. Possible values include: "IfRequired", "Never", "Always".
+    :ivar reboot_setting: Defines when it is acceptable to reboot a VM during a software update
+     operation. Required. Known values are: "IfRequired", "Never", and "Always".
     :vartype reboot_setting: str or
      ~azure.mgmt.compute.v2021_03_01.models.VMGuestPatchRebootSetting
     :ivar windows_parameters: Input for InstallPatches on a Windows VM, as directly received by the
@@ -10228,32 +9715,32 @@ class VirtualMachineInstallPatchesParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'maximum_duration': {'required': True},
-        'reboot_setting': {'required': True},
+        "maximum_duration": {"required": True},
+        "reboot_setting": {"required": True},
     }
 
     _attribute_map = {
-        'maximum_duration': {'key': 'maximumDuration', 'type': 'str'},
-        'reboot_setting': {'key': 'rebootSetting', 'type': 'str'},
-        'windows_parameters': {'key': 'windowsParameters', 'type': 'WindowsParameters'},
-        'linux_parameters': {'key': 'linuxParameters', 'type': 'LinuxParameters'},
+        "maximum_duration": {"key": "maximumDuration", "type": "str"},
+        "reboot_setting": {"key": "rebootSetting", "type": "str"},
+        "windows_parameters": {"key": "windowsParameters", "type": "WindowsParameters"},
+        "linux_parameters": {"key": "linuxParameters", "type": "LinuxParameters"},
     }
 
     def __init__(
         self,
         *,
         maximum_duration: str,
-        reboot_setting: Union[str, "VMGuestPatchRebootSetting"],
-        windows_parameters: Optional["WindowsParameters"] = None,
-        linux_parameters: Optional["LinuxParameters"] = None,
+        reboot_setting: Union[str, "_models.VMGuestPatchRebootSetting"],
+        windows_parameters: Optional["_models.WindowsParameters"] = None,
+        linux_parameters: Optional["_models.LinuxParameters"] = None,
         **kwargs
     ):
         """
-        :keyword maximum_duration: Required. Specifies the maximum amount of time that the operation
-         will run. It must be an ISO 8601-compliant duration string such as PT4H (4 hours).
+        :keyword maximum_duration: Specifies the maximum amount of time that the operation will run. It
+         must be an ISO 8601-compliant duration string such as PT4H (4 hours). Required.
         :paramtype maximum_duration: str
-        :keyword reboot_setting: Required. Defines when it is acceptable to reboot a VM during a
-         software update operation. Possible values include: "IfRequired", "Never", "Always".
+        :keyword reboot_setting: Defines when it is acceptable to reboot a VM during a software update
+         operation. Required. Known values are: "IfRequired", "Never", and "Always".
         :paramtype reboot_setting: str or
          ~azure.mgmt.compute.v2021_03_01.models.VMGuestPatchRebootSetting
         :keyword windows_parameters: Input for InstallPatches on a Windows VM, as directly received by
@@ -10263,28 +9750,28 @@ class VirtualMachineInstallPatchesParameters(msrest.serialization.Model):
          API.
         :paramtype linux_parameters: ~azure.mgmt.compute.v2021_03_01.models.LinuxParameters
         """
-        super(VirtualMachineInstallPatchesParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.maximum_duration = maximum_duration
         self.reboot_setting = reboot_setting
         self.windows_parameters = windows_parameters
         self.linux_parameters = linux_parameters
 
 
-class VirtualMachineInstallPatchesResult(msrest.serialization.Model):
+class VirtualMachineInstallPatchesResult(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The result summary of an installation operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar status: The overall success or failure status of the operation. It remains "InProgress"
      until the operation completes. At that point it will become "Failed", "Succeeded", "Unknown" or
-     "CompletedWithWarnings.". Possible values include: "Unknown", "InProgress", "Failed",
-     "Succeeded", "CompletedWithWarnings".
+     "CompletedWithWarnings.". Known values are: "Unknown", "InProgress", "Failed", "Succeeded", and
+     "CompletedWithWarnings".
     :vartype status: str or ~azure.mgmt.compute.v2021_03_01.models.PatchOperationStatus
     :ivar installation_activity_id: The activity ID of the operation that produced this result. It
      is used to correlate across CRP and extension logs.
     :vartype installation_activity_id: str
-    :ivar reboot_status: The reboot state of the VM following completion of the operation. Possible
-     values include: "Unknown", "NotNeeded", "Required", "Started", "Failed", "Completed".
+    :ivar reboot_status: The reboot state of the VM following completion of the operation. Known
+     values are: "Unknown", "NotNeeded", "Required", "Started", "Failed", and "Completed".
     :vartype reboot_status: str or ~azure.mgmt.compute.v2021_03_01.models.VMGuestPatchRebootStatus
     :ivar maintenance_window_exceeded: Whether the operation ran out of time before it completed
      all its intended actions.
@@ -10314,42 +9801,38 @@ class VirtualMachineInstallPatchesResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'readonly': True},
-        'installation_activity_id': {'readonly': True},
-        'reboot_status': {'readonly': True},
-        'maintenance_window_exceeded': {'readonly': True},
-        'excluded_patch_count': {'readonly': True},
-        'not_selected_patch_count': {'readonly': True},
-        'pending_patch_count': {'readonly': True},
-        'installed_patch_count': {'readonly': True},
-        'failed_patch_count': {'readonly': True},
-        'patches': {'readonly': True},
-        'start_date_time': {'readonly': True},
-        'error': {'readonly': True},
+        "status": {"readonly": True},
+        "installation_activity_id": {"readonly": True},
+        "reboot_status": {"readonly": True},
+        "maintenance_window_exceeded": {"readonly": True},
+        "excluded_patch_count": {"readonly": True},
+        "not_selected_patch_count": {"readonly": True},
+        "pending_patch_count": {"readonly": True},
+        "installed_patch_count": {"readonly": True},
+        "failed_patch_count": {"readonly": True},
+        "patches": {"readonly": True},
+        "start_date_time": {"readonly": True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'installation_activity_id': {'key': 'installationActivityId', 'type': 'str'},
-        'reboot_status': {'key': 'rebootStatus', 'type': 'str'},
-        'maintenance_window_exceeded': {'key': 'maintenanceWindowExceeded', 'type': 'bool'},
-        'excluded_patch_count': {'key': 'excludedPatchCount', 'type': 'int'},
-        'not_selected_patch_count': {'key': 'notSelectedPatchCount', 'type': 'int'},
-        'pending_patch_count': {'key': 'pendingPatchCount', 'type': 'int'},
-        'installed_patch_count': {'key': 'installedPatchCount', 'type': 'int'},
-        'failed_patch_count': {'key': 'failedPatchCount', 'type': 'int'},
-        'patches': {'key': 'patches', 'type': '[PatchInstallationDetail]'},
-        'start_date_time': {'key': 'startDateTime', 'type': 'iso-8601'},
-        'error': {'key': 'error', 'type': 'ApiErrorAutoGenerated'},
+        "status": {"key": "status", "type": "str"},
+        "installation_activity_id": {"key": "installationActivityId", "type": "str"},
+        "reboot_status": {"key": "rebootStatus", "type": "str"},
+        "maintenance_window_exceeded": {"key": "maintenanceWindowExceeded", "type": "bool"},
+        "excluded_patch_count": {"key": "excludedPatchCount", "type": "int"},
+        "not_selected_patch_count": {"key": "notSelectedPatchCount", "type": "int"},
+        "pending_patch_count": {"key": "pendingPatchCount", "type": "int"},
+        "installed_patch_count": {"key": "installedPatchCount", "type": "int"},
+        "failed_patch_count": {"key": "failedPatchCount", "type": "int"},
+        "patches": {"key": "patches", "type": "[PatchInstallationDetail]"},
+        "start_date_time": {"key": "startDateTime", "type": "iso-8601"},
+        "error": {"key": "error", "type": "ApiErrorAutoGenerated"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(VirtualMachineInstallPatchesResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.status = None
         self.installation_activity_id = None
         self.reboot_status = None
@@ -10364,7 +9847,7 @@ class VirtualMachineInstallPatchesResult(msrest.serialization.Model):
         self.error = None
 
 
-class VirtualMachineInstanceView(msrest.serialization.Model):
+class VirtualMachineInstanceView(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The instance view of a virtual machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10379,8 +9862,8 @@ class VirtualMachineInstanceView(msrest.serialization.Model):
     :vartype os_name: str
     :ivar os_version: The version of Operating System running on the virtual machine.
     :vartype os_version: str
-    :ivar hyper_v_generation: Specifies the HyperVGeneration Type associated with a resource.
-     Possible values include: "V1", "V2".
+    :ivar hyper_v_generation: Specifies the HyperVGeneration Type associated with a resource. Known
+     values are: "V1" and "V2".
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2021_03_01.models.HyperVGenerationType
     :ivar rdp_thumb_print: The Remote desktop certificate thumbprint.
     :vartype rdp_thumb_print: str
@@ -10413,27 +9896,27 @@ class VirtualMachineInstanceView(msrest.serialization.Model):
     """
 
     _validation = {
-        'vm_health': {'readonly': True},
-        'assigned_host': {'readonly': True},
+        "vm_health": {"readonly": True},
+        "assigned_host": {"readonly": True},
     }
 
     _attribute_map = {
-        'platform_update_domain': {'key': 'platformUpdateDomain', 'type': 'int'},
-        'platform_fault_domain': {'key': 'platformFaultDomain', 'type': 'int'},
-        'computer_name': {'key': 'computerName', 'type': 'str'},
-        'os_name': {'key': 'osName', 'type': 'str'},
-        'os_version': {'key': 'osVersion', 'type': 'str'},
-        'hyper_v_generation': {'key': 'hyperVGeneration', 'type': 'str'},
-        'rdp_thumb_print': {'key': 'rdpThumbPrint', 'type': 'str'},
-        'vm_agent': {'key': 'vmAgent', 'type': 'VirtualMachineAgentInstanceView'},
-        'maintenance_redeploy_status': {'key': 'maintenanceRedeployStatus', 'type': 'MaintenanceRedeployStatus'},
-        'disks': {'key': 'disks', 'type': '[DiskInstanceView]'},
-        'extensions': {'key': 'extensions', 'type': '[VirtualMachineExtensionInstanceView]'},
-        'vm_health': {'key': 'vmHealth', 'type': 'VirtualMachineHealthStatus'},
-        'boot_diagnostics': {'key': 'bootDiagnostics', 'type': 'BootDiagnosticsInstanceView'},
-        'assigned_host': {'key': 'assignedHost', 'type': 'str'},
-        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
-        'patch_status': {'key': 'patchStatus', 'type': 'VirtualMachinePatchStatus'},
+        "platform_update_domain": {"key": "platformUpdateDomain", "type": "int"},
+        "platform_fault_domain": {"key": "platformFaultDomain", "type": "int"},
+        "computer_name": {"key": "computerName", "type": "str"},
+        "os_name": {"key": "osName", "type": "str"},
+        "os_version": {"key": "osVersion", "type": "str"},
+        "hyper_v_generation": {"key": "hyperVGeneration", "type": "str"},
+        "rdp_thumb_print": {"key": "rdpThumbPrint", "type": "str"},
+        "vm_agent": {"key": "vmAgent", "type": "VirtualMachineAgentInstanceView"},
+        "maintenance_redeploy_status": {"key": "maintenanceRedeployStatus", "type": "MaintenanceRedeployStatus"},
+        "disks": {"key": "disks", "type": "[DiskInstanceView]"},
+        "extensions": {"key": "extensions", "type": "[VirtualMachineExtensionInstanceView]"},
+        "vm_health": {"key": "vmHealth", "type": "VirtualMachineHealthStatus"},
+        "boot_diagnostics": {"key": "bootDiagnostics", "type": "BootDiagnosticsInstanceView"},
+        "assigned_host": {"key": "assignedHost", "type": "str"},
+        "statuses": {"key": "statuses", "type": "[InstanceViewStatus]"},
+        "patch_status": {"key": "patchStatus", "type": "VirtualMachinePatchStatus"},
     }
 
     def __init__(
@@ -10444,15 +9927,15 @@ class VirtualMachineInstanceView(msrest.serialization.Model):
         computer_name: Optional[str] = None,
         os_name: Optional[str] = None,
         os_version: Optional[str] = None,
-        hyper_v_generation: Optional[Union[str, "HyperVGenerationType"]] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGenerationType"]] = None,
         rdp_thumb_print: Optional[str] = None,
-        vm_agent: Optional["VirtualMachineAgentInstanceView"] = None,
-        maintenance_redeploy_status: Optional["MaintenanceRedeployStatus"] = None,
-        disks: Optional[List["DiskInstanceView"]] = None,
-        extensions: Optional[List["VirtualMachineExtensionInstanceView"]] = None,
-        boot_diagnostics: Optional["BootDiagnosticsInstanceView"] = None,
-        statuses: Optional[List["InstanceViewStatus"]] = None,
-        patch_status: Optional["VirtualMachinePatchStatus"] = None,
+        vm_agent: Optional["_models.VirtualMachineAgentInstanceView"] = None,
+        maintenance_redeploy_status: Optional["_models.MaintenanceRedeployStatus"] = None,
+        disks: Optional[List["_models.DiskInstanceView"]] = None,
+        extensions: Optional[List["_models.VirtualMachineExtensionInstanceView"]] = None,
+        boot_diagnostics: Optional["_models.BootDiagnosticsInstanceView"] = None,
+        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
+        patch_status: Optional["_models.VirtualMachinePatchStatus"] = None,
         **kwargs
     ):
         """
@@ -10467,7 +9950,7 @@ class VirtualMachineInstanceView(msrest.serialization.Model):
         :keyword os_version: The version of Operating System running on the virtual machine.
         :paramtype os_version: str
         :keyword hyper_v_generation: Specifies the HyperVGeneration Type associated with a resource.
-         Possible values include: "V1", "V2".
+         Known values are: "V1" and "V2".
         :paramtype hyper_v_generation: str or
          ~azure.mgmt.compute.v2021_03_01.models.HyperVGenerationType
         :keyword rdp_thumb_print: The Remote desktop certificate thumbprint.
@@ -10492,7 +9975,7 @@ class VirtualMachineInstanceView(msrest.serialization.Model):
         :keyword patch_status: [Preview Feature] The status of virtual machine patch operations.
         :paramtype patch_status: ~azure.mgmt.compute.v2021_03_01.models.VirtualMachinePatchStatus
         """
-        super(VirtualMachineInstanceView, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.platform_update_domain = platform_update_domain
         self.platform_fault_domain = platform_fault_domain
         self.computer_name = computer_name
@@ -10511,7 +9994,7 @@ class VirtualMachineInstanceView(msrest.serialization.Model):
         self.patch_status = patch_status
 
 
-class VirtualMachineIpTag(msrest.serialization.Model):
+class VirtualMachineIpTag(_serialization.Model):
     """Contains the IP tag associated with the public IP address.
 
     :ivar ip_tag_type: IP tag type. Example: FirstPartyUsage.
@@ -10521,34 +10004,28 @@ class VirtualMachineIpTag(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'ip_tag_type': {'key': 'ipTagType', 'type': 'str'},
-        'tag': {'key': 'tag', 'type': 'str'},
+        "ip_tag_type": {"key": "ipTagType", "type": "str"},
+        "tag": {"key": "tag", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        ip_tag_type: Optional[str] = None,
-        tag: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, ip_tag_type: Optional[str] = None, tag: Optional[str] = None, **kwargs):
         """
         :keyword ip_tag_type: IP tag type. Example: FirstPartyUsage.
         :paramtype ip_tag_type: str
         :keyword tag: IP tag associated with the public IP. Example: SQL, Storage etc.
         :paramtype tag: str
         """
-        super(VirtualMachineIpTag, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.ip_tag_type = ip_tag_type
         self.tag = tag
 
 
-class VirtualMachineListResult(msrest.serialization.Model):
+class VirtualMachineListResult(_serialization.Model):
     """The List Virtual Machine operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. The list of virtual machines.
+    :ivar value: The list of virtual machines. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachine]
     :ivar next_link: The URI to fetch the next page of VMs. Call ListNext() with this URI to fetch
      the next page of Virtual Machines.
@@ -10556,45 +10033,39 @@ class VirtualMachineListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualMachine]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualMachine]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["VirtualMachine"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.VirtualMachine"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. The list of virtual machines.
+        :keyword value: The list of virtual machines. Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachine]
         :keyword next_link: The URI to fetch the next page of VMs. Call ListNext() with this URI to
          fetch the next page of Virtual Machines.
         :paramtype next_link: str
         """
-        super(VirtualMachineListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class VirtualMachineNetworkInterfaceConfiguration(msrest.serialization.Model):
+class VirtualMachineNetworkInterfaceConfiguration(_serialization.Model):
     """Describes a virtual machine network interface configurations.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The network interface configuration name.
+    :ivar name: The network interface configuration name. Required.
     :vartype name: str
     :ivar primary: Specifies the primary network interface in case the virtual machine has more
      than 1 network interface.
     :vartype primary: bool
     :ivar delete_option: Specify what happens to the network interface when the VM is deleted.
-     Possible values include: "Delete", "Detach".
+     Known values are: "Delete" and "Detach".
     :vartype delete_option: str or ~azure.mgmt.compute.v2021_03_01.models.DeleteOptions
     :ivar enable_accelerated_networking: Specifies whether the network interface is accelerated
      networking-enabled.
@@ -10616,20 +10087,26 @@ class VirtualMachineNetworkInterfaceConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'primary': {'key': 'properties.primary', 'type': 'bool'},
-        'delete_option': {'key': 'properties.deleteOption', 'type': 'str'},
-        'enable_accelerated_networking': {'key': 'properties.enableAcceleratedNetworking', 'type': 'bool'},
-        'enable_fpga': {'key': 'properties.enableFpga', 'type': 'bool'},
-        'enable_ip_forwarding': {'key': 'properties.enableIPForwarding', 'type': 'bool'},
-        'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'SubResource'},
-        'dns_settings': {'key': 'properties.dnsSettings', 'type': 'VirtualMachineNetworkInterfaceDnsSettingsConfiguration'},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[VirtualMachineNetworkInterfaceIPConfiguration]'},
-        'dscp_configuration': {'key': 'properties.dscpConfiguration', 'type': 'SubResource'},
+        "name": {"key": "name", "type": "str"},
+        "primary": {"key": "properties.primary", "type": "bool"},
+        "delete_option": {"key": "properties.deleteOption", "type": "str"},
+        "enable_accelerated_networking": {"key": "properties.enableAcceleratedNetworking", "type": "bool"},
+        "enable_fpga": {"key": "properties.enableFpga", "type": "bool"},
+        "enable_ip_forwarding": {"key": "properties.enableIPForwarding", "type": "bool"},
+        "network_security_group": {"key": "properties.networkSecurityGroup", "type": "SubResource"},
+        "dns_settings": {
+            "key": "properties.dnsSettings",
+            "type": "VirtualMachineNetworkInterfaceDnsSettingsConfiguration",
+        },
+        "ip_configurations": {
+            "key": "properties.ipConfigurations",
+            "type": "[VirtualMachineNetworkInterfaceIPConfiguration]",
+        },
+        "dscp_configuration": {"key": "properties.dscpConfiguration", "type": "SubResource"},
     }
 
     def __init__(
@@ -10637,24 +10114,24 @@ class VirtualMachineNetworkInterfaceConfiguration(msrest.serialization.Model):
         *,
         name: str,
         primary: Optional[bool] = None,
-        delete_option: Optional[Union[str, "DeleteOptions"]] = None,
+        delete_option: Optional[Union[str, "_models.DeleteOptions"]] = None,
         enable_accelerated_networking: Optional[bool] = None,
         enable_fpga: Optional[bool] = None,
         enable_ip_forwarding: Optional[bool] = None,
-        network_security_group: Optional["SubResource"] = None,
-        dns_settings: Optional["VirtualMachineNetworkInterfaceDnsSettingsConfiguration"] = None,
-        ip_configurations: Optional[List["VirtualMachineNetworkInterfaceIPConfiguration"]] = None,
-        dscp_configuration: Optional["SubResource"] = None,
+        network_security_group: Optional["_models.SubResource"] = None,
+        dns_settings: Optional["_models.VirtualMachineNetworkInterfaceDnsSettingsConfiguration"] = None,
+        ip_configurations: Optional[List["_models.VirtualMachineNetworkInterfaceIPConfiguration"]] = None,
+        dscp_configuration: Optional["_models.SubResource"] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. The network interface configuration name.
+        :keyword name: The network interface configuration name. Required.
         :paramtype name: str
         :keyword primary: Specifies the primary network interface in case the virtual machine has more
          than 1 network interface.
         :paramtype primary: bool
         :keyword delete_option: Specify what happens to the network interface when the VM is deleted.
-         Possible values include: "Delete", "Detach".
+         Known values are: "Delete" and "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2021_03_01.models.DeleteOptions
         :keyword enable_accelerated_networking: Specifies whether the network interface is accelerated
          networking-enabled.
@@ -10674,7 +10151,7 @@ class VirtualMachineNetworkInterfaceConfiguration(msrest.serialization.Model):
         :keyword dscp_configuration:
         :paramtype dscp_configuration: ~azure.mgmt.compute.v2021_03_01.models.SubResource
         """
-        super(VirtualMachineNetworkInterfaceConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.primary = primary
         self.delete_option = delete_option
@@ -10687,7 +10164,7 @@ class VirtualMachineNetworkInterfaceConfiguration(msrest.serialization.Model):
         self.dscp_configuration = dscp_configuration
 
 
-class VirtualMachineNetworkInterfaceDnsSettingsConfiguration(msrest.serialization.Model):
+class VirtualMachineNetworkInterfaceDnsSettingsConfiguration(_serialization.Model):
     """Describes a virtual machines network configuration's DNS settings.
 
     :ivar dns_servers: List of DNS servers IP addresses.
@@ -10695,29 +10172,24 @@ class VirtualMachineNetworkInterfaceDnsSettingsConfiguration(msrest.serializatio
     """
 
     _attribute_map = {
-        'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
+        "dns_servers": {"key": "dnsServers", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        dns_servers: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, dns_servers: Optional[List[str]] = None, **kwargs):
         """
         :keyword dns_servers: List of DNS servers IP addresses.
         :paramtype dns_servers: list[str]
         """
-        super(VirtualMachineNetworkInterfaceDnsSettingsConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.dns_servers = dns_servers
 
 
-class VirtualMachineNetworkInterfaceIPConfiguration(msrest.serialization.Model):
+class VirtualMachineNetworkInterfaceIPConfiguration(_serialization.Model):
     """Describes a virtual machine network profile's IP configuration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The IP configuration name.
+    :ivar name: The IP configuration name. Required.
     :vartype name: str
     :ivar subnet: Specifies the identifier of the subnet.
     :vartype subnet: ~azure.mgmt.compute.v2021_03_01.models.SubResource
@@ -10729,7 +10201,7 @@ class VirtualMachineNetworkInterfaceIPConfiguration(msrest.serialization.Model):
      ~azure.mgmt.compute.v2021_03_01.models.VirtualMachinePublicIPAddressConfiguration
     :ivar private_ip_address_version: Available from Api-Version 2017-03-30 onwards, it represents
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
-     values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+     values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
     :vartype private_ip_address_version: str or ~azure.mgmt.compute.v2021_03_01.models.IPVersions
     :ivar application_security_groups: Specifies an array of references to application security
      group.
@@ -10749,35 +10221,44 @@ class VirtualMachineNetworkInterfaceIPConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'SubResource'},
-        'primary': {'key': 'properties.primary', 'type': 'bool'},
-        'public_ip_address_configuration': {'key': 'properties.publicIPAddressConfiguration', 'type': 'VirtualMachinePublicIPAddressConfiguration'},
-        'private_ip_address_version': {'key': 'properties.privateIPAddressVersion', 'type': 'str'},
-        'application_security_groups': {'key': 'properties.applicationSecurityGroups', 'type': '[SubResource]'},
-        'application_gateway_backend_address_pools': {'key': 'properties.applicationGatewayBackendAddressPools', 'type': '[SubResource]'},
-        'load_balancer_backend_address_pools': {'key': 'properties.loadBalancerBackendAddressPools', 'type': '[SubResource]'},
+        "name": {"key": "name", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "SubResource"},
+        "primary": {"key": "properties.primary", "type": "bool"},
+        "public_ip_address_configuration": {
+            "key": "properties.publicIPAddressConfiguration",
+            "type": "VirtualMachinePublicIPAddressConfiguration",
+        },
+        "private_ip_address_version": {"key": "properties.privateIPAddressVersion", "type": "str"},
+        "application_security_groups": {"key": "properties.applicationSecurityGroups", "type": "[SubResource]"},
+        "application_gateway_backend_address_pools": {
+            "key": "properties.applicationGatewayBackendAddressPools",
+            "type": "[SubResource]",
+        },
+        "load_balancer_backend_address_pools": {
+            "key": "properties.loadBalancerBackendAddressPools",
+            "type": "[SubResource]",
+        },
     }
 
     def __init__(
         self,
         *,
         name: str,
-        subnet: Optional["SubResource"] = None,
+        subnet: Optional["_models.SubResource"] = None,
         primary: Optional[bool] = None,
-        public_ip_address_configuration: Optional["VirtualMachinePublicIPAddressConfiguration"] = None,
-        private_ip_address_version: Optional[Union[str, "IPVersions"]] = None,
-        application_security_groups: Optional[List["SubResource"]] = None,
-        application_gateway_backend_address_pools: Optional[List["SubResource"]] = None,
-        load_balancer_backend_address_pools: Optional[List["SubResource"]] = None,
+        public_ip_address_configuration: Optional["_models.VirtualMachinePublicIPAddressConfiguration"] = None,
+        private_ip_address_version: Optional[Union[str, "_models.IPVersions"]] = None,
+        application_security_groups: Optional[List["_models.SubResource"]] = None,
+        application_gateway_backend_address_pools: Optional[List["_models.SubResource"]] = None,
+        load_balancer_backend_address_pools: Optional[List["_models.SubResource"]] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. The IP configuration name.
+        :keyword name: The IP configuration name. Required.
         :paramtype name: str
         :keyword subnet: Specifies the identifier of the subnet.
         :paramtype subnet: ~azure.mgmt.compute.v2021_03_01.models.SubResource
@@ -10789,7 +10270,7 @@ class VirtualMachineNetworkInterfaceIPConfiguration(msrest.serialization.Model):
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachinePublicIPAddressConfiguration
         :keyword private_ip_address_version: Available from Api-Version 2017-03-30 onwards, it
          represents whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.
-         Possible values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+         Possible values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
         :paramtype private_ip_address_version: str or ~azure.mgmt.compute.v2021_03_01.models.IPVersions
         :keyword application_security_groups: Specifies an array of references to application security
          group.
@@ -10808,7 +10289,7 @@ class VirtualMachineNetworkInterfaceIPConfiguration(msrest.serialization.Model):
         :paramtype load_balancer_backend_address_pools:
          list[~azure.mgmt.compute.v2021_03_01.models.SubResource]
         """
-        super(VirtualMachineNetworkInterfaceIPConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.subnet = subnet
         self.primary = primary
@@ -10819,7 +10300,7 @@ class VirtualMachineNetworkInterfaceIPConfiguration(msrest.serialization.Model):
         self.load_balancer_backend_address_pools = load_balancer_backend_address_pools
 
 
-class VirtualMachinePatchStatus(msrest.serialization.Model):
+class VirtualMachinePatchStatus(_serialization.Model):
     """The status of virtual machine patch operations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10837,20 +10318,23 @@ class VirtualMachinePatchStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'configuration_statuses': {'readonly': True},
+        "configuration_statuses": {"readonly": True},
     }
 
     _attribute_map = {
-        'available_patch_summary': {'key': 'availablePatchSummary', 'type': 'AvailablePatchSummary'},
-        'last_patch_installation_summary': {'key': 'lastPatchInstallationSummary', 'type': 'LastPatchInstallationSummary'},
-        'configuration_statuses': {'key': 'configurationStatuses', 'type': '[InstanceViewStatus]'},
+        "available_patch_summary": {"key": "availablePatchSummary", "type": "AvailablePatchSummary"},
+        "last_patch_installation_summary": {
+            "key": "lastPatchInstallationSummary",
+            "type": "LastPatchInstallationSummary",
+        },
+        "configuration_statuses": {"key": "configurationStatuses", "type": "[InstanceViewStatus]"},
     }
 
     def __init__(
         self,
         *,
-        available_patch_summary: Optional["AvailablePatchSummary"] = None,
-        last_patch_installation_summary: Optional["LastPatchInstallationSummary"] = None,
+        available_patch_summary: Optional["_models.AvailablePatchSummary"] = None,
+        last_patch_installation_summary: Optional["_models.LastPatchInstallationSummary"] = None,
         **kwargs
     ):
         """
@@ -10863,25 +10347,25 @@ class VirtualMachinePatchStatus(msrest.serialization.Model):
         :paramtype last_patch_installation_summary:
          ~azure.mgmt.compute.v2021_03_01.models.LastPatchInstallationSummary
         """
-        super(VirtualMachinePatchStatus, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.available_patch_summary = available_patch_summary
         self.last_patch_installation_summary = last_patch_installation_summary
         self.configuration_statuses = None
 
 
-class VirtualMachinePublicIPAddressConfiguration(msrest.serialization.Model):
+class VirtualMachinePublicIPAddressConfiguration(_serialization.Model):
     """Describes a virtual machines IP Configuration's PublicIPAddress configuration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The publicIP address configuration name.
+    :ivar name: The publicIP address configuration name. Required.
     :vartype name: str
     :ivar sku: Describes the public IP Sku.
     :vartype sku: ~azure.mgmt.compute.v2021_03_01.models.PublicIPAddressSku
     :ivar idle_timeout_in_minutes: The idle timeout of the public IP address.
     :vartype idle_timeout_in_minutes: int
     :ivar delete_option: Specify what happens to the public IP address when the VM is deleted.
-     Possible values include: "Delete", "Detach".
+     Known values are: "Delete" and "Detach".
     :vartype delete_option: str or ~azure.mgmt.compute.v2021_03_01.models.DeleteOptions
     :ivar dns_settings: The dns settings to be applied on the publicIP addresses .
     :vartype dns_settings:
@@ -10892,53 +10376,56 @@ class VirtualMachinePublicIPAddressConfiguration(msrest.serialization.Model):
     :vartype public_ip_prefix: ~azure.mgmt.compute.v2021_03_01.models.SubResource
     :ivar public_ip_address_version: Available from Api-Version 2019-07-01 onwards, it represents
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4. Possible values
-     are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+     are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
     :vartype public_ip_address_version: str or ~azure.mgmt.compute.v2021_03_01.models.IPVersions
-    :ivar public_ip_allocation_method: Specify the public IP allocation type. Possible values
-     include: "Dynamic", "Static".
+    :ivar public_ip_allocation_method: Specify the public IP allocation type. Known values are:
+     "Dynamic" and "Static".
     :vartype public_ip_allocation_method: str or
      ~azure.mgmt.compute.v2021_03_01.models.PublicIPAllocationMethod
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'PublicIPAddressSku'},
-        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
-        'delete_option': {'key': 'properties.deleteOption', 'type': 'str'},
-        'dns_settings': {'key': 'properties.dnsSettings', 'type': 'VirtualMachinePublicIPAddressDnsSettingsConfiguration'},
-        'ip_tags': {'key': 'properties.ipTags', 'type': '[VirtualMachineIpTag]'},
-        'public_ip_prefix': {'key': 'properties.publicIPPrefix', 'type': 'SubResource'},
-        'public_ip_address_version': {'key': 'properties.publicIPAddressVersion', 'type': 'str'},
-        'public_ip_allocation_method': {'key': 'properties.publicIPAllocationMethod', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "sku": {"key": "sku", "type": "PublicIPAddressSku"},
+        "idle_timeout_in_minutes": {"key": "properties.idleTimeoutInMinutes", "type": "int"},
+        "delete_option": {"key": "properties.deleteOption", "type": "str"},
+        "dns_settings": {
+            "key": "properties.dnsSettings",
+            "type": "VirtualMachinePublicIPAddressDnsSettingsConfiguration",
+        },
+        "ip_tags": {"key": "properties.ipTags", "type": "[VirtualMachineIpTag]"},
+        "public_ip_prefix": {"key": "properties.publicIPPrefix", "type": "SubResource"},
+        "public_ip_address_version": {"key": "properties.publicIPAddressVersion", "type": "str"},
+        "public_ip_allocation_method": {"key": "properties.publicIPAllocationMethod", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        sku: Optional["PublicIPAddressSku"] = None,
+        sku: Optional["_models.PublicIPAddressSku"] = None,
         idle_timeout_in_minutes: Optional[int] = None,
-        delete_option: Optional[Union[str, "DeleteOptions"]] = None,
-        dns_settings: Optional["VirtualMachinePublicIPAddressDnsSettingsConfiguration"] = None,
-        ip_tags: Optional[List["VirtualMachineIpTag"]] = None,
-        public_ip_prefix: Optional["SubResource"] = None,
-        public_ip_address_version: Optional[Union[str, "IPVersions"]] = None,
-        public_ip_allocation_method: Optional[Union[str, "PublicIPAllocationMethod"]] = None,
+        delete_option: Optional[Union[str, "_models.DeleteOptions"]] = None,
+        dns_settings: Optional["_models.VirtualMachinePublicIPAddressDnsSettingsConfiguration"] = None,
+        ip_tags: Optional[List["_models.VirtualMachineIpTag"]] = None,
+        public_ip_prefix: Optional["_models.SubResource"] = None,
+        public_ip_address_version: Optional[Union[str, "_models.IPVersions"]] = None,
+        public_ip_allocation_method: Optional[Union[str, "_models.PublicIPAllocationMethod"]] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. The publicIP address configuration name.
+        :keyword name: The publicIP address configuration name. Required.
         :paramtype name: str
         :keyword sku: Describes the public IP Sku.
         :paramtype sku: ~azure.mgmt.compute.v2021_03_01.models.PublicIPAddressSku
         :keyword idle_timeout_in_minutes: The idle timeout of the public IP address.
         :paramtype idle_timeout_in_minutes: int
         :keyword delete_option: Specify what happens to the public IP address when the VM is deleted.
-         Possible values include: "Delete", "Detach".
+         Known values are: "Delete" and "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2021_03_01.models.DeleteOptions
         :keyword dns_settings: The dns settings to be applied on the publicIP addresses .
         :paramtype dns_settings:
@@ -10949,14 +10436,14 @@ class VirtualMachinePublicIPAddressConfiguration(msrest.serialization.Model):
         :paramtype public_ip_prefix: ~azure.mgmt.compute.v2021_03_01.models.SubResource
         :keyword public_ip_address_version: Available from Api-Version 2019-07-01 onwards, it
          represents whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.
-         Possible values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+         Possible values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
         :paramtype public_ip_address_version: str or ~azure.mgmt.compute.v2021_03_01.models.IPVersions
-        :keyword public_ip_allocation_method: Specify the public IP allocation type. Possible values
-         include: "Dynamic", "Static".
+        :keyword public_ip_allocation_method: Specify the public IP allocation type. Known values are:
+         "Dynamic" and "Static".
         :paramtype public_ip_allocation_method: str or
          ~azure.mgmt.compute.v2021_03_01.models.PublicIPAllocationMethod
         """
-        super(VirtualMachinePublicIPAddressConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.sku = sku
         self.idle_timeout_in_minutes = idle_timeout_in_minutes
@@ -10968,42 +10455,37 @@ class VirtualMachinePublicIPAddressConfiguration(msrest.serialization.Model):
         self.public_ip_allocation_method = public_ip_allocation_method
 
 
-class VirtualMachinePublicIPAddressDnsSettingsConfiguration(msrest.serialization.Model):
+class VirtualMachinePublicIPAddressDnsSettingsConfiguration(_serialization.Model):
     """Describes a virtual machines network configuration's DNS settings.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar domain_name_label: Required. The Domain name label prefix of the PublicIPAddress
-     resources that will be created. The generated name label is the concatenation of the domain
-     name label and vm network profile unique ID.
+    :ivar domain_name_label: The Domain name label prefix of the PublicIPAddress resources that
+     will be created. The generated name label is the concatenation of the domain name label and vm
+     network profile unique ID. Required.
     :vartype domain_name_label: str
     """
 
     _validation = {
-        'domain_name_label': {'required': True},
+        "domain_name_label": {"required": True},
     }
 
     _attribute_map = {
-        'domain_name_label': {'key': 'domainNameLabel', 'type': 'str'},
+        "domain_name_label": {"key": "domainNameLabel", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        domain_name_label: str,
-        **kwargs
-    ):
+    def __init__(self, *, domain_name_label: str, **kwargs):
         """
-        :keyword domain_name_label: Required. The Domain name label prefix of the PublicIPAddress
-         resources that will be created. The generated name label is the concatenation of the domain
-         name label and vm network profile unique ID.
+        :keyword domain_name_label: The Domain name label prefix of the PublicIPAddress resources that
+         will be created. The generated name label is the concatenation of the domain name label and vm
+         network profile unique ID. Required.
         :paramtype domain_name_label: str
         """
-        super(VirtualMachinePublicIPAddressDnsSettingsConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.domain_name_label = domain_name_label
 
 
-class VirtualMachineReimageParameters(msrest.serialization.Model):
+class VirtualMachineReimageParameters(_serialization.Model):
     """Parameters for Reimaging Virtual Machine. NOTE: Virtual Machine OS disk will always be reimaged.
 
     :ivar temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
@@ -11012,25 +10494,20 @@ class VirtualMachineReimageParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'temp_disk': {'key': 'tempDisk', 'type': 'bool'},
+        "temp_disk": {"key": "tempDisk", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        temp_disk: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, temp_disk: Optional[bool] = None, **kwargs):
         """
         :keyword temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This
          temp disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
         :paramtype temp_disk: bool
         """
-        super(VirtualMachineReimageParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.temp_disk = temp_disk
 
 
-class VirtualMachineRunCommand(Resource):
+class VirtualMachineRunCommand(Resource):  # pylint: disable=too-many-instance-attributes
     """Describes a Virtual Machine run command.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11043,9 +10520,9 @@ class VirtualMachineRunCommand(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar source: The source of the run command script.
     :vartype source: ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineRunCommandScriptSource
@@ -11078,31 +10555,31 @@ class VirtualMachineRunCommand(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'instance_view': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "instance_view": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'source': {'key': 'properties.source', 'type': 'VirtualMachineRunCommandScriptSource'},
-        'parameters': {'key': 'properties.parameters', 'type': '[RunCommandInputParameter]'},
-        'protected_parameters': {'key': 'properties.protectedParameters', 'type': '[RunCommandInputParameter]'},
-        'async_execution': {'key': 'properties.asyncExecution', 'type': 'bool'},
-        'run_as_user': {'key': 'properties.runAsUser', 'type': 'str'},
-        'run_as_password': {'key': 'properties.runAsPassword', 'type': 'str'},
-        'timeout_in_seconds': {'key': 'properties.timeoutInSeconds', 'type': 'int'},
-        'output_blob_uri': {'key': 'properties.outputBlobUri', 'type': 'str'},
-        'error_blob_uri': {'key': 'properties.errorBlobUri', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineRunCommandInstanceView'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "source": {"key": "properties.source", "type": "VirtualMachineRunCommandScriptSource"},
+        "parameters": {"key": "properties.parameters", "type": "[RunCommandInputParameter]"},
+        "protected_parameters": {"key": "properties.protectedParameters", "type": "[RunCommandInputParameter]"},
+        "async_execution": {"key": "properties.asyncExecution", "type": "bool"},
+        "run_as_user": {"key": "properties.runAsUser", "type": "str"},
+        "run_as_password": {"key": "properties.runAsPassword", "type": "str"},
+        "timeout_in_seconds": {"key": "properties.timeoutInSeconds", "type": "int"},
+        "output_blob_uri": {"key": "properties.outputBlobUri", "type": "str"},
+        "error_blob_uri": {"key": "properties.errorBlobUri", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "instance_view": {"key": "properties.instanceView", "type": "VirtualMachineRunCommandInstanceView"},
     }
 
     def __init__(
@@ -11110,10 +10587,10 @@ class VirtualMachineRunCommand(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        source: Optional["VirtualMachineRunCommandScriptSource"] = None,
-        parameters: Optional[List["RunCommandInputParameter"]] = None,
-        protected_parameters: Optional[List["RunCommandInputParameter"]] = None,
-        async_execution: Optional[bool] = False,
+        source: Optional["_models.VirtualMachineRunCommandScriptSource"] = None,
+        parameters: Optional[List["_models.RunCommandInputParameter"]] = None,
+        protected_parameters: Optional[List["_models.RunCommandInputParameter"]] = None,
+        async_execution: bool = False,
         run_as_user: Optional[str] = None,
         run_as_password: Optional[str] = None,
         timeout_in_seconds: Optional[int] = None,
@@ -11122,9 +10599,9 @@ class VirtualMachineRunCommand(Resource):
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword source: The source of the run command script.
         :paramtype source: ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineRunCommandScriptSource
@@ -11150,7 +10627,7 @@ class VirtualMachineRunCommand(Resource):
          uploaded.
         :paramtype error_blob_uri: str
         """
-        super(VirtualMachineRunCommand, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.source = source
         self.parameters = parameters
         self.protected_parameters = protected_parameters
@@ -11164,11 +10641,11 @@ class VirtualMachineRunCommand(Resource):
         self.instance_view = None
 
 
-class VirtualMachineRunCommandInstanceView(msrest.serialization.Model):
+class VirtualMachineRunCommandInstanceView(_serialization.Model):
     """The instance view of a virtual machine run command.
 
-    :ivar execution_state: Script execution status. Possible values include: "Unknown", "Pending",
-     "Running", "Failed", "Succeeded", "TimedOut", "Canceled".
+    :ivar execution_state: Script execution status. Known values are: "Unknown", "Pending",
+     "Running", "Failed", "Succeeded", "TimedOut", and "Canceled".
     :vartype execution_state: str or ~azure.mgmt.compute.v2021_03_01.models.ExecutionState
     :ivar execution_message: Communicate script configuration errors or execution messages.
     :vartype execution_message: str
@@ -11187,32 +10664,32 @@ class VirtualMachineRunCommandInstanceView(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'execution_state': {'key': 'executionState', 'type': 'str'},
-        'execution_message': {'key': 'executionMessage', 'type': 'str'},
-        'exit_code': {'key': 'exitCode', 'type': 'int'},
-        'output': {'key': 'output', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
+        "execution_state": {"key": "executionState", "type": "str"},
+        "execution_message": {"key": "executionMessage", "type": "str"},
+        "exit_code": {"key": "exitCode", "type": "int"},
+        "output": {"key": "output", "type": "str"},
+        "error": {"key": "error", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "statuses": {"key": "statuses", "type": "[InstanceViewStatus]"},
     }
 
     def __init__(
         self,
         *,
-        execution_state: Optional[Union[str, "ExecutionState"]] = None,
+        execution_state: Optional[Union[str, "_models.ExecutionState"]] = None,
         execution_message: Optional[str] = None,
         exit_code: Optional[int] = None,
         output: Optional[str] = None,
         error: Optional[str] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        statuses: Optional[List["InstanceViewStatus"]] = None,
+        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
         **kwargs
     ):
         """
-        :keyword execution_state: Script execution status. Possible values include: "Unknown",
-         "Pending", "Running", "Failed", "Succeeded", "TimedOut", "Canceled".
+        :keyword execution_state: Script execution status. Known values are: "Unknown", "Pending",
+         "Running", "Failed", "Succeeded", "TimedOut", and "Canceled".
         :paramtype execution_state: str or ~azure.mgmt.compute.v2021_03_01.models.ExecutionState
         :keyword execution_message: Communicate script configuration errors or execution messages.
         :paramtype execution_message: str
@@ -11229,7 +10706,7 @@ class VirtualMachineRunCommandInstanceView(msrest.serialization.Model):
         :keyword statuses: The resource status information.
         :paramtype statuses: list[~azure.mgmt.compute.v2021_03_01.models.InstanceViewStatus]
         """
-        super(VirtualMachineRunCommandInstanceView, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.execution_state = execution_state
         self.execution_message = execution_message
         self.exit_code = exit_code
@@ -11240,7 +10717,7 @@ class VirtualMachineRunCommandInstanceView(msrest.serialization.Model):
         self.statuses = statuses
 
 
-class VirtualMachineRunCommandScriptSource(msrest.serialization.Model):
+class VirtualMachineRunCommandScriptSource(_serialization.Model):
     """Describes the script sources for run command.
 
     :ivar script: Specifies the script content to be executed on the VM.
@@ -11252,9 +10729,9 @@ class VirtualMachineRunCommandScriptSource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'script': {'key': 'script', 'type': 'str'},
-        'script_uri': {'key': 'scriptUri', 'type': 'str'},
-        'command_id': {'key': 'commandId', 'type': 'str'},
+        "script": {"key": "script", "type": "str"},
+        "script_uri": {"key": "scriptUri", "type": "str"},
+        "command_id": {"key": "commandId", "type": "str"},
     }
 
     def __init__(
@@ -11273,56 +10750,50 @@ class VirtualMachineRunCommandScriptSource(msrest.serialization.Model):
         :keyword command_id: Specifies a commandId of predefined built-in script.
         :paramtype command_id: str
         """
-        super(VirtualMachineRunCommandScriptSource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.script = script
         self.script_uri = script_uri
         self.command_id = command_id
 
 
-class VirtualMachineRunCommandsListResult(msrest.serialization.Model):
+class VirtualMachineRunCommandsListResult(_serialization.Model):
     """The List run command operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. The list of run commands.
+    :ivar value: The list of run commands. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineRunCommand]
     :ivar next_link: The uri to fetch the next page of run commands.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualMachineRunCommand]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualMachineRunCommand]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["VirtualMachineRunCommand"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.VirtualMachineRunCommand"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. The list of run commands.
+        :keyword value: The list of run commands. Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineRunCommand]
         :keyword next_link: The uri to fetch the next page of run commands.
         :paramtype next_link: str
         """
-        super(VirtualMachineRunCommandsListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class VirtualMachineRunCommandUpdate(UpdateResource):
+class VirtualMachineRunCommandUpdate(UpdateResource):  # pylint: disable=too-many-instance-attributes
     """Describes a Virtual Machine run command.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar source: The source of the run command script.
     :vartype source: ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineRunCommandScriptSource
@@ -11355,33 +10826,33 @@ class VirtualMachineRunCommandUpdate(UpdateResource):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'instance_view': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "instance_view": {"readonly": True},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'source': {'key': 'properties.source', 'type': 'VirtualMachineRunCommandScriptSource'},
-        'parameters': {'key': 'properties.parameters', 'type': '[RunCommandInputParameter]'},
-        'protected_parameters': {'key': 'properties.protectedParameters', 'type': '[RunCommandInputParameter]'},
-        'async_execution': {'key': 'properties.asyncExecution', 'type': 'bool'},
-        'run_as_user': {'key': 'properties.runAsUser', 'type': 'str'},
-        'run_as_password': {'key': 'properties.runAsPassword', 'type': 'str'},
-        'timeout_in_seconds': {'key': 'properties.timeoutInSeconds', 'type': 'int'},
-        'output_blob_uri': {'key': 'properties.outputBlobUri', 'type': 'str'},
-        'error_blob_uri': {'key': 'properties.errorBlobUri', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineRunCommandInstanceView'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "source": {"key": "properties.source", "type": "VirtualMachineRunCommandScriptSource"},
+        "parameters": {"key": "properties.parameters", "type": "[RunCommandInputParameter]"},
+        "protected_parameters": {"key": "properties.protectedParameters", "type": "[RunCommandInputParameter]"},
+        "async_execution": {"key": "properties.asyncExecution", "type": "bool"},
+        "run_as_user": {"key": "properties.runAsUser", "type": "str"},
+        "run_as_password": {"key": "properties.runAsPassword", "type": "str"},
+        "timeout_in_seconds": {"key": "properties.timeoutInSeconds", "type": "int"},
+        "output_blob_uri": {"key": "properties.outputBlobUri", "type": "str"},
+        "error_blob_uri": {"key": "properties.errorBlobUri", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "instance_view": {"key": "properties.instanceView", "type": "VirtualMachineRunCommandInstanceView"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        source: Optional["VirtualMachineRunCommandScriptSource"] = None,
-        parameters: Optional[List["RunCommandInputParameter"]] = None,
-        protected_parameters: Optional[List["RunCommandInputParameter"]] = None,
-        async_execution: Optional[bool] = False,
+        source: Optional["_models.VirtualMachineRunCommandScriptSource"] = None,
+        parameters: Optional[List["_models.RunCommandInputParameter"]] = None,
+        protected_parameters: Optional[List["_models.RunCommandInputParameter"]] = None,
+        async_execution: bool = False,
         run_as_user: Optional[str] = None,
         run_as_password: Optional[str] = None,
         timeout_in_seconds: Optional[int] = None,
@@ -11390,7 +10861,7 @@ class VirtualMachineRunCommandUpdate(UpdateResource):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword source: The source of the run command script.
         :paramtype source: ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineRunCommandScriptSource
@@ -11416,7 +10887,7 @@ class VirtualMachineRunCommandUpdate(UpdateResource):
          uploaded.
         :paramtype error_blob_uri: str
         """
-        super(VirtualMachineRunCommandUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.source = source
         self.parameters = parameters
         self.protected_parameters = protected_parameters
@@ -11430,7 +10901,7 @@ class VirtualMachineRunCommandUpdate(UpdateResource):
         self.instance_view = None
 
 
-class VirtualMachineScaleSet(Resource):
+class VirtualMachineScaleSet(Resource):  # pylint: disable=too-many-instance-attributes
     """Describes a Virtual Machine Scale Set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11443,9 +10914,9 @@ class VirtualMachineScaleSet(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: The virtual machine scale set sku.
     :vartype sku: ~azure.mgmt.compute.v2021_03_01.models.Sku
@@ -11505,76 +10976,82 @@ class VirtualMachineScaleSet(Resource):
      chosen for removal when a Virtual Machine Scale Set is scaled-in.
     :vartype scale_in_policy: ~azure.mgmt.compute.v2021_03_01.models.ScaleInPolicy
     :ivar orchestration_mode: Specifies the orchestration mode for the virtual machine scale set.
-     Possible values include: "Uniform", "Flexible".
+     Known values are: "Uniform" and "Flexible".
     :vartype orchestration_mode: str or ~azure.mgmt.compute.v2021_03_01.models.OrchestrationMode
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'unique_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "unique_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'plan': {'key': 'plan', 'type': 'Plan'},
-        'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
-        'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'UpgradePolicy'},
-        'automatic_repairs_policy': {'key': 'properties.automaticRepairsPolicy', 'type': 'AutomaticRepairsPolicy'},
-        'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineScaleSetVMProfile'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
-        'do_not_run_extensions_on_overprovisioned_v_ms': {'key': 'properties.doNotRunExtensionsOnOverprovisionedVMs', 'type': 'bool'},
-        'unique_id': {'key': 'properties.uniqueId', 'type': 'str'},
-        'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
-        'zone_balance': {'key': 'properties.zoneBalance', 'type': 'bool'},
-        'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
-        'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
-        'host_group': {'key': 'properties.hostGroup', 'type': 'SubResource'},
-        'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
-        'scale_in_policy': {'key': 'properties.scaleInPolicy', 'type': 'ScaleInPolicy'},
-        'orchestration_mode': {'key': 'properties.orchestrationMode', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "plan": {"key": "plan", "type": "Plan"},
+        "identity": {"key": "identity", "type": "VirtualMachineScaleSetIdentity"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "upgrade_policy": {"key": "properties.upgradePolicy", "type": "UpgradePolicy"},
+        "automatic_repairs_policy": {"key": "properties.automaticRepairsPolicy", "type": "AutomaticRepairsPolicy"},
+        "virtual_machine_profile": {
+            "key": "properties.virtualMachineProfile",
+            "type": "VirtualMachineScaleSetVMProfile",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "overprovision": {"key": "properties.overprovision", "type": "bool"},
+        "do_not_run_extensions_on_overprovisioned_v_ms": {
+            "key": "properties.doNotRunExtensionsOnOverprovisionedVMs",
+            "type": "bool",
+        },
+        "unique_id": {"key": "properties.uniqueId", "type": "str"},
+        "single_placement_group": {"key": "properties.singlePlacementGroup", "type": "bool"},
+        "zone_balance": {"key": "properties.zoneBalance", "type": "bool"},
+        "platform_fault_domain_count": {"key": "properties.platformFaultDomainCount", "type": "int"},
+        "proximity_placement_group": {"key": "properties.proximityPlacementGroup", "type": "SubResource"},
+        "host_group": {"key": "properties.hostGroup", "type": "SubResource"},
+        "additional_capabilities": {"key": "properties.additionalCapabilities", "type": "AdditionalCapabilities"},
+        "scale_in_policy": {"key": "properties.scaleInPolicy", "type": "ScaleInPolicy"},
+        "orchestration_mode": {"key": "properties.orchestrationMode", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
-        plan: Optional["Plan"] = None,
-        identity: Optional["VirtualMachineScaleSetIdentity"] = None,
+        sku: Optional["_models.Sku"] = None,
+        plan: Optional["_models.Plan"] = None,
+        identity: Optional["_models.VirtualMachineScaleSetIdentity"] = None,
         zones: Optional[List[str]] = None,
-        extended_location: Optional["ExtendedLocation"] = None,
-        upgrade_policy: Optional["UpgradePolicy"] = None,
-        automatic_repairs_policy: Optional["AutomaticRepairsPolicy"] = None,
-        virtual_machine_profile: Optional["VirtualMachineScaleSetVMProfile"] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        upgrade_policy: Optional["_models.UpgradePolicy"] = None,
+        automatic_repairs_policy: Optional["_models.AutomaticRepairsPolicy"] = None,
+        virtual_machine_profile: Optional["_models.VirtualMachineScaleSetVMProfile"] = None,
         overprovision: Optional[bool] = None,
         do_not_run_extensions_on_overprovisioned_v_ms: Optional[bool] = None,
         single_placement_group: Optional[bool] = None,
         zone_balance: Optional[bool] = None,
         platform_fault_domain_count: Optional[int] = None,
-        proximity_placement_group: Optional["SubResource"] = None,
-        host_group: Optional["SubResource"] = None,
-        additional_capabilities: Optional["AdditionalCapabilities"] = None,
-        scale_in_policy: Optional["ScaleInPolicy"] = None,
-        orchestration_mode: Optional[Union[str, "OrchestrationMode"]] = None,
+        proximity_placement_group: Optional["_models.SubResource"] = None,
+        host_group: Optional["_models.SubResource"] = None,
+        additional_capabilities: Optional["_models.AdditionalCapabilities"] = None,
+        scale_in_policy: Optional["_models.ScaleInPolicy"] = None,
+        orchestration_mode: Optional[Union[str, "_models.OrchestrationMode"]] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: The virtual machine scale set sku.
         :paramtype sku: ~azure.mgmt.compute.v2021_03_01.models.Sku
@@ -11632,10 +11109,10 @@ class VirtualMachineScaleSet(Resource):
          chosen for removal when a Virtual Machine Scale Set is scaled-in.
         :paramtype scale_in_policy: ~azure.mgmt.compute.v2021_03_01.models.ScaleInPolicy
         :keyword orchestration_mode: Specifies the orchestration mode for the virtual machine scale
-         set. Possible values include: "Uniform", "Flexible".
+         set. Known values are: "Uniform" and "Flexible".
         :paramtype orchestration_mode: str or ~azure.mgmt.compute.v2021_03_01.models.OrchestrationMode
         """
-        super(VirtualMachineScaleSet, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.plan = plan
         self.identity = identity
@@ -11658,28 +11135,27 @@ class VirtualMachineScaleSet(Resource):
         self.orchestration_mode = orchestration_mode
 
 
-class VirtualMachineScaleSetDataDisk(msrest.serialization.Model):
+class VirtualMachineScaleSetDataDisk(_serialization.Model):
     """Describes a virtual machine scale set data disk.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar name: The disk name.
     :vartype name: str
-    :ivar lun: Required. Specifies the logical unit number of the data disk. This value is used to
-     identify data disks within the VM and therefore must be unique for each data disk attached to a
-     VM.
+    :ivar lun: Specifies the logical unit number of the data disk. This value is used to identify
+     data disks within the VM and therefore must be unique for each data disk attached to a VM.
+     Required.
     :vartype lun: int
     :ivar caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
      are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-     storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-     "ReadWrite".
+     storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype caching: str or ~azure.mgmt.compute.v2021_03_01.models.CachingTypes
     :ivar write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
      disabled on the disk.
     :vartype write_accelerator_enabled: bool
-    :ivar create_option: Required. The create option. Possible values include: "FromImage",
-     "Empty", "Attach".
+    :ivar create_option: The create option. Required. Known values are: "FromImage", "Empty", and
+     "Attach".
     :vartype create_option: str or ~azure.mgmt.compute.v2021_03_01.models.DiskCreateOptionTypes
     :ivar disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can be
      used to overwrite the size of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
@@ -11691,40 +11167,40 @@ class VirtualMachineScaleSetDataDisk(msrest.serialization.Model):
     :ivar disk_iops_read_write: Specifies the Read-Write IOPS for the managed disk. Should be used
      only when StorageAccountType is UltraSSD_LRS. If not specified, a default value would be
      assigned based on diskSizeGB.
-    :vartype disk_iops_read_write: long
+    :vartype disk_iops_read_write: int
     :ivar disk_m_bps_read_write: Specifies the bandwidth in MB per second for the managed disk.
      Should be used only when StorageAccountType is UltraSSD_LRS. If not specified, a default value
      would be assigned based on diskSizeGB.
-    :vartype disk_m_bps_read_write: long
+    :vartype disk_m_bps_read_write: int
     """
 
     _validation = {
-        'lun': {'required': True},
-        'create_option': {'required': True},
+        "lun": {"required": True},
+        "create_option": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'lun': {'key': 'lun', 'type': 'int'},
-        'caching': {'key': 'caching', 'type': 'str'},
-        'write_accelerator_enabled': {'key': 'writeAcceleratorEnabled', 'type': 'bool'},
-        'create_option': {'key': 'createOption', 'type': 'str'},
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'managed_disk': {'key': 'managedDisk', 'type': 'VirtualMachineScaleSetManagedDiskParameters'},
-        'disk_iops_read_write': {'key': 'diskIOPSReadWrite', 'type': 'long'},
-        'disk_m_bps_read_write': {'key': 'diskMBpsReadWrite', 'type': 'long'},
+        "name": {"key": "name", "type": "str"},
+        "lun": {"key": "lun", "type": "int"},
+        "caching": {"key": "caching", "type": "str"},
+        "write_accelerator_enabled": {"key": "writeAcceleratorEnabled", "type": "bool"},
+        "create_option": {"key": "createOption", "type": "str"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "managed_disk": {"key": "managedDisk", "type": "VirtualMachineScaleSetManagedDiskParameters"},
+        "disk_iops_read_write": {"key": "diskIOPSReadWrite", "type": "int"},
+        "disk_m_bps_read_write": {"key": "diskMBpsReadWrite", "type": "int"},
     }
 
     def __init__(
         self,
         *,
         lun: int,
-        create_option: Union[str, "DiskCreateOptionTypes"],
+        create_option: Union[str, "_models.DiskCreateOptionTypes"],
         name: Optional[str] = None,
-        caching: Optional[Union[str, "CachingTypes"]] = None,
+        caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         write_accelerator_enabled: Optional[bool] = None,
         disk_size_gb: Optional[int] = None,
-        managed_disk: Optional["VirtualMachineScaleSetManagedDiskParameters"] = None,
+        managed_disk: Optional["_models.VirtualMachineScaleSetManagedDiskParameters"] = None,
         disk_iops_read_write: Optional[int] = None,
         disk_m_bps_read_write: Optional[int] = None,
         **kwargs
@@ -11732,21 +11208,20 @@ class VirtualMachineScaleSetDataDisk(msrest.serialization.Model):
         """
         :keyword name: The disk name.
         :paramtype name: str
-        :keyword lun: Required. Specifies the logical unit number of the data disk. This value is used
-         to identify data disks within the VM and therefore must be unique for each data disk attached
-         to a VM.
+        :keyword lun: Specifies the logical unit number of the data disk. This value is used to
+         identify data disks within the VM and therefore must be unique for each data disk attached to a
+         VM. Required.
         :paramtype lun: int
         :keyword caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
          are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
          :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-         storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-         "ReadWrite".
+         storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", and "ReadWrite".
         :paramtype caching: str or ~azure.mgmt.compute.v2021_03_01.models.CachingTypes
         :keyword write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
          disabled on the disk.
         :paramtype write_accelerator_enabled: bool
-        :keyword create_option: Required. The create option. Possible values include: "FromImage",
-         "Empty", "Attach".
+        :keyword create_option: The create option. Required. Known values are: "FromImage", "Empty",
+         and "Attach".
         :paramtype create_option: str or ~azure.mgmt.compute.v2021_03_01.models.DiskCreateOptionTypes
         :keyword disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can
          be used to overwrite the size of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
@@ -11758,13 +11233,13 @@ class VirtualMachineScaleSetDataDisk(msrest.serialization.Model):
         :keyword disk_iops_read_write: Specifies the Read-Write IOPS for the managed disk. Should be
          used only when StorageAccountType is UltraSSD_LRS. If not specified, a default value would be
          assigned based on diskSizeGB.
-        :paramtype disk_iops_read_write: long
+        :paramtype disk_iops_read_write: int
         :keyword disk_m_bps_read_write: Specifies the bandwidth in MB per second for the managed disk.
          Should be used only when StorageAccountType is UltraSSD_LRS. If not specified, a default value
          would be assigned based on diskSizeGB.
-        :paramtype disk_m_bps_read_write: long
+        :paramtype disk_m_bps_read_write: int
         """
-        super(VirtualMachineScaleSetDataDisk, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.lun = lun
         self.caching = caching
@@ -11776,7 +11251,7 @@ class VirtualMachineScaleSetDataDisk(msrest.serialization.Model):
         self.disk_m_bps_read_write = disk_m_bps_read_write
 
 
-class VirtualMachineScaleSetExtension(SubResourceReadOnly):
+class VirtualMachineScaleSetExtension(SubResourceReadOnly):  # pylint: disable=too-many-instance-attributes
     """Describes a Virtual Machine Scale Set Extension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11805,10 +11280,10 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
      upgraded by the platform if there is a newer version of the extension available.
     :vartype enable_automatic_upgrade: bool
     :ivar settings: Json formatted public settings for the extension.
-    :vartype settings: any
+    :vartype settings: JSON
     :ivar protected_settings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :vartype protected_settings: any
+    :vartype protected_settings: JSON
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :ivar provision_after_extensions: Collection of extension names after which this extension
@@ -11817,25 +11292,25 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
-        'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
-        'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
-        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
-        'enable_automatic_upgrade': {'key': 'properties.enableAutomaticUpgrade', 'type': 'bool'},
-        'settings': {'key': 'properties.settings', 'type': 'object'},
-        'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'provision_after_extensions': {'key': 'properties.provisionAfterExtensions', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "force_update_tag": {"key": "properties.forceUpdateTag", "type": "str"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "type_handler_version": {"key": "properties.typeHandlerVersion", "type": "str"},
+        "auto_upgrade_minor_version": {"key": "properties.autoUpgradeMinorVersion", "type": "bool"},
+        "enable_automatic_upgrade": {"key": "properties.enableAutomaticUpgrade", "type": "bool"},
+        "settings": {"key": "properties.settings", "type": "object"},
+        "protected_settings": {"key": "properties.protectedSettings", "type": "object"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "provision_after_extensions": {"key": "properties.provisionAfterExtensions", "type": "[str]"},
     }
 
     def __init__(
@@ -11848,8 +11323,8 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
         type_handler_version: Optional[str] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
         enable_automatic_upgrade: Optional[bool] = None,
-        settings: Optional[Any] = None,
-        protected_settings: Optional[Any] = None,
+        settings: Optional[JSON] = None,
+        protected_settings: Optional[JSON] = None,
         provision_after_extensions: Optional[List[str]] = None,
         **kwargs
     ):
@@ -11874,15 +11349,15 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
          upgraded by the platform if there is a newer version of the extension available.
         :paramtype enable_automatic_upgrade: bool
         :keyword settings: Json formatted public settings for the extension.
-        :paramtype settings: any
+        :paramtype settings: JSON
         :keyword protected_settings: The extension can contain either protectedSettings or
          protectedSettingsFromKeyVault or no protected settings at all.
-        :paramtype protected_settings: any
+        :paramtype protected_settings: JSON
         :keyword provision_after_extensions: Collection of extension names after which this extension
          needs to be provisioned.
         :paramtype provision_after_extensions: list[str]
         """
-        super(VirtualMachineScaleSetExtension, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.type = None
         self.force_update_tag = force_update_tag
@@ -11897,12 +11372,12 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
         self.provision_after_extensions = provision_after_extensions
 
 
-class VirtualMachineScaleSetExtensionListResult(msrest.serialization.Model):
+class VirtualMachineScaleSetExtensionListResult(_serialization.Model):
     """The List VM scale set extension operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. The list of VM scale set extensions.
+    :ivar value: The list of VM scale set extensions. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetExtension]
     :ivar next_link: The uri to fetch the next page of VM scale set extensions. Call ListNext()
      with this to fetch the next page of VM scale set extensions.
@@ -11910,34 +11385,30 @@ class VirtualMachineScaleSetExtensionListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualMachineScaleSetExtension]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualMachineScaleSetExtension]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: List["VirtualMachineScaleSetExtension"],
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: List["_models.VirtualMachineScaleSetExtension"], next_link: Optional[str] = None, **kwargs
     ):
         """
-        :keyword value: Required. The list of VM scale set extensions.
+        :keyword value: The list of VM scale set extensions. Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetExtension]
         :keyword next_link: The uri to fetch the next page of VM scale set extensions. Call ListNext()
          with this to fetch the next page of VM scale set extensions.
         :paramtype next_link: str
         """
-        super(VirtualMachineScaleSetExtensionListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class VirtualMachineScaleSetExtensionProfile(msrest.serialization.Model):
+class VirtualMachineScaleSetExtensionProfile(_serialization.Model):
     """Describes a virtual machine scale set extension profile.
 
     :ivar extensions: The virtual machine scale set child extension resources.
@@ -11951,14 +11422,14 @@ class VirtualMachineScaleSetExtensionProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'extensions': {'key': 'extensions', 'type': '[VirtualMachineScaleSetExtension]'},
-        'extensions_time_budget': {'key': 'extensionsTimeBudget', 'type': 'str'},
+        "extensions": {"key": "extensions", "type": "[VirtualMachineScaleSetExtension]"},
+        "extensions_time_budget": {"key": "extensionsTimeBudget", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        extensions: Optional[List["VirtualMachineScaleSetExtension"]] = None,
+        extensions: Optional[List["_models.VirtualMachineScaleSetExtension"]] = None,
         extensions_time_budget: Optional[str] = None,
         **kwargs
     ):
@@ -11972,12 +11443,12 @@ class VirtualMachineScaleSetExtensionProfile(msrest.serialization.Model):
          api-version: 2020-06-01.
         :paramtype extensions_time_budget: str
         """
-        super(VirtualMachineScaleSetExtensionProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.extensions = extensions
         self.extensions_time_budget = extensions_time_budget
 
 
-class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
+class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):  # pylint: disable=too-many-instance-attributes
     """Describes a Virtual Machine Scale Set Extension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12006,10 +11477,10 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
      upgraded by the platform if there is a newer version of the extension available.
     :vartype enable_automatic_upgrade: bool
     :ivar settings: Json formatted public settings for the extension.
-    :vartype settings: any
+    :vartype settings: JSON
     :ivar protected_settings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :vartype protected_settings: any
+    :vartype protected_settings: JSON
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :ivar provision_after_extensions: Collection of extension names after which this extension
@@ -12018,26 +11489,26 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
-        'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
-        'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
-        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
-        'enable_automatic_upgrade': {'key': 'properties.enableAutomaticUpgrade', 'type': 'bool'},
-        'settings': {'key': 'properties.settings', 'type': 'object'},
-        'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'provision_after_extensions': {'key': 'properties.provisionAfterExtensions', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "force_update_tag": {"key": "properties.forceUpdateTag", "type": "str"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "type_handler_version": {"key": "properties.typeHandlerVersion", "type": "str"},
+        "auto_upgrade_minor_version": {"key": "properties.autoUpgradeMinorVersion", "type": "bool"},
+        "enable_automatic_upgrade": {"key": "properties.enableAutomaticUpgrade", "type": "bool"},
+        "settings": {"key": "properties.settings", "type": "object"},
+        "protected_settings": {"key": "properties.protectedSettings", "type": "object"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "provision_after_extensions": {"key": "properties.provisionAfterExtensions", "type": "[str]"},
     }
 
     def __init__(
@@ -12049,8 +11520,8 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
         type_handler_version: Optional[str] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
         enable_automatic_upgrade: Optional[bool] = None,
-        settings: Optional[Any] = None,
-        protected_settings: Optional[Any] = None,
+        settings: Optional[JSON] = None,
+        protected_settings: Optional[JSON] = None,
         provision_after_extensions: Optional[List[str]] = None,
         **kwargs
     ):
@@ -12073,15 +11544,15 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
          upgraded by the platform if there is a newer version of the extension available.
         :paramtype enable_automatic_upgrade: bool
         :keyword settings: Json formatted public settings for the extension.
-        :paramtype settings: any
+        :paramtype settings: JSON
         :keyword protected_settings: The extension can contain either protectedSettings or
          protectedSettingsFromKeyVault or no protected settings at all.
-        :paramtype protected_settings: any
+        :paramtype protected_settings: JSON
         :keyword provision_after_extensions: Collection of extension names after which this extension
          needs to be provisioned.
         :paramtype provision_after_extensions: list[str]
         """
-        super(VirtualMachineScaleSetExtensionUpdate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.type = None
         self.force_update_tag = force_update_tag
@@ -12096,7 +11567,7 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
         self.provision_after_extensions = provision_after_extensions
 
 
-class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
+class VirtualMachineScaleSetIdentity(_serialization.Model):
     """Identity for the virtual machine scale set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12110,7 +11581,7 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
     :ivar type: The type of identity used for the virtual machine scale set. The type
      'SystemAssigned, UserAssigned' includes both an implicitly created identity and a set of user
      assigned identities. The type 'None' will remove any identities from the virtual machine scale
-     set. Possible values include: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned",
+     set. Known values are: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", and
      "None".
     :vartype type: str or ~azure.mgmt.compute.v2021_03_01.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the virtual machine
@@ -12121,29 +11592,34 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue}'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {
+            "key": "userAssignedIdentities",
+            "type": "{VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue}",
+        },
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue"]] = None,
+        type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
+        user_assigned_identities: Optional[
+            Dict[str, "_models.VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue"]
+        ] = None,
         **kwargs
     ):
         """
         :keyword type: The type of identity used for the virtual machine scale set. The type
          'SystemAssigned, UserAssigned' includes both an implicitly created identity and a set of user
          assigned identities. The type 'None' will remove any identities from the virtual machine scale
-         set. Possible values include: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned",
+         set. Known values are: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", and
          "None".
         :paramtype type: str or ~azure.mgmt.compute.v2021_03_01.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user identities associated with the virtual
@@ -12153,14 +11629,14 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue]
         """
-        super(VirtualMachineScaleSetIdentity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
 
-class VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue(msrest.serialization.Model):
+class VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue(_serialization.Model):
     """VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12172,27 +11648,23 @@ class VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue(msrest.serializa
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
 
 
-class VirtualMachineScaleSetInstanceView(msrest.serialization.Model):
+class VirtualMachineScaleSetInstanceView(_serialization.Model):
     """The instance view of a virtual machine scale set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12211,36 +11683,31 @@ class VirtualMachineScaleSetInstanceView(msrest.serialization.Model):
     """
 
     _validation = {
-        'virtual_machine': {'readonly': True},
-        'extensions': {'readonly': True},
-        'orchestration_services': {'readonly': True},
+        "virtual_machine": {"readonly": True},
+        "extensions": {"readonly": True},
+        "orchestration_services": {"readonly": True},
     }
 
     _attribute_map = {
-        'virtual_machine': {'key': 'virtualMachine', 'type': 'VirtualMachineScaleSetInstanceViewStatusesSummary'},
-        'extensions': {'key': 'extensions', 'type': '[VirtualMachineScaleSetVMExtensionsSummary]'},
-        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
-        'orchestration_services': {'key': 'orchestrationServices', 'type': '[OrchestrationServiceSummary]'},
+        "virtual_machine": {"key": "virtualMachine", "type": "VirtualMachineScaleSetInstanceViewStatusesSummary"},
+        "extensions": {"key": "extensions", "type": "[VirtualMachineScaleSetVMExtensionsSummary]"},
+        "statuses": {"key": "statuses", "type": "[InstanceViewStatus]"},
+        "orchestration_services": {"key": "orchestrationServices", "type": "[OrchestrationServiceSummary]"},
     }
 
-    def __init__(
-        self,
-        *,
-        statuses: Optional[List["InstanceViewStatus"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, statuses: Optional[List["_models.InstanceViewStatus"]] = None, **kwargs):
         """
         :keyword statuses: The resource status information.
         :paramtype statuses: list[~azure.mgmt.compute.v2021_03_01.models.InstanceViewStatus]
         """
-        super(VirtualMachineScaleSetInstanceView, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.virtual_machine = None
         self.extensions = None
         self.statuses = statuses
         self.orchestration_services = None
 
 
-class VirtualMachineScaleSetInstanceViewStatusesSummary(msrest.serialization.Model):
+class VirtualMachineScaleSetInstanceViewStatusesSummary(_serialization.Model):
     """Instance view statuses summary for virtual machines of a virtual machine scale set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12251,20 +11718,16 @@ class VirtualMachineScaleSetInstanceViewStatusesSummary(msrest.serialization.Mod
     """
 
     _validation = {
-        'statuses_summary': {'readonly': True},
+        "statuses_summary": {"readonly": True},
     }
 
     _attribute_map = {
-        'statuses_summary': {'key': 'statusesSummary', 'type': '[VirtualMachineStatusCodeCount]'},
+        "statuses_summary": {"key": "statusesSummary", "type": "[VirtualMachineStatusCodeCount]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(VirtualMachineScaleSetInstanceViewStatusesSummary, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.statuses_summary = None
 
 
@@ -12275,7 +11738,7 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :ivar name: Required. The IP configuration name.
+    :ivar name: The IP configuration name. Required.
     :vartype name: str
     :ivar subnet: Specifies the identifier of the subnet.
     :vartype subnet: ~azure.mgmt.compute.v2021_03_01.models.ApiEntityReference
@@ -12287,7 +11750,7 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
      ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetPublicIPAddressConfiguration
     :ivar private_ip_address_version: Available from Api-Version 2017-03-30 onwards, it represents
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
-     values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+     values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
     :vartype private_ip_address_version: str or ~azure.mgmt.compute.v2021_03_01.models.IPVersion
     :ivar application_gateway_backend_address_pools: Specifies an array of references to backend
      address pools of application gateways. A scale set can reference backend address pools of
@@ -12310,41 +11773,50 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'ApiEntityReference'},
-        'primary': {'key': 'properties.primary', 'type': 'bool'},
-        'public_ip_address_configuration': {'key': 'properties.publicIPAddressConfiguration', 'type': 'VirtualMachineScaleSetPublicIPAddressConfiguration'},
-        'private_ip_address_version': {'key': 'properties.privateIPAddressVersion', 'type': 'str'},
-        'application_gateway_backend_address_pools': {'key': 'properties.applicationGatewayBackendAddressPools', 'type': '[SubResource]'},
-        'application_security_groups': {'key': 'properties.applicationSecurityGroups', 'type': '[SubResource]'},
-        'load_balancer_backend_address_pools': {'key': 'properties.loadBalancerBackendAddressPools', 'type': '[SubResource]'},
-        'load_balancer_inbound_nat_pools': {'key': 'properties.loadBalancerInboundNatPools', 'type': '[SubResource]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "ApiEntityReference"},
+        "primary": {"key": "properties.primary", "type": "bool"},
+        "public_ip_address_configuration": {
+            "key": "properties.publicIPAddressConfiguration",
+            "type": "VirtualMachineScaleSetPublicIPAddressConfiguration",
+        },
+        "private_ip_address_version": {"key": "properties.privateIPAddressVersion", "type": "str"},
+        "application_gateway_backend_address_pools": {
+            "key": "properties.applicationGatewayBackendAddressPools",
+            "type": "[SubResource]",
+        },
+        "application_security_groups": {"key": "properties.applicationSecurityGroups", "type": "[SubResource]"},
+        "load_balancer_backend_address_pools": {
+            "key": "properties.loadBalancerBackendAddressPools",
+            "type": "[SubResource]",
+        },
+        "load_balancer_inbound_nat_pools": {"key": "properties.loadBalancerInboundNatPools", "type": "[SubResource]"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        id: Optional[str] = None,
-        subnet: Optional["ApiEntityReference"] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        subnet: Optional["_models.ApiEntityReference"] = None,
         primary: Optional[bool] = None,
-        public_ip_address_configuration: Optional["VirtualMachineScaleSetPublicIPAddressConfiguration"] = None,
-        private_ip_address_version: Optional[Union[str, "IPVersion"]] = None,
-        application_gateway_backend_address_pools: Optional[List["SubResource"]] = None,
-        application_security_groups: Optional[List["SubResource"]] = None,
-        load_balancer_backend_address_pools: Optional[List["SubResource"]] = None,
-        load_balancer_inbound_nat_pools: Optional[List["SubResource"]] = None,
+        public_ip_address_configuration: Optional["_models.VirtualMachineScaleSetPublicIPAddressConfiguration"] = None,
+        private_ip_address_version: Optional[Union[str, "_models.IPVersion"]] = None,
+        application_gateway_backend_address_pools: Optional[List["_models.SubResource"]] = None,
+        application_security_groups: Optional[List["_models.SubResource"]] = None,
+        load_balancer_backend_address_pools: Optional[List["_models.SubResource"]] = None,
+        load_balancer_inbound_nat_pools: Optional[List["_models.SubResource"]] = None,
         **kwargs
     ):
         """
         :keyword id: Resource Id.
         :paramtype id: str
-        :keyword name: Required. The IP configuration name.
+        :keyword name: The IP configuration name. Required.
         :paramtype name: str
         :keyword subnet: Specifies the identifier of the subnet.
         :paramtype subnet: ~azure.mgmt.compute.v2021_03_01.models.ApiEntityReference
@@ -12356,7 +11828,7 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetPublicIPAddressConfiguration
         :keyword private_ip_address_version: Available from Api-Version 2017-03-30 onwards, it
          represents whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.
-         Possible values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+         Possible values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
         :paramtype private_ip_address_version: str or ~azure.mgmt.compute.v2021_03_01.models.IPVersion
         :keyword application_gateway_backend_address_pools: Specifies an array of references to backend
          address pools of application gateways. A scale set can reference backend address pools of
@@ -12379,7 +11851,7 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
         :paramtype load_balancer_inbound_nat_pools:
          list[~azure.mgmt.compute.v2021_03_01.models.SubResource]
         """
-        super(VirtualMachineScaleSetIPConfiguration, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.subnet = subnet
         self.primary = primary
@@ -12391,7 +11863,7 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
         self.load_balancer_inbound_nat_pools = load_balancer_inbound_nat_pools
 
 
-class VirtualMachineScaleSetIpTag(msrest.serialization.Model):
+class VirtualMachineScaleSetIpTag(_serialization.Model):
     """Contains the IP tag associated with the public IP address.
 
     :ivar ip_tag_type: IP tag type. Example: FirstPartyUsage.
@@ -12401,34 +11873,28 @@ class VirtualMachineScaleSetIpTag(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'ip_tag_type': {'key': 'ipTagType', 'type': 'str'},
-        'tag': {'key': 'tag', 'type': 'str'},
+        "ip_tag_type": {"key": "ipTagType", "type": "str"},
+        "tag": {"key": "tag", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        ip_tag_type: Optional[str] = None,
-        tag: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, ip_tag_type: Optional[str] = None, tag: Optional[str] = None, **kwargs):
         """
         :keyword ip_tag_type: IP tag type. Example: FirstPartyUsage.
         :paramtype ip_tag_type: str
         :keyword tag: IP tag associated with the public IP. Example: SQL, Storage etc.
         :paramtype tag: str
         """
-        super(VirtualMachineScaleSetIpTag, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.ip_tag_type = ip_tag_type
         self.tag = tag
 
 
-class VirtualMachineScaleSetListOSUpgradeHistory(msrest.serialization.Model):
+class VirtualMachineScaleSetListOSUpgradeHistory(_serialization.Model):
     """List of Virtual Machine Scale Set OS Upgrade History operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. The list of OS upgrades performed on the virtual machine scale set.
+    :ivar value: The list of OS upgrades performed on the virtual machine scale set. Required.
     :vartype value:
      list[~azure.mgmt.compute.v2021_03_01.models.UpgradeOperationHistoricalStatusInfo]
     :ivar next_link: The uri to fetch the next page of OS Upgrade History. Call ListNext() with
@@ -12437,40 +11903,36 @@ class VirtualMachineScaleSetListOSUpgradeHistory(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[UpgradeOperationHistoricalStatusInfo]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[UpgradeOperationHistoricalStatusInfo]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: List["UpgradeOperationHistoricalStatusInfo"],
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: List["_models.UpgradeOperationHistoricalStatusInfo"], next_link: Optional[str] = None, **kwargs
     ):
         """
-        :keyword value: Required. The list of OS upgrades performed on the virtual machine scale set.
+        :keyword value: The list of OS upgrades performed on the virtual machine scale set. Required.
         :paramtype value:
          list[~azure.mgmt.compute.v2021_03_01.models.UpgradeOperationHistoricalStatusInfo]
         :keyword next_link: The uri to fetch the next page of OS Upgrade History. Call ListNext() with
          this to fetch the next page of history of upgrades.
         :paramtype next_link: str
         """
-        super(VirtualMachineScaleSetListOSUpgradeHistory, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class VirtualMachineScaleSetListResult(msrest.serialization.Model):
+class VirtualMachineScaleSetListResult(_serialization.Model):
     """The List Virtual Machine operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. The list of virtual machine scale sets.
+    :ivar value: The list of virtual machine scale sets. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSet]
     :ivar next_link: The uri to fetch the next page of Virtual Machine Scale Sets. Call ListNext()
      with this to fetch the next page of VMSS.
@@ -12478,39 +11940,33 @@ class VirtualMachineScaleSetListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualMachineScaleSet]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualMachineScaleSet]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["VirtualMachineScaleSet"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.VirtualMachineScaleSet"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. The list of virtual machine scale sets.
+        :keyword value: The list of virtual machine scale sets. Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSet]
         :keyword next_link: The uri to fetch the next page of Virtual Machine Scale Sets. Call
          ListNext() with this to fetch the next page of VMSS.
         :paramtype next_link: str
         """
-        super(VirtualMachineScaleSetListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class VirtualMachineScaleSetListSkusResult(msrest.serialization.Model):
+class VirtualMachineScaleSetListSkusResult(_serialization.Model):
     """The Virtual Machine Scale Set List Skus operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. The list of skus available for the virtual machine scale set.
+    :ivar value: The list of skus available for the virtual machine scale set. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetSku]
     :ivar next_link: The uri to fetch the next page of Virtual Machine Scale Set Skus. Call
      ListNext() with this to fetch the next page of VMSS Skus.
@@ -12518,39 +11974,33 @@ class VirtualMachineScaleSetListSkusResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualMachineScaleSetSku]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualMachineScaleSetSku]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["VirtualMachineScaleSetSku"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.VirtualMachineScaleSetSku"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. The list of skus available for the virtual machine scale set.
+        :keyword value: The list of skus available for the virtual machine scale set. Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetSku]
         :keyword next_link: The uri to fetch the next page of Virtual Machine Scale Set Skus. Call
          ListNext() with this to fetch the next page of VMSS Skus.
         :paramtype next_link: str
         """
-        super(VirtualMachineScaleSetListSkusResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class VirtualMachineScaleSetListWithLinkResult(msrest.serialization.Model):
+class VirtualMachineScaleSetListWithLinkResult(_serialization.Model):
     """The List Virtual Machine operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. The list of virtual machine scale sets.
+    :ivar value: The list of virtual machine scale sets. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSet]
     :ivar next_link: The uri to fetch the next page of Virtual Machine Scale Sets. Call ListNext()
      with this to fetch the next page of Virtual Machine Scale Sets.
@@ -12558,39 +12008,33 @@ class VirtualMachineScaleSetListWithLinkResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualMachineScaleSet]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualMachineScaleSet]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["VirtualMachineScaleSet"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.VirtualMachineScaleSet"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. The list of virtual machine scale sets.
+        :keyword value: The list of virtual machine scale sets. Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSet]
         :keyword next_link: The uri to fetch the next page of Virtual Machine Scale Sets. Call
          ListNext() with this to fetch the next page of Virtual Machine Scale Sets.
         :paramtype next_link: str
         """
-        super(VirtualMachineScaleSetListWithLinkResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class VirtualMachineScaleSetManagedDiskParameters(msrest.serialization.Model):
+class VirtualMachineScaleSetManagedDiskParameters(_serialization.Model):
     """Describes the parameters of a ScaleSet managed disk.
 
     :ivar storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
+     are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS", and
      "StandardSSD_ZRS".
     :vartype storage_account_type: str or
      ~azure.mgmt.compute.v2021_03_01.models.StorageAccountTypes
@@ -12601,21 +12045,21 @@ class VirtualMachineScaleSetManagedDiskParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'DiskEncryptionSetParameters'},
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
+        "disk_encryption_set": {"key": "diskEncryptionSet", "type": "DiskEncryptionSetParameters"},
     }
 
     def __init__(
         self,
         *,
-        storage_account_type: Optional[Union[str, "StorageAccountTypes"]] = None,
-        disk_encryption_set: Optional["DiskEncryptionSetParameters"] = None,
+        storage_account_type: Optional[Union[str, "_models.StorageAccountTypes"]] = None,
+        disk_encryption_set: Optional["_models.DiskEncryptionSetParameters"] = None,
         **kwargs
     ):
         """
         :keyword storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-         UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-         include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+         UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
+         are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS", and
          "StandardSSD_ZRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2021_03_01.models.StorageAccountTypes
@@ -12624,7 +12068,7 @@ class VirtualMachineScaleSetManagedDiskParameters(msrest.serialization.Model):
         :paramtype disk_encryption_set:
          ~azure.mgmt.compute.v2021_03_01.models.DiskEncryptionSetParameters
         """
-        super(VirtualMachineScaleSetManagedDiskParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.storage_account_type = storage_account_type
         self.disk_encryption_set = disk_encryption_set
 
@@ -12636,7 +12080,7 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :ivar name: Required. The network configuration name.
+    :ivar name: The network configuration name. Required.
     :vartype name: str
     :ivar primary: Specifies the primary network interface in case the virtual machine has more
      than 1 network interface.
@@ -12657,46 +12101,49 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
     :ivar enable_ip_forwarding: Whether IP forwarding enabled on this NIC.
     :vartype enable_ip_forwarding: bool
     :ivar delete_option: Specify what happens to the network interface when the VM is deleted.
-     Possible values include: "Delete", "Detach".
+     Known values are: "Delete" and "Detach".
     :vartype delete_option: str or ~azure.mgmt.compute.v2021_03_01.models.DeleteOptions
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'primary': {'key': 'properties.primary', 'type': 'bool'},
-        'enable_accelerated_networking': {'key': 'properties.enableAcceleratedNetworking', 'type': 'bool'},
-        'enable_fpga': {'key': 'properties.enableFpga', 'type': 'bool'},
-        'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'SubResource'},
-        'dns_settings': {'key': 'properties.dnsSettings', 'type': 'VirtualMachineScaleSetNetworkConfigurationDnsSettings'},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[VirtualMachineScaleSetIPConfiguration]'},
-        'enable_ip_forwarding': {'key': 'properties.enableIPForwarding', 'type': 'bool'},
-        'delete_option': {'key': 'properties.deleteOption', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "primary": {"key": "properties.primary", "type": "bool"},
+        "enable_accelerated_networking": {"key": "properties.enableAcceleratedNetworking", "type": "bool"},
+        "enable_fpga": {"key": "properties.enableFpga", "type": "bool"},
+        "network_security_group": {"key": "properties.networkSecurityGroup", "type": "SubResource"},
+        "dns_settings": {
+            "key": "properties.dnsSettings",
+            "type": "VirtualMachineScaleSetNetworkConfigurationDnsSettings",
+        },
+        "ip_configurations": {"key": "properties.ipConfigurations", "type": "[VirtualMachineScaleSetIPConfiguration]"},
+        "enable_ip_forwarding": {"key": "properties.enableIPForwarding", "type": "bool"},
+        "delete_option": {"key": "properties.deleteOption", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         primary: Optional[bool] = None,
         enable_accelerated_networking: Optional[bool] = None,
         enable_fpga: Optional[bool] = None,
-        network_security_group: Optional["SubResource"] = None,
-        dns_settings: Optional["VirtualMachineScaleSetNetworkConfigurationDnsSettings"] = None,
-        ip_configurations: Optional[List["VirtualMachineScaleSetIPConfiguration"]] = None,
+        network_security_group: Optional["_models.SubResource"] = None,
+        dns_settings: Optional["_models.VirtualMachineScaleSetNetworkConfigurationDnsSettings"] = None,
+        ip_configurations: Optional[List["_models.VirtualMachineScaleSetIPConfiguration"]] = None,
         enable_ip_forwarding: Optional[bool] = None,
-        delete_option: Optional[Union[str, "DeleteOptions"]] = None,
+        delete_option: Optional[Union[str, "_models.DeleteOptions"]] = None,
         **kwargs
     ):
         """
         :keyword id: Resource Id.
         :paramtype id: str
-        :keyword name: Required. The network configuration name.
+        :keyword name: The network configuration name. Required.
         :paramtype name: str
         :keyword primary: Specifies the primary network interface in case the virtual machine has more
          than 1 network interface.
@@ -12717,10 +12164,10 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
         :keyword enable_ip_forwarding: Whether IP forwarding enabled on this NIC.
         :paramtype enable_ip_forwarding: bool
         :keyword delete_option: Specify what happens to the network interface when the VM is deleted.
-         Possible values include: "Delete", "Detach".
+         Known values are: "Delete" and "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2021_03_01.models.DeleteOptions
         """
-        super(VirtualMachineScaleSetNetworkConfiguration, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.primary = primary
         self.enable_accelerated_networking = enable_accelerated_networking
@@ -12732,7 +12179,7 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
         self.delete_option = delete_option
 
 
-class VirtualMachineScaleSetNetworkConfigurationDnsSettings(msrest.serialization.Model):
+class VirtualMachineScaleSetNetworkConfigurationDnsSettings(_serialization.Model):
     """Describes a virtual machines scale sets network configuration's DNS settings.
 
     :ivar dns_servers: List of DNS servers IP addresses.
@@ -12740,24 +12187,19 @@ class VirtualMachineScaleSetNetworkConfigurationDnsSettings(msrest.serialization
     """
 
     _attribute_map = {
-        'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
+        "dns_servers": {"key": "dnsServers", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        dns_servers: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, dns_servers: Optional[List[str]] = None, **kwargs):
         """
         :keyword dns_servers: List of DNS servers IP addresses.
         :paramtype dns_servers: list[str]
         """
-        super(VirtualMachineScaleSetNetworkConfigurationDnsSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.dns_servers = dns_servers
 
 
-class VirtualMachineScaleSetNetworkProfile(msrest.serialization.Model):
+class VirtualMachineScaleSetNetworkProfile(_serialization.Model):
     """Describes a virtual machine scale set network profile.
 
     :ivar health_probe: A reference to a load balancer probe used to determine the health of an
@@ -12769,22 +12211,25 @@ class VirtualMachineScaleSetNetworkProfile(msrest.serialization.Model):
      list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetNetworkConfiguration]
     :ivar network_api_version: specifies the Microsoft.Network API version used when creating
      networking resources in the Network Interface Configurations for Virtual Machine Scale Set with
-     orchestration mode 'Flexible'. Possible values include: "2020-11-01".
+     orchestration mode 'Flexible'. "2020-11-01"
     :vartype network_api_version: str or ~azure.mgmt.compute.v2021_03_01.models.NetworkApiVersion
     """
 
     _attribute_map = {
-        'health_probe': {'key': 'healthProbe', 'type': 'ApiEntityReference'},
-        'network_interface_configurations': {'key': 'networkInterfaceConfigurations', 'type': '[VirtualMachineScaleSetNetworkConfiguration]'},
-        'network_api_version': {'key': 'networkApiVersion', 'type': 'str'},
+        "health_probe": {"key": "healthProbe", "type": "ApiEntityReference"},
+        "network_interface_configurations": {
+            "key": "networkInterfaceConfigurations",
+            "type": "[VirtualMachineScaleSetNetworkConfiguration]",
+        },
+        "network_api_version": {"key": "networkApiVersion", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        health_probe: Optional["ApiEntityReference"] = None,
-        network_interface_configurations: Optional[List["VirtualMachineScaleSetNetworkConfiguration"]] = None,
-        network_api_version: Optional[Union[str, "NetworkApiVersion"]] = None,
+        health_probe: Optional["_models.ApiEntityReference"] = None,
+        network_interface_configurations: Optional[List["_models.VirtualMachineScaleSetNetworkConfiguration"]] = None,
+        network_api_version: Optional[Union[str, "_models.NetworkApiVersion"]] = None,
         **kwargs
     ):
         """
@@ -12797,16 +12242,16 @@ class VirtualMachineScaleSetNetworkProfile(msrest.serialization.Model):
          list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetNetworkConfiguration]
         :keyword network_api_version: specifies the Microsoft.Network API version used when creating
          networking resources in the Network Interface Configurations for Virtual Machine Scale Set with
-         orchestration mode 'Flexible'. Possible values include: "2020-11-01".
+         orchestration mode 'Flexible'. "2020-11-01"
         :paramtype network_api_version: str or ~azure.mgmt.compute.v2021_03_01.models.NetworkApiVersion
         """
-        super(VirtualMachineScaleSetNetworkProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.health_probe = health_probe
         self.network_interface_configurations = network_interface_configurations
         self.network_api_version = network_api_version
 
 
-class VirtualMachineScaleSetOSDisk(msrest.serialization.Model):
+class VirtualMachineScaleSetOSDisk(_serialization.Model):
     """Describes a virtual machine scale set operating system disk.
 
     All required parameters must be populated in order to send to Azure.
@@ -12816,18 +12261,17 @@ class VirtualMachineScaleSetOSDisk(msrest.serialization.Model):
     :ivar caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
      are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-     storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-     "ReadWrite".
+     storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype caching: str or ~azure.mgmt.compute.v2021_03_01.models.CachingTypes
     :ivar write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
      disabled on the disk.
     :vartype write_accelerator_enabled: bool
-    :ivar create_option: Required. Specifies how the virtual machines in the scale set should be
+    :ivar create_option: Specifies how the virtual machines in the scale set should be
      created.:code:`<br>`:code:`<br>` The only allowed value is: **FromImage** \u2013 This value is
      used when you are using an image to create the virtual machine. If you are using a platform
      image, you also use the imageReference element described above. If you are using a marketplace
-     image, you  also use the plan element previously described. Possible values include:
-     "FromImage", "Empty", "Attach".
+     image, you  also use the plan element previously described. Required. Known values are:
+     "FromImage", "Empty", and "Attach".
     :vartype create_option: str or ~azure.mgmt.compute.v2021_03_01.models.DiskCreateOptionTypes
     :ivar diff_disk_settings: Specifies the ephemeral disk Settings for the operating system disk
      used by the virtual machine scale set.
@@ -12838,8 +12282,8 @@ class VirtualMachineScaleSetOSDisk(msrest.serialization.Model):
     :vartype disk_size_gb: int
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
      disk if creating a VM from user-image or a specialized VHD. :code:`<br>`:code:`<br>` Possible
-     values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible
-     values include: "Windows", "Linux".
+     values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known
+     values are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2021_03_01.models.OperatingSystemTypes
     :ivar image: Specifies information about the unmanaged user image to base the scale set on.
     :vartype image: ~azure.mgmt.compute.v2021_03_01.models.VirtualHardDisk
@@ -12852,35 +12296,35 @@ class VirtualMachineScaleSetOSDisk(msrest.serialization.Model):
     """
 
     _validation = {
-        'create_option': {'required': True},
+        "create_option": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'caching': {'key': 'caching', 'type': 'str'},
-        'write_accelerator_enabled': {'key': 'writeAcceleratorEnabled', 'type': 'bool'},
-        'create_option': {'key': 'createOption', 'type': 'str'},
-        'diff_disk_settings': {'key': 'diffDiskSettings', 'type': 'DiffDiskSettings'},
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'image': {'key': 'image', 'type': 'VirtualHardDisk'},
-        'vhd_containers': {'key': 'vhdContainers', 'type': '[str]'},
-        'managed_disk': {'key': 'managedDisk', 'type': 'VirtualMachineScaleSetManagedDiskParameters'},
+        "name": {"key": "name", "type": "str"},
+        "caching": {"key": "caching", "type": "str"},
+        "write_accelerator_enabled": {"key": "writeAcceleratorEnabled", "type": "bool"},
+        "create_option": {"key": "createOption", "type": "str"},
+        "diff_disk_settings": {"key": "diffDiskSettings", "type": "DiffDiskSettings"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "os_type": {"key": "osType", "type": "str"},
+        "image": {"key": "image", "type": "VirtualHardDisk"},
+        "vhd_containers": {"key": "vhdContainers", "type": "[str]"},
+        "managed_disk": {"key": "managedDisk", "type": "VirtualMachineScaleSetManagedDiskParameters"},
     }
 
     def __init__(
         self,
         *,
-        create_option: Union[str, "DiskCreateOptionTypes"],
+        create_option: Union[str, "_models.DiskCreateOptionTypes"],
         name: Optional[str] = None,
-        caching: Optional[Union[str, "CachingTypes"]] = None,
+        caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         write_accelerator_enabled: Optional[bool] = None,
-        diff_disk_settings: Optional["DiffDiskSettings"] = None,
+        diff_disk_settings: Optional["_models.DiffDiskSettings"] = None,
         disk_size_gb: Optional[int] = None,
-        os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
-        image: Optional["VirtualHardDisk"] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
+        image: Optional["_models.VirtualHardDisk"] = None,
         vhd_containers: Optional[List[str]] = None,
-        managed_disk: Optional["VirtualMachineScaleSetManagedDiskParameters"] = None,
+        managed_disk: Optional["_models.VirtualMachineScaleSetManagedDiskParameters"] = None,
         **kwargs
     ):
         """
@@ -12889,18 +12333,17 @@ class VirtualMachineScaleSetOSDisk(msrest.serialization.Model):
         :keyword caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
          are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
          :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-         storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-         "ReadWrite".
+         storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", and "ReadWrite".
         :paramtype caching: str or ~azure.mgmt.compute.v2021_03_01.models.CachingTypes
         :keyword write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
          disabled on the disk.
         :paramtype write_accelerator_enabled: bool
-        :keyword create_option: Required. Specifies how the virtual machines in the scale set should be
+        :keyword create_option: Specifies how the virtual machines in the scale set should be
          created.:code:`<br>`:code:`<br>` The only allowed value is: **FromImage** \u2013 This value is
          used when you are using an image to create the virtual machine. If you are using a platform
          image, you also use the imageReference element described above. If you are using a marketplace
-         image, you  also use the plan element previously described. Possible values include:
-         "FromImage", "Empty", "Attach".
+         image, you  also use the plan element previously described. Required. Known values are:
+         "FromImage", "Empty", and "Attach".
         :paramtype create_option: str or ~azure.mgmt.compute.v2021_03_01.models.DiskCreateOptionTypes
         :keyword diff_disk_settings: Specifies the ephemeral disk Settings for the operating system
          disk used by the virtual machine scale set.
@@ -12912,7 +12355,7 @@ class VirtualMachineScaleSetOSDisk(msrest.serialization.Model):
         :keyword os_type: This property allows you to specify the type of the OS that is included in
          the disk if creating a VM from user-image or a specialized VHD. :code:`<br>`:code:`<br>`
          Possible values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**.
-         Possible values include: "Windows", "Linux".
+         Known values are: "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2021_03_01.models.OperatingSystemTypes
         :keyword image: Specifies information about the unmanaged user image to base the scale set on.
         :paramtype image: ~azure.mgmt.compute.v2021_03_01.models.VirtualHardDisk
@@ -12923,7 +12366,7 @@ class VirtualMachineScaleSetOSDisk(msrest.serialization.Model):
         :paramtype managed_disk:
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetManagedDiskParameters
         """
-        super(VirtualMachineScaleSetOSDisk, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.caching = caching
         self.write_accelerator_enabled = write_accelerator_enabled
@@ -12936,7 +12379,7 @@ class VirtualMachineScaleSetOSDisk(msrest.serialization.Model):
         self.managed_disk = managed_disk
 
 
-class VirtualMachineScaleSetOSProfile(msrest.serialization.Model):
+class VirtualMachineScaleSetOSProfile(_serialization.Model):
     """Describes a virtual machine scale set OS profile.
 
     :ivar computer_name_prefix: Specifies the computer name prefix for all of the virtual machines
@@ -12990,13 +12433,13 @@ class VirtualMachineScaleSetOSProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'computer_name_prefix': {'key': 'computerNamePrefix', 'type': 'str'},
-        'admin_username': {'key': 'adminUsername', 'type': 'str'},
-        'admin_password': {'key': 'adminPassword', 'type': 'str'},
-        'custom_data': {'key': 'customData', 'type': 'str'},
-        'windows_configuration': {'key': 'windowsConfiguration', 'type': 'WindowsConfiguration'},
-        'linux_configuration': {'key': 'linuxConfiguration', 'type': 'LinuxConfiguration'},
-        'secrets': {'key': 'secrets', 'type': '[VaultSecretGroup]'},
+        "computer_name_prefix": {"key": "computerNamePrefix", "type": "str"},
+        "admin_username": {"key": "adminUsername", "type": "str"},
+        "admin_password": {"key": "adminPassword", "type": "str"},
+        "custom_data": {"key": "customData", "type": "str"},
+        "windows_configuration": {"key": "windowsConfiguration", "type": "WindowsConfiguration"},
+        "linux_configuration": {"key": "linuxConfiguration", "type": "LinuxConfiguration"},
+        "secrets": {"key": "secrets", "type": "[VaultSecretGroup]"},
     }
 
     def __init__(
@@ -13006,9 +12449,9 @@ class VirtualMachineScaleSetOSProfile(msrest.serialization.Model):
         admin_username: Optional[str] = None,
         admin_password: Optional[str] = None,
         custom_data: Optional[str] = None,
-        windows_configuration: Optional["WindowsConfiguration"] = None,
-        linux_configuration: Optional["LinuxConfiguration"] = None,
-        secrets: Optional[List["VaultSecretGroup"]] = None,
+        windows_configuration: Optional["_models.WindowsConfiguration"] = None,
+        linux_configuration: Optional["_models.LinuxConfiguration"] = None,
+        secrets: Optional[List["_models.VaultSecretGroup"]] = None,
         **kwargs
     ):
         """
@@ -13062,7 +12505,7 @@ class VirtualMachineScaleSetOSProfile(msrest.serialization.Model):
          <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
         :paramtype secrets: list[~azure.mgmt.compute.v2021_03_01.models.VaultSecretGroup]
         """
-        super(VirtualMachineScaleSetOSProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.computer_name_prefix = computer_name_prefix
         self.admin_username = admin_username
         self.admin_password = admin_password
@@ -13072,12 +12515,12 @@ class VirtualMachineScaleSetOSProfile(msrest.serialization.Model):
         self.secrets = secrets
 
 
-class VirtualMachineScaleSetPublicIPAddressConfiguration(msrest.serialization.Model):
+class VirtualMachineScaleSetPublicIPAddressConfiguration(_serialization.Model):
     """Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The publicIP address configuration name.
+    :ivar name: The publicIP address configuration name. Required.
     :vartype name: str
     :ivar sku: Describes the public IP Sku.
     :vartype sku: ~azure.mgmt.compute.v2021_03_01.models.PublicIPAddressSku
@@ -13092,43 +12535,46 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(msrest.serialization.Mo
     :vartype public_ip_prefix: ~azure.mgmt.compute.v2021_03_01.models.SubResource
     :ivar public_ip_address_version: Available from Api-Version 2019-07-01 onwards, it represents
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4. Possible values
-     are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+     are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
     :vartype public_ip_address_version: str or ~azure.mgmt.compute.v2021_03_01.models.IPVersion
-    :ivar delete_option: Specify what happens to the public IP when the VM is deleted. Possible
-     values include: "Delete", "Detach".
+    :ivar delete_option: Specify what happens to the public IP when the VM is deleted. Known values
+     are: "Delete" and "Detach".
     :vartype delete_option: str or ~azure.mgmt.compute.v2021_03_01.models.DeleteOptions
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'PublicIPAddressSku'},
-        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
-        'dns_settings': {'key': 'properties.dnsSettings', 'type': 'VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings'},
-        'ip_tags': {'key': 'properties.ipTags', 'type': '[VirtualMachineScaleSetIpTag]'},
-        'public_ip_prefix': {'key': 'properties.publicIPPrefix', 'type': 'SubResource'},
-        'public_ip_address_version': {'key': 'properties.publicIPAddressVersion', 'type': 'str'},
-        'delete_option': {'key': 'properties.deleteOption', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "sku": {"key": "sku", "type": "PublicIPAddressSku"},
+        "idle_timeout_in_minutes": {"key": "properties.idleTimeoutInMinutes", "type": "int"},
+        "dns_settings": {
+            "key": "properties.dnsSettings",
+            "type": "VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings",
+        },
+        "ip_tags": {"key": "properties.ipTags", "type": "[VirtualMachineScaleSetIpTag]"},
+        "public_ip_prefix": {"key": "properties.publicIPPrefix", "type": "SubResource"},
+        "public_ip_address_version": {"key": "properties.publicIPAddressVersion", "type": "str"},
+        "delete_option": {"key": "properties.deleteOption", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        sku: Optional["PublicIPAddressSku"] = None,
+        sku: Optional["_models.PublicIPAddressSku"] = None,
         idle_timeout_in_minutes: Optional[int] = None,
-        dns_settings: Optional["VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings"] = None,
-        ip_tags: Optional[List["VirtualMachineScaleSetIpTag"]] = None,
-        public_ip_prefix: Optional["SubResource"] = None,
-        public_ip_address_version: Optional[Union[str, "IPVersion"]] = None,
-        delete_option: Optional[Union[str, "DeleteOptions"]] = None,
+        dns_settings: Optional["_models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings"] = None,
+        ip_tags: Optional[List["_models.VirtualMachineScaleSetIpTag"]] = None,
+        public_ip_prefix: Optional["_models.SubResource"] = None,
+        public_ip_address_version: Optional[Union[str, "_models.IPVersion"]] = None,
+        delete_option: Optional[Union[str, "_models.DeleteOptions"]] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. The publicIP address configuration name.
+        :keyword name: The publicIP address configuration name. Required.
         :paramtype name: str
         :keyword sku: Describes the public IP Sku.
         :paramtype sku: ~azure.mgmt.compute.v2021_03_01.models.PublicIPAddressSku
@@ -13143,13 +12589,13 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(msrest.serialization.Mo
         :paramtype public_ip_prefix: ~azure.mgmt.compute.v2021_03_01.models.SubResource
         :keyword public_ip_address_version: Available from Api-Version 2019-07-01 onwards, it
          represents whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.
-         Possible values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+         Possible values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
         :paramtype public_ip_address_version: str or ~azure.mgmt.compute.v2021_03_01.models.IPVersion
-        :keyword delete_option: Specify what happens to the public IP when the VM is deleted. Possible
-         values include: "Delete", "Detach".
+        :keyword delete_option: Specify what happens to the public IP when the VM is deleted. Known
+         values are: "Delete" and "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2021_03_01.models.DeleteOptions
         """
-        super(VirtualMachineScaleSetPublicIPAddressConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.sku = sku
         self.idle_timeout_in_minutes = idle_timeout_in_minutes
@@ -13160,38 +12606,33 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(msrest.serialization.Mo
         self.delete_option = delete_option
 
 
-class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(msrest.serialization.Model):
+class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(_serialization.Model):
     """Describes a virtual machines scale sets network configuration's DNS settings.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar domain_name_label: Required. The Domain name label.The concatenation of the domain name
-     label and vm index will be the domain name labels of the PublicIPAddress resources that will be
-     created.
+    :ivar domain_name_label: The Domain name label.The concatenation of the domain name label and
+     vm index will be the domain name labels of the PublicIPAddress resources that will be created.
+     Required.
     :vartype domain_name_label: str
     """
 
     _validation = {
-        'domain_name_label': {'required': True},
+        "domain_name_label": {"required": True},
     }
 
     _attribute_map = {
-        'domain_name_label': {'key': 'domainNameLabel', 'type': 'str'},
+        "domain_name_label": {"key": "domainNameLabel", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        domain_name_label: str,
-        **kwargs
-    ):
+    def __init__(self, *, domain_name_label: str, **kwargs):
         """
-        :keyword domain_name_label: Required. The Domain name label.The concatenation of the domain
-         name label and vm index will be the domain name labels of the PublicIPAddress resources that
-         will be created.
+        :keyword domain_name_label: The Domain name label.The concatenation of the domain name label
+         and vm index will be the domain name labels of the PublicIPAddress resources that will be
+         created. Required.
         :paramtype domain_name_label: str
         """
-        super(VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.domain_name_label = domain_name_label
 
 
@@ -13204,21 +12645,16 @@ class VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters)
     """
 
     _attribute_map = {
-        'temp_disk': {'key': 'tempDisk', 'type': 'bool'},
+        "temp_disk": {"key": "tempDisk", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        temp_disk: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, temp_disk: Optional[bool] = None, **kwargs):
         """
         :keyword temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This
          temp disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
         :paramtype temp_disk: bool
         """
-        super(VirtualMachineScaleSetVMReimageParameters, self).__init__(temp_disk=temp_disk, **kwargs)
+        super().__init__(temp_disk=temp_disk, **kwargs)
 
 
 class VirtualMachineScaleSetReimageParameters(VirtualMachineScaleSetVMReimageParameters):
@@ -13234,17 +12670,11 @@ class VirtualMachineScaleSetReimageParameters(VirtualMachineScaleSetVMReimagePar
     """
 
     _attribute_map = {
-        'temp_disk': {'key': 'tempDisk', 'type': 'bool'},
-        'instance_ids': {'key': 'instanceIds', 'type': '[str]'},
+        "temp_disk": {"key": "tempDisk", "type": "bool"},
+        "instance_ids": {"key": "instanceIds", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        temp_disk: Optional[bool] = None,
-        instance_ids: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, temp_disk: Optional[bool] = None, instance_ids: Optional[List[str]] = None, **kwargs):
         """
         :keyword temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This
          temp disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
@@ -13254,11 +12684,11 @@ class VirtualMachineScaleSetReimageParameters(VirtualMachineScaleSetVMReimagePar
          the virtual machine scale set.
         :paramtype instance_ids: list[str]
         """
-        super(VirtualMachineScaleSetReimageParameters, self).__init__(temp_disk=temp_disk, **kwargs)
+        super().__init__(temp_disk=temp_disk, **kwargs)
         self.instance_ids = instance_ids
 
 
-class VirtualMachineScaleSetSku(msrest.serialization.Model):
+class VirtualMachineScaleSetSku(_serialization.Model):
     """Describes an available virtual machine scale set sku.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -13272,74 +12702,66 @@ class VirtualMachineScaleSetSku(msrest.serialization.Model):
     """
 
     _validation = {
-        'resource_type': {'readonly': True},
-        'sku': {'readonly': True},
-        'capacity': {'readonly': True},
+        "resource_type": {"readonly": True},
+        "sku": {"readonly": True},
+        "capacity": {"readonly": True},
     }
 
     _attribute_map = {
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'capacity': {'key': 'capacity', 'type': 'VirtualMachineScaleSetSkuCapacity'},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "capacity": {"key": "capacity", "type": "VirtualMachineScaleSetSkuCapacity"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(VirtualMachineScaleSetSku, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.resource_type = None
         self.sku = None
         self.capacity = None
 
 
-class VirtualMachineScaleSetSkuCapacity(msrest.serialization.Model):
+class VirtualMachineScaleSetSkuCapacity(_serialization.Model):
     """Describes scaling information of a sku.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar minimum: The minimum capacity.
-    :vartype minimum: long
+    :vartype minimum: int
     :ivar maximum: The maximum capacity that can be set.
-    :vartype maximum: long
+    :vartype maximum: int
     :ivar default_capacity: The default capacity.
-    :vartype default_capacity: long
-    :ivar scale_type: The scale type applicable to the sku. Possible values include: "Automatic",
+    :vartype default_capacity: int
+    :ivar scale_type: The scale type applicable to the sku. Known values are: "Automatic" and
      "None".
     :vartype scale_type: str or
      ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetSkuScaleType
     """
 
     _validation = {
-        'minimum': {'readonly': True},
-        'maximum': {'readonly': True},
-        'default_capacity': {'readonly': True},
-        'scale_type': {'readonly': True},
+        "minimum": {"readonly": True},
+        "maximum": {"readonly": True},
+        "default_capacity": {"readonly": True},
+        "scale_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'minimum': {'key': 'minimum', 'type': 'long'},
-        'maximum': {'key': 'maximum', 'type': 'long'},
-        'default_capacity': {'key': 'defaultCapacity', 'type': 'long'},
-        'scale_type': {'key': 'scaleType', 'type': 'str'},
+        "minimum": {"key": "minimum", "type": "int"},
+        "maximum": {"key": "maximum", "type": "int"},
+        "default_capacity": {"key": "defaultCapacity", "type": "int"},
+        "scale_type": {"key": "scaleType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(VirtualMachineScaleSetSkuCapacity, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.minimum = None
         self.maximum = None
         self.default_capacity = None
         self.scale_type = None
 
 
-class VirtualMachineScaleSetStorageProfile(msrest.serialization.Model):
+class VirtualMachineScaleSetStorageProfile(_serialization.Model):
     """Describes a virtual machine scale set storage profile.
 
     :ivar image_reference: Specifies information about the image to use. You can specify
@@ -13361,17 +12783,17 @@ class VirtualMachineScaleSetStorageProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
-        'os_disk': {'key': 'osDisk', 'type': 'VirtualMachineScaleSetOSDisk'},
-        'data_disks': {'key': 'dataDisks', 'type': '[VirtualMachineScaleSetDataDisk]'},
+        "image_reference": {"key": "imageReference", "type": "ImageReference"},
+        "os_disk": {"key": "osDisk", "type": "VirtualMachineScaleSetOSDisk"},
+        "data_disks": {"key": "dataDisks", "type": "[VirtualMachineScaleSetDataDisk]"},
     }
 
     def __init__(
         self,
         *,
-        image_reference: Optional["ImageReference"] = None,
-        os_disk: Optional["VirtualMachineScaleSetOSDisk"] = None,
-        data_disks: Optional[List["VirtualMachineScaleSetDataDisk"]] = None,
+        image_reference: Optional["_models.ImageReference"] = None,
+        os_disk: Optional["_models.VirtualMachineScaleSetOSDisk"] = None,
+        data_disks: Optional[List["_models.VirtualMachineScaleSetDataDisk"]] = None,
         **kwargs
     ):
         """
@@ -13392,16 +12814,16 @@ class VirtualMachineScaleSetStorageProfile(msrest.serialization.Model):
         :paramtype data_disks:
          list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetDataDisk]
         """
-        super(VirtualMachineScaleSetStorageProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.image_reference = image_reference
         self.os_disk = os_disk
         self.data_disks = data_disks
 
 
-class VirtualMachineScaleSetUpdate(UpdateResource):
+class VirtualMachineScaleSetUpdate(UpdateResource):  # pylint: disable=too-many-instance-attributes
     """Describes a Virtual Machine Scale Set.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: The virtual machine scale set sku.
     :vartype sku: ~azure.mgmt.compute.v2021_03_01.models.Sku
@@ -13443,41 +12865,47 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'plan': {'key': 'plan', 'type': 'Plan'},
-        'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
-        'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'UpgradePolicy'},
-        'automatic_repairs_policy': {'key': 'properties.automaticRepairsPolicy', 'type': 'AutomaticRepairsPolicy'},
-        'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineScaleSetUpdateVMProfile'},
-        'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
-        'do_not_run_extensions_on_overprovisioned_v_ms': {'key': 'properties.doNotRunExtensionsOnOverprovisionedVMs', 'type': 'bool'},
-        'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
-        'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
-        'scale_in_policy': {'key': 'properties.scaleInPolicy', 'type': 'ScaleInPolicy'},
-        'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "plan": {"key": "plan", "type": "Plan"},
+        "identity": {"key": "identity", "type": "VirtualMachineScaleSetIdentity"},
+        "upgrade_policy": {"key": "properties.upgradePolicy", "type": "UpgradePolicy"},
+        "automatic_repairs_policy": {"key": "properties.automaticRepairsPolicy", "type": "AutomaticRepairsPolicy"},
+        "virtual_machine_profile": {
+            "key": "properties.virtualMachineProfile",
+            "type": "VirtualMachineScaleSetUpdateVMProfile",
+        },
+        "overprovision": {"key": "properties.overprovision", "type": "bool"},
+        "do_not_run_extensions_on_overprovisioned_v_ms": {
+            "key": "properties.doNotRunExtensionsOnOverprovisionedVMs",
+            "type": "bool",
+        },
+        "single_placement_group": {"key": "properties.singlePlacementGroup", "type": "bool"},
+        "additional_capabilities": {"key": "properties.additionalCapabilities", "type": "AdditionalCapabilities"},
+        "scale_in_policy": {"key": "properties.scaleInPolicy", "type": "ScaleInPolicy"},
+        "proximity_placement_group": {"key": "properties.proximityPlacementGroup", "type": "SubResource"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
-        plan: Optional["Plan"] = None,
-        identity: Optional["VirtualMachineScaleSetIdentity"] = None,
-        upgrade_policy: Optional["UpgradePolicy"] = None,
-        automatic_repairs_policy: Optional["AutomaticRepairsPolicy"] = None,
-        virtual_machine_profile: Optional["VirtualMachineScaleSetUpdateVMProfile"] = None,
+        sku: Optional["_models.Sku"] = None,
+        plan: Optional["_models.Plan"] = None,
+        identity: Optional["_models.VirtualMachineScaleSetIdentity"] = None,
+        upgrade_policy: Optional["_models.UpgradePolicy"] = None,
+        automatic_repairs_policy: Optional["_models.AutomaticRepairsPolicy"] = None,
+        virtual_machine_profile: Optional["_models.VirtualMachineScaleSetUpdateVMProfile"] = None,
         overprovision: Optional[bool] = None,
         do_not_run_extensions_on_overprovisioned_v_ms: Optional[bool] = None,
         single_placement_group: Optional[bool] = None,
-        additional_capabilities: Optional["AdditionalCapabilities"] = None,
-        scale_in_policy: Optional["ScaleInPolicy"] = None,
-        proximity_placement_group: Optional["SubResource"] = None,
+        additional_capabilities: Optional["_models.AdditionalCapabilities"] = None,
+        scale_in_policy: Optional["_models.ScaleInPolicy"] = None,
+        proximity_placement_group: Optional["_models.SubResource"] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: The virtual machine scale set sku.
         :paramtype sku: ~azure.mgmt.compute.v2021_03_01.models.Sku
@@ -13519,7 +12947,7 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
          api-version: 2018-04-01.
         :paramtype proximity_placement_group: ~azure.mgmt.compute.v2021_03_01.models.SubResource
         """
-        super(VirtualMachineScaleSetUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.sku = sku
         self.plan = plan
         self.identity = identity
@@ -13551,7 +12979,7 @@ class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):
      ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetUpdatePublicIPAddressConfiguration
     :ivar private_ip_address_version: Available from Api-Version 2017-03-30 onwards, it represents
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
-     values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+     values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
     :vartype private_ip_address_version: str or ~azure.mgmt.compute.v2021_03_01.models.IPVersion
     :ivar application_gateway_backend_address_pools: The application gateway backend address pools.
     :vartype application_gateway_backend_address_pools:
@@ -13568,31 +12996,42 @@ class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'ApiEntityReference'},
-        'primary': {'key': 'properties.primary', 'type': 'bool'},
-        'public_ip_address_configuration': {'key': 'properties.publicIPAddressConfiguration', 'type': 'VirtualMachineScaleSetUpdatePublicIPAddressConfiguration'},
-        'private_ip_address_version': {'key': 'properties.privateIPAddressVersion', 'type': 'str'},
-        'application_gateway_backend_address_pools': {'key': 'properties.applicationGatewayBackendAddressPools', 'type': '[SubResource]'},
-        'application_security_groups': {'key': 'properties.applicationSecurityGroups', 'type': '[SubResource]'},
-        'load_balancer_backend_address_pools': {'key': 'properties.loadBalancerBackendAddressPools', 'type': '[SubResource]'},
-        'load_balancer_inbound_nat_pools': {'key': 'properties.loadBalancerInboundNatPools', 'type': '[SubResource]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "ApiEntityReference"},
+        "primary": {"key": "properties.primary", "type": "bool"},
+        "public_ip_address_configuration": {
+            "key": "properties.publicIPAddressConfiguration",
+            "type": "VirtualMachineScaleSetUpdatePublicIPAddressConfiguration",
+        },
+        "private_ip_address_version": {"key": "properties.privateIPAddressVersion", "type": "str"},
+        "application_gateway_backend_address_pools": {
+            "key": "properties.applicationGatewayBackendAddressPools",
+            "type": "[SubResource]",
+        },
+        "application_security_groups": {"key": "properties.applicationSecurityGroups", "type": "[SubResource]"},
+        "load_balancer_backend_address_pools": {
+            "key": "properties.loadBalancerBackendAddressPools",
+            "type": "[SubResource]",
+        },
+        "load_balancer_inbound_nat_pools": {"key": "properties.loadBalancerInboundNatPools", "type": "[SubResource]"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
-        subnet: Optional["ApiEntityReference"] = None,
+        subnet: Optional["_models.ApiEntityReference"] = None,
         primary: Optional[bool] = None,
-        public_ip_address_configuration: Optional["VirtualMachineScaleSetUpdatePublicIPAddressConfiguration"] = None,
-        private_ip_address_version: Optional[Union[str, "IPVersion"]] = None,
-        application_gateway_backend_address_pools: Optional[List["SubResource"]] = None,
-        application_security_groups: Optional[List["SubResource"]] = None,
-        load_balancer_backend_address_pools: Optional[List["SubResource"]] = None,
-        load_balancer_inbound_nat_pools: Optional[List["SubResource"]] = None,
+        public_ip_address_configuration: Optional[
+            "_models.VirtualMachineScaleSetUpdatePublicIPAddressConfiguration"
+        ] = None,
+        private_ip_address_version: Optional[Union[str, "_models.IPVersion"]] = None,
+        application_gateway_backend_address_pools: Optional[List["_models.SubResource"]] = None,
+        application_security_groups: Optional[List["_models.SubResource"]] = None,
+        load_balancer_backend_address_pools: Optional[List["_models.SubResource"]] = None,
+        load_balancer_inbound_nat_pools: Optional[List["_models.SubResource"]] = None,
         **kwargs
     ):
         """
@@ -13610,7 +13049,7 @@ class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetUpdatePublicIPAddressConfiguration
         :keyword private_ip_address_version: Available from Api-Version 2017-03-30 onwards, it
          represents whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.
-         Possible values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+         Possible values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
         :paramtype private_ip_address_version: str or ~azure.mgmt.compute.v2021_03_01.models.IPVersion
         :keyword application_gateway_backend_address_pools: The application gateway backend address
          pools.
@@ -13627,7 +13066,7 @@ class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):
         :paramtype load_balancer_inbound_nat_pools:
          list[~azure.mgmt.compute.v2021_03_01.models.SubResource]
         """
-        super(VirtualMachineScaleSetUpdateIPConfiguration, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.subnet = subnet
         self.primary = primary
@@ -13664,36 +13103,42 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
     :ivar enable_ip_forwarding: Whether IP forwarding enabled on this NIC.
     :vartype enable_ip_forwarding: bool
     :ivar delete_option: Specify what happens to the network interface when the VM is deleted.
-     Possible values include: "Delete", "Detach".
+     Known values are: "Delete" and "Detach".
     :vartype delete_option: str or ~azure.mgmt.compute.v2021_03_01.models.DeleteOptions
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'primary': {'key': 'properties.primary', 'type': 'bool'},
-        'enable_accelerated_networking': {'key': 'properties.enableAcceleratedNetworking', 'type': 'bool'},
-        'enable_fpga': {'key': 'properties.enableFpga', 'type': 'bool'},
-        'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'SubResource'},
-        'dns_settings': {'key': 'properties.dnsSettings', 'type': 'VirtualMachineScaleSetNetworkConfigurationDnsSettings'},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[VirtualMachineScaleSetUpdateIPConfiguration]'},
-        'enable_ip_forwarding': {'key': 'properties.enableIPForwarding', 'type': 'bool'},
-        'delete_option': {'key': 'properties.deleteOption', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "primary": {"key": "properties.primary", "type": "bool"},
+        "enable_accelerated_networking": {"key": "properties.enableAcceleratedNetworking", "type": "bool"},
+        "enable_fpga": {"key": "properties.enableFpga", "type": "bool"},
+        "network_security_group": {"key": "properties.networkSecurityGroup", "type": "SubResource"},
+        "dns_settings": {
+            "key": "properties.dnsSettings",
+            "type": "VirtualMachineScaleSetNetworkConfigurationDnsSettings",
+        },
+        "ip_configurations": {
+            "key": "properties.ipConfigurations",
+            "type": "[VirtualMachineScaleSetUpdateIPConfiguration]",
+        },
+        "enable_ip_forwarding": {"key": "properties.enableIPForwarding", "type": "bool"},
+        "delete_option": {"key": "properties.deleteOption", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         primary: Optional[bool] = None,
         enable_accelerated_networking: Optional[bool] = None,
         enable_fpga: Optional[bool] = None,
-        network_security_group: Optional["SubResource"] = None,
-        dns_settings: Optional["VirtualMachineScaleSetNetworkConfigurationDnsSettings"] = None,
-        ip_configurations: Optional[List["VirtualMachineScaleSetUpdateIPConfiguration"]] = None,
+        network_security_group: Optional["_models.SubResource"] = None,
+        dns_settings: Optional["_models.VirtualMachineScaleSetNetworkConfigurationDnsSettings"] = None,
+        ip_configurations: Optional[List["_models.VirtualMachineScaleSetUpdateIPConfiguration"]] = None,
         enable_ip_forwarding: Optional[bool] = None,
-        delete_option: Optional[Union[str, "DeleteOptions"]] = None,
+        delete_option: Optional[Union[str, "_models.DeleteOptions"]] = None,
         **kwargs
     ):
         """
@@ -13719,10 +13164,10 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
         :keyword enable_ip_forwarding: Whether IP forwarding enabled on this NIC.
         :paramtype enable_ip_forwarding: bool
         :keyword delete_option: Specify what happens to the network interface when the VM is deleted.
-         Possible values include: "Delete", "Detach".
+         Known values are: "Delete" and "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2021_03_01.models.DeleteOptions
         """
-        super(VirtualMachineScaleSetUpdateNetworkConfiguration, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.primary = primary
         self.enable_accelerated_networking = enable_accelerated_networking
@@ -13734,7 +13179,7 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
         self.delete_option = delete_option
 
 
-class VirtualMachineScaleSetUpdateNetworkProfile(msrest.serialization.Model):
+class VirtualMachineScaleSetUpdateNetworkProfile(_serialization.Model):
     """Describes a virtual machine scale set network profile.
 
     :ivar health_probe: A reference to a load balancer probe used to determine the health of an
@@ -13746,22 +13191,27 @@ class VirtualMachineScaleSetUpdateNetworkProfile(msrest.serialization.Model):
      list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetUpdateNetworkConfiguration]
     :ivar network_api_version: specifies the Microsoft.Network API version used when creating
      networking resources in the Network Interface Configurations for Virtual Machine Scale Set with
-     orchestration mode 'Flexible'. Possible values include: "2020-11-01".
+     orchestration mode 'Flexible'. "2020-11-01"
     :vartype network_api_version: str or ~azure.mgmt.compute.v2021_03_01.models.NetworkApiVersion
     """
 
     _attribute_map = {
-        'health_probe': {'key': 'healthProbe', 'type': 'ApiEntityReference'},
-        'network_interface_configurations': {'key': 'networkInterfaceConfigurations', 'type': '[VirtualMachineScaleSetUpdateNetworkConfiguration]'},
-        'network_api_version': {'key': 'networkApiVersion', 'type': 'str'},
+        "health_probe": {"key": "healthProbe", "type": "ApiEntityReference"},
+        "network_interface_configurations": {
+            "key": "networkInterfaceConfigurations",
+            "type": "[VirtualMachineScaleSetUpdateNetworkConfiguration]",
+        },
+        "network_api_version": {"key": "networkApiVersion", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        health_probe: Optional["ApiEntityReference"] = None,
-        network_interface_configurations: Optional[List["VirtualMachineScaleSetUpdateNetworkConfiguration"]] = None,
-        network_api_version: Optional[Union[str, "NetworkApiVersion"]] = None,
+        health_probe: Optional["_models.ApiEntityReference"] = None,
+        network_interface_configurations: Optional[
+            List["_models.VirtualMachineScaleSetUpdateNetworkConfiguration"]
+        ] = None,
+        network_api_version: Optional[Union[str, "_models.NetworkApiVersion"]] = None,
         **kwargs
     ):
         """
@@ -13774,19 +13224,19 @@ class VirtualMachineScaleSetUpdateNetworkProfile(msrest.serialization.Model):
          list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetUpdateNetworkConfiguration]
         :keyword network_api_version: specifies the Microsoft.Network API version used when creating
          networking resources in the Network Interface Configurations for Virtual Machine Scale Set with
-         orchestration mode 'Flexible'. Possible values include: "2020-11-01".
+         orchestration mode 'Flexible'. "2020-11-01"
         :paramtype network_api_version: str or ~azure.mgmt.compute.v2021_03_01.models.NetworkApiVersion
         """
-        super(VirtualMachineScaleSetUpdateNetworkProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.health_probe = health_probe
         self.network_interface_configurations = network_interface_configurations
         self.network_api_version = network_api_version
 
 
-class VirtualMachineScaleSetUpdateOSDisk(msrest.serialization.Model):
+class VirtualMachineScaleSetUpdateOSDisk(_serialization.Model):
     """Describes virtual machine scale set operating system disk Update Object. This should be used for Updating VMSS OS Disk.
 
-    :ivar caching: The caching type. Possible values include: "None", "ReadOnly", "ReadWrite".
+    :ivar caching: The caching type. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype caching: str or ~azure.mgmt.compute.v2021_03_01.models.CachingTypes
     :ivar write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
      disabled on the disk.
@@ -13807,27 +13257,27 @@ class VirtualMachineScaleSetUpdateOSDisk(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'caching': {'key': 'caching', 'type': 'str'},
-        'write_accelerator_enabled': {'key': 'writeAcceleratorEnabled', 'type': 'bool'},
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'image': {'key': 'image', 'type': 'VirtualHardDisk'},
-        'vhd_containers': {'key': 'vhdContainers', 'type': '[str]'},
-        'managed_disk': {'key': 'managedDisk', 'type': 'VirtualMachineScaleSetManagedDiskParameters'},
+        "caching": {"key": "caching", "type": "str"},
+        "write_accelerator_enabled": {"key": "writeAcceleratorEnabled", "type": "bool"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "image": {"key": "image", "type": "VirtualHardDisk"},
+        "vhd_containers": {"key": "vhdContainers", "type": "[str]"},
+        "managed_disk": {"key": "managedDisk", "type": "VirtualMachineScaleSetManagedDiskParameters"},
     }
 
     def __init__(
         self,
         *,
-        caching: Optional[Union[str, "CachingTypes"]] = None,
+        caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         write_accelerator_enabled: Optional[bool] = None,
         disk_size_gb: Optional[int] = None,
-        image: Optional["VirtualHardDisk"] = None,
+        image: Optional["_models.VirtualHardDisk"] = None,
         vhd_containers: Optional[List[str]] = None,
-        managed_disk: Optional["VirtualMachineScaleSetManagedDiskParameters"] = None,
+        managed_disk: Optional["_models.VirtualMachineScaleSetManagedDiskParameters"] = None,
         **kwargs
     ):
         """
-        :keyword caching: The caching type. Possible values include: "None", "ReadOnly", "ReadWrite".
+        :keyword caching: The caching type. Known values are: "None", "ReadOnly", and "ReadWrite".
         :paramtype caching: str or ~azure.mgmt.compute.v2021_03_01.models.CachingTypes
         :keyword write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
          disabled on the disk.
@@ -13846,7 +13296,7 @@ class VirtualMachineScaleSetUpdateOSDisk(msrest.serialization.Model):
         :paramtype managed_disk:
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetManagedDiskParameters
         """
-        super(VirtualMachineScaleSetUpdateOSDisk, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.caching = caching
         self.write_accelerator_enabled = write_accelerator_enabled
         self.disk_size_gb = disk_size_gb
@@ -13855,7 +13305,7 @@ class VirtualMachineScaleSetUpdateOSDisk(msrest.serialization.Model):
         self.managed_disk = managed_disk
 
 
-class VirtualMachineScaleSetUpdateOSProfile(msrest.serialization.Model):
+class VirtualMachineScaleSetUpdateOSProfile(_serialization.Model):
     """Describes a virtual machine scale set OS profile.
 
     :ivar custom_data: A base-64 encoded string of custom data.
@@ -13869,19 +13319,19 @@ class VirtualMachineScaleSetUpdateOSProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'custom_data': {'key': 'customData', 'type': 'str'},
-        'windows_configuration': {'key': 'windowsConfiguration', 'type': 'WindowsConfiguration'},
-        'linux_configuration': {'key': 'linuxConfiguration', 'type': 'LinuxConfiguration'},
-        'secrets': {'key': 'secrets', 'type': '[VaultSecretGroup]'},
+        "custom_data": {"key": "customData", "type": "str"},
+        "windows_configuration": {"key": "windowsConfiguration", "type": "WindowsConfiguration"},
+        "linux_configuration": {"key": "linuxConfiguration", "type": "LinuxConfiguration"},
+        "secrets": {"key": "secrets", "type": "[VaultSecretGroup]"},
     }
 
     def __init__(
         self,
         *,
         custom_data: Optional[str] = None,
-        windows_configuration: Optional["WindowsConfiguration"] = None,
-        linux_configuration: Optional["LinuxConfiguration"] = None,
-        secrets: Optional[List["VaultSecretGroup"]] = None,
+        windows_configuration: Optional["_models.WindowsConfiguration"] = None,
+        linux_configuration: Optional["_models.LinuxConfiguration"] = None,
+        secrets: Optional[List["_models.VaultSecretGroup"]] = None,
         **kwargs
     ):
         """
@@ -13894,14 +13344,14 @@ class VirtualMachineScaleSetUpdateOSProfile(msrest.serialization.Model):
         :keyword secrets: The List of certificates for addition to the VM.
         :paramtype secrets: list[~azure.mgmt.compute.v2021_03_01.models.VaultSecretGroup]
         """
-        super(VirtualMachineScaleSetUpdateOSProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.custom_data = custom_data
         self.windows_configuration = windows_configuration
         self.linux_configuration = linux_configuration
         self.secrets = secrets
 
 
-class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(msrest.serialization.Model):
+class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(_serialization.Model):
     """Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration.
 
     :ivar name: The publicIP address configuration name.
@@ -13911,16 +13361,19 @@ class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(msrest.serializat
     :ivar dns_settings: The dns settings to be applied on the publicIP addresses .
     :vartype dns_settings:
      ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
-    :ivar delete_option: Specify what happens to the public IP when the VM is deleted. Possible
-     values include: "Delete", "Detach".
+    :ivar delete_option: Specify what happens to the public IP when the VM is deleted. Known values
+     are: "Delete" and "Detach".
     :vartype delete_option: str or ~azure.mgmt.compute.v2021_03_01.models.DeleteOptions
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
-        'dns_settings': {'key': 'properties.dnsSettings', 'type': 'VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings'},
-        'delete_option': {'key': 'properties.deleteOption', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "idle_timeout_in_minutes": {"key": "properties.idleTimeoutInMinutes", "type": "int"},
+        "dns_settings": {
+            "key": "properties.dnsSettings",
+            "type": "VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings",
+        },
+        "delete_option": {"key": "properties.deleteOption", "type": "str"},
     }
 
     def __init__(
@@ -13928,8 +13381,8 @@ class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(msrest.serializat
         *,
         name: Optional[str] = None,
         idle_timeout_in_minutes: Optional[int] = None,
-        dns_settings: Optional["VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings"] = None,
-        delete_option: Optional[Union[str, "DeleteOptions"]] = None,
+        dns_settings: Optional["_models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings"] = None,
+        delete_option: Optional[Union[str, "_models.DeleteOptions"]] = None,
         **kwargs
     ):
         """
@@ -13940,18 +13393,18 @@ class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(msrest.serializat
         :keyword dns_settings: The dns settings to be applied on the publicIP addresses .
         :paramtype dns_settings:
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
-        :keyword delete_option: Specify what happens to the public IP when the VM is deleted. Possible
-         values include: "Delete", "Detach".
+        :keyword delete_option: Specify what happens to the public IP when the VM is deleted. Known
+         values are: "Delete" and "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2021_03_01.models.DeleteOptions
         """
-        super(VirtualMachineScaleSetUpdatePublicIPAddressConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.idle_timeout_in_minutes = idle_timeout_in_minutes
         self.dns_settings = dns_settings
         self.delete_option = delete_option
 
 
-class VirtualMachineScaleSetUpdateStorageProfile(msrest.serialization.Model):
+class VirtualMachineScaleSetUpdateStorageProfile(_serialization.Model):
     """Describes a virtual machine scale set storage profile.
 
     :ivar image_reference: The image reference.
@@ -13964,17 +13417,17 @@ class VirtualMachineScaleSetUpdateStorageProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
-        'os_disk': {'key': 'osDisk', 'type': 'VirtualMachineScaleSetUpdateOSDisk'},
-        'data_disks': {'key': 'dataDisks', 'type': '[VirtualMachineScaleSetDataDisk]'},
+        "image_reference": {"key": "imageReference", "type": "ImageReference"},
+        "os_disk": {"key": "osDisk", "type": "VirtualMachineScaleSetUpdateOSDisk"},
+        "data_disks": {"key": "dataDisks", "type": "[VirtualMachineScaleSetDataDisk]"},
     }
 
     def __init__(
         self,
         *,
-        image_reference: Optional["ImageReference"] = None,
-        os_disk: Optional["VirtualMachineScaleSetUpdateOSDisk"] = None,
-        data_disks: Optional[List["VirtualMachineScaleSetDataDisk"]] = None,
+        image_reference: Optional["_models.ImageReference"] = None,
+        os_disk: Optional["_models.VirtualMachineScaleSetUpdateOSDisk"] = None,
+        data_disks: Optional[List["_models.VirtualMachineScaleSetDataDisk"]] = None,
         **kwargs
     ):
         """
@@ -13986,13 +13439,13 @@ class VirtualMachineScaleSetUpdateStorageProfile(msrest.serialization.Model):
         :paramtype data_disks:
          list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetDataDisk]
         """
-        super(VirtualMachineScaleSetUpdateStorageProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.image_reference = image_reference
         self.os_disk = os_disk
         self.data_disks = data_disks
 
 
-class VirtualMachineScaleSetUpdateVMProfile(msrest.serialization.Model):
+class VirtualMachineScaleSetUpdateVMProfile(_serialization.Model):
     """Describes a virtual machine scale set virtual machine profile.
 
     :ivar os_profile: The virtual machine scale set OS profile.
@@ -14025,30 +13478,30 @@ class VirtualMachineScaleSetUpdateVMProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'os_profile': {'key': 'osProfile', 'type': 'VirtualMachineScaleSetUpdateOSProfile'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'VirtualMachineScaleSetUpdateStorageProfile'},
-        'network_profile': {'key': 'networkProfile', 'type': 'VirtualMachineScaleSetUpdateNetworkProfile'},
-        'security_profile': {'key': 'securityProfile', 'type': 'SecurityProfile'},
-        'diagnostics_profile': {'key': 'diagnosticsProfile', 'type': 'DiagnosticsProfile'},
-        'extension_profile': {'key': 'extensionProfile', 'type': 'VirtualMachineScaleSetExtensionProfile'},
-        'license_type': {'key': 'licenseType', 'type': 'str'},
-        'billing_profile': {'key': 'billingProfile', 'type': 'BillingProfile'},
-        'scheduled_events_profile': {'key': 'scheduledEventsProfile', 'type': 'ScheduledEventsProfile'},
-        'user_data': {'key': 'userData', 'type': 'str'},
+        "os_profile": {"key": "osProfile", "type": "VirtualMachineScaleSetUpdateOSProfile"},
+        "storage_profile": {"key": "storageProfile", "type": "VirtualMachineScaleSetUpdateStorageProfile"},
+        "network_profile": {"key": "networkProfile", "type": "VirtualMachineScaleSetUpdateNetworkProfile"},
+        "security_profile": {"key": "securityProfile", "type": "SecurityProfile"},
+        "diagnostics_profile": {"key": "diagnosticsProfile", "type": "DiagnosticsProfile"},
+        "extension_profile": {"key": "extensionProfile", "type": "VirtualMachineScaleSetExtensionProfile"},
+        "license_type": {"key": "licenseType", "type": "str"},
+        "billing_profile": {"key": "billingProfile", "type": "BillingProfile"},
+        "scheduled_events_profile": {"key": "scheduledEventsProfile", "type": "ScheduledEventsProfile"},
+        "user_data": {"key": "userData", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        os_profile: Optional["VirtualMachineScaleSetUpdateOSProfile"] = None,
-        storage_profile: Optional["VirtualMachineScaleSetUpdateStorageProfile"] = None,
-        network_profile: Optional["VirtualMachineScaleSetUpdateNetworkProfile"] = None,
-        security_profile: Optional["SecurityProfile"] = None,
-        diagnostics_profile: Optional["DiagnosticsProfile"] = None,
-        extension_profile: Optional["VirtualMachineScaleSetExtensionProfile"] = None,
+        os_profile: Optional["_models.VirtualMachineScaleSetUpdateOSProfile"] = None,
+        storage_profile: Optional["_models.VirtualMachineScaleSetUpdateStorageProfile"] = None,
+        network_profile: Optional["_models.VirtualMachineScaleSetUpdateNetworkProfile"] = None,
+        security_profile: Optional["_models.SecurityProfile"] = None,
+        diagnostics_profile: Optional["_models.DiagnosticsProfile"] = None,
+        extension_profile: Optional["_models.VirtualMachineScaleSetExtensionProfile"] = None,
         license_type: Optional[str] = None,
-        billing_profile: Optional["BillingProfile"] = None,
-        scheduled_events_profile: Optional["ScheduledEventsProfile"] = None,
+        billing_profile: Optional["_models.BillingProfile"] = None,
+        scheduled_events_profile: Optional["_models.ScheduledEventsProfile"] = None,
         user_data: Optional[str] = None,
         **kwargs
     ):
@@ -14081,7 +13534,7 @@ class VirtualMachineScaleSetUpdateVMProfile(msrest.serialization.Model):
          pass any secrets in here. :code:`<br>`:code:`<br>`Minimum api-version: 2021-03-01.
         :paramtype user_data: str
         """
-        super(VirtualMachineScaleSetUpdateVMProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.os_profile = os_profile
         self.storage_profile = storage_profile
         self.network_profile = network_profile
@@ -14094,7 +13547,7 @@ class VirtualMachineScaleSetUpdateVMProfile(msrest.serialization.Model):
         self.user_data = user_data
 
 
-class VirtualMachineScaleSetVM(Resource):
+class VirtualMachineScaleSetVM(Resource):  # pylint: disable=too-many-instance-attributes
     """Describes a virtual machine scale set virtual machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -14107,9 +13560,9 @@ class VirtualMachineScaleSetVM(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar instance_id: The virtual machine instance ID.
     :vartype instance_id: str
@@ -14191,75 +13644,78 @@ class VirtualMachineScaleSetVM(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'instance_id': {'readonly': True},
-        'sku': {'readonly': True},
-        'resources': {'readonly': True},
-        'zones': {'readonly': True},
-        'latest_model_applied': {'readonly': True},
-        'vm_id': {'readonly': True},
-        'instance_view': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'model_definition_applied': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "instance_id": {"readonly": True},
+        "sku": {"readonly": True},
+        "resources": {"readonly": True},
+        "zones": {"readonly": True},
+        "latest_model_applied": {"readonly": True},
+        "vm_id": {"readonly": True},
+        "instance_view": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "model_definition_applied": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'instance_id': {'key': 'instanceId', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'plan': {'key': 'plan', 'type': 'Plan'},
-        'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'latest_model_applied': {'key': 'properties.latestModelApplied', 'type': 'bool'},
-        'vm_id': {'key': 'properties.vmId', 'type': 'str'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineScaleSetVMInstanceView'},
-        'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
-        'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
-        'os_profile': {'key': 'properties.osProfile', 'type': 'OSProfile'},
-        'security_profile': {'key': 'properties.securityProfile', 'type': 'SecurityProfile'},
-        'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
-        'network_profile_configuration': {'key': 'properties.networkProfileConfiguration', 'type': 'VirtualMachineScaleSetVMNetworkProfileConfiguration'},
-        'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
-        'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'license_type': {'key': 'properties.licenseType', 'type': 'str'},
-        'model_definition_applied': {'key': 'properties.modelDefinitionApplied', 'type': 'str'},
-        'protection_policy': {'key': 'properties.protectionPolicy', 'type': 'VirtualMachineScaleSetVMProtectionPolicy'},
-        'user_data': {'key': 'properties.userData', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "instance_id": {"key": "instanceId", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "plan": {"key": "plan", "type": "Plan"},
+        "resources": {"key": "resources", "type": "[VirtualMachineExtension]"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "latest_model_applied": {"key": "properties.latestModelApplied", "type": "bool"},
+        "vm_id": {"key": "properties.vmId", "type": "str"},
+        "instance_view": {"key": "properties.instanceView", "type": "VirtualMachineScaleSetVMInstanceView"},
+        "hardware_profile": {"key": "properties.hardwareProfile", "type": "HardwareProfile"},
+        "storage_profile": {"key": "properties.storageProfile", "type": "StorageProfile"},
+        "additional_capabilities": {"key": "properties.additionalCapabilities", "type": "AdditionalCapabilities"},
+        "os_profile": {"key": "properties.osProfile", "type": "OSProfile"},
+        "security_profile": {"key": "properties.securityProfile", "type": "SecurityProfile"},
+        "network_profile": {"key": "properties.networkProfile", "type": "NetworkProfile"},
+        "network_profile_configuration": {
+            "key": "properties.networkProfileConfiguration",
+            "type": "VirtualMachineScaleSetVMNetworkProfileConfiguration",
+        },
+        "diagnostics_profile": {"key": "properties.diagnosticsProfile", "type": "DiagnosticsProfile"},
+        "availability_set": {"key": "properties.availabilitySet", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "license_type": {"key": "properties.licenseType", "type": "str"},
+        "model_definition_applied": {"key": "properties.modelDefinitionApplied", "type": "str"},
+        "protection_policy": {"key": "properties.protectionPolicy", "type": "VirtualMachineScaleSetVMProtectionPolicy"},
+        "user_data": {"key": "properties.userData", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        plan: Optional["Plan"] = None,
-        hardware_profile: Optional["HardwareProfile"] = None,
-        storage_profile: Optional["StorageProfile"] = None,
-        additional_capabilities: Optional["AdditionalCapabilities"] = None,
-        os_profile: Optional["OSProfile"] = None,
-        security_profile: Optional["SecurityProfile"] = None,
-        network_profile: Optional["NetworkProfile"] = None,
-        network_profile_configuration: Optional["VirtualMachineScaleSetVMNetworkProfileConfiguration"] = None,
-        diagnostics_profile: Optional["DiagnosticsProfile"] = None,
-        availability_set: Optional["SubResource"] = None,
+        plan: Optional["_models.Plan"] = None,
+        hardware_profile: Optional["_models.HardwareProfile"] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
+        additional_capabilities: Optional["_models.AdditionalCapabilities"] = None,
+        os_profile: Optional["_models.OSProfile"] = None,
+        security_profile: Optional["_models.SecurityProfile"] = None,
+        network_profile: Optional["_models.NetworkProfile"] = None,
+        network_profile_configuration: Optional["_models.VirtualMachineScaleSetVMNetworkProfileConfiguration"] = None,
+        diagnostics_profile: Optional["_models.DiagnosticsProfile"] = None,
+        availability_set: Optional["_models.SubResource"] = None,
         license_type: Optional[str] = None,
-        protection_policy: Optional["VirtualMachineScaleSetVMProtectionPolicy"] = None,
+        protection_policy: Optional["_models.VirtualMachineScaleSetVMProtectionPolicy"] = None,
         user_data: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword plan: Specifies information about the marketplace image used to create the virtual
          machine. This element is only used for marketplace images. Before you can use a marketplace
@@ -14319,7 +13775,7 @@ class VirtualMachineScaleSetVM(Resource):
          pass any secrets in here. :code:`<br>`:code:`<br>`Minimum api-version: 2021-03-01.
         :paramtype user_data: str
         """
-        super(VirtualMachineScaleSetVM, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.instance_id = None
         self.sku = None
         self.plan = plan
@@ -14344,7 +13800,7 @@ class VirtualMachineScaleSetVM(Resource):
         self.user_data = user_data
 
 
-class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
+class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):  # pylint: disable=too-many-instance-attributes
     """Describes a VMSS VM Extension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -14373,10 +13829,10 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
      upgraded by the platform if there is a newer version of the extension available.
     :vartype enable_automatic_upgrade: bool
     :ivar settings: Json formatted public settings for the extension.
-    :vartype settings: any
+    :vartype settings: JSON
     :ivar protected_settings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :vartype protected_settings: any
+    :vartype protected_settings: JSON
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :ivar instance_view: The virtual machine extension instance view.
@@ -14385,26 +13841,26 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
-        'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
-        'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
-        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
-        'enable_automatic_upgrade': {'key': 'properties.enableAutomaticUpgrade', 'type': 'bool'},
-        'settings': {'key': 'properties.settings', 'type': 'object'},
-        'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineExtensionInstanceView'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "force_update_tag": {"key": "properties.forceUpdateTag", "type": "str"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "type_handler_version": {"key": "properties.typeHandlerVersion", "type": "str"},
+        "auto_upgrade_minor_version": {"key": "properties.autoUpgradeMinorVersion", "type": "bool"},
+        "enable_automatic_upgrade": {"key": "properties.enableAutomaticUpgrade", "type": "bool"},
+        "settings": {"key": "properties.settings", "type": "object"},
+        "protected_settings": {"key": "properties.protectedSettings", "type": "object"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "instance_view": {"key": "properties.instanceView", "type": "VirtualMachineExtensionInstanceView"},
     }
 
     def __init__(
@@ -14416,9 +13872,9 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
         type_handler_version: Optional[str] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
         enable_automatic_upgrade: Optional[bool] = None,
-        settings: Optional[Any] = None,
-        protected_settings: Optional[Any] = None,
-        instance_view: Optional["VirtualMachineExtensionInstanceView"] = None,
+        settings: Optional[JSON] = None,
+        protected_settings: Optional[JSON] = None,
+        instance_view: Optional["_models.VirtualMachineExtensionInstanceView"] = None,
         **kwargs
     ):
         """
@@ -14440,15 +13896,15 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
          upgraded by the platform if there is a newer version of the extension available.
         :paramtype enable_automatic_upgrade: bool
         :keyword settings: Json formatted public settings for the extension.
-        :paramtype settings: any
+        :paramtype settings: JSON
         :keyword protected_settings: The extension can contain either protectedSettings or
          protectedSettingsFromKeyVault or no protected settings at all.
-        :paramtype protected_settings: any
+        :paramtype protected_settings: JSON
         :keyword instance_view: The virtual machine extension instance view.
         :paramtype instance_view:
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineExtensionInstanceView
         """
-        super(VirtualMachineScaleSetVMExtension, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.type = None
         self.force_update_tag = force_update_tag
@@ -14463,7 +13919,7 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
         self.instance_view = instance_view
 
 
-class VirtualMachineScaleSetVMExtensionsListResult(msrest.serialization.Model):
+class VirtualMachineScaleSetVMExtensionsListResult(_serialization.Model):
     """The List VMSS VM Extension operation response.
 
     :ivar value: The list of VMSS VM extensions.
@@ -14471,25 +13927,20 @@ class VirtualMachineScaleSetVMExtensionsListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualMachineScaleSetVMExtension]'},
+        "value": {"key": "value", "type": "[VirtualMachineScaleSetVMExtension]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["VirtualMachineScaleSetVMExtension"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.VirtualMachineScaleSetVMExtension"]] = None, **kwargs):
         """
         :keyword value: The list of VMSS VM extensions.
         :paramtype value:
          list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetVMExtension]
         """
-        super(VirtualMachineScaleSetVMExtensionsListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class VirtualMachineScaleSetVMExtensionsSummary(msrest.serialization.Model):
+class VirtualMachineScaleSetVMExtensionsSummary(_serialization.Model):
     """Extensions summary for virtual machines of a virtual machine scale set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -14502,27 +13953,23 @@ class VirtualMachineScaleSetVMExtensionsSummary(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'statuses_summary': {'readonly': True},
+        "name": {"readonly": True},
+        "statuses_summary": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'statuses_summary': {'key': 'statusesSummary', 'type': '[VirtualMachineStatusCodeCount]'},
+        "name": {"key": "name", "type": "str"},
+        "statuses_summary": {"key": "statusesSummary", "type": "[VirtualMachineStatusCodeCount]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(VirtualMachineScaleSetVMExtensionsSummary, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.statuses_summary = None
 
 
-class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):
+class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):  # pylint: disable=too-many-instance-attributes
     """Describes a VMSS VM Extension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -14551,30 +13998,30 @@ class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):
      upgraded by the platform if there is a newer version of the extension available.
     :vartype enable_automatic_upgrade: bool
     :ivar settings: Json formatted public settings for the extension.
-    :vartype settings: any
+    :vartype settings: JSON
     :ivar protected_settings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :vartype protected_settings: any
+    :vartype protected_settings: JSON
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
-        'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
-        'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
-        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
-        'enable_automatic_upgrade': {'key': 'properties.enableAutomaticUpgrade', 'type': 'bool'},
-        'settings': {'key': 'properties.settings', 'type': 'object'},
-        'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "force_update_tag": {"key": "properties.forceUpdateTag", "type": "str"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "type_handler_version": {"key": "properties.typeHandlerVersion", "type": "str"},
+        "auto_upgrade_minor_version": {"key": "properties.autoUpgradeMinorVersion", "type": "bool"},
+        "enable_automatic_upgrade": {"key": "properties.enableAutomaticUpgrade", "type": "bool"},
+        "settings": {"key": "properties.settings", "type": "object"},
+        "protected_settings": {"key": "properties.protectedSettings", "type": "object"},
     }
 
     def __init__(
@@ -14586,8 +14033,8 @@ class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):
         type_handler_version: Optional[str] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
         enable_automatic_upgrade: Optional[bool] = None,
-        settings: Optional[Any] = None,
-        protected_settings: Optional[Any] = None,
+        settings: Optional[JSON] = None,
+        protected_settings: Optional[JSON] = None,
         **kwargs
     ):
         """
@@ -14609,12 +14056,12 @@ class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):
          upgraded by the platform if there is a newer version of the extension available.
         :paramtype enable_automatic_upgrade: bool
         :keyword settings: Json formatted public settings for the extension.
-        :paramtype settings: any
+        :paramtype settings: JSON
         :keyword protected_settings: The extension can contain either protectedSettings or
          protectedSettingsFromKeyVault or no protected settings at all.
-        :paramtype protected_settings: any
+        :paramtype protected_settings: JSON
         """
-        super(VirtualMachineScaleSetVMExtensionUpdate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.type = None
         self.force_update_tag = force_update_tag
@@ -14627,7 +14074,7 @@ class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):
         self.protected_settings = protected_settings
 
 
-class VirtualMachineScaleSetVMInstanceIDs(msrest.serialization.Model):
+class VirtualMachineScaleSetVMInstanceIDs(_serialization.Model):
     """Specifies a list of virtual machine instance IDs from the VM scale set.
 
     :ivar instance_ids: The virtual machine scale set instance ids. Omitting the virtual machine
@@ -14637,57 +14084,47 @@ class VirtualMachineScaleSetVMInstanceIDs(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'instance_ids': {'key': 'instanceIds', 'type': '[str]'},
+        "instance_ids": {"key": "instanceIds", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        instance_ids: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, instance_ids: Optional[List[str]] = None, **kwargs):
         """
         :keyword instance_ids: The virtual machine scale set instance ids. Omitting the virtual machine
          scale set instance ids will result in the operation being performed on all virtual machines in
          the virtual machine scale set.
         :paramtype instance_ids: list[str]
         """
-        super(VirtualMachineScaleSetVMInstanceIDs, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.instance_ids = instance_ids
 
 
-class VirtualMachineScaleSetVMInstanceRequiredIDs(msrest.serialization.Model):
+class VirtualMachineScaleSetVMInstanceRequiredIDs(_serialization.Model):
     """Specifies a list of virtual machine instance IDs from the VM scale set.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar instance_ids: Required. The virtual machine scale set instance ids.
+    :ivar instance_ids: The virtual machine scale set instance ids. Required.
     :vartype instance_ids: list[str]
     """
 
     _validation = {
-        'instance_ids': {'required': True},
+        "instance_ids": {"required": True},
     }
 
     _attribute_map = {
-        'instance_ids': {'key': 'instanceIds', 'type': '[str]'},
+        "instance_ids": {"key": "instanceIds", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        instance_ids: List[str],
-        **kwargs
-    ):
+    def __init__(self, *, instance_ids: List[str], **kwargs):
         """
-        :keyword instance_ids: Required. The virtual machine scale set instance ids.
+        :keyword instance_ids: The virtual machine scale set instance ids. Required.
         :paramtype instance_ids: list[str]
         """
-        super(VirtualMachineScaleSetVMInstanceRequiredIDs, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.instance_ids = instance_ids
 
 
-class VirtualMachineScaleSetVMInstanceView(msrest.serialization.Model):
+class VirtualMachineScaleSetVMInstanceView(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The instance view of a virtual machine scale set VM.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -14728,23 +14165,23 @@ class VirtualMachineScaleSetVMInstanceView(msrest.serialization.Model):
     """
 
     _validation = {
-        'vm_health': {'readonly': True},
-        'assigned_host': {'readonly': True},
+        "vm_health": {"readonly": True},
+        "assigned_host": {"readonly": True},
     }
 
     _attribute_map = {
-        'platform_update_domain': {'key': 'platformUpdateDomain', 'type': 'int'},
-        'platform_fault_domain': {'key': 'platformFaultDomain', 'type': 'int'},
-        'rdp_thumb_print': {'key': 'rdpThumbPrint', 'type': 'str'},
-        'vm_agent': {'key': 'vmAgent', 'type': 'VirtualMachineAgentInstanceView'},
-        'maintenance_redeploy_status': {'key': 'maintenanceRedeployStatus', 'type': 'MaintenanceRedeployStatus'},
-        'disks': {'key': 'disks', 'type': '[DiskInstanceView]'},
-        'extensions': {'key': 'extensions', 'type': '[VirtualMachineExtensionInstanceView]'},
-        'vm_health': {'key': 'vmHealth', 'type': 'VirtualMachineHealthStatus'},
-        'boot_diagnostics': {'key': 'bootDiagnostics', 'type': 'BootDiagnosticsInstanceView'},
-        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
-        'assigned_host': {'key': 'assignedHost', 'type': 'str'},
-        'placement_group_id': {'key': 'placementGroupId', 'type': 'str'},
+        "platform_update_domain": {"key": "platformUpdateDomain", "type": "int"},
+        "platform_fault_domain": {"key": "platformFaultDomain", "type": "int"},
+        "rdp_thumb_print": {"key": "rdpThumbPrint", "type": "str"},
+        "vm_agent": {"key": "vmAgent", "type": "VirtualMachineAgentInstanceView"},
+        "maintenance_redeploy_status": {"key": "maintenanceRedeployStatus", "type": "MaintenanceRedeployStatus"},
+        "disks": {"key": "disks", "type": "[DiskInstanceView]"},
+        "extensions": {"key": "extensions", "type": "[VirtualMachineExtensionInstanceView]"},
+        "vm_health": {"key": "vmHealth", "type": "VirtualMachineHealthStatus"},
+        "boot_diagnostics": {"key": "bootDiagnostics", "type": "BootDiagnosticsInstanceView"},
+        "statuses": {"key": "statuses", "type": "[InstanceViewStatus]"},
+        "assigned_host": {"key": "assignedHost", "type": "str"},
+        "placement_group_id": {"key": "placementGroupId", "type": "str"},
     }
 
     def __init__(
@@ -14753,12 +14190,12 @@ class VirtualMachineScaleSetVMInstanceView(msrest.serialization.Model):
         platform_update_domain: Optional[int] = None,
         platform_fault_domain: Optional[int] = None,
         rdp_thumb_print: Optional[str] = None,
-        vm_agent: Optional["VirtualMachineAgentInstanceView"] = None,
-        maintenance_redeploy_status: Optional["MaintenanceRedeployStatus"] = None,
-        disks: Optional[List["DiskInstanceView"]] = None,
-        extensions: Optional[List["VirtualMachineExtensionInstanceView"]] = None,
-        boot_diagnostics: Optional["BootDiagnosticsInstanceView"] = None,
-        statuses: Optional[List["InstanceViewStatus"]] = None,
+        vm_agent: Optional["_models.VirtualMachineAgentInstanceView"] = None,
+        maintenance_redeploy_status: Optional["_models.MaintenanceRedeployStatus"] = None,
+        disks: Optional[List["_models.DiskInstanceView"]] = None,
+        extensions: Optional[List["_models.VirtualMachineExtensionInstanceView"]] = None,
+        boot_diagnostics: Optional["_models.BootDiagnosticsInstanceView"] = None,
+        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
         placement_group_id: Optional[str] = None,
         **kwargs
     ):
@@ -14790,7 +14227,7 @@ class VirtualMachineScaleSetVMInstanceView(msrest.serialization.Model):
          deallocated it will not have a placementGroupId.
         :paramtype placement_group_id: str
         """
-        super(VirtualMachineScaleSetVMInstanceView, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.platform_update_domain = platform_update_domain
         self.platform_fault_domain = platform_fault_domain
         self.rdp_thumb_print = rdp_thumb_print
@@ -14805,12 +14242,12 @@ class VirtualMachineScaleSetVMInstanceView(msrest.serialization.Model):
         self.placement_group_id = placement_group_id
 
 
-class VirtualMachineScaleSetVMListResult(msrest.serialization.Model):
+class VirtualMachineScaleSetVMListResult(_serialization.Model):
     """The List Virtual Machine Scale Set VMs operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. The list of virtual machine scale sets VMs.
+    :ivar value: The list of virtual machine scale sets VMs. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetVM]
     :ivar next_link: The uri to fetch the next page of Virtual Machine Scale Set VMs. Call
      ListNext() with this to fetch the next page of VMSS VMs.
@@ -14818,34 +14255,28 @@ class VirtualMachineScaleSetVMListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualMachineScaleSetVM]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualMachineScaleSetVM]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["VirtualMachineScaleSetVM"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.VirtualMachineScaleSetVM"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. The list of virtual machine scale sets VMs.
+        :keyword value: The list of virtual machine scale sets VMs. Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetVM]
         :keyword next_link: The uri to fetch the next page of Virtual Machine Scale Set VMs. Call
          ListNext() with this to fetch the next page of VMSS VMs.
         :paramtype next_link: str
         """
-        super(VirtualMachineScaleSetVMListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class VirtualMachineScaleSetVMNetworkProfileConfiguration(msrest.serialization.Model):
+class VirtualMachineScaleSetVMNetworkProfileConfiguration(_serialization.Model):
     """Describes a virtual machine scale set VM network profile.
 
     :ivar network_interface_configurations: The list of network configurations.
@@ -14854,13 +14285,16 @@ class VirtualMachineScaleSetVMNetworkProfileConfiguration(msrest.serialization.M
     """
 
     _attribute_map = {
-        'network_interface_configurations': {'key': 'networkInterfaceConfigurations', 'type': '[VirtualMachineScaleSetNetworkConfiguration]'},
+        "network_interface_configurations": {
+            "key": "networkInterfaceConfigurations",
+            "type": "[VirtualMachineScaleSetNetworkConfiguration]",
+        },
     }
 
     def __init__(
         self,
         *,
-        network_interface_configurations: Optional[List["VirtualMachineScaleSetNetworkConfiguration"]] = None,
+        network_interface_configurations: Optional[List["_models.VirtualMachineScaleSetNetworkConfiguration"]] = None,
         **kwargs
     ):
         """
@@ -14868,11 +14302,11 @@ class VirtualMachineScaleSetVMNetworkProfileConfiguration(msrest.serialization.M
         :paramtype network_interface_configurations:
          list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetNetworkConfiguration]
         """
-        super(VirtualMachineScaleSetVMNetworkProfileConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.network_interface_configurations = network_interface_configurations
 
 
-class VirtualMachineScaleSetVMProfile(msrest.serialization.Model):
+class VirtualMachineScaleSetVMProfile(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Describes a virtual machine scale set virtual machine profile.
 
     :ivar os_profile: Specifies the operating system settings for the virtual machines in the scale
@@ -14907,15 +14341,14 @@ class VirtualMachineScaleSetVMProfile(msrest.serialization.Model):
      :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
     :vartype license_type: str
     :ivar priority: Specifies the priority for the virtual machines in the scale set.
-     :code:`<br>`:code:`<br>`Minimum api-version: 2017-10-30-preview. Possible values include:
-     "Regular", "Low", "Spot".
+     :code:`<br>`:code:`<br>`Minimum api-version: 2017-10-30-preview. Known values are: "Regular",
+     "Low", and "Spot".
     :vartype priority: str or ~azure.mgmt.compute.v2021_03_01.models.VirtualMachinePriorityTypes
     :ivar eviction_policy: Specifies the eviction policy for the Azure Spot virtual machine and
      Azure Spot scale set. :code:`<br>`:code:`<br>`For Azure Spot virtual machines, both
      'Deallocate' and 'Delete' are supported and the minimum api-version is 2019-03-01.
      :code:`<br>`:code:`<br>`For Azure Spot scale sets, both 'Deallocate' and 'Delete' are supported
-     and the minimum api-version is 2017-10-30-preview. Possible values include: "Deallocate",
-     "Delete".
+     and the minimum api-version is 2017-10-30-preview. Known values are: "Deallocate" and "Delete".
     :vartype eviction_policy: str or
      ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineEvictionPolicyTypes
     :ivar billing_profile: Specifies the billing related details of a Azure Spot VMSS.
@@ -14931,34 +14364,34 @@ class VirtualMachineScaleSetVMProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'os_profile': {'key': 'osProfile', 'type': 'VirtualMachineScaleSetOSProfile'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'VirtualMachineScaleSetStorageProfile'},
-        'network_profile': {'key': 'networkProfile', 'type': 'VirtualMachineScaleSetNetworkProfile'},
-        'security_profile': {'key': 'securityProfile', 'type': 'SecurityProfile'},
-        'diagnostics_profile': {'key': 'diagnosticsProfile', 'type': 'DiagnosticsProfile'},
-        'extension_profile': {'key': 'extensionProfile', 'type': 'VirtualMachineScaleSetExtensionProfile'},
-        'license_type': {'key': 'licenseType', 'type': 'str'},
-        'priority': {'key': 'priority', 'type': 'str'},
-        'eviction_policy': {'key': 'evictionPolicy', 'type': 'str'},
-        'billing_profile': {'key': 'billingProfile', 'type': 'BillingProfile'},
-        'scheduled_events_profile': {'key': 'scheduledEventsProfile', 'type': 'ScheduledEventsProfile'},
-        'user_data': {'key': 'userData', 'type': 'str'},
+        "os_profile": {"key": "osProfile", "type": "VirtualMachineScaleSetOSProfile"},
+        "storage_profile": {"key": "storageProfile", "type": "VirtualMachineScaleSetStorageProfile"},
+        "network_profile": {"key": "networkProfile", "type": "VirtualMachineScaleSetNetworkProfile"},
+        "security_profile": {"key": "securityProfile", "type": "SecurityProfile"},
+        "diagnostics_profile": {"key": "diagnosticsProfile", "type": "DiagnosticsProfile"},
+        "extension_profile": {"key": "extensionProfile", "type": "VirtualMachineScaleSetExtensionProfile"},
+        "license_type": {"key": "licenseType", "type": "str"},
+        "priority": {"key": "priority", "type": "str"},
+        "eviction_policy": {"key": "evictionPolicy", "type": "str"},
+        "billing_profile": {"key": "billingProfile", "type": "BillingProfile"},
+        "scheduled_events_profile": {"key": "scheduledEventsProfile", "type": "ScheduledEventsProfile"},
+        "user_data": {"key": "userData", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        os_profile: Optional["VirtualMachineScaleSetOSProfile"] = None,
-        storage_profile: Optional["VirtualMachineScaleSetStorageProfile"] = None,
-        network_profile: Optional["VirtualMachineScaleSetNetworkProfile"] = None,
-        security_profile: Optional["SecurityProfile"] = None,
-        diagnostics_profile: Optional["DiagnosticsProfile"] = None,
-        extension_profile: Optional["VirtualMachineScaleSetExtensionProfile"] = None,
+        os_profile: Optional["_models.VirtualMachineScaleSetOSProfile"] = None,
+        storage_profile: Optional["_models.VirtualMachineScaleSetStorageProfile"] = None,
+        network_profile: Optional["_models.VirtualMachineScaleSetNetworkProfile"] = None,
+        security_profile: Optional["_models.SecurityProfile"] = None,
+        diagnostics_profile: Optional["_models.DiagnosticsProfile"] = None,
+        extension_profile: Optional["_models.VirtualMachineScaleSetExtensionProfile"] = None,
         license_type: Optional[str] = None,
-        priority: Optional[Union[str, "VirtualMachinePriorityTypes"]] = None,
-        eviction_policy: Optional[Union[str, "VirtualMachineEvictionPolicyTypes"]] = None,
-        billing_profile: Optional["BillingProfile"] = None,
-        scheduled_events_profile: Optional["ScheduledEventsProfile"] = None,
+        priority: Optional[Union[str, "_models.VirtualMachinePriorityTypes"]] = None,
+        eviction_policy: Optional[Union[str, "_models.VirtualMachineEvictionPolicyTypes"]] = None,
+        billing_profile: Optional["_models.BillingProfile"] = None,
+        scheduled_events_profile: Optional["_models.ScheduledEventsProfile"] = None,
         user_data: Optional[str] = None,
         **kwargs
     ):
@@ -14995,15 +14428,14 @@ class VirtualMachineScaleSetVMProfile(msrest.serialization.Model):
          :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
         :paramtype license_type: str
         :keyword priority: Specifies the priority for the virtual machines in the scale set.
-         :code:`<br>`:code:`<br>`Minimum api-version: 2017-10-30-preview. Possible values include:
-         "Regular", "Low", "Spot".
+         :code:`<br>`:code:`<br>`Minimum api-version: 2017-10-30-preview. Known values are: "Regular",
+         "Low", and "Spot".
         :paramtype priority: str or ~azure.mgmt.compute.v2021_03_01.models.VirtualMachinePriorityTypes
         :keyword eviction_policy: Specifies the eviction policy for the Azure Spot virtual machine and
          Azure Spot scale set. :code:`<br>`:code:`<br>`For Azure Spot virtual machines, both
          'Deallocate' and 'Delete' are supported and the minimum api-version is 2019-03-01.
          :code:`<br>`:code:`<br>`For Azure Spot scale sets, both 'Deallocate' and 'Delete' are supported
-         and the minimum api-version is 2017-10-30-preview. Possible values include: "Deallocate",
-         "Delete".
+         and the minimum api-version is 2017-10-30-preview. Known values are: "Deallocate" and "Delete".
         :paramtype eviction_policy: str or
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineEvictionPolicyTypes
         :keyword billing_profile: Specifies the billing related details of a Azure Spot VMSS.
@@ -15017,7 +14449,7 @@ class VirtualMachineScaleSetVMProfile(msrest.serialization.Model):
          api-version: 2021-03-01.
         :paramtype user_data: str
         """
-        super(VirtualMachineScaleSetVMProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.os_profile = os_profile
         self.storage_profile = storage_profile
         self.network_profile = network_profile
@@ -15032,7 +14464,7 @@ class VirtualMachineScaleSetVMProfile(msrest.serialization.Model):
         self.user_data = user_data
 
 
-class VirtualMachineScaleSetVMProtectionPolicy(msrest.serialization.Model):
+class VirtualMachineScaleSetVMProtectionPolicy(_serialization.Model):
     """The protection policy of a virtual machine scale set VM.
 
     :ivar protect_from_scale_in: Indicates that the virtual machine scale set VM shouldn't be
@@ -15045,8 +14477,8 @@ class VirtualMachineScaleSetVMProtectionPolicy(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'protect_from_scale_in': {'key': 'protectFromScaleIn', 'type': 'bool'},
-        'protect_from_scale_set_actions': {'key': 'protectFromScaleSetActions', 'type': 'bool'},
+        "protect_from_scale_in": {"key": "protectFromScaleIn", "type": "bool"},
+        "protect_from_scale_set_actions": {"key": "protectFromScaleSetActions", "type": "bool"},
     }
 
     def __init__(
@@ -15065,12 +14497,12 @@ class VirtualMachineScaleSetVMProtectionPolicy(msrest.serialization.Model):
          machine scale set VM.
         :paramtype protect_from_scale_set_actions: bool
         """
-        super(VirtualMachineScaleSetVMProtectionPolicy, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.protect_from_scale_in = protect_from_scale_in
         self.protect_from_scale_set_actions = protect_from_scale_set_actions
 
 
-class VirtualMachineSize(msrest.serialization.Model):
+class VirtualMachineSize(_serialization.Model):
     """Describes the properties of a VM size.
 
     :ivar name: The name of the virtual machine size.
@@ -15094,12 +14526,12 @@ class VirtualMachineSize(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'number_of_cores': {'key': 'numberOfCores', 'type': 'int'},
-        'os_disk_size_in_mb': {'key': 'osDiskSizeInMB', 'type': 'int'},
-        'resource_disk_size_in_mb': {'key': 'resourceDiskSizeInMB', 'type': 'int'},
-        'memory_in_mb': {'key': 'memoryInMB', 'type': 'int'},
-        'max_data_disk_count': {'key': 'maxDataDiskCount', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "number_of_cores": {"key": "numberOfCores", "type": "int"},
+        "os_disk_size_in_mb": {"key": "osDiskSizeInMB", "type": "int"},
+        "resource_disk_size_in_mb": {"key": "resourceDiskSizeInMB", "type": "int"},
+        "memory_in_mb": {"key": "memoryInMB", "type": "int"},
+        "max_data_disk_count": {"key": "maxDataDiskCount", "type": "int"},
     }
 
     def __init__(
@@ -15133,7 +14565,7 @@ class VirtualMachineSize(msrest.serialization.Model):
          virtual machine size.
         :paramtype max_data_disk_count: int
         """
-        super(VirtualMachineSize, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.number_of_cores = number_of_cores
         self.os_disk_size_in_mb = os_disk_size_in_mb
@@ -15142,7 +14574,7 @@ class VirtualMachineSize(msrest.serialization.Model):
         self.max_data_disk_count = max_data_disk_count
 
 
-class VirtualMachineSizeListResult(msrest.serialization.Model):
+class VirtualMachineSizeListResult(_serialization.Model):
     """The List Virtual Machine operation response.
 
     :ivar value: The list of virtual machine sizes.
@@ -15150,24 +14582,19 @@ class VirtualMachineSizeListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualMachineSize]'},
+        "value": {"key": "value", "type": "[VirtualMachineSize]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["VirtualMachineSize"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.VirtualMachineSize"]] = None, **kwargs):
         """
         :keyword value: The list of virtual machine sizes.
         :paramtype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineSize]
         """
-        super(VirtualMachineSizeListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class VirtualMachineSoftwarePatchProperties(msrest.serialization.Model):
+class VirtualMachineSoftwarePatchProperties(_serialization.Model):
     """Describes the properties of a Virtual Machine software patch.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -15182,8 +14609,8 @@ class VirtualMachineSoftwarePatchProperties(msrest.serialization.Model):
     :vartype kb_id: str
     :ivar classifications: The classification(s) of the patch as provided by the patch publisher.
     :vartype classifications: list[str]
-    :ivar reboot_behavior: Describes the reboot requirements of the patch. Possible values include:
-     "Unknown", "NeverReboots", "AlwaysRequiresReboot", "CanRequestReboot".
+    :ivar reboot_behavior: Describes the reboot requirements of the patch. Known values are:
+     "Unknown", "NeverReboots", "AlwaysRequiresReboot", and "CanRequestReboot".
     :vartype reboot_behavior: str or
      ~azure.mgmt.compute.v2021_03_01.models.VMGuestPatchRebootBehavior
     :ivar activity_id: The activity ID of the operation that produced this result. It is used to
@@ -15193,44 +14620,40 @@ class VirtualMachineSoftwarePatchProperties(msrest.serialization.Model):
     :vartype published_date: ~datetime.datetime
     :ivar last_modified_date_time: The UTC timestamp of the last update to this patch record.
     :vartype last_modified_date_time: ~datetime.datetime
-    :ivar assessment_state: Describes the availability of a given patch. Possible values include:
-     "Unknown", "Available".
+    :ivar assessment_state: Describes the availability of a given patch. Known values are:
+     "Unknown" and "Available".
     :vartype assessment_state: str or ~azure.mgmt.compute.v2021_03_01.models.PatchAssessmentState
     """
 
     _validation = {
-        'patch_id': {'readonly': True},
-        'name': {'readonly': True},
-        'version': {'readonly': True},
-        'kb_id': {'readonly': True},
-        'classifications': {'readonly': True},
-        'reboot_behavior': {'readonly': True},
-        'activity_id': {'readonly': True},
-        'published_date': {'readonly': True},
-        'last_modified_date_time': {'readonly': True},
-        'assessment_state': {'readonly': True},
+        "patch_id": {"readonly": True},
+        "name": {"readonly": True},
+        "version": {"readonly": True},
+        "kb_id": {"readonly": True},
+        "classifications": {"readonly": True},
+        "reboot_behavior": {"readonly": True},
+        "activity_id": {"readonly": True},
+        "published_date": {"readonly": True},
+        "last_modified_date_time": {"readonly": True},
+        "assessment_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'patch_id': {'key': 'patchId', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-        'kb_id': {'key': 'kbId', 'type': 'str'},
-        'classifications': {'key': 'classifications', 'type': '[str]'},
-        'reboot_behavior': {'key': 'rebootBehavior', 'type': 'str'},
-        'activity_id': {'key': 'activityId', 'type': 'str'},
-        'published_date': {'key': 'publishedDate', 'type': 'iso-8601'},
-        'last_modified_date_time': {'key': 'lastModifiedDateTime', 'type': 'iso-8601'},
-        'assessment_state': {'key': 'assessmentState', 'type': 'str'},
+        "patch_id": {"key": "patchId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+        "kb_id": {"key": "kbId", "type": "str"},
+        "classifications": {"key": "classifications", "type": "[str]"},
+        "reboot_behavior": {"key": "rebootBehavior", "type": "str"},
+        "activity_id": {"key": "activityId", "type": "str"},
+        "published_date": {"key": "publishedDate", "type": "iso-8601"},
+        "last_modified_date_time": {"key": "lastModifiedDateTime", "type": "iso-8601"},
+        "assessment_state": {"key": "assessmentState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(VirtualMachineSoftwarePatchProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.patch_id = None
         self.name = None
         self.version = None
@@ -15243,7 +14666,7 @@ class VirtualMachineSoftwarePatchProperties(msrest.serialization.Model):
         self.assessment_state = None
 
 
-class VirtualMachineStatusCodeCount(msrest.serialization.Model):
+class VirtualMachineStatusCodeCount(_serialization.Model):
     """The status code and count of the virtual machine scale set instance view status summary.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -15255,32 +14678,28 @@ class VirtualMachineStatusCodeCount(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'count': {'readonly': True},
+        "code": {"readonly": True},
+        "count": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'int'},
+        "code": {"key": "code", "type": "str"},
+        "count": {"key": "count", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(VirtualMachineStatusCodeCount, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.count = None
 
 
-class VirtualMachineUpdate(UpdateResource):
+class VirtualMachineUpdate(UpdateResource):  # pylint: disable=too-many-instance-attributes
     """Describes a Virtual Machine Update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar plan: Specifies information about the marketplace image used to create the virtual
      machine. This element is only used for marketplace images. Before you can use a marketplace
@@ -15337,14 +14756,13 @@ class VirtualMachineUpdate(UpdateResource):
      2018-04-01.
     :vartype proximity_placement_group: ~azure.mgmt.compute.v2021_03_01.models.SubResource
     :ivar priority: Specifies the priority for the virtual machine. :code:`<br>`:code:`<br>`Minimum
-     api-version: 2019-03-01. Possible values include: "Regular", "Low", "Spot".
+     api-version: 2019-03-01. Known values are: "Regular", "Low", and "Spot".
     :vartype priority: str or ~azure.mgmt.compute.v2021_03_01.models.VirtualMachinePriorityTypes
     :ivar eviction_policy: Specifies the eviction policy for the Azure Spot virtual machine and
      Azure Spot scale set. :code:`<br>`:code:`<br>`For Azure Spot virtual machines, both
      'Deallocate' and 'Delete' are supported and the minimum api-version is 2019-03-01.
      :code:`<br>`:code:`<br>`For Azure Spot scale sets, both 'Deallocate' and 'Delete' are supported
-     and the minimum api-version is 2017-10-30-preview. Possible values include: "Deallocate",
-     "Delete".
+     and the minimum api-version is 2017-10-30-preview. Known values are: "Deallocate" and "Delete".
     :vartype eviction_policy: str or
      ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineEvictionPolicyTypes
     :ivar billing_profile: Specifies the billing related details of a Azure Spot virtual machine.
@@ -15398,72 +14816,72 @@ class VirtualMachineUpdate(UpdateResource):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'instance_view': {'readonly': True},
-        'vm_id': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "instance_view": {"readonly": True},
+        "vm_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'plan': {'key': 'plan', 'type': 'Plan'},
-        'identity': {'key': 'identity', 'type': 'VirtualMachineIdentity'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
-        'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
-        'os_profile': {'key': 'properties.osProfile', 'type': 'OSProfile'},
-        'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
-        'security_profile': {'key': 'properties.securityProfile', 'type': 'SecurityProfile'},
-        'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
-        'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
-        'virtual_machine_scale_set': {'key': 'properties.virtualMachineScaleSet', 'type': 'SubResource'},
-        'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
-        'priority': {'key': 'properties.priority', 'type': 'str'},
-        'eviction_policy': {'key': 'properties.evictionPolicy', 'type': 'str'},
-        'billing_profile': {'key': 'properties.billingProfile', 'type': 'BillingProfile'},
-        'host': {'key': 'properties.host', 'type': 'SubResource'},
-        'host_group': {'key': 'properties.hostGroup', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
-        'license_type': {'key': 'properties.licenseType', 'type': 'str'},
-        'vm_id': {'key': 'properties.vmId', 'type': 'str'},
-        'extensions_time_budget': {'key': 'properties.extensionsTimeBudget', 'type': 'str'},
-        'platform_fault_domain': {'key': 'properties.platformFaultDomain', 'type': 'int'},
-        'scheduled_events_profile': {'key': 'properties.scheduledEventsProfile', 'type': 'ScheduledEventsProfile'},
-        'user_data': {'key': 'properties.userData', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "plan": {"key": "plan", "type": "Plan"},
+        "identity": {"key": "identity", "type": "VirtualMachineIdentity"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "hardware_profile": {"key": "properties.hardwareProfile", "type": "HardwareProfile"},
+        "storage_profile": {"key": "properties.storageProfile", "type": "StorageProfile"},
+        "additional_capabilities": {"key": "properties.additionalCapabilities", "type": "AdditionalCapabilities"},
+        "os_profile": {"key": "properties.osProfile", "type": "OSProfile"},
+        "network_profile": {"key": "properties.networkProfile", "type": "NetworkProfile"},
+        "security_profile": {"key": "properties.securityProfile", "type": "SecurityProfile"},
+        "diagnostics_profile": {"key": "properties.diagnosticsProfile", "type": "DiagnosticsProfile"},
+        "availability_set": {"key": "properties.availabilitySet", "type": "SubResource"},
+        "virtual_machine_scale_set": {"key": "properties.virtualMachineScaleSet", "type": "SubResource"},
+        "proximity_placement_group": {"key": "properties.proximityPlacementGroup", "type": "SubResource"},
+        "priority": {"key": "properties.priority", "type": "str"},
+        "eviction_policy": {"key": "properties.evictionPolicy", "type": "str"},
+        "billing_profile": {"key": "properties.billingProfile", "type": "BillingProfile"},
+        "host": {"key": "properties.host", "type": "SubResource"},
+        "host_group": {"key": "properties.hostGroup", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "instance_view": {"key": "properties.instanceView", "type": "VirtualMachineInstanceView"},
+        "license_type": {"key": "properties.licenseType", "type": "str"},
+        "vm_id": {"key": "properties.vmId", "type": "str"},
+        "extensions_time_budget": {"key": "properties.extensionsTimeBudget", "type": "str"},
+        "platform_fault_domain": {"key": "properties.platformFaultDomain", "type": "int"},
+        "scheduled_events_profile": {"key": "properties.scheduledEventsProfile", "type": "ScheduledEventsProfile"},
+        "user_data": {"key": "properties.userData", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        plan: Optional["Plan"] = None,
-        identity: Optional["VirtualMachineIdentity"] = None,
+        plan: Optional["_models.Plan"] = None,
+        identity: Optional["_models.VirtualMachineIdentity"] = None,
         zones: Optional[List[str]] = None,
-        hardware_profile: Optional["HardwareProfile"] = None,
-        storage_profile: Optional["StorageProfile"] = None,
-        additional_capabilities: Optional["AdditionalCapabilities"] = None,
-        os_profile: Optional["OSProfile"] = None,
-        network_profile: Optional["NetworkProfile"] = None,
-        security_profile: Optional["SecurityProfile"] = None,
-        diagnostics_profile: Optional["DiagnosticsProfile"] = None,
-        availability_set: Optional["SubResource"] = None,
-        virtual_machine_scale_set: Optional["SubResource"] = None,
-        proximity_placement_group: Optional["SubResource"] = None,
-        priority: Optional[Union[str, "VirtualMachinePriorityTypes"]] = None,
-        eviction_policy: Optional[Union[str, "VirtualMachineEvictionPolicyTypes"]] = None,
-        billing_profile: Optional["BillingProfile"] = None,
-        host: Optional["SubResource"] = None,
-        host_group: Optional["SubResource"] = None,
+        hardware_profile: Optional["_models.HardwareProfile"] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
+        additional_capabilities: Optional["_models.AdditionalCapabilities"] = None,
+        os_profile: Optional["_models.OSProfile"] = None,
+        network_profile: Optional["_models.NetworkProfile"] = None,
+        security_profile: Optional["_models.SecurityProfile"] = None,
+        diagnostics_profile: Optional["_models.DiagnosticsProfile"] = None,
+        availability_set: Optional["_models.SubResource"] = None,
+        virtual_machine_scale_set: Optional["_models.SubResource"] = None,
+        proximity_placement_group: Optional["_models.SubResource"] = None,
+        priority: Optional[Union[str, "_models.VirtualMachinePriorityTypes"]] = None,
+        eviction_policy: Optional[Union[str, "_models.VirtualMachineEvictionPolicyTypes"]] = None,
+        billing_profile: Optional["_models.BillingProfile"] = None,
+        host: Optional["_models.SubResource"] = None,
+        host_group: Optional["_models.SubResource"] = None,
         license_type: Optional[str] = None,
         extensions_time_budget: Optional[str] = None,
         platform_fault_domain: Optional[int] = None,
-        scheduled_events_profile: Optional["ScheduledEventsProfile"] = None,
+        scheduled_events_profile: Optional["_models.ScheduledEventsProfile"] = None,
         user_data: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword plan: Specifies information about the marketplace image used to create the virtual
          machine. This element is only used for marketplace images. Before you can use a marketplace
@@ -15521,15 +14939,14 @@ class VirtualMachineUpdate(UpdateResource):
          2018-04-01.
         :paramtype proximity_placement_group: ~azure.mgmt.compute.v2021_03_01.models.SubResource
         :keyword priority: Specifies the priority for the virtual machine.
-         :code:`<br>`:code:`<br>`Minimum api-version: 2019-03-01. Possible values include: "Regular",
-         "Low", "Spot".
+         :code:`<br>`:code:`<br>`Minimum api-version: 2019-03-01. Known values are: "Regular", "Low",
+         and "Spot".
         :paramtype priority: str or ~azure.mgmt.compute.v2021_03_01.models.VirtualMachinePriorityTypes
         :keyword eviction_policy: Specifies the eviction policy for the Azure Spot virtual machine and
          Azure Spot scale set. :code:`<br>`:code:`<br>`For Azure Spot virtual machines, both
          'Deallocate' and 'Delete' are supported and the minimum api-version is 2019-03-01.
          :code:`<br>`:code:`<br>`For Azure Spot scale sets, both 'Deallocate' and 'Delete' are supported
-         and the minimum api-version is 2017-10-30-preview. Possible values include: "Deallocate",
-         "Delete".
+         and the minimum api-version is 2017-10-30-preview. Known values are: "Deallocate" and "Delete".
         :paramtype eviction_policy: str or
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineEvictionPolicyTypes
         :keyword billing_profile: Specifies the billing related details of a Azure Spot virtual
@@ -15574,7 +14991,7 @@ class VirtualMachineUpdate(UpdateResource):
          pass any secrets in here. :code:`<br>`:code:`<br>`Minimum api-version: 2021-03-01.
         :paramtype user_data: str
         """
-        super(VirtualMachineUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.plan = plan
         self.identity = identity
         self.zones = zones
@@ -15603,7 +15020,7 @@ class VirtualMachineUpdate(UpdateResource):
         self.user_data = user_data
 
 
-class VMScaleSetConvertToSinglePlacementGroupInput(msrest.serialization.Model):
+class VMScaleSetConvertToSinglePlacementGroupInput(_serialization.Model):
     """VMScaleSetConvertToSinglePlacementGroupInput.
 
     :ivar active_placement_group_id: Id of the placement group in which you want future virtual
@@ -15614,15 +15031,10 @@ class VMScaleSetConvertToSinglePlacementGroupInput(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'active_placement_group_id': {'key': 'activePlacementGroupId', 'type': 'str'},
+        "active_placement_group_id": {"key": "activePlacementGroupId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        active_placement_group_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, active_placement_group_id: Optional[str] = None, **kwargs):
         """
         :keyword active_placement_group_id: Id of the placement group in which you want future virtual
          machine instances to be placed. To query placement group Id, please use Virtual Machine Scale
@@ -15630,11 +15042,11 @@ class VMScaleSetConvertToSinglePlacementGroupInput(msrest.serialization.Model):
          machine instances.
         :paramtype active_placement_group_id: str
         """
-        super(VMScaleSetConvertToSinglePlacementGroupInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.active_placement_group_id = active_placement_group_id
 
 
-class WindowsConfiguration(msrest.serialization.Model):
+class WindowsConfiguration(_serialization.Model):
     """Specifies Windows operating system settings on the virtual machine.
 
     :ivar provision_vm_agent: Indicates whether virtual machine agent should be provisioned on the
@@ -15665,12 +15077,12 @@ class WindowsConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provision_vm_agent': {'key': 'provisionVMAgent', 'type': 'bool'},
-        'enable_automatic_updates': {'key': 'enableAutomaticUpdates', 'type': 'bool'},
-        'time_zone': {'key': 'timeZone', 'type': 'str'},
-        'additional_unattend_content': {'key': 'additionalUnattendContent', 'type': '[AdditionalUnattendContent]'},
-        'patch_settings': {'key': 'patchSettings', 'type': 'PatchSettings'},
-        'win_rm': {'key': 'winRM', 'type': 'WinRMConfiguration'},
+        "provision_vm_agent": {"key": "provisionVMAgent", "type": "bool"},
+        "enable_automatic_updates": {"key": "enableAutomaticUpdates", "type": "bool"},
+        "time_zone": {"key": "timeZone", "type": "str"},
+        "additional_unattend_content": {"key": "additionalUnattendContent", "type": "[AdditionalUnattendContent]"},
+        "patch_settings": {"key": "patchSettings", "type": "PatchSettings"},
+        "win_rm": {"key": "winRM", "type": "WinRMConfiguration"},
     }
 
     def __init__(
@@ -15679,9 +15091,9 @@ class WindowsConfiguration(msrest.serialization.Model):
         provision_vm_agent: Optional[bool] = None,
         enable_automatic_updates: Optional[bool] = None,
         time_zone: Optional[str] = None,
-        additional_unattend_content: Optional[List["AdditionalUnattendContent"]] = None,
-        patch_settings: Optional["PatchSettings"] = None,
-        win_rm: Optional["WinRMConfiguration"] = None,
+        additional_unattend_content: Optional[List["_models.AdditionalUnattendContent"]] = None,
+        patch_settings: Optional["_models.PatchSettings"] = None,
+        win_rm: Optional["_models.WinRMConfiguration"] = None,
         **kwargs
     ):
         """
@@ -15711,7 +15123,7 @@ class WindowsConfiguration(msrest.serialization.Model):
          PowerShell.
         :paramtype win_rm: ~azure.mgmt.compute.v2021_03_01.models.WinRMConfiguration
         """
-        super(WindowsConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provision_vm_agent = provision_vm_agent
         self.enable_automatic_updates = enable_automatic_updates
         self.time_zone = time_zone
@@ -15720,7 +15132,7 @@ class WindowsConfiguration(msrest.serialization.Model):
         self.win_rm = win_rm
 
 
-class WindowsParameters(msrest.serialization.Model):
+class WindowsParameters(_serialization.Model):
     """Input for InstallPatches on a Windows VM, as directly received by the API.
 
     :ivar classifications_to_include: The update classifications to select when installing patches
@@ -15740,17 +15152,17 @@ class WindowsParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'classifications_to_include': {'key': 'classificationsToInclude', 'type': '[str]'},
-        'kb_numbers_to_include': {'key': 'kbNumbersToInclude', 'type': '[str]'},
-        'kb_numbers_to_exclude': {'key': 'kbNumbersToExclude', 'type': '[str]'},
-        'exclude_kbs_requiring_reboot': {'key': 'excludeKbsRequiringReboot', 'type': 'bool'},
-        'max_patch_publish_date': {'key': 'maxPatchPublishDate', 'type': 'iso-8601'},
+        "classifications_to_include": {"key": "classificationsToInclude", "type": "[str]"},
+        "kb_numbers_to_include": {"key": "kbNumbersToInclude", "type": "[str]"},
+        "kb_numbers_to_exclude": {"key": "kbNumbersToExclude", "type": "[str]"},
+        "exclude_kbs_requiring_reboot": {"key": "excludeKbsRequiringReboot", "type": "bool"},
+        "max_patch_publish_date": {"key": "maxPatchPublishDate", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
-        classifications_to_include: Optional[List[Union[str, "VMGuestPatchClassificationWindows"]]] = None,
+        classifications_to_include: Optional[List[Union[str, "_models.VMGuestPatchClassificationWindows"]]] = None,
         kb_numbers_to_include: Optional[List[str]] = None,
         kb_numbers_to_exclude: Optional[List[str]] = None,
         exclude_kbs_requiring_reboot: Optional[bool] = None,
@@ -15773,7 +15185,7 @@ class WindowsParameters(msrest.serialization.Model):
          before this given max published date.
         :paramtype max_patch_publish_date: ~datetime.datetime
         """
-        super(WindowsParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.classifications_to_include = classifications_to_include
         self.kb_numbers_to_include = kb_numbers_to_include
         self.kb_numbers_to_exclude = kb_numbers_to_exclude
@@ -15781,7 +15193,7 @@ class WindowsParameters(msrest.serialization.Model):
         self.max_patch_publish_date = max_patch_publish_date
 
 
-class WinRMConfiguration(msrest.serialization.Model):
+class WinRMConfiguration(_serialization.Model):
     """Describes Windows Remote Management configuration of the VM.
 
     :ivar listeners: The list of Windows Remote Management listeners.
@@ -15789,29 +15201,24 @@ class WinRMConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'listeners': {'key': 'listeners', 'type': '[WinRMListener]'},
+        "listeners": {"key": "listeners", "type": "[WinRMListener]"},
     }
 
-    def __init__(
-        self,
-        *,
-        listeners: Optional[List["WinRMListener"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, listeners: Optional[List["_models.WinRMListener"]] = None, **kwargs):
         """
         :keyword listeners: The list of Windows Remote Management listeners.
         :paramtype listeners: list[~azure.mgmt.compute.v2021_03_01.models.WinRMListener]
         """
-        super(WinRMConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.listeners = listeners
 
 
-class WinRMListener(msrest.serialization.Model):
+class WinRMListener(_serialization.Model):
     """Describes Protocol and thumbprint of Windows Remote Management listener.
 
     :ivar protocol: Specifies the protocol of WinRM listener. :code:`<br>`:code:`<br>` Possible
-     values are: :code:`<br>`\ **http** :code:`<br>`:code:`<br>` **https**. Possible values include:
-     "Http", "Https".
+     values are: :code:`<br>`\ **http** :code:`<br>`:code:`<br>` **https**. Known values are: "Http"
+     and "Https".
     :vartype protocol: str or ~azure.mgmt.compute.v2021_03_01.models.ProtocolTypes
     :ivar certificate_url: This is the URL of a certificate that has been uploaded to Key Vault as
      a secret. For adding a secret to the Key Vault, see `Add a key or secret to the key vault
@@ -15828,21 +15235,21 @@ class WinRMListener(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'certificate_url': {'key': 'certificateUrl', 'type': 'str'},
+        "protocol": {"key": "protocol", "type": "str"},
+        "certificate_url": {"key": "certificateUrl", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        protocol: Optional[Union[str, "ProtocolTypes"]] = None,
+        protocol: Optional[Union[str, "_models.ProtocolTypes"]] = None,
         certificate_url: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword protocol: Specifies the protocol of WinRM listener. :code:`<br>`:code:`<br>` Possible
-         values are: :code:`<br>`\ **http** :code:`<br>`:code:`<br>` **https**. Possible values include:
-         "Http", "Https".
+         values are: :code:`<br>`\ **http** :code:`<br>`:code:`<br>` **https**. Known values are: "Http"
+         and "Https".
         :paramtype protocol: str or ~azure.mgmt.compute.v2021_03_01.models.ProtocolTypes
         :keyword certificate_url: This is the URL of a certificate that has been uploaded to Key Vault
          as a secret. For adding a secret to the Key Vault, see `Add a key or secret to the key vault
@@ -15857,6 +15264,6 @@ class WinRMListener(msrest.serialization.Model):
          <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
         :paramtype certificate_url: str
         """
-        super(WinRMListener, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.protocol = protocol
         self.certificate_url = certificate_url

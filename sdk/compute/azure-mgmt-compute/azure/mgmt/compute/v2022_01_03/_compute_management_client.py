@@ -9,20 +9,33 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
 from . import models
+from .._serialization import Deserializer, Serializer
 from ._configuration import ComputeManagementClientConfiguration
-from .operations import CommunityGalleriesOperations, CommunityGalleryImageVersionsOperations, CommunityGalleryImagesOperations, GalleriesOperations, GalleryApplicationVersionsOperations, GalleryApplicationsOperations, GalleryImageVersionsOperations, GalleryImagesOperations, GallerySharingProfileOperations, SharedGalleriesOperations, SharedGalleryImageVersionsOperations, SharedGalleryImagesOperations
+from .operations import (
+    CommunityGalleriesOperations,
+    CommunityGalleryImageVersionsOperations,
+    CommunityGalleryImagesOperations,
+    GalleriesOperations,
+    GalleryApplicationVersionsOperations,
+    GalleryApplicationsOperations,
+    GalleryImageVersionsOperations,
+    GalleryImagesOperations,
+    GallerySharingProfileOperations,
+    SharedGalleriesOperations,
+    SharedGalleryImageVersionsOperations,
+    SharedGalleryImagesOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class ComputeManagementClient:    # pylint: disable=too-many-instance-attributes
+
+class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Compute Client.
 
     :ivar galleries: GalleriesOperations operations
@@ -58,10 +71,10 @@ class ComputeManagementClient:    # pylint: disable=too-many-instance-attributes
     :ivar community_gallery_image_versions: CommunityGalleryImageVersionsOperations operations
     :vartype community_gallery_image_versions:
      azure.mgmt.compute.v2022_01_03.operations.CommunityGalleryImageVersionsOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure
-     subscription. The subscription ID forms part of the URI for every service call.
+     subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
@@ -79,7 +92,9 @@ class ComputeManagementClient:    # pylint: disable=too-many-instance-attributes
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = ComputeManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = ComputeManagementClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -88,23 +103,38 @@ class ComputeManagementClient:    # pylint: disable=too-many-instance-attributes
         self._serialize.client_side_validation = False
         self.galleries = GalleriesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.gallery_images = GalleryImagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_image_versions = GalleryImageVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_applications = GalleryApplicationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_application_versions = GalleryApplicationVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_sharing_profile = GallerySharingProfileOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.shared_galleries = SharedGalleriesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.shared_gallery_images = SharedGalleryImagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.shared_gallery_image_versions = SharedGalleryImageVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.community_galleries = CommunityGalleriesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.community_gallery_images = CommunityGalleryImagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.community_gallery_image_versions = CommunityGalleryImageVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.gallery_image_versions = GalleryImageVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.gallery_applications = GalleryApplicationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.gallery_application_versions = GalleryApplicationVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.gallery_sharing_profile = GallerySharingProfileOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.shared_galleries = SharedGalleriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.shared_gallery_images = SharedGalleryImagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.shared_gallery_image_versions = SharedGalleryImageVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.community_galleries = CommunityGalleriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.community_gallery_images = CommunityGalleryImagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.community_gallery_image_versions = CommunityGalleryImageVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -113,7 +143,7 @@ class ComputeManagementClient:    # pylint: disable=too-many-instance-attributes
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest

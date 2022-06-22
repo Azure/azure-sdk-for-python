@@ -7,37 +7,35 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AggregatedReplicationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """This is the aggregated replication status based on all the regional replication status flags.
-    """
+class AggregatedReplicationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This is the aggregated replication status based on all the regional replication status flags."""
 
     UNKNOWN = "Unknown"
     IN_PROGRESS = "InProgress"
     COMPLETED = "Completed"
     FAILED = "Failed"
 
-class Architecture(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The architecture of the image. Applicable to OS disks only.
-    """
+
+class Architecture(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The architecture of the image. Applicable to OS disks only."""
 
     X64 = "x64"
     ARM64 = "Arm64"
 
-class ConfidentialVMEncryptionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """confidential VM encryption types
-    """
+
+class ConfidentialVMEncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """confidential VM encryption types."""
 
     ENCRYPTED_VM_GUEST_STATE_ONLY_WITH_PMK = "EncryptedVMGuestStateOnlyWithPmk"
     ENCRYPTED_WITH_PMK = "EncryptedWithPmk"
     ENCRYPTED_WITH_CMK = "EncryptedWithCmk"
 
-class GalleryApplicationVersionPropertiesProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state, which only appears in the response.
-    """
+
+class GalleryApplicationVersionPropertiesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state, which only appears in the response."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -46,20 +44,22 @@ class GalleryApplicationVersionPropertiesProvisioningState(with_metaclass(CaseIn
     DELETING = "Deleting"
     MIGRATING = "Migrating"
 
-class GalleryExpandParams(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class GalleryExpandParams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """GalleryExpandParams."""
 
     SHARING_PROFILE_GROUPS = "SharingProfile/Groups"
 
-class GalleryExtendedLocationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """It is type of the extended location.
-    """
+
+class GalleryExtendedLocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """It is type of the extended location."""
 
     EDGE_ZONE = "EdgeZone"
     UNKNOWN = "Unknown"
 
-class GalleryImagePropertiesProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state, which only appears in the response.
-    """
+
+class GalleryImagePropertiesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state, which only appears in the response."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -68,9 +68,9 @@ class GalleryImagePropertiesProvisioningState(with_metaclass(CaseInsensitiveEnum
     DELETING = "Deleting"
     MIGRATING = "Migrating"
 
-class GalleryImageVersionPropertiesProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state, which only appears in the response.
-    """
+
+class GalleryImageVersionPropertiesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state, which only appears in the response."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -79,9 +79,9 @@ class GalleryImageVersionPropertiesProvisioningState(with_metaclass(CaseInsensit
     DELETING = "Deleting"
     MIGRATING = "Migrating"
 
-class GalleryPropertiesProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state, which only appears in the response.
-    """
+
+class GalleryPropertiesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state, which only appears in the response."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -90,30 +90,32 @@ class GalleryPropertiesProvisioningState(with_metaclass(CaseInsensitiveEnumMeta,
     DELETING = "Deleting"
     MIGRATING = "Migrating"
 
-class GallerySharingPermissionTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class GallerySharingPermissionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This property allows you to specify the permission of sharing gallery. :code:`<br>`:code:`<br>`
-    Possible values are: :code:`<br>`:code:`<br>` **Private** :code:`<br>`:code:`<br>` **Groups**
+    Possible values are: :code:`<br>`:code:`<br>` **Private** :code:`<br>`:code:`<br>` **Groups**.
     """
 
     PRIVATE = "Private"
     GROUPS = "Groups"
 
-class HostCaching(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The host caching of the disk. Valid values are 'None', 'ReadOnly', and 'ReadWrite'
-    """
+
+class HostCaching(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The host caching of the disk. Valid values are 'None', 'ReadOnly', and 'ReadWrite'."""
 
     NONE = "None"
     READ_ONLY = "ReadOnly"
     READ_WRITE = "ReadWrite"
 
-class HyperVGeneration(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The hypervisor generation of the Virtual Machine. Applicable to OS disks only.
-    """
+
+class HyperVGeneration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The hypervisor generation of the Virtual Machine. Applicable to OS disks only."""
 
     V1 = "V1"
     V2 = "V2"
 
-class OperatingSystemStateTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class OperatingSystemStateTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This property allows the user to specify whether the virtual machines created under this image
     are 'Generalized' or 'Specialized'.
     """
@@ -121,16 +123,18 @@ class OperatingSystemStateTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     GENERALIZED = "Generalized"
     SPECIALIZED = "Specialized"
 
-class OperatingSystemTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This property allows you to specify the supported type of the OS that application is built for.
     :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Windows**
-    :code:`<br>`:code:`<br>` **Linux**
+    :code:`<br>`:code:`<br>` **Linux**.
     """
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
-class ReplicationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ReplicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Optional parameter which specifies the mode to be used for replication. This property is not
     updatable.
     """
@@ -138,46 +142,52 @@ class ReplicationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FULL = "Full"
     SHALLOW = "Shallow"
 
-class ReplicationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """This is the regional replication state.
-    """
+
+class ReplicationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This is the regional replication state."""
 
     UNKNOWN = "Unknown"
     REPLICATING = "Replicating"
     COMPLETED = "Completed"
     FAILED = "Failed"
 
-class ReplicationStatusTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ReplicationStatusTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ReplicationStatusTypes."""
 
     REPLICATION_STATUS = "ReplicationStatus"
 
-class SelectPermissions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class SelectPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SelectPermissions."""
 
     PERMISSIONS = "Permissions"
 
-class SharingProfileGroupTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class SharingProfileGroupTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This property allows you to specify the type of sharing group. :code:`<br>`:code:`<br>`
     Possible values are: :code:`<br>`:code:`<br>` **Subscriptions** :code:`<br>`:code:`<br>`
-    **AADTenants** :code:`<br>`:code:`<br>` **Community**
+    **AADTenants** :code:`<br>`:code:`<br>` **Community**.
     """
 
     SUBSCRIPTIONS = "Subscriptions"
     AAD_TENANTS = "AADTenants"
     COMMUNITY = "Community"
 
-class SharingState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The sharing state of the gallery, which only appears in the response.
-    """
+
+class SharingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The sharing state of the gallery, which only appears in the response."""
 
     SUCCEEDED = "Succeeded"
     IN_PROGRESS = "InProgress"
     FAILED = "Failed"
     UNKNOWN = "Unknown"
 
-class SharingUpdateOperationTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class SharingUpdateOperationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This property allows you to specify the operation type of gallery sharing update.
     :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Add**
-    :code:`<br>`:code:`<br>` **Remove** :code:`<br>`:code:`<br>` **Reset**
+    :code:`<br>`:code:`<br>` **Remove** :code:`<br>`:code:`<br>` **Reset**.
     """
 
     ADD = "Add"
@@ -185,7 +195,8 @@ class SharingUpdateOperationTypes(with_metaclass(CaseInsensitiveEnumMeta, str, E
     RESET = "Reset"
     ENABLE_COMMUNITY = "EnableCommunity"
 
-class StorageAccountType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the storage account type to be used to store the image. This property is not
     updatable.
     """

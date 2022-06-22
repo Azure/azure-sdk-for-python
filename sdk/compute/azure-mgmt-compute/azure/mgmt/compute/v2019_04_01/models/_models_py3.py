@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8,10 +9,10 @@
 
 from typing import List, Optional
 
-import msrest.serialization
+from ... import _serialization
 
 
-class ResourceSku(msrest.serialization.Model):
+class ResourceSku(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Describes an available Compute SKU.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -49,44 +50,40 @@ class ResourceSku(msrest.serialization.Model):
     """
 
     _validation = {
-        'resource_type': {'readonly': True},
-        'name': {'readonly': True},
-        'tier': {'readonly': True},
-        'size': {'readonly': True},
-        'family': {'readonly': True},
-        'kind': {'readonly': True},
-        'capacity': {'readonly': True},
-        'locations': {'readonly': True},
-        'location_info': {'readonly': True},
-        'api_versions': {'readonly': True},
-        'costs': {'readonly': True},
-        'capabilities': {'readonly': True},
-        'restrictions': {'readonly': True},
+        "resource_type": {"readonly": True},
+        "name": {"readonly": True},
+        "tier": {"readonly": True},
+        "size": {"readonly": True},
+        "family": {"readonly": True},
+        "kind": {"readonly": True},
+        "capacity": {"readonly": True},
+        "locations": {"readonly": True},
+        "location_info": {"readonly": True},
+        "api_versions": {"readonly": True},
+        "costs": {"readonly": True},
+        "capabilities": {"readonly": True},
+        "restrictions": {"readonly": True},
     }
 
     _attribute_map = {
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'size': {'key': 'size', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'ResourceSkuCapacity'},
-        'locations': {'key': 'locations', 'type': '[str]'},
-        'location_info': {'key': 'locationInfo', 'type': '[ResourceSkuLocationInfo]'},
-        'api_versions': {'key': 'apiVersions', 'type': '[str]'},
-        'costs': {'key': 'costs', 'type': '[ResourceSkuCosts]'},
-        'capabilities': {'key': 'capabilities', 'type': '[ResourceSkuCapabilities]'},
-        'restrictions': {'key': 'restrictions', 'type': '[ResourceSkuRestrictions]'},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "size": {"key": "size", "type": "str"},
+        "family": {"key": "family", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "capacity": {"key": "capacity", "type": "ResourceSkuCapacity"},
+        "locations": {"key": "locations", "type": "[str]"},
+        "location_info": {"key": "locationInfo", "type": "[ResourceSkuLocationInfo]"},
+        "api_versions": {"key": "apiVersions", "type": "[str]"},
+        "costs": {"key": "costs", "type": "[ResourceSkuCosts]"},
+        "capabilities": {"key": "capabilities", "type": "[ResourceSkuCapabilities]"},
+        "restrictions": {"key": "restrictions", "type": "[ResourceSkuRestrictions]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResourceSku, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.resource_type = None
         self.name = None
         self.tier = None
@@ -102,7 +99,7 @@ class ResourceSku(msrest.serialization.Model):
         self.restrictions = None
 
 
-class ResourceSkuCapabilities(msrest.serialization.Model):
+class ResourceSkuCapabilities(_serialization.Model):
     """Describes The SKU capabilities object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -114,70 +111,62 @@ class ResourceSkuCapabilities(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'value': {'readonly': True},
+        "name": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResourceSkuCapabilities, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.value = None
 
 
-class ResourceSkuCapacity(msrest.serialization.Model):
+class ResourceSkuCapacity(_serialization.Model):
     """Describes scaling information of a SKU.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar minimum: The minimum capacity.
-    :vartype minimum: long
+    :vartype minimum: int
     :ivar maximum: The maximum capacity that can be set.
-    :vartype maximum: long
+    :vartype maximum: int
     :ivar default: The default capacity.
-    :vartype default: long
-    :ivar scale_type: The scale type applicable to the sku. Possible values include: "Automatic",
-     "Manual", "None".
+    :vartype default: int
+    :ivar scale_type: The scale type applicable to the sku. Known values are: "Automatic",
+     "Manual", and "None".
     :vartype scale_type: str or ~azure.mgmt.compute.v2019_04_01.models.ResourceSkuCapacityScaleType
     """
 
     _validation = {
-        'minimum': {'readonly': True},
-        'maximum': {'readonly': True},
-        'default': {'readonly': True},
-        'scale_type': {'readonly': True},
+        "minimum": {"readonly": True},
+        "maximum": {"readonly": True},
+        "default": {"readonly": True},
+        "scale_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'minimum': {'key': 'minimum', 'type': 'long'},
-        'maximum': {'key': 'maximum', 'type': 'long'},
-        'default': {'key': 'default', 'type': 'long'},
-        'scale_type': {'key': 'scaleType', 'type': 'str'},
+        "minimum": {"key": "minimum", "type": "int"},
+        "maximum": {"key": "maximum", "type": "int"},
+        "default": {"key": "default", "type": "int"},
+        "scale_type": {"key": "scaleType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResourceSkuCapacity, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.minimum = None
         self.maximum = None
         self.default = None
         self.scale_type = None
 
 
-class ResourceSkuCosts(msrest.serialization.Model):
+class ResourceSkuCosts(_serialization.Model):
     """Describes metadata for retrieving price info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -185,36 +174,32 @@ class ResourceSkuCosts(msrest.serialization.Model):
     :ivar meter_id: Used for querying price from commerce.
     :vartype meter_id: str
     :ivar quantity: The multiplier is needed to extend the base metered cost.
-    :vartype quantity: long
+    :vartype quantity: int
     :ivar extended_unit: An invariant to show the extended unit.
     :vartype extended_unit: str
     """
 
     _validation = {
-        'meter_id': {'readonly': True},
-        'quantity': {'readonly': True},
-        'extended_unit': {'readonly': True},
+        "meter_id": {"readonly": True},
+        "quantity": {"readonly": True},
+        "extended_unit": {"readonly": True},
     }
 
     _attribute_map = {
-        'meter_id': {'key': 'meterID', 'type': 'str'},
-        'quantity': {'key': 'quantity', 'type': 'long'},
-        'extended_unit': {'key': 'extendedUnit', 'type': 'str'},
+        "meter_id": {"key": "meterID", "type": "str"},
+        "quantity": {"key": "quantity", "type": "int"},
+        "extended_unit": {"key": "extendedUnit", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResourceSkuCosts, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.meter_id = None
         self.quantity = None
         self.extended_unit = None
 
 
-class ResourceSkuLocationInfo(msrest.serialization.Model):
+class ResourceSkuLocationInfo(_serialization.Model):
     """ResourceSkuLocationInfo.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -228,30 +213,26 @@ class ResourceSkuLocationInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'location': {'readonly': True},
-        'zones': {'readonly': True},
-        'zone_details': {'readonly': True},
+        "location": {"readonly": True},
+        "zones": {"readonly": True},
+        "zone_details": {"readonly": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'zone_details': {'key': 'zoneDetails', 'type': '[ResourceSkuZoneDetails]'},
+        "location": {"key": "location", "type": "str"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "zone_details": {"key": "zoneDetails", "type": "[ResourceSkuZoneDetails]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResourceSkuLocationInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.location = None
         self.zones = None
         self.zone_details = None
 
 
-class ResourceSkuRestrictionInfo(msrest.serialization.Model):
+class ResourceSkuRestrictionInfo(_serialization.Model):
     """ResourceSkuRestrictionInfo.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -263,77 +244,69 @@ class ResourceSkuRestrictionInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'locations': {'readonly': True},
-        'zones': {'readonly': True},
+        "locations": {"readonly": True},
+        "zones": {"readonly": True},
     }
 
     _attribute_map = {
-        'locations': {'key': 'locations', 'type': '[str]'},
-        'zones': {'key': 'zones', 'type': '[str]'},
+        "locations": {"key": "locations", "type": "[str]"},
+        "zones": {"key": "zones", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResourceSkuRestrictionInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.locations = None
         self.zones = None
 
 
-class ResourceSkuRestrictions(msrest.serialization.Model):
+class ResourceSkuRestrictions(_serialization.Model):
     """Describes scaling information of a SKU.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: The type of restrictions. Possible values include: "Location", "Zone".
+    :ivar type: The type of restrictions. Known values are: "Location" and "Zone".
     :vartype type: str or ~azure.mgmt.compute.v2019_04_01.models.ResourceSkuRestrictionsType
     :ivar values: The value of restrictions. If the restriction type is set to location. This would
      be different locations where the SKU is restricted.
     :vartype values: list[str]
     :ivar restriction_info: The information about the restriction where the SKU cannot be used.
     :vartype restriction_info: ~azure.mgmt.compute.v2019_04_01.models.ResourceSkuRestrictionInfo
-    :ivar reason_code: The reason for restriction. Possible values include: "QuotaId",
+    :ivar reason_code: The reason for restriction. Known values are: "QuotaId" and
      "NotAvailableForSubscription".
     :vartype reason_code: str or
      ~azure.mgmt.compute.v2019_04_01.models.ResourceSkuRestrictionsReasonCode
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'values': {'readonly': True},
-        'restriction_info': {'readonly': True},
-        'reason_code': {'readonly': True},
+        "type": {"readonly": True},
+        "values": {"readonly": True},
+        "restriction_info": {"readonly": True},
+        "reason_code": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[str]'},
-        'restriction_info': {'key': 'restrictionInfo', 'type': 'ResourceSkuRestrictionInfo'},
-        'reason_code': {'key': 'reasonCode', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
+        "restriction_info": {"key": "restrictionInfo", "type": "ResourceSkuRestrictionInfo"},
+        "reason_code": {"key": "reasonCode", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResourceSkuRestrictions, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.values = None
         self.restriction_info = None
         self.reason_code = None
 
 
-class ResourceSkusResult(msrest.serialization.Model):
+class ResourceSkusResult(_serialization.Model):
     """The List Resource Skus operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. The list of skus available for the subscription.
+    :ivar value: The list of skus available for the subscription. Required.
     :vartype value: list[~azure.mgmt.compute.v2019_04_01.models.ResourceSku]
     :ivar next_link: The URI to fetch the next page of Resource Skus. Call ListNext() with this URI
      to fetch the next page of Resource Skus.
@@ -341,34 +314,28 @@ class ResourceSkusResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ResourceSku]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ResourceSku]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["ResourceSku"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.ResourceSku"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. The list of skus available for the subscription.
+        :keyword value: The list of skus available for the subscription. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_04_01.models.ResourceSku]
         :keyword next_link: The URI to fetch the next page of Resource Skus. Call ListNext() with this
          URI to fetch the next page of Resource Skus.
         :paramtype next_link: str
         """
-        super(ResourceSkusResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ResourceSkuZoneDetails(msrest.serialization.Model):
+class ResourceSkuZoneDetails(_serialization.Model):
     """Describes The zonal capabilities of a SKU.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -381,21 +348,17 @@ class ResourceSkuZoneDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'capabilities': {'readonly': True},
+        "name": {"readonly": True},
+        "capabilities": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': '[str]'},
-        'capabilities': {'key': 'capabilities', 'type': '[ResourceSkuCapabilities]'},
+        "name": {"key": "name", "type": "[str]"},
+        "capabilities": {"key": "capabilities", "type": "[ResourceSkuCapabilities]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResourceSkuZoneDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.capabilities = None

@@ -7,22 +7,22 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CachingTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CachingTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values are:
     :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
     :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-    storage. ReadOnly for Premium storage**
+    storage. ReadOnly for Premium storage**.
     """
 
     NONE = "None"
     READ_ONLY = "ReadOnly"
     READ_WRITE = "ReadWrite"
 
-class DiskCreateOptionTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class DiskCreateOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies how the virtual machine should be created.:code:`<br>`:code:`<br>` Possible values
     are::code:`<br>`:code:`<br>` **Attach** \u2013 This value is used when you are using a
     specialized disk to create the virtual machine.:code:`<br>`:code:`<br>` **FromImage** \u2013
@@ -35,16 +35,17 @@ class DiskCreateOptionTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     EMPTY = "Empty"
     ATTACH = "Attach"
 
-class IntervalInMins(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Interval value in minutes used to create LogAnalytics call rate logs.
-    """
+
+class IntervalInMins(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Interval value in minutes used to create LogAnalytics call rate logs."""
 
     THREE_MINS = "ThreeMins"
     FIVE_MINS = "FiveMins"
     THIRTY_MINS = "ThirtyMins"
     SIXTY_MINS = "SixtyMins"
 
-class IPVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class IPVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
     ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
     'IPv6'.
@@ -53,38 +54,40 @@ class IPVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     I_PV4 = "IPv4"
     I_PV6 = "IPv6"
 
-class MaintenanceOperationResultCodeTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The Last Maintenance Operation Result Code.
-    """
+
+class MaintenanceOperationResultCodeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Last Maintenance Operation Result Code."""
 
     NONE = "None"
     RETRY_LATER = "RetryLater"
     MAINTENANCE_ABORTED = "MaintenanceAborted"
     MAINTENANCE_COMPLETED = "MaintenanceCompleted"
 
-class OperatingSystemStateTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The OS State.
-    """
+
+class OperatingSystemStateTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The OS State."""
 
     GENERALIZED = "Generalized"
     SPECIALIZED = "Specialized"
 
-class OperatingSystemTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The operating system of the osDiskImage.
-    """
+
+class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operating system of the osDiskImage."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
-class ProtocolTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ProtocolTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the protocol of listener. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`\
-    **http** :code:`<br>`:code:`<br>` **https**
+    **http** :code:`<br>`:code:`<br>` **https**.
     """
 
     HTTP = "Http"
     HTTPS = "Https"
 
-class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity used for the virtual machine. The type 'SystemAssigned, UserAssigned'
     includes both an implicitly created identity and a set of user assigned identities. The type
     'None' will remove any identities from the virtual machine.
@@ -95,23 +98,24 @@ class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     NONE = "None"
 
-class RollingUpgradeActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The last action performed on the rolling upgrade.
-    """
+
+class RollingUpgradeActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The last action performed on the rolling upgrade."""
 
     START = "Start"
     CANCEL = "Cancel"
 
-class RollingUpgradeStatusCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Code indicating the current status of the upgrade.
-    """
+
+class RollingUpgradeStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Code indicating the current status of the upgrade."""
 
     ROLLING_FORWARD = "RollingForward"
     CANCELLED = "Cancelled"
     COMPLETED = "Completed"
     FAULTED = "Faulted"
 
-class SettingNames(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class SettingNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the name of the setting to which the content applies. Possible values are:
     FirstLogonCommands and AutoLogon.
     """
@@ -119,15 +123,16 @@ class SettingNames(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AUTO_LOGON = "AutoLogon"
     FIRST_LOGON_COMMANDS = "FirstLogonCommands"
 
-class StatusLevelTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The level code.
-    """
+
+class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The level code."""
 
     INFO = "Info"
     WARNING = "Warning"
     ERROR = "Error"
 
-class StorageAccountTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class StorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the storage account type for the managed disk. Possible values are: Standard_LRS or
     Premium_LRS.
     """
@@ -135,7 +140,8 @@ class StorageAccountTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD_LRS = "Standard_LRS"
     PREMIUM_LRS = "Premium_LRS"
 
-class UpgradeMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class UpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br />`:code:`<br
     />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control the application
     of updates to virtual machines in the scale set. You do this by using the manualUpgrade
@@ -147,47 +153,50 @@ class UpgradeMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MANUAL = "Manual"
     ROLLING = "Rolling"
 
-class UpgradeOperationInvoker(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Invoker of the Upgrade Operation
-    """
+
+class UpgradeOperationInvoker(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Invoker of the Upgrade Operation."""
 
     UNKNOWN = "Unknown"
     USER = "User"
     PLATFORM = "Platform"
 
-class UpgradeState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Code indicating the current status of the upgrade.
-    """
+
+class UpgradeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Code indicating the current status of the upgrade."""
 
     ROLLING_FORWARD = "RollingForward"
     CANCELLED = "Cancelled"
     COMPLETED = "Completed"
     FAULTED = "Faulted"
 
-class VirtualMachineEvictionPolicyTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class VirtualMachineEvictionPolicyTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the eviction policy for virtual machines in a low priority scale set.
-    :code:`<br>`:code:`<br>`Minimum api-version: 2017-10-30-preview
+    :code:`<br>`:code:`<br>`Minimum api-version: 2017-10-30-preview.
     """
 
     DEALLOCATE = "Deallocate"
     DELETE = "Delete"
 
-class VirtualMachinePriorityTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class VirtualMachinePriorityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the priority for the virtual machines in the scale set.
-    :code:`<br>`:code:`<br>`Minimum api-version: 2017-10-30-preview
+    :code:`<br>`:code:`<br>`Minimum api-version: 2017-10-30-preview.
     """
 
     REGULAR = "Regular"
     LOW = "Low"
 
-class VirtualMachineScaleSetSkuScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The scale type applicable to the sku.
-    """
+
+class VirtualMachineScaleSetSkuScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The scale type applicable to the sku."""
 
     AUTOMATIC = "Automatic"
     NONE = "None"
 
-class VirtualMachineSizeTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class VirtualMachineSizeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the size of the virtual machine. For more information about virtual machine sizes,
     see `Sizes for virtual machines
     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-sizes?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
@@ -198,7 +207,7 @@ class VirtualMachineSizeTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     :code:`<br>`:code:`<br>` `List all available virtual machine sizes in a region
     <https://docs.microsoft.com/rest/api/compute/virtualmachinesizes/list>`_
     :code:`<br>`:code:`<br>` `List all available virtual machine sizes for resizing
-    <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_
+    <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_.
     """
 
     BASIC_A0 = "Basic_A0"
