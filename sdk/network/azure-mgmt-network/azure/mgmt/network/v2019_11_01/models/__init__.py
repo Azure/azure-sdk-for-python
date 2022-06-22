@@ -474,139 +474,138 @@ from ._models_py3 import WebApplicationFirewallCustomRule
 from ._models_py3 import WebApplicationFirewallPolicy
 from ._models_py3 import WebApplicationFirewallPolicyListResult
 
-
-from ._network_management_client_enums import (
-    Access,
-    ApplicationGatewayBackendHealthServerHealth,
-    ApplicationGatewayCookieBasedAffinity,
-    ApplicationGatewayCustomErrorStatusCode,
-    ApplicationGatewayFirewallMode,
-    ApplicationGatewayOperationalState,
-    ApplicationGatewayProtocol,
-    ApplicationGatewayRedirectType,
-    ApplicationGatewayRequestRoutingRuleType,
-    ApplicationGatewaySkuName,
-    ApplicationGatewaySslCipherSuite,
-    ApplicationGatewaySslPolicyName,
-    ApplicationGatewaySslPolicyType,
-    ApplicationGatewaySslProtocol,
-    ApplicationGatewayTier,
-    AssociationType,
-    AuthenticationMethod,
-    AuthorizationUseStatus,
-    AzureFirewallApplicationRuleProtocolType,
-    AzureFirewallNatRCActionType,
-    AzureFirewallNetworkRuleProtocol,
-    AzureFirewallRCActionType,
-    AzureFirewallSkuName,
-    AzureFirewallSkuTier,
-    AzureFirewallThreatIntelMode,
-    BastionConnectProtocol,
-    BgpPeerState,
-    CircuitConnectionStatus,
-    ConnectionMonitorEndpointFilterItemType,
-    ConnectionMonitorEndpointFilterType,
-    ConnectionMonitorSourceStatus,
-    ConnectionMonitorTestConfigurationProtocol,
-    ConnectionMonitorType,
-    ConnectionState,
-    ConnectionStatus,
-    DdosCustomPolicyProtocol,
-    DdosCustomPolicyTriggerSensitivityOverride,
-    DdosSettingsProtectionCoverage,
-    DhGroup,
-    Direction,
-    EffectiveRouteSource,
-    EffectiveRouteState,
-    EffectiveSecurityRuleProtocol,
-    EvaluationState,
-    ExpressRouteCircuitPeeringAdvertisedPublicPrefixState,
-    ExpressRouteCircuitPeeringState,
-    ExpressRouteCircuitSkuFamily,
-    ExpressRouteCircuitSkuTier,
-    ExpressRouteLinkAdminState,
-    ExpressRouteLinkConnectorType,
-    ExpressRouteLinkMacSecCipher,
-    ExpressRoutePeeringState,
-    ExpressRoutePeeringType,
-    ExpressRoutePortsEncapsulation,
-    FirewallPolicyFilterRuleActionType,
-    FirewallPolicyNatRuleActionType,
-    FirewallPolicyRuleConditionApplicationProtocolType,
-    FirewallPolicyRuleConditionNetworkProtocol,
-    FirewallPolicyRuleConditionType,
-    FirewallPolicyRuleType,
-    FlowLogFormatType,
-    HTTPConfigurationMethod,
-    HTTPMethod,
-    HubVirtualNetworkConnectionStatus,
-    IPAllocationMethod,
-    IPVersion,
-    IkeEncryption,
-    IkeIntegrity,
-    IpFlowProtocol,
-    IpsecEncryption,
-    IpsecIntegrity,
-    IssueType,
-    LoadBalancerOutboundRuleProtocol,
-    LoadBalancerSkuName,
-    LoadDistribution,
-    ManagedRuleEnabledState,
-    NatGatewaySkuName,
-    NetworkOperationStatus,
-    NextHopType,
-    OfficeTrafficCategory,
-    Origin,
-    OutputType,
-    OwaspCrsExclusionEntryMatchVariable,
-    OwaspCrsExclusionEntrySelectorMatchOperator,
-    PcError,
-    PcProtocol,
-    PcStatus,
-    PfsGroup,
-    PreferredIPVersion,
-    ProbeProtocol,
-    ProcessorArchitecture,
-    Protocol,
-    ProvisioningState,
-    PublicIPAddressSkuName,
-    PublicIPPrefixSkuName,
-    ResourceIdentityType,
-    RouteFilterRuleType,
-    RouteNextHopType,
-    SecurityRuleAccess,
-    SecurityRuleDirection,
-    SecurityRuleProtocol,
-    ServiceProviderProvisioningState,
-    Severity,
-    TransportProtocol,
-    TunnelConnectionStatus,
-    UsageUnit,
-    VerbosityLevel,
-    VirtualNetworkGatewayConnectionProtocol,
-    VirtualNetworkGatewayConnectionStatus,
-    VirtualNetworkGatewayConnectionType,
-    VirtualNetworkGatewaySkuName,
-    VirtualNetworkGatewaySkuTier,
-    VirtualNetworkGatewayType,
-    VirtualNetworkPeeringState,
-    VirtualWanSecurityProviderType,
-    VpnAuthenticationType,
-    VpnClientProtocol,
-    VpnConnectionStatus,
-    VpnGatewayGeneration,
-    VpnGatewayTunnelingProtocol,
-    VpnType,
-    WebApplicationFirewallAction,
-    WebApplicationFirewallEnabledState,
-    WebApplicationFirewallMatchVariable,
-    WebApplicationFirewallMode,
-    WebApplicationFirewallOperator,
-    WebApplicationFirewallPolicyResourceState,
-    WebApplicationFirewallRuleType,
-    WebApplicationFirewallTransform,
-)
-
+from ._network_management_client_enums import Access
+from ._network_management_client_enums import ApplicationGatewayBackendHealthServerHealth
+from ._network_management_client_enums import ApplicationGatewayCookieBasedAffinity
+from ._network_management_client_enums import ApplicationGatewayCustomErrorStatusCode
+from ._network_management_client_enums import ApplicationGatewayFirewallMode
+from ._network_management_client_enums import ApplicationGatewayOperationalState
+from ._network_management_client_enums import ApplicationGatewayProtocol
+from ._network_management_client_enums import ApplicationGatewayRedirectType
+from ._network_management_client_enums import ApplicationGatewayRequestRoutingRuleType
+from ._network_management_client_enums import ApplicationGatewaySkuName
+from ._network_management_client_enums import ApplicationGatewaySslCipherSuite
+from ._network_management_client_enums import ApplicationGatewaySslPolicyName
+from ._network_management_client_enums import ApplicationGatewaySslPolicyType
+from ._network_management_client_enums import ApplicationGatewaySslProtocol
+from ._network_management_client_enums import ApplicationGatewayTier
+from ._network_management_client_enums import AssociationType
+from ._network_management_client_enums import AuthenticationMethod
+from ._network_management_client_enums import AuthorizationUseStatus
+from ._network_management_client_enums import AzureFirewallApplicationRuleProtocolType
+from ._network_management_client_enums import AzureFirewallNatRCActionType
+from ._network_management_client_enums import AzureFirewallNetworkRuleProtocol
+from ._network_management_client_enums import AzureFirewallRCActionType
+from ._network_management_client_enums import AzureFirewallSkuName
+from ._network_management_client_enums import AzureFirewallSkuTier
+from ._network_management_client_enums import AzureFirewallThreatIntelMode
+from ._network_management_client_enums import BastionConnectProtocol
+from ._network_management_client_enums import BgpPeerState
+from ._network_management_client_enums import CircuitConnectionStatus
+from ._network_management_client_enums import ConnectionMonitorEndpointFilterItemType
+from ._network_management_client_enums import ConnectionMonitorEndpointFilterType
+from ._network_management_client_enums import ConnectionMonitorSourceStatus
+from ._network_management_client_enums import ConnectionMonitorTestConfigurationProtocol
+from ._network_management_client_enums import ConnectionMonitorType
+from ._network_management_client_enums import ConnectionState
+from ._network_management_client_enums import ConnectionStatus
+from ._network_management_client_enums import DdosCustomPolicyProtocol
+from ._network_management_client_enums import DdosCustomPolicyTriggerSensitivityOverride
+from ._network_management_client_enums import DdosSettingsProtectionCoverage
+from ._network_management_client_enums import DhGroup
+from ._network_management_client_enums import Direction
+from ._network_management_client_enums import EffectiveRouteSource
+from ._network_management_client_enums import EffectiveRouteState
+from ._network_management_client_enums import EffectiveSecurityRuleProtocol
+from ._network_management_client_enums import EvaluationState
+from ._network_management_client_enums import ExpressRouteCircuitPeeringAdvertisedPublicPrefixState
+from ._network_management_client_enums import ExpressRouteCircuitPeeringState
+from ._network_management_client_enums import ExpressRouteCircuitSkuFamily
+from ._network_management_client_enums import ExpressRouteCircuitSkuTier
+from ._network_management_client_enums import ExpressRouteLinkAdminState
+from ._network_management_client_enums import ExpressRouteLinkConnectorType
+from ._network_management_client_enums import ExpressRouteLinkMacSecCipher
+from ._network_management_client_enums import ExpressRoutePeeringState
+from ._network_management_client_enums import ExpressRoutePeeringType
+from ._network_management_client_enums import ExpressRoutePortsEncapsulation
+from ._network_management_client_enums import FirewallPolicyFilterRuleActionType
+from ._network_management_client_enums import FirewallPolicyNatRuleActionType
+from ._network_management_client_enums import FirewallPolicyRuleConditionApplicationProtocolType
+from ._network_management_client_enums import FirewallPolicyRuleConditionNetworkProtocol
+from ._network_management_client_enums import FirewallPolicyRuleConditionType
+from ._network_management_client_enums import FirewallPolicyRuleType
+from ._network_management_client_enums import FlowLogFormatType
+from ._network_management_client_enums import HTTPConfigurationMethod
+from ._network_management_client_enums import HTTPMethod
+from ._network_management_client_enums import HubVirtualNetworkConnectionStatus
+from ._network_management_client_enums import IPAllocationMethod
+from ._network_management_client_enums import IPVersion
+from ._network_management_client_enums import IkeEncryption
+from ._network_management_client_enums import IkeIntegrity
+from ._network_management_client_enums import IpFlowProtocol
+from ._network_management_client_enums import IpsecEncryption
+from ._network_management_client_enums import IpsecIntegrity
+from ._network_management_client_enums import IssueType
+from ._network_management_client_enums import LoadBalancerOutboundRuleProtocol
+from ._network_management_client_enums import LoadBalancerSkuName
+from ._network_management_client_enums import LoadDistribution
+from ._network_management_client_enums import ManagedRuleEnabledState
+from ._network_management_client_enums import NatGatewaySkuName
+from ._network_management_client_enums import NetworkOperationStatus
+from ._network_management_client_enums import NextHopType
+from ._network_management_client_enums import OfficeTrafficCategory
+from ._network_management_client_enums import Origin
+from ._network_management_client_enums import OutputType
+from ._network_management_client_enums import OwaspCrsExclusionEntryMatchVariable
+from ._network_management_client_enums import OwaspCrsExclusionEntrySelectorMatchOperator
+from ._network_management_client_enums import PcError
+from ._network_management_client_enums import PcProtocol
+from ._network_management_client_enums import PcStatus
+from ._network_management_client_enums import PfsGroup
+from ._network_management_client_enums import PreferredIPVersion
+from ._network_management_client_enums import ProbeProtocol
+from ._network_management_client_enums import ProcessorArchitecture
+from ._network_management_client_enums import Protocol
+from ._network_management_client_enums import ProvisioningState
+from ._network_management_client_enums import PublicIPAddressSkuName
+from ._network_management_client_enums import PublicIPPrefixSkuName
+from ._network_management_client_enums import ResourceIdentityType
+from ._network_management_client_enums import RouteFilterRuleType
+from ._network_management_client_enums import RouteNextHopType
+from ._network_management_client_enums import SecurityRuleAccess
+from ._network_management_client_enums import SecurityRuleDirection
+from ._network_management_client_enums import SecurityRuleProtocol
+from ._network_management_client_enums import ServiceProviderProvisioningState
+from ._network_management_client_enums import Severity
+from ._network_management_client_enums import TransportProtocol
+from ._network_management_client_enums import TunnelConnectionStatus
+from ._network_management_client_enums import UsageUnit
+from ._network_management_client_enums import VerbosityLevel
+from ._network_management_client_enums import VirtualNetworkGatewayConnectionProtocol
+from ._network_management_client_enums import VirtualNetworkGatewayConnectionStatus
+from ._network_management_client_enums import VirtualNetworkGatewayConnectionType
+from ._network_management_client_enums import VirtualNetworkGatewaySkuName
+from ._network_management_client_enums import VirtualNetworkGatewaySkuTier
+from ._network_management_client_enums import VirtualNetworkGatewayType
+from ._network_management_client_enums import VirtualNetworkPeeringState
+from ._network_management_client_enums import VirtualWanSecurityProviderType
+from ._network_management_client_enums import VpnAuthenticationType
+from ._network_management_client_enums import VpnClientProtocol
+from ._network_management_client_enums import VpnConnectionStatus
+from ._network_management_client_enums import VpnGatewayGeneration
+from ._network_management_client_enums import VpnGatewayTunnelingProtocol
+from ._network_management_client_enums import VpnType
+from ._network_management_client_enums import WebApplicationFirewallAction
+from ._network_management_client_enums import WebApplicationFirewallEnabledState
+from ._network_management_client_enums import WebApplicationFirewallMatchVariable
+from ._network_management_client_enums import WebApplicationFirewallMode
+from ._network_management_client_enums import WebApplicationFirewallOperator
+from ._network_management_client_enums import WebApplicationFirewallPolicyResourceState
+from ._network_management_client_enums import WebApplicationFirewallRuleType
+from ._network_management_client_enums import WebApplicationFirewallTransform
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'AadAuthenticationParameters',
     'AddressSpace',
@@ -1205,3 +1204,5 @@ __all__ = [
     'WebApplicationFirewallRuleType',
     'WebApplicationFirewallTransform',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

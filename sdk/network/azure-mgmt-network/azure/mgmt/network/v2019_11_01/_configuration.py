@@ -25,10 +25,10 @@ class NetworkManagementClientConfiguration(Configuration):  # pylint: disable=to
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription credentials which uniquely identify the Microsoft
-     Azure subscription. The subscription ID forms part of the URI for every service call.
+     Azure subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
     """
 
