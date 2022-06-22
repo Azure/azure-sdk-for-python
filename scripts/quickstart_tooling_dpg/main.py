@@ -12,6 +12,7 @@ _LOGGER = logging.getLogger(__name__)
 _TEMPLATE = Path(__file__).resolve().parent / "template"
 _TEMPLATE_TESTS = Path(__file__).resolve().parent / "template_tests"
 _TEMPLATE_SAMPLES = Path(__file__).resolve().parent / "template_samples"
+_TEMPLATE_CI = Path(__file__).resolve().parent / "template_ci"
 
 
 def check_parameters(
@@ -25,16 +26,22 @@ def check_parameters(
         _LOGGER.info(f'{output} is created')
 
 
-def generate_ci(package_name: str, folder_name: Path) -> None:
-    ci = Path(folder_name, "ci.yml")
-    ci_template_path = folder_name.parent.parent / 'ci_template.yml'
+def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> None:
+    ci = Path(folder_path, "ci.yml")
+    ci_template_path = template_path / 'ci.yml'
+    service_name = folder_path.name
+    name = package_name.split('-')[-1]
     if not ci.exists():
         with open(ci_template_path, "r") as file_in:
             content = file_in.readlines()
-        name = package_name.split('-')[-1]
-        content = [line.replace("MyService", name) for line in content]
+        content = [line.replace("ServiceName", service_name).replace('PackageName', name) for line in content]
         with open(str(ci), "w") as file_out:
             file_out.writelines(content)
+    else:
+        with open(str(ci), "r") as file_in:
+            content = file_in.readlines()
+
+
 
 
 def generate_test_sample(template_path: Path, target_path: Path, **kwargs: Any) -> None:
@@ -84,7 +91,7 @@ def build_package(**kwargs) -> None:
     check_parameters(output_folder)
 
     #generate ci
-    generate_ci(package_name, Path(output_folder).parent)
+    generate_ci(_TEMPLATE_CI, Path(output_folder).parent, package_name)
 
 
     # generate swagger readme
