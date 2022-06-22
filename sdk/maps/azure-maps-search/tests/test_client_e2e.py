@@ -41,8 +41,8 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
         # import pdb; pdb.set_trace()
         self.client = SearchClient(
             credential='NotUsed',
-            client_id=self.get_settings_value('CLIENT_ID'),
-            authentication_policy = AzureKeyInQueryCredentialPolicy(AzureKeyCredential(self.get_settings_value('SUBSCRIPTION_KEY')), "subscription-key")
+            client_id="00000000-0000-0000-0000-000000000000",
+            authentication_policy = AzureKeyInQueryCredentialPolicy(AzureKeyCredential('SUBSCRIPTION_KEY'), "subscription-key")
         )
         assert self.client is not None
 
