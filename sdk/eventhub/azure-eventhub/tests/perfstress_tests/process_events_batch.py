@@ -16,55 +16,54 @@ class ProcessEventsBatchTest(_EventHubProcessorTest):
         self._partition_event_count = defaultdict(int)
 
     def process_events_sync(self, partition_context, events):
-        if events:
-            if self.args.processing_delay:
-                delay_in_seconds = self.args.processing_delay / 1000
-                if self.args.processing_delay_strategy == 'sleep':
-                    time.sleep(delay_in_seconds)
-                elif self.args.processing_delay_strategy == 'spin':
-                    starttime = time.time()
-                    while (time.time() - starttime) < delay_in_seconds:
-                        pass
-            
-            # Consume properties and body.
-            _ = [e.properties, e.body for e in events]
+        try:
+            if events:
+                if self.args.processing_delay:
+                    delay_in_seconds = self.args.processing_delay / 1000
+                    if self.args.processing_delay_strategy == 'sleep':
+                        time.sleep(delay_in_seconds)
+                    elif self.args.processing_delay_strategy == 'spin':
+                        starttime = time.time()
+                        while (time.time() - starttime) < delay_in_seconds:
+                            pass
+                
+                # Consume properties and body.
+                _ = [(e.properties, e.body) for e in events]
 
-            if self.args.checkpoint_interval:
-                self._partition_event_count[partition_context.partition_id] += len(events)
-                if self._partition_event_count[partition_context.partition_id] >= self.args.checkpoint_interval:
-                    partition_context.update_checkpoint()
-                    self._partition_event_count[partition_context.partition_id] = 0
-
-            try:
+                if self.args.checkpoint_interval:
+                    self._partition_event_count[partition_context.partition_id] += len(events)
+                    if self._partition_event_count[partition_context.partition_id] >= self.args.checkpoint_interval:
+                        partition_context.update_checkpoint()
+                        self._partition_event_count[partition_context.partition_id] = 0
                 for e in events:
                     self.event_raised_sync()
-            except Exception as e:
-                self.error_raised_sync(e)
+        except Exception as e:
+            self.error_raised_sync(e)
 
     async def process_events_async(self, partition_context, events):
-        if events:
-            if self.args.processing_delay:
-                delay_in_seconds = self.args.processing_delay / 1000
-                if self.args.processing_delay_strategy == 'sleep':
-                    await asyncio.sleep(delay_in_seconds)
-                elif self.args.processing_delay_strategy == 'spin':
-                    starttime = time.time()
-                    while (time.time() - starttime) < delay_in_seconds:
-                        pass
-            
-            # Consume properties and body.
-            _ = [e.properties, e.body for e in events]
+        try:
+            if events:
+                if self.args.processing_delay:
+                    delay_in_seconds = self.args.processing_delay / 1000
+                    if self.args.processing_delay_strategy == 'sleep':
+                        await asyncio.sleep(delay_in_seconds)
+                    elif self.args.processing_delay_strategy == 'spin':
+                        starttime = time.time()
+                        while (time.time() - starttime) < delay_in_seconds:
+                            pass
+                
+                # Consume properties and body.
+                _ = [(e.properties, e.body) for e in events]
 
-            if self.args.checkpoint_interval:
-                self._partition_event_count[partition_context.partition_id] += len(events)
-                if self._partition_event_count[partition_context.partition_id] >= self.args.checkpoint_interval:
-                    await partition_context.update_checkpoint()
-                    self._partition_event_count[partition_context.partition_id] = 0
-
-            try:
-                await asyncio.gather(*[self.event_raised_async for _ in events])
-            except Exception as e:
-                await self.error_raised_async(e)
+                if self.args.checkpoint_interval:
+                    self._partition_event_count[partition_context.partition_id] += len(events)
+                    if self._partition_event_count[partition_context.partition_id] >= self.args.checkpoint_interval:
+                        await partition_context.update_checkpoint()
+                        self._partition_event_count[partition_context.partition_id] = 0
+                for e in events:
+                    await self.event_raised_async()
+        except Exception as e:
+            await self.error_raised_async(e)
 
     def process_error_sync(self, _, error):
         self.error_raised_sync(error)
@@ -78,9 +77,9 @@ class ProcessEventsBatchTest(_EventHubProcessorTest):
         """
         self.consumer.receive_batch(
             on_event_batch=self.process_events_sync,
-            max_batch_size=self.args.maximum_batch_size,
+            max_batch_size=self.args.max_batch_size,
             on_error=self.process_error_sync,
-            max_wait_time=self.args.maximum_wait_time,
+            max_wait_time=self.args.max_wait_time,
             prefetch=self.args.prefetch_count,
             starting_position="-1",  # "-1" is from the beginning of the partition.
         )
@@ -91,9 +90,9 @@ class ProcessEventsBatchTest(_EventHubProcessorTest):
         """
         await self.async_consumer.receive_batch(
             on_event_batch=self.process_events_async,
-            max_batch_size=self.args.maximum_batch_size,
-            on_error=self.process_error_sync,
-            max_wait_time=self.args.maximum_wait_time,
+            max_batch_size=self.args.max_batch_size,
+            on_error=self.process_error_async,
+            max_wait_time=self.args.max_wait_time,
             prefetch=self.args.prefetch_count,
             starting_position="-1",  # "-1" is from the beginning of the partition.
         )
@@ -101,4 +100,4 @@ class ProcessEventsBatchTest(_EventHubProcessorTest):
     @staticmethod
     def add_arguments(parser):
         super(ProcessEventsBatchTest, ProcessEventsBatchTest).add_arguments(parser)
-        parser.add_argument('--maximum-batch-size', nargs='?', type=int, help='Maximum number of events to process in a single batch. Defaults to 100.', default=100)
+        parser.add_argument('--max-batch-size', nargs='?', type=int, help='Maximum number of events to process in a single batch. Defaults to 100.', default=100)

@@ -38,7 +38,6 @@ class ProcessEventsTest(_EventHubProcessorTest):
                 if self._partition_event_count[partition_context.partition_id] >= self.args.checkpoint_interval:
                     partition_context.update_checkpoint(event)
                     self._partition_event_count[partition_context.partition_id] = 0
-
             try:
                 self.event_raised_sync()
             except Exception as e:
@@ -67,17 +66,16 @@ class ProcessEventsTest(_EventHubProcessorTest):
                 if self._partition_event_count[partition_context.partition_id] >= self.args.checkpoint_interval:
                     await partition_context.update_checkpoint(event)
                     self._partition_event_count[partition_context.partition_id] = 0
-
             try:
                 await self.event_raised_async()
             except Exception as e:
                 await self.error_raised_async(e)
 
 
-    def process_error_sync(self, partition_context, error):
+    def process_error_sync(self, _, error):
         self.error_raised_sync(error)
 
-    async def process_error_async(self, partition_context, error):
+    async def process_error_async(self, _, error):
         await self.error_raised_async(error)
 
     def start_events_sync(self) -> None:
@@ -87,7 +85,7 @@ class ProcessEventsTest(_EventHubProcessorTest):
         self.consumer.receive(
             on_event=self.process_event_sync,
             on_error=self.process_error_sync,
-            max_wait_time=self.args.maximum_wait_time,
+            max_wait_time=self.args.max_wait_time,
             prefetch=self.args.prefetch_count,
             starting_position="-1",  # "-1" is from the beginning of the partition.
         )
@@ -97,9 +95,9 @@ class ProcessEventsTest(_EventHubProcessorTest):
         Start the process for receiving events.
         """
         await self.async_consumer.receive(
-            on_event=self.process_event_sync,
-            on_error=self.process_error_sync,
-            max_wait_time=self.args.maximum_wait_time,
+            on_event=self.process_event_async,
+            on_error=self.process_error_async,
+            max_wait_time=self.args.max_wait_time,
             prefetch=self.args.prefetch_count,
             starting_position="-1",  # "-1" is from the beginning of the partition.
         )
