@@ -95,6 +95,14 @@ class EnableSubvolumes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: subvolumes are not enabled.
     DISABLED = "Disabled"
 
+class EncryptionKeySource(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Source of key used to encrypt data in volume. Possible values (case-insensitive) are:
+    'Microsoft.NetApp'
+    """
+
+    #: Microsoft-managed key encryption.
+    MICROSOFT_NET_APP = "Microsoft.NetApp"
+
 class EncryptionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Encryption type of the capacity pool, set encryption type for data at rest for this pool and
     all volumes in it. This value can only be set when creating new pool.
@@ -142,6 +150,18 @@ class NetworkFeatures(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Standard network feature.
     STANDARD = "Standard"
 
+class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Gets the status of the VolumeQuotaRule at the time the operation was called.
+    """
+
+    ACCEPTED = "Accepted"
+    CREATING = "Creating"
+    PATCHING = "Patching"
+    DELETING = "Deleting"
+    MOVING = "Moving"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+
 class QosType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The qos type of the pool
     """
@@ -185,6 +205,19 @@ class ServiceLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ULTRA = "Ultra"
     #: Zone redundant storage service level.
     STANDARD_ZRS = "StandardZRS"
+
+class Type(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of quota
+    """
+
+    #: Default user quota.
+    DEFAULT_USER_QUOTA = "DefaultUserQuota"
+    #: Default group quota.
+    DEFAULT_GROUP_QUOTA = "DefaultGroupQuota"
+    #: Individual user quota.
+    INDIVIDUAL_USER_QUOTA = "IndividualUserQuota"
+    #: Individual group quota.
+    INDIVIDUAL_GROUP_QUOTA = "IndividualGroupQuota"
 
 class VolumeStorageToNetworkProximity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Provides storage to network proximity information for the volume.

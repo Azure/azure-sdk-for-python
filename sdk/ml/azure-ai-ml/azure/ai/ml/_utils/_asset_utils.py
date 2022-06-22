@@ -43,7 +43,7 @@ from azure.ai.ml._utils.utils import retry
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
 
 if TYPE_CHECKING:
-    from azure.ai.ml._operations import (
+    from azure.ai.ml.operations import (
         DatasetOperations,
         DataOperations,
         ComponentOperations,

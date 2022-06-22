@@ -323,7 +323,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         """
         lease = kwargs.pop('lease', None)
         try:
-            kwargs['source_lease_id'] = lease.id  # type: str
+            kwargs['source_lease_id'] = lease.id
         except AttributeError:
             kwargs['source_lease_id'] = lease
         try:
@@ -331,8 +331,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
                 "{}://{}".format(self.scheme, self.primary_hostname), container_name=new_name,
                 credential=self.credential, api_version=self.api_version, _configuration=self._config,
                 _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
-                require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-                key_resolver_function=self.key_resolver_function)
+                require_encryption=self.require_encryption, encryption_version=self.encryption_version,
+                key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
             renamed_container._client.container.rename(self.container_name, **kwargs)   # pylint: disable = protected-access
             return renamed_container
         except HttpResponseError as error:
@@ -619,8 +619,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             "{}://{}".format(self.scheme, self.primary_hostname),
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
             _location_mode=self._location_mode, _hosts=self._hosts, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function,
-            _pipeline=_pipeline)
+            encryption_version=self.encryption_version, key_encryption_key=self.key_encryption_key,
+            key_resolver_function=self.key_resolver_function, _pipeline=_pipeline)
 
     @distributed_trace
     def get_container_access_policy(self, **kwargs):
@@ -1152,6 +1152,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
 
     def _generate_delete_blobs_subrequest_options(
         self, snapshot=None,
+        version_id=None,
         delete_snapshots=None,
         lease_access_conditions=None,
         modified_access_conditions=None,
@@ -1185,6 +1186,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         query_parameters = {}
         if snapshot is not None:
             query_parameters['snapshot'] = self._client._serialize.query("snapshot", snapshot, 'str')  # pylint: disable=protected-access
+        if version_id is not None:
+            query_parameters['versionid'] = self._client._serialize.query("version_id", version_id, 'str')  # pylint: disable=protected-access
         if timeout is not None:
             query_parameters['timeout'] = self._client._serialize.query("timeout", timeout, 'int', minimum=0)  # pylint: disable=protected-access
 
@@ -1238,6 +1241,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             try:
                 options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
                     snapshot=blob.get('snapshot'),
+                    version_id=blob.get('version_id'),
                     delete_snapshots=delete_snapshots or blob.get('delete_snapshots'),
                     lease=blob.get('lease_id'),
                     if_modified_since=if_modified_since or blob.get('if_modified_since'),
@@ -1296,7 +1300,9 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
                     key: 'name', value type: str
                 snapshot you want to delete:
                     key: 'snapshot', value type: str
-                whether to delete snapthots when deleting blob:
+                version id:
+                    key: 'version_id', value type: str
+                whether to delete snapshots when deleting blob:
                     key: 'delete_snapshots', value: 'include' or 'only'
                 if the blob modified or not:
                     key: 'if_modified_since', 'if_unmodified_since', value type: datetime
@@ -1490,7 +1496,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
                 lease:
                     key: 'lease_id', value type: Union[str, LeaseClient]
                 snapshot:
-                    key: "snapshost", value type: str
+                    key: "snapshot", value type: str
                 version id:
                     key: "version_id", value type: str
                 tags match condition:
@@ -1608,5 +1614,5 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
-            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            require_encryption=self.require_encryption, encryption_version=self.encryption_version,
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)

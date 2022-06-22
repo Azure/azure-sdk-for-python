@@ -199,10 +199,7 @@ class EventData(object):
 
     @classmethod
     def from_message_content(  # pylint: disable=unused-argument
-        cls,
-        content: bytes,
-        content_type: str,
-        **kwargs: Any
+        cls, content: bytes, content_type: str, **kwargs: Any
     ) -> "EventData":
         """
         Creates an EventData object given content type and a content value to be set as body.

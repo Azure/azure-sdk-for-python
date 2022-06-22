@@ -10,7 +10,7 @@ from typing import Dict, List, Optional, Union
 
 from os import PathLike
 
-from marshmallow import INCLUDE
+from marshmallow import INCLUDE, Schema
 
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from .base_node import BaseNode
@@ -46,8 +46,10 @@ from azure.ai.ml.entities._job.distribution import (
     PyTorchDistribution,
     DistributionConfiguration,
 )
+from ..._schema import PathAwareSchema
 from ..._schema.job.distribution import PyTorchDistributionSchema, TensorFlowDistributionSchema, MPIDistributionSchema
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorTarget
+from ..._utils._arm_id_utils import get_resource_name_from_arm_id_safe
 
 module_logger = logging.getLogger(__name__)
 
@@ -200,12 +202,20 @@ class Command(BaseNode):
         return self._component
 
     @property
-    def command(self) -> str:
-        return self.component.command
+    def command(self) -> Optional[str]:
+        # the same as code
+        return self.component.command if hasattr(self.component, "command") else None
 
     @property
     def code(self) -> Optional[Union[str, PathLike]]:
-        return self.component.code
+        # BaseNode is an _AttrDict to allow dynamic attributes, so that lower version of SDK can work with attributes
+        # added in higher version of SDK.
+        # self.code will be treated as an Arbitrary attribute if it raises AttributeError in getting
+        # (when self.component doesn't have attribute code, self.component = 'azureml:xxx:1' e.g.
+        # you may check _AttrDict._is_arbitrary_attr for detailed logic for Arbitrary judgement),
+        # then its value will be set to _AttrDict and be deserialized as {"shape": {}} instead of None,
+        # which is invalid in schema validation.
+        return self.component.code if hasattr(self.component, "code") else None
 
     def set_resources(
         self,
@@ -391,7 +401,6 @@ class Command(BaseNode):
                 distribution=get_rest_dict(self.distribution),
                 limits=get_rest_dict(self.limits),
                 resources=get_rest_dict(self.resources, clear_empty_value=True),
-                **self._get_attrs(),
             )
         )
 
@@ -412,7 +421,7 @@ class Command(BaseNode):
         component_id = obj.pop("componentId", None)
         compute_id = obj.pop("computeId", None)
         obj["component"] = component_id
-        obj["compute"] = compute_id
+        obj["compute"] = get_resource_name_from_arm_id_safe(compute_id)
 
         # distribution
         if "distribution" in obj and obj["distribution"]:
@@ -433,10 +442,10 @@ class Command(BaseNode):
         return built_inputs
 
     @classmethod
-    def _get_schema(cls):
+    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         from azure.ai.ml._schema.pipeline import CommandSchema
 
-        return CommandSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
+        return CommandSchema(context=context)
 
     def __call__(self, *args, **kwargs) -> "Command":
         """Call Command as a function will return a new instance each time."""
@@ -452,6 +461,7 @@ class Command(BaseNode):
             for name, original_output in self.outputs.items():
                 # use setattr here to make sure owner of input won't change
                 setattr(node.outputs, name, original_output._data)
+            self._refine_optional_inputs_with_no_value(node, kwargs)
             # set default values: compute, environment_variables, outputs
             node._name = self.name
             node.compute = self.compute

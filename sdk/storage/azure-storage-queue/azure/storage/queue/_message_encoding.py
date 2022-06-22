@@ -11,13 +11,14 @@ import sys
 import six
 from azure.core.exceptions import DecodeError
 
-from ._shared.encryption import decrypt_queue_message, encrypt_queue_message
+from ._shared.encryption import decrypt_queue_message, encrypt_queue_message, _ENCRYPTION_PROTOCOL_V1
 
 
 class MessageEncodePolicy(object):
 
     def __init__(self):
         self.require_encryption = False
+        self.encryption_version = None
         self.key_encryption_key = None
         self.resolver = None
 
@@ -25,11 +26,12 @@ class MessageEncodePolicy(object):
         if content:
             content = self.encode(content)
             if self.key_encryption_key is not None:
-                content = encrypt_queue_message(content, self.key_encryption_key)
+                content = encrypt_queue_message(content, self.key_encryption_key, self.encryption_version)
         return content
 
-    def configure(self, require_encryption, key_encryption_key, resolver):
+    def configure(self, require_encryption, key_encryption_key, resolver, encryption_version=_ENCRYPTION_PROTOCOL_V1):
         self.require_encryption = require_encryption
+        self.encryption_version = encryption_version
         self.key_encryption_key = key_encryption_key
         self.resolver = resolver
         if self.require_encryption and not self.key_encryption_key:

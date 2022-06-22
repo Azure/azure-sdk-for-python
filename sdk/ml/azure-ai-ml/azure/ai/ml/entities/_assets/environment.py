@@ -163,28 +163,6 @@ class Environment(Asset):
         self._conda_file = value
 
     @classmethod
-    def load(
-        cls,
-        path: Union[os.PathLike, str],
-        params_override: list = None,
-        **kwargs,
-    ) -> "Environment":
-        """Construct a environment object from yaml file.
-
-        :param path: Path to a local file as the source.
-        :type path: str
-        :param params_override: Fields to overwrite on top of the yaml file. Format is [{"field1": "value1"}, {"field2": "value2"}]
-        :type params_override: list
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
-
-        :return: Constructed environment object.
-        :rtype: Environment
-        """
-        yaml_dict = load_yaml(path)
-        return cls._load(data=yaml_dict, yaml_path=path, params_override=params_override, **kwargs)
-
-    @classmethod
     def _load(
         cls,
         data: dict = None,
@@ -373,7 +351,7 @@ def _deserialize(
     :type base_path: Union[str, os.PathLike]
     :param input: Input to be deserialized. Will be either dictionary of file contents or path to file.
     :type input: Union[str, os.PathLike, Dict[str, str]]
-    :param is_conda: If file is condafile, it will be returned as dictionary
+    :param is_conda: If file is conda file, it will be returned as dictionary
     :type is_conda: bool
     :return: Union[str, Dict]
     """

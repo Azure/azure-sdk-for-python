@@ -92,7 +92,13 @@ class Resource(ABC):
 
     @classmethod
     @abstractmethod
-    def load(cls, path: Union[PathLike, str], **kwargs) -> "Resource":
+    def _load(
+        cls,
+        data: Dict = None,
+        yaml_path: Union[PathLike, str] = None,
+        params_override: list = None,
+        **kwargs,
+    ) -> "Resource":
         """Construct a resource object from a file. @classmethod.
 
         :param cls: Indicates that this is a class method.

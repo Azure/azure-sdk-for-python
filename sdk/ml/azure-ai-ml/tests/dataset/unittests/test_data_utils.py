@@ -1,9 +1,10 @@
 import pytest
 import requests
 from pathlib import Path
-from azure.ai.ml._utils._data_utils import read_mltable_metadata_contents
+from azure.ai.ml._utils._data_utils import read_local_mltable_metadata_contents, read_remote_mltable_metadata_contents
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml._operations import CodeOperations, DatastoreOperations
+from azure.ai.ml.operations import DatastoreOperations
+from azure.ai.ml.operations._code_operations import CodeOperations
 from unittest.mock import Mock, patch
 from collections import OrderedDict
 
@@ -39,28 +40,42 @@ class TestDataUtils:
         """
         tmp_metadata_file.write_text(file_contents)
 
+        # remote https accessible
         with patch.object(requests, "get", return_value=Mock(content=file_contents.encode(encoding="UTF-8"))):
-            contents = read_mltable_metadata_contents(
+            contents = read_remote_mltable_metadata_contents(
                 datastore_operations=mock_datastore_operations, path="https://fake.localhost/file.yaml"
             )
             assert contents["paths"] == [OrderedDict([("file", "./tmp_file.csv")])]
 
-        # test azureml remote file reading
-        print(f"mltable_folder: {mltable_folder}")
+        # remote https inaccessible
+        with pytest.raises(Exception) as ex:
+            contents = read_remote_mltable_metadata_contents(
+                datastore_operations=mock_datastore_operations,
+                path="https://fake.localhost/file.yaml",
+            )
+        assert "Invalid URL" in str(ex)
+
+        # remote azureml accessible
         with patch("azure.ai.ml._utils._data_utils.TemporaryDirectory", return_value=mltable_folder):
-            contents = read_mltable_metadata_contents(
+            contents = read_remote_mltable_metadata_contents(
                 datastore_operations=mock_datastore_operations,
                 path="azureml://datastores/mydatastore/paths/images/dogs",
             )
             assert contents["paths"] == [OrderedDict([("file", "./tmp_file.csv")])]
 
-        # test local file reading
-        contents = read_mltable_metadata_contents(datastore_operations=mock_datastore_operations, path=mltable_folder)
+        # remote azureml inaccessible
+        with pytest.raises(Exception) as ex:
+            contents = read_remote_mltable_metadata_contents(
+                datastore_operations=mock_datastore_operations,
+                path="azureml://datastores/mydatastore/paths/images/dogs",
+            )
+        assert "No such file or directory" in str(ex)
+
+        # local accessible
+        contents = read_local_mltable_metadata_contents(path=mltable_folder)
         assert contents["paths"] == [OrderedDict([("file", "./tmp_file.csv")])]
 
-        # should raise an error when an MLTable metadata file cannot be read from local path (path is not "is_url")
+        # local inaccessible: should raise an error when an MLTable metadata file cannot be read from local path (path is not "is_url")
         with pytest.raises(Exception) as ex:
-            read_mltable_metadata_contents(
-                datastore_operations=mock_datastore_operations, path=mltable_folder / "should-fail"
-            )
+            read_local_mltable_metadata_contents(path=mltable_folder / "should-fail")
         assert "No such file or directory" in str(ex)

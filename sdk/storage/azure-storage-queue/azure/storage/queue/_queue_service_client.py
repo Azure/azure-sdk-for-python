@@ -433,5 +433,6 @@ class QueueServiceClient(StorageAccountHostsMixin):
         return QueueClient(
             self.url, queue_name=queue_name, credential=self.credential,
             key_resolver_function=self.key_resolver_function, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, api_version=self.api_version, _pipeline=_pipeline,
-            _configuration=self._config, _location_mode=self._location_mode, _hosts=self._hosts, **kwargs)
+            encryption_version=self.encryption_version, key_encryption_key=self.key_encryption_key,
+            api_version=self.api_version, _pipeline=_pipeline, _configuration=self._config,
+            _location_mode=self._location_mode, _hosts=self._hosts, **kwargs)

@@ -101,7 +101,7 @@ class Dataset(Asset):
         :param path: Path to a local file as the source.
         :type path: str
         :param params_override: Fields to overwrite on top of the yaml file. Format is [{"field1": "value1"}, {"field2": "value2"}]
-        :type params_override: list
+        :type params_override: List[Dict]
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
 

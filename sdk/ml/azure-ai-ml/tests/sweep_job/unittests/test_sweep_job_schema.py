@@ -32,6 +32,7 @@ from azure.ai.ml.sweep import (
     SamplingAlgorithm,
 )
 from azure.ai.ml._schema import SweepJobSchema
+from azure.ai.ml import load_job
 
 
 @pytest.mark.unittest
@@ -173,7 +174,7 @@ class TestSweepJobSchema:
         ],
     )
     def test_inputs_types_sweep_job(self, yaml_path: str):
-        original_entity = Job.load(Path(yaml_path))
+        original_entity = load_job(Path(yaml_path))
         rest_representation = original_entity._to_rest_object()
         reconstructed_entity = Job._from_rest_object(rest_representation)
 
@@ -210,7 +211,7 @@ class TestSweepJobSchema:
         ],
     )
     def test_outputs_types_standalone_jobs(self, yaml_path: str):
-        original_entity = Job.load(Path(yaml_path))
+        original_entity = load_job(Path(yaml_path))
         rest_representation = original_entity._to_rest_object()
         dummy_default = RestUriFolderJobOutput(uri="azureml://foo", mode=OutputDeliveryMode.READ_WRITE_MOUNT)
         rest_representation.properties.outputs["default"] = dummy_default
@@ -274,7 +275,7 @@ class TestSweepJobSchema:
             assert reconstructed_yaml["early_termination"]["type"] == cfg["early_termination"]["type"]
 
     def test_sweep_search_space_environment_variables(self):
-        sweep: SweepJob = Job.load(Path("./tests/test_configs/sweep_job/sweep-search.yaml"))
+        sweep: SweepJob = load_job(Path("./tests/test_configs/sweep_job/sweep-search.yaml"))
         # This is to guard against using mutable values as default for constructor args
         assert sweep.search_space["dropout_rate"] != sweep.search_space["dropout_rate2"]
 
@@ -287,7 +288,7 @@ class TestSweepJobSchema:
         yaml_path = Path("./tests/test_configs/sweep_job/sweep_job_recursive_search_space.yaml")
         with open(yaml_path, "r") as f:
             yaml_job = yaml.safe_load(f)
-        job: SweepJob = Job.load(Path("./tests/test_configs/sweep_job/sweep_job_recursive_search_space.yaml"))
+        job: SweepJob = load_job(Path("./tests/test_configs/sweep_job/sweep_job_recursive_search_space.yaml"))
         rest_job = job._to_rest_object()
 
         with open("./tests/test_configs/sweep_job/expected_recursive_search_space.json") as f:
@@ -314,7 +315,7 @@ class TestSweepJobSchema:
         ],
     )
     def test_sampling_algorithm_string_preservation(self, yaml_path: str, expected_sampling_algorithm: str):
-        sweep_entity: SweepJob = Job.load(Path(yaml_path))
+        sweep_entity: SweepJob = load_job(Path(yaml_path))
         assert isinstance(sweep_entity.sampling_algorithm, str)
         assert sweep_entity.sampling_algorithm == expected_sampling_algorithm
 
@@ -336,7 +337,7 @@ class TestSweepJobSchema:
         ],
     )
     def test_sampling_algorithm_object_preservation(self, yaml_path: str, expected_sampling_algorithm: str):
-        sweep_entity = Job.load(Path(yaml_path))
+        sweep_entity = load_job(Path(yaml_path))
         assert isinstance(sweep_entity.sampling_algorithm, SamplingAlgorithm)
         assert sweep_entity.sampling_algorithm.sampling_algorithm_type == expected_sampling_algorithm
 
@@ -348,7 +349,7 @@ class TestSweepJobSchema:
         ],
     )
     def test_sampling_algorithm_object_properties(self, yaml_path: str, property_name: str, expected_value: Any):
-        sweep_entity = Job.load(Path(yaml_path))
+        sweep_entity = load_job(Path(yaml_path))
         assert isinstance(sweep_entity.sampling_algorithm, SamplingAlgorithm)
         assert sweep_entity.sampling_algorithm.__dict__[property_name] == expected_value
 

@@ -45,13 +45,13 @@ class ChannelProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     SUCCEEDED = "Succeeded"
     CANCELED = "Canceled"
     FAILED = "Failed"
+    IDLE_DUE_TO_MIRRORED_PARTNER_TOPIC_DELETION = "IdleDueToMirroredPartnerTopicDeletion"
 
 class ChannelType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the event channel which represents the  direction flow of events.
+    """The type of the event channel which represents the direction flow of events.
     """
 
     PARTNER_TOPIC = "PartnerTopic"
-    PARTNER_DESTINATION = "PartnerDestination"
 
 class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity that created the resource.
@@ -115,18 +115,6 @@ class EndpointType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SERVICE_BUS_QUEUE = "ServiceBusQueue"
     SERVICE_BUS_TOPIC = "ServiceBusTopic"
     AZURE_FUNCTION = "AzureFunction"
-    PARTNER_DESTINATION = "PartnerDestination"
-
-class EventChannelProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the event channel.
-    """
-
-    CREATING = "Creating"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
-    SUCCEEDED = "Succeeded"
-    CANCELED = "Canceled"
-    FAILED = "Failed"
 
 class EventDefinitionKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The kind of event type used.
@@ -195,18 +183,6 @@ class IpActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     ALLOW = "Allow"
 
-class ParentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
-    TOPICS = "topics"
-    DOMAINS = "domains"
-    PARTNER_NAMESPACES = "partnerNamespaces"
-
-class PartnerClientAuthenticationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of client authentication
-    """
-
-    AZURE_AD = "AzureAD"
-
 class PartnerConfigurationProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning state of the partner configuration.
     """
@@ -217,30 +193,6 @@ class PartnerConfigurationProvisioningState(with_metaclass(CaseInsensitiveEnumMe
     SUCCEEDED = "Succeeded"
     CANCELED = "Canceled"
     FAILED = "Failed"
-
-class PartnerDestinationActivationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Activation state of the partner destination.
-    """
-
-    NEVER_ACTIVATED = "NeverActivated"
-    ACTIVATED = "Activated"
-
-class PartnerDestinationProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the partner destination.
-    """
-
-    CREATING = "Creating"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
-    SUCCEEDED = "Succeeded"
-    CANCELED = "Canceled"
-    FAILED = "Failed"
-
-class PartnerEndpointType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the endpoint for the partner destination
-    """
-
-    WEB_HOOK = "WebHook"
 
 class PartnerNamespaceProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning state of the partner namespace.
@@ -264,14 +216,6 @@ class PartnerRegistrationProvisioningState(with_metaclass(CaseInsensitiveEnumMet
     CANCELED = "Canceled"
     FAILED = "Failed"
 
-class PartnerRegistrationVisibilityState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Visibility state of the partner registration.
-    """
-
-    HIDDEN = "Hidden"
-    PUBLIC_PREVIEW = "PublicPreview"
-    GENERALLY_AVAILABLE = "GenerallyAvailable"
-
 class PartnerTopicActivationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Activation state of the partner topic.
     """
@@ -290,15 +234,7 @@ class PartnerTopicProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str,
     SUCCEEDED = "Succeeded"
     CANCELED = "Canceled"
     FAILED = "Failed"
-
-class PartnerTopicReadinessState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The readiness state of the corresponding partner topic.
-    """
-
-    NOT_ACTIVATED_BY_USER_YET = "NotActivatedByUserYet"
-    ACTIVATED_BY_USER = "ActivatedByUser"
-    DEACTIVATED_BY_USER = "DeactivatedByUser"
-    DELETED_BY_USER = "DeletedByUser"
+    IDLE_DUE_TO_MIRRORED_CHANNEL_RESOURCE_DELETION = "IdleDueToMirroredChannelResourceDeletion"
 
 class PartnerTopicRoutingMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """This determines if events published to this partner namespace should use the source attribute
@@ -319,6 +255,12 @@ class PersistedConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
 
+class PrivateEndpointConnectionsParentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    TOPICS = "topics"
+    DOMAINS = "domains"
+    PARTNER_NAMESPACES = "partnerNamespaces"
+
 class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """This determines if traffic is allowed over public network. By default it is enabled.
     You can further restrict to specific IPs by configuring :code:`<seealso
@@ -335,13 +277,6 @@ class ReadinessState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     NEVER_ACTIVATED = "NeverActivated"
     ACTIVATED = "Activated"
-
-class ResourceKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Kind of the resource.
-    """
-
-    AZURE = "Azure"
-    AZURE_ARC = "AzureArc"
 
 class ResourceProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning state of the Private Endpoint Connection.
@@ -361,13 +296,6 @@ class ResourceRegionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     REGIONAL_RESOURCE = "RegionalResource"
     GLOBAL_RESOURCE = "GlobalResource"
 
-class Sku(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The Sku name of the resource. The possible values are: Basic or Premium.
-    """
-
-    BASIC = "Basic"
-    PREMIUM = "Premium"
-
 class TopicProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning state of the topic.
     """
@@ -379,13 +307,6 @@ class TopicProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum))
     CANCELED = "Canceled"
     FAILED = "Failed"
 
-class TopicTypePropertiesSupportedScopesForSourceItem(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
-    RESOURCE = "Resource"
-    RESOURCE_GROUP = "ResourceGroup"
-    AZURE_SUBSCRIPTION = "AzureSubscription"
-    MANAGEMENT_GROUP = "ManagementGroup"
-
 class TopicTypeProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning state of the topic type
     """
@@ -396,6 +317,13 @@ class TopicTypeProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, En
     SUCCEEDED = "Succeeded"
     CANCELED = "Canceled"
     FAILED = "Failed"
+
+class TopicTypeSourceScope(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    RESOURCE = "Resource"
+    RESOURCE_GROUP = "ResourceGroup"
+    AZURE_SUBSCRIPTION = "AzureSubscription"
+    MANAGEMENT_GROUP = "ManagementGroup"
 
 class VerifiedPartnerProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning state of the verified partner.
