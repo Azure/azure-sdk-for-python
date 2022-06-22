@@ -2,18 +2,6 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline._base import SansIOHTTPPolicy
 from azure.core.pipeline.transport._base import HttpRequest
 from azure.core.pipeline import PipelineRequest
-
-
-# class MapsClientBase(Object):
-#     def __init__(self, key, name, **kwargs):  # pylint: disable=unused-argument
-#         # type: (AzureKeyCredential, str, **Any) -> None
-#         super(MapsClientBase, self).__init__()
-#         self._key = key
-#         self._name = name
-
-#         return AzureKeyInQueryCredentialPolicy(AzureKeyCredential(key), "subscription-key")
-
-
 class AzureKeyInQueryCredentialPolicy(SansIOHTTPPolicy):
     """Adds a key in query for the provided credential.
 

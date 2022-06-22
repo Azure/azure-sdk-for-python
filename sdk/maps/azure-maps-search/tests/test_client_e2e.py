@@ -41,12 +41,12 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
         # import pdb; pdb.set_trace()
         self.client = SearchClient(
             credential='NotUsed',
-            client_id="00000000-0000-0000-0000-000000000000",
-            authentication_policy = AzureKeyInQueryCredentialPolicy(AzureKeyCredential('SUBSCRIPTION_KEY'), "subscription-key")
+            client_id=self.get_settings_value('CLIENT_ID'),
+            authentication_policy = AzureKeyInQueryCredentialPolicy(AzureKeyCredential(self.get_settings_value('SUBSCRIPTION_KEY')), "subscription-key")
         )
         assert self.client is not None
 
-
+    @pytest.mark.live_test_only
     def test_fuzzy_search_poi_coordinates(self):
         result = self.client.fuzzy_search("Taipei 101")
         assert len(result.results) > 0
@@ -58,7 +58,7 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
         assert top_answer.address.country_code_iso3 == "TWN"
         assert top_answer.position.lat == 25.03339 and top_answer.position.lon == 121.56437
 
-
+    @pytest.mark.live_test_only
     def test_fuzzy_search_poi_country_set(self):
         result = self.client.fuzzy_search("Taipei 101", country_filter=["TW"])
         assert len(result.results) > 0
