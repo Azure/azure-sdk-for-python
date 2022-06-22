@@ -41,7 +41,7 @@ class IssueProcessPython(IssueProcess):
         pattern_output = re.compile(r'\$\(python-sdks-folder\)/(.*?)/azure-')
         self.package_name = pattern_package.search(contents).group().split(':')[-1].strip()
         self.output_folder = pattern_output.search(contents).group().split('/')[1]
-        self.is_multiapi = ('MultiAPI' in self.issue_package.issue.labels) or ('multi-api' in contents)
+        self.is_multiapi = ('MultiAPI' in self.issue_package.labels_name) or ('multi-api' in contents)
 
     def get_edit_content(self) -> None:
         self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}\n{self.package_name}'
@@ -49,10 +49,10 @@ class IssueProcessPython(IssueProcess):
     @property
     def readme_comparison(self) -> bool:
         # to see whether need change readme
-        self.log(f'**** target_readme_tag: {self.target_readme_tag}')
+        self.log(f'**** issue_package.labels_name: {self.issue_package.labels_name}')
         if 'package-' not in self.target_readme_tag:
             return True
-        if _CONFIGURED in self.issue_package.issue.labels:
+        if _CONFIGURED in self.issue_package.labels_name:
             return False
         readme_path = self.pattern_resource_manager.search(self.readme_link).group() + '/readme.md'
         contents = str(self.issue_package.rest_repo.get_contents(readme_path).decoded_content)
@@ -60,7 +60,6 @@ class IssueProcessPython(IssueProcess):
         package_tags = pattern_tag.findall(contents)
         whether_same_tag = self.target_readme_tag in package_tags
         whether_change_readme = not whether_same_tag or self.is_multiapi
-        self.log(f'**** whether_change_readme: {whether_change_readme}')
         return whether_change_readme
 
     def auto_reply(self) -> None:
