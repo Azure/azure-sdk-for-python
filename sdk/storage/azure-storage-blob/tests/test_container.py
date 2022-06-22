@@ -751,7 +751,7 @@ class StorageContainerTest(StorageTestCase):
         # Assert
         with self.assertRaises(HttpResponseError):
             container.acquire_lease()
-        self.sleep(15)
+        self.sleep(17)
         container.acquire_lease()
 
     @BlobPreparer()
