@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models_py3 import CommunicationRoom, RoomParticipant
+from ._models import CommunicationRoom, RoomParticipant
 
 __all__ = [
     "CommunicationRoom",

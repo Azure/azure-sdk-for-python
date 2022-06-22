@@ -7,10 +7,9 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 import uuid
 from azure.core.tracing.decorator import distributed_trace
-from pyparsing import null_debug_action
 from azure.communication.rooms._models import CommunicationRoom, RoomParticipant
 
-from ._generated._azure_communication_rooms_service import AzureCommunicationRoomsService
+from ._generated._client import AzureCommunicationRoomsService
 from ._generated.models import (
     CreateRoomRequest,
     UpdateRoomRequest
@@ -110,18 +109,21 @@ class RoomsClient(object):
         if participants is None:
             participantDict = {}
         else:
-           participantDict = {participant.identifier: participant.to_room_participant_internal() for participant in participants}
+           participantDict = {participant.identifier: participant.to_room_participant() for participant in participants}
         create_room_request = CreateRoomRequest(
             valid_from=valid_from,
             valid_until=valid_until,
             participants=participantDict
         )
 
-        repeatability_request_id = uuid.uuid1();
-        repeatability_first_sent = datetime.utcnow();
+        repeatability_request_id = uuid.uuid1()
+        repeatability_first_sent = datetime.utcnow()
 
         create_room_response = self._rooms_service_client.rooms.create_room(
-            create_room_request=create_room_request, repeatability_request_id=repeatability_request_id, repeatability_first_sent=repeatability_first_sent, **kwargs)
+            create_room_request=create_room_request,
+            repeatability_request_id=repeatability_request_id,
+            repeatability_first_sent=repeatability_first_sent,
+            **kwargs)
         return CommunicationRoom.from_room_response(create_room_response)
 
     @distributed_trace
@@ -210,7 +212,7 @@ class RoomsClient(object):
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
-        participantsDict = {participant.identifier: participant.to_room_participant_internal() for participant in participants}
+        participantsDict = {participant.identifier: participant.to_room_participant() for participant in participants}
         update_room_request = UpdateRoomRequest(
             participants=participantsDict
         )
@@ -235,7 +237,7 @@ class RoomsClient(object):
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
-        participantsDict = {participant.identifier: participant.to_room_participant_internal() for participant in participants}
+        participantsDict = {participant.identifier: participant.to_room_participantl() for participant in participants}
         update_room_request = UpdateRoomRequest(
             participants=participantsDict
         )

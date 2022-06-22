@@ -6,26 +6,35 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import CommunicationError
-    from ._models_py3 import CommunicationErrorResponse
-    from ._models_py3 import CreateRoomRequest
-    from ._models_py3 import RoomModel
-    from ._models_py3 import RoomParticipantInternal
-    from ._models_py3 import UpdateRoomRequest
-except (SyntaxError, ImportError):
-    from ._models import CommunicationError  # type: ignore
-    from ._models import CommunicationErrorResponse  # type: ignore
-    from ._models import CreateRoomRequest  # type: ignore
-    from ._models import RoomModel  # type: ignore
-    from ._models import RoomParticipantInternal  # type: ignore
-    from ._models import UpdateRoomRequest  # type: ignore
+from ._models import AddParticipantsRequest
+from ._models import CommunicationError
+from ._models import CommunicationErrorResponse
+from ._models import CommunicationIdentifierModel
+from ._models import CommunicationUserIdentifierModel
+from ._models import CreateRoomRequest
+from ._models import ParticipantsCollection
+from ._models import RemoveParticipantsRequest
+from ._models import RoomModel
+from ._models import RoomParticipant
+from ._models import UpdateParticipantsRequest
+from ._models import UpdateRoomRequest
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'CommunicationError',
-    'CommunicationErrorResponse',
-    'CreateRoomRequest',
-    'RoomModel',
-    'RoomParticipantInternal',
-    'UpdateRoomRequest',
+    "AddParticipantsRequest",
+    "CommunicationError",
+    "CommunicationErrorResponse",
+    "CommunicationIdentifierModel",
+    "CommunicationUserIdentifierModel",
+    "CreateRoomRequest",
+    "ParticipantsCollection",
+    "RemoveParticipantsRequest",
+    "RoomModel",
+    "RoomParticipant",
+    "UpdateParticipantsRequest",
+    "UpdateRoomRequest",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

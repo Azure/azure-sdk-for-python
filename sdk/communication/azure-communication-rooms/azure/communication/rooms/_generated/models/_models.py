@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,94 +7,180 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+import datetime
+from typing import List, Optional, TYPE_CHECKING
+
+from .. import _serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class CommunicationError(msrest.serialization.Model):
-    """The Communication Services error.
+class AddParticipantsRequest(_serialization.Model):
+    """Participants to be added to the room.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Required. The error code.
+    :ivar participants: Participants to add to a room. Required.
+    :vartype participants: list[~azure.communication.rooms.models.RoomParticipant]
+    """
+
+    _validation = {
+        "participants": {"required": True},
+    }
+
+    _attribute_map = {
+        "participants": {"key": "participants", "type": "[RoomParticipant]"},
+    }
+
+    def __init__(self, *, participants: List["_models.RoomParticipant"], **kwargs):
+        """
+        :keyword participants: Participants to add to a room. Required.
+        :paramtype participants: list[~azure.communication.rooms.models.RoomParticipant]
+        """
+        super().__init__(**kwargs)
+        self.participants = participants
+
+
+class CommunicationError(_serialization.Model):
+    """The Communication Services error.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar code: The error code. Required.
     :vartype code: str
-    :ivar message: Required. The error message.
+    :ivar message: The error message. Required.
     :vartype message: str
-    :ivar target: If applicable, would be used to indicate the property causing the error.
+    :ivar target: The error target.
     :vartype target: str
     :ivar details: Further details about specific errors that led to this error.
     :vartype details: list[~azure.communication.rooms.models.CommunicationError]
-    :ivar inner_error: The Communication Services error.
+    :ivar inner_error: The inner error if any.
     :vartype inner_error: ~azure.communication.rooms.models.CommunicationError
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "inner_error": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[CommunicationError]'},
-        'inner_error': {'key': 'innerError', 'type': 'CommunicationError'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CommunicationError]"},
+        "inner_error": {"key": "innererror", "type": "CommunicationError"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, *, code: str, message: str, **kwargs):
         """
-        :keyword code: Required. The error code.
+        :keyword code: The error code. Required.
         :paramtype code: str
-        :keyword message: Required. The error message.
+        :keyword message: The error message. Required.
         :paramtype message: str
-        :keyword target: If applicable, would be used to indicate the property causing the error.
-        :paramtype target: str
-        :keyword details: Further details about specific errors that led to this error.
-        :paramtype details: list[~azure.communication.rooms.models.CommunicationError]
-        :keyword inner_error: The Communication Services error.
-        :paramtype inner_error: ~azure.communication.rooms.models.CommunicationError
         """
-        super(CommunicationError, self).__init__(**kwargs)
-        self.code = kwargs['code']
-        self.message = kwargs['message']
-        self.target = kwargs.get('target', None)
-        self.details = kwargs.get('details', None)
-        self.inner_error = kwargs.get('inner_error', None)
+        super().__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.target = None
+        self.details = None
+        self.inner_error = None
 
 
-class CommunicationErrorResponse(msrest.serialization.Model):
+class CommunicationErrorResponse(_serialization.Model):
     """The Communication Services error.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar communication_error: Required. The Communication Services error.
-    :vartype communication_error: ~azure.communication.rooms.models.CommunicationError
+    :ivar error: The Communication Services error. Required.
+    :vartype error: ~azure.communication.rooms.models.CommunicationError
     """
 
     _validation = {
-        'communication_error': {'required': True},
+        "error": {"required": True},
     }
 
     _attribute_map = {
-        'communication_error': {'key': 'communicationError', 'type': 'CommunicationError'},
+        "error": {"key": "error", "type": "CommunicationError"},
+    }
+
+    def __init__(self, *, error: "_models.CommunicationError", **kwargs):
+        """
+        :keyword error: The Communication Services error. Required.
+        :paramtype error: ~azure.communication.rooms.models.CommunicationError
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
+class CommunicationIdentifierModel(_serialization.Model):
+    """Identifies a participant in Azure Communication services. A participant is, for example, an Azure communication user. This model must be interpreted as a union: Apart from rawId, at most one further property may be set.
+
+    :ivar raw_id: Raw Id of the identifier. Optional in requests, required in responses.
+    :vartype raw_id: str
+    :ivar communication_user: A user that got created with an Azure Communication Services
+     resource.
+    :vartype communication_user: ~azure.communication.rooms.models.CommunicationUserIdentifierModel
+    """
+
+    _attribute_map = {
+        "raw_id": {"key": "rawId", "type": "str"},
+        "communication_user": {"key": "communicationUser", "type": "CommunicationUserIdentifierModel"},
     }
 
     def __init__(
         self,
+        *,
+        raw_id: Optional[str] = None,
+        communication_user: Optional["_models.CommunicationUserIdentifierModel"] = None,
         **kwargs
     ):
         """
-        :keyword communication_error: Required. The Communication Services error.
-        :paramtype communication_error: ~azure.communication.rooms.models.CommunicationError
+        :keyword raw_id: Raw Id of the identifier. Optional in requests, required in responses.
+        :paramtype raw_id: str
+        :keyword communication_user: A user that got created with an Azure Communication Services
+         resource.
+        :paramtype communication_user:
+         ~azure.communication.rooms.models.CommunicationUserIdentifierModel
         """
-        super(CommunicationErrorResponse, self).__init__(**kwargs)
-        self.communication_error = kwargs['communication_error']
+        super().__init__(**kwargs)
+        self.raw_id = raw_id
+        self.communication_user = communication_user
 
 
-class CreateRoomRequest(msrest.serialization.Model):
+class CommunicationUserIdentifierModel(_serialization.Model):
+    """A user that got created with an Azure Communication Services resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The Id of the communication user. Required.
+    :vartype id: str
+    """
+
+    _validation = {
+        "id": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+        """
+        :keyword id: The Id of the communication user. Required.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+
+
+class CreateRoomRequest(_serialization.Model):
     """Request payload for creating new room.
 
     :ivar valid_from: The timestamp from when the room is open for joining. The timestamp is in
@@ -102,18 +189,26 @@ class CreateRoomRequest(msrest.serialization.Model):
     :ivar valid_until: The timestamp from when the room can no longer be joined. The timestamp is
      in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :vartype valid_until: ~datetime.datetime
+    :ivar room_open: Flag to specify if the room is to be an open room or closed room.
+    :vartype room_open: bool
     :ivar participants: (Optional) Collection of identities invited to the room.
-    :vartype participants: dict[str, ~azure.communication.rooms.models.RoomParticipantInternal]
+    :vartype participants: list[~azure.communication.rooms.models.RoomParticipant]
     """
 
     _attribute_map = {
-        'valid_from': {'key': 'validFrom', 'type': 'iso-8601'},
-        'valid_until': {'key': 'validUntil', 'type': 'iso-8601'},
-        'participants': {'key': 'participants', 'type': '{RoomParticipantInternal}'},
+        "valid_from": {"key": "validFrom", "type": "iso-8601"},
+        "valid_until": {"key": "validUntil", "type": "iso-8601"},
+        "room_open": {"key": "roomOpen", "type": "bool"},
+        "participants": {"key": "participants", "type": "[RoomParticipant]"},
     }
 
     def __init__(
         self,
+        *,
+        valid_from: Optional[datetime.datetime] = None,
+        valid_until: Optional[datetime.datetime] = None,
+        room_open: Optional[bool] = None,
+        participants: Optional[List["_models.RoomParticipant"]] = None,
         **kwargs
     ):
         """
@@ -123,16 +218,71 @@ class CreateRoomRequest(msrest.serialization.Model):
         :keyword valid_until: The timestamp from when the room can no longer be joined. The timestamp
          is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :paramtype valid_until: ~datetime.datetime
+        :keyword room_open: Flag to specify if the room is to be an open room or closed room.
+        :paramtype room_open: bool
         :keyword participants: (Optional) Collection of identities invited to the room.
-        :paramtype participants: dict[str, ~azure.communication.rooms.models.RoomParticipantInternal]
+        :paramtype participants: list[~azure.communication.rooms.models.RoomParticipant]
         """
-        super(CreateRoomRequest, self).__init__(**kwargs)
-        self.valid_from = kwargs.get('valid_from', None)
-        self.valid_until = kwargs.get('valid_until', None)
-        self.participants = kwargs.get('participants', None)
+        super().__init__(**kwargs)
+        self.valid_from = valid_from
+        self.valid_until = valid_until
+        self.room_open = room_open
+        self.participants = participants
 
 
-class RoomModel(msrest.serialization.Model):
+class ParticipantsCollection(_serialization.Model):
+    """Collection of participants who belong to a room.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar participants: Room Participants. Required.
+    :vartype participants: list[~azure.communication.rooms.models.RoomParticipant]
+    """
+
+    _validation = {
+        "participants": {"required": True},
+    }
+
+    _attribute_map = {
+        "participants": {"key": "participants", "type": "[RoomParticipant]"},
+    }
+
+    def __init__(self, *, participants: List["_models.RoomParticipant"], **kwargs):
+        """
+        :keyword participants: Room Participants. Required.
+        :paramtype participants: list[~azure.communication.rooms.models.RoomParticipant]
+        """
+        super().__init__(**kwargs)
+        self.participants = participants
+
+
+class RemoveParticipantsRequest(_serialization.Model):
+    """Participants to be removed from a room.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar participants: Participants to be removed from a room. Required.
+    :vartype participants: list[~azure.communication.rooms.models.RoomParticipant]
+    """
+
+    _validation = {
+        "participants": {"required": True},
+    }
+
+    _attribute_map = {
+        "participants": {"key": "participants", "type": "[RoomParticipant]"},
+    }
+
+    def __init__(self, *, participants: List["_models.RoomParticipant"], **kwargs):
+        """
+        :keyword participants: Participants to be removed from a room. Required.
+        :paramtype participants: list[~azure.communication.rooms.models.RoomParticipant]
+        """
+        super().__init__(**kwargs)
+        self.participants = participants
+
+
+class RoomModel(_serialization.Model):
     """The meeting room.
 
     :ivar id: Unique identifier of a room. This id is server generated.
@@ -146,20 +296,30 @@ class RoomModel(msrest.serialization.Model):
     :ivar valid_until: The timestamp from when the room can no longer be joined. The timestamp is
      in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :vartype valid_until: ~datetime.datetime
+    :ivar room_open: Flag to specify if the room is to be an open room or closed room.
+    :vartype room_open: bool
     :ivar participants: Collection of identities invited to the room.
-    :vartype participants: dict[str, ~azure.communication.rooms.models.RoomParticipantInternal]
+    :vartype participants: list[~azure.communication.rooms.models.RoomParticipant]
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'valid_from': {'key': 'validFrom', 'type': 'iso-8601'},
-        'valid_until': {'key': 'validUntil', 'type': 'iso-8601'},
-        'participants': {'key': 'participants', 'type': '{RoomParticipantInternal}'},
+        "id": {"key": "id", "type": "str"},
+        "created_date_time": {"key": "createdDateTime", "type": "iso-8601"},
+        "valid_from": {"key": "validFrom", "type": "iso-8601"},
+        "valid_until": {"key": "validUntil", "type": "iso-8601"},
+        "room_open": {"key": "roomOpen", "type": "bool"},
+        "participants": {"key": "participants", "type": "[RoomParticipant]"},
     }
 
     def __init__(
         self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        created_date_time: Optional[datetime.datetime] = None,
+        valid_from: Optional[datetime.datetime] = None,
+        valid_until: Optional[datetime.datetime] = None,
+        room_open: Optional[bool] = None,
+        participants: Optional[List["_models.RoomParticipant"]] = None,
         **kwargs
     ):
         """
@@ -174,41 +334,87 @@ class RoomModel(msrest.serialization.Model):
         :keyword valid_until: The timestamp from when the room can no longer be joined. The timestamp
          is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :paramtype valid_until: ~datetime.datetime
+        :keyword room_open: Flag to specify if the room is to be an open room or closed room.
+        :paramtype room_open: bool
         :keyword participants: Collection of identities invited to the room.
-        :paramtype participants: dict[str, ~azure.communication.rooms.models.RoomParticipantInternal]
+        :paramtype participants: list[~azure.communication.rooms.models.RoomParticipant]
         """
-        super(RoomModel, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.created_date_time = kwargs.get('created_date_time', None)
-        self.valid_from = kwargs.get('valid_from', None)
-        self.valid_until = kwargs.get('valid_until', None)
-        self.participants = kwargs.get('participants', None)
+        super().__init__(**kwargs)
+        self.id = id
+        self.created_date_time = created_date_time
+        self.valid_from = valid_from
+        self.valid_until = valid_until
+        self.room_open = room_open
+        self.participants = participants
 
 
-class RoomParticipantInternal(msrest.serialization.Model):
+class RoomParticipant(_serialization.Model):
     """A participant of the room.
 
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar communication_identifier: Identifies a participant in Azure Communication services. A
+     participant is, for example, an Azure communication user. This model must be interpreted as a
+     union: Apart from rawId, at most one further property may be set. Required.
+    :vartype communication_identifier:
+     ~azure.communication.rooms.models.CommunicationIdentifierModel
     :ivar role: Role Name.
     :vartype role: str
     """
 
+    _validation = {
+        "communication_identifier": {"required": True},
+    }
+
     _attribute_map = {
-        'role': {'key': 'role', 'type': 'str'},
+        "communication_identifier": {"key": "communicationIdentifier", "type": "CommunicationIdentifierModel"},
+        "role": {"key": "role", "type": "str"},
     }
 
     def __init__(
-        self,
-        **kwargs
+        self, *, communication_identifier: "_models.CommunicationIdentifierModel", role: Optional[str] = None, **kwargs
     ):
         """
+        :keyword communication_identifier: Identifies a participant in Azure Communication services. A
+         participant is, for example, an Azure communication user. This model must be interpreted as a
+         union: Apart from rawId, at most one further property may be set. Required.
+        :paramtype communication_identifier:
+         ~azure.communication.rooms.models.CommunicationIdentifierModel
         :keyword role: Role Name.
         :paramtype role: str
         """
-        super(RoomParticipantInternal, self).__init__(**kwargs)
-        self.role = kwargs.get('role', None)
+        super().__init__(**kwargs)
+        self.communication_identifier = communication_identifier
+        self.role = role
 
 
-class UpdateRoomRequest(msrest.serialization.Model):
+class UpdateParticipantsRequest(_serialization.Model):
+    """Participants to be updated in a room.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar participants: Participants to update in a room. Required.
+    :vartype participants: list[~azure.communication.rooms.models.RoomParticipant]
+    """
+
+    _validation = {
+        "participants": {"required": True},
+    }
+
+    _attribute_map = {
+        "participants": {"key": "participants", "type": "[RoomParticipant]"},
+    }
+
+    def __init__(self, *, participants: List["_models.RoomParticipant"], **kwargs):
+        """
+        :keyword participants: Participants to update in a room. Required.
+        :paramtype participants: list[~azure.communication.rooms.models.RoomParticipant]
+        """
+        super().__init__(**kwargs)
+        self.participants = participants
+
+
+class UpdateRoomRequest(_serialization.Model):
     """Request payload for updating a room.
 
     :ivar valid_from: (Optional) The timestamp from when the room is open for joining. The
@@ -217,18 +423,26 @@ class UpdateRoomRequest(msrest.serialization.Model):
     :ivar valid_until: (Optional) The timestamp from when the room can no longer be joined. The
      timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :vartype valid_until: ~datetime.datetime
-    :ivar participants: (Optional) Collection of identities invited to the room.
-    :vartype participants: dict[str, ~azure.communication.rooms.models.RoomParticipantInternal]
+    :ivar room_open: Flag to specify if the room is to be an open room or closed room.
+    :vartype room_open: bool
+    :ivar participants: Collection of room participants.
+    :vartype participants: list[~azure.communication.rooms.models.RoomParticipant]
     """
 
     _attribute_map = {
-        'valid_from': {'key': 'validFrom', 'type': 'iso-8601'},
-        'valid_until': {'key': 'validUntil', 'type': 'iso-8601'},
-        'participants': {'key': 'participants', 'type': '{RoomParticipantInternal}'},
+        "valid_from": {"key": "validFrom", "type": "iso-8601"},
+        "valid_until": {"key": "validUntil", "type": "iso-8601"},
+        "room_open": {"key": "roomOpen", "type": "bool"},
+        "participants": {"key": "participants", "type": "[RoomParticipant]"},
     }
 
     def __init__(
         self,
+        *,
+        valid_from: Optional[datetime.datetime] = None,
+        valid_until: Optional[datetime.datetime] = None,
+        room_open: Optional[bool] = None,
+        participants: Optional[List["_models.RoomParticipant"]] = None,
         **kwargs
     ):
         """
@@ -238,10 +452,13 @@ class UpdateRoomRequest(msrest.serialization.Model):
         :keyword valid_until: (Optional) The timestamp from when the room can no longer be joined. The
          timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :paramtype valid_until: ~datetime.datetime
-        :keyword participants: (Optional) Collection of identities invited to the room.
-        :paramtype participants: dict[str, ~azure.communication.rooms.models.RoomParticipantInternal]
+        :keyword room_open: Flag to specify if the room is to be an open room or closed room.
+        :paramtype room_open: bool
+        :keyword participants: Collection of room participants.
+        :paramtype participants: list[~azure.communication.rooms.models.RoomParticipant]
         """
-        super(UpdateRoomRequest, self).__init__(**kwargs)
-        self.valid_from = kwargs.get('valid_from', None)
-        self.valid_until = kwargs.get('valid_until', None)
-        self.participants = kwargs.get('participants', None)
+        super().__init__(**kwargs)
+        self.valid_from = valid_from
+        self.valid_until = valid_until
+        self.room_open = room_open
+        self.participants = participants

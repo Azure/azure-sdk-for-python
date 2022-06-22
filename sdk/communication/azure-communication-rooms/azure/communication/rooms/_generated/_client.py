@@ -7,37 +7,33 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable
+from typing import Any
 
-from msrest import Deserializer, Serializer
+from azure.core import PipelineClient
+from azure.core.rest import HttpRequest, HttpResponse
 
-from azure.core import AsyncPipelineClient
-from azure.core.rest import AsyncHttpResponse, HttpRequest
-
-from .. import models
+from . import models
 from ._configuration import AzureCommunicationRoomsServiceConfiguration
+from ._serialization import Deserializer, Serializer
 from .operations import RoomsOperations
 
-class AzureCommunicationRoomsService:
+
+class AzureCommunicationRoomsService:  # pylint: disable=client-accepts-api-version-keyword
     """Azure Communication Room Service.
 
     :ivar rooms: RoomsOperations operations
-    :vartype rooms: azure.communication.rooms.aio.operations.RoomsOperations
-    :param endpoint: The endpoint of the Azure Communication resource.
+    :vartype rooms: azure.communication.rooms.operations.RoomsOperations
+    :param endpoint: The endpoint of the Azure Communication resource. Required.
     :type endpoint: str
     :keyword api_version: Api Version. Default value is "2022-02-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        endpoint: str,
-        **kwargs: Any
-    ) -> None:
-        _base_url = '{endpoint}'
+    def __init__(self, endpoint: str, **kwargs: Any) -> None:
+        _endpoint = "{endpoint}"
         self._config = AzureCommunicationRoomsServiceConfiguration(endpoint=endpoint, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_base_url, config=self._config, **kwargs)
+        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -45,43 +41,41 @@ class AzureCommunicationRoomsService:
         self._serialize.client_side_validation = False
         self.rooms = RoomsOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = await client._send_request(request)
-        <AsyncHttpResponse: 200 OK>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.AsyncHttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
-    async def close(self) -> None:
-        await self._client.close()
+    def close(self):
+        # type: () -> None
+        self._client.close()
 
-    async def __aenter__(self) -> "AzureCommunicationRoomsService":
-        await self._client.__aenter__()
+    def __enter__(self):
+        # type: () -> AzureCommunicationRoomsService
+        self._client.__enter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
-        await self._client.__aexit__(*exc_details)
+    def __exit__(self, *exc_details):
+        # type: (Any) -> None
+        self._client.__exit__(*exc_details)

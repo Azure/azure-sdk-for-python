@@ -10,7 +10,7 @@ import uuid
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.communication.rooms._models import CommunicationRoom
-from .._generated.aio._azure_communication_rooms_service import AzureCommunicationRoomsService
+from .._generated.aio._client import AzureCommunicationRoomsService
 from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
@@ -110,15 +110,15 @@ class RoomsClient(object):
         if participants is None:
             participantsDict = participants
         else:
-            participantsDict = {participant.identifier: participant.to_room_participant_internal() for participant in participants}
+            participantsDict = {participant.identifier: participant.to_room_participant() for participant in participants}
         create_room_request = CreateRoomRequest(
             valid_from=valid_from,
             valid_until=valid_until,
             participants=participantsDict
         )
 
-        repeatability_request_id = uuid.uuid1();
-        repeatability_first_sent = datetime.utcnow();
+        repeatability_request_id = uuid.uuid1()
+        repeatability_first_sent = datetime.utcnow()
 
         create_room_response = await self._rooms_service_client.rooms.create_room(
             create_room_request=create_room_request, repeatability_request_id=repeatability_request_id, repeatability_first_sent=repeatability_first_sent, **kwargs)
@@ -213,7 +213,7 @@ class RoomsClient(object):
         if participants is None:
             participantsDict = participants
         else:
-            participantsDict = {participant.identifier: participant.to_room_participant_internal() for participant in participants}
+            participantsDict = {participant.identifier: participant.to_room_participant() for participant in participants}
         update_room_request = UpdateRoomRequest(
             participants=participantsDict
         )
@@ -241,7 +241,7 @@ class RoomsClient(object):
         if participants is None:
             participantsDict = participants
         else:
-            participantsDict = {participant.identifier: participant.to_room_participant_internal() for participant in participants}
+            participantsDict = {participant.identifier: participant.to_room_participant() for participant in participants}
 
         update_room_request = UpdateRoomRequest(
             participants=participantsDict
