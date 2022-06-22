@@ -18,18 +18,18 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._locations_operations import build_check_name_availability_request
+from ...operations._media_service_operation_results_operations import build_get_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class LocationsOperations:
+class MediaServiceOperationResultsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.media.aio.AzureMediaServices`'s
-        :attr:`locations` attribute.
+        :attr:`media_service_operation_results` attribute.
     """
 
     models = _models
@@ -43,23 +43,23 @@ class LocationsOperations:
 
 
     @distributed_trace_async
-    async def check_name_availability(
+    async def get(
         self,
         location_name: str,
-        parameters: _models.CheckNameAvailabilityInput,
+        operation_id: str,
         **kwargs: Any
-    ) -> _models.EntityNameAvailabilityCheckOutput:
-        """Check Name Availability.
+    ) -> Optional[_models.MediaService]:
+        """Get operation result.
 
-        Checks whether the Media Service resource name is available.
+        Get media service operation result.
 
         :param location_name: Location name.
         :type location_name: str
-        :param parameters: The request parameters.
-        :type parameters: ~azure.mgmt.media.models.CheckNameAvailabilityInput
+        :param operation_id: Operation Id.
+        :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: EntityNameAvailabilityCheckOutput, or the result of cls(response)
-        :rtype: ~azure.mgmt.media.models.EntityNameAvailabilityCheckOutput
+        :return: MediaService, or the result of cls(response)
+        :rtype: ~azure.mgmt.media.models.MediaService or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -67,22 +67,19 @@ class LocationsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-11-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.EntityNameAvailabilityCheckOutput]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.MediaService]]
 
-        _json = self._serialize.body(parameters, 'CheckNameAvailabilityInput')
-
-        request = build_check_name_availability_request(
+        
+        request = build_get_request(
             subscription_id=self._config.subscription_id,
             location_name=location_name,
+            operation_id=operation_id,
             api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self.check_name_availability.metadata['url'],
+            template_url=self.get.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -96,17 +93,26 @@ class LocationsOperations:
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('EntityNameAvailabilityCheckOutput', pipeline_response)
+        deserialized = None
+        response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize('MediaService', pipeline_response)
+
+        if response.status_code == 202:
+            response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
+            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+            response_headers['Azure-AsyncOperation']=self._deserialize('str', response.headers.get('Azure-AsyncOperation'))
+            
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    check_name_availability.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.Media/locations/{locationName}/checkNameAvailability"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.Media/locations/{locationName}/mediaServiceOperationResults/{operationId}"}  # type: ignore
 
