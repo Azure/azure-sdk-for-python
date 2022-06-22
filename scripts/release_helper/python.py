@@ -49,6 +49,7 @@ class IssueProcessPython(IssueProcess):
     @property
     def readme_comparison(self) -> bool:
         # to see whether need change readme
+        self.log(f'**** target_readme_tag: {self.target_readme_tag}')
         if 'package-' not in self.target_readme_tag:
             return True
         if _CONFIGURED in self.issue_package.issue.labels:
