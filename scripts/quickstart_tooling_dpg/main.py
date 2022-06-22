@@ -27,8 +27,9 @@ def check_parameters(
 
 def generate_ci(package_name: str, folder_name: Path) -> None:
     ci = Path(folder_name, "ci.yml")
+    ci_template_path = folder_name.parent.parent / 'ci_template.yml'
     if not ci.exists():
-        with open("ci_template.yml", "r") as file_in:
+        with open(ci_template_path, "r") as file_in:
             content = file_in.readlines()
         name = package_name.split('-')[-1]
         content = [line.replace("MyService", name) for line in content]
