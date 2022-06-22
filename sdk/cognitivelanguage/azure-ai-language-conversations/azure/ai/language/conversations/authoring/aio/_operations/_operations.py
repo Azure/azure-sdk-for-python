@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------
 import sys
 from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -139,7 +140,11 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -1802,7 +1807,11 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -3227,7 +3236,11 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -3474,7 +3487,11 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -3786,7 +3803,11 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -4335,7 +4356,11 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -4435,7 +4460,11 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -4525,7 +4554,11 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
