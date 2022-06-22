@@ -64,6 +64,12 @@ class QuestionAnsweringTest(AzureTestCase):
     def generate_fake_token(self):
         return FakeTokenCredential()
 
+    @property
+    def kwargs_for_polling(self):
+        if self.is_playback:
+            return {"polling_interval": 0}
+        return {}
+
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):
     def __init__(self):
         super(GlobalResourceGroupPreparer, self).__init__(
@@ -107,7 +113,6 @@ class GlobalQuestionAnsweringAccountPreparer(AzureMgmtPreparer):
             'qna_project': TEST_PROJECT
         }
 
-
 class QnaAuthoringHelper:
 
     def create_test_project(
@@ -117,7 +122,8 @@ class QnaAuthoringHelper:
         add_sources = False,
         get_export_url = False,
         delete_old_project = False,
-        add_qnas = False
+        add_qnas = False,
+        **kwargs
     ):
         # create project
         client.create_project(
@@ -133,12 +139,12 @@ class QnaAuthoringHelper:
 
         # add sources
         if is_deployable or add_sources:
-            QnaAuthoringHelper.add_sources(client, project_name)
+            QnaAuthoringHelper.add_sources(client, project_name, **kwargs)
 
         if get_export_url:
-            return QnaAuthoringHelper.export_project(client, project_name, delete_project=delete_old_project)
+            return QnaAuthoringHelper.export_project(client, project_name, delete_project=delete_old_project, **kwargs)
 
-    def add_sources(client, project_name):
+    def add_sources(client, project_name, **kwargs):
         update_sources_poller = client.begin_update_sources(
             project_name=project_name,
             sources=[
@@ -150,22 +156,25 @@ class QnaAuthoringHelper:
                         "sourceKind": "url"
                     }
                 }
-            ]
+            ],
+            **kwargs
         )
         update_sources_poller.result()
 
-    def export_project(client, project_name, delete_project=True):
+    def export_project(client, project_name, delete_project=True, **kwargs):
         # export project
         export_poller = client.begin_export(
             project_name=project_name,
-            format="json"
+            format="json",
+            **kwargs
         )
         result = export_poller.result()
 
         # delete old project
         if delete_project:
             delete_poller = client.begin_delete_project(
-                project_name=project_name
+                project_name=project_name,
+                **kwargs
             )
             delete_poller.result()
 

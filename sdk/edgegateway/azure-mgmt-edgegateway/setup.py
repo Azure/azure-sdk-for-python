@@ -20,7 +20,6 @@ package_folder_path = PACKAGE_NAME.replace('-', '/')
 # a-b-c => a.b.c
 namespace_name = PACKAGE_NAME.replace('-', '.')
 
-
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, 'version.py')
           if os.path.exists(os.path.join(package_folder_path, 'version.py'))
@@ -46,6 +45,7 @@ setup(
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
+    keywords="azure, azure sdk",  # update with search keywords relevant to the azure service / product
     classifiers=[
         'Development Status :: 4 - Beta',
         'Programming Language :: Python',
@@ -70,5 +70,5 @@ setup(
         'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.6"
 )

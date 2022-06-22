@@ -9,7 +9,8 @@
 from typing import Any, Iterable, List
 from enum import Enum
 from collections import namedtuple
-from ._generated.v2022_01_30_preview.models import ModelInfo, Error
+from azure.core import CaseInsensitiveEnumMeta
+from ._generated.v2022_06_30_preview.models import ModelInfo, Error
 from ._helpers import (
     adjust_value_type,
     adjust_confidence,
@@ -40,6 +41,17 @@ def get_bounding_box(field):
             Point(x=field.bounding_box[6], y=field.bounding_box[7]),
         ]
         if field.bounding_box
+        else None
+    )
+
+
+def get_polygon(field):
+    return (
+        [
+            Point(x=field.polygon[point], y=field.polygon[point+1])
+            for point in range(0, len(field.polygon), 2)
+        ]
+        if field.polygon
         else None
     )
 
@@ -122,6 +134,8 @@ def get_field_value_v3(value):  # pylint: disable=too-many-return-statements
         )
     if value.type == "currency":
         return CurrencyValue._from_generated(value.value_currency)
+    if value.type == "address":
+        return AddressValue._from_generated(value.value_address)
     if value.type == "object":
         return (
             {
@@ -137,7 +151,7 @@ def get_field_value_v3(value):  # pylint: disable=too-many-return-statements
         return value.value_country_region
     return None
 
-class DocumentBuildMode(str, Enum):
+class DocumentBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode used when building custom models.
 
     For more information, see https://aka.ms/azsdk/formrecognizer/buildmode.
@@ -147,7 +161,7 @@ class DocumentBuildMode(str, Enum):
     TEMPLATE = "template"
 
 
-class FieldValueType(str, Enum):
+class FieldValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Semantic data type of the field value.
 
     .. versionadded:: v2.1
@@ -166,7 +180,7 @@ class FieldValueType(str, Enum):
     COUNTRY_REGION = "countryRegion"
 
 
-class LengthUnit(str, Enum):
+class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The unit used by the width, height and bounding box properties.
     For images, the unit is "pixel". For PDF, the unit is "inch".
     """
@@ -175,7 +189,7 @@ class LengthUnit(str, Enum):
     INCH = "inch"
 
 
-class TrainingStatus(str, Enum):
+class TrainingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the training operation."""
 
     SUCCEEDED = "succeeded"
@@ -183,7 +197,7 @@ class TrainingStatus(str, Enum):
     FAILED = "failed"
 
 
-class CustomFormModelStatus(str, Enum):
+class CustomFormModelStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status indicating the model's readiness for use."""
 
     CREATING = "creating"
@@ -191,7 +205,7 @@ class CustomFormModelStatus(str, Enum):
     INVALID = "invalid"
 
 
-class FormContentType(str, Enum):
+class FormContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Content type for upload.
 
     .. versionadded:: v2.1
@@ -2080,11 +2094,11 @@ class TextAppearance(object):
 class BoundingRegion(object):
     """The bounding region corresponding to a page.
 
-    :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
-        A list of 4 points representing the quadrilateral bounding box
-        that outlines the text. The points are listed in clockwise
-        order relative to the text orientation: top-left, top-right,
-        bottom-right, bottom-left.
+    :ivar list[~azure.ai.formrecognizer.Point] polygon:
+        A list of points representing the bounding polygon
+        that outlines the document component. The points are listed in
+        clockwise order relative to the document component orientation
+        starting from the top-left.
         Units are in pixels for images and inches for PDF.
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
@@ -2092,18 +2106,18 @@ class BoundingRegion(object):
 
     def __init__(self, **kwargs):
         self.page_number = kwargs.get("page_number", None)
-        self.bounding_box = kwargs.get("bounding_box", None)
+        self.polygon = kwargs.get("polygon", None)
 
     def __repr__(self):
-        return "BoundingRegion(page_number={}, bounding_box={})".format(
-            self.page_number, self.bounding_box
+        return "BoundingRegion(page_number={}, polygon={})".format(
+            self.page_number, self.polygon
         )
 
     @classmethod
     def _from_generated(cls, region):
         return cls(
             page_number=region.page_number,
-            bounding_box=get_bounding_box(region),
+            polygon=get_polygon(region),
         )
 
     def to_dict(self):
@@ -2115,8 +2129,8 @@ class BoundingRegion(object):
         """
         return {
             "page_number": self.page_number,
-            "bounding_box": [f.to_dict() for f in self.bounding_box]
-            if self.bounding_box
+            "polygon": [f.to_dict() for f in self.polygon]
+            if self.polygon
             else [],
         }
 
@@ -2131,9 +2145,108 @@ class BoundingRegion(object):
         """
         return cls(
             page_number=data.get("page_number", None),
-            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
-            if len(data.get("bounding_box", [])) > 0
+            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+            if len(data.get("polygon", [])) > 0
             else [],
+        )
+
+
+class AddressValue(object):
+    """An address field value.
+
+    :ivar house_number: House or building number.
+    :vartype house_number: str
+    :ivar po_box: Post office box number.
+    :vartype po_box: str
+    :ivar road: Street name.
+    :vartype road: str
+    :ivar city: Name of city, town, village, etc.
+    :vartype city: str
+    :ivar state: First-level administrative division.
+    :vartype state: str
+    :ivar postal_code: Postal code used for mail sorting.
+    :vartype postal_code: str
+    :ivar country_region: Country/region.
+    :vartype country_region: str
+    :ivar street_address: Street-level address, excluding city, state, countryRegion, and
+     postalCode.
+    :vartype street_address: str
+    """
+
+    def __init__(self, **kwargs):
+        self.house_number = kwargs.get("house_number", None)
+        self.po_box = kwargs.get("po_box", None)
+        self.road = kwargs.get("road", None)
+        self.city = kwargs.get("city", None)
+        self.state = kwargs.get("state", None)
+        self.postal_code = kwargs.get("postal_code", None)
+        self.country_region = kwargs.get("country_region", None)
+        self.street_address = kwargs.get("street_address", None)
+
+    @classmethod
+    def _from_generated(cls, data):
+        return cls(
+            house_number=data.house_number,
+            po_box=data.po_box,
+            road=data.road,
+            city=data.city,
+            state=data.state,
+            postal_code=data.postal_code,
+            country_region=data.country_region,
+            street_address=data.street_address,
+        )
+
+    def __repr__(self):
+        return (
+            "AddressValue(house_number={}, po_box={}, road={}, city={}, state={}, "
+            "postal_code={}, country_region={}, street_address={})".format(
+                self.house_number,
+                self.po_box,
+                self.road,
+                self.city,
+                self.state,
+                self.postal_code,
+                self.country_region,
+                self.street_address,
+            )
+        )
+
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of AddressValue.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "house_number": self.house_number,
+            "po_box": self.po_box,
+            "road": self.road,
+            "city": self.city,
+            "state": self.state,
+            "postal_code": self.postal_code,
+            "country_region": self.country_region,
+            "street_address": self.street_address,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> AddressValue
+        """Converts a dict in the shape of a AddressValue to the model itself.
+
+        :param dict data: A dictionary in the shape of AddressValue.
+        :return: AddressValue
+        :rtype: AddressValue
+        """
+        return cls(
+            house_number=data.get("house_number", None),
+            po_box=data.get("po_box", None),
+            road=data.get("road", None),
+            city=data.get("city", None),
+            state=data.get("state", None),
+            postal_code=data.get("postal_code", None),
+            country_region=data.get("country_region", None),
+            street_address=data.get("street_address", None),
         )
 
 
@@ -2192,8 +2305,8 @@ class DocumentContentElement(object):
 
     :ivar content: Text content of the document content element.
     :vartype content: str
-    :ivar bounding_box: Bounding box of the document content element.
-    :vartype bounding_box: list[Point]
+    :ivar polygon: Bounding polygon of the document content element.
+    :vartype polygon: list[~azure.ai.formrecognizer.Point]
     :ivar span: Location of the element in the full document content.
     :vartype span: ~azure.ai.formrecognizer.DocumentSpan
     :ivar confidence: Confidence of accurately extracting the document content element.
@@ -2205,14 +2318,14 @@ class DocumentContentElement(object):
 
     def __init__(self, **kwargs):
         self.content = kwargs.get("content", None)
-        self.bounding_box = kwargs.get("bounding_box", None)
+        self.polygon = kwargs.get("polygon", None)
         self.span = kwargs.get("span", None)
         self.confidence = kwargs.get("confidence", None)
         self.kind = kwargs.get("kind", None)
 
     def __repr__(self):
-        return "DocumentContentElement(content={}, bounding_box={}, span={}, confidence={}, kind={})".format(
-            self.content, self.bounding_box, self.span, self.confidence, self.kind
+        return "DocumentContentElement(content={}, polygon={}, span={}, confidence={}, kind={})".format(
+            self.content, self.polygon, self.span, self.confidence, self.kind
         )
 
     def to_dict(self):
@@ -2224,8 +2337,8 @@ class DocumentContentElement(object):
         """
         return {
             "content": self.content,
-            "bounding_box": [f.to_dict() for f in self.bounding_box]
-            if self.bounding_box
+            "polygon": [f.to_dict() for f in self.polygon]
+            if self.polygon
             else [],
             "span": self.span.to_dict() if self.span else None,
             "confidence": self.confidence,
@@ -2243,8 +2356,8 @@ class DocumentContentElement(object):
         """
         return cls(
             content=data.get("content", None),
-            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
-            if len(data.get("bounding_box", [])) > 0
+            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+            if len(data.get("polygon", [])) > 0
             else [],
             span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
             confidence=data.get("confidence", None),
@@ -2255,9 +2368,9 @@ class DocumentContentElement(object):
 class DocumentLanguage(object):
     """An object representing the detected language for a given text span.
 
-    :ivar language_code: Detected language code. Value may be an ISO 639-1 language code (ex.
+    :ivar locale: Detected language code. Value may be an ISO 639-1 language code (ex.
      "en", "fr") or a BCP 47 language tag (ex. "zh-Hans").
-    :vartype language_code: str
+    :vartype locale: str
     :ivar spans: Location of the text elements in the concatenated content that the language
      applies to.
     :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
@@ -2266,21 +2379,21 @@ class DocumentLanguage(object):
     """
 
     def __init__(self, **kwargs):
-        self.language_code = kwargs.get("language_code", None)
+        self.locale = kwargs.get("locale", None)
         self.spans = kwargs.get("spans", None)
         self.confidence = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, language):
         return cls(
-            language_code=language.language_code,
+            locale=language.locale,
             spans=prepare_document_spans(language.spans),
             confidence=language.confidence,
         )
 
     def __repr__(self):
-        return "DocumentLanguage(language_code={}, spans={}, confidence={})".format(
-            self.language_code,
+        return "DocumentLanguage(locale={}, spans={}, confidence={})".format(
+            self.locale,
             repr(self.spans),
             self.confidence,
         )
@@ -2293,7 +2406,7 @@ class DocumentLanguage(object):
         :rtype: dict
         """
         return {
-            "language_code": self.language_code,
+            "locale": self.locale,
             "spans": [f.to_dict() for f in self.spans]
             if self.spans
             else [],
@@ -2310,7 +2423,7 @@ class DocumentLanguage(object):
         :rtype: DocumentLanguage
         """
         return cls(
-            language_code=data.get("language_code", None),
+            locale=data.get("locale", None),
             spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
             if len(data.get("spans", [])) > 0
             else [],
@@ -2409,114 +2522,6 @@ class AnalyzedDocument(object):
         )
 
 
-class DocumentEntity(object):
-    """An object representing various categories of entities.
-
-    :ivar category: Entity type.
-    :vartype category: str
-    :ivar sub_category: Entity sub type.
-    :vartype sub_category: str
-    :ivar content: Entity content.
-    :vartype content: str
-    :ivar bounding_regions: Bounding regions covering the entity.
-    :vartype bounding_regions: list[~azure.ai.formrecognizer.BoundingRegion]
-    :ivar spans: Location of the entity in the reading order concatenated content.
-    :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
-    :ivar confidence: Confidence of correctly extracting the entity.
-    :vartype confidence: float
-    """
-
-    def __init__(self, **kwargs):
-        self.category = kwargs.get("category", None)
-        self.sub_category = kwargs.get("sub_category", None)
-        self.content = kwargs.get("content", None)
-        self.bounding_regions = kwargs.get("bounding_regions", None)
-        self.spans = kwargs.get("spans", None)
-        self.confidence = kwargs.get("confidence", None)
-
-    @classmethod
-    def _from_generated(cls, entity):
-        return cls(
-            category=entity.category,
-            sub_category=entity.sub_category,
-            content=entity.content,
-            bounding_regions=[
-                BoundingRegion(
-                    page_number=region.page_number,
-                    bounding_box=get_bounding_box(region),
-                )
-                for region in entity.bounding_regions
-            ]
-            if entity.bounding_regions
-            else [],
-            spans=[
-                DocumentSpan(
-                    offset=span.offset,
-                    length=span.length,
-                )
-                for span in entity.spans
-            ]
-            if entity.spans
-            else [],
-            confidence=entity.confidence,
-        )
-
-    def __repr__(self):
-        return (
-            "DocumentEntity(category={}, sub_category={}, content={}, bounding_regions={}, spans={}, "
-            "confidence={})".format(
-                self.category,
-                self.sub_category,
-                self.content,
-                repr(self.bounding_regions),
-                repr(self.spans),
-                self.confidence,
-            )
-        )
-
-    def to_dict(self):
-        # type: () -> dict
-        """Returns a dict representation of DocumentEntity.
-
-        :return: dict
-        :rtype: dict
-        """
-        return {
-            "category": self.category,
-            "sub_category": self.sub_category,
-            "content": self.content,
-            "bounding_regions": [f.to_dict() for f in self.bounding_regions]
-            if self.bounding_regions
-            else [],
-            "spans": [f.to_dict() for f in self.spans]
-            if self.spans
-            else [],
-            "confidence": self.confidence,
-        }
-
-    @classmethod
-    def from_dict(cls, data):
-        # type: (dict) -> DocumentEntity
-        """Converts a dict in the shape of a DocumentEntity to the model itself.
-
-        :param dict data: A dictionary in the shape of DocumentEntity.
-        :return: DocumentEntity
-        :rtype: DocumentEntity
-        """
-        return cls(
-            category=data.get("category", None),
-            sub_category=data.get("sub_category", None),
-            content=data.get("content", None),
-            bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
-            if len(data.get("bounding_regions", [])) > 0
-            else [],
-            spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
-            if len(data.get("spans", [])) > 0
-            else [],
-            confidence=data.get("confidence", None),
-        )
-
-
 class DocumentField(object):
     """An object representing the content and location of a document field value.
 
@@ -2528,7 +2533,7 @@ class DocumentField(object):
         If the value is extracted from the document, but cannot be normalized to its type,
         then access the `content` property for a textual representation of the value.
     :vartype value: str, int, float, :class:`~datetime.date`, :class:`~datetime.time`,
-        :class:`~azure.ai.formrecognizer.CurrencyValue`,
+        :class:`~azure.ai.formrecognizer.CurrencyValue`, :class:`~azure.ai.formrecognizer.AddressValue`,
         dict[str, :class:`~azure.ai.formrecognizer.DocumentField`],
         or list[:class:`~azure.ai.formrecognizer.DocumentField`]
     :ivar content: The field's content.
@@ -2560,7 +2565,7 @@ class DocumentField(object):
             bounding_regions=[
                 BoundingRegion(
                     page_number=region.page_number,
-                    bounding_box=get_bounding_box(region),
+                    polygon=get_polygon(region),
                 )
                 for region in field.bounding_regions
             ]
@@ -2598,9 +2603,22 @@ class DocumentField(object):
         :return: dict
         :rtype: dict
         """
+        value = self.value
+        # CurrencyValue objects are interpreted as dict, therefore need to be processed first
+        # to call the proper to_dict() method.
+        if self.value_type == "currency":
+            value = self.value.to_dict()
+        # AddressValue objects are interpreted as dict, therefore need to be processed first
+        # to call the proper to_dict() method.
+        elif self.value_type == "address":
+            value = self.value.to_dict()
+        elif isinstance(self.value, dict):
+            value = {k: v.to_dict() for k, v in self.value.items()}
+        elif isinstance(self.value, list):
+            value = [v.to_dict() for v in self.value]
         return {
             "value_type": self.value_type,
-            "value": self.value,
+            "value": value,
             "content": self.content,
             "bounding_regions": [f.to_dict() for f in self.bounding_regions]
             if self.bounding_regions
@@ -2620,9 +2638,24 @@ class DocumentField(object):
         :return: DocumentField
         :rtype: DocumentField
         """
+
+        value = data.get("value", None)
+        # CurrencyValue objects are interpreted as dict, therefore need to be processed first
+        # to call the proper from_dict() method.
+        if data.get("value_type", None) == "currency":
+            value = CurrencyValue.from_dict(data.get("value"))  #type: ignore
+        # AddressValue objects are interpreted as dict, therefore need to be processed first
+        # to call the proper from_dict() method.
+        elif data.get("value_type", None) == "address":
+            value = AddressValue.from_dict(data.get("value"))  #type: ignore
+        elif isinstance(data.get("value"), dict):
+            value = {k: DocumentField.from_dict(v) for k, v in data.get("value").items()}  # type: ignore
+        elif isinstance(data.get("value"), list):
+            value = [DocumentField.from_dict(v) for v in data.get("value")]  # type: ignore
+
         return cls(
             value_type=data.get("value_type", None),
-            value=data.get("value", None),
+            value=value,
             content=data.get("content", None),
             bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
             if len(data.get("bounding_regions", [])) > 0
@@ -2785,8 +2818,8 @@ class DocumentLine(object):
 
     :ivar content: Concatenated content of the contained elements in reading order.
     :vartype content: str
-    :ivar bounding_box: Bounding box of the line.
-    :vartype bounding_box: list[Point]
+    :ivar polygon: Bounding polygon of the line.
+    :vartype polygon: list[~azure.ai.formrecognizer.Point]
     :ivar spans: Location of the line in the reading order concatenated content.
     :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
     """
@@ -2794,7 +2827,7 @@ class DocumentLine(object):
     def __init__(self, **kwargs):
         self._parent = kwargs.get("_parent", None)
         self.content = kwargs.get("content", None)
-        self.bounding_box = kwargs.get("bounding_box", None)
+        self.polygon = kwargs.get("polygon", None)
         self.spans = kwargs.get("spans", None)
 
     @classmethod
@@ -2802,14 +2835,14 @@ class DocumentLine(object):
         return cls(
             _parent=document_page,
             content=line.content,
-            bounding_box=get_bounding_box(line),
+            polygon=get_polygon(line),
             spans=prepare_document_spans(line.spans),
         )
 
     def __repr__(self):
-        return "DocumentLine(content={}, bounding_box={}, spans={})".format(
+        return "DocumentLine(content={}, polygon={}, spans={})".format(
             self.content,
-            self.bounding_box,
+            self.polygon,
             repr(self.spans),
         )
 
@@ -2822,8 +2855,8 @@ class DocumentLine(object):
         """
         return {
             "content": self.content,
-            "bounding_box": [f.to_dict() for f in self.bounding_box]
-            if self.bounding_box
+            "polygon": [f.to_dict() for f in self.polygon]
+            if self.polygon
             else [],
             "spans": [f.to_dict() for f in self.spans]
             if self.spans
@@ -2841,8 +2874,8 @@ class DocumentLine(object):
         """
         return cls(
             content=data.get("content", None),
-            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
-            if len(data.get("bounding_box", [])) > 0
+            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+            if len(data.get("polygon", [])) > 0
             else [],
             spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
             if len(data.get("spans", [])) > 0
@@ -2868,9 +2901,90 @@ class DocumentLine(object):
         return result
 
 
+class DocumentParagraph(object):
+    """A paragraph object generally consisting of contiguous lines with common alignment and spacing.
+
+    :ivar role: Semantic role of the paragraph. Known values are: "pageHeader", "pageFooter",
+     "pageNumber", "title", "sectionHeading", "footnote".
+    :vartype role: str
+    :ivar content: Concatenated content of the paragraph in reading order.
+    :vartype content: str
+    :ivar bounding_regions: Bounding regions covering the paragraph.
+    :vartype bounding_regions: list[~azure.ai.formrecognizer.BoundingRegion]
+    :ivar spans: Location of the paragraph in the reading order concatenated content.
+    :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
+    """
+
+    def __init__(self, **kwargs):
+        self.role = kwargs.get("role", None)
+        self.content = kwargs.get("content", None)
+        self.bounding_regions = kwargs.get("bounding_regions", None)
+        self.spans = kwargs.get("spans", None)
+
+    @classmethod
+    def _from_generated(cls, paragraph):
+        return cls(
+            role=paragraph.role,
+            content=paragraph.content,
+            bounding_regions=prepare_bounding_regions(paragraph.bounding_regions),
+            spans=prepare_document_spans(paragraph.spans),
+        )
+
+    def __repr__(self):
+        return (
+            "DocumentParagraph(role={}, content={}, bounding_regions={}, spans={})".format(
+                self.role,
+                self.content,
+                repr(self.bounding_regions),
+                repr(self.spans),
+            )
+        )
+
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of DocumentParagraph.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "role": self.role,
+            "content": self.content,
+            "bounding_regions": [f.to_dict() for f in self.bounding_regions]
+            if self.bounding_regions
+            else [],
+            "spans": [f.to_dict() for f in self.spans]
+            if self.spans
+            else [],
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> DocumentParagraph
+        """Converts a dict in the shape of a DocumentParagraph to the model itself.
+
+        :param dict data: A dictionary in the shape of DocumentParagraph.
+        :return: DocumentParagraph
+        :rtype: DocumentParagraph
+        """
+        return cls(
+            role=data.get("role", None),
+            content=data.get("content", None),
+            bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
+            if len(data.get("bounding_regions", [])) > 0
+            else [],
+            spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
+            if len(data.get("spans", [])) > 0
+            else [],
+        )
+
+
 class DocumentPage(object):
     """Content and layout elements extracted from a page of the input.
 
+    :ivar kind: Kind of document page. Known values are: "document", "sheet", "slide",
+     "image".
+    :vartype kind: str
     :ivar page_number: 1-based page number in the input document.
     :vartype page_number: int
     :ivar angle: The general orientation of the content in clockwise direction, measured
@@ -2880,7 +2994,7 @@ class DocumentPage(object):
     :vartype width: float
     :ivar height: The height of the image/PDF in pixels/inches, respectively.
     :vartype height: float
-    :ivar unit: The unit used by the width, height, and boundingBox properties. For
+    :ivar unit: The unit used by the width, height, and bounding box properties. For
      images, the unit is "pixel". For PDF, the unit is "inch". Possible values include: "pixel",
      "inch".
     :vartype unit: str
@@ -2897,6 +3011,7 @@ class DocumentPage(object):
     """
 
     def __init__(self, **kwargs):
+        self.kind = kwargs.get("kind", None)
         self.page_number = kwargs.get("page_number", None)
         self.angle = kwargs.get("angle", None)
         self.width = kwargs.get("width", None)
@@ -2910,8 +3025,10 @@ class DocumentPage(object):
     @classmethod
     def _from_generated(cls, page):
         return cls(
+            kind=page.kind,
             page_number=page.page_number,
-            angle=adjust_text_angle(page.angle),
+            angle=adjust_text_angle(page.angle)
+            if page.angle else None,
             width=page.width,
             height=page.height,
             unit=page.unit,
@@ -2932,8 +3049,9 @@ class DocumentPage(object):
 
     def __repr__(self):
         return (
-            "DocumentPage(page_number={}, angle={}, width={}, height={}, unit={}, lines={}, words={}, "
-            "selection_marks={}, spans={})".format(
+            "DocumentPage(kind={}, page_number={}, angle={}, width={}, height={}, unit={}, lines={}, "
+            "words={}, selection_marks={}, spans={})".format(
+                self.kind,
                 self.page_number,
                 self.angle,
                 self.width,
@@ -2954,6 +3072,7 @@ class DocumentPage(object):
         :rtype: dict
         """
         return {
+            "kind": self.kind,
             "page_number": self.page_number,
             "angle": self.angle,
             "width": self.width,
@@ -2983,6 +3102,7 @@ class DocumentPage(object):
         :rtype: DocumentPage
         """
         return cls(
+            kind=data.get("kind", None),
             page_number=data.get("page_number", None),
             angle=data.get("angle", None),
             width=data.get("width", None),
@@ -3011,8 +3131,8 @@ class DocumentSelectionMark(DocumentContentElement):
     :vartype state: str
     :ivar content: The text content - not returned for DocumentSelectionMark.
     :vartype content: str
-    :ivar bounding_box: Bounding box of the selection mark.
-    :vartype bounding_box: list[Point]
+    :ivar polygon: Bounding polygon of the selection mark.
+    :vartype polygon: list[~azure.ai.formrecognizer.Point]
     :ivar span: Location of the selection mark in the reading order concatenated
      content.
     :vartype span: ~azure.ai.formrecognizer.DocumentSpan
@@ -3029,7 +3149,7 @@ class DocumentSelectionMark(DocumentContentElement):
     def _from_generated(cls, mark):
         return cls(
             state=mark.state,
-            bounding_box=get_bounding_box(mark),
+            polygon=get_polygon(mark),
             span=DocumentSpan._from_generated(mark.span)
             if mark.span
             else None,
@@ -3037,12 +3157,12 @@ class DocumentSelectionMark(DocumentContentElement):
         )
 
     def __repr__(self):
-        return "DocumentSelectionMark(state={}, content={}, span={}, confidence={}, bounding_box={}, kind={})".format(
+        return "DocumentSelectionMark(state={}, content={}, span={}, confidence={}, polygon={}, kind={})".format(
             self.state,
             self.content,
             repr(self.span),
             self.confidence,
-            self.bounding_box,
+            self.polygon,
             self.kind,
         )
 
@@ -3056,8 +3176,8 @@ class DocumentSelectionMark(DocumentContentElement):
         return {
             "state": self.state,
             "content": self.content,
-            "bounding_box": [f.to_dict() for f in self.bounding_box]
-            if self.bounding_box
+            "polygon": [f.to_dict() for f in self.polygon]
+            if self.polygon
             else [],
             "span": self.span.to_dict() if self.span else None,
             "confidence": self.confidence,
@@ -3076,8 +3196,8 @@ class DocumentSelectionMark(DocumentContentElement):
         return cls(
             state=data.get("state", None),
             content=data.get("content", None),
-            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
-            if len(data.get("bounding_box", [])) > 0
+            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+            if len(data.get("polygon", [])) > 0
             else [],
             span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
             confidence=data.get("confidence", None),
@@ -3603,8 +3723,8 @@ class DocumentWord(DocumentContentElement):
 
     :ivar content: Text content of the word.
     :vartype content: str
-    :ivar bounding_box: Bounding box of the word.
-    :vartype bounding_box: list[Point]
+    :ivar polygon: Bounding polygon of the word.
+    :vartype polygon: list[~azure.ai.formrecognizer.Point]
     :ivar span: Location of the word in the reading order concatenated content.
     :vartype span: ~azure.ai.formrecognizer.DocumentSpan
     :ivar confidence: Confidence of correctly extracting the word.
@@ -3619,7 +3739,7 @@ class DocumentWord(DocumentContentElement):
     def _from_generated(cls, word):
         return cls(
             content=word.content,
-            bounding_box=get_bounding_box(word),
+            polygon=get_polygon(word),
             span=DocumentSpan._from_generated(word.span)
             if word.span
             else None,
@@ -3627,9 +3747,9 @@ class DocumentWord(DocumentContentElement):
         )
 
     def __repr__(self):
-        return "DocumentWord(content={}, bounding_box={}, span={}, confidence={}, kind={})".format(
+        return "DocumentWord(content={}, polygon={}, span={}, confidence={}, kind={})".format(
             self.content,
-            self.bounding_box,
+            self.polygon,
             repr(self.span),
             self.confidence,
             self.kind,
@@ -3644,8 +3764,8 @@ class DocumentWord(DocumentContentElement):
         """
         return {
             "content": self.content,
-            "bounding_box": [f.to_dict() for f in self.bounding_box]
-            if self.bounding_box
+            "polygon": [f.to_dict() for f in self.polygon]
+            if self.polygon
             else [],
             "span": self.span.to_dict() if self.span else None,
             "confidence": self.confidence,
@@ -3663,19 +3783,19 @@ class DocumentWord(DocumentContentElement):
         """
         return cls(
             content=data.get("content", None),
-            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
-            if len(data.get("bounding_box", [])) > 0
+            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+            if len(data.get("polygon", [])) > 0
             else [],
             span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
             confidence=data.get("confidence", None),
         )
 
 
-class AnalyzeResult(object):
+class AnalyzeResult(object):  # pylint: disable=too-many-instance-attributes
     """Document analysis result.
 
     :ivar api_version: API version used to produce this result. Possible values include:
-     "2022-01-30-preview".
+     "2022-06-30-preview".
     :vartype api_version: str
     :ivar model_id: Model ID used to produce this result.
     :vartype model_id: str
@@ -3686,13 +3806,13 @@ class AnalyzeResult(object):
     :vartype languages: list[~azure.ai.formrecognizer.DocumentLanguage]
     :ivar pages: Analyzed pages.
     :vartype pages: list[~azure.ai.formrecognizer.DocumentPage]
+    :ivar paragraphs: Extracted paragraphs.
+    :vartype paragraphs: list[~azure.ai.formrecognizer.DocumentParagraph]
     :ivar tables: Extracted tables.
     :vartype tables: list[~azure.ai.formrecognizer.DocumentTable]
     :ivar key_value_pairs: Extracted key-value pairs.
     :vartype key_value_pairs:
      list[~azure.ai.formrecognizer.DocumentKeyValuePair]
-    :ivar entities: Extracted entities.
-    :vartype entities: list[~azure.ai.formrecognizer.DocumentEntity]
     :ivar styles: Extracted font styles.
     :vartype styles: list[~azure.ai.formrecognizer.DocumentStyle]
     :ivar documents: Extracted documents.
@@ -3708,9 +3828,9 @@ class AnalyzeResult(object):
         self.content = kwargs.get("content", None)
         self.languages = kwargs.get("languages", None)
         self.pages = kwargs.get("pages", None)
+        self.paragraphs = kwargs.get("paragraphs", None)
         self.tables = kwargs.get("tables", None)
         self.key_value_pairs = kwargs.get("key_value_pairs", None)
-        self.entities = kwargs.get("entities", None)
         self.styles = kwargs.get("styles", None)
         self.documents = kwargs.get("documents", None)
 
@@ -3726,6 +3846,9 @@ class AnalyzeResult(object):
             pages=[DocumentPage._from_generated(page) for page in response.pages]
             if response.pages
             else [],
+            paragraphs=[DocumentParagraph._from_generated(paragraph) for paragraph in response.paragraphs]
+            if response.paragraphs
+            else [],
             tables=[DocumentTable._from_generated(table) for table in response.tables]
             if response.tables
             else [],
@@ -3734,11 +3857,6 @@ class AnalyzeResult(object):
                 for kv in response.key_value_pairs
             ]
             if response.key_value_pairs
-            else [],
-            entities=[
-                DocumentEntity._from_generated(entity) for entity in response.entities
-            ]
-            if response.entities
             else [],
             styles=[DocumentStyle._from_generated(style) for style in response.styles]
             if response.styles
@@ -3753,16 +3871,16 @@ class AnalyzeResult(object):
 
     def __repr__(self):
         return (
-            "AnalyzeResult(api_version={}, model_id={}, content={}, languages={}, pages={}, "
-            "tables={}, key_value_pairs={}, entities={}, styles={}, documents={})".format(
+            "AnalyzeResult(api_version={}, model_id={}, content={}, languages={}, pages={}, paragraphs={}, "
+            "tables={}, key_value_pairs={}, styles={}, documents={})".format(
                 self.api_version,
                 self.model_id,
                 self.content,
                 repr(self.languages),
                 repr(self.pages),
+                repr(self.paragraphs),
                 repr(self.tables),
                 repr(self.key_value_pairs),
-                repr(self.entities),
                 repr(self.styles),
                 repr(self.documents),
             )
@@ -3785,14 +3903,14 @@ class AnalyzeResult(object):
             "pages": [f.to_dict() for f in self.pages]
             if self.pages
             else [],
+            "paragraphs": [f.to_dict() for f in self.paragraphs]
+            if self.paragraphs
+            else [],
             "tables": [f.to_dict() for f in self.tables]
             if self.tables
             else [],
             "key_value_pairs": [f.to_dict() for f in self.key_value_pairs]
             if self.key_value_pairs
-            else [],
-            "entities": [f.to_dict() for f in self.entities]
-            if self.entities
             else [],
             "styles": [f.to_dict() for f in self.styles]
             if self.styles
@@ -3821,14 +3939,14 @@ class AnalyzeResult(object):
             pages=[DocumentPage.from_dict(v) for v in data.get("pages")]  # type: ignore
             if len(data.get("pages", [])) > 0
             else [],
+            paragraphs=[DocumentParagraph.from_dict(v) for v in data.get("paragraphs")]  # type: ignore
+            if len(data.get("paragraphs", [])) > 0
+            else [],
             tables=[DocumentTable.from_dict(v) for v in data.get("tables")]  # type: ignore
             if len(data.get("tables", [])) > 0
             else [],
             key_value_pairs=[DocumentKeyValuePair.from_dict(v) for v in data.get("key_value_pairs")]  # type: ignore
             if len(data.get("key_value_pairs", [])) > 0
-            else [],
-            entities=[DocumentEntity.from_dict(v) for v in data.get("entities")]  # type: ignore
-            if len(data.get("entities", [])) > 0
             else [],
             styles=[DocumentStyle.from_dict(v) for v in data.get("styles")]  # type: ignore
             if len(data.get("styles", [])) > 0
@@ -3860,9 +3978,9 @@ class DocumentModelInfo(object):
         self,
         **kwargs
     ):
-        self.model_id = kwargs.get('model_id', None)
-        self.description = kwargs.get('description', None)
-        self.created_on = kwargs.get('created_on', None)
+        self.model_id = kwargs.get("model_id", None)
+        self.description = kwargs.get("description", None)
+        self.created_on = kwargs.get("created_on", None)
         self.api_version = kwargs.get("api_version", None)
         self.tags = kwargs.get("tags", None)
 
@@ -3943,7 +4061,7 @@ class DocumentModel(DocumentModelInfo):
         **kwargs
     ):
         super(DocumentModel, self).__init__(**kwargs)
-        self.doc_types = kwargs.get('doc_types', None)
+        self.doc_types = kwargs.get("doc_types", None)
 
     def __repr__(self):
         return (
@@ -4027,10 +4145,10 @@ class DocTypeInfo(object):
         self,
         **kwargs
     ):
-        self.description = kwargs.get('description', None)
-        self.build_mode = kwargs.get('build_mode', None)
-        self.field_schema = kwargs.get('field_schema', None)
-        self.field_confidence = kwargs.get('field_confidence', None)
+        self.description = kwargs.get("description", None)
+        self.build_mode = kwargs.get("build_mode", None)
+        self.field_schema = kwargs.get("field_schema", None)
+        self.field_confidence = kwargs.get("field_confidence", None)
 
     def __repr__(self):
         return (
@@ -4086,30 +4204,30 @@ class DocTypeInfo(object):
 class AccountInfo(object):
     """Info regarding models under the Form Recognizer resource.
 
-    :ivar int model_count: Number of custom models in the current resource.
-    :ivar int model_limit: Maximum number of custom models supported in the current resource.
+    :ivar int document_model_count: Number of custom models in the current resource.
+    :ivar int document_model_limit: Maximum number of custom models supported in the current resource.
     """
 
     def __init__(
         self,
         **kwargs
     ):
-        self.model_count = kwargs.get('model_count', None)
-        self.model_limit = kwargs.get('model_limit', None)
+        self.document_model_count = kwargs.get("document_model_count", None)
+        self.document_model_limit = kwargs.get("document_model_limit", None)
 
     def __repr__(self):
         return (
-            "AccountInfo(model_count={}, model_limit={})".format(
-                self.model_count,
-                self.model_limit,
+            "AccountInfo(document_model_count={}, document_model_limit={})".format(
+                self.document_model_count,
+                self.document_model_limit,
             )
         )
 
     @classmethod
     def _from_generated(cls, info):
         return cls(
-            model_count=info.count,
-            model_limit=info.limit,
+            document_model_count=info.count,
+            document_model_limit=info.limit,
         )
 
 
@@ -4121,8 +4239,8 @@ class AccountInfo(object):
         :rtype: dict
         """
         return {
-            "model_count": self.model_count,
-            "model_limit": self.model_limit,
+            "document_model_count": self.document_model_count,
+            "document_model_limit": self.document_model_limit,
         }
 
     @classmethod
@@ -4135,8 +4253,8 @@ class AccountInfo(object):
         :rtype: AccountInfo
         """
         return cls(
-            model_count=data.get("model_count", None),
-            model_limit=data.get("model_limit", None),
+            document_model_count=data.get("document_model_count", None),
+            document_model_limit=data.get("document_model_limit", None),
         )
 
 
@@ -4159,11 +4277,11 @@ class DocumentAnalysisError(object):
         self,
         **kwargs
     ):
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.target = kwargs.get('target', None)
-        self.details = kwargs.get('details', None)
-        self.innererror = kwargs.get('innererror', None)
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
+        self.target = kwargs.get("target", None)
+        self.details = kwargs.get("details", None)
+        self.innererror = kwargs.get("innererror", None)
 
     def __repr__(self):
         return (
@@ -4236,9 +4354,9 @@ class DocumentAnalysisInnerError(object):
         **kwargs
     ):
 
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.innererror = kwargs.get('innererror', None)
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
+        self.innererror = kwargs.get("innererror", None)
 
     def __repr__(self):
         return (

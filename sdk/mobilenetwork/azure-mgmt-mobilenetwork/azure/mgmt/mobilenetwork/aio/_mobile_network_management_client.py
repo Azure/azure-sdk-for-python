@@ -26,30 +26,29 @@ class MobileNetworkManagementClient:
 
     :ivar attached_data_networks: AttachedDataNetworksOperations operations
     :vartype attached_data_networks:
-     mobile_network_management_client.aio.operations.AttachedDataNetworksOperations
+     azure.mgmt.mobilenetwork.aio.operations.AttachedDataNetworksOperations
     :ivar data_networks: DataNetworksOperations operations
-    :vartype data_networks: mobile_network_management_client.aio.operations.DataNetworksOperations
+    :vartype data_networks: azure.mgmt.mobilenetwork.aio.operations.DataNetworksOperations
     :ivar mobile_networks: MobileNetworksOperations operations
-    :vartype mobile_networks:
-     mobile_network_management_client.aio.operations.MobileNetworksOperations
+    :vartype mobile_networks: azure.mgmt.mobilenetwork.aio.operations.MobileNetworksOperations
     :ivar sites: SitesOperations operations
-    :vartype sites: mobile_network_management_client.aio.operations.SitesOperations
+    :vartype sites: azure.mgmt.mobilenetwork.aio.operations.SitesOperations
     :ivar sims: SimsOperations operations
-    :vartype sims: mobile_network_management_client.aio.operations.SimsOperations
+    :vartype sims: azure.mgmt.mobilenetwork.aio.operations.SimsOperations
     :ivar operations: Operations operations
-    :vartype operations: mobile_network_management_client.aio.operations.Operations
+    :vartype operations: azure.mgmt.mobilenetwork.aio.operations.Operations
     :ivar packet_core_control_planes: PacketCoreControlPlanesOperations operations
     :vartype packet_core_control_planes:
-     mobile_network_management_client.aio.operations.PacketCoreControlPlanesOperations
+     azure.mgmt.mobilenetwork.aio.operations.PacketCoreControlPlanesOperations
     :ivar packet_core_data_planes: PacketCoreDataPlanesOperations operations
     :vartype packet_core_data_planes:
-     mobile_network_management_client.aio.operations.PacketCoreDataPlanesOperations
+     azure.mgmt.mobilenetwork.aio.operations.PacketCoreDataPlanesOperations
     :ivar services: ServicesOperations operations
-    :vartype services: mobile_network_management_client.aio.operations.ServicesOperations
+    :vartype services: azure.mgmt.mobilenetwork.aio.operations.ServicesOperations
     :ivar sim_policies: SimPoliciesOperations operations
-    :vartype sim_policies: mobile_network_management_client.aio.operations.SimPoliciesOperations
+    :vartype sim_policies: azure.mgmt.mobilenetwork.aio.operations.SimPoliciesOperations
     :ivar slices: SlicesOperations operations
-    :vartype slices: mobile_network_management_client.aio.operations.SlicesOperations
+    :vartype slices: azure.mgmt.mobilenetwork.aio.operations.SlicesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.

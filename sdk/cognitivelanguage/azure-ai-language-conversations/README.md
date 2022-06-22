@@ -1,27 +1,26 @@
 [![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/azure-sdk-for-python.client?branchName=main)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46?branchName=main)
 
 # Azure Conversational Language Understanding client library for Python
-Conversational Language Understanding, aka **CLU** for short, is a cloud-based conversational AI service which is mainly used in bots to extract useful information from user utterance (natural language processing).
-The CLU **analyze api** encompasses two projects; conversation, and orchestration projects.
-You can use the "conversation" project if you want to extract intents (intention behind a user utterance) and custom entities.
-You can also use the "orchestration" project which orchestrates multiple language apps to get the best response (language apps like Question Answering, Luis, and Conversation).
+Conversational Language Understanding - aka **CLU** for short - is a cloud-based conversational AI service which provides many language understanding capabilities like:
+- Conversation App: It's used in extracting intents and entities in conversations
+- Workflow app: Acts like an orchestrator to select the best candidate to analyze conversations to get best response from apps like Qna, Luis, and Conversation App
+
 
 [Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][api_reference_documentation] | [Product documentation][conversationallanguage_docs] | [Samples][conversationallanguage_samples]
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 
 ## Getting started
 
 ### Prerequisites
 
-* Python 2.7, or 3.6 or later is required to use this package.
+* Python 3.6 or later is required to use this package.
 * An [Azure subscription][azure_subscription]
-* An existing Text Analytics resource
+* An existing Azure Language Service Resource
 
-> Note: the new unified Cognitive Language Services are not currently available for deployment.
 
 ### Install the package
 
@@ -32,7 +31,7 @@ pip install azure-ai-language-conversations
 ```
 
 ### Authenticate the client
-In order to interact with the CLU service, you'll need to create an instance of the [ConversationAnalysisClient][conversationanalysis_client_class] class. You will need an **endpoint**, and an **API key** to instantiate a client object. For more information regarding authenticating with Cognitive Services, see [Authenticate requests to Azure Cognitive Services][cognitive_auth].
+In order to interact with the CLU service, you'll need to create an instance of the [ConversationAnalysisClient][conversationanalysis_client_class] class, or [ConversationAuthoringClient][conversationauthoring_client_class] class. You will need an **endpoint**, and an **API key** to instantiate a client object. For more information regarding authenticating with Cognitive Services, see [Authenticate requests to Azure Cognitive Services][cognitive_auth].
 
 #### Get an API key
 You can get the **endpoint** and an **API key** from the Cognitive Services resource in the [Azure Portal][azure_portal].
@@ -56,163 +55,218 @@ credential = AzureKeyCredential("<api-key>")
 client = ConversationAnalysisClient(endpoint, credential)
 ```
 
+#### Create ConversationAuthoringClient
+Once you've determined your **endpoint** and **API key** you can instantiate a `ConversationAuthoringClient`:
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.conversations.authoring import ConversationAuthoringClient
+
+endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
+credential = AzureKeyCredential("<api-key>")
+client = ConversationAuthoringClient(endpoint, credential)
+```
+
 
 ## Key concepts
 
 ### ConversationAnalysisClient
 The [ConversationAnalysisClient][conversationanalysis_client_class] is the primary interface for making predictions using your deployed Conversations models. For asynchronous operations, an async `ConversationAnalysisClient` is in the `azure.ai.language.conversation.aio` namespace.
 
+### ConversationAnalysisClient
+You can use the [ConversationAuthoringClient][conversationauthoring_client_class] to interface with the [Azure Language Portal][azure_language_portal] to carry out authoring operations on your language resource/project. For example, you can use it to create a project, populate with training data, train, test, and deploy. For asynchronous operations, an async `ConversationAnalysisClient` is in the `azure.ai.language.conversation.authoring.aio` namespace.
+
 ## Examples
 The `azure-ai-language-conversation` client library provides both synchronous and asynchronous APIs.
 
 The following examples show common scenarios using the `client` [created above](#create-conversationanalysisclient).
 
-### Analyze a conversation with a Conversation App
-If you would like to extract custom intents and entities from a user utterance, you can call the `client.analyze_conversations()` method with your conversation's project name as follows:
+### Analyze Text with a Conversation App
+If you would like to extract custom intents and entities from a user utterance, you can call the `client.analyze_conversation()` method with your conversation's project name as follows:
+
 
 ```python
 # import libraries
 import os
 from azure.core.credentials import AzureKeyCredential
-
 from azure.ai.language.conversations import ConversationAnalysisClient
-from azure.ai.language.conversations.models import ConversationAnalysisOptions
 
 # get secrets
-conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
-conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-conv_project = os.environ["AZURE_CONVERSATIONS_PROJECT"]
-
-# prepare data
-query = "One california maki please."
-input = ConversationAnalysisOptions(
-    query=query
-)
+clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
+clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
+project_name = os.environ["AZURE_CONVERSATIONS_PROJECT_NAME"]
+deployment_name = os.environ["AZURE_CONVERSATIONS_DEPLOYMENT_NAME"]
 
 # analyze quey
-client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
+client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
 with client:
-    result = client.analyze_conversations(
-        input,
-        project_name=conv_project,
-        deployment_name='production'
-    )
-
-# view result
-print("query: {}".format(result.query))
-print("project kind: {}\n".format(result.prediction.project_kind))
-
-print("view top intent:")
-print("\ttop intent: {}".format(result.prediction.top_intent))
-print("\tcategory: {}".format(result.prediction.intents[0].category))
-print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
-
-print("view entities:")
-for entity in result.prediction.entities:
-    print("\tcategory: {}".format(entity.category))
-    print("\ttext: {}".format(entity.text))
-    print("\tconfidence score: {}".format(entity.confidence_score))
-```
-
-### Analyze conversation with a Orchestration App
-
-If you would like to pass the user utterance to your orchestrator (worflow) app, you can call the `client.analyze_conversations()` method with your orchestration's project name. The orchestrator project simply orchestrates the submitted user utterance between your language apps (Luis, Conversation, and Question Answering) to get the best response according to the user intent. See the next example:
-
-```python
-# import libraries
-import os
-from azure.core.credentials import AzureKeyCredential
-
-from azure.ai.language.conversations import ConversationAnalysisClient
-from azure.ai.language.conversations.models import ConversationAnalysisOptions
-
-# get secrets
-conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
-conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-orchestration_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
-
-# prepare data
-query = "How do you make sushi rice?",
-input = ConversationAnalysisOptions(
-    query=query
-)
-
-# analyze query
-client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
-with client:
-    result = client.analyze_conversations(
-        input,
-        project_name=orchestration_project,
-        deployment_name='production',
-    )
-
-# view result
-print("query: {}".format(result.query))
-print("project kind: {}\n".format(result.prediction.project_kind))
-
-print("view top intent:")
-print("\ttop intent: {}".format(result.prediction.top_intent))
-print("\tcategory: {}".format(result.prediction.intents[0].category))
-print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
-
-print("view Question Answering result:")
-print("\tresult: {}\n".format(result.prediction.intents[0].result))
-```
-
-### Analyze conversation with a Orchestration (Direct) App
-
-If you would like to use an orchestrator (orchestration) app, and you want to call a specific one of your language apps directly, you can call the `client.analyze_conversations()` method with your orchestration's project name and the diirect target name which corresponds to your one of you language apps as follows:
-
-```python
-# import libraries
-import os
-from azure.core.credentials import AzureKeyCredential
-
-from azure.ai.language.conversations import ConversationAnalysisClient
-from azure.ai.language.conversations.models import ConversationAnalysisOptions
-
-# get secrets
-conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
-conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-orchestration_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
-
-# prepare data
-query = "How do you make sushi rice?",
-target_intent = "SushiMaking"
-input = ConversationAnalysisOptions(
-    query=query,
-    direct_target=target_intent,
-    parameters={
-        "SushiMaking": QuestionAnsweringParameters(
-            calling_options={
-                "question": query,
-                "top": 1,
-                "confidenceScoreThreshold": 0.1
+    query = "Send an email to Carol about the tomorrow's demo"
+    result = client.analyze_conversation(
+        task={
+            "kind": "Conversation",
+            "analysisInput": {
+                "conversationItem": {
+                    "participantId": "1",
+                    "id": "1",
+                    "modality": "text",
+                    "language": "en",
+                    "text": query
+                },
+                "isLoggingEnabled": False
+            },
+            "parameters": {
+                "projectName": project_name,
+                "deploymentName": deployment_name,
+                "verbose": True
             }
-        )
-    }
-)
-
-# analyze query
-client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
-with client:
-    result = client.analyze_conversations(
-        input,
-        project_name=orchestration_project,
-        deployment_name='production',
+        }
     )
 
 # view result
-print("query: {}".format(result.query))
-print("project kind: {}\n".format(result.prediction.project_kind))
+print("query: {}".format(result["result"]["query"]))
+print("project kind: {}\n".format(result["result"]["prediction"]["projectKind"]))
 
-print("view top intent:")
-print("\ttop intent: {}".format(result.prediction.top_intent))
-print("\tcategory: {}".format(result.prediction.intents[0].category))
-print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
+print("top intent: {}".format(result["result"]["prediction"]["topIntent"]))
+print("category: {}".format(result["result"]["prediction"]["intents"][0]["category"]))
+print("confidence score: {}\n".format(result["result"]["prediction"]["intents"][0]["confidenceScore"]))
 
-print("view Question Answering result:")
-print("\tresult: {}\n".format(result.prediction.intents[0].result))
+print("entities:")
+for entity in result["result"]["prediction"]["entities"]:
+    print("\ncategory: {}".format(entity["category"]))
+    print("text: {}".format(entity["text"]))
+    print("confidence score: {}".format(entity["confidenceScore"]))
+    if "resolutions" in entity:
+        print("resolutions")
+        for resolution in entity["resolutions"]:
+            print("kind: {}".format(resolution["resolutionKind"]))
+            print("value: {}".format(resolution["value"]))
+    if "extraInformation" in entity:
+        print("extra info")
+        for data in entity["extraInformation"]:
+            print("kind: {}".format(data["extraInformationKind"]))
+            if data["extraInformationKind"] == "ListKey":
+                print("key: {}".format(data["key"]))
+            if data["extraInformationKind"] == "EntitySubtype":
+                print("value: {}".format(data["value"]))
+```
+
+### Analyze Text with an Orchestration App
+
+If you would like to pass the user utterance to your orchestrator (worflow) app, you can call the `client.analyze_conversation()` method with your orchestration's project name. The orchestrator project simply orchestrates the submitted user utterance between your language apps (Luis, Conversation, and Question Answering) to get the best response according to the user intent. See the next example:
+
+
+```python
+# import libraries
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.conversations import ConversationAnalysisClient
+
+# get secrets
+clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
+clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
+project_name = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT_NAME"]
+deployment_name = os.environ["AZURE_CONVERSATIONS_WORKFLOW_DEPLOYMENT_NAME"]
+
+# analyze query
+client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
+with client:
+    query = "Reserve a table for 2 at the Italian restaurant"
+    result = client.analyze_conversation(
+        task={
+            "kind": "Conversation",
+            "analysisInput": {
+                "conversationItem": {
+                    "participantId": "1",
+                    "id": "1",
+                    "modality": "text",
+                    "language": "en",
+                    "text": query
+                },
+                "isLoggingEnabled": False
+            },
+            "parameters": {
+                "projectName": project_name,
+                "deploymentName": deployment_name,
+                "verbose": True
+            }
+        }
+    )
+
+# view result
+print("query: {}".format(result["result"]["query"]))
+print("project kind: {}\n".format(result["result"]["prediction"]["projectKind"]))
+
+# top intent
+top_intent = result["result"]["prediction"]["topIntent"]
+print("top intent: {}".format(top_intent))
+top_intent_object = result["result"]["prediction"]["intents"][top_intent]
+print("confidence score: {}".format(top_intent_object["confidenceScore"]))
+print("project kind: {}".format(top_intent_object["targetProjectKind"]))
+
+if top_intent_object["targetProjectKind"] == "Luis":
+    print("\nluis response:")
+    luis_response = top_intent_object["result"]["prediction"]
+    print("top intent: {}".format(luis_response["topIntent"]))
+    print("\nentities:")
+    for entity in luis_response["entities"]:
+        print("\n{}".format(entity))
+```
+
+### Import a Conversation Project
+This sample shows a common scenario for the authoring part of the SDK
+
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.conversations.authoring import ConversationAuthoringClient
+
+clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
+clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
+
+project_name = "test_project"
+
+exported_project_assets = {
+    "projectKind": "Conversation",
+    "intents": [{"category": "Read"}, {"category": "Delete"}],
+    "entities": [{"category": "Sender"}],
+    "utterances": [
+        {
+            "text": "Open Blake's email",
+            "dataset": "Train",
+            "intent": "Read",
+            "entities": [{"category": "Sender", "offset": 5, "length": 5}],
+        },
+        {
+            "text": "Delete last email",
+            "language": "en-gb",
+            "dataset": "Test",
+            "intent": "Delete",
+            "entities": [],
+        },
+    ],
+}
+
+client = ConversationAuthoringClient(
+    clu_endpoint, AzureKeyCredential(clu_key)
+)
+poller = client.begin_import_project(
+    project_name=project_name,
+    project={
+        "assets": exported_project_assets,
+        "metadata": {
+            "projectKind": "Conversation",
+            "settings": {"confidenceThreshold": 0.7},
+            "projectName": "EmailApp",
+            "multilingual": True,
+            "description": "Trying out CLU",
+            "language": "en-us",
+        },
+        "projectFileVersion": "2022-05-01",
+    },
+)
+response = poller.result()
+print(response)
+
 ```
 
 
@@ -257,13 +311,13 @@ credential = AzureKeyCredential("<my-api-key>")
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
 client = ConversationAnalysisClient(endpoint, credential, logging_enable=True)
-result = client.analyze_conversations(...)
+result = client.analyze_conversation(...)
 ```
 
 Similarly, `logging_enable` can enable detailed logging for a single operation, even when it isn't enabled for the client:
 
 ```python
-result = client.analyze_conversations(..., logging_enable=True)
+result = client.analyze_conversation(..., logging_enable=True)
 ```
 
 ## Next steps
@@ -300,6 +354,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [conversationallanguage_refdocs]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations
 [conversationallanguage_docs]: https://docs.microsoft.com/azure/cognitive-services/language-service/conversational-language-understanding/overview
 [conversationallanguage_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/README.md
-[conversationanalysis_client_class]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/azure/ai/language/conversations/_conversation_analysis_client.py
+[conversationanalysis_client_class]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html#azure.ai.language.conversations.ConversationAnalysisClient
+[conversationauthoring_client_class]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html#azure.ai.language.conversations.ConversationAuthoringClient
 [azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
+[azure_language_portal]: https://language.cognitive.azure.com/home
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftemplate%2Fazure-template%2FREADME.png)

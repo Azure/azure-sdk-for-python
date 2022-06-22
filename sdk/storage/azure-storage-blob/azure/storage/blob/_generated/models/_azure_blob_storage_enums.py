@@ -6,27 +6,29 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+
+    P4 = "P4"
+    P6 = "P6"
+    P10 = "P10"
+    P15 = "P15"
+    P20 = "P20"
+    P30 = "P30"
+    P40 = "P40"
+    P50 = "P50"
+    P60 = "P60"
+    P70 = "P70"
+    P80 = "P80"
+    HOT = "Hot"
+    COOL = "Cool"
+    ARCHIVE = "Archive"
+    PREMIUM = "Premium"
+
+class AccessTierOptional(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     P4 = "P4"
     P6 = "P6"
@@ -43,7 +45,7 @@ class AccessTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     COOL = "Cool"
     ARCHIVE = "Archive"
 
-class AccessTierOptional(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccessTierRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     P4 = "P4"
     P6 = "P6"
@@ -60,24 +62,7 @@ class AccessTierOptional(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     COOL = "Cool"
     ARCHIVE = "Archive"
 
-class AccessTierRequired(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    P4 = "P4"
-    P6 = "P6"
-    P10 = "P10"
-    P15 = "P15"
-    P20 = "P20"
-    P30 = "P30"
-    P40 = "P40"
-    P50 = "P50"
-    P60 = "P60"
-    P70 = "P70"
-    P80 = "P80"
-    HOT = "Hot"
-    COOL = "Cool"
-    ARCHIVE = "Archive"
-
-class AccountKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccountKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     STORAGE = "Storage"
     BLOB_STORAGE = "BlobStorage"
@@ -85,54 +70,64 @@ class AccountKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FILE_STORAGE = "FileStorage"
     BLOCK_BLOB_STORAGE = "BlockBlobStorage"
 
-class ArchiveStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ArchiveStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     REHYDRATE_PENDING_TO_HOT = "rehydrate-pending-to-hot"
     REHYDRATE_PENDING_TO_COOL = "rehydrate-pending-to-cool"
 
-class BlobExpiryOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BlobCopySourceTags(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+
+    REPLACE = "REPLACE"
+    COPY = "COPY"
+
+class BlobExpiryOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NEVER_EXPIRE = "NeverExpire"
     RELATIVE_TO_CREATION = "RelativeToCreation"
     RELATIVE_TO_NOW = "RelativeToNow"
     ABSOLUTE = "Absolute"
 
-class BlobImmutabilityPolicyMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BlobImmutabilityPolicyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MUTABLE = "Mutable"
     UNLOCKED = "Unlocked"
     LOCKED = "Locked"
 
-class BlobType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BlobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     BLOCK_BLOB = "BlockBlob"
     PAGE_BLOB = "PageBlob"
     APPEND_BLOB = "AppendBlob"
 
-class BlockListType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BlockListType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     COMMITTED = "committed"
     UNCOMMITTED = "uncommitted"
     ALL = "all"
 
-class CopyStatusType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CopyStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     PENDING = "pending"
     SUCCESS = "success"
     ABORTED = "aborted"
     FAILED = "failed"
 
-class DeleteSnapshotsOptionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DeleteSnapshotsOptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     INCLUDE = "include"
     ONLY = "only"
 
-class EncryptionAlgorithmType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EncryptionAlgorithmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NONE = "None"
     AES256 = "AES256"
 
-class GeoReplicationStatusType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class FilterBlobsIncludeItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+
+    NONE = "none"
+    VERSIONS = "versions"
+
+class GeoReplicationStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the secondary location
     """
 
@@ -140,12 +135,12 @@ class GeoReplicationStatusType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     BOOTSTRAP = "bootstrap"
     UNAVAILABLE = "unavailable"
 
-class LeaseDurationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LeaseDurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     INFINITE = "infinite"
     FIXED = "fixed"
 
-class LeaseStateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LeaseStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AVAILABLE = "available"
     LEASED = "leased"
@@ -153,12 +148,12 @@ class LeaseStateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     BREAKING = "breaking"
     BROKEN = "broken"
 
-class LeaseStatusType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LeaseStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     LOCKED = "locked"
     UNLOCKED = "unlocked"
 
-class ListBlobsIncludeItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ListBlobsIncludeItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     COPY = "copy"
     DELETED = "deleted"
@@ -171,13 +166,13 @@ class ListBlobsIncludeItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LEGALHOLD = "legalhold"
     DELETEDWITHVERSIONS = "deletedwithversions"
 
-class ListContainersIncludeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ListContainersIncludeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     METADATA = "metadata"
     DELETED = "deleted"
     SYSTEM = "system"
 
-class PremiumPageBlobAccessTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PremiumPageBlobAccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     P4 = "P4"
     P6 = "P6"
@@ -191,12 +186,12 @@ class PremiumPageBlobAccessTier(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     P70 = "P70"
     P80 = "P80"
 
-class PublicAccessType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PublicAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CONTAINER = "container"
     BLOB = "blob"
 
-class QueryFormatType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class QueryFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The quick query format type.
     """
 
@@ -205,7 +200,7 @@ class QueryFormatType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ARROW = "arrow"
     PARQUET = "parquet"
 
-class RehydratePriority(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RehydratePriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """If an object is in rehydrate pending state then this header is returned with priority of
     rehydrate. Valid values are High and Standard.
     """
@@ -213,13 +208,13 @@ class RehydratePriority(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     HIGH = "High"
     STANDARD = "Standard"
 
-class SequenceNumberActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SequenceNumberActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MAX = "max"
     UPDATE = "update"
     INCREMENT = "increment"
 
-class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     STANDARD_LRS = "Standard_LRS"
     STANDARD_GRS = "Standard_GRS"
@@ -227,7 +222,7 @@ class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD_ZRS = "Standard_ZRS"
     PREMIUM_LRS = "Premium_LRS"
 
-class StorageErrorCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Error codes returned by the service
     """
 

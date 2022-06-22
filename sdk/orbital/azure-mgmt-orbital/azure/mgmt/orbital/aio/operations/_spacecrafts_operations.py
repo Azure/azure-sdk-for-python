@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,19 +7,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, AsyncIterable, Callable, Dict, Generic, List, Optional, TypeVar, Union
-import warnings
+from typing import Any, AsyncIterable, Callable, Dict, List, Optional, TypeVar, Union
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
-
+from ..._vendor import _convert_request
+from ...operations._spacecrafts_operations import build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_list_available_contacts_request_initial, build_list_by_subscription_request, build_list_request, build_update_tags_request_initial
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -29,7 +33,7 @@ class SpacecraftsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure_orbital.models
+    :type models: ~azure.mgmt.orbital.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -44,59 +48,74 @@ class SpacecraftsOperations:
         self._deserialize = deserializer
         self._config = config
 
+    @distributed_trace
     def list_by_subscription(
         self,
+        skiptoken: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.SpacecraftListResult"]:
         """Return list of spacecrafts.
 
+        :param skiptoken: An opaque string that the resource provider uses to skip over
+         previously-returned results. This is used when a previous list operation call returned a
+         partial result. If a previous response contains a nextLink element, the value of the nextLink
+         element will include a skiptoken parameter that specifies a starting point to use for
+         subsequent calls. Default value is None.
+        :type skiptoken: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either SpacecraftListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure_orbital.models.SpacecraftListResult]
+        :return: An iterator like instance of either SpacecraftListResult or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.orbital.models.SpacecraftListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SpacecraftListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-04-preview"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_by_subscription.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    skiptoken=skiptoken,
+                    template_url=self.list_by_subscription.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    skiptoken=skiptoken,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('SpacecraftListResult', pipeline_response)
+            deserialized = self._deserialize("SpacecraftListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -105,68 +124,85 @@ class SpacecraftsOperations:
 
             return pipeline_response
 
+
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Orbital/spacecrafts'}  # type: ignore
+    list_by_subscription.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.Orbital/spacecrafts"}  # type: ignore
 
+    @distributed_trace
     def list(
         self,
         resource_group_name: str,
+        skiptoken: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.SpacecraftListResult"]:
         """Return list of spacecrafts.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
+        :param skiptoken: An opaque string that the resource provider uses to skip over
+         previously-returned results. This is used when a previous list operation call returned a
+         partial result. If a previous response contains a nextLink element, the value of the nextLink
+         element will include a skiptoken parameter that specifies a starting point to use for
+         subsequent calls. Default value is None.
+        :type skiptoken: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either SpacecraftListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure_orbital.models.SpacecraftListResult]
+        :return: An iterator like instance of either SpacecraftListResult or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.orbital.models.SpacecraftListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SpacecraftListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-04-preview"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    skiptoken=skiptoken,
+                    template_url=self.list.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    skiptoken=skiptoken,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('SpacecraftListResult', pipeline_response)
+            deserialized = self._deserialize("SpacecraftListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -175,11 +211,13 @@ class SpacecraftsOperations:
 
             return pipeline_response
 
+
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Orbital/spacecrafts'}  # type: ignore
+    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Orbital/spacecrafts"}  # type: ignore
 
+    @distributed_trace_async
     async def get(
         self,
         resource_group_name: str,
@@ -194,7 +232,7 @@ class SpacecraftsOperations:
         :type spacecraft_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Spacecraft, or the result of cls(response)
-        :rtype: ~azure_orbital.models.Spacecraft
+        :rtype: ~azure.mgmt.orbital.models.Spacecraft
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Spacecraft"]
@@ -202,28 +240,25 @@ class SpacecraftsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-04-preview"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'spacecraftName': self._serialize.url("spacecraft_name", spacecraft_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        
+        request = build_get_request(
+            resource_group_name=resource_group_name,
+            subscription_id=self._config.subscription_id,
+            spacecraft_name=spacecraft_name,
+            api_version=api_version,
+            template_url=self.get.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -236,7 +271,9 @@ class SpacecraftsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Orbital/spacecrafts/{spacecraftName}'}  # type: ignore
+
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Orbital/spacecrafts/{spacecraftName}"}  # type: ignore
+
 
     async def _create_or_update_initial(
         self,
@@ -244,6 +281,7 @@ class SpacecraftsOperations:
         spacecraft_name: str,
         location: str,
         tags: Optional[Dict[str, str]] = None,
+        provisioning_state: Optional[Union[str, "_models.SpacecraftsPropertiesProvisioningState"]] = None,
         norad_id: Optional[str] = None,
         title_line: Optional[str] = None,
         tle_line1: Optional[str] = None,
@@ -257,58 +295,60 @@ class SpacecraftsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _parameters = _models.Spacecraft(tags=tags, location=location, norad_id=norad_id, title_line=title_line, tle_line1=tle_line1, tle_line2=tle_line2, links=links)
-        api_version = "2021-04-04-preview"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
+        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        # Construct URL
-        url = self._create_or_update_initial.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'spacecraftName': self._serialize.url("spacecraft_name", spacecraft_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        _parameters = _models.Spacecraft(tags=tags, location=location, provisioning_state=provisioning_state, norad_id=norad_id, title_line=title_line, tle_line1=tle_line1, tle_line2=tle_line2, links=links)
+        _json = self._serialize.body(_parameters, 'Spacecraft')
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        request = build_create_or_update_request_initial(
+            resource_group_name=resource_group_name,
+            subscription_id=self._config.subscription_id,
+            spacecraft_name=spacecraft_name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self._create_or_update_initial.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'Spacecraft')
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
         if response.status_code == 200:
             deserialized = self._deserialize('Spacecraft', pipeline_response)
 
         if response.status_code == 201:
+            response_headers['Azure-AsyncOperation']=self._deserialize('str', response.headers.get('Azure-AsyncOperation'))
+            
             deserialized = self._deserialize('Spacecraft', pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Orbital/spacecrafts/{spacecraftName}'}  # type: ignore
 
+    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Orbital/spacecrafts/{spacecraftName}"}  # type: ignore
+
+
+    @distributed_trace_async
     async def begin_create_or_update(
         self,
         resource_group_name: str,
         spacecraft_name: str,
         location: str,
         tags: Optional[Dict[str, str]] = None,
+        provisioning_state: Optional[Union[str, "_models.SpacecraftsPropertiesProvisioningState"]] = None,
         norad_id: Optional[str] = None,
         title_line: Optional[str] = None,
         tle_line1: Optional[str] = None,
@@ -324,28 +364,37 @@ class SpacecraftsOperations:
         :type spacecraft_name: str
         :param location: The geo-location where the resource lives.
         :type location: str
-        :param tags: Resource tags.
+        :param tags: Resource tags. Default value is None.
         :type tags: dict[str, str]
-        :param norad_id: NORAD ID of the spacecraft.
+        :param provisioning_state: The current state of the resource's creation, deletion, or
+         modification. Default value is None.
+        :type provisioning_state: str or
+         ~azure.mgmt.orbital.models.SpacecraftsPropertiesProvisioningState
+        :param norad_id: NORAD ID of the spacecraft. Default value is None.
         :type norad_id: str
-        :param title_line: Title line of Two Line Element (TLE).
+        :param title_line: Title line of Two Line Element (TLE). Default value is None.
         :type title_line: str
-        :param tle_line1: Line 1 of Two Line Element (TLE).
+        :param tle_line1: Line 1 of Two Line Element (TLE). Default value is None.
         :type tle_line1: str
-        :param tle_line2: Line 2 of Two Line Element (TLE).
+        :param tle_line2: Line 2 of Two Line Element (TLE). Default value is None.
         :type tle_line2: str
-        :param links: Links of the Spacecraft.
-        :type links: list[~azure_orbital.models.SpacecraftLink]
+        :param links: Links of the Spacecraft. Default value is None.
+        :type links: list[~azure.mgmt.orbital.models.SpacecraftLink]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either Spacecraft or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure_orbital.models.Spacecraft]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either Spacecraft or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.orbital.models.Spacecraft]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Spacecraft"]
         lro_delay = kwargs.pop(
@@ -359,32 +408,28 @@ class SpacecraftsOperations:
                 spacecraft_name=spacecraft_name,
                 location=location,
                 tags=tags,
+                provisioning_state=provisioning_state,
                 norad_id=norad_id,
                 title_line=title_line,
                 tle_line1=tle_line1,
                 tle_line2=tle_line2,
                 links=links,
+                api_version=api_version,
+                content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
-
         kwargs.pop('error_map', None)
-        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
             deserialized = self._deserialize('Spacecraft', pipeline_response)
-
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'spacecraftName': self._serialize.url("spacecraft_name", spacecraft_name, 'str'),
-        }
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -394,11 +439,11 @@ class SpacecraftsOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
-        else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Orbital/spacecrafts/{spacecraftName}'}  # type: ignore
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    async def _delete_initial(
+    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Orbital/spacecrafts/{spacecraftName}"}  # type: ignore
+
+    async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         spacecraft_name: str,
@@ -409,40 +454,44 @@ class SpacecraftsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-04-preview"
-        accept = "application/json"
 
-        # Construct URL
-        url = self._delete_initial.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'spacecraftName': self._serialize.url("spacecraft_name", spacecraft_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        
+        request = build_delete_request_initial(
+            resource_group_name=resource_group_name,
+            subscription_id=self._config.subscription_id,
+            spacecraft_name=spacecraft_name,
+            api_version=api_version,
+            template_url=self._delete_initial.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+            
+
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, response_headers)
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Orbital/spacecrafts/{spacecraftName}'}  # type: ignore
+    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Orbital/spacecrafts/{spacecraftName}"}  # type: ignore
 
-    async def begin_delete(
+
+    @distributed_trace_async
+    async def begin_delete(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         spacecraft_name: str,
@@ -456,14 +505,17 @@ class SpacecraftsOperations:
         :type spacecraft_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -475,24 +527,18 @@ class SpacecraftsOperations:
             raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
                 spacecraft_name=spacecraft_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
-
         kwargs.pop('error_map', None)
-        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'spacecraftName': self._serialize.url("spacecraft_name", spacecraft_name, 'str'),
-        }
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -502,17 +548,76 @@ class SpacecraftsOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
-        else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Orbital/spacecrafts/{spacecraftName}'}  # type: ignore
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    async def update_tags(
+    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Orbital/spacecrafts/{spacecraftName}"}  # type: ignore
+
+    async def _update_tags_initial(
         self,
         resource_group_name: str,
         spacecraft_name: str,
         parameters: "_models.TagsObject",
         **kwargs: Any
-    ) -> "_models.Spacecraft":
+    ) -> Optional["_models.Spacecraft"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Spacecraft"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(parameters, 'TagsObject')
+
+        request = build_update_tags_request_initial(
+            resource_group_name=resource_group_name,
+            subscription_id=self._config.subscription_id,
+            spacecraft_name=spacecraft_name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self._update_tags_initial.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = None
+        response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize('Spacecraft', pipeline_response)
+
+        if response.status_code == 202:
+            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+            
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
+
+    _update_tags_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Orbital/spacecrafts/{spacecraftName}"}  # type: ignore
+
+
+    @distributed_trace_async
+    async def begin_update_tags(
+        self,
+        resource_group_name: str,
+        spacecraft_name: str,
+        parameters: "_models.TagsObject",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.Spacecraft"]:
         """Updates the specified spacecraft tags.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -520,126 +625,136 @@ class SpacecraftsOperations:
         :param spacecraft_name: Spacecraft ID.
         :type spacecraft_name: str
         :param parameters: Parameters supplied to update spacecraft tags.
-        :type parameters: ~azure_orbital.models.TagsObject
+        :type parameters: ~azure.mgmt.orbital.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Spacecraft, or the result of cls(response)
-        :rtype: ~azure_orbital.models.Spacecraft
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either Spacecraft or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.orbital.models.Spacecraft]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Spacecraft"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-04-preview"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._update_tags_initial(
+                resource_group_name=resource_group_name,
+                spacecraft_name=spacecraft_name,
+                parameters=parameters,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
 
-        # Construct URL
-        url = self.update_tags.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'spacecraftName': self._serialize.url("spacecraft_name", spacecraft_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = self._deserialize('Spacecraft', pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'TagsObject')
-        body_content_kwargs['content'] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('Spacecraft', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Orbital/spacecrafts/{spacecraftName}'}  # type: ignore
+    begin_update_tags.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Orbital/spacecrafts/{spacecraftName}"}  # type: ignore
 
     async def _list_available_contacts_initial(
         self,
         resource_group_name: str,
         spacecraft_name: str,
-        contact_profile: "_models.ResourceReference",
+        contact_profile: "_models.ContactParametersContactProfile",
         ground_station_name: str,
         start_time: datetime.datetime,
         end_time: datetime.datetime,
         **kwargs: Any
-    ) -> "_models.AvailableContactsListResult":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailableContactsListResult"]
+    ) -> Optional["_models.AvailableContactsListResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.AvailableContactsListResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
         _parameters = _models.ContactParameters(contact_profile=contact_profile, ground_station_name=ground_station_name, start_time=start_time, end_time=end_time)
-        api_version = "2021-04-04-preview"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
+        _json = self._serialize.body(_parameters, 'ContactParameters')
 
-        # Construct URL
-        url = self._list_available_contacts_initial.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'spacecraftName': self._serialize.url("spacecraft_name", spacecraft_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        request = build_list_available_contacts_request_initial(
+            resource_group_name=resource_group_name,
+            subscription_id=self._config.subscription_id,
+            spacecraft_name=spacecraft_name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self._list_available_contacts_initial.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'ContactParameters')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('AvailableContactsListResult', pipeline_response)
+        deserialized = None
+        response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize('AvailableContactsListResult', pipeline_response)
+
+        if response.status_code == 202:
+            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+            
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    _list_available_contacts_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Orbital/spacecrafts/{spacecraftName}/listAvailableContacts'}  # type: ignore
 
+    _list_available_contacts_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Orbital/spacecrafts/{spacecraftName}/listAvailableContacts"}  # type: ignore
+
+
+    @distributed_trace_async
     async def begin_list_available_contacts(
         self,
         resource_group_name: str,
         spacecraft_name: str,
-        contact_profile: "_models.ResourceReference",
+        contact_profile: "_models.ContactParametersContactProfile",
         ground_station_name: str,
         start_time: datetime.datetime,
         end_time: datetime.datetime,
         **kwargs: Any
-    ) -> AsyncLROPoller["_models.AvailableContactsListResult"]:
+    ) -> AsyncLROPoller[AsyncItemPaged["_models.AvailableContactsListResult"]]:
         """Return list of available contacts.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -647,7 +762,7 @@ class SpacecraftsOperations:
         :param spacecraft_name: Spacecraft ID.
         :type spacecraft_name: str
         :param contact_profile: The reference to the contact profile resource.
-        :type contact_profile: ~azure_orbital.models.ResourceReference
+        :type contact_profile: ~azure.mgmt.orbital.models.ContactParametersContactProfile
         :param ground_station_name: Name of Azure Ground Station.
         :type ground_station_name: str
         :param start_time: Start time of a contact.
@@ -656,14 +771,86 @@ class SpacecraftsOperations:
         :type end_time: ~datetime.datetime
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either AvailableContactsListResult or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure_orbital.models.AvailableContactsListResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns an iterator like instance of either
+         AvailableContactsListResult or the result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.orbital.models.AvailableContactsListResult]]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
+
+        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailableContactsListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        def prepare_request(next_link=None):
+            if not next_link:
+                _parameters = _models.ContactParameters(contact_profile=contact_profile, ground_station_name=ground_station_name, start_time=start_time, end_time=end_time)
+                _json = self._serialize.body(_parameters, 'ContactParameters')
+                
+                request = build_list_available_contacts_request_initial(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    spacecraft_name=spacecraft_name,
+                    api_version=api_version,
+                    content_type=content_type,
+                    json=_json,
+                    template_url=self.begin_list_available_contacts.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+
+            else:
+                _parameters = _models.ContactParameters(contact_profile=contact_profile, ground_station_name=ground_station_name, start_time=start_time, end_time=end_time)
+                _json = self._serialize.body(_parameters, 'ContactParameters')
+                
+                request = build_list_available_contacts_request_initial(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    spacecraft_name=spacecraft_name,
+                    api_version=api_version,
+                    content_type=content_type,
+                    json=_json,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("AvailableContactsListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailableContactsListResult"]
         lro_delay = kwargs.pop(
@@ -679,27 +866,24 @@ class SpacecraftsOperations:
                 ground_station_name=ground_station_name,
                 start_time=start_time,
                 end_time=end_time,
+                api_version=api_version,
+                content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
-
         kwargs.pop('error_map', None)
-        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('AvailableContactsListResult', pipeline_response)
+            async def internal_get_next(next_link=None):
+                if next_link is None:
+                    return pipeline_response
+                return await get_next(next_link)
 
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
+            return AsyncItemPaged(
+                internal_get_next, extract_data
+            )
 
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'spacecraftName': self._serialize.url("spacecraft_name", spacecraft_name, 'str'),
-        }
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -709,6 +893,7 @@ class SpacecraftsOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
-        else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_list_available_contacts.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Orbital/spacecrafts/{spacecraftName}/listAvailableContacts'}  # type: ignore
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_list_available_contacts.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Orbital/spacecrafts/{spacecraftName}/listAvailableContacts"}  # type: ignore
+

@@ -49,7 +49,7 @@ setup(
     classifiers=[
         '{{classifier}}',
         'Programming Language :: Python',
-        "Programming Language :: Python :: 3 :: Only",
+        'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
@@ -66,6 +66,10 @@ setup(
         '{{ nspkg_name }}',
         {%- endfor %}
     ]),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     install_requires=[
         'msrest>=0.6.21',
         {%- if need_msrestazure %}
@@ -73,10 +77,10 @@ setup(
         {%- endif %}
         'azure-common~=1.1',
         {%- if need_azurecore %}
-        'azure-core>=1.6.0,<2.0.0',
+        'azure-core>=1.23.0,<2.0.0',
         {%- endif %}
         {%- if need_azuremgmtcore %}
-        'azure-mgmt-core>=1.3.0,<2.0.0',
+        'azure-mgmt-core>=1.3.1,<2.0.0',
         {%- endif %}
     ],
     python_requires=">=3.6"

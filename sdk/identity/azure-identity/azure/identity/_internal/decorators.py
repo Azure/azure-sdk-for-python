@@ -4,6 +4,8 @@
 # ------------------------------------
 import functools
 import logging
+import json
+import base64
 
 from six import raise_from
 from azure.core.exceptions import ClientAuthenticationError
@@ -31,8 +33,24 @@ def log_get_token(class_name):
                 _LOGGER.log(
                     logging.DEBUG if within_credential_chain.get() else logging.INFO, "%s succeeded", qualified_name
                 )
+                if _LOGGER.isEnabledFor(logging.DEBUG):
+                    try:
+                        base64_meta_data = token.token.split(".")[1].encode("utf-8") + b'=='
+                        json_bytes = base64.decodebytes(base64_meta_data)
+                        json_string = json_bytes.decode('utf-8')
+                        json_dict = json.loads(json_string)
+                        upn = json_dict.get('upn', 'unavailableUpn')
+                        log_string = '[Authenticated account] Client ID: {}. Tenant ID: {}. User Principal Name: {}. ' \
+                                     'Object ID (user): {}'.format(json_dict['appid'],
+                                                                   json_dict['tid'],
+                                                                   upn,
+                                                                   json_dict['oid']
+                                                                   )
+                        _LOGGER.debug(log_string)
+                    except Exception:     # pylint: disable=broad-except
+                        _LOGGER.debug("Fail to log the account information")
                 return token
-            except Exception as ex:
+            except Exception as ex:   # pylint: disable=broad-except
                 _LOGGER.log(
                     logging.DEBUG if within_credential_chain.get() else logging.WARNING,
                     "%s failed: %s",

@@ -147,7 +147,7 @@ This section contains code snippets covering common tasks:
 * [Retrieve a Certificate](#retrieve-a-certificate "Retrieve a Certificate")
 * [Update Properties of an existing Certificate](#update-properties-of-an-existing-certificate "Update Properties of an existing Certificate")
 * [Delete a Certificate](#delete-a-certificate "Delete a Certificate")
-* [List Properites of Certificates](#list-properties-of-certificates "List Properties of Certificates")
+* [List Properties of Certificates](#list-properties-of-certificates "List Properties of Certificates")
 * [Asynchronously create a Certificate](#asynchronously-create-a-certificate "Asynchronously create a Certificate")
 * [Asynchronously list properties of Certificates](#asynchronously-list-properties-of-certificates "Asynchronously list properties of Certificates")
 
@@ -335,6 +335,11 @@ async for certificate in certificates:
 ```
 
 ## Troubleshooting
+
+See the `azure-keyvault-certificates`
+[troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates/TROUBLESHOOTING.md)
+for details on how to diagnose various failure scenarios.
+
 ### General
 Key Vault clients raise exceptions defined in [azure-core][azure_core_exceptions].
 For example, if you try to get a key that doesn't exist in the vault, [CertificateClient][certificate_client_docs]

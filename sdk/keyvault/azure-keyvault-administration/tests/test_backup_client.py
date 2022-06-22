@@ -2,53 +2,59 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from functools import partial
 import time
+from functools import partial
 
+import pytest
 from azure.core.exceptions import ResourceExistsError
 from azure.keyvault.administration._internal import parse_folder_url
-import pytest
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import AdministrationTestCase, backup_client_setup, get_decorator
-
+from _test_case import KeyVaultBackupClientPreparer, get_decorator
 
 all_api_versions = get_decorator()
 
 
-class BackupClientTests(AdministrationTestCase, KeyVaultTestCase):
-    def __init__(self, *args, **kwargs):
-        super(BackupClientTests, self).__init__(*args, match_body=False, **kwargs)
+class TestBackupClientTests(KeyVaultTestCase):
 
-    @all_api_versions()
-    @backup_client_setup
-    def test_full_backup_and_restore(self, client):
-        if self.is_live:
-            pytest.skip("SAS token failures are causing sev2 alerts for service team")
+    def create_key_client(self, vault_uri, **kwargs):
+        from azure.keyvault.keys import KeyClient
+        credential = self.get_credential(KeyClient)
+        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs )
 
+    @pytest.mark.parametrize("api_version", all_api_versions)
+    @KeyVaultBackupClientPreparer()
+    @recorded_by_proxy
+    def test_full_backup_and_restore(self, client, **kwargs):
+        set_bodiless_matcher()
         # backup the vault
-        backup_poller = client.begin_backup(self.container_uri, self.sas_token)
+        container_uri = kwargs.pop("container_uri")
+        sas_token = kwargs.pop("sas_token")
+        backup_poller = client.begin_backup(container_uri, sas_token)
         backup_operation = backup_poller.result()
         assert backup_operation.folder_url
 
         # restore the backup
-        restore_poller = client.begin_restore(backup_operation.folder_url, self.sas_token)
+        restore_poller = client.begin_restore(backup_operation.folder_url, sas_token)
         restore_poller.wait()
         if self.is_live:
             time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
-    @all_api_versions()
-    @backup_client_setup
-    def test_full_backup_and_restore_rehydration(self, client):
-        if not self.is_live:
-            pytest.skip("Poller requests are incompatible with vcrpy in playback")
+    @pytest.mark.parametrize("api_version", all_api_versions)
+    @KeyVaultBackupClientPreparer()
+    @recorded_by_proxy
+    def test_full_backup_and_restore_rehydration(self, client, **kwargs):
+        set_bodiless_matcher()
+        container_uri = kwargs.pop("container_uri")
+        sas_token = kwargs.pop("sas_token")
 
         # backup the vault
-        backup_poller = client.begin_backup(self.container_uri, self.sas_token)
+        backup_poller = client.begin_backup(container_uri, sas_token)
 
         # create a new poller from a continuation token
         token = backup_poller.continuation_token()
-        rehydrated = client.begin_backup(self.container_uri, self.sas_token, continuation_token=token)
+        rehydrated = client.begin_backup(container_uri, sas_token, continuation_token=token)
 
         rehydrated_operation = rehydrated.result()
         assert rehydrated_operation.folder_url
@@ -56,34 +62,37 @@ class BackupClientTests(AdministrationTestCase, KeyVaultTestCase):
         assert backup_operation.folder_url == rehydrated_operation.folder_url
 
         # restore the backup
-        restore_poller = client.begin_restore(backup_operation.folder_url, self.sas_token)
+        restore_poller = client.begin_restore(backup_operation.folder_url, sas_token)
 
         # create a new poller from a continuation token
         token = restore_poller.continuation_token()
-        rehydrated = client.begin_restore(backup_operation.folder_url, self.sas_token, continuation_token=token)
+        rehydrated = client.begin_restore(backup_operation.folder_url, sas_token, continuation_token=token)
 
         rehydrated.wait()
         restore_poller.wait()
         if self.is_live:
             time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
-    @all_api_versions()
-    @backup_client_setup
-    def test_selective_key_restore(self, client):
-        if self.is_live:
-            pytest.skip("SAS token failures are causing sev2 alerts for service team")
-
+    @pytest.mark.parametrize("api_version", all_api_versions)
+    @KeyVaultBackupClientPreparer()
+    @recorded_by_proxy
+    def test_selective_key_restore(self, client, **kwargs):
+        set_bodiless_matcher()
         # create a key to selectively restore
-        key_client = self.create_key_client(self.managed_hsm_url)
+        managed_hsm_url = kwargs.pop("managed_hsm_url")
+        key_client = self.create_key_client(managed_hsm_url)
         key_name = self.get_resource_name("selective-restore-test-key")
         key_client.create_rsa_key(key_name)
 
+
         # backup the vault
-        backup_poller = client.begin_backup(self.container_uri, self.sas_token)
+        container_uri = kwargs.pop("container_uri")
+        sas_token = kwargs.pop("sas_token")
+        backup_poller = client.begin_backup(container_uri, sas_token)
         backup_operation = backup_poller.result()
 
         # restore the key
-        restore_poller = client.begin_restore(backup_operation.folder_url, self.sas_token, key_name=key_name)
+        restore_poller = client.begin_restore(backup_operation.folder_url, sas_token, key_name=key_name)
         restore_poller.wait()
 
         # delete the key
@@ -94,24 +103,29 @@ class BackupClientTests(AdministrationTestCase, KeyVaultTestCase):
         if self.is_live:
             time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
-    @all_api_versions()
-    @backup_client_setup
-    def test_backup_client_polling(self, client):
-        if not self.is_live:
-            pytest.skip("Poller requests are incompatible with vcrpy in playback")
+    @pytest.mark.parametrize("api_version", all_api_versions)
+    @KeyVaultBackupClientPreparer()
+    @recorded_by_proxy
+    def test_backup_client_polling(self, client, **kwargs):
+        set_bodiless_matcher()
+        # if not self.is_live:
+        #     pytest.skip("Poller requests are incompatible with vcrpy in playback")
 
         # backup the vault
-        backup_poller = client.begin_backup(self.container_uri, self.sas_token)
+        container_uri = kwargs.pop("container_uri")
+        sas_token = kwargs.pop("sas_token")
+        backup_poller = client.begin_backup(container_uri, sas_token)
 
         # create a new poller from a continuation token
         token = backup_poller.continuation_token()
-        rehydrated = client.begin_backup(self.container_uri, self.sas_token, continuation_token=token)
+        rehydrated = client.begin_backup(container_uri, sas_token, continuation_token=token)
 
         # check that pollers and polling methods behave as expected
-        assert backup_poller.status() == "InProgress"
-        assert not backup_poller.done() or backup_poller.polling_method().finished()
-        assert rehydrated.status() == "InProgress"
-        assert not rehydrated.done() or rehydrated.polling_method().finished()
+        if self.is_live:
+            assert backup_poller.status() == "InProgress"
+            assert not backup_poller.done() or backup_poller.polling_method().finished()
+            assert rehydrated.status() == "InProgress"
+            assert not rehydrated.done() or rehydrated.polling_method().finished()
 
         backup_operation = backup_poller.result()
         assert backup_poller.status() == "Succeeded" and backup_poller.polling_method().status() == "Succeeded"
@@ -120,22 +134,23 @@ class BackupClientTests(AdministrationTestCase, KeyVaultTestCase):
         assert backup_operation.folder_url == rehydrated_operation.folder_url
 
         # rehydrate a poller with a continuation token of a completed operation
-        late_rehydrated = client.begin_backup(self.container_uri, self.sas_token, continuation_token=token)
+        late_rehydrated = client.begin_backup(container_uri, sas_token, continuation_token=token)
         assert late_rehydrated.status() == "Succeeded"
         late_rehydrated.wait()
 
         # restore the backup
-        restore_poller = client.begin_restore(backup_operation.folder_url, self.sas_token)
+        restore_poller = client.begin_restore(backup_operation.folder_url, sas_token)
 
         # create a new poller from a continuation token
         token = restore_poller.continuation_token()
-        rehydrated = client.begin_restore(backup_operation.folder_url, self.sas_token, continuation_token=token)
+        rehydrated = client.begin_restore(backup_operation.folder_url, sas_token, continuation_token=token)
 
         # check that pollers and polling methods behave as expected
-        assert restore_poller.status() == "InProgress"
-        assert not restore_poller.done() or restore_poller.polling_method().finished()
-        assert rehydrated.status() == "InProgress"
-        assert not rehydrated.done() or rehydrated.polling_method().finished()
+        if self.is_live:
+            assert restore_poller.status() == "InProgress"
+            assert not restore_poller.done() or restore_poller.polling_method().finished()
+            assert rehydrated.status() == "InProgress"
+            assert not rehydrated.done() or rehydrated.polling_method().finished()
 
         rehydrated.wait()
         assert rehydrated.status() == "Succeeded" and rehydrated.polling_method().status() == "Succeeded"

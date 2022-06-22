@@ -5,3 +5,4 @@ include *.md
 include {{ init_name }}
 {%- endfor %}
 include LICENSE
+include {{ package_name.replace('-', '/') }}/py.typed

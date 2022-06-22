@@ -7,21 +7,25 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional
+from typing import List, Optional, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AclFailedEntry(msrest.serialization.Model):
     """AclFailedEntry.
 
-    :param name:
-    :type name: str
-    :param type:
-    :type type: str
-    :param error_message:
-    :type error_message: str
+    :ivar name:
+    :vartype name: str
+    :ivar type:
+    :vartype type: str
+    :ivar error_message:
+    :vartype error_message: str
     """
 
     _attribute_map = {
@@ -38,6 +42,14 @@ class AclFailedEntry(msrest.serialization.Model):
         error_message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name:
+        :paramtype name: str
+        :keyword type:
+        :paramtype type: str
+        :keyword error_message:
+        :paramtype error_message: str
+        """
         super(AclFailedEntry, self).__init__(**kwargs)
         self.name = name
         self.type = type
@@ -49,10 +61,10 @@ class BlobHierarchyListSegment(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param blob_prefixes:
-    :type blob_prefixes: list[~azure.storage.filedatalake.models.BlobPrefix]
-    :param blob_items: Required.
-    :type blob_items: list[~azure.storage.filedatalake.models.BlobItemInternal]
+    :ivar blob_prefixes:
+    :vartype blob_prefixes: list[~azure.storage.filedatalake.models.BlobPrefix]
+    :ivar blob_items: Required.
+    :vartype blob_items: list[~azure.storage.filedatalake.models.BlobItemInternal]
     """
 
     _validation = {
@@ -70,10 +82,16 @@ class BlobHierarchyListSegment(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        blob_items: List["BlobItemInternal"],
-        blob_prefixes: Optional[List["BlobPrefix"]] = None,
+        blob_items: List["_models.BlobItemInternal"],
+        blob_prefixes: Optional[List["_models.BlobPrefix"]] = None,
         **kwargs
     ):
+        """
+        :keyword blob_prefixes:
+        :paramtype blob_prefixes: list[~azure.storage.filedatalake.models.BlobPrefix]
+        :keyword blob_items: Required.
+        :paramtype blob_items: list[~azure.storage.filedatalake.models.BlobItemInternal]
+        """
         super(BlobHierarchyListSegment, self).__init__(**kwargs)
         self.blob_prefixes = blob_prefixes
         self.blob_items = blob_items
@@ -84,20 +102,20 @@ class BlobItemInternal(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required.
-    :type name: str
-    :param deleted: Required.
-    :type deleted: bool
-    :param snapshot: Required.
-    :type snapshot: str
-    :param version_id:
-    :type version_id: str
-    :param is_current_version:
-    :type is_current_version: bool
-    :param properties: Required. Properties of a blob.
-    :type properties: ~azure.storage.filedatalake.models.BlobPropertiesInternal
-    :param deletion_id:
-    :type deletion_id: str
+    :ivar name: Required.
+    :vartype name: str
+    :ivar deleted: Required.
+    :vartype deleted: bool
+    :ivar snapshot: Required.
+    :vartype snapshot: str
+    :ivar version_id:
+    :vartype version_id: str
+    :ivar is_current_version:
+    :vartype is_current_version: bool
+    :ivar properties: Required. Properties of a blob.
+    :vartype properties: ~azure.storage.filedatalake.models.BlobPropertiesInternal
+    :ivar deletion_id:
+    :vartype deletion_id: str
     """
 
     _validation = {
@@ -126,12 +144,28 @@ class BlobItemInternal(msrest.serialization.Model):
         name: str,
         deleted: bool,
         snapshot: str,
-        properties: "BlobPropertiesInternal",
+        properties: "_models.BlobPropertiesInternal",
         version_id: Optional[str] = None,
         is_current_version: Optional[bool] = None,
         deletion_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required.
+        :paramtype name: str
+        :keyword deleted: Required.
+        :paramtype deleted: bool
+        :keyword snapshot: Required.
+        :paramtype snapshot: str
+        :keyword version_id:
+        :paramtype version_id: str
+        :keyword is_current_version:
+        :paramtype is_current_version: bool
+        :keyword properties: Required. Properties of a blob.
+        :paramtype properties: ~azure.storage.filedatalake.models.BlobPropertiesInternal
+        :keyword deletion_id:
+        :paramtype deletion_id: str
+        """
         super(BlobItemInternal, self).__init__(**kwargs)
         self.name = name
         self.deleted = deleted
@@ -147,8 +181,8 @@ class BlobPrefix(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required.
-    :type name: str
+    :ivar name: Required.
+    :vartype name: str
     """
 
     _validation = {
@@ -165,6 +199,10 @@ class BlobPrefix(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required.
+        :paramtype name: str
+        """
         super(BlobPrefix, self).__init__(**kwargs)
         self.name = name
 
@@ -174,66 +212,66 @@ class BlobPropertiesInternal(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param creation_time:
-    :type creation_time: ~datetime.datetime
-    :param last_modified: Required.
-    :type last_modified: ~datetime.datetime
-    :param etag: Required.
-    :type etag: str
-    :param content_length: Size in bytes.
-    :type content_length: long
-    :param content_type:
-    :type content_type: str
-    :param content_encoding:
-    :type content_encoding: str
-    :param content_language:
-    :type content_language: str
-    :param content_md5:
-    :type content_md5: bytearray
-    :param content_disposition:
-    :type content_disposition: str
-    :param cache_control:
-    :type cache_control: str
-    :param blob_sequence_number:
-    :type blob_sequence_number: long
-    :param copy_id:
-    :type copy_id: str
-    :param copy_source:
-    :type copy_source: str
-    :param copy_progress:
-    :type copy_progress: str
-    :param copy_completion_time:
-    :type copy_completion_time: ~datetime.datetime
-    :param copy_status_description:
-    :type copy_status_description: str
-    :param server_encrypted:
-    :type server_encrypted: bool
-    :param incremental_copy:
-    :type incremental_copy: bool
-    :param destination_snapshot:
-    :type destination_snapshot: str
-    :param deleted_time:
-    :type deleted_time: ~datetime.datetime
-    :param remaining_retention_days:
-    :type remaining_retention_days: int
-    :param access_tier_inferred:
-    :type access_tier_inferred: bool
-    :param customer_provided_key_sha256:
-    :type customer_provided_key_sha256: str
-    :param encryption_scope: The name of the encryption scope under which the blob is encrypted.
-    :type encryption_scope: str
-    :param access_tier_change_time:
-    :type access_tier_change_time: ~datetime.datetime
-    :param tag_count:
-    :type tag_count: int
-    :param expires_on:
-    :type expires_on: ~datetime.datetime
-    :param is_sealed:
-    :type is_sealed: bool
-    :param last_accessed_on:
-    :type last_accessed_on: ~datetime.datetime
-    :param delete_time:
-    :type delete_time: ~datetime.datetime
+    :ivar creation_time:
+    :vartype creation_time: ~datetime.datetime
+    :ivar last_modified: Required.
+    :vartype last_modified: ~datetime.datetime
+    :ivar etag: Required.
+    :vartype etag: str
+    :ivar content_length: Size in bytes.
+    :vartype content_length: long
+    :ivar content_type:
+    :vartype content_type: str
+    :ivar content_encoding:
+    :vartype content_encoding: str
+    :ivar content_language:
+    :vartype content_language: str
+    :ivar content_md5:
+    :vartype content_md5: bytearray
+    :ivar content_disposition:
+    :vartype content_disposition: str
+    :ivar cache_control:
+    :vartype cache_control: str
+    :ivar blob_sequence_number:
+    :vartype blob_sequence_number: long
+    :ivar copy_id:
+    :vartype copy_id: str
+    :ivar copy_source:
+    :vartype copy_source: str
+    :ivar copy_progress:
+    :vartype copy_progress: str
+    :ivar copy_completion_time:
+    :vartype copy_completion_time: ~datetime.datetime
+    :ivar copy_status_description:
+    :vartype copy_status_description: str
+    :ivar server_encrypted:
+    :vartype server_encrypted: bool
+    :ivar incremental_copy:
+    :vartype incremental_copy: bool
+    :ivar destination_snapshot:
+    :vartype destination_snapshot: str
+    :ivar deleted_time:
+    :vartype deleted_time: ~datetime.datetime
+    :ivar remaining_retention_days:
+    :vartype remaining_retention_days: int
+    :ivar access_tier_inferred:
+    :vartype access_tier_inferred: bool
+    :ivar customer_provided_key_sha256:
+    :vartype customer_provided_key_sha256: str
+    :ivar encryption_scope: The name of the encryption scope under which the blob is encrypted.
+    :vartype encryption_scope: str
+    :ivar access_tier_change_time:
+    :vartype access_tier_change_time: ~datetime.datetime
+    :ivar tag_count:
+    :vartype tag_count: int
+    :ivar expires_on:
+    :vartype expires_on: ~datetime.datetime
+    :ivar is_sealed:
+    :vartype is_sealed: bool
+    :ivar last_accessed_on:
+    :vartype last_accessed_on: ~datetime.datetime
+    :ivar delete_time:
+    :vartype delete_time: ~datetime.datetime
     """
 
     _validation = {
@@ -312,6 +350,68 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         delete_time: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword creation_time:
+        :paramtype creation_time: ~datetime.datetime
+        :keyword last_modified: Required.
+        :paramtype last_modified: ~datetime.datetime
+        :keyword etag: Required.
+        :paramtype etag: str
+        :keyword content_length: Size in bytes.
+        :paramtype content_length: long
+        :keyword content_type:
+        :paramtype content_type: str
+        :keyword content_encoding:
+        :paramtype content_encoding: str
+        :keyword content_language:
+        :paramtype content_language: str
+        :keyword content_md5:
+        :paramtype content_md5: bytearray
+        :keyword content_disposition:
+        :paramtype content_disposition: str
+        :keyword cache_control:
+        :paramtype cache_control: str
+        :keyword blob_sequence_number:
+        :paramtype blob_sequence_number: long
+        :keyword copy_id:
+        :paramtype copy_id: str
+        :keyword copy_source:
+        :paramtype copy_source: str
+        :keyword copy_progress:
+        :paramtype copy_progress: str
+        :keyword copy_completion_time:
+        :paramtype copy_completion_time: ~datetime.datetime
+        :keyword copy_status_description:
+        :paramtype copy_status_description: str
+        :keyword server_encrypted:
+        :paramtype server_encrypted: bool
+        :keyword incremental_copy:
+        :paramtype incremental_copy: bool
+        :keyword destination_snapshot:
+        :paramtype destination_snapshot: str
+        :keyword deleted_time:
+        :paramtype deleted_time: ~datetime.datetime
+        :keyword remaining_retention_days:
+        :paramtype remaining_retention_days: int
+        :keyword access_tier_inferred:
+        :paramtype access_tier_inferred: bool
+        :keyword customer_provided_key_sha256:
+        :paramtype customer_provided_key_sha256: str
+        :keyword encryption_scope: The name of the encryption scope under which the blob is encrypted.
+        :paramtype encryption_scope: str
+        :keyword access_tier_change_time:
+        :paramtype access_tier_change_time: ~datetime.datetime
+        :keyword tag_count:
+        :paramtype tag_count: int
+        :keyword expires_on:
+        :paramtype expires_on: ~datetime.datetime
+        :keyword is_sealed:
+        :paramtype is_sealed: bool
+        :keyword last_accessed_on:
+        :paramtype last_accessed_on: ~datetime.datetime
+        :keyword delete_time:
+        :paramtype delete_time: ~datetime.datetime
+        """
         super(BlobPropertiesInternal, self).__init__(**kwargs)
         self.creation_time = creation_time
         self.last_modified = last_modified
@@ -345,15 +445,66 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         self.delete_time = delete_time
 
 
+class CpkInfo(msrest.serialization.Model):
+    """Parameter group.
+
+    :ivar encryption_key: Optional. Specifies the encryption key to use to encrypt the data
+     provided in the request. If not specified, encryption is performed with the root account
+     encryption key.  For more information, see Encryption at Rest for Azure Storage Services.
+    :vartype encryption_key: str
+    :ivar encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be provided
+     if the x-ms-encryption-key header is provided.
+    :vartype encryption_key_sha256: str
+    :ivar encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
+     the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
+     provided. The only acceptable values to pass in are None and "AES256". The default value is
+     None.
+    :vartype encryption_algorithm: str
+    """
+
+    _attribute_map = {
+        'encryption_key': {'key': 'encryptionKey', 'type': 'str'},
+        'encryption_key_sha256': {'key': 'encryptionKeySha256', 'type': 'str'},
+        'encryption_algorithm': {'key': 'encryptionAlgorithm', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        encryption_key: Optional[str] = None,
+        encryption_key_sha256: Optional[str] = None,
+        encryption_algorithm: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword encryption_key: Optional. Specifies the encryption key to use to encrypt the data
+         provided in the request. If not specified, encryption is performed with the root account
+         encryption key.  For more information, see Encryption at Rest for Azure Storage Services.
+        :paramtype encryption_key: str
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the x-ms-encryption-key header is provided.
+        :paramtype encryption_key_sha256: str
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash.
+         Currently, the only accepted value is "AES256". Must be provided if the x-ms-encryption-key
+         header is provided. The only acceptable values to pass in are None and "AES256". The default
+         value is None.
+        :paramtype encryption_algorithm: str
+        """
+        super(CpkInfo, self).__init__(**kwargs)
+        self.encryption_key = encryption_key
+        self.encryption_key_sha256 = encryption_key_sha256
+        self.encryption_algorithm = encryption_algorithm
+
+
 class FileSystem(msrest.serialization.Model):
     """FileSystem.
 
-    :param name:
-    :type name: str
-    :param last_modified:
-    :type last_modified: str
-    :param e_tag:
-    :type e_tag: str
+    :ivar name:
+    :vartype name: str
+    :ivar last_modified:
+    :vartype last_modified: str
+    :ivar e_tag:
+    :vartype e_tag: str
     """
 
     _attribute_map = {
@@ -370,6 +521,14 @@ class FileSystem(msrest.serialization.Model):
         e_tag: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name:
+        :paramtype name: str
+        :keyword last_modified:
+        :paramtype last_modified: str
+        :keyword e_tag:
+        :paramtype e_tag: str
+        """
         super(FileSystem, self).__init__(**kwargs)
         self.name = name
         self.last_modified = last_modified
@@ -379,8 +538,8 @@ class FileSystem(msrest.serialization.Model):
 class FileSystemList(msrest.serialization.Model):
     """FileSystemList.
 
-    :param filesystems:
-    :type filesystems: list[~azure.storage.filedatalake.models.FileSystem]
+    :ivar filesystems:
+    :vartype filesystems: list[~azure.storage.filedatalake.models.FileSystem]
     """
 
     _attribute_map = {
@@ -390,9 +549,13 @@ class FileSystemList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        filesystems: Optional[List["FileSystem"]] = None,
+        filesystems: Optional[List["_models.FileSystem"]] = None,
         **kwargs
     ):
+        """
+        :keyword filesystems:
+        :paramtype filesystems: list[~azure.storage.filedatalake.models.FileSystem]
+        """
         super(FileSystemList, self).__init__(**kwargs)
         self.filesystems = filesystems
 
@@ -400,9 +563,9 @@ class FileSystemList(msrest.serialization.Model):
 class LeaseAccessConditions(msrest.serialization.Model):
     """Parameter group.
 
-    :param lease_id: If specified, the operation only succeeds if the resource's lease is active
-     and matches this ID.
-    :type lease_id: str
+    :ivar lease_id: If specified, the operation only succeeds if the resource's lease is active and
+     matches this ID.
+    :vartype lease_id: str
     """
 
     _attribute_map = {
@@ -415,6 +578,11 @@ class LeaseAccessConditions(msrest.serialization.Model):
         lease_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID.
+        :paramtype lease_id: str
+        """
         super(LeaseAccessConditions, self).__init__(**kwargs)
         self.lease_id = lease_id
 
@@ -424,22 +592,22 @@ class ListBlobsHierarchySegmentResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param service_endpoint: Required.
-    :type service_endpoint: str
-    :param container_name: Required.
-    :type container_name: str
-    :param prefix:
-    :type prefix: str
-    :param marker:
-    :type marker: str
-    :param max_results:
-    :type max_results: int
-    :param delimiter:
-    :type delimiter: str
-    :param segment: Required.
-    :type segment: ~azure.storage.filedatalake.models.BlobHierarchyListSegment
-    :param next_marker:
-    :type next_marker: str
+    :ivar service_endpoint: Required.
+    :vartype service_endpoint: str
+    :ivar container_name: Required.
+    :vartype container_name: str
+    :ivar prefix:
+    :vartype prefix: str
+    :ivar marker:
+    :vartype marker: str
+    :ivar max_results:
+    :vartype max_results: int
+    :ivar delimiter:
+    :vartype delimiter: str
+    :ivar segment: Required.
+    :vartype segment: ~azure.storage.filedatalake.models.BlobHierarchyListSegment
+    :ivar next_marker:
+    :vartype next_marker: str
     """
 
     _validation = {
@@ -467,7 +635,7 @@ class ListBlobsHierarchySegmentResponse(msrest.serialization.Model):
         *,
         service_endpoint: str,
         container_name: str,
-        segment: "BlobHierarchyListSegment",
+        segment: "_models.BlobHierarchyListSegment",
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
@@ -475,6 +643,24 @@ class ListBlobsHierarchySegmentResponse(msrest.serialization.Model):
         next_marker: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword service_endpoint: Required.
+        :paramtype service_endpoint: str
+        :keyword container_name: Required.
+        :paramtype container_name: str
+        :keyword prefix:
+        :paramtype prefix: str
+        :keyword marker:
+        :paramtype marker: str
+        :keyword max_results:
+        :paramtype max_results: int
+        :keyword delimiter:
+        :paramtype delimiter: str
+        :keyword segment: Required.
+        :paramtype segment: ~azure.storage.filedatalake.models.BlobHierarchyListSegment
+        :keyword next_marker:
+        :paramtype next_marker: str
+        """
         super(ListBlobsHierarchySegmentResponse, self).__init__(**kwargs)
         self.service_endpoint = service_endpoint
         self.container_name = container_name
@@ -489,16 +675,16 @@ class ListBlobsHierarchySegmentResponse(msrest.serialization.Model):
 class ModifiedAccessConditions(msrest.serialization.Model):
     """Parameter group.
 
-    :param if_modified_since: Specify this header value to operate only on a blob if it has been
+    :ivar if_modified_since: Specify this header value to operate only on a blob if it has been
      modified since the specified date/time.
-    :type if_modified_since: ~datetime.datetime
-    :param if_unmodified_since: Specify this header value to operate only on a blob if it has not
+    :vartype if_modified_since: ~datetime.datetime
+    :ivar if_unmodified_since: Specify this header value to operate only on a blob if it has not
      been modified since the specified date/time.
-    :type if_unmodified_since: ~datetime.datetime
-    :param if_match: Specify an ETag value to operate only on blobs with a matching value.
-    :type if_match: str
-    :param if_none_match: Specify an ETag value to operate only on blobs without a matching value.
-    :type if_none_match: str
+    :vartype if_unmodified_since: ~datetime.datetime
+    :ivar if_match: Specify an ETag value to operate only on blobs with a matching value.
+    :vartype if_match: str
+    :ivar if_none_match: Specify an ETag value to operate only on blobs without a matching value.
+    :vartype if_none_match: str
     """
 
     _attribute_map = {
@@ -517,6 +703,19 @@ class ModifiedAccessConditions(msrest.serialization.Model):
         if_none_match: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword if_modified_since: Specify this header value to operate only on a blob if it has been
+         modified since the specified date/time.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: Specify this header value to operate only on a blob if it has not
+         been modified since the specified date/time.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword if_match: Specify an ETag value to operate only on blobs with a matching value.
+        :paramtype if_match: str
+        :keyword if_none_match: Specify an ETag value to operate only on blobs without a matching
+         value.
+        :paramtype if_none_match: str
+        """
         super(ModifiedAccessConditions, self).__init__(**kwargs)
         self.if_modified_since = if_modified_since
         self.if_unmodified_since = if_unmodified_since
@@ -527,24 +726,28 @@ class ModifiedAccessConditions(msrest.serialization.Model):
 class Path(msrest.serialization.Model):
     """Path.
 
-    :param name:
-    :type name: str
-    :param is_directory:
-    :type is_directory: bool
-    :param last_modified:
-    :type last_modified: str
-    :param e_tag:
-    :type e_tag: str
-    :param content_length:
-    :type content_length: long
-    :param owner:
-    :type owner: str
-    :param group:
-    :type group: str
-    :param permissions:
-    :type permissions: str
-    :param encryption_scope: The name of the encryption scope under which the blob is encrypted.
-    :type encryption_scope: str
+    :ivar name:
+    :vartype name: str
+    :ivar is_directory:
+    :vartype is_directory: bool
+    :ivar last_modified:
+    :vartype last_modified: str
+    :ivar e_tag:
+    :vartype e_tag: str
+    :ivar content_length:
+    :vartype content_length: long
+    :ivar owner:
+    :vartype owner: str
+    :ivar group:
+    :vartype group: str
+    :ivar permissions:
+    :vartype permissions: str
+    :ivar encryption_scope: The name of the encryption scope under which the blob is encrypted.
+    :vartype encryption_scope: str
+    :ivar creation_time:
+    :vartype creation_time: str
+    :ivar expiry_time:
+    :vartype expiry_time: str
     """
 
     _attribute_map = {
@@ -557,6 +760,8 @@ class Path(msrest.serialization.Model):
         'group': {'key': 'group', 'type': 'str'},
         'permissions': {'key': 'permissions', 'type': 'str'},
         'encryption_scope': {'key': 'EncryptionScope', 'type': 'str'},
+        'creation_time': {'key': 'creationTime', 'type': 'str'},
+        'expiry_time': {'key': 'expiryTime', 'type': 'str'},
     }
 
     def __init__(
@@ -571,8 +776,34 @@ class Path(msrest.serialization.Model):
         group: Optional[str] = None,
         permissions: Optional[str] = None,
         encryption_scope: Optional[str] = None,
+        creation_time: Optional[str] = None,
+        expiry_time: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name:
+        :paramtype name: str
+        :keyword is_directory:
+        :paramtype is_directory: bool
+        :keyword last_modified:
+        :paramtype last_modified: str
+        :keyword e_tag:
+        :paramtype e_tag: str
+        :keyword content_length:
+        :paramtype content_length: long
+        :keyword owner:
+        :paramtype owner: str
+        :keyword group:
+        :paramtype group: str
+        :keyword permissions:
+        :paramtype permissions: str
+        :keyword encryption_scope: The name of the encryption scope under which the blob is encrypted.
+        :paramtype encryption_scope: str
+        :keyword creation_time:
+        :paramtype creation_time: str
+        :keyword expiry_time:
+        :paramtype expiry_time: str
+        """
         super(Path, self).__init__(**kwargs)
         self.name = name
         self.is_directory = is_directory
@@ -583,30 +814,32 @@ class Path(msrest.serialization.Model):
         self.group = group
         self.permissions = permissions
         self.encryption_scope = encryption_scope
+        self.creation_time = creation_time
+        self.expiry_time = expiry_time
 
 
 class PathHTTPHeaders(msrest.serialization.Model):
     """Parameter group.
 
-    :param cache_control: Optional. Sets the blob's cache control. If specified, this property is
+    :ivar cache_control: Optional. Sets the blob's cache control. If specified, this property is
      stored with the blob and returned with a read request.
-    :type cache_control: str
-    :param content_encoding: Optional. Sets the blob's content encoding. If specified, this
-     property is stored with the blob and returned with a read request.
-    :type content_encoding: str
-    :param content_language: Optional. Set the blob's content language. If specified, this property
+    :vartype cache_control: str
+    :ivar content_encoding: Optional. Sets the blob's content encoding. If specified, this property
      is stored with the blob and returned with a read request.
-    :type content_language: str
-    :param content_disposition: Optional. Sets the blob's Content-Disposition header.
-    :type content_disposition: str
-    :param content_type: Optional. Sets the blob's content type. If specified, this property is
+    :vartype content_encoding: str
+    :ivar content_language: Optional. Set the blob's content language. If specified, this property
+     is stored with the blob and returned with a read request.
+    :vartype content_language: str
+    :ivar content_disposition: Optional. Sets the blob's Content-Disposition header.
+    :vartype content_disposition: str
+    :ivar content_type: Optional. Sets the blob's content type. If specified, this property is
      stored with the blob and returned with a read request.
-    :type content_type: str
-    :param content_md5: Specify the transactional md5 for the body, to be validated by the service.
-    :type content_md5: bytearray
-    :param transactional_content_hash: Specify the transactional md5 for the body, to be validated
+    :vartype content_type: str
+    :ivar content_md5: Specify the transactional md5 for the body, to be validated by the service.
+    :vartype content_md5: bytearray
+    :ivar transactional_content_hash: Specify the transactional md5 for the body, to be validated
      by the service.
-    :type transactional_content_hash: bytearray
+    :vartype transactional_content_hash: bytearray
     """
 
     _attribute_map = {
@@ -631,6 +864,28 @@ class PathHTTPHeaders(msrest.serialization.Model):
         transactional_content_hash: Optional[bytearray] = None,
         **kwargs
     ):
+        """
+        :keyword cache_control: Optional. Sets the blob's cache control. If specified, this property is
+         stored with the blob and returned with a read request.
+        :paramtype cache_control: str
+        :keyword content_encoding: Optional. Sets the blob's content encoding. If specified, this
+         property is stored with the blob and returned with a read request.
+        :paramtype content_encoding: str
+        :keyword content_language: Optional. Set the blob's content language. If specified, this
+         property is stored with the blob and returned with a read request.
+        :paramtype content_language: str
+        :keyword content_disposition: Optional. Sets the blob's Content-Disposition header.
+        :paramtype content_disposition: str
+        :keyword content_type: Optional. Sets the blob's content type. If specified, this property is
+         stored with the blob and returned with a read request.
+        :paramtype content_type: str
+        :keyword content_md5: Specify the transactional md5 for the body, to be validated by the
+         service.
+        :paramtype content_md5: bytearray
+        :keyword transactional_content_hash: Specify the transactional md5 for the body, to be
+         validated by the service.
+        :paramtype transactional_content_hash: bytearray
+        """
         super(PathHTTPHeaders, self).__init__(**kwargs)
         self.cache_control = cache_control
         self.content_encoding = content_encoding
@@ -644,8 +899,8 @@ class PathHTTPHeaders(msrest.serialization.Model):
 class PathList(msrest.serialization.Model):
     """PathList.
 
-    :param paths:
-    :type paths: list[~azure.storage.filedatalake.models.Path]
+    :ivar paths:
+    :vartype paths: list[~azure.storage.filedatalake.models.Path]
     """
 
     _attribute_map = {
@@ -655,9 +910,13 @@ class PathList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        paths: Optional[List["Path"]] = None,
+        paths: Optional[List["_models.Path"]] = None,
         **kwargs
     ):
+        """
+        :keyword paths:
+        :paramtype paths: list[~azure.storage.filedatalake.models.Path]
+        """
         super(PathList, self).__init__(**kwargs)
         self.paths = paths
 
@@ -665,14 +924,14 @@ class PathList(msrest.serialization.Model):
 class SetAccessControlRecursiveResponse(msrest.serialization.Model):
     """SetAccessControlRecursiveResponse.
 
-    :param directories_successful:
-    :type directories_successful: int
-    :param files_successful:
-    :type files_successful: int
-    :param failure_count:
-    :type failure_count: int
-    :param failed_entries:
-    :type failed_entries: list[~azure.storage.filedatalake.models.AclFailedEntry]
+    :ivar directories_successful:
+    :vartype directories_successful: int
+    :ivar files_successful:
+    :vartype files_successful: int
+    :ivar failure_count:
+    :vartype failure_count: int
+    :ivar failed_entries:
+    :vartype failed_entries: list[~azure.storage.filedatalake.models.AclFailedEntry]
     """
 
     _attribute_map = {
@@ -688,9 +947,19 @@ class SetAccessControlRecursiveResponse(msrest.serialization.Model):
         directories_successful: Optional[int] = None,
         files_successful: Optional[int] = None,
         failure_count: Optional[int] = None,
-        failed_entries: Optional[List["AclFailedEntry"]] = None,
+        failed_entries: Optional[List["_models.AclFailedEntry"]] = None,
         **kwargs
     ):
+        """
+        :keyword directories_successful:
+        :paramtype directories_successful: int
+        :keyword files_successful:
+        :paramtype files_successful: int
+        :keyword failure_count:
+        :paramtype failure_count: int
+        :keyword failed_entries:
+        :paramtype failed_entries: list[~azure.storage.filedatalake.models.AclFailedEntry]
+        """
         super(SetAccessControlRecursiveResponse, self).__init__(**kwargs)
         self.directories_successful = directories_successful
         self.files_successful = files_successful
@@ -701,17 +970,17 @@ class SetAccessControlRecursiveResponse(msrest.serialization.Model):
 class SourceModifiedAccessConditions(msrest.serialization.Model):
     """Parameter group.
 
-    :param source_if_match: Specify an ETag value to operate only on blobs with a matching value.
-    :type source_if_match: str
-    :param source_if_none_match: Specify an ETag value to operate only on blobs without a matching
+    :ivar source_if_match: Specify an ETag value to operate only on blobs with a matching value.
+    :vartype source_if_match: str
+    :ivar source_if_none_match: Specify an ETag value to operate only on blobs without a matching
      value.
-    :type source_if_none_match: str
-    :param source_if_modified_since: Specify this header value to operate only on a blob if it has
+    :vartype source_if_none_match: str
+    :ivar source_if_modified_since: Specify this header value to operate only on a blob if it has
      been modified since the specified date/time.
-    :type source_if_modified_since: ~datetime.datetime
-    :param source_if_unmodified_since: Specify this header value to operate only on a blob if it
-     has not been modified since the specified date/time.
-    :type source_if_unmodified_since: ~datetime.datetime
+    :vartype source_if_modified_since: ~datetime.datetime
+    :ivar source_if_unmodified_since: Specify this header value to operate only on a blob if it has
+     not been modified since the specified date/time.
+    :vartype source_if_unmodified_since: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -730,6 +999,19 @@ class SourceModifiedAccessConditions(msrest.serialization.Model):
         source_if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword source_if_match: Specify an ETag value to operate only on blobs with a matching value.
+        :paramtype source_if_match: str
+        :keyword source_if_none_match: Specify an ETag value to operate only on blobs without a
+         matching value.
+        :paramtype source_if_none_match: str
+        :keyword source_if_modified_since: Specify this header value to operate only on a blob if it
+         has been modified since the specified date/time.
+        :paramtype source_if_modified_since: ~datetime.datetime
+        :keyword source_if_unmodified_since: Specify this header value to operate only on a blob if it
+         has not been modified since the specified date/time.
+        :paramtype source_if_unmodified_since: ~datetime.datetime
+        """
         super(SourceModifiedAccessConditions, self).__init__(**kwargs)
         self.source_if_match = source_if_match
         self.source_if_none_match = source_if_none_match
@@ -740,8 +1022,8 @@ class SourceModifiedAccessConditions(msrest.serialization.Model):
 class StorageError(msrest.serialization.Model):
     """StorageError.
 
-    :param error: The service error response object.
-    :type error: ~azure.storage.filedatalake.models.StorageErrorError
+    :ivar error: The service error response object.
+    :vartype error: ~azure.storage.filedatalake.models.StorageErrorError
     """
 
     _attribute_map = {
@@ -751,9 +1033,13 @@ class StorageError(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["StorageErrorError"] = None,
+        error: Optional["_models.StorageErrorError"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The service error response object.
+        :paramtype error: ~azure.storage.filedatalake.models.StorageErrorError
+        """
         super(StorageError, self).__init__(**kwargs)
         self.error = error
 
@@ -761,10 +1047,10 @@ class StorageError(msrest.serialization.Model):
 class StorageErrorError(msrest.serialization.Model):
     """The service error response object.
 
-    :param code: The service error code.
-    :type code: str
-    :param message: The service error message.
-    :type message: str
+    :ivar code: The service error code.
+    :vartype code: str
+    :ivar message: The service error message.
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -779,6 +1065,12 @@ class StorageErrorError(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword code: The service error code.
+        :paramtype code: str
+        :keyword message: The service error message.
+        :paramtype message: str
+        """
         super(StorageErrorError, self).__init__(**kwargs)
         self.code = code
         self.message = message

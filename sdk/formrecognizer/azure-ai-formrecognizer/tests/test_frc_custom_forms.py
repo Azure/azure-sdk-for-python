@@ -6,7 +6,7 @@
 
 import pytest
 import functools
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
+from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 from azure.ai.formrecognizer import FormContentType, FormTrainingClient, _models
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
@@ -23,7 +23,10 @@ class TestCustomForms(FormRecognizerTest):
     @FormTrainingClientPreparer()
     @recorded_by_proxy
     def test_custom_form_unlabeled(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
@@ -44,7 +47,10 @@ class TestCustomForms(FormRecognizerTest):
     @FormTrainingClientPreparer()
     @recorded_by_proxy
     def test_custom_form_multipage_unlabeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=False)
@@ -68,7 +74,10 @@ class TestCustomForms(FormRecognizerTest):
     @FormTrainingClientPreparer()
     @recorded_by_proxy
     def test_custom_form_labeled(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(
@@ -79,9 +88,9 @@ class TestCustomForms(FormRecognizerTest):
         model = poller.result()
 
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
-        poller = fr_client.begin_recognize_custom_forms(model.model_id, myfile, content_type=FormContentType.IMAGE_JPEG)
+        poller = fr_client.begin_recognize_custom_forms(model.model_id, my_file, content_type=FormContentType.IMAGE_JPEG)
         form = poller.result()
 
         assert form[0].form_type ==  "custom:labeled"
@@ -91,7 +100,10 @@ class TestCustomForms(FormRecognizerTest):
     @FormTrainingClientPreparer()
     @recorded_by_proxy
     def test_custom_form_multipage_labeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(
@@ -101,11 +113,11 @@ class TestCustomForms(FormRecognizerTest):
         model = poller.result()
 
         with open(self.multipage_invoice_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
-            myfile,
+            my_file,
             content_type=FormContentType.APPLICATION_PDF
         )
         forms = poller.result()
@@ -118,7 +130,10 @@ class TestCustomForms(FormRecognizerTest):
     @FormTrainingClientPreparer()
     @recorded_by_proxy
     def test_custom_form_unlabeled_transform(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
@@ -133,11 +148,11 @@ class TestCustomForms(FormRecognizerTest):
             responses.append(form)
 
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
-            myfile,
+            my_file,
             include_field_elements=True,
             cls=callback
         )
@@ -173,7 +188,10 @@ class TestCustomForms(FormRecognizerTest):
     @FormTrainingClientPreparer()
     @recorded_by_proxy
     def test_custom_form_multipage_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=False)
@@ -188,11 +206,11 @@ class TestCustomForms(FormRecognizerTest):
             responses.append(form)
 
         with open(self.multipage_invoice_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
-            myfile,
+            my_file,
             include_field_elements=True,
             cls=callback
         )
@@ -223,10 +241,10 @@ class TestCustomForms(FormRecognizerTest):
         model = poller.result()
 
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         initial_poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
-            myfile
+            my_file
         )
         cont_token = initial_poller.continuation_token()
         poller = fr_client.begin_recognize_custom_forms(
@@ -243,7 +261,10 @@ class TestCustomForms(FormRecognizerTest):
     @FormTrainingClientPreparer()
     @recorded_by_proxy
     def test_custom_form_multipage_vendor_set_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=False)
@@ -258,11 +279,11 @@ class TestCustomForms(FormRecognizerTest):
             responses.append(form)
 
         with open(self.multipage_vendor_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
-            myfile,
+            my_file,
             include_field_elements=True,
             cls=callback
         )
@@ -285,7 +306,10 @@ class TestCustomForms(FormRecognizerTest):
     @FormTrainingClientPreparer()
     @recorded_by_proxy
     def test_custom_form_multipage_vendor_set_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=True)
@@ -300,11 +324,11 @@ class TestCustomForms(FormRecognizerTest):
             responses.append(form)
 
         with open(self.multipage_vendor_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
-            myfile,
+            my_file,
             include_field_elements=True,
             cls=callback
         )

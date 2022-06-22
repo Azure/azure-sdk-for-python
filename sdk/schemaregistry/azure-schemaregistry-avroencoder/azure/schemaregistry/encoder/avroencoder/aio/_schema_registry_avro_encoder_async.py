@@ -23,35 +23,40 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from io import BytesIO
-from typing import Any, Callable, Dict, Mapping, Union, Optional
-from ._async_lru import alru_cache
-from .._constants import (
-    SCHEMA_ID_START_INDEX,
-    SCHEMA_ID_LENGTH,
-    DATA_START_INDEX,
-    AVRO_MIME_TYPE,
-    RECORD_FORMAT_IDENTIFIER_LENGTH,
+import logging
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, overload, Type, Union
+from .._utils import (  # pylint: disable=import-error
+    validate_schema,
+    create_message_content,
+    validate_message,
+    decode_content,
+    MessageType,
 )
-from .._message_protocol import MessageType, MessageMetadataDict
-from .._apache_avro_encoder import ApacheAvroObjectEncoder as AvroObjectEncoder
-from ..exceptions import (
-    SchemaParseError,
-    SchemaEncodeError,
-    SchemaDecodeError,
-)
+from ._async_lru import alru_cache  # pylint: disable=import-error
+from .._message_protocol import (
+    MessageContent,
+)  # pylint: disable=import-error
+from .._apache_avro_encoder import (
+    ApacheAvroObjectEncoder as AvroObjectEncoder,
+)  # pylint: disable=import-error
+
+if TYPE_CHECKING:
+    from azure.schemaregistry.aio import SchemaRegistryClient
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class AvroEncoder(object):
     """
-    AvroEncoder provides the ability to encode and decode data according
-    to the given avro schema. It would automatically register, get and cache the schema.
+    AvroEncoder provides the ability to encode and decode content according
+    to the given avro schema. It would automatically register, get, and cache the schema.
 
-    :keyword client: Required. The schema registry client
-     which is used to register schema and retrieve schema from the service.
+    :keyword client: Required. The schema registry client which is used to register schema
+     and retrieve schema from the service.
     :paramtype client: ~azure.schemaregistry.aio.SchemaRegistryClient
-    :keyword str group_name: Required. Schema group under which schema should be registered.
-    :keyword bool auto_register_schemas: When true, register new schemas passed to encode.
+    :keyword Optional[str] group_name: Required for encoding. Not used when decoding.
+     Schema group under which schema should be registered.
+    :keyword bool auto_register: When true, registers new schemas passed to encode.
      Otherwise, and by default, encode will fail if the schema has not been pre-registered in the registry.
 
     """
@@ -59,17 +64,17 @@ class AvroEncoder(object):
     def __init__(self, **kwargs):
         # type: (Any) -> None
         try:
-            self._schema_group = kwargs.pop("group_name")
             self._schema_registry_client = kwargs.pop(
                 "client"
             )  # type: "SchemaRegistryClient"
-        except KeyError as e:
-            raise TypeError("'{}' is a required keyword.".format(e.args[0]))
+        except KeyError as exc:
+            raise TypeError(f"'{exc.args[0]}' is a required keyword.")
         self._avro_encoder = AvroObjectEncoder(codec=kwargs.get("codec"))
-        self._auto_register_schemas = kwargs.get("auto_register_schemas", False)
+        self._schema_group = kwargs.pop("group_name", None)
+        self._auto_register = kwargs.get("auto_register", False)
         self._auto_register_schema_func = (
             self._schema_registry_client.register_schema
-            if self._auto_register_schemas
+            if self._auto_register
             else self._schema_registry_client.get_schema_properties
         )
 
@@ -120,20 +125,44 @@ class AvroEncoder(object):
         schema = await self._schema_registry_client.get_schema(schema_id, **kwargs)
         return schema.definition
 
+    @overload
     async def encode(
         self,
-        data: Mapping[str, Any],
+        content: Mapping[str, Any],
         *,
         schema: str,
-        message_type: Optional[Callable] = None,
+        message_type: Type[MessageType],
+        request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> Union[MessageType, MessageMetadataDict]:
+    ) -> MessageType:
+        ...
 
-        """
-        Encode data with the given schema. Create content type value, which consists of the Avro Mime Type string
-         and the schema ID corresponding to given schema. If provided with a message constructor callback,
-         pass encoded data and content type to create message object. If not provided, return the following dict:
-         {"data": Avro encoded value, "content_type": Avro mime type string + schema ID}.
+    @overload
+    async def encode(
+        self,
+        content: Mapping[str, Any],
+        *,
+        schema: str,
+        message_type: None = None,
+        request_options: Optional[Dict[str, Any]] = None,
+        **kwargs: Any,
+    ) -> MessageContent:
+        ...
+
+    async def encode(
+        self,
+        content: Mapping[str, Any],
+        *,
+        schema: str,
+        message_type: Optional[Type[MessageType]] = None,
+        request_options: Optional[Dict[str, Any]] = None,
+        **kwargs: Any,
+    ) -> Union[MessageType, MessageContent]:
+
+        """Encode content with the given schema. Create content type value, which consists of the Avro Mime Type string
+         and the schema ID corresponding to given schema. If provided with a MessageType subtype, encoded content
+         and content type will be passed to create message object. If not provided, the following dict will be returned:
+         {"content": Avro encoded value, "content_type": Avro mime type string + schema ID}.
 
         If `message_type` is set, then additional keyword arguments will be passed to the message callback
          function provided.
@@ -141,137 +170,104 @@ class AvroEncoder(object):
         Schema must be an Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
 
-        :param data: The data to be encoded.
-        :type data: Mapping[str, Any]
-        :keyword schema: Required. The schema used to encode the data.
+        :param content: The content to be encoded.
+        :type content: Mapping[str, Any]
+        :keyword schema: Required. The schema used to encode the content.
         :paramtype schema: str
-        :keyword message_type: The callback function or message class to construct the message. If message class,
-         it must be a subtype of the azure.schemaregistry.encoder.avroencoder.MessageType protocol.
-         If callback function, it must have the following method signature:
-         `(data: bytes, content_type: str, **kwargs) -> MessageType`, where `data` and `content_type`
-         are positional parameters.
-        :paramtype message_type: Callable or None
-        :rtype: MessageType or MessageMetadataDict
-        :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.SchemaParseError:
-            Indicates an issue with parsing schema.
-        :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.SchemaEncodeError:
-            Indicates an issue with encoding data for provided schema.
+        :keyword message_type: The message class to construct the message. Must be a subtype of the
+         azure.schemaregistry.encoder.avroencoder.MessageType protocol.
+        :paramtype message_type: Type[MessageType] or None
+        :keyword request_options: The keyword arguments for http requests to be passed to the client.
+        :paramtype request_options: Dict[str, Any]
+        :rtype: MessageType or MessageContent
+        :raises ~azure.schemaregistry.encoder.avroencoder.InvalidSchemaError:
+            Indicates an issue with validating schema.
+        :raises ~azure.schemaregistry.encoder.avroencoder.InvalidContentError:
+            Indicates an issue with encoding content with schema.
         """
 
         raw_input_schema = schema
+        if not self._schema_group:
+            raise TypeError("'group_name' in constructor cannot be None, if encoding.")
+        schema_fullname = validate_schema(self._avro_encoder, raw_input_schema)
 
-        try:
-            schema_fullname = self._avro_encoder.get_schema_fullname(raw_input_schema)
-        except Exception as e:  # pylint:disable=broad-except
-            SchemaParseError(
-                f"Cannot parse schema: {raw_input_schema}", error=e
-            ).raise_with_traceback()
-
-        schema_id = await self._get_schema_id(schema_fullname, raw_input_schema)
-        content_type = f"{AVRO_MIME_TYPE}+{schema_id}"
-
-        try:
-            data_bytes = self._avro_encoder.encode(data, raw_input_schema)
-        except Exception as e:  # pylint:disable=broad-except
-            SchemaEncodeError(
-                "Cannot encode value '{}' for schema: {}".format(
-                    data, raw_input_schema
-                ),
-                error=e,
-            ).raise_with_traceback()
-
-        stream = BytesIO()
-
-        stream.write(data_bytes)
-        stream.flush()
-
-        payload = stream.getvalue()
-        stream.close()
-        if message_type:
-            try:
-                return message_type.from_message_data(payload, content_type, **kwargs)
-            except AttributeError:
-                try:
-                    return message_type(payload, content_type, **kwargs)
-                except TypeError as e:
-                    SchemaEncodeError(
-                        f"""The data model {str(message_type)} is not a Callable that takes `data`
-                            and `content_type` or a subtype of the MessageType protocol.
-                            If using an Azure SDK model class, please check the README.md for the full list
-                            of supported Azure SDK models and their corresponding versions."""
-                    ).raise_with_traceback()
-
-        return {"data": payload, "content_type": content_type}
-
-    def _convert_preamble_format(self, data, content_type):  # pylint: disable=no-self-use
-        record_format_identifier = b"\0\0\0\0"
-        if data[0:RECORD_FORMAT_IDENTIFIER_LENGTH] == record_format_identifier:
-            schema_id = data[
-                SCHEMA_ID_START_INDEX : (SCHEMA_ID_START_INDEX + SCHEMA_ID_LENGTH)
-            ].decode("utf-8")
-            content_type = f"{AVRO_MIME_TYPE}+{schema_id}"
-            data = data[DATA_START_INDEX:]
-
-        return data, content_type
+        cache_misses = (
+            self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter disable=no-member
+        )
+        request_options = request_options or {}
+        schema_id = await self._get_schema_id(
+            schema_fullname, raw_input_schema, **request_options
+        )
+        new_cache_misses = (
+            self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter disable=no-member
+        )
+        if new_cache_misses > cache_misses:
+            cache_info = (
+                self._get_schema_id.cache_info()  # pylint: disable=no-value-for-parameter disable=no-member
+            )
+            _LOGGER.info(
+                "New entry has been added to schema ID cache. Cache info: %s",
+                str(cache_info),
+            )
+        return create_message_content(
+            self._avro_encoder,
+            content=content,
+            raw_input_schema=raw_input_schema,
+            schema_id=schema_id,
+            message_type=message_type,
+            **kwargs,
+        )
 
     async def decode(
-        self,
-        message: Union[MessageType, MessageMetadataDict],
+        self,  # pylint: disable=unused-argument
+        message: Union[MessageContent, MessageType],
         *,
         readers_schema: Optional[str] = None,
-        **kwargs,   # pylint: disable=unused-argument
+        request_options: Dict[str, Any] = None,
+        **kwargs: Any,
     ) -> Dict[str, Any]:
-        """
-        Decode bytes data using schema ID in the content type field. `message` must be one of the following:
-            1) A Subtype of the MessageType protocol.
-            2) A dict {"data": ..., "content_type": ...}, where "data" is bytes and "content_type" is string.
-            3) If using to decode data that was serialized with the AvroSerializer, a dict
-                {"data": ..., "content_type": None}, where "data" is bytes and "content_type" is None.
-        Data must follow format of associated Avro RecordSchema:
+        """Decode bytes content using schema ID in the content type field. `message` must be one of the following:
+            1) A object of subtype of the MessageType protocol.
+            2) A dict {"content": ..., "content_type": ...}, where "content" is bytes and "content_type" is string.
+        Content must follow format of associated Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
 
-        :param message: The message object which holds the data to be decoded and content type
+        :param message: The message object which holds the content to be decoded and content type
          containing the schema ID.
-        :type message: MessageType or MessageMetadataDict
+        :type message: MessageType or MessageContent
         :keyword readers_schema: An optional reader's schema as defined by the Apache Avro specification.
         :paramtype readers_schema: str or None
+        :keyword request_options: The keyword arguments for http requests to be passed to the client.
+        :paramtype request_options: Dict[str, Any]
         :rtype: Dict[str, Any]
-        :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.SchemaParseError:
-            Indicates an issue with parsing schema.
-        :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.SchemaDecodeError:
-            Indicates an issue with decoding value.
+        :raises ~azure.schemaregistry.encoder.avroencoder.InvalidSchemaError:
+            Indicates an issue with validating schemas.
+        :raises ~azure.schemaregistry.encoder.avroencoder.InvalidContentError:
+            Indicates an issue with decoding content.
         """
+        schema_id, content = validate_message(message)
 
-        try:
-            message_data_dict = message.__message_data__()
-            data = message_data_dict["data"]
-            content_type = message_data_dict["content_type"]
-        except AttributeError:
-            try:
-                data = message["data"]
-                content_type = message["content_type"]
-            except (KeyError, TypeError):
-                SchemaDecodeError(
-                    f"""The data model {str(message)} is not a subtype of the MessageType protocol or type
-                        MessageMetadataDict.  If using an Azure SDK model class, please check the README.md
-                        for the full list of supported Azure SDK models and their corresponding versions."""
-                ).raise_with_traceback()
-
-        # include in first preview for back compatibility
-        data, content_type = self._convert_preamble_format(data, content_type)
-
-        schema_id = content_type.split("+")[1]
-        schema_definition = await self._get_schema(schema_id)
-        try:
-            dict_value = self._avro_encoder.decode(data, schema_definition, readers_schema=readers_schema)
-        except Exception as e:  # pylint:disable=broad-except
-            error_message = (
-                f"Cannot decode value '{data}' for schema: {schema_definition}\n and reader's schema: {readers_schema}"
-                if readers_schema
-                else f"Cannot decode value '{data}' for schema: {schema_definition}"
+        cache_misses = (
+            self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter disable=no-member
+        )
+        request_options = request_options or {}
+        schema_definition = await self._get_schema(schema_id, **request_options)
+        new_cache_misses = (
+            self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter disable=no-member
+        )
+        if new_cache_misses > cache_misses:
+            cache_info = (
+                self._get_schema.cache_info()  # pylint: disable=no-value-for-parameter disable=no-member
             )
-            SchemaDecodeError(
-                error_message,
-                error=e,
-            ).raise_with_traceback()
-        return dict_value
+            _LOGGER.info(
+                "New entry has been added to schema cache. Cache info: %s",
+                str(cache_info),
+            )
+
+        return decode_content(
+            self._avro_encoder,
+            content=content,
+            schema_id=schema_id,
+            schema_definition=schema_definition,
+            readers_schema=readers_schema,
+        )

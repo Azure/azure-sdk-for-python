@@ -217,65 +217,6 @@ class FileSystemSamplesAsync(object):
 
             await file_system_client.delete_file_system()
 
-    # [START batch_delete_files_or_empty_directories]
-    async def batch_delete_files_or_empty_directories(self):
-        from azure.storage.filedatalake.aio import FileSystemClient
-        file_system_client = FileSystemClient.from_connection_string(self.connection_string, "filesystemforcreate")
-
-        async with file_system_client:
-            await file_system_client.create_file_system()
-
-            data = b'hello world'
-
-            try:
-                # create file1
-                await file_system_client.get_file_client('file1').upload_data(data, overwrite=True)
-
-                # create file2, then pass file properties in batch delete later
-                file2 = file_system_client.get_file_client('file2')
-                await file2.upload_data(data, overwrite=True)
-                file2_properties = await file2.get_file_properties()
-
-                # create file3 and batch delete it later only etag matches this file3 etag
-                file3 = file_system_client.get_file_client('file3')
-                await file3.upload_data(data, overwrite=True)
-                file3_props = await file3.get_file_properties()
-                file3_etag = file3_props.etag
-
-                # create dir1
-                # empty directory can be deleted using delete_files
-                await file_system_client.get_directory_client('dir1').create_directory(),
-
-                # create dir2, then pass directory properties in batch delete later
-                dir2 = file_system_client.get_directory_client('dir2')
-                await dir2.create_directory()
-                dir2_properties = await dir2.get_directory_properties()
-
-            except:
-                pass
-
-            # Act
-            response = await self._to_list(await file_system_client.delete_files(
-                'file1',
-                file2_properties,
-                {'name': 'file3', 'etag': file3_etag},
-                'dir1',
-                dir2_properties,
-                raise_on_any_failure=False
-            ))
-            print("total number of sub-responses:" + len(response))
-            print(response[0].status_code)
-            print(response[2].status_code)
-            print(response[3].status_code)
-
-    async def _to_list(self, async_iterator):
-        result = []
-        async for item in async_iterator:
-            result.append(item)
-        return result
-    # [END batch_delete_files_or_empty_directories]
-
-
 async def run():
     sample = FileSystemSamplesAsync()
     await sample.file_system_sample()
@@ -284,7 +225,6 @@ async def run():
     await sample.list_paths_in_file_system()
     await sample.get_file_client_from_file_system()
     await sample.create_file_from_file_system()
-    await sample.batch_delete_files_or_empty_directories()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

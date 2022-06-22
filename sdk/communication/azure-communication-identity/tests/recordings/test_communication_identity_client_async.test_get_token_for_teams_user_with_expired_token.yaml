@@ -1,36 +1,89 @@
 interactions:
 - request:
-    body: '{"token": "sanitized"}'
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Cookie:
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrN7aE7wlba10pvEBMpqJYKLiiu_7Xpg1rc1NRhuh41W8e3xh1Zq9QYH1TFk-YRiZnJjGA-IP3IlGp8cbTBUwPwEp1aM7kwmRKYKBxwGqoSPh99M8HOTACrRqhGvtfR-ikprNhdyIxAFntsKGNEjG7uAY0VfqMhBAZjtemcNVtx0sgAA;
+        fpc=AivukxZwm3JJvv9MPpanjek; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      User-Agent:
+      - python-requests/2.27.1
+    method: GET
+    uri: https://sanitized.microsoftonline.com/common/userrealm/sanitized@test.onmicrosoft.com?api-version=1.0
+  response:
+    body:
+      string: '{"ver": "1.0", "account_type": "Managed", "domain_name": "sanitized",
+        "cloud_instance_name": "microsoftonline.com", "cloud_audience_urn": "urn:federation:MicrosoftOnline"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-disposition:
+      - inline; filename=userrealm.json
+      content-length:
+      - '180'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 01 Jun 2022 08:16:31 GMT
+      expires:
+      - '-1'
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      pragma:
+      - no-cache
+      set-cookie:
+      - fpc=AivukxZwm3JJvv9MPpanjek; expires=Fri, 01-Jul-2022 08:16:31 GMT; path=/;
+        secure; HttpOnly; SameSite=None
+      - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
+      - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ests-server:
+      - 2.1.12794.7 - WEULR1 ProdSlices
+      x-xss-protection:
+      - '0'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"token": "sanitized", "appId": "sanitized", "userId": "sanitized"}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '2015'
+      - '2114'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 02 Nov 2021 10:40:57 GMT
+      - Wed, 01 Jun 2022 08:16:32 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2021-10-31-preview
+    uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2022-06-01
   response:
     body:
       string: '{"error": {"code": "InvalidAccessToken", "message": "Provided access
         token is not valid."}}'
     headers:
       content-type: application/json
-      date: Tue, 02 Nov 2021 10:40:57 GMT
-      ms-cv: BhG7fhdGk067EPrsAZvxhQ.0
+      date: Wed, 01 Jun 2022 08:16:31 GMT
+      ms-cv: Vni6DHXmXkaVPU26Ljk8CQ.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 37ms
+      x-processing-time: 116ms
     status:
       code: 401
       message: Unauthorized
-    url: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2021-10-31-preview
+    url: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2022-06-01
 version: 1

@@ -12,6 +12,8 @@ trigger:
     - sdk/core/
     - eng/
     - tools/
+    exclude:
+    - eng/common/
 
 pr:
   branches:
@@ -26,6 +28,8 @@ pr:
     - sdk/core/
     - eng/
     - tools/
+    exclude:
+    - eng/common/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
@@ -49,4 +53,4 @@ extends:
       checkout:
         - package: azure-core
           checkout_path: sdk/core
-          version: 1.12.0
+          version: 1.24.1

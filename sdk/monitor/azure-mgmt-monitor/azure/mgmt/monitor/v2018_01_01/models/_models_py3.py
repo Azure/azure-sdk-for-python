@@ -18,10 +18,10 @@ from ._monitor_management_client_enums import *
 class ErrorResponse(msrest.serialization.Model):
     """Describes the format of Error response.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -36,6 +36,12 @@ class ErrorResponse(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword code: Error code.
+        :paramtype code: str
+        :keyword message: Error message indicating why the operation failed.
+        :paramtype message: str
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -46,10 +52,10 @@ class LocalizableString(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. the invariant value.
-    :type value: str
-    :param localized_value: the locale specific value.
-    :type localized_value: str
+    :ivar value: Required. the invariant value.
+    :vartype value: str
+    :ivar localized_value: the locale specific value.
+    :vartype localized_value: str
     """
 
     _validation = {
@@ -68,6 +74,12 @@ class LocalizableString(msrest.serialization.Model):
         localized_value: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Required. the invariant value.
+        :paramtype value: str
+        :keyword localized_value: the locale specific value.
+        :paramtype localized_value: str
+        """
         super(LocalizableString, self).__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
@@ -76,10 +88,10 @@ class LocalizableString(msrest.serialization.Model):
 class MetadataValue(msrest.serialization.Model):
     """Represents a metric metadata value.
 
-    :param name: the name of the metadata.
-    :type name: ~$(python-base-namespace).v2018_01_01.models.LocalizableString
-    :param value: the value of the metadata.
-    :type value: str
+    :ivar name: the name of the metadata.
+    :vartype name: ~$(python-base-namespace).v2018_01_01.models.LocalizableString
+    :ivar value: the value of the metadata.
+    :vartype value: str
     """
 
     _attribute_map = {
@@ -94,6 +106,12 @@ class MetadataValue(msrest.serialization.Model):
         value: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: the name of the metadata.
+        :paramtype name: ~$(python-base-namespace).v2018_01_01.models.LocalizableString
+        :keyword value: the value of the metadata.
+        :paramtype value: str
+        """
         super(MetadataValue, self).__init__(**kwargs)
         self.name = name
         self.value = value
@@ -104,25 +122,25 @@ class Metric(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. the metric Id.
-    :type id: str
-    :param type: Required. the resource type of the metric resource.
-    :type type: str
-    :param name: Required. the name and the display name of the metric, i.e. it is localizable
+    :ivar id: Required. the metric Id.
+    :vartype id: str
+    :ivar type: Required. the resource type of the metric resource.
+    :vartype type: str
+    :ivar name: Required. the name and the display name of the metric, i.e. it is localizable
      string.
-    :type name: ~$(python-base-namespace).v2018_01_01.models.LocalizableString
-    :param display_description: Detailed description of this metric.
-    :type display_description: str
-    :param error_code: 'Success' or the error details on query failures for this metric.
-    :type error_code: str
-    :param error_message: Error message encountered querying this specific metric.
-    :type error_message: str
-    :param unit: Required. The unit of the metric. Possible values include: "Count", "Bytes",
+    :vartype name: ~$(python-base-namespace).v2018_01_01.models.LocalizableString
+    :ivar display_description: Detailed description of this metric.
+    :vartype display_description: str
+    :ivar error_code: 'Success' or the error details on query failures for this metric.
+    :vartype error_code: str
+    :ivar error_message: Error message encountered querying this specific metric.
+    :vartype error_message: str
+    :ivar unit: Required. The unit of the metric. Possible values include: "Count", "Bytes",
      "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds",
      "Unspecified", "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
-    :type unit: str or ~$(python-base-namespace).v2018_01_01.models.MetricUnit
-    :param timeseries: Required. the time series returned when a data query is performed.
-    :type timeseries: list[~$(python-base-namespace).v2018_01_01.models.TimeSeriesElement]
+    :vartype unit: str or ~$(python-base-namespace).v2018_01_01.models.MetricUnit
+    :ivar timeseries: Required. the time series returned when a data query is performed.
+    :vartype timeseries: list[~$(python-base-namespace).v2018_01_01.models.TimeSeriesElement]
     """
 
     _validation = {
@@ -157,6 +175,27 @@ class Metric(msrest.serialization.Model):
         error_message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Required. the metric Id.
+        :paramtype id: str
+        :keyword type: Required. the resource type of the metric resource.
+        :paramtype type: str
+        :keyword name: Required. the name and the display name of the metric, i.e. it is localizable
+         string.
+        :paramtype name: ~$(python-base-namespace).v2018_01_01.models.LocalizableString
+        :keyword display_description: Detailed description of this metric.
+        :paramtype display_description: str
+        :keyword error_code: 'Success' or the error details on query failures for this metric.
+        :paramtype error_code: str
+        :keyword error_message: Error message encountered querying this specific metric.
+        :paramtype error_message: str
+        :keyword unit: Required. The unit of the metric. Possible values include: "Count", "Bytes",
+         "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds",
+         "Unspecified", "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
+        :paramtype unit: str or ~$(python-base-namespace).v2018_01_01.models.MetricUnit
+        :keyword timeseries: Required. the time series returned when a data query is performed.
+        :paramtype timeseries: list[~$(python-base-namespace).v2018_01_01.models.TimeSeriesElement]
+        """
         super(Metric, self).__init__(**kwargs)
         self.id = id
         self.type = type
@@ -171,12 +210,12 @@ class Metric(msrest.serialization.Model):
 class MetricAvailability(msrest.serialization.Model):
     """Metric availability specifies the time grain (aggregation interval or frequency) and the retention period for that time grain.
 
-    :param time_grain: the time grain specifies the aggregation interval for the metric. Expressed
+    :ivar time_grain: the time grain specifies the aggregation interval for the metric. Expressed
      as a duration 'PT1M', 'P1D', etc.
-    :type time_grain: ~datetime.timedelta
-    :param retention: the retention period for the metric at the specified timegrain.  Expressed as
+    :vartype time_grain: ~datetime.timedelta
+    :ivar retention: the retention period for the metric at the specified timegrain.  Expressed as
      a duration 'PT1M', 'P1D', etc.
-    :type retention: ~datetime.timedelta
+    :vartype retention: ~datetime.timedelta
     """
 
     _attribute_map = {
@@ -191,6 +230,14 @@ class MetricAvailability(msrest.serialization.Model):
         retention: Optional[datetime.timedelta] = None,
         **kwargs
     ):
+        """
+        :keyword time_grain: the time grain specifies the aggregation interval for the metric.
+         Expressed as a duration 'PT1M', 'P1D', etc.
+        :paramtype time_grain: ~datetime.timedelta
+        :keyword retention: the retention period for the metric at the specified timegrain.  Expressed
+         as a duration 'PT1M', 'P1D', etc.
+        :paramtype retention: ~datetime.timedelta
+        """
         super(MetricAvailability, self).__init__(**kwargs)
         self.time_grain = time_grain
         self.retention = retention
@@ -199,42 +246,42 @@ class MetricAvailability(msrest.serialization.Model):
 class MetricDefinition(msrest.serialization.Model):
     """Metric definition class specifies the metadata for a metric.
 
-    :param is_dimension_required: Flag to indicate whether the dimension is required.
-    :type is_dimension_required: bool
-    :param resource_id: the resource identifier of the resource that emitted the metric.
-    :type resource_id: str
-    :param namespace: the namespace the metric belongs to.
-    :type namespace: str
-    :param name: the name and the display name of the metric, i.e. it is a localizable string.
-    :type name: ~$(python-base-namespace).v2018_01_01.models.LocalizableString
-    :param display_description: Detailed description of this metric.
-    :type display_description: str
-    :param category: Custom category name for this metric.
-    :type category: str
-    :param metric_class: The class of the metric. Possible values include: "Availability",
+    :ivar is_dimension_required: Flag to indicate whether the dimension is required.
+    :vartype is_dimension_required: bool
+    :ivar resource_id: the resource identifier of the resource that emitted the metric.
+    :vartype resource_id: str
+    :ivar namespace: the namespace the metric belongs to.
+    :vartype namespace: str
+    :ivar name: the name and the display name of the metric, i.e. it is a localizable string.
+    :vartype name: ~$(python-base-namespace).v2018_01_01.models.LocalizableString
+    :ivar display_description: Detailed description of this metric.
+    :vartype display_description: str
+    :ivar category: Custom category name for this metric.
+    :vartype category: str
+    :ivar metric_class: The class of the metric. Possible values include: "Availability",
      "Transactions", "Errors", "Latency", "Saturation".
-    :type metric_class: str or ~$(python-base-namespace).v2018_01_01.models.MetricClass
-    :param unit: The unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
+    :vartype metric_class: str or ~$(python-base-namespace).v2018_01_01.models.MetricClass
+    :ivar unit: The unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
      "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
      "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
-    :type unit: str or ~$(python-base-namespace).v2018_01_01.models.MetricUnit
-    :param primary_aggregation_type: the primary aggregation type value defining how to use the
+    :vartype unit: str or ~$(python-base-namespace).v2018_01_01.models.MetricUnit
+    :ivar primary_aggregation_type: the primary aggregation type value defining how to use the
      values for display. Possible values include: "None", "Average", "Count", "Minimum", "Maximum",
      "Total".
-    :type primary_aggregation_type: str or
+    :vartype primary_aggregation_type: str or
      ~$(python-base-namespace).v2018_01_01.models.AggregationType
-    :param supported_aggregation_types: the collection of what aggregation types are supported.
-    :type supported_aggregation_types: list[str or
+    :ivar supported_aggregation_types: the collection of what aggregation types are supported.
+    :vartype supported_aggregation_types: list[str or
      ~$(python-base-namespace).v2018_01_01.models.AggregationType]
-    :param metric_availabilities: the collection of what aggregation intervals are available to be
+    :ivar metric_availabilities: the collection of what aggregation intervals are available to be
      queried.
-    :type metric_availabilities:
+    :vartype metric_availabilities:
      list[~$(python-base-namespace).v2018_01_01.models.MetricAvailability]
-    :param id: the resource identifier of the metric definition.
-    :type id: str
-    :param dimensions: the name and the display name of the dimension, i.e. it is a localizable
+    :ivar id: the resource identifier of the metric definition.
+    :vartype id: str
+    :ivar dimensions: the name and the display name of the dimension, i.e. it is a localizable
      string.
-    :type dimensions: list[~$(python-base-namespace).v2018_01_01.models.LocalizableString]
+    :vartype dimensions: list[~$(python-base-namespace).v2018_01_01.models.LocalizableString]
     """
 
     _attribute_map = {
@@ -271,6 +318,44 @@ class MetricDefinition(msrest.serialization.Model):
         dimensions: Optional[List["LocalizableString"]] = None,
         **kwargs
     ):
+        """
+        :keyword is_dimension_required: Flag to indicate whether the dimension is required.
+        :paramtype is_dimension_required: bool
+        :keyword resource_id: the resource identifier of the resource that emitted the metric.
+        :paramtype resource_id: str
+        :keyword namespace: the namespace the metric belongs to.
+        :paramtype namespace: str
+        :keyword name: the name and the display name of the metric, i.e. it is a localizable string.
+        :paramtype name: ~$(python-base-namespace).v2018_01_01.models.LocalizableString
+        :keyword display_description: Detailed description of this metric.
+        :paramtype display_description: str
+        :keyword category: Custom category name for this metric.
+        :paramtype category: str
+        :keyword metric_class: The class of the metric. Possible values include: "Availability",
+         "Transactions", "Errors", "Latency", "Saturation".
+        :paramtype metric_class: str or ~$(python-base-namespace).v2018_01_01.models.MetricClass
+        :keyword unit: The unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
+         "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
+         "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
+        :paramtype unit: str or ~$(python-base-namespace).v2018_01_01.models.MetricUnit
+        :keyword primary_aggregation_type: the primary aggregation type value defining how to use the
+         values for display. Possible values include: "None", "Average", "Count", "Minimum", "Maximum",
+         "Total".
+        :paramtype primary_aggregation_type: str or
+         ~$(python-base-namespace).v2018_01_01.models.AggregationType
+        :keyword supported_aggregation_types: the collection of what aggregation types are supported.
+        :paramtype supported_aggregation_types: list[str or
+         ~$(python-base-namespace).v2018_01_01.models.AggregationType]
+        :keyword metric_availabilities: the collection of what aggregation intervals are available to
+         be queried.
+        :paramtype metric_availabilities:
+         list[~$(python-base-namespace).v2018_01_01.models.MetricAvailability]
+        :keyword id: the resource identifier of the metric definition.
+        :paramtype id: str
+        :keyword dimensions: the name and the display name of the dimension, i.e. it is a localizable
+         string.
+        :paramtype dimensions: list[~$(python-base-namespace).v2018_01_01.models.LocalizableString]
+        """
         super(MetricDefinition, self).__init__(**kwargs)
         self.is_dimension_required = is_dimension_required
         self.resource_id = resource_id
@@ -292,8 +377,8 @@ class MetricDefinitionCollection(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. the values for the metric definitions.
-    :type value: list[~$(python-base-namespace).v2018_01_01.models.MetricDefinition]
+    :ivar value: Required. the values for the metric definitions.
+    :vartype value: list[~$(python-base-namespace).v2018_01_01.models.MetricDefinition]
     """
 
     _validation = {
@@ -310,6 +395,10 @@ class MetricDefinitionCollection(msrest.serialization.Model):
         value: List["MetricDefinition"],
         **kwargs
     ):
+        """
+        :keyword value: Required. the values for the metric definitions.
+        :paramtype value: list[~$(python-base-namespace).v2018_01_01.models.MetricDefinition]
+        """
         super(MetricDefinitionCollection, self).__init__(**kwargs)
         self.value = value
 
@@ -319,19 +408,19 @@ class MetricValue(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param time_stamp: Required. the timestamp for the metric value in ISO 8601 format.
-    :type time_stamp: ~datetime.datetime
-    :param average: the average value in the time range.
-    :type average: float
-    :param minimum: the least value in the time range.
-    :type minimum: float
-    :param maximum: the greatest value in the time range.
-    :type maximum: float
-    :param total: the sum of all of the values in the time range.
-    :type total: float
-    :param count: the number of samples in the time range. Can be used to determine the number of
+    :ivar time_stamp: Required. the timestamp for the metric value in ISO 8601 format.
+    :vartype time_stamp: ~datetime.datetime
+    :ivar average: the average value in the time range.
+    :vartype average: float
+    :ivar minimum: the least value in the time range.
+    :vartype minimum: float
+    :ivar maximum: the greatest value in the time range.
+    :vartype maximum: float
+    :ivar total: the sum of all of the values in the time range.
+    :vartype total: float
+    :ivar count: the number of samples in the time range. Can be used to determine the number of
      values that contributed to the average value.
-    :type count: float
+    :vartype count: float
     """
 
     _validation = {
@@ -358,6 +447,21 @@ class MetricValue(msrest.serialization.Model):
         count: Optional[float] = None,
         **kwargs
     ):
+        """
+        :keyword time_stamp: Required. the timestamp for the metric value in ISO 8601 format.
+        :paramtype time_stamp: ~datetime.datetime
+        :keyword average: the average value in the time range.
+        :paramtype average: float
+        :keyword minimum: the least value in the time range.
+        :paramtype minimum: float
+        :keyword maximum: the greatest value in the time range.
+        :paramtype maximum: float
+        :keyword total: the sum of all of the values in the time range.
+        :paramtype total: float
+        :keyword count: the number of samples in the time range. Can be used to determine the number of
+         values that contributed to the average value.
+        :paramtype count: float
+        """
         super(MetricValue, self).__init__(**kwargs)
         self.time_stamp = time_stamp
         self.average = average
@@ -372,22 +476,22 @@ class Response(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param cost: The integer value representing the relative cost of the query.
-    :type cost: int
-    :param timespan: Required. The timespan for which the data was retrieved. Its value consists of
+    :ivar cost: The integer value representing the relative cost of the query.
+    :vartype cost: int
+    :ivar timespan: Required. The timespan for which the data was retrieved. Its value consists of
      two datetimes concatenated, separated by '/'.  This may be adjusted in the future and returned
      back from what was originally requested.
-    :type timespan: str
-    :param interval: The interval (window size) for which the metric data was returned in.  This
-     may be adjusted in the future and returned back from what was originally requested.  This is
-     not present if a metadata request was made.
-    :type interval: ~datetime.timedelta
-    :param namespace: The namespace of the metrics being queried.
-    :type namespace: str
-    :param resourceregion: The region of the resource being queried for metrics.
-    :type resourceregion: str
-    :param value: Required. the value of the collection.
-    :type value: list[~$(python-base-namespace).v2018_01_01.models.Metric]
+    :vartype timespan: str
+    :ivar interval: The interval (window size) for which the metric data was returned in.  This may
+     be adjusted in the future and returned back from what was originally requested.  This is not
+     present if a metadata request was made.
+    :vartype interval: ~datetime.timedelta
+    :ivar namespace: The namespace of the metrics being queried.
+    :vartype namespace: str
+    :ivar resourceregion: The region of the resource being queried for metrics.
+    :vartype resourceregion: str
+    :ivar value: Required. the value of the collection.
+    :vartype value: list[~$(python-base-namespace).v2018_01_01.models.Metric]
     """
 
     _validation = {
@@ -416,6 +520,24 @@ class Response(msrest.serialization.Model):
         resourceregion: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword cost: The integer value representing the relative cost of the query.
+        :paramtype cost: int
+        :keyword timespan: Required. The timespan for which the data was retrieved. Its value consists
+         of two datetimes concatenated, separated by '/'.  This may be adjusted in the future and
+         returned back from what was originally requested.
+        :paramtype timespan: str
+        :keyword interval: The interval (window size) for which the metric data was returned in.  This
+         may be adjusted in the future and returned back from what was originally requested.  This is
+         not present if a metadata request was made.
+        :paramtype interval: ~datetime.timedelta
+        :keyword namespace: The namespace of the metrics being queried.
+        :paramtype namespace: str
+        :keyword resourceregion: The region of the resource being queried for metrics.
+        :paramtype resourceregion: str
+        :keyword value: Required. the value of the collection.
+        :paramtype value: list[~$(python-base-namespace).v2018_01_01.models.Metric]
+        """
         super(Response, self).__init__(**kwargs)
         self.cost = cost
         self.timespan = timespan
@@ -428,11 +550,11 @@ class Response(msrest.serialization.Model):
 class TimeSeriesElement(msrest.serialization.Model):
     """A time series result type. The discriminator value is always TimeSeries in this case.
 
-    :param metadatavalues: the metadata values returned if $filter was specified in the call.
-    :type metadatavalues: list[~$(python-base-namespace).v2018_01_01.models.MetadataValue]
-    :param data: An array of data points representing the metric values.  This is only returned if
-     a result type of data is specified.
-    :type data: list[~$(python-base-namespace).v2018_01_01.models.MetricValue]
+    :ivar metadatavalues: the metadata values returned if $filter was specified in the call.
+    :vartype metadatavalues: list[~$(python-base-namespace).v2018_01_01.models.MetadataValue]
+    :ivar data: An array of data points representing the metric values.  This is only returned if a
+     result type of data is specified.
+    :vartype data: list[~$(python-base-namespace).v2018_01_01.models.MetricValue]
     """
 
     _attribute_map = {
@@ -447,6 +569,13 @@ class TimeSeriesElement(msrest.serialization.Model):
         data: Optional[List["MetricValue"]] = None,
         **kwargs
     ):
+        """
+        :keyword metadatavalues: the metadata values returned if $filter was specified in the call.
+        :paramtype metadatavalues: list[~$(python-base-namespace).v2018_01_01.models.MetadataValue]
+        :keyword data: An array of data points representing the metric values.  This is only returned
+         if a result type of data is specified.
+        :paramtype data: list[~$(python-base-namespace).v2018_01_01.models.MetricValue]
+        """
         super(TimeSeriesElement, self).__init__(**kwargs)
         self.metadatavalues = metadatavalues
         self.data = data

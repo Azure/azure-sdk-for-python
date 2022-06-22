@@ -327,6 +327,31 @@ class StorageContainerTest(StorageTestCase):
         self.assertNamedItemInContainer(containers2, container_names[2])
         self.assertNamedItemInContainer(containers2, container_names[3])
 
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_list_containers_account_sas(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+
+        sas_token = generate_account_sas(
+            account_name=storage_account_name,
+            account_key=storage_account_key,
+            resource_types=ResourceTypes(service=True),
+            permission=AccountSasPermissions(list=True),
+            expiry=datetime.utcnow() + timedelta(hours=3)
+        )
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=sas_token)
+
+        # Act
+        containers = list(bsc.list_containers(name_starts_with=container.container_name))
+
+        # Assert
+        self.assertIsNotNone(containers)
+        self.assertEqual(len(containers), 1)
+        self.assertIsNotNone(containers[0])
+        self.assertEqual(containers[0].name, container.container_name)
+        self.assertIsNone(containers[0].metadata)
+
     @BlobPreparer()
     def test_set_container_metadata(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
@@ -936,7 +961,6 @@ class StorageContainerTest(StorageTestCase):
                          'application/octet-stream')
         self.assertIsNotNone(blobs[0].creation_time)
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="quote and unquote behave differently on py2 for recordings")
     @BlobPreparer()
     def test_list_encoded_blobs(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
@@ -1062,7 +1086,6 @@ class StorageContainerTest(StorageTestCase):
     @BlobPreparer()
     def test_list_blobs_with_include_metadata(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
-        # pytest.skip("Waiting on metadata XML fix in msrest")
         container = self._create_container(bsc)
         data = b'hello world'
         content_settings = ContentSettings(
@@ -1091,7 +1114,6 @@ class StorageContainerTest(StorageTestCase):
     @BlobPreparer()
     def test_list_blobs_include_deletedwithversion(self, versioned_storage_account_name, versioned_storage_account_key):
         bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
-        # pytest.skip("Waiting on metadata XML fix in msrest")
         container = self._create_container(bsc)
         data = b'hello world'
         content_settings = ContentSettings(
@@ -1255,7 +1277,7 @@ class StorageContainerTest(StorageTestCase):
             container.account_name,
             container.container_name,
             account_key=storage_account_key,
-            permission=ContainerSasPermissions(find=True),
+            permission=ContainerSasPermissions(filter_by_tags=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
         container = ContainerClient.from_container_url(container.url, credential=sas_token)
@@ -1297,6 +1319,44 @@ class StorageContainerTest(StorageTestCase):
         assert response[0].status_code == 202
         assert response[1].status_code == 202
         assert response[2].status_code == 202
+
+    @BlobPreparer()
+    def test_delete_blobs_with_version_id(self, versioned_storage_account_name, versioned_storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        container = self._create_container(bsc)
+        data = b'hello world'
+
+        try:
+            blob = bsc.get_blob_client(container.container_name, 'blob1')
+            blob.upload_blob(data, length=len(data))
+            container.get_blob_client('blob2').upload_blob(data)
+        except:
+            pass
+
+        # Act
+        blob = bsc.get_blob_client(container.container_name, 'blob1')
+        old_blob_version_id = blob.get_blob_properties().get("version_id")
+        blob.stage_block(block_id='1', data="Test Content")
+        blob.commit_block_list(['1'])
+        new_blob_version_id = blob.get_blob_properties().get("version_id")
+        assert old_blob_version_id != new_blob_version_id
+
+        blob1_del_data = dict()
+        blob1_del_data['name'] = 'blob1'
+        blob1_del_data['version_id'] = old_blob_version_id
+
+        response = container.delete_blobs(
+            blob1_del_data,
+            'blob2'
+        )
+
+        # Assert
+        response = list(response)
+        assert len(response) == 2
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert blob.get_blob_properties().get("version_id") == new_blob_version_id
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -1789,7 +1849,6 @@ class StorageContainerTest(StorageTestCase):
     @BlobPreparer()
     def test_list_blobs_with_include_multiple(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
-        pytest.skip("Waiting on metadata XML fix in msrest")
         container = self._create_container(bsc)
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')

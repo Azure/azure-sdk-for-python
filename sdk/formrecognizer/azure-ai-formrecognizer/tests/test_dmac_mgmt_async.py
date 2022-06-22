@@ -7,7 +7,7 @@
 import pytest
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import set_bodiless_matcher
+from devtools_testutils import set_custom_default_matcher
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
@@ -84,8 +84,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         async with client:
             info = await client.get_account_info()
 
-        assert info.model_limit
-        assert info.model_count
+        assert info.document_model_limit
+        assert info.document_model_count
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -108,7 +108,10 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_mgmt_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
-        set_bodiless_matcher()  
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )  
         
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template", description="mgmt model")
@@ -202,7 +205,10 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
     async def test_get_document_analysis_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        set_bodiless_matcher()  
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )  
         transport = AioHttpTransport()
         dtc = DocumentModelAdministrationClient(endpoint=formrecognizer_test_endpoint, credential=AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
 
@@ -212,6 +218,6 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             async with dtc.get_document_analysis_client() as dac:
                 assert transport.session is not None
                 await (await dac.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)).wait()
-                assert dac._api_version == DocumentAnalysisApiVersion.V2022_01_30_PREVIEW
+                assert dac._api_version == DocumentAnalysisApiVersion.V2022_06_30_PREVIEW
             await dtc.get_account_info()
             assert transport.session is not None

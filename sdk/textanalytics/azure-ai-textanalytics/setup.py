@@ -57,6 +57,7 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
+    keywords="azure, azure sdk, text analytics, cognitive services, natural language processing",
     packages=find_packages(exclude=[
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
@@ -65,8 +66,9 @@ setup(
     ]),
     python_requires=">=3.6",
     install_requires=[
-        "azure-core<2.0.0,>=1.19.1",
+        "azure-core<2.0.0,>=1.23.0",
         "msrest>=0.6.21",
         'azure-common~=1.1',
+        "typing-extensions>=4.0.1",
     ],
 )

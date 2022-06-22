@@ -18,8 +18,6 @@ from typing import (
     Awaitable,
 )
 
-from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
-
 from ._eventprocessor.event_processor import EventProcessor
 from ._consumer_async import EventHubConsumer
 from ._client_base_async import ClientBaseAsync
@@ -28,7 +26,7 @@ from .._eventprocessor.common import LoadBalancingStrategy
 
 
 if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
+    from ._client_base_async import CredentialTypes
     from uamqp.constants import TransportType
     from ._eventprocessor.partition_context import PartitionContext
     from ._eventprocessor.checkpoint_store import CheckpointStore
@@ -38,7 +36,9 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubConsumerClient(ClientBaseAsync):
+class EventHubConsumerClient(
+    ClientBaseAsync
+):  # pylint: disable=client-accepts-api-version-keyword
     """The EventHubConsumerClient class defines a high level interface for
     receiving events from the Azure Event Hubs service.
 
@@ -147,7 +147,7 @@ class EventHubConsumerClient(ClientBaseAsync):
         fully_qualified_namespace: str,
         eventhub_name: str,
         consumer_group: str,
-        credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
+        credential: "CredentialTypes",
         **kwargs
     ) -> None:
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
@@ -158,10 +158,17 @@ class EventHubConsumerClient(ClientBaseAsync):
             "partition_ownership_expiration_interval", None
         )
         if self._partition_ownership_expiration_interval is None:
-            self._partition_ownership_expiration_interval = 6 * self._load_balancing_interval
-        load_balancing_strategy = kwargs.pop("load_balancing_strategy", None) or LoadBalancingStrategy.GREEDY
-        self._load_balancing_strategy = LoadBalancingStrategy(load_balancing_strategy) if load_balancing_strategy \
+            self._partition_ownership_expiration_interval = (
+                6 * self._load_balancing_interval
+            )
+        load_balancing_strategy = (
+            kwargs.pop("load_balancing_strategy", None) or LoadBalancingStrategy.GREEDY
+        )
+        self._load_balancing_strategy = (
+            LoadBalancingStrategy(load_balancing_strategy)
+            if load_balancing_strategy
             else LoadBalancingStrategy.GREEDY
+        )
         self._consumer_group = consumer_group
         network_tracing = kwargs.pop("logging_enable", False)
         super(EventHubConsumerClient, self).__init__(
@@ -169,7 +176,7 @@ class EventHubConsumerClient(ClientBaseAsync):
             eventhub_name=eventhub_name,
             credential=credential,
             network_tracing=network_tracing,
-            **kwargs
+            **kwargs,
         )
         self._lock = asyncio.Lock(**self._internal_kwargs)
         self._event_processors = dict()  # type: Dict[Tuple[str, str], EventProcessor]
@@ -208,7 +215,7 @@ class EventHubConsumerClient(ClientBaseAsync):
             prefetch=prefetch,
             idle_timeout=self._idle_timeout,
             track_last_enqueued_event_properties=track_last_enqueued_event_properties,
-            **self._internal_kwargs
+            **self._internal_kwargs,
         )
         return handler
 
@@ -322,34 +329,34 @@ class EventHubConsumerClient(ClientBaseAsync):
             transport_type=transport_type,
             checkpoint_store=checkpoint_store,
             load_balancing_interval=load_balancing_interval,
-            **kwargs
+            **kwargs,
         )
         return cls(**constructor_args)
 
     async def _receive(
-            self,
-            on_event,
-            batch=False,
-            *,
-            max_batch_size: int = 300,
-            max_wait_time: Optional[float] = None,
-            partition_id: Optional[str] = None,
-            owner_level: Optional[int] = None,
-            prefetch: int = 300,
-            track_last_enqueued_event_properties: bool = False,
-            starting_position: Optional[
-                Union[str, int, datetime.datetime, Dict[str, Any]]
-            ] = None,
-            starting_position_inclusive: Union[bool, Dict[str, bool]] = False,
-            on_error: Optional[
-                Callable[["PartitionContext", Exception], Awaitable[None]]
-            ] = None,
-            on_partition_initialize: Optional[
-                Callable[["PartitionContext"], Awaitable[None]]
-            ] = None,
-            on_partition_close: Optional[
-                Callable[["PartitionContext", "CloseReason"], Awaitable[None]]
-            ] = None
+        self,
+        on_event,
+        batch=False,
+        *,
+        max_batch_size: int = 300,
+        max_wait_time: Optional[float] = None,
+        partition_id: Optional[str] = None,
+        owner_level: Optional[int] = None,
+        prefetch: int = 300,
+        track_last_enqueued_event_properties: bool = False,
+        starting_position: Optional[
+            Union[str, int, datetime.datetime, Dict[str, Any]]
+        ] = None,
+        starting_position_inclusive: Union[bool, Dict[str, bool]] = False,
+        on_error: Optional[
+            Callable[["PartitionContext", Exception], Awaitable[None]]
+        ] = None,
+        on_partition_initialize: Optional[
+            Callable[["PartitionContext"], Awaitable[None]]
+        ] = None,
+        on_partition_close: Optional[
+            Callable[["PartitionContext", "CloseReason"], Awaitable[None]]
+        ] = None
     ):
         async with self._lock:
             error = None
@@ -361,7 +368,7 @@ class EventHubConsumerClient(ClientBaseAsync):
                     )
                 )
             elif partition_id is None and any(
-                    x[0] == self._consumer_group for x in self._event_processors
+                x[0] == self._consumer_group for x in self._event_processors
             ):
                 error = (
                     "This consumer client is already receiving events "
@@ -393,12 +400,14 @@ class EventHubConsumerClient(ClientBaseAsync):
                 load_balancing_interval=self._load_balancing_interval,
                 load_balancing_strategy=self._load_balancing_strategy,
                 partition_ownership_expiration_interval=self._partition_ownership_expiration_interval,
-                initial_event_position=starting_position if starting_position is not None else "@latest",
+                initial_event_position=starting_position
+                if starting_position is not None
+                else "@latest",
                 initial_event_position_inclusive=starting_position_inclusive or False,
                 owner_level=owner_level,
                 prefetch=prefetch,
                 track_last_enqueued_event_properties=track_last_enqueued_event_properties,
-                **self._internal_kwargs
+                **self._internal_kwargs,
             )
             self._event_processors[
                 (self._consumer_group, partition_id or ALL_PARTITIONS)
@@ -417,7 +426,9 @@ class EventHubConsumerClient(ClientBaseAsync):
 
     async def receive(
         self,
-        on_event: Callable[["PartitionContext", Optional["EventData"]], Awaitable[None]],
+        on_event: Callable[
+            ["PartitionContext", Optional["EventData"]], Awaitable[None]
+        ],
         *,
         max_wait_time: Optional[float] = None,
         partition_id: Optional[str] = None,
@@ -521,12 +532,14 @@ class EventHubConsumerClient(ClientBaseAsync):
             starting_position_inclusive=starting_position_inclusive,
             on_error=on_error,
             on_partition_initialize=on_partition_initialize,
-            on_partition_close=on_partition_close
+            on_partition_close=on_partition_close,
         )
 
     async def receive_batch(
         self,
-        on_event_batch: Callable[["PartitionContext", List["EventData"]], Awaitable[None]],
+        on_event_batch: Callable[
+            ["PartitionContext", List["EventData"]], Awaitable[None]
+        ],
         *,
         max_batch_size: int = 300,
         max_wait_time: Optional[float] = None,
@@ -639,7 +652,7 @@ class EventHubConsumerClient(ClientBaseAsync):
             starting_position_inclusive=starting_position_inclusive,
             on_error=on_error,
             on_partition_initialize=on_partition_initialize,
-            on_partition_close=on_partition_close
+            on_partition_close=on_partition_close,
         )
 
     async def get_eventhub_properties(self) -> Dict[str, Any]:

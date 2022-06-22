@@ -56,7 +56,13 @@ class AmqpAnnotatedMessage(object):
             return
 
         # manually constructed AMQPAnnotatedMessage
-        input_count_validation = len([key for key in ("data_body", "sequence_body", "value_body") if key in kwargs])
+        input_count_validation = len(
+            [
+                key
+                for key in ("data_body", "sequence_body", "value_body")
+                if key in kwargs
+            ]
+        )
         if input_count_validation != 1:
             raise ValueError(
                 "There should be one and only one of either data_body, sequence_body "
@@ -75,12 +81,16 @@ class AmqpAnnotatedMessage(object):
             self._body = kwargs.get("value_body")
             self._body_type = uamqp.MessageBodyType.Value
 
-        self._message = uamqp.message.Message(body=self._body, body_type=self._body_type)
+        self._message = uamqp.message.Message(
+            body=self._body, body_type=self._body_type
+        )
         header_dict = cast(Mapping, kwargs.get("header"))
         self._header = AmqpMessageHeader(**header_dict) if "header" in kwargs else None
         self._footer = kwargs.get("footer")
         properties_dict = cast(Mapping, kwargs.get("properties"))
-        self._properties = AmqpMessageProperties(**properties_dict) if "properties" in kwargs else None
+        self._properties = (
+            AmqpMessageProperties(**properties_dict) if "properties" in kwargs else None
+        )
         self._application_properties = kwargs.get("application_properties")
         self._annotations = kwargs.get("annotations")
         self._delivery_annotations = kwargs.get("delivery_annotations")
@@ -91,9 +101,7 @@ class AmqpAnnotatedMessage(object):
     def __repr__(self):
         # type: () -> str
         # pylint: disable=bare-except
-        message_repr = "body={}".format(
-            str(self)
-        )
+        message_repr = "body={}".format(str(self))
         message_repr += ", body_type={}".format(self.body_type)
         try:
             message_repr += ", header={}".format(self.header)
@@ -108,11 +116,15 @@ class AmqpAnnotatedMessage(object):
         except:
             message_repr += ", properties=<read-error>"
         try:
-            message_repr += ", application_properties={}".format(self.application_properties)
+            message_repr += ", application_properties={}".format(
+                self.application_properties
+            )
         except:
             message_repr += ", application_properties=<read-error>"
         try:
-            message_repr += ", delivery_annotations={}".format(self.delivery_annotations)
+            message_repr += ", delivery_annotations={}".format(
+                self.delivery_annotations
+            )
         except:
             message_repr += ", delivery_annotations=<read-error>"
         try:
@@ -123,28 +135,36 @@ class AmqpAnnotatedMessage(object):
 
     def _from_amqp_message(self, message):
         # populate the properties from an uamqp message
-        self._properties = AmqpMessageProperties(
-            message_id=message.properties.message_id,
-            user_id=message.properties.user_id,
-            to=message.properties.to,
-            subject=message.properties.subject,
-            reply_to=message.properties.reply_to,
-            correlation_id=message.properties.correlation_id,
-            content_type=message.properties.content_type,
-            content_encoding=message.properties.content_encoding,
-            absolute_expiry_time=message.properties.absolute_expiry_time,
-            creation_time=message.properties.creation_time,
-            group_id=message.properties.group_id,
-            group_sequence=message.properties.group_sequence,
-            reply_to_group_id=message.properties.reply_to_group_id,
-        ) if message.properties else None
-        self._header = AmqpMessageHeader(
-            delivery_count=message.header.delivery_count,
-            time_to_live=message.header.time_to_live,
-            first_acquirer=message.header.first_acquirer,
-            durable=message.header.durable,
-            priority=message.header.priority
-        ) if message.header else None
+        self._properties = (
+            AmqpMessageProperties(
+                message_id=message.properties.message_id,
+                user_id=message.properties.user_id,
+                to=message.properties.to,
+                subject=message.properties.subject,
+                reply_to=message.properties.reply_to,
+                correlation_id=message.properties.correlation_id,
+                content_type=message.properties.content_type,
+                content_encoding=message.properties.content_encoding,
+                absolute_expiry_time=message.properties.absolute_expiry_time,
+                creation_time=message.properties.creation_time,
+                group_id=message.properties.group_id,
+                group_sequence=message.properties.group_sequence,
+                reply_to_group_id=message.properties.reply_to_group_id,
+            )
+            if message.properties
+            else None
+        )
+        self._header = (
+            AmqpMessageHeader(
+                delivery_count=message.header.delivery_count,
+                time_to_live=message.header.time_to_live,
+                first_acquirer=message.header.first_acquirer,
+                durable=message.header.durable,
+                priority=message.header.priority,
+            )
+            if message.header
+            else None
+        )
         self._footer = message.footer
         self._annotations = message.annotations
         self._delivery_annotations = message.delivery_annotations
@@ -171,13 +191,16 @@ class AmqpAnnotatedMessage(object):
                 correlation_id=self.properties.correlation_id,
                 content_type=self.properties.content_type,
                 content_encoding=self.properties.content_encoding,
-                creation_time=int(self.properties.creation_time) if self.properties.creation_time else None,
+                creation_time=int(self.properties.creation_time)
+                if self.properties.creation_time
+                else None,
                 absolute_expiry_time=int(self.properties.absolute_expiry_time)
-                if self.properties.absolute_expiry_time else None,
+                if self.properties.absolute_expiry_time
+                else None,
                 group_id=self.properties.group_id,
                 group_sequence=self.properties.group_sequence,
                 reply_to_group_id=self.properties.reply_to_group_id,
-                encoding=self._encoding
+                encoding=self._encoding,
             )
 
         amqp_body = self._message._body  # pylint: disable=protected-access
@@ -200,7 +223,7 @@ class AmqpAnnotatedMessage(object):
             application_properties=self.application_properties,
             annotations=self.annotations,
             delivery_annotations=self.delivery_annotations,
-            footer=self.footer
+            footer=self.footer,
         )
 
     @property
@@ -226,7 +249,8 @@ class AmqpAnnotatedMessage(object):
         :rtype: ~azure.eventhub.amqp.AmqpMessageBodyType
         """
         return AMQP_MESSAGE_BODY_TYPE_MAP.get(
-            self._message._body.type, AmqpMessageBodyType.VALUE  # pylint: disable=protected-access
+            self._message._body.type,   # pylint: disable=protected-access
+            AmqpMessageBodyType.VALUE,
         )
 
     @property
@@ -386,6 +410,7 @@ class AmqpMessageHeader(DictMixin):
      priority messages. Messages with higher priorities MAY be delivered before those with lower priorities.
     :vartype priority: Optional[int]
     """
+
     def __init__(self, **kwargs):
         self.delivery_count = kwargs.get("delivery_count")
         self.time_to_live = kwargs.get("time_to_live")
@@ -470,6 +495,7 @@ class AmqpMessageProperties(DictMixin):
      to this message to a specific group.
     :vartype reply_to_group_id: Optional[bytes]
     """
+
     def __init__(self, **kwargs):
         self.message_id = kwargs.get("message_id")
         self.user_id = kwargs.get("user_id")

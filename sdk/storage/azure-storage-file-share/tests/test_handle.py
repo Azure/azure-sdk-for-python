@@ -58,12 +58,11 @@ class StorageHandleTest(StorageTestCase):
         self.assertIsNotNone(handles[0].client_ip)
         self.assertIsNotNone(handles[0].open_time)
 
+    @pytest.mark.playback_test_only
     @FileSharePreparer()
     def test_list_handles_on_share(self, storage_account_name, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-        if self.is_live:
-            pytest.skip("Cannot run in live without manual setup")
     
         self._setup(storage_account_name, storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
@@ -75,13 +74,11 @@ class StorageHandleTest(StorageTestCase):
         # Assert
         self._validate_handles(handles)
 
-#
+    @pytest.mark.playback_test_only
     @FileSharePreparer()
     def test_list_handles_on_share_snapshot(self, storage_account_name, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-        if self.is_live:
-            pytest.skip("Cannot run in live without manual setup")
 
         self._setup(storage_account_name, storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME, snapshot="2019-05-08T23:27:24.0000000Z")
@@ -93,12 +90,11 @@ class StorageHandleTest(StorageTestCase):
         # Assert
         self._validate_handles(handles)
 
+    @pytest.mark.playback_test_only
     @FileSharePreparer()
     def test_list_handles_with_marker(self, storage_account_name, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-        if self.is_live:
-            pytest.skip("Cannot run in live without manual setup")
 
         self._setup(storage_account_name, storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
@@ -127,12 +123,11 @@ class StorageHandleTest(StorageTestCase):
         old_handle_not_present = all([old_handle.id != handle.id for handle in remaining_handles])
         self.assertTrue(old_handle_not_present)
 
+    @pytest.mark.playback_test_only
     @FileSharePreparer()
     def test_list_handles_on_directory(self, storage_account_name, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-        if self.is_live:
-            pytest.skip("Cannot run in live without manual setup")
 
         self._setup(storage_account_name, storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
@@ -150,12 +145,11 @@ class StorageHandleTest(StorageTestCase):
         # Assert recursive option is functioning when disabled
         self.assertTrue(len(handles) == 0)
 
+    @pytest.mark.playback_test_only
     @FileSharePreparer()
     def test_list_handles_on_file(self, storage_account_name, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-        if self.is_live:
-            pytest.skip("Cannot run in live without manual setup")
 
         self._setup(storage_account_name, storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
@@ -167,12 +161,11 @@ class StorageHandleTest(StorageTestCase):
         # Assert
         self._validate_handles(handles)
 
+    @pytest.mark.playback_test_only
     @FileSharePreparer()
     def test_close_single_handle(self, storage_account_name, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-        if self.is_live:
-            pytest.skip("Cannot run in live without manual setup")
 
         self._setup(storage_account_name, storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
@@ -190,12 +183,11 @@ class StorageHandleTest(StorageTestCase):
         self.assertEqual(1, handles_info['closed_handles_count'])
         self.assertEqual(handles_info['failed_handles_count'], 0)
 
+    @pytest.mark.playback_test_only
     @FileSharePreparer()
     def test_close_all_handle(self, storage_account_name, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-        if self.is_live:
-            pytest.skip("Cannot run in live without manual setup")
 
         self._setup(storage_account_name, storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)

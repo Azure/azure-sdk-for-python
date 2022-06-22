@@ -46,6 +46,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -87,6 +89,8 @@ class AzureEntityResource(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(AzureEntityResource, self).__init__(**kwargs)
         self.etag = None
 
@@ -106,20 +110,20 @@ class Account(AzureEntityResource):
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
-    :param kind: The Kind of the resource.
-    :type kind: str
-    :param sku: The resource model definition representing SKU.
-    :type sku: ~azure.mgmt.cognitiveservices.models.Sku
-    :param identity: Identity for the resource.
-    :type identity: ~azure.mgmt.cognitiveservices.models.Identity
+    :ivar kind: The Kind of the resource.
+    :vartype kind: str
+    :ivar sku: The resource model definition representing SKU.
+    :vartype sku: ~azure.mgmt.cognitiveservices.models.Sku
+    :ivar identity: Identity for the resource.
+    :vartype identity: ~azure.mgmt.cognitiveservices.models.Identity
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: The geo-location where the resource lives.
-    :type location: str
-    :param properties: Properties of Cognitive Services account.
-    :type properties: ~azure.mgmt.cognitiveservices.models.AccountProperties
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
+    :ivar properties: Properties of Cognitive Services account.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.AccountProperties
     """
 
     _validation = {
@@ -155,6 +159,20 @@ class Account(AzureEntityResource):
         properties: Optional["AccountProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword kind: The Kind of the resource.
+        :paramtype kind: str
+        :keyword sku: The resource model definition representing SKU.
+        :paramtype sku: ~azure.mgmt.cognitiveservices.models.Sku
+        :keyword identity: Identity for the resource.
+        :paramtype identity: ~azure.mgmt.cognitiveservices.models.Identity
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword properties: Properties of Cognitive Services account.
+        :paramtype properties: ~azure.mgmt.cognitiveservices.models.AccountProperties
+        """
         super(Account, self).__init__(**kwargs)
         self.kind = kind
         self.sku = sku
@@ -170,8 +188,8 @@ class AccountListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param next_link: The link used to get the next page of accounts.
-    :type next_link: str
+    :ivar next_link: The link used to get the next page of accounts.
+    :vartype next_link: str
     :ivar value: Gets the list of Cognitive Services accounts and their properties.
     :vartype value: list[~azure.mgmt.cognitiveservices.models.Account]
     """
@@ -191,9 +209,158 @@ class AccountListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: The link used to get the next page of accounts.
+        :paramtype next_link: str
+        """
         super(AccountListResult, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = None
+
+
+class DeploymentModel(msrest.serialization.Model):
+    """Properties of Cognitive Services account deployment model.
+
+    :ivar format: Deployment model format.
+    :vartype format: str
+    :ivar name: Deployment model name.
+    :vartype name: str
+    :ivar version: Deployment model version.
+    :vartype version: str
+    """
+
+    _attribute_map = {
+        'format': {'key': 'format', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        format: Optional[str] = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword format: Deployment model format.
+        :paramtype format: str
+        :keyword name: Deployment model name.
+        :paramtype name: str
+        :keyword version: Deployment model version.
+        :paramtype version: str
+        """
+        super(DeploymentModel, self).__init__(**kwargs)
+        self.format = format
+        self.name = name
+        self.version = version
+
+
+class AccountModel(DeploymentModel):
+    """Cognitive Services account Model.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar format: Deployment model format.
+    :vartype format: str
+    :ivar name: Deployment model name.
+    :vartype name: str
+    :ivar version: Deployment model version.
+    :vartype version: str
+    :ivar base_model: Base Model Identifier.
+    :vartype base_model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
+    :ivar max_capacity: The max capacity.
+    :vartype max_capacity: int
+    :ivar capabilities: The capabilities.
+    :vartype capabilities: dict[str, str]
+    :ivar deprecation: Cognitive Services account ModelDeprecationInfo.
+    :vartype deprecation: ~azure.mgmt.cognitiveservices.models.ModelDeprecationInfo
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    """
+
+    _validation = {
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'format': {'key': 'format', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+        'base_model': {'key': 'baseModel', 'type': 'DeploymentModel'},
+        'max_capacity': {'key': 'maxCapacity', 'type': 'int'},
+        'capabilities': {'key': 'capabilities', 'type': '{str}'},
+        'deprecation': {'key': 'deprecation', 'type': 'ModelDeprecationInfo'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+    }
+
+    def __init__(
+        self,
+        *,
+        format: Optional[str] = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        base_model: Optional["DeploymentModel"] = None,
+        max_capacity: Optional[int] = None,
+        capabilities: Optional[Dict[str, str]] = None,
+        deprecation: Optional["ModelDeprecationInfo"] = None,
+        **kwargs
+    ):
+        """
+        :keyword format: Deployment model format.
+        :paramtype format: str
+        :keyword name: Deployment model name.
+        :paramtype name: str
+        :keyword version: Deployment model version.
+        :paramtype version: str
+        :keyword base_model: Base Model Identifier.
+        :paramtype base_model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
+        :keyword max_capacity: The max capacity.
+        :paramtype max_capacity: int
+        :keyword capabilities: The capabilities.
+        :paramtype capabilities: dict[str, str]
+        :keyword deprecation: Cognitive Services account ModelDeprecationInfo.
+        :paramtype deprecation: ~azure.mgmt.cognitiveservices.models.ModelDeprecationInfo
+        """
+        super(AccountModel, self).__init__(format=format, name=name, version=version, **kwargs)
+        self.base_model = base_model
+        self.max_capacity = max_capacity
+        self.capabilities = capabilities
+        self.deprecation = deprecation
+        self.system_data = None
+
+
+class AccountModelListResult(msrest.serialization.Model):
+    """The list of cognitive services accounts operation response.
+
+    :ivar next_link: The link used to get the next page of Model.
+    :vartype next_link: str
+    :ivar value: Gets the list of Cognitive Services accounts Model and their properties.
+    :vartype value: list[~azure.mgmt.cognitiveservices.models.AccountModel]
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[AccountModel]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["AccountModel"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword next_link: The link used to get the next page of Model.
+        :paramtype next_link: str
+        :keyword value: Gets the list of Cognitive Services accounts Model and their properties.
+        :paramtype value: list[~azure.mgmt.cognitiveservices.models.AccountModel]
+        """
+        super(AccountModelListResult, self).__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
 
 
 class AccountProperties(msrest.serialization.Model):
@@ -215,45 +382,50 @@ class AccountProperties(msrest.serialization.Model):
     :vartype capabilities: list[~azure.mgmt.cognitiveservices.models.SkuCapability]
     :ivar is_migrated: If the resource is migrated from an existing key.
     :vartype is_migrated: bool
-    :param migration_token: Resource migration token.
-    :type migration_token: str
+    :ivar migration_token: Resource migration token.
+    :vartype migration_token: str
     :ivar sku_change_info: Sku change info of account.
     :vartype sku_change_info: ~azure.mgmt.cognitiveservices.models.SkuChangeInfo
-    :param custom_sub_domain_name: Optional subdomain name used for token-based authentication.
-    :type custom_sub_domain_name: str
-    :param network_acls: A collection of rules governing the accessibility from specific network
+    :ivar custom_sub_domain_name: Optional subdomain name used for token-based authentication.
+    :vartype custom_sub_domain_name: str
+    :ivar network_acls: A collection of rules governing the accessibility from specific network
      locations.
-    :type network_acls: ~azure.mgmt.cognitiveservices.models.NetworkRuleSet
-    :param encryption: The encryption properties for this resource.
-    :type encryption: ~azure.mgmt.cognitiveservices.models.Encryption
-    :param user_owned_storage: The storage accounts for this resource.
-    :type user_owned_storage: list[~azure.mgmt.cognitiveservices.models.UserOwnedStorage]
+    :vartype network_acls: ~azure.mgmt.cognitiveservices.models.NetworkRuleSet
+    :ivar encryption: The encryption properties for this resource.
+    :vartype encryption: ~azure.mgmt.cognitiveservices.models.Encryption
+    :ivar user_owned_storage: The storage accounts for this resource.
+    :vartype user_owned_storage: list[~azure.mgmt.cognitiveservices.models.UserOwnedStorage]
     :ivar private_endpoint_connections: The private endpoint connection associated with the
      Cognitive Services account.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.cognitiveservices.models.PrivateEndpointConnection]
-    :param public_network_access: Whether or not public endpoint access is allowed for this
-     account. Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values
-     include: "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.cognitiveservices.models.PublicNetworkAccess
-    :param api_properties: The api properties for special APIs.
-    :type api_properties: ~azure.mgmt.cognitiveservices.models.ApiProperties
+    :ivar public_network_access: Whether or not public endpoint access is allowed for this account.
+     Possible values include: "Enabled", "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.cognitiveservices.models.PublicNetworkAccess
+    :ivar api_properties: The api properties for special APIs.
+    :vartype api_properties: ~azure.mgmt.cognitiveservices.models.ApiProperties
     :ivar date_created: Gets the date of cognitive services account creation.
     :vartype date_created: str
     :ivar call_rate_limit: The call rate limit Cognitive Services account.
     :vartype call_rate_limit: ~azure.mgmt.cognitiveservices.models.CallRateLimit
+    :ivar dynamic_throttling_enabled: The flag to enable dynamic throttling.
+    :vartype dynamic_throttling_enabled: bool
     :ivar quota_limit:
     :vartype quota_limit: ~azure.mgmt.cognitiveservices.models.QuotaLimit
-    :param restrict_outbound_network_access:
-    :type restrict_outbound_network_access: bool
-    :param allowed_fqdn_list:
-    :type allowed_fqdn_list: list[str]
-    :param disable_local_auth:
-    :type disable_local_auth: bool
+    :ivar restrict_outbound_network_access:
+    :vartype restrict_outbound_network_access: bool
+    :ivar allowed_fqdn_list:
+    :vartype allowed_fqdn_list: list[str]
+    :ivar disable_local_auth:
+    :vartype disable_local_auth: bool
     :ivar endpoints: Dictionary of :code:`<string>`.
     :vartype endpoints: dict[str, str]
-    :param restore:
-    :type restore: bool
+    :ivar restore:
+    :vartype restore: bool
+    :ivar deletion_date: The deletion date, only available for deleted account.
+    :vartype deletion_date: str
+    :ivar scheduled_purge_date: The scheduled purge date, only available for deleted account.
+    :vartype scheduled_purge_date: str
     """
 
     _validation = {
@@ -268,6 +440,8 @@ class AccountProperties(msrest.serialization.Model):
         'call_rate_limit': {'readonly': True},
         'quota_limit': {'readonly': True},
         'endpoints': {'readonly': True},
+        'deletion_date': {'readonly': True},
+        'scheduled_purge_date': {'readonly': True},
     }
 
     _attribute_map = {
@@ -287,12 +461,15 @@ class AccountProperties(msrest.serialization.Model):
         'api_properties': {'key': 'apiProperties', 'type': 'ApiProperties'},
         'date_created': {'key': 'dateCreated', 'type': 'str'},
         'call_rate_limit': {'key': 'callRateLimit', 'type': 'CallRateLimit'},
+        'dynamic_throttling_enabled': {'key': 'dynamicThrottlingEnabled', 'type': 'bool'},
         'quota_limit': {'key': 'quotaLimit', 'type': 'QuotaLimit'},
         'restrict_outbound_network_access': {'key': 'restrictOutboundNetworkAccess', 'type': 'bool'},
         'allowed_fqdn_list': {'key': 'allowedFqdnList', 'type': '[str]'},
         'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
         'endpoints': {'key': 'endpoints', 'type': '{str}'},
         'restore': {'key': 'restore', 'type': 'bool'},
+        'deletion_date': {'key': 'deletionDate', 'type': 'str'},
+        'scheduled_purge_date': {'key': 'scheduledPurgeDate', 'type': 'str'},
     }
 
     def __init__(
@@ -305,12 +482,42 @@ class AccountProperties(msrest.serialization.Model):
         user_owned_storage: Optional[List["UserOwnedStorage"]] = None,
         public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
         api_properties: Optional["ApiProperties"] = None,
+        dynamic_throttling_enabled: Optional[bool] = None,
         restrict_outbound_network_access: Optional[bool] = None,
         allowed_fqdn_list: Optional[List[str]] = None,
         disable_local_auth: Optional[bool] = None,
         restore: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword migration_token: Resource migration token.
+        :paramtype migration_token: str
+        :keyword custom_sub_domain_name: Optional subdomain name used for token-based authentication.
+        :paramtype custom_sub_domain_name: str
+        :keyword network_acls: A collection of rules governing the accessibility from specific network
+         locations.
+        :paramtype network_acls: ~azure.mgmt.cognitiveservices.models.NetworkRuleSet
+        :keyword encryption: The encryption properties for this resource.
+        :paramtype encryption: ~azure.mgmt.cognitiveservices.models.Encryption
+        :keyword user_owned_storage: The storage accounts for this resource.
+        :paramtype user_owned_storage: list[~azure.mgmt.cognitiveservices.models.UserOwnedStorage]
+        :keyword public_network_access: Whether or not public endpoint access is allowed for this
+         account. Possible values include: "Enabled", "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.cognitiveservices.models.PublicNetworkAccess
+        :keyword api_properties: The api properties for special APIs.
+        :paramtype api_properties: ~azure.mgmt.cognitiveservices.models.ApiProperties
+        :keyword dynamic_throttling_enabled: The flag to enable dynamic throttling.
+        :paramtype dynamic_throttling_enabled: bool
+        :keyword restrict_outbound_network_access:
+        :paramtype restrict_outbound_network_access: bool
+        :keyword allowed_fqdn_list:
+        :paramtype allowed_fqdn_list: list[str]
+        :keyword disable_local_auth:
+        :paramtype disable_local_auth: bool
+        :keyword restore:
+        :paramtype restore: bool
+        """
         super(AccountProperties, self).__init__(**kwargs)
         self.provisioning_state = None
         self.endpoint = None
@@ -328,21 +535,24 @@ class AccountProperties(msrest.serialization.Model):
         self.api_properties = api_properties
         self.date_created = None
         self.call_rate_limit = None
+        self.dynamic_throttling_enabled = dynamic_throttling_enabled
         self.quota_limit = None
         self.restrict_outbound_network_access = restrict_outbound_network_access
         self.allowed_fqdn_list = allowed_fqdn_list
         self.disable_local_auth = disable_local_auth
         self.endpoints = None
         self.restore = restore
+        self.deletion_date = None
+        self.scheduled_purge_date = None
 
 
 class AccountSku(msrest.serialization.Model):
     """Cognitive Services resource type and SKU.
 
-    :param resource_type: Resource Namespace and Type.
-    :type resource_type: str
-    :param sku: The SKU of Cognitive Services account.
-    :type sku: ~azure.mgmt.cognitiveservices.models.Sku
+    :ivar resource_type: Resource Namespace and Type.
+    :vartype resource_type: str
+    :ivar sku: The SKU of Cognitive Services account.
+    :vartype sku: ~azure.mgmt.cognitiveservices.models.Sku
     """
 
     _attribute_map = {
@@ -357,6 +567,12 @@ class AccountSku(msrest.serialization.Model):
         sku: Optional["Sku"] = None,
         **kwargs
     ):
+        """
+        :keyword resource_type: Resource Namespace and Type.
+        :paramtype resource_type: str
+        :keyword sku: The SKU of Cognitive Services account.
+        :paramtype sku: ~azure.mgmt.cognitiveservices.models.Sku
+        """
         super(AccountSku, self).__init__(**kwargs)
         self.resource_type = resource_type
         self.sku = sku
@@ -365,8 +581,8 @@ class AccountSku(msrest.serialization.Model):
 class AccountSkuListResult(msrest.serialization.Model):
     """The list of cognitive services accounts operation response.
 
-    :param value: Gets the list of Cognitive Services accounts and their properties.
-    :type value: list[~azure.mgmt.cognitiveservices.models.AccountSku]
+    :ivar value: Gets the list of Cognitive Services accounts and their properties.
+    :vartype value: list[~azure.mgmt.cognitiveservices.models.AccountSku]
     """
 
     _attribute_map = {
@@ -379,6 +595,10 @@ class AccountSkuListResult(msrest.serialization.Model):
         value: Optional[List["AccountSku"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: Gets the list of Cognitive Services accounts and their properties.
+        :paramtype value: list[~azure.mgmt.cognitiveservices.models.AccountSku]
+        """
         super(AccountSkuListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -386,10 +606,10 @@ class AccountSkuListResult(msrest.serialization.Model):
 class ApiKeys(msrest.serialization.Model):
     """The access keys for the cognitive services account.
 
-    :param key1: Gets the value of key 1.
-    :type key1: str
-    :param key2: Gets the value of key 2.
-    :type key2: str
+    :ivar key1: Gets the value of key 1.
+    :vartype key1: str
+    :ivar key2: Gets the value of key 2.
+    :vartype key2: str
     """
 
     _attribute_map = {
@@ -404,6 +624,12 @@ class ApiKeys(msrest.serialization.Model):
         key2: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword key1: Gets the value of key 1.
+        :paramtype key1: str
+        :keyword key2: Gets the value of key 2.
+        :paramtype key2: str
+        """
         super(ApiKeys, self).__init__(**kwargs)
         self.key1 = key1
         self.key2 = key2
@@ -412,32 +638,31 @@ class ApiKeys(msrest.serialization.Model):
 class ApiProperties(msrest.serialization.Model):
     """The api properties for special APIs.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param qna_runtime_endpoint: (QnAMaker Only) The runtime endpoint of QnAMaker.
-    :type qna_runtime_endpoint: str
-    :param qna_azure_search_endpoint_key: (QnAMaker Only) The Azure Search endpoint key of
-     QnAMaker.
-    :type qna_azure_search_endpoint_key: str
-    :param qna_azure_search_endpoint_id: (QnAMaker Only) The Azure Search endpoint id of QnAMaker.
-    :type qna_azure_search_endpoint_id: str
-    :param statistics_enabled: (Bing Search Only) The flag to enable statistics of Bing Search.
-    :type statistics_enabled: bool
-    :param event_hub_connection_string: (Personalization Only) The flag to enable statistics of
-     Bing Search.
-    :type event_hub_connection_string: str
-    :param storage_account_connection_string: (Personalization Only) The storage account connection
+    :vartype additional_properties: dict[str, any]
+    :ivar qna_runtime_endpoint: (QnAMaker Only) The runtime endpoint of QnAMaker.
+    :vartype qna_runtime_endpoint: str
+    :ivar qna_azure_search_endpoint_key: (QnAMaker Only) The Azure Search endpoint key of QnAMaker.
+    :vartype qna_azure_search_endpoint_key: str
+    :ivar qna_azure_search_endpoint_id: (QnAMaker Only) The Azure Search endpoint id of QnAMaker.
+    :vartype qna_azure_search_endpoint_id: str
+    :ivar statistics_enabled: (Bing Search Only) The flag to enable statistics of Bing Search.
+    :vartype statistics_enabled: bool
+    :ivar event_hub_connection_string: (Personalization Only) The flag to enable statistics of Bing
+     Search.
+    :vartype event_hub_connection_string: str
+    :ivar storage_account_connection_string: (Personalization Only) The storage account connection
      string.
-    :type storage_account_connection_string: str
-    :param aad_client_id: (Metrics Advisor Only) The Azure AD Client Id (Application Id).
-    :type aad_client_id: str
-    :param aad_tenant_id: (Metrics Advisor Only) The Azure AD Tenant Id.
-    :type aad_tenant_id: str
-    :param super_user: (Metrics Advisor Only) The super user of Metrics Advisor.
-    :type super_user: str
-    :param website_name: (Metrics Advisor Only) The website name of Metrics Advisor.
-    :type website_name: str
+    :vartype storage_account_connection_string: str
+    :ivar aad_client_id: (Metrics Advisor Only) The Azure AD Client Id (Application Id).
+    :vartype aad_client_id: str
+    :ivar aad_tenant_id: (Metrics Advisor Only) The Azure AD Tenant Id.
+    :vartype aad_tenant_id: str
+    :ivar super_user: (Metrics Advisor Only) The super user of Metrics Advisor.
+    :vartype super_user: str
+    :ivar website_name: (Metrics Advisor Only) The website name of Metrics Advisor.
+    :vartype website_name: str
     """
 
     _validation = {
@@ -479,6 +704,35 @@ class ApiProperties(msrest.serialization.Model):
         website_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword qna_runtime_endpoint: (QnAMaker Only) The runtime endpoint of QnAMaker.
+        :paramtype qna_runtime_endpoint: str
+        :keyword qna_azure_search_endpoint_key: (QnAMaker Only) The Azure Search endpoint key of
+         QnAMaker.
+        :paramtype qna_azure_search_endpoint_key: str
+        :keyword qna_azure_search_endpoint_id: (QnAMaker Only) The Azure Search endpoint id of
+         QnAMaker.
+        :paramtype qna_azure_search_endpoint_id: str
+        :keyword statistics_enabled: (Bing Search Only) The flag to enable statistics of Bing Search.
+        :paramtype statistics_enabled: bool
+        :keyword event_hub_connection_string: (Personalization Only) The flag to enable statistics of
+         Bing Search.
+        :paramtype event_hub_connection_string: str
+        :keyword storage_account_connection_string: (Personalization Only) The storage account
+         connection string.
+        :paramtype storage_account_connection_string: str
+        :keyword aad_client_id: (Metrics Advisor Only) The Azure AD Client Id (Application Id).
+        :paramtype aad_client_id: str
+        :keyword aad_tenant_id: (Metrics Advisor Only) The Azure AD Tenant Id.
+        :paramtype aad_tenant_id: str
+        :keyword super_user: (Metrics Advisor Only) The super user of Metrics Advisor.
+        :paramtype super_user: str
+        :keyword website_name: (Metrics Advisor Only) The website name of Metrics Advisor.
+        :paramtype website_name: str
+        """
         super(ApiProperties, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.qna_runtime_endpoint = qna_runtime_endpoint
@@ -496,12 +750,12 @@ class ApiProperties(msrest.serialization.Model):
 class CallRateLimit(msrest.serialization.Model):
     """The call rate limit Cognitive Services account.
 
-    :param count: The count value of Call Rate Limit.
-    :type count: float
-    :param renewal_period: The renewal period in seconds of Call Rate Limit.
-    :type renewal_period: float
-    :param rules:
-    :type rules: list[~azure.mgmt.cognitiveservices.models.ThrottlingRule]
+    :ivar count: The count value of Call Rate Limit.
+    :vartype count: float
+    :ivar renewal_period: The renewal period in seconds of Call Rate Limit.
+    :vartype renewal_period: float
+    :ivar rules:
+    :vartype rules: list[~azure.mgmt.cognitiveservices.models.ThrottlingRule]
     """
 
     _attribute_map = {
@@ -518,6 +772,14 @@ class CallRateLimit(msrest.serialization.Model):
         rules: Optional[List["ThrottlingRule"]] = None,
         **kwargs
     ):
+        """
+        :keyword count: The count value of Call Rate Limit.
+        :paramtype count: float
+        :keyword renewal_period: The renewal period in seconds of Call Rate Limit.
+        :paramtype renewal_period: float
+        :keyword rules:
+        :paramtype rules: list[~azure.mgmt.cognitiveservices.models.ThrottlingRule]
+        """
         super(CallRateLimit, self).__init__(**kwargs)
         self.count = count
         self.renewal_period = renewal_period
@@ -529,12 +791,12 @@ class CheckDomainAvailabilityParameter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param subdomain_name: Required. The subdomain name to use.
-    :type subdomain_name: str
-    :param type: Required. The Type of the resource.
-    :type type: str
-    :param kind: The Kind of the resource.
-    :type kind: str
+    :ivar subdomain_name: Required. The subdomain name to use.
+    :vartype subdomain_name: str
+    :ivar type: Required. The Type of the resource.
+    :vartype type: str
+    :ivar kind: The Kind of the resource.
+    :vartype kind: str
     """
 
     _validation = {
@@ -556,6 +818,14 @@ class CheckDomainAvailabilityParameter(msrest.serialization.Model):
         kind: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword subdomain_name: Required. The subdomain name to use.
+        :paramtype subdomain_name: str
+        :keyword type: Required. The Type of the resource.
+        :paramtype type: str
+        :keyword kind: The Kind of the resource.
+        :paramtype kind: str
+        """
         super(CheckDomainAvailabilityParameter, self).__init__(**kwargs)
         self.subdomain_name = subdomain_name
         self.type = type
@@ -567,12 +837,12 @@ class CheckSkuAvailabilityParameter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param skus: Required. The SKU of the resource.
-    :type skus: list[str]
-    :param kind: Required. The Kind of the resource.
-    :type kind: str
-    :param type: Required. The Type of the resource.
-    :type type: str
+    :ivar skus: Required. The SKU of the resource.
+    :vartype skus: list[str]
+    :ivar kind: Required. The Kind of the resource.
+    :vartype kind: str
+    :ivar type: Required. The Type of the resource.
+    :vartype type: str
     """
 
     _validation = {
@@ -595,6 +865,14 @@ class CheckSkuAvailabilityParameter(msrest.serialization.Model):
         type: str,
         **kwargs
     ):
+        """
+        :keyword skus: Required. The SKU of the resource.
+        :paramtype skus: list[str]
+        :keyword kind: Required. The Kind of the resource.
+        :paramtype kind: str
+        :keyword type: Required. The Type of the resource.
+        :paramtype type: str
+        """
         super(CheckSkuAvailabilityParameter, self).__init__(**kwargs)
         self.skus = skus
         self.kind = kind
@@ -604,10 +882,10 @@ class CheckSkuAvailabilityParameter(msrest.serialization.Model):
 class CommitmentCost(msrest.serialization.Model):
     """Cognitive Services account commitment cost.
 
-    :param commitment_meter_id: Commitment meter Id.
-    :type commitment_meter_id: str
-    :param overage_meter_id: Overage meter Id.
-    :type overage_meter_id: str
+    :ivar commitment_meter_id: Commitment meter Id.
+    :vartype commitment_meter_id: str
+    :ivar overage_meter_id: Overage meter Id.
+    :vartype overage_meter_id: str
     """
 
     _attribute_map = {
@@ -622,6 +900,12 @@ class CommitmentCost(msrest.serialization.Model):
         overage_meter_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword commitment_meter_id: Commitment meter Id.
+        :paramtype commitment_meter_id: str
+        :keyword overage_meter_id: Overage meter Id.
+        :paramtype overage_meter_id: str
+        """
         super(CommitmentCost, self).__init__(**kwargs)
         self.commitment_meter_id = commitment_meter_id
         self.overage_meter_id = overage_meter_id
@@ -632,10 +916,10 @@ class CommitmentPeriod(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param tier: Commitment period commitment tier.
-    :type tier: str
-    :param count: Commitment period commitment count.
-    :type count: int
+    :ivar tier: Commitment period commitment tier.
+    :vartype tier: str
+    :ivar count: Commitment period commitment count.
+    :vartype count: int
     :ivar quota: Cognitive Services account commitment quota.
     :vartype quota: ~azure.mgmt.cognitiveservices.models.CommitmentQuota
     :ivar start_date: Commitment period start date.
@@ -665,6 +949,12 @@ class CommitmentPeriod(msrest.serialization.Model):
         count: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword tier: Commitment period commitment tier.
+        :paramtype tier: str
+        :keyword count: Commitment period commitment count.
+        :paramtype count: int
+        """
         super(CommitmentPeriod, self).__init__(**kwargs)
         self.tier = tier
         self.count = count
@@ -704,6 +994,8 @@ class ProxyResource(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
 
 
@@ -724,8 +1016,8 @@ class CommitmentPlan(ProxyResource):
     :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
     :ivar etag: Resource Etag.
     :vartype etag: str
-    :param properties: Properties of Cognitive Services account commitment plan.
-    :type properties: ~azure.mgmt.cognitiveservices.models.CommitmentPlanProperties
+    :ivar properties: Properties of Cognitive Services account commitment plan.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.CommitmentPlanProperties
     """
 
     _validation = {
@@ -751,6 +1043,10 @@ class CommitmentPlan(ProxyResource):
         properties: Optional["CommitmentPlanProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: Properties of Cognitive Services account commitment plan.
+        :paramtype properties: ~azure.mgmt.cognitiveservices.models.CommitmentPlanProperties
+        """
         super(CommitmentPlan, self).__init__(**kwargs)
         self.system_data = None
         self.etag = None
@@ -762,8 +1058,8 @@ class CommitmentPlanListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param next_link: The link used to get the next page of CommitmentPlan.
-    :type next_link: str
+    :ivar next_link: The link used to get the next page of CommitmentPlan.
+    :vartype next_link: str
     :ivar value: Gets the list of Cognitive Services accounts CommitmentPlan and their properties.
     :vartype value: list[~azure.mgmt.cognitiveservices.models.CommitmentPlan]
     """
@@ -783,6 +1079,10 @@ class CommitmentPlanListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: The link used to get the next page of CommitmentPlan.
+        :paramtype next_link: str
+        """
         super(CommitmentPlanListResult, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = None
@@ -793,17 +1093,17 @@ class CommitmentPlanProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param hosting_model: Account hosting model. Possible values include: "Web",
+    :ivar hosting_model: Account hosting model. Possible values include: "Web",
      "ConnectedContainer", "DisconnectedContainer".
-    :type hosting_model: str or ~azure.mgmt.cognitiveservices.models.HostingModel
-    :param plan_type: Commitment plan type.
-    :type plan_type: str
-    :param current: Cognitive Services account commitment period.
-    :type current: ~azure.mgmt.cognitiveservices.models.CommitmentPeriod
-    :param auto_renew: AutoRenew commitment plan.
-    :type auto_renew: bool
-    :param next: Cognitive Services account commitment period.
-    :type next: ~azure.mgmt.cognitiveservices.models.CommitmentPeriod
+    :vartype hosting_model: str or ~azure.mgmt.cognitiveservices.models.HostingModel
+    :ivar plan_type: Commitment plan type.
+    :vartype plan_type: str
+    :ivar current: Cognitive Services account commitment period.
+    :vartype current: ~azure.mgmt.cognitiveservices.models.CommitmentPeriod
+    :ivar auto_renew: AutoRenew commitment plan.
+    :vartype auto_renew: bool
+    :ivar next: Cognitive Services account commitment period.
+    :vartype next: ~azure.mgmt.cognitiveservices.models.CommitmentPeriod
     :ivar last: Cognitive Services account commitment period.
     :vartype last: ~azure.mgmt.cognitiveservices.models.CommitmentPeriod
     """
@@ -831,6 +1131,19 @@ class CommitmentPlanProperties(msrest.serialization.Model):
         next: Optional["CommitmentPeriod"] = None,
         **kwargs
     ):
+        """
+        :keyword hosting_model: Account hosting model. Possible values include: "Web",
+         "ConnectedContainer", "DisconnectedContainer".
+        :paramtype hosting_model: str or ~azure.mgmt.cognitiveservices.models.HostingModel
+        :keyword plan_type: Commitment plan type.
+        :paramtype plan_type: str
+        :keyword current: Cognitive Services account commitment period.
+        :paramtype current: ~azure.mgmt.cognitiveservices.models.CommitmentPeriod
+        :keyword auto_renew: AutoRenew commitment plan.
+        :paramtype auto_renew: bool
+        :keyword next: Cognitive Services account commitment period.
+        :paramtype next: ~azure.mgmt.cognitiveservices.models.CommitmentPeriod
+        """
         super(CommitmentPlanProperties, self).__init__(**kwargs)
         self.hosting_model = hosting_model
         self.plan_type = plan_type
@@ -843,10 +1156,10 @@ class CommitmentPlanProperties(msrest.serialization.Model):
 class CommitmentQuota(msrest.serialization.Model):
     """Cognitive Services account commitment quota.
 
-    :param quantity: Commitment quota quantity.
-    :type quantity: long
-    :param unit: Commitment quota unit.
-    :type unit: str
+    :ivar quantity: Commitment quota quantity.
+    :vartype quantity: long
+    :ivar unit: Commitment quota unit.
+    :vartype unit: str
     """
 
     _attribute_map = {
@@ -861,6 +1174,12 @@ class CommitmentQuota(msrest.serialization.Model):
         unit: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword quantity: Commitment quota quantity.
+        :paramtype quantity: long
+        :keyword unit: Commitment quota unit.
+        :paramtype unit: str
+        """
         super(CommitmentQuota, self).__init__(**kwargs)
         self.quantity = quantity
         self.unit = unit
@@ -869,23 +1188,23 @@ class CommitmentQuota(msrest.serialization.Model):
 class CommitmentTier(msrest.serialization.Model):
     """Cognitive Services account commitment tier.
 
-    :param kind: The Kind of the resource.
-    :type kind: str
-    :param sku_name: The name of the SKU. Ex - P3. It is typically a letter+number code.
-    :type sku_name: str
-    :param hosting_model: Account hosting model. Possible values include: "Web",
+    :ivar kind: The Kind of the resource.
+    :vartype kind: str
+    :ivar sku_name: The name of the SKU. Ex - P3. It is typically a letter+number code.
+    :vartype sku_name: str
+    :ivar hosting_model: Account hosting model. Possible values include: "Web",
      "ConnectedContainer", "DisconnectedContainer".
-    :type hosting_model: str or ~azure.mgmt.cognitiveservices.models.HostingModel
-    :param plan_type: Commitment plan type.
-    :type plan_type: str
-    :param tier: Commitment period commitment tier.
-    :type tier: str
-    :param max_count: Commitment period commitment max count.
-    :type max_count: int
-    :param quota: Cognitive Services account commitment quota.
-    :type quota: ~azure.mgmt.cognitiveservices.models.CommitmentQuota
-    :param cost: Cognitive Services account commitment cost.
-    :type cost: ~azure.mgmt.cognitiveservices.models.CommitmentCost
+    :vartype hosting_model: str or ~azure.mgmt.cognitiveservices.models.HostingModel
+    :ivar plan_type: Commitment plan type.
+    :vartype plan_type: str
+    :ivar tier: Commitment period commitment tier.
+    :vartype tier: str
+    :ivar max_count: Commitment period commitment max count.
+    :vartype max_count: int
+    :ivar quota: Cognitive Services account commitment quota.
+    :vartype quota: ~azure.mgmt.cognitiveservices.models.CommitmentQuota
+    :ivar cost: Cognitive Services account commitment cost.
+    :vartype cost: ~azure.mgmt.cognitiveservices.models.CommitmentCost
     """
 
     _attribute_map = {
@@ -912,6 +1231,25 @@ class CommitmentTier(msrest.serialization.Model):
         cost: Optional["CommitmentCost"] = None,
         **kwargs
     ):
+        """
+        :keyword kind: The Kind of the resource.
+        :paramtype kind: str
+        :keyword sku_name: The name of the SKU. Ex - P3. It is typically a letter+number code.
+        :paramtype sku_name: str
+        :keyword hosting_model: Account hosting model. Possible values include: "Web",
+         "ConnectedContainer", "DisconnectedContainer".
+        :paramtype hosting_model: str or ~azure.mgmt.cognitiveservices.models.HostingModel
+        :keyword plan_type: Commitment plan type.
+        :paramtype plan_type: str
+        :keyword tier: Commitment period commitment tier.
+        :paramtype tier: str
+        :keyword max_count: Commitment period commitment max count.
+        :paramtype max_count: int
+        :keyword quota: Cognitive Services account commitment quota.
+        :paramtype quota: ~azure.mgmt.cognitiveservices.models.CommitmentQuota
+        :keyword cost: Cognitive Services account commitment cost.
+        :paramtype cost: ~azure.mgmt.cognitiveservices.models.CommitmentCost
+        """
         super(CommitmentTier, self).__init__(**kwargs)
         self.kind = kind
         self.sku_name = sku_name
@@ -928,8 +1266,8 @@ class CommitmentTierListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param next_link: The link used to get the next page of CommitmentTier.
-    :type next_link: str
+    :ivar next_link: The link used to get the next page of CommitmentTier.
+    :vartype next_link: str
     :ivar value: Gets the list of Cognitive Services accounts CommitmentTier and their properties.
     :vartype value: list[~azure.mgmt.cognitiveservices.models.CommitmentTier]
     """
@@ -949,6 +1287,10 @@ class CommitmentTierListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: The link used to get the next page of CommitmentTier.
+        :paramtype next_link: str
+        """
         super(CommitmentTierListResult, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = None
@@ -971,8 +1313,8 @@ class Deployment(ProxyResource):
     :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
     :ivar etag: Resource Etag.
     :vartype etag: str
-    :param properties: Properties of Cognitive Services account deployment.
-    :type properties: ~azure.mgmt.cognitiveservices.models.DeploymentProperties
+    :ivar properties: Properties of Cognitive Services account deployment.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.DeploymentProperties
     """
 
     _validation = {
@@ -998,6 +1340,10 @@ class Deployment(ProxyResource):
         properties: Optional["DeploymentProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: Properties of Cognitive Services account deployment.
+        :paramtype properties: ~azure.mgmt.cognitiveservices.models.DeploymentProperties
+        """
         super(Deployment, self).__init__(**kwargs)
         self.system_data = None
         self.etag = None
@@ -1009,8 +1355,8 @@ class DeploymentListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param next_link: The link used to get the next page of Deployment.
-    :type next_link: str
+    :ivar next_link: The link used to get the next page of Deployment.
+    :vartype next_link: str
     :ivar value: Gets the list of Cognitive Services accounts Deployment and their properties.
     :vartype value: list[~azure.mgmt.cognitiveservices.models.Deployment]
     """
@@ -1030,40 +1376,13 @@ class DeploymentListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: The link used to get the next page of Deployment.
+        :paramtype next_link: str
+        """
         super(DeploymentListResult, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = None
-
-
-class DeploymentModel(msrest.serialization.Model):
-    """Properties of Cognitive Services account deployment model.
-
-    :param format: Deployment model format.
-    :type format: str
-    :param name: Deployment model name.
-    :type name: str
-    :param version: Deployment model version.
-    :type version: str
-    """
-
-    _attribute_map = {
-        'format': {'key': 'format', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        format: Optional[str] = None,
-        name: Optional[str] = None,
-        version: Optional[str] = None,
-        **kwargs
-    ):
-        super(DeploymentModel, self).__init__(**kwargs)
-        self.format = format
-        self.name = name
-        self.version = version
 
 
 class DeploymentProperties(msrest.serialization.Model):
@@ -1075,10 +1394,10 @@ class DeploymentProperties(msrest.serialization.Model):
      Possible values include: "Accepted", "Creating", "Deleting", "Moving", "Failed", "Succeeded".
     :vartype provisioning_state: str or
      ~azure.mgmt.cognitiveservices.models.DeploymentProvisioningState
-    :param model: Properties of Cognitive Services account deployment model.
-    :type model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
-    :param scale_settings: Properties of Cognitive Services account deployment model.
-    :type scale_settings: ~azure.mgmt.cognitiveservices.models.DeploymentScaleSettings
+    :ivar model: Properties of Cognitive Services account deployment model.
+    :vartype model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
+    :ivar scale_settings: Properties of Cognitive Services account deployment model.
+    :vartype scale_settings: ~azure.mgmt.cognitiveservices.models.DeploymentScaleSettings
     """
 
     _validation = {
@@ -1098,6 +1417,12 @@ class DeploymentProperties(msrest.serialization.Model):
         scale_settings: Optional["DeploymentScaleSettings"] = None,
         **kwargs
     ):
+        """
+        :keyword model: Properties of Cognitive Services account deployment model.
+        :paramtype model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
+        :keyword scale_settings: Properties of Cognitive Services account deployment model.
+        :paramtype scale_settings: ~azure.mgmt.cognitiveservices.models.DeploymentScaleSettings
+        """
         super(DeploymentProperties, self).__init__(**kwargs)
         self.provisioning_state = None
         self.model = model
@@ -1107,15 +1432,25 @@ class DeploymentProperties(msrest.serialization.Model):
 class DeploymentScaleSettings(msrest.serialization.Model):
     """Properties of Cognitive Services account deployment model.
 
-    :param scale_type: Deployment scale type. Possible values include: "Manual".
-    :type scale_type: str or ~azure.mgmt.cognitiveservices.models.DeploymentScaleType
-    :param capacity: Deployment capacity.
-    :type capacity: int
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar scale_type: Deployment scale type. Possible values include: "Standard", "Manual".
+    :vartype scale_type: str or ~azure.mgmt.cognitiveservices.models.DeploymentScaleType
+    :ivar capacity: Deployment capacity.
+    :vartype capacity: int
+    :ivar active_capacity: Deployment active capacity. This value might be different from
+     ``capacity`` if customer recently updated ``capacity``.
+    :vartype active_capacity: int
     """
+
+    _validation = {
+        'active_capacity': {'readonly': True},
+    }
 
     _attribute_map = {
         'scale_type': {'key': 'scaleType', 'type': 'str'},
         'capacity': {'key': 'capacity', 'type': 'int'},
+        'active_capacity': {'key': 'activeCapacity', 'type': 'int'},
     }
 
     def __init__(
@@ -1125,24 +1460,31 @@ class DeploymentScaleSettings(msrest.serialization.Model):
         capacity: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword scale_type: Deployment scale type. Possible values include: "Standard", "Manual".
+        :paramtype scale_type: str or ~azure.mgmt.cognitiveservices.models.DeploymentScaleType
+        :keyword capacity: Deployment capacity.
+        :paramtype capacity: int
+        """
         super(DeploymentScaleSettings, self).__init__(**kwargs)
         self.scale_type = scale_type
         self.capacity = capacity
+        self.active_capacity = None
 
 
 class DomainAvailability(msrest.serialization.Model):
     """Domain availability.
 
-    :param is_subdomain_available: Indicates the given SKU is available or not.
-    :type is_subdomain_available: bool
-    :param reason: Reason why the SKU is not available.
-    :type reason: str
-    :param subdomain_name: The subdomain name to use.
-    :type subdomain_name: str
-    :param type: The Type of the resource.
-    :type type: str
-    :param kind: The Kind of the resource.
-    :type kind: str
+    :ivar is_subdomain_available: Indicates the given SKU is available or not.
+    :vartype is_subdomain_available: bool
+    :ivar reason: Reason why the SKU is not available.
+    :vartype reason: str
+    :ivar subdomain_name: The subdomain name to use.
+    :vartype subdomain_name: str
+    :ivar type: The Type of the resource.
+    :vartype type: str
+    :ivar kind: The Kind of the resource.
+    :vartype kind: str
     """
 
     _attribute_map = {
@@ -1163,6 +1505,18 @@ class DomainAvailability(msrest.serialization.Model):
         kind: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword is_subdomain_available: Indicates the given SKU is available or not.
+        :paramtype is_subdomain_available: bool
+        :keyword reason: Reason why the SKU is not available.
+        :paramtype reason: str
+        :keyword subdomain_name: The subdomain name to use.
+        :paramtype subdomain_name: str
+        :keyword type: The Type of the resource.
+        :paramtype type: str
+        :keyword kind: The Kind of the resource.
+        :paramtype kind: str
+        """
         super(DomainAvailability, self).__init__(**kwargs)
         self.is_subdomain_available = is_subdomain_available
         self.reason = reason
@@ -1174,12 +1528,12 @@ class DomainAvailability(msrest.serialization.Model):
 class Encryption(msrest.serialization.Model):
     """Properties to configure Encryption.
 
-    :param key_vault_properties: Properties of KeyVault.
-    :type key_vault_properties: ~azure.mgmt.cognitiveservices.models.KeyVaultProperties
-    :param key_source: Enumerates the possible value of keySource for Encryption. Possible values
+    :ivar key_vault_properties: Properties of KeyVault.
+    :vartype key_vault_properties: ~azure.mgmt.cognitiveservices.models.KeyVaultProperties
+    :ivar key_source: Enumerates the possible value of keySource for Encryption. Possible values
      include: "Microsoft.CognitiveServices", "Microsoft.KeyVault". Default value:
      "Microsoft.KeyVault".
-    :type key_source: str or ~azure.mgmt.cognitiveservices.models.KeySource
+    :vartype key_source: str or ~azure.mgmt.cognitiveservices.models.KeySource
     """
 
     _attribute_map = {
@@ -1194,6 +1548,14 @@ class Encryption(msrest.serialization.Model):
         key_source: Optional[Union[str, "KeySource"]] = "Microsoft.KeyVault",
         **kwargs
     ):
+        """
+        :keyword key_vault_properties: Properties of KeyVault.
+        :paramtype key_vault_properties: ~azure.mgmt.cognitiveservices.models.KeyVaultProperties
+        :keyword key_source: Enumerates the possible value of keySource for Encryption. Possible values
+         include: "Microsoft.CognitiveServices", "Microsoft.KeyVault". Default value:
+         "Microsoft.KeyVault".
+        :paramtype key_source: str or ~azure.mgmt.cognitiveservices.models.KeySource
+        """
         super(Encryption, self).__init__(**kwargs)
         self.key_vault_properties = key_vault_properties
         self.key_source = key_source
@@ -1224,6 +1586,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -1266,6 +1630,8 @@ class ErrorDetail(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -1277,8 +1643,8 @@ class ErrorDetail(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~azure.mgmt.cognitiveservices.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.cognitiveservices.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -1291,6 +1657,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorDetail"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.cognitiveservices.models.ErrorDetail
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -1300,17 +1670,17 @@ class Identity(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param type: The identity type. Possible values include: "None", "SystemAssigned",
+    :ivar type: The identity type. Possible values include: "None", "SystemAssigned",
      "UserAssigned", "SystemAssigned, UserAssigned".
-    :type type: str or ~azure.mgmt.cognitiveservices.models.ResourceIdentityType
+    :vartype type: str or ~azure.mgmt.cognitiveservices.models.ResourceIdentityType
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
     :ivar principal_id: The principal ID of resource identity.
     :vartype principal_id: str
-    :param user_assigned_identities: The list of user assigned identities associated with the
+    :ivar user_assigned_identities: The list of user assigned identities associated with the
      resource. The user identity dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
-    :type user_assigned_identities: dict[str,
+    :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.cognitiveservices.models.UserAssignedIdentity]
     """
 
@@ -1333,6 +1703,16 @@ class Identity(msrest.serialization.Model):
         user_assigned_identities: Optional[Dict[str, "UserAssignedIdentity"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: The identity type. Possible values include: "None", "SystemAssigned",
+         "UserAssigned", "SystemAssigned, UserAssigned".
+        :paramtype type: str or ~azure.mgmt.cognitiveservices.models.ResourceIdentityType
+        :keyword user_assigned_identities: The list of user assigned identities associated with the
+         resource. The user identity dictionary key references will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.cognitiveservices.models.UserAssignedIdentity]
+        """
         super(Identity, self).__init__(**kwargs)
         self.type = type
         self.tenant_id = None
@@ -1345,9 +1725,9 @@ class IpRule(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple
+    :ivar value: Required. An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple
      IP address) or '124.56.78.0/24' (all addresses that start with 124.56.78).
-    :type value: str
+    :vartype value: str
     """
 
     _validation = {
@@ -1364,6 +1744,11 @@ class IpRule(msrest.serialization.Model):
         value: str,
         **kwargs
     ):
+        """
+        :keyword value: Required. An IPv4 address range in CIDR notation, such as '124.56.78.91'
+         (simple IP address) or '124.56.78.0/24' (all addresses that start with 124.56.78).
+        :paramtype value: str
+        """
         super(IpRule, self).__init__(**kwargs)
         self.value = value
 
@@ -1371,14 +1756,14 @@ class IpRule(msrest.serialization.Model):
 class KeyVaultProperties(msrest.serialization.Model):
     """Properties to configure keyVault Properties.
 
-    :param key_name: Name of the Key from KeyVault.
-    :type key_name: str
-    :param key_version: Version of the Key from KeyVault.
-    :type key_version: str
-    :param key_vault_uri: Uri of KeyVault.
-    :type key_vault_uri: str
-    :param identity_client_id:
-    :type identity_client_id: str
+    :ivar key_name: Name of the Key from KeyVault.
+    :vartype key_name: str
+    :ivar key_version: Version of the Key from KeyVault.
+    :vartype key_version: str
+    :ivar key_vault_uri: Uri of KeyVault.
+    :vartype key_vault_uri: str
+    :ivar identity_client_id:
+    :vartype identity_client_id: str
     """
 
     _attribute_map = {
@@ -1397,6 +1782,16 @@ class KeyVaultProperties(msrest.serialization.Model):
         identity_client_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword key_name: Name of the Key from KeyVault.
+        :paramtype key_name: str
+        :keyword key_version: Version of the Key from KeyVault.
+        :paramtype key_version: str
+        :keyword key_vault_uri: Uri of KeyVault.
+        :paramtype key_vault_uri: str
+        :keyword identity_client_id:
+        :paramtype identity_client_id: str
+        """
         super(KeyVaultProperties, self).__init__(**kwargs)
         self.key_name = key_name
         self.key_version = key_version
@@ -1407,10 +1802,10 @@ class KeyVaultProperties(msrest.serialization.Model):
 class MetricName(msrest.serialization.Model):
     """A metric name.
 
-    :param value: The name of the metric.
-    :type value: str
-    :param localized_value: The friendly name of the metric.
-    :type localized_value: str
+    :ivar value: The name of the metric.
+    :vartype value: str
+    :ivar localized_value: The friendly name of the metric.
+    :vartype localized_value: str
     """
 
     _attribute_map = {
@@ -1425,22 +1820,60 @@ class MetricName(msrest.serialization.Model):
         localized_value: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The name of the metric.
+        :paramtype value: str
+        :keyword localized_value: The friendly name of the metric.
+        :paramtype localized_value: str
+        """
         super(MetricName, self).__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
 
 
+class ModelDeprecationInfo(msrest.serialization.Model):
+    """Cognitive Services account ModelDeprecationInfo.
+
+    :ivar fine_tune: The datetime of deprecation of the fineTune Model.
+    :vartype fine_tune: str
+    :ivar inference: The datetime of deprecation of the inference Model.
+    :vartype inference: str
+    """
+
+    _attribute_map = {
+        'fine_tune': {'key': 'fineTune', 'type': 'str'},
+        'inference': {'key': 'inference', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        fine_tune: Optional[str] = None,
+        inference: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword fine_tune: The datetime of deprecation of the fineTune Model.
+        :paramtype fine_tune: str
+        :keyword inference: The datetime of deprecation of the inference Model.
+        :paramtype inference: str
+        """
+        super(ModelDeprecationInfo, self).__init__(**kwargs)
+        self.fine_tune = fine_tune
+        self.inference = inference
+
+
 class NetworkRuleSet(msrest.serialization.Model):
     """A set of rules governing the network accessibility.
 
-    :param default_action: The default action when no rule from ipRules and from
-     virtualNetworkRules match. This is only used after the bypass property has been evaluated.
-     Possible values include: "Allow", "Deny".
-    :type default_action: str or ~azure.mgmt.cognitiveservices.models.NetworkRuleAction
-    :param ip_rules: The list of IP address rules.
-    :type ip_rules: list[~azure.mgmt.cognitiveservices.models.IpRule]
-    :param virtual_network_rules: The list of virtual network rules.
-    :type virtual_network_rules: list[~azure.mgmt.cognitiveservices.models.VirtualNetworkRule]
+    :ivar default_action: The default action when no rule from ipRules and from virtualNetworkRules
+     match. This is only used after the bypass property has been evaluated. Possible values include:
+     "Allow", "Deny".
+    :vartype default_action: str or ~azure.mgmt.cognitiveservices.models.NetworkRuleAction
+    :ivar ip_rules: The list of IP address rules.
+    :vartype ip_rules: list[~azure.mgmt.cognitiveservices.models.IpRule]
+    :ivar virtual_network_rules: The list of virtual network rules.
+    :vartype virtual_network_rules: list[~azure.mgmt.cognitiveservices.models.VirtualNetworkRule]
     """
 
     _attribute_map = {
@@ -1457,6 +1890,16 @@ class NetworkRuleSet(msrest.serialization.Model):
         virtual_network_rules: Optional[List["VirtualNetworkRule"]] = None,
         **kwargs
     ):
+        """
+        :keyword default_action: The default action when no rule from ipRules and from
+         virtualNetworkRules match. This is only used after the bypass property has been evaluated.
+         Possible values include: "Allow", "Deny".
+        :paramtype default_action: str or ~azure.mgmt.cognitiveservices.models.NetworkRuleAction
+        :keyword ip_rules: The list of IP address rules.
+        :paramtype ip_rules: list[~azure.mgmt.cognitiveservices.models.IpRule]
+        :keyword virtual_network_rules: The list of virtual network rules.
+        :paramtype virtual_network_rules: list[~azure.mgmt.cognitiveservices.models.VirtualNetworkRule]
+        """
         super(NetworkRuleSet, self).__init__(**kwargs)
         self.default_action = default_action
         self.ip_rules = ip_rules
@@ -1474,8 +1917,8 @@ class Operation(msrest.serialization.Model):
     :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
      data-plane operations and "false" for ARM/control-plane operations.
     :vartype is_data_action: bool
-    :param display: Localized display information for this particular operation.
-    :type display: ~azure.mgmt.cognitiveservices.models.OperationDisplay
+    :ivar display: Localized display information for this particular operation.
+    :vartype display: ~azure.mgmt.cognitiveservices.models.OperationDisplay
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
      (RBAC) and audit logs UX. Default value is "user,system". Possible values include: "user",
      "system", "user,system".
@@ -1506,6 +1949,10 @@ class Operation(msrest.serialization.Model):
         display: Optional["OperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword display: Localized display information for this particular operation.
+        :paramtype display: ~azure.mgmt.cognitiveservices.models.OperationDisplay
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.is_data_action = None
@@ -1551,6 +1998,8 @@ class OperationDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -1583,6 +2032,8 @@ class OperationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1609,6 +2060,8 @@ class PrivateEndpoint(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateEndpoint, self).__init__(**kwargs)
         self.id = None
 
@@ -1628,12 +2081,12 @@ class PrivateEndpointConnection(AzureEntityResource):
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
-    :param properties: Resource properties.
-    :type properties: ~azure.mgmt.cognitiveservices.models.PrivateEndpointConnectionProperties
+    :ivar properties: Resource properties.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.PrivateEndpointConnectionProperties
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
-    :param location: The location of the private endpoint connection.
-    :type location: str
+    :ivar location: The location of the private endpoint connection.
+    :vartype location: str
     """
 
     _validation = {
@@ -1661,6 +2114,12 @@ class PrivateEndpointConnection(AzureEntityResource):
         location: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword properties: Resource properties.
+        :paramtype properties: ~azure.mgmt.cognitiveservices.models.PrivateEndpointConnectionProperties
+        :keyword location: The location of the private endpoint connection.
+        :paramtype location: str
+        """
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.properties = properties
         self.system_data = None
@@ -1670,8 +2129,8 @@ class PrivateEndpointConnection(AzureEntityResource):
 class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     """A list of private endpoint connections.
 
-    :param value: Array of private endpoint connections.
-    :type value: list[~azure.mgmt.cognitiveservices.models.PrivateEndpointConnection]
+    :ivar value: Array of private endpoint connections.
+    :vartype value: list[~azure.mgmt.cognitiveservices.models.PrivateEndpointConnection]
     """
 
     _attribute_map = {
@@ -1684,6 +2143,10 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
         value: Optional[List["PrivateEndpointConnection"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: Array of private endpoint connections.
+        :paramtype value: list[~azure.mgmt.cognitiveservices.models.PrivateEndpointConnection]
+        """
         super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -1695,18 +2158,18 @@ class PrivateEndpointConnectionProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param private_endpoint: The resource of private end point.
-    :type private_endpoint: ~azure.mgmt.cognitiveservices.models.PrivateEndpoint
-    :param private_link_service_connection_state: Required. A collection of information about the
+    :ivar private_endpoint: The resource of private end point.
+    :vartype private_endpoint: ~azure.mgmt.cognitiveservices.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: Required. A collection of information about the
      state of the connection between service consumer and provider.
-    :type private_link_service_connection_state:
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.cognitiveservices.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
      Possible values include: "Succeeded", "Creating", "Deleting", "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.cognitiveservices.models.PrivateEndpointConnectionProvisioningState
-    :param group_ids: The private link resource group ids.
-    :type group_ids: list[str]
+    :ivar group_ids: The private link resource group ids.
+    :vartype group_ids: list[str]
     """
 
     _validation = {
@@ -1729,6 +2192,16 @@ class PrivateEndpointConnectionProperties(msrest.serialization.Model):
         group_ids: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword private_endpoint: The resource of private end point.
+        :paramtype private_endpoint: ~azure.mgmt.cognitiveservices.models.PrivateEndpoint
+        :keyword private_link_service_connection_state: Required. A collection of information about the
+         state of the connection between service consumer and provider.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.cognitiveservices.models.PrivateLinkServiceConnectionState
+        :keyword group_ids: The private link resource group ids.
+        :paramtype group_ids: list[str]
+        """
         super(PrivateEndpointConnectionProperties, self).__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
@@ -1749,8 +2222,8 @@ class PrivateLinkResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param properties: Resource properties.
-    :type properties: ~azure.mgmt.cognitiveservices.models.PrivateLinkResourceProperties
+    :ivar properties: Resource properties.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.PrivateLinkResourceProperties
     """
 
     _validation = {
@@ -1772,6 +2245,10 @@ class PrivateLinkResource(Resource):
         properties: Optional["PrivateLinkResourceProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: Resource properties.
+        :paramtype properties: ~azure.mgmt.cognitiveservices.models.PrivateLinkResourceProperties
+        """
         super(PrivateLinkResource, self).__init__(**kwargs)
         self.properties = properties
 
@@ -1779,8 +2256,8 @@ class PrivateLinkResource(Resource):
 class PrivateLinkResourceListResult(msrest.serialization.Model):
     """A list of private link resources.
 
-    :param value: Array of private link resources.
-    :type value: list[~azure.mgmt.cognitiveservices.models.PrivateLinkResource]
+    :ivar value: Array of private link resources.
+    :vartype value: list[~azure.mgmt.cognitiveservices.models.PrivateLinkResource]
     """
 
     _attribute_map = {
@@ -1793,6 +2270,10 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
         value: Optional[List["PrivateLinkResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: Array of private link resources.
+        :paramtype value: list[~azure.mgmt.cognitiveservices.models.PrivateLinkResource]
+        """
         super(PrivateLinkResourceListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -1806,8 +2287,8 @@ class PrivateLinkResourceProperties(msrest.serialization.Model):
     :vartype group_id: str
     :ivar required_members: The private link resource required member names.
     :vartype required_members: list[str]
-    :param required_zone_names: The private link resource Private link DNS zone name.
-    :type required_zone_names: list[str]
+    :ivar required_zone_names: The private link resource Private link DNS zone name.
+    :vartype required_zone_names: list[str]
     :ivar display_name: The private link resource display name.
     :vartype display_name: str
     """
@@ -1831,6 +2312,10 @@ class PrivateLinkResourceProperties(msrest.serialization.Model):
         required_zone_names: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword required_zone_names: The private link resource Private link DNS zone name.
+        :paramtype required_zone_names: list[str]
+        """
         super(PrivateLinkResourceProperties, self).__init__(**kwargs)
         self.group_id = None
         self.required_members = None
@@ -1841,15 +2326,15 @@ class PrivateLinkResourceProperties(msrest.serialization.Model):
 class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     """A collection of information about the state of the connection between service consumer and provider.
 
-    :param status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
+    :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
      of the service. Possible values include: "Pending", "Approved", "Rejected".
-    :type status: str or
+    :vartype status: str or
      ~azure.mgmt.cognitiveservices.models.PrivateEndpointServiceConnectionStatus
-    :param description: The reason for approval/rejection of the connection.
-    :type description: str
-    :param actions_required: A message indicating if changes on the service provider require any
+    :ivar description: The reason for approval/rejection of the connection.
+    :vartype description: str
+    :ivar actions_required: A message indicating if changes on the service provider require any
      updates on the consumer.
-    :type actions_required: str
+    :vartype actions_required: str
     """
 
     _attribute_map = {
@@ -1866,6 +2351,17 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
         actions_required: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
+         owner of the service. Possible values include: "Pending", "Approved", "Rejected".
+        :paramtype status: str or
+         ~azure.mgmt.cognitiveservices.models.PrivateEndpointServiceConnectionStatus
+        :keyword description: The reason for approval/rejection of the connection.
+        :paramtype description: str
+        :keyword actions_required: A message indicating if changes on the service provider require any
+         updates on the consumer.
+        :paramtype actions_required: str
+        """
         super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
         self.status = status
         self.description = description
@@ -1875,12 +2371,12 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
 class QuotaLimit(msrest.serialization.Model):
     """QuotaLimit.
 
-    :param count:
-    :type count: float
-    :param renewal_period:
-    :type renewal_period: float
-    :param rules:
-    :type rules: list[~azure.mgmt.cognitiveservices.models.ThrottlingRule]
+    :ivar count:
+    :vartype count: float
+    :ivar renewal_period:
+    :vartype renewal_period: float
+    :ivar rules:
+    :vartype rules: list[~azure.mgmt.cognitiveservices.models.ThrottlingRule]
     """
 
     _attribute_map = {
@@ -1897,6 +2393,14 @@ class QuotaLimit(msrest.serialization.Model):
         rules: Optional[List["ThrottlingRule"]] = None,
         **kwargs
     ):
+        """
+        :keyword count:
+        :paramtype count: float
+        :keyword renewal_period:
+        :paramtype renewal_period: float
+        :keyword rules:
+        :paramtype rules: list[~azure.mgmt.cognitiveservices.models.ThrottlingRule]
+        """
         super(QuotaLimit, self).__init__(**kwargs)
         self.count = count
         self.renewal_period = renewal_period
@@ -1908,9 +2412,9 @@ class RegenerateKeyParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_name: Required. key name to generate (Key1|Key2). Possible values include: "Key1",
+    :ivar key_name: Required. key name to generate (Key1|Key2). Possible values include: "Key1",
      "Key2".
-    :type key_name: str or ~azure.mgmt.cognitiveservices.models.KeyName
+    :vartype key_name: str or ~azure.mgmt.cognitiveservices.models.KeyName
     """
 
     _validation = {
@@ -1927,6 +2431,11 @@ class RegenerateKeyParameters(msrest.serialization.Model):
         key_name: Union[str, "KeyName"],
         **kwargs
     ):
+        """
+        :keyword key_name: Required. key name to generate (Key1|Key2). Possible values include: "Key1",
+         "Key2".
+        :paramtype key_name: str or ~azure.mgmt.cognitiveservices.models.KeyName
+        """
         super(RegenerateKeyParameters, self).__init__(**kwargs)
         self.key_name = key_name
 
@@ -1934,10 +2443,10 @@ class RegenerateKeyParameters(msrest.serialization.Model):
 class RequestMatchPattern(msrest.serialization.Model):
     """RequestMatchPattern.
 
-    :param path:
-    :type path: str
-    :param method:
-    :type method: str
+    :ivar path:
+    :vartype path: str
+    :ivar method:
+    :vartype method: str
     """
 
     _attribute_map = {
@@ -1952,6 +2461,12 @@ class RequestMatchPattern(msrest.serialization.Model):
         method: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword path:
+        :paramtype path: str
+        :keyword method:
+        :paramtype method: str
+        """
         super(RequestMatchPattern, self).__init__(**kwargs)
         self.path = path
         self.method = method
@@ -1960,19 +2475,19 @@ class RequestMatchPattern(msrest.serialization.Model):
 class ResourceSku(msrest.serialization.Model):
     """Describes an available Cognitive Services SKU.
 
-    :param resource_type: The type of resource the SKU applies to.
-    :type resource_type: str
-    :param name: The name of SKU.
-    :type name: str
-    :param tier: Specifies the tier of Cognitive Services account.
-    :type tier: str
-    :param kind: The Kind of resources that are supported in this SKU.
-    :type kind: str
-    :param locations: The set of locations that the SKU is available.
-    :type locations: list[str]
-    :param restrictions: The restrictions because of which SKU cannot be used. This is empty if
+    :ivar resource_type: The type of resource the SKU applies to.
+    :vartype resource_type: str
+    :ivar name: The name of SKU.
+    :vartype name: str
+    :ivar tier: Specifies the tier of Cognitive Services account.
+    :vartype tier: str
+    :ivar kind: The Kind of resources that are supported in this SKU.
+    :vartype kind: str
+    :ivar locations: The set of locations that the SKU is available.
+    :vartype locations: list[str]
+    :ivar restrictions: The restrictions because of which SKU cannot be used. This is empty if
      there are no restrictions.
-    :type restrictions: list[~azure.mgmt.cognitiveservices.models.ResourceSkuRestrictions]
+    :vartype restrictions: list[~azure.mgmt.cognitiveservices.models.ResourceSkuRestrictions]
     """
 
     _attribute_map = {
@@ -1995,6 +2510,21 @@ class ResourceSku(msrest.serialization.Model):
         restrictions: Optional[List["ResourceSkuRestrictions"]] = None,
         **kwargs
     ):
+        """
+        :keyword resource_type: The type of resource the SKU applies to.
+        :paramtype resource_type: str
+        :keyword name: The name of SKU.
+        :paramtype name: str
+        :keyword tier: Specifies the tier of Cognitive Services account.
+        :paramtype tier: str
+        :keyword kind: The Kind of resources that are supported in this SKU.
+        :paramtype kind: str
+        :keyword locations: The set of locations that the SKU is available.
+        :paramtype locations: list[str]
+        :keyword restrictions: The restrictions because of which SKU cannot be used. This is empty if
+         there are no restrictions.
+        :paramtype restrictions: list[~azure.mgmt.cognitiveservices.models.ResourceSkuRestrictions]
+        """
         super(ResourceSku, self).__init__(**kwargs)
         self.resource_type = resource_type
         self.name = name
@@ -2009,10 +2539,10 @@ class ResourceSkuListResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. The list of skus available for the subscription.
-    :type value: list[~azure.mgmt.cognitiveservices.models.ResourceSku]
-    :param next_link: The uri to fetch the next page of Skus.
-    :type next_link: str
+    :ivar value: Required. The list of skus available for the subscription.
+    :vartype value: list[~azure.mgmt.cognitiveservices.models.ResourceSku]
+    :ivar next_link: The uri to fetch the next page of Skus.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -2031,6 +2561,12 @@ class ResourceSkuListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Required. The list of skus available for the subscription.
+        :paramtype value: list[~azure.mgmt.cognitiveservices.models.ResourceSku]
+        :keyword next_link: The uri to fetch the next page of Skus.
+        :paramtype next_link: str
+        """
         super(ResourceSkuListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -2039,10 +2575,10 @@ class ResourceSkuListResult(msrest.serialization.Model):
 class ResourceSkuRestrictionInfo(msrest.serialization.Model):
     """ResourceSkuRestrictionInfo.
 
-    :param locations: Locations where the SKU is restricted.
-    :type locations: list[str]
-    :param zones: List of availability zones where the SKU is restricted.
-    :type zones: list[str]
+    :ivar locations: Locations where the SKU is restricted.
+    :vartype locations: list[str]
+    :ivar zones: List of availability zones where the SKU is restricted.
+    :vartype zones: list[str]
     """
 
     _attribute_map = {
@@ -2057,6 +2593,12 @@ class ResourceSkuRestrictionInfo(msrest.serialization.Model):
         zones: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword locations: Locations where the SKU is restricted.
+        :paramtype locations: list[str]
+        :keyword zones: List of availability zones where the SKU is restricted.
+        :paramtype zones: list[str]
+        """
         super(ResourceSkuRestrictionInfo, self).__init__(**kwargs)
         self.locations = locations
         self.zones = zones
@@ -2065,16 +2607,16 @@ class ResourceSkuRestrictionInfo(msrest.serialization.Model):
 class ResourceSkuRestrictions(msrest.serialization.Model):
     """Describes restrictions of a SKU.
 
-    :param type: The type of restrictions. Possible values include: "Location", "Zone".
-    :type type: str or ~azure.mgmt.cognitiveservices.models.ResourceSkuRestrictionsType
-    :param values: The value of restrictions. If the restriction type is set to location. This
-     would be different locations where the SKU is restricted.
-    :type values: list[str]
-    :param restriction_info: The information about the restriction where the SKU cannot be used.
-    :type restriction_info: ~azure.mgmt.cognitiveservices.models.ResourceSkuRestrictionInfo
-    :param reason_code: The reason for restriction. Possible values include: "QuotaId",
+    :ivar type: The type of restrictions. Possible values include: "Location", "Zone".
+    :vartype type: str or ~azure.mgmt.cognitiveservices.models.ResourceSkuRestrictionsType
+    :ivar values: The value of restrictions. If the restriction type is set to location. This would
+     be different locations where the SKU is restricted.
+    :vartype values: list[str]
+    :ivar restriction_info: The information about the restriction where the SKU cannot be used.
+    :vartype restriction_info: ~azure.mgmt.cognitiveservices.models.ResourceSkuRestrictionInfo
+    :ivar reason_code: The reason for restriction. Possible values include: "QuotaId",
      "NotAvailableForSubscription".
-    :type reason_code: str or
+    :vartype reason_code: str or
      ~azure.mgmt.cognitiveservices.models.ResourceSkuRestrictionsReasonCode
     """
 
@@ -2094,6 +2636,19 @@ class ResourceSkuRestrictions(msrest.serialization.Model):
         reason_code: Optional[Union[str, "ResourceSkuRestrictionsReasonCode"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: The type of restrictions. Possible values include: "Location", "Zone".
+        :paramtype type: str or ~azure.mgmt.cognitiveservices.models.ResourceSkuRestrictionsType
+        :keyword values: The value of restrictions. If the restriction type is set to location. This
+         would be different locations where the SKU is restricted.
+        :paramtype values: list[str]
+        :keyword restriction_info: The information about the restriction where the SKU cannot be used.
+        :paramtype restriction_info: ~azure.mgmt.cognitiveservices.models.ResourceSkuRestrictionInfo
+        :keyword reason_code: The reason for restriction. Possible values include: "QuotaId",
+         "NotAvailableForSubscription".
+        :paramtype reason_code: str or
+         ~azure.mgmt.cognitiveservices.models.ResourceSkuRestrictionsReasonCode
+        """
         super(ResourceSkuRestrictions, self).__init__(**kwargs)
         self.type = type
         self.values = values
@@ -2106,21 +2661,21 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the SKU. Ex - P3. It is typically a letter+number code.
-    :type name: str
-    :param tier: This field is required to be implemented by the Resource Provider if the service
+    :ivar name: Required. The name of the SKU. Ex - P3. It is typically a letter+number code.
+    :vartype name: str
+    :ivar tier: This field is required to be implemented by the Resource Provider if the service
      has more than one tier, but is not required on a PUT. Possible values include: "Free", "Basic",
      "Standard", "Premium", "Enterprise".
-    :type tier: str or ~azure.mgmt.cognitiveservices.models.SkuTier
-    :param size: The SKU size. When the name field is the combination of tier and some other value,
+    :vartype tier: str or ~azure.mgmt.cognitiveservices.models.SkuTier
+    :ivar size: The SKU size. When the name field is the combination of tier and some other value,
      this would be the standalone code.
-    :type size: str
-    :param family: If the service has different generations of hardware, for the same SKU, then
-     that can be captured here.
-    :type family: str
-    :param capacity: If the SKU supports scale out/in then the capacity integer should be included.
+    :vartype size: str
+    :ivar family: If the service has different generations of hardware, for the same SKU, then that
+     can be captured here.
+    :vartype family: str
+    :ivar capacity: If the SKU supports scale out/in then the capacity integer should be included.
      If scale out/in is not possible for the resource this may be omitted.
-    :type capacity: int
+    :vartype capacity: int
     """
 
     _validation = {
@@ -2145,6 +2700,23 @@ class Sku(msrest.serialization.Model):
         capacity: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the SKU. Ex - P3. It is typically a letter+number code.
+        :paramtype name: str
+        :keyword tier: This field is required to be implemented by the Resource Provider if the service
+         has more than one tier, but is not required on a PUT. Possible values include: "Free", "Basic",
+         "Standard", "Premium", "Enterprise".
+        :paramtype tier: str or ~azure.mgmt.cognitiveservices.models.SkuTier
+        :keyword size: The SKU size. When the name field is the combination of tier and some other
+         value, this would be the standalone code.
+        :paramtype size: str
+        :keyword family: If the service has different generations of hardware, for the same SKU, then
+         that can be captured here.
+        :paramtype family: str
+        :keyword capacity: If the SKU supports scale out/in then the capacity integer should be
+         included. If scale out/in is not possible for the resource this may be omitted.
+        :paramtype capacity: int
+        """
         super(Sku, self).__init__(**kwargs)
         self.name = name
         self.tier = tier
@@ -2156,18 +2728,18 @@ class Sku(msrest.serialization.Model):
 class SkuAvailability(msrest.serialization.Model):
     """SKU availability.
 
-    :param kind: The Kind of the resource.
-    :type kind: str
-    :param type: The Type of the resource.
-    :type type: str
-    :param sku_name: The SKU of Cognitive Services account.
-    :type sku_name: str
-    :param sku_available: Indicates the given SKU is available or not.
-    :type sku_available: bool
-    :param reason: Reason why the SKU is not available.
-    :type reason: str
-    :param message: Additional error message.
-    :type message: str
+    :ivar kind: The Kind of the resource.
+    :vartype kind: str
+    :ivar type: The Type of the resource.
+    :vartype type: str
+    :ivar sku_name: The SKU of Cognitive Services account.
+    :vartype sku_name: str
+    :ivar sku_available: Indicates the given SKU is available or not.
+    :vartype sku_available: bool
+    :ivar reason: Reason why the SKU is not available.
+    :vartype reason: str
+    :ivar message: Additional error message.
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -2190,6 +2762,20 @@ class SkuAvailability(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword kind: The Kind of the resource.
+        :paramtype kind: str
+        :keyword type: The Type of the resource.
+        :paramtype type: str
+        :keyword sku_name: The SKU of Cognitive Services account.
+        :paramtype sku_name: str
+        :keyword sku_available: Indicates the given SKU is available or not.
+        :paramtype sku_available: bool
+        :keyword reason: Reason why the SKU is not available.
+        :paramtype reason: str
+        :keyword message: Additional error message.
+        :paramtype message: str
+        """
         super(SkuAvailability, self).__init__(**kwargs)
         self.kind = kind
         self.type = type
@@ -2202,8 +2788,8 @@ class SkuAvailability(msrest.serialization.Model):
 class SkuAvailabilityListResult(msrest.serialization.Model):
     """Check SKU availability result list.
 
-    :param value: Check SKU availability result list.
-    :type value: list[~azure.mgmt.cognitiveservices.models.SkuAvailability]
+    :ivar value: Check SKU availability result list.
+    :vartype value: list[~azure.mgmt.cognitiveservices.models.SkuAvailability]
     """
 
     _attribute_map = {
@@ -2216,6 +2802,10 @@ class SkuAvailabilityListResult(msrest.serialization.Model):
         value: Optional[List["SkuAvailability"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: Check SKU availability result list.
+        :paramtype value: list[~azure.mgmt.cognitiveservices.models.SkuAvailability]
+        """
         super(SkuAvailabilityListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -2223,10 +2813,10 @@ class SkuAvailabilityListResult(msrest.serialization.Model):
 class SkuCapability(msrest.serialization.Model):
     """SkuCapability indicates the capability of a certain feature.
 
-    :param name: The name of the SkuCapability.
-    :type name: str
-    :param value: The value of the SkuCapability.
-    :type value: str
+    :ivar name: The name of the SkuCapability.
+    :vartype name: str
+    :ivar value: The value of the SkuCapability.
+    :vartype value: str
     """
 
     _attribute_map = {
@@ -2241,6 +2831,12 @@ class SkuCapability(msrest.serialization.Model):
         value: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: The name of the SkuCapability.
+        :paramtype name: str
+        :keyword value: The value of the SkuCapability.
+        :paramtype value: str
+        """
         super(SkuCapability, self).__init__(**kwargs)
         self.name = name
         self.value = value
@@ -2249,12 +2845,12 @@ class SkuCapability(msrest.serialization.Model):
 class SkuChangeInfo(msrest.serialization.Model):
     """Sku change info of account.
 
-    :param count_of_downgrades: Gets the count of downgrades.
-    :type count_of_downgrades: float
-    :param count_of_upgrades_after_downgrades: Gets the count of upgrades after downgrades.
-    :type count_of_upgrades_after_downgrades: float
-    :param last_change_date: Gets the last change date.
-    :type last_change_date: str
+    :ivar count_of_downgrades: Gets the count of downgrades.
+    :vartype count_of_downgrades: float
+    :ivar count_of_upgrades_after_downgrades: Gets the count of upgrades after downgrades.
+    :vartype count_of_upgrades_after_downgrades: float
+    :ivar last_change_date: Gets the last change date.
+    :vartype last_change_date: str
     """
 
     _attribute_map = {
@@ -2271,6 +2867,14 @@ class SkuChangeInfo(msrest.serialization.Model):
         last_change_date: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword count_of_downgrades: Gets the count of downgrades.
+        :paramtype count_of_downgrades: float
+        :keyword count_of_upgrades_after_downgrades: Gets the count of upgrades after downgrades.
+        :paramtype count_of_upgrades_after_downgrades: float
+        :keyword last_change_date: Gets the last change date.
+        :paramtype last_change_date: str
+        """
         super(SkuChangeInfo, self).__init__(**kwargs)
         self.count_of_downgrades = count_of_downgrades
         self.count_of_upgrades_after_downgrades = count_of_upgrades_after_downgrades
@@ -2280,20 +2884,20 @@ class SkuChangeInfo(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.cognitiveservices.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.cognitiveservices.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~azure.mgmt.cognitiveservices.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :vartype last_modified_by_type: str or ~azure.mgmt.cognitiveservices.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -2316,6 +2920,22 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.cognitiveservices.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.cognitiveservices.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -2328,18 +2948,18 @@ class SystemData(msrest.serialization.Model):
 class ThrottlingRule(msrest.serialization.Model):
     """ThrottlingRule.
 
-    :param key:
-    :type key: str
-    :param renewal_period:
-    :type renewal_period: float
-    :param count:
-    :type count: float
-    :param min_count:
-    :type min_count: float
-    :param dynamic_throttling_enabled:
-    :type dynamic_throttling_enabled: bool
-    :param match_patterns:
-    :type match_patterns: list[~azure.mgmt.cognitiveservices.models.RequestMatchPattern]
+    :ivar key:
+    :vartype key: str
+    :ivar renewal_period:
+    :vartype renewal_period: float
+    :ivar count:
+    :vartype count: float
+    :ivar min_count:
+    :vartype min_count: float
+    :ivar dynamic_throttling_enabled:
+    :vartype dynamic_throttling_enabled: bool
+    :ivar match_patterns:
+    :vartype match_patterns: list[~azure.mgmt.cognitiveservices.models.RequestMatchPattern]
     """
 
     _attribute_map = {
@@ -2362,6 +2982,20 @@ class ThrottlingRule(msrest.serialization.Model):
         match_patterns: Optional[List["RequestMatchPattern"]] = None,
         **kwargs
     ):
+        """
+        :keyword key:
+        :paramtype key: str
+        :keyword renewal_period:
+        :paramtype renewal_period: float
+        :keyword count:
+        :paramtype count: float
+        :keyword min_count:
+        :paramtype min_count: float
+        :keyword dynamic_throttling_enabled:
+        :paramtype dynamic_throttling_enabled: bool
+        :keyword match_patterns:
+        :paramtype match_patterns: list[~azure.mgmt.cognitiveservices.models.RequestMatchPattern]
+        """
         super(ThrottlingRule, self).__init__(**kwargs)
         self.key = key
         self.renewal_period = renewal_period
@@ -2374,22 +3008,22 @@ class ThrottlingRule(msrest.serialization.Model):
 class Usage(msrest.serialization.Model):
     """The usage data for a usage request.
 
-    :param unit: The unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
+    :ivar unit: The unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
      "Percent", "CountPerSecond", "BytesPerSecond", "Milliseconds".
-    :type unit: str or ~azure.mgmt.cognitiveservices.models.UnitType
-    :param name: The name information for the metric.
-    :type name: ~azure.mgmt.cognitiveservices.models.MetricName
-    :param quota_period: The quota period used to summarize the usage values.
-    :type quota_period: str
-    :param limit: Maximum value for this metric.
-    :type limit: float
-    :param current_value: Current value for this metric.
-    :type current_value: float
-    :param next_reset_time: Next reset time for current quota.
-    :type next_reset_time: str
-    :param status: Cognitive Services account quota usage status. Possible values include:
+    :vartype unit: str or ~azure.mgmt.cognitiveservices.models.UnitType
+    :ivar name: The name information for the metric.
+    :vartype name: ~azure.mgmt.cognitiveservices.models.MetricName
+    :ivar quota_period: The quota period used to summarize the usage values.
+    :vartype quota_period: str
+    :ivar limit: Maximum value for this metric.
+    :vartype limit: float
+    :ivar current_value: Current value for this metric.
+    :vartype current_value: float
+    :ivar next_reset_time: Next reset time for current quota.
+    :vartype next_reset_time: str
+    :ivar status: Cognitive Services account quota usage status. Possible values include:
      "Included", "Blocked", "InOverage", "Unknown".
-    :type status: str or ~azure.mgmt.cognitiveservices.models.QuotaUsageStatus
+    :vartype status: str or ~azure.mgmt.cognitiveservices.models.QuotaUsageStatus
     """
 
     _attribute_map = {
@@ -2414,6 +3048,24 @@ class Usage(msrest.serialization.Model):
         status: Optional[Union[str, "QuotaUsageStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword unit: The unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
+         "Percent", "CountPerSecond", "BytesPerSecond", "Milliseconds".
+        :paramtype unit: str or ~azure.mgmt.cognitiveservices.models.UnitType
+        :keyword name: The name information for the metric.
+        :paramtype name: ~azure.mgmt.cognitiveservices.models.MetricName
+        :keyword quota_period: The quota period used to summarize the usage values.
+        :paramtype quota_period: str
+        :keyword limit: Maximum value for this metric.
+        :paramtype limit: float
+        :keyword current_value: Current value for this metric.
+        :paramtype current_value: float
+        :keyword next_reset_time: Next reset time for current quota.
+        :paramtype next_reset_time: str
+        :keyword status: Cognitive Services account quota usage status. Possible values include:
+         "Included", "Blocked", "InOverage", "Unknown".
+        :paramtype status: str or ~azure.mgmt.cognitiveservices.models.QuotaUsageStatus
+        """
         super(Usage, self).__init__(**kwargs)
         self.unit = unit
         self.name = name
@@ -2427,8 +3079,8 @@ class Usage(msrest.serialization.Model):
 class UsageListResult(msrest.serialization.Model):
     """The response to a list usage request.
 
-    :param value: The list of usages for Cognitive Service account.
-    :type value: list[~azure.mgmt.cognitiveservices.models.Usage]
+    :ivar value: The list of usages for Cognitive Service account.
+    :vartype value: list[~azure.mgmt.cognitiveservices.models.Usage]
     """
 
     _attribute_map = {
@@ -2441,6 +3093,10 @@ class UsageListResult(msrest.serialization.Model):
         value: Optional[List["Usage"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of usages for Cognitive Service account.
+        :paramtype value: list[~azure.mgmt.cognitiveservices.models.Usage]
+        """
         super(UsageListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -2470,6 +3126,8 @@ class UserAssignedIdentity(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(UserAssignedIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
@@ -2478,10 +3136,10 @@ class UserAssignedIdentity(msrest.serialization.Model):
 class UserOwnedStorage(msrest.serialization.Model):
     """The user owned storage for Cognitive Services account.
 
-    :param resource_id: Full resource id of a Microsoft.Storage resource.
-    :type resource_id: str
-    :param identity_client_id:
-    :type identity_client_id: str
+    :ivar resource_id: Full resource id of a Microsoft.Storage resource.
+    :vartype resource_id: str
+    :ivar identity_client_id:
+    :vartype identity_client_id: str
     """
 
     _attribute_map = {
@@ -2496,6 +3154,12 @@ class UserOwnedStorage(msrest.serialization.Model):
         identity_client_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword resource_id: Full resource id of a Microsoft.Storage resource.
+        :paramtype resource_id: str
+        :keyword identity_client_id:
+        :paramtype identity_client_id: str
+        """
         super(UserOwnedStorage, self).__init__(**kwargs)
         self.resource_id = resource_id
         self.identity_client_id = identity_client_id
@@ -2506,13 +3170,13 @@ class VirtualNetworkRule(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. Full resource id of a vnet subnet, such as
+    :ivar id: Required. Full resource id of a vnet subnet, such as
      '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
-    :type id: str
-    :param state: Gets the state of virtual network rule.
-    :type state: str
-    :param ignore_missing_vnet_service_endpoint: Ignore missing vnet service endpoint or not.
-    :type ignore_missing_vnet_service_endpoint: bool
+    :vartype id: str
+    :ivar state: Gets the state of virtual network rule.
+    :vartype state: str
+    :ivar ignore_missing_vnet_service_endpoint: Ignore missing vnet service endpoint or not.
+    :vartype ignore_missing_vnet_service_endpoint: bool
     """
 
     _validation = {
@@ -2533,6 +3197,15 @@ class VirtualNetworkRule(msrest.serialization.Model):
         ignore_missing_vnet_service_endpoint: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword id: Required. Full resource id of a vnet subnet, such as
+         '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
+        :paramtype id: str
+        :keyword state: Gets the state of virtual network rule.
+        :paramtype state: str
+        :keyword ignore_missing_vnet_service_endpoint: Ignore missing vnet service endpoint or not.
+        :paramtype ignore_missing_vnet_service_endpoint: bool
+        """
         super(VirtualNetworkRule, self).__init__(**kwargs)
         self.id = id
         self.state = state

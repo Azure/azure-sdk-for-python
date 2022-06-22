@@ -1,14 +1,25 @@
 # Release History
 
-## 7.6.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 7.7.0 (2022-06-07)
 
 ### Bugs Fixed
 
+- Fixed bug to make AMQP exceptions retryable by default, if condition is not non-retryable, to ensure that InternalServerErrors are retried.
+
+### Features Added
+
+- The `ServiceBusClient` constructor now accepts optional `custom_endpoint_address` argument
+which allows for specifying a custom endpoint to use when communicating with the Service Bus service,
+and is useful when your network does not allow communicating to the standard Service Bus endpoint.
+- The `ServiceBusClient`constructor now accepts optional `connection_verify` argument
+which allows for specifying the path to the custom CA_BUNDLE file of the SSL certificate which is used to authenticate
+the identity of the connection endpoint.
+
+## 7.6.1 (2022-04-11)
+
 ### Other Changes
+
+- Improved receiving by releasing messages from internal buffer when the `prefetch_count` of `ServiceBusReceiver`  is set 0 and there is no active receive call, this helps avoid receiving expired messages and incrementing delivery count of a message.
 
 ## 7.6.0 (2022-02-10)
 

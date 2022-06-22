@@ -117,7 +117,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
         super(ShareDirectoryClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
-        self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline)
+        self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     @classmethod
@@ -272,6 +272,34 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         # type: (Any) -> Dict[str, Any]
         """Creates a new directory under the directory referenced by the client.
 
+        :keyword file_attributes:
+            The file system attributes for files and directories.
+            If not set, the default value would be "none" and the attributes will be set to "Archive".
+            Here is an example for when the var type is str: 'Temporary|Archive'.
+            file_attributes value is not case sensitive.
+        :paramtype file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
+        :keyword file_creation_time:
+            Creation time for the directory. Default value: "now".
+        :paramtype file_creation_time: str or ~datetime.datetime
+        :keyword file_last_write_time:
+            Last write time for the directory. Default value: "now".
+        :paramtype file_last_write_time: str or ~datetime.datetime
+        :keyword str file_permission:
+            If specified the permission (security descriptor) shall be set
+            for the directory/file. This header can be used if Permission size is
+            <= 8KB, else file-permission-key header shall be used.
+            Default value: Inherit. If SDDL is specified as input, it must have owner, group and dacl.
+            Note: Only one of the file-permission or file-permission-key should be specified.
+        :keyword str file_permission_key:
+            Key of the permission to be set for the directory/file.
+            Note: Only one of the file-permission or file-permission-key should be specified.
+        :keyword file_change_time:
+            Change time for the directory. If not specified, change time will be set to the current date/time.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword dict(str,str) metadata:
             Name-value pairs associated with the directory as metadata.
         :keyword int timeout:
@@ -292,8 +320,23 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         metadata = kwargs.pop('metadata', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
+
+        file_attributes = kwargs.pop('file_attributes', 'none')
+        file_creation_time = kwargs.pop('file_creation_time', 'now')
+        file_last_write_time = kwargs.pop('file_last_write_time', 'now')
+        file_change_time = kwargs.pop('file_change_time', None)
+        file_permission = kwargs.pop('file_permission', None)
+        file_permission_key = kwargs.pop('file_permission_key', None)
+        file_permission = _get_file_permission(file_permission, file_permission_key, 'inherit')
+
         try:
             return self._client.directory.create( # type: ignore
+                file_attributes=str(file_attributes),
+                file_creation_time=_datetime_to_str(file_creation_time),
+                file_last_write_time=_datetime_to_str(file_last_write_time),
+                file_change_time=_datetime_to_str(file_change_time),
+                file_permission=file_permission,
+                file_permission_key=file_permission_key,
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
@@ -367,12 +410,19 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         :keyword file_last_write_time:
             Last write time for the file.
         :paramtype file_last_write_time:~datetime.datetime or str
-        :keyword dict(str,str) metadata:
+        :keyword file_change_time:
+            Change time for the directory. If not specified, change time will be set to the current date/time.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
+        :paramtype file_change_time: str or ~datetime.datetime
+        :keyword Dict[str,str] metadata:
             A name-value pair to associate with a file storage object.
-        :keyword lease:
+        :keyword destination_lease:
             Required if the destination file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :paramtype destination_lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: The new Directory Client.
         :rtype: ~azure.storage.fileshare.ShareDirectoryClient
         """
@@ -403,14 +453,14 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
 
-        access_conditions = get_dest_access_conditions(kwargs.pop('lease', None))
+        destination_access_conditions = get_dest_access_conditions(kwargs.pop('destination_lease', None))
 
         try:
             new_directory_client._client.directory.rename(  # pylint: disable=protected-access
                 self.url,
                 timeout=timeout,
                 replace_if_exists=overwrite,
-                destination_lease_access_conditions=access_conditions,
+                destination_lease_access_conditions=destination_access_conditions,
                 headers=headers,
                 **kwargs)
 
@@ -632,7 +682,8 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
 
         :kwarg int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: boolean
+        :returns: True if the directory exists, False otherwise.
+        :rtype: bool
         """
         try:
             self._client.directory.get_properties(**kwargs)
@@ -645,8 +696,8 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def set_http_headers(self, file_attributes="none",  # type: Union[str, NTFSAttributes]
-                         file_creation_time="preserve",  # type: Union[str, datetime]
-                         file_last_write_time="preserve",  # type: Union[str, datetime]
+                         file_creation_time="preserve",  # type: Optional[Union[str, datetime]]
+                         file_last_write_time="preserve",  # type: Optional[Union[str, datetime]]
                          file_permission=None,   # type: Optional[str]
                          permission_key=None,   # type: Optional[str]
                          **kwargs  # type: Any
@@ -676,6 +727,13 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
+        :keyword file_change_time:
+            Change time for the directory. If not specified, change time will be set to the current date/time.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
@@ -683,11 +741,13 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         """
         timeout = kwargs.pop('timeout', None)
         file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
+        file_change_time = kwargs.pop('file_change_time', None)
         try:
             return self._client.directory.set_properties(  # type: ignore
                 file_attributes=_str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
+                file_change_time=_datetime_to_str(file_change_time),
                 file_permission=file_permission,
                 file_permission_key=permission_key,
                 timeout=timeout,

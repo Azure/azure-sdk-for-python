@@ -7,21 +7,22 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import SynapseManagementClientConfiguration
-from .operations import AzureADOnlyAuthenticationsOperations, BigDataPoolsOperations, DataMaskingPoliciesOperations, DataMaskingRulesOperations, ExtendedSqlPoolBlobAuditingPoliciesOperations, IntegrationRuntimeAuthKeysOperations, IntegrationRuntimeConnectionInfosOperations, IntegrationRuntimeCredentialsOperations, IntegrationRuntimeMonitoringDataOperations, IntegrationRuntimeNodeIpAddressOperations, IntegrationRuntimeNodesOperations, IntegrationRuntimeObjectMetadataOperations, IntegrationRuntimeStatusOperations, IntegrationRuntimesOperations, IpFirewallRulesOperations, KeysOperations, KustoOperationsOperations, KustoPoolAttachedDatabaseConfigurationsOperations, KustoPoolChildResourceOperations, KustoPoolDataConnectionsOperations, KustoPoolDatabasePrincipalAssignmentsOperations, KustoPoolDatabasesOperations, KustoPoolPrincipalAssignmentsOperations, KustoPoolsOperations, LibrariesOperations, LibraryOperations, Operations, PrivateEndpointConnectionsOperations, PrivateEndpointConnectionsPrivateLinkHubOperations, PrivateLinkHubPrivateLinkResourcesOperations, PrivateLinkHubsOperations, PrivateLinkResourcesOperations, RestorableDroppedSqlPoolsOperations, SparkConfigurationOperations, SparkConfigurationsOperations, SqlPoolBlobAuditingPoliciesOperations, SqlPoolColumnsOperations, SqlPoolConnectionPoliciesOperations, SqlPoolDataWarehouseUserActivitiesOperations, SqlPoolGeoBackupPoliciesOperations, SqlPoolMaintenanceWindowOptionsOperations, SqlPoolMaintenanceWindowsOperations, SqlPoolMetadataSyncConfigsOperations, SqlPoolOperationResultsOperations, SqlPoolOperationsOperations, SqlPoolRecommendedSensitivityLabelsOperations, SqlPoolReplicationLinksOperations, SqlPoolRestorePointsOperations, SqlPoolSchemasOperations, SqlPoolSecurityAlertPoliciesOperations, SqlPoolSensitivityLabelsOperations, SqlPoolTableColumnsOperations, SqlPoolTablesOperations, SqlPoolTransparentDataEncryptionsOperations, SqlPoolUsagesOperations, SqlPoolVulnerabilityAssessmentRuleBaselinesOperations, SqlPoolVulnerabilityAssessmentScansOperations, SqlPoolVulnerabilityAssessmentsOperations, SqlPoolWorkloadClassifierOperations, SqlPoolWorkloadGroupOperations, SqlPoolsOperations, WorkspaceAadAdminsOperations, WorkspaceManagedIdentitySqlControlSettingsOperations, WorkspaceManagedSqlServerBlobAuditingPoliciesOperations, WorkspaceManagedSqlServerEncryptionProtectorOperations, WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations, WorkspaceManagedSqlServerRecoverableSqlPoolsOperations, WorkspaceManagedSqlServerSecurityAlertPolicyOperations, WorkspaceManagedSqlServerUsagesOperations, WorkspaceManagedSqlServerVulnerabilityAssessmentsOperations, WorkspaceSqlAadAdminsOperations, WorkspacesOperations
+from .operations import AzureADOnlyAuthenticationsOperations, BigDataPoolsOperations, DataMaskingPoliciesOperations, DataMaskingRulesOperations, ExtendedSqlPoolBlobAuditingPoliciesOperations, IntegrationRuntimeAuthKeysOperations, IntegrationRuntimeConnectionInfosOperations, IntegrationRuntimeCredentialsOperations, IntegrationRuntimeMonitoringDataOperations, IntegrationRuntimeNodeIpAddressOperations, IntegrationRuntimeNodesOperations, IntegrationRuntimeObjectMetadataOperations, IntegrationRuntimeStatusOperations, IntegrationRuntimesOperations, IpFirewallRulesOperations, KeysOperations, KustoOperationsOperations, KustoPoolAttachedDatabaseConfigurationsOperations, KustoPoolChildResourceOperations, KustoPoolDataConnectionsOperations, KustoPoolDatabasePrincipalAssignmentsOperations, KustoPoolDatabasesOperations, KustoPoolPrincipalAssignmentsOperations, KustoPoolsOperations, LibrariesOperations, LibraryOperations, Operations, PrivateEndpointConnectionsOperations, PrivateEndpointConnectionsPrivateLinkHubOperations, PrivateLinkHubPrivateLinkResourcesOperations, PrivateLinkHubsOperations, PrivateLinkResourcesOperations, RestorableDroppedSqlPoolsOperations, SparkConfigurationOperations, SparkConfigurationsOperations, SqlPoolBlobAuditingPoliciesOperations, SqlPoolColumnsOperations, SqlPoolConnectionPoliciesOperations, SqlPoolDataWarehouseUserActivitiesOperations, SqlPoolGeoBackupPoliciesOperations, SqlPoolMaintenanceWindowOptionsOperations, SqlPoolMaintenanceWindowsOperations, SqlPoolMetadataSyncConfigsOperations, SqlPoolOperationResultsOperations, SqlPoolOperationsOperations, SqlPoolRecommendedSensitivityLabelsOperations, SqlPoolReplicationLinksOperations, SqlPoolRestorePointsOperations, SqlPoolSchemasOperations, SqlPoolSecurityAlertPoliciesOperations, SqlPoolSensitivityLabelsOperations, SqlPoolTableColumnsOperations, SqlPoolTablesOperations, SqlPoolTransparentDataEncryptionsOperations, SqlPoolUsagesOperations, SqlPoolVulnerabilityAssessmentRuleBaselinesOperations, SqlPoolVulnerabilityAssessmentScansOperations, SqlPoolVulnerabilityAssessmentsOperations, SqlPoolWorkloadClassifierOperations, SqlPoolWorkloadGroupOperations, SqlPoolsOperations, WorkspaceAadAdminsOperations, WorkspaceManagedIdentitySqlControlSettingsOperations, WorkspaceManagedSqlServerBlobAuditingPoliciesOperations, WorkspaceManagedSqlServerDedicatedSQLMinimalTlsSettingsOperations, WorkspaceManagedSqlServerEncryptionProtectorOperations, WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations, WorkspaceManagedSqlServerRecoverableSqlPoolsOperations, WorkspaceManagedSqlServerSecurityAlertPolicyOperations, WorkspaceManagedSqlServerUsagesOperations, WorkspaceManagedSqlServerVulnerabilityAssessmentsOperations, WorkspaceSqlAadAdminsOperations, WorkspacesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class SynapseManagementClient:
+class SynapseManagementClient:    # pylint: disable=too-many-instance-attributes
     """Azure Synapse Analytics Management Client.
 
     :ivar azure_ad_only_authentications: AzureADOnlyAuthenticationsOperations operations
@@ -161,6 +162,10 @@ class SynapseManagementClient:
      WorkspaceManagedSqlServerRecoverableSqlPoolsOperations operations
     :vartype workspace_managed_sql_server_recoverable_sql_pools:
      azure.mgmt.synapse.aio.operations.WorkspaceManagedSqlServerRecoverableSqlPoolsOperations
+    :ivar workspace_managed_sql_server_dedicated_sql_minimal_tls_settings:
+     WorkspaceManagedSqlServerDedicatedSQLMinimalTlsSettingsOperations operations
+    :vartype workspace_managed_sql_server_dedicated_sql_minimal_tls_settings:
+     azure.mgmt.synapse.aio.operations.WorkspaceManagedSqlServerDedicatedSQLMinimalTlsSettingsOperations
     :ivar workspaces: WorkspacesOperations operations
     :vartype workspaces: azure.mgmt.synapse.aio.operations.WorkspacesOperations
     :ivar workspace_aad_admins: WorkspaceAadAdminsOperations operations
@@ -241,7 +246,7 @@ class SynapseManagementClient:
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -306,6 +311,7 @@ class SynapseManagementClient:
         self.workspace_managed_sql_server_encryption_protector = WorkspaceManagedSqlServerEncryptionProtectorOperations(self._client, self._config, self._serialize, self._deserialize)
         self.workspace_managed_sql_server_usages = WorkspaceManagedSqlServerUsagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.workspace_managed_sql_server_recoverable_sql_pools = WorkspaceManagedSqlServerRecoverableSqlPoolsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.workspace_managed_sql_server_dedicated_sql_minimal_tls_settings = WorkspaceManagedSqlServerDedicatedSQLMinimalTlsSettingsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.workspaces = WorkspacesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.workspace_aad_admins = WorkspaceAadAdminsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.workspace_sql_aad_admins = WorkspaceSqlAadAdminsOperations(self._client, self._config, self._serialize, self._deserialize)

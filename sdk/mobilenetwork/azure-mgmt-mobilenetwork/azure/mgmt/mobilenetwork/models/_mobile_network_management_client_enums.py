@@ -11,18 +11,13 @@ from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ConfigurationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The configuration state of the resource - complete or incomplete.
-    """
-
-    INCOMPLETE = "Incomplete"
-    COMPLETE = "Complete"
-
 class CoreNetworkType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Core network type.
     """
 
+    #: 5G core.
     FIVE_GC = "5GC"
+    #: EPC / 4G core.
     EPC = "EPC"
 
 class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
@@ -38,7 +33,9 @@ class NaptEnabled(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Whether Network Address and Port Translation is enabled.
     """
 
+    #: NAPT is enabled.
     ENABLED = "Enabled"
+    #: NAPT is disabled.
     DISABLED = "Disabled"
 
 class PduSessionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
@@ -52,14 +49,18 @@ class PreemptionCapability(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Preemption capability.
     """
 
+    #: Cannot preempt.
     NOT_PREEMPT = "NotPreempt"
+    #: May preempt.
     MAY_PREEMPT = "MayPreempt"
 
 class PreemptionVulnerability(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Preemption vulnerability.
     """
 
+    #: Cannot be preempted.
     NOT_PREEMPTABLE = "NotPreemptable"
+    #: May be preempted.
     PREEMPTABLE = "Preemptable"
 
 class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
@@ -78,13 +79,29 @@ class SdfDirection(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Service data flow direction.
     """
 
+    #: Traffic flowing from the UE to the data network.
     UPLINK = "Uplink"
+    #: Traffic flowing from the data network to the UE.
     DOWNLINK = "Downlink"
+    #: Traffic flowing both to and from the UE.
     BIDIRECTIONAL = "Bidirectional"
+
+class SimState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The state of the sim resource.
+    """
+
+    #: The sim is disabled because not all configuration required for enabling is present.
+    DISABLED = "Disabled"
+    #: The sim is enabled.
+    ENABLED = "Enabled"
+    #: The sim cannot be enabled because some of the associated configuration is invalid.
+    INVALID = "Invalid"
 
 class TrafficControlPermission(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Traffic control permission.
     """
 
+    #: Traffic matching this rule is allowed to flow.
     ENABLED = "Enabled"
+    #: Traffic matching this rule is not allowed to flow.
     BLOCKED = "Blocked"

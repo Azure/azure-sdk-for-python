@@ -5,24 +5,26 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import time
+import pytest
 import unittest
 from datetime import datetime, timedelta
-import pytest
-
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 from azure.core import MatchConditions
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
-from azure.storage.filedatalake import DataLakeServiceClient, PublicAccess, generate_account_sas, ResourceTypes, \
-    AccountSasPermissions
+from azure.storage.filedatalake import(
+    AccessPolicy,
+    AccountSasPermissions,
+    DataLakeServiceClient,
+    FileSystemSasPermissions,
+    PublicAccess,
+    ResourceTypes,
+    generate_account_sas)
+
 from settings.testcase import DataLakePreparer
 from devtools_testutils.storage import StorageTestCase
-# ------------------------------------------------------------------------------
-from azure.storage.filedatalake import AccessPolicy, FileSystemSasPermissions
-from azure.storage.filedatalake._list_paths_helper import DirectoryPrefix
-from azure.storage.filedatalake._models import DeletedPathProperties
 
+# ------------------------------------------------------------------------------
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 # ------------------------------------------------------------------------------
 
@@ -57,7 +59,7 @@ class FileSystemTest(StorageTestCase):
             pass
 
 
-    # --Helpers-----------------------------------------------------------------
+    # --Test cases for file system ---------------------------------------------
 
     @DataLakePreparer()
     def test_create_file_system(self, datalake_storage_account_name, datalake_storage_account_key):
@@ -67,6 +69,19 @@ class FileSystemTest(StorageTestCase):
 
         # Act
         file_system_client = self.dsc.get_file_system_client(file_system_name)
+        created = file_system_client.create_file_system()
+
+        # Assert
+        self.assertTrue(created)
+
+    @DataLakePreparer()
+    def test_create_file_system_extra_backslash(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system_name = self._get_file_system_reference()
+
+        # Act
+        file_system_client = self.dsc.get_file_system_client(file_system_name + '/')
         created = file_system_client.create_file_system()
 
         # Assert
@@ -144,6 +159,31 @@ class FileSystemTest(StorageTestCase):
         self.assertIsNotNone(file_systems[0].has_immutability_policy)
         self.assertIsNotNone(file_systems[0].has_legal_hold)
 
+    @pytest.mark.live_test_only
+    @DataLakePreparer()
+    def test_list_file_systems_account_sas(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system_name = self._get_file_system_reference()
+        file_system = self.dsc.create_file_system(file_system_name)
+        sas_token = generate_account_sas(
+            datalake_storage_account_name,
+            datalake_storage_account_key,
+            ResourceTypes(service=True),
+            AccountSasPermissions(list=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # Act
+        dsc = DataLakeServiceClient(self.account_url(datalake_storage_account_name, 'dfs'), credential=sas_token)
+        file_systems = list(dsc.list_file_systems())
+
+        # Assert
+        self.assertIsNotNone(file_systems)
+        self.assertGreaterEqual(len(file_systems), 1)
+        self.assertIsNotNone(file_systems[0])
+        self.assertNamedItemInContainer(file_systems, file_system.file_system_name)
+
     @DataLakePreparer()
     def test_rename_file_system(self, datalake_storage_account_name, datalake_storage_account_key):
         if not self.is_playback():
@@ -164,9 +204,9 @@ class FileSystemTest(StorageTestCase):
             self.dsc._rename_file_system(name="badfilesystem", new_name="filesystem")
         self.assertEqual(new_name, new_filesystem.get_file_system_properties().name)
 
+    @pytest.mark.skip(reason="Feature not yet enabled. Record when enabled.")
     @DataLakePreparer()
     def test_rename_file_system_with_file_system_client(self, datalake_storage_account_name, datalake_storage_account_key):
-        pytest.skip("Feature not yet enabled. Make sure to record this test once enabled.")
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         old_name1 = self._get_file_system_reference(prefix="oldcontainer1")
         old_name2 = self._get_file_system_reference(prefix="oldcontainer2")
@@ -243,11 +283,9 @@ class FileSystemTest(StorageTestCase):
                 props = restored_fs_client.get_file_system_properties()
                 self.assertIsNotNone(props)
 
+    @pytest.mark.skip(reason="We are generating a SAS token therefore play only live but we also need a soft delete enabled account.")
     @DataLakePreparer()
     def test_restore_file_system_with_sas(self, datalake_storage_account_name, datalake_storage_account_key):
-        # TODO: Needs soft delete enabled account in ARM template.
-        pytest.skip(
-            "We are generating a SAS token therefore play only live but we also need a soft delete enabled account.")
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         token = generate_account_sas(
             self.dsc.account_name,
@@ -398,6 +436,40 @@ class FileSystemTest(StorageTestCase):
 
         self.assertEqual(len(paths), 6)
         self.assertTrue(isinstance(paths[0].last_modified, datetime))
+
+    @DataLakePreparer()
+    def test_list_paths_create_expiry(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system = self._create_file_system()
+        file_client = file_system.create_file('file1')
+
+        expires_on = datetime.utcnow() + timedelta(days=1)
+        file_client.set_file_expiry("Absolute", expires_on=expires_on)
+
+        # Act
+        paths = list(file_system.get_paths(upn=True))
+
+        # Assert
+        self.assertEqual(1, len(paths))
+        props = file_client.get_file_properties()
+        # Properties do not include microseconds so let them vary by 1 second
+        self.assertAlmostEqual(props.creation_time, paths[0].creation_time, delta=timedelta(seconds=1))
+        self.assertAlmostEqual(props.expiry_time, paths[0].expiry_time, delta=timedelta(seconds=1))
+
+    @DataLakePreparer()
+    def test_list_paths_no_expiry(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system = self._create_file_system()
+        file_system.create_file('file1')
+
+        # Act
+        paths = list(file_system.get_paths(upn=True))
+
+        # Assert
+        self.assertEqual(1, len(paths))
+        self.assertIsNone(paths[0].expiry_time)
 
     @DataLakePreparer()
     def test_get_deleted_paths(self, datalake_storage_account_name, datalake_storage_account_key):
@@ -619,104 +691,6 @@ class FileSystemTest(StorageTestCase):
         restored_file_client = file_system_client._undelete_path(file_path, resp['deletion_id'])
         resp = restored_file_client.get_file_properties()
         self.assertIsNotNone(resp)
-
-    @DataLakePreparer()
-    def test_delete_files_simple_no_raise(self, datalake_storage_account_name, datalake_storage_account_key):
-        # Arrange
-        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        filesystem = self._create_file_system("fs1")
-        data = b'hello world'
-
-        try:
-            # create file1
-            filesystem.get_file_client('file1').upload_data(data, overwrite=True)
-
-            # create file2
-            file2 = filesystem.get_file_client('file2')
-            file2.upload_data(data, overwrite=True)
-            file2_properties = file2.get_file_properties()
-
-            # create file3
-            file3 = filesystem.get_file_client('file3')
-            file3.upload_data(data, overwrite=True)
-            file3_etag = file3.get_file_properties().etag
-
-            # create dir1
-            # empty directory can be deleted using delete_files
-            filesystem.get_directory_client('dir1').create_directory(),
-
-            # create dir2
-            dir2 = filesystem.get_directory_client('dir2')
-            dir2.create_directory()
-            dir2_properties = dir2.get_directory_properties()
-
-        except:
-            pass
-
-        # Act
-        response = filesystem.delete_files(
-            'file1',
-            file2_properties,
-            {'name': 'file3', 'etag': file3_etag},
-            'dir1',
-            dir2_properties,
-            raise_on_any_failure=False
-        )
-        assert len(response) == 5
-        assert response[0].status_code == 202
-        assert response[1].status_code == 202
-        assert response[2].status_code == 202
-        assert response[3].status_code == 202
-        assert response[4].status_code == 202
-
-    @DataLakePreparer()
-    def test_delete_files_with_failed_subrequest(self, datalake_storage_account_name, datalake_storage_account_key):
-        # Arrange
-        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        filesystem = self._create_file_system("fs2")
-        data = b'hello world'
-
-        try:
-            # create file1
-            filesystem.get_file_client('file1').upload_data(data, overwrite=True)
-
-            # create file2
-            file2 = filesystem.get_file_client('file2')
-            file2.upload_data(data, overwrite=True)
-            file2_properties = file2.get_file_properties()
-
-            # create file3
-            file3 = filesystem.get_file_client('file3')
-            file3.upload_data(data, overwrite=True)
-            file3_etag = file3.get_file_properties().etag
-
-            # create dir1
-            dir1 = filesystem.get_directory_client('dir1')
-            dir1.create_file("file4")
-
-            # create dir2
-            dir2 = filesystem.get_directory_client('dir2')
-            dir2.create_directory()
-            dir2_properties = dir2.get_directory_properties()
-
-        except:
-            pass
-
-        # Act
-        response = filesystem.delete_files(
-            'file1',
-            file2_properties,
-            {'name': 'file3', 'etag': file3_etag},
-            'dir1',  # dir1 is not empty
-            'dir8',  # dir 8 doesn't exist
-            raise_on_any_failure=False
-        )
-        assert len(response) == 5
-        assert response[0].status_code == 202
-        assert response[1].status_code == 202
-        assert response[2].status_code == 202
-        assert response[3].status_code == 409
-        assert response[4].status_code == 404
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

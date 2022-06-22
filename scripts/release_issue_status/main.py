@@ -15,10 +15,9 @@ from utils import update_issue_body, get_readme_and_output_folder, \
 _NULL = ' '
 _FILE_OUT = 'release_issue_status.csv'
 _FILE_OUT_PYTHON = 'release_python_status.md'
-_PYTHON_SDK_ADMINISTRATORS = ['msyyc', 'BigCat20196', 'azure-sdk']
-_PYTHON_SDK_ASSIGNEES = ['BigCat20196', 'msyyc']
-_ASSIGNER_DICT = {'BigCat20196': os.getenv('JF_TOKEN'),
-                  'msyyc': os.getenv('TOKEN')}
+_PYTHON_SDK_ADMINISTRATORS = ['msyyc', 'BigCat20196', 'azure-sdk', 'Wzb123456789']
+_PYTHON_SDK_ASSIGNEES = ['BigCat20196', 'Wzb123456789']
+_ASSIGNER_DICT = {'azure-sdk': os.getenv('AZURESDK_BOT_TOKEN')}
 logging.basicConfig(level=logging.INFO,
                     format='[auto-reply  log] - %(funcName)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
@@ -145,7 +144,7 @@ def _latest_comment_time(comments, delay_from_create_date):
 
 def auto_reply(item, request_repo, rest_repo, duplicated_issue, python_piplines, assigner_repoes):
     logging.info("new issue number: {}".format(item.issue_object.number))
-    assigner_repo = assigner_repoes[item.assignee]
+    assigner_repo = assigner_repoes['azure-sdk']
     if 'auto-link' not in item.labels:
         item.issue_object.add_to_labels('auto-link')
         try:
@@ -190,7 +189,8 @@ def main():
     rest_repo = g.get_repo('Azure/azure-rest-api-specs')
     sdk_repo = g.get_repo('Azure/azure-sdk-for-python')
     label1 = request_repo.get_label('ManagementPlane')
-    open_issues = request_repo.get_issues(state='open', labels=[label1])
+    label2 = request_repo.get_label('Python')
+    open_issues = request_repo.get_issues(state='open', labels=[label1, label2])
     issue_status = []
     issue_status_python = []
     duplicated_issue = dict()
@@ -205,9 +205,13 @@ def main():
         issue.link = f'https://github.com/Azure/sdk-release-request/issues/{item.number}'
         issue.author = item.user.login
         issue.package = _extract(item.body.split('\n'), 'azure-.*')
-        issue.target_date = [x.split(':')[-1].strip() for x in item.body.split('\n') if 'Target release date' in x][0]
-        issue.days_from_target = int(
-            (time.mktime(time.strptime(issue.target_date, '%Y-%m-%d')) - time.time()) / 3600 / 24)
+        try:
+            issue.target_date = [x.split(':')[-1].strip() for x in item.body.split('\n') if 'Target release date' in x][0]
+            issue.days_from_target = int(
+                (time.mktime(time.strptime(issue.target_date, '%Y-%m-%d')) - time.time()) / 3600 / 24)
+        except Exception:
+            issue.target_date = 'fail to get.'
+            issue.days_from_target = 1000  # make a ridiculous data to remind failure when error happens
         issue.create_date = item.created_at.timestamp()
         issue.delay_from_create_date = int((time.time() - item.created_at.timestamp()) / 3600 / 24)
         issue.latest_update = item.updated_at.timestamp()
@@ -237,7 +241,7 @@ def main():
     # rule7: if delay from created date is over 15 days and owner never reply, remind owner to handle it.
     for item in issue_status:
         if item.language == 'Python':
-            assigner_repo = assigner_repoes[item.assignee]
+            assigner_repo = assigner_repoes['azure-sdk']
             item.issue_object = assigner_repo.get_issue(number=item.issue_object.number)
             issue_status_python.append(item)
         if item.status == 'release':

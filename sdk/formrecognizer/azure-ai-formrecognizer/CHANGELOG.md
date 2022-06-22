@@ -1,6 +1,6 @@
 # Release History
 
-## 3.2.0b4 (Unreleased)
+## 3.2.0b6 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,34 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 3.2.0b5 (2022-06-07)
+
+### Features Added
+- Added `paragraphs` property on `AnalyzeResult`.
+- Added new `DocumentParagraph` model to represent document paragraphs.
+- Added new `AddressValue` model to represent address fields found in documents.
+- Added `kind` property on `DocumentPage`.
+
+### Breaking Changes
+- Renamed `bounding_box` to `polygon` on `BoundingRegion`, `DocumentContentElement`, `DocumentLine`, `DocumentSelectionMark`, `DocumentWord`.
+- Renamed `language_code` to `locale` on `DocumentLanguage`.
+- Some models that previously returned string for address related fields may now return `AddressValue`. TIP: Use `get_model()` on `DocumentModelAdministrationClient` to see updated prebuilt model schemas.
+- Removed `entities` property on `AnalyzeResult`.
+- Removed `DocumentEntity` model.
+
+## 3.2.0b4 (2022-04-05)
+
+### Breaking Changes
+- Renamed `begin_copy_model()` to `begin_copy_model_to()`.
+- In `begin_create_composed_model()`, renamed required parameter `model_ids` to `component_model_ids`.
+- Renamed `model_count` and `model_limit` on `AccountInfo` to `document_model_count` and `document_model_limit`.
+
+### Bugs Fixed
+- Fixed `to_dict()` and `from_dict()` methods on `DocumentField` to support converting lists, dictionaries, and CurrenyValue field types to and from a dictionary.
+
+### Other Changes
+- Renamed `sample_copy_model.py` and `sample_copy_model_async.py` to `sample_copy_model_to.py` and `sample_copy_model_to_async.py` under the `3.2-beta` samples folder. Updated the samples to use renamed copy model method.
 
 ## 3.2.0b3 (2022-02-10)
 
@@ -25,7 +53,7 @@
 
 ### Breaking Changes
 - Added new required parameter `build_mode` to `begin_build_model()`.
-- Some models that previously returned float for currency related fields may now return a `CurrencyValue`. TIP: Use `get_model()` to see updated prebuilt model schemas.
+- Some models that previously returned float for currency related fields may now return a `CurrencyValue`. TIP: Use `get_model()` on `DocumentModelAdministrationClient` to see updated prebuilt model schemas.
 
 ### Bugs Fixed
 - Default the `percent_completed` property to 0 when not returned with model operation information.

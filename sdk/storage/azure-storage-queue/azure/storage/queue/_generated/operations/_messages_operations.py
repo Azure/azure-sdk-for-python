@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,43 +7,225 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
-import warnings
+
+from msrest import Serializer
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
+from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar
-
+    from typing import Any, Callable, Dict, List, Optional, TypeVar
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
+# fmt: off
+
+def build_dequeue_request(
+    url,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    version = kwargs.pop('version', "2018-03-28")  # type: str
+    number_of_messages = kwargs.pop('number_of_messages', None)  # type: Optional[int]
+    visibilitytimeout = kwargs.pop('visibilitytimeout', None)  # type: Optional[int]
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+
+    accept = "application/xml"
+    # Construct URL
+    _url = kwargs.pop("template_url", "{url}/{queueName}/messages")
+    path_format_arguments = {
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if number_of_messages is not None:
+        _query_parameters['numofmessages'] = _SERIALIZER.query("number_of_messages", number_of_messages, 'int', minimum=1)
+    if visibilitytimeout is not None:
+        _query_parameters['visibilitytimeout'] = _SERIALIZER.query("visibilitytimeout", visibilitytimeout, 'int', maximum=604800, minimum=0)
+    if timeout is not None:
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    if request_id_parameter is not None:
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_clear_request(
+    url,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    version = kwargs.pop('version', "2018-03-28")  # type: str
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+
+    accept = "application/xml"
+    # Construct URL
+    _url = kwargs.pop("template_url", "{url}/{queueName}/messages")
+    path_format_arguments = {
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if timeout is not None:
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    if request_id_parameter is not None:
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="DELETE",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_enqueue_request(
+    url,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    version = kwargs.pop('version', "2018-03-28")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    visibilitytimeout = kwargs.pop('visibilitytimeout', None)  # type: Optional[int]
+    message_time_to_live = kwargs.pop('message_time_to_live', None)  # type: Optional[int]
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+
+    accept = "application/xml"
+    # Construct URL
+    _url = kwargs.pop("template_url", "{url}/{queueName}/messages")
+    path_format_arguments = {
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if visibilitytimeout is not None:
+        _query_parameters['visibilitytimeout'] = _SERIALIZER.query("visibilitytimeout", visibilitytimeout, 'int', maximum=604800, minimum=0)
+    if message_time_to_live is not None:
+        _query_parameters['messagettl'] = _SERIALIZER.query("message_time_to_live", message_time_to_live, 'int', minimum=-1)
+    if timeout is not None:
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    if request_id_parameter is not None:
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_peek_request(
+    url,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    peekonly = kwargs.pop('peekonly', "true")  # type: str
+    version = kwargs.pop('version', "2018-03-28")  # type: str
+    number_of_messages = kwargs.pop('number_of_messages', None)  # type: Optional[int]
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+
+    accept = "application/xml"
+    # Construct URL
+    _url = kwargs.pop("template_url", "{url}/{queueName}/messages")
+    path_format_arguments = {
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['peekonly'] = _SERIALIZER.query("peekonly", peekonly, 'str')
+    if number_of_messages is not None:
+        _query_parameters['numofmessages'] = _SERIALIZER.query("number_of_messages", number_of_messages, 'int', minimum=1)
+    if timeout is not None:
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    if request_id_parameter is not None:
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+# fmt: on
 class MessagesOperations(object):
-    """MessagesOperations operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.storage.queue.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.storage.queue.AzureQueueStorage`'s
+        :attr:`messages` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        args = list(args)
+        self._client = args.pop(0) if args else kwargs.pop("client")
+        self._config = args.pop(0) if args else kwargs.pop("config")
+        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
+        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
 
+
+    @distributed_trace
     def dequeue(
         self,
         number_of_messages=None,  # type: Optional[int]
@@ -57,7 +240,7 @@ class MessagesOperations(object):
         :param number_of_messages: Optional. A nonzero integer value that specifies the number of
          messages to retrieve from the queue, up to a maximum of 32. If fewer are visible, the visible
          messages are returned. By default, a single message is retrieved from the queue with this
-         operation.
+         operation. Default value is None.
         :type number_of_messages: int
         :param visibilitytimeout: Optional. Specifies the new visibility timeout value, in seconds,
          relative to server time. The default value is 30 seconds. A specified value must be larger than
@@ -66,11 +249,12 @@ class MessagesOperations(object):
          later than the expiry time.
         :type visibilitytimeout: int
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-
-         service-operations>Setting Timeouts for Queue Service Operations.</a>.
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         Timeouts for Queue Service Operations.</a>. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of DequeuedMessageItem, or the result of cls(response)
@@ -82,53 +266,49 @@ class MessagesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        accept = "application/xml"
 
-        # Construct URL
-        url = self.dequeue.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_dequeue_request(
+            url=self._config.url,
+            version=self._config.version,
+            number_of_messages=number_of_messages,
+            visibilitytimeout=visibilitytimeout,
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
+            template_url=self.dequeue.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if number_of_messages is not None:
-            query_parameters['numofmessages'] = self._serialize.query("number_of_messages", number_of_messages, 'int', minimum=1)
-        if visibilitytimeout is not None:
-            query_parameters['visibilitytimeout'] = self._serialize.query("visibilitytimeout", visibilitytimeout, 'int', maximum=604800, minimum=0)
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
-        if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
         response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+
         deserialized = self._deserialize('[DequeuedMessageItem]', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    dequeue.metadata = {'url': '/{queueName}/messages'}  # type: ignore
 
-    def clear(
+    dequeue.metadata = {'url': "{url}/{queueName}/messages"}  # type: ignore
+
+
+    @distributed_trace
+    def clear(  # pylint: disable=inconsistent-return-statements
         self,
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
@@ -138,11 +318,12 @@ class MessagesOperations(object):
         """The Clear operation deletes all messages from the specified queue.
 
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-
-         service-operations>Setting Timeouts for Queue Service Operations.</a>.
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         Timeouts for Queue Service Operations.</a>. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -154,34 +335,28 @@ class MessagesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        accept = "application/xml"
 
-        # Construct URL
-        url = self.clear.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_clear_request(
+            url=self._config.url,
+            version=self._config.version,
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
+            template_url=self.clear.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
-        if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -189,11 +364,14 @@ class MessagesOperations(object):
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
         response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
 
+
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    clear.metadata = {'url': '/{queueName}/messages'}  # type: ignore
+    clear.metadata = {'url': "{url}/{queueName}/messages"}  # type: ignore
 
+
+    @distributed_trace
     def enqueue(
         self,
         queue_message,  # type: "_models.QueueMessage"
@@ -212,9 +390,9 @@ class MessagesOperations(object):
 
         :param queue_message: A Message object which can be stored in a Queue.
         :type queue_message: ~azure.storage.queue.models.QueueMessage
-        :param visibilitytimeout: Optional. If specified, the request must be made using an x-ms-
-         version of 2011-08-18 or later. If not specified, the default value is 0. Specifies the new
-         visibility timeout value, in seconds, relative to server time. The new value must be larger
+        :param visibilitytimeout: Optional. If specified, the request must be made using an
+         x-ms-version of 2011-08-18 or later. If not specified, the default value is 0. Specifies the
+         new visibility timeout value, in seconds, relative to server time. The new value must be larger
          than or equal to 0, and cannot be larger than 7 days. The visibility timeout of a message
          cannot be set to a value later than the expiry time. visibilitytimeout should be set to a value
          smaller than the time-to-live value.
@@ -222,15 +400,16 @@ class MessagesOperations(object):
         :param message_time_to_live: Optional. Specifies the time-to-live interval for the message, in
          seconds. Prior to version 2017-07-29, the maximum time-to-live allowed is 7 days. For version
          2017-07-29 or later, the maximum time-to-live can be any positive number, as well as -1
-         indicating that the message does not expire. If this parameter is omitted, the default time-to-
-         live is 7 days.
+         indicating that the message does not expire. If this parameter is omitted, the default
+         time-to-live is 7 days. Default value is None.
         :type message_time_to_live: int
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-
-         service-operations>Setting Timeouts for Queue Service Operations.</a>.
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         Timeouts for Queue Service Operations.</a>. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of EnqueuedMessage, or the result of cls(response)
@@ -242,57 +421,53 @@ class MessagesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        content_type = kwargs.pop("content_type", "application/xml")
-        accept = "application/xml"
 
-        # Construct URL
-        url = self.enqueue.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        content_type = kwargs.pop('content_type', "application/xml")  # type: Optional[str]
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if visibilitytimeout is not None:
-            query_parameters['visibilitytimeout'] = self._serialize.query("visibilitytimeout", visibilitytimeout, 'int', maximum=604800, minimum=0)
-        if message_time_to_live is not None:
-            query_parameters['messagettl'] = self._serialize.query("message_time_to_live", message_time_to_live, 'int', minimum=-1)
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        _content = self._serialize.body(queue_message, 'QueueMessage', is_xml=True)
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
-        if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        request = build_enqueue_request(
+            url=self._config.url,
+            version=self._config.version,
+            content_type=content_type,
+            content=_content,
+            visibilitytimeout=visibilitytimeout,
+            message_time_to_live=message_time_to_live,
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
+            template_url=self.enqueue.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(queue_message, 'QueueMessage', is_xml=True)
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
         response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+
         deserialized = self._deserialize('[EnqueuedMessage]', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    enqueue.metadata = {'url': '/{queueName}/messages'}  # type: ignore
 
+    enqueue.metadata = {'url': "{url}/{queueName}/messages"}  # type: ignore
+
+
+    @distributed_trace
     def peek(
         self,
         number_of_messages=None,  # type: Optional[int]
@@ -307,15 +482,19 @@ class MessagesOperations(object):
         :param number_of_messages: Optional. A nonzero integer value that specifies the number of
          messages to retrieve from the queue, up to a maximum of 32. If fewer are visible, the visible
          messages are returned. By default, a single message is retrieved from the queue with this
-         operation.
+         operation. Default value is None.
         :type number_of_messages: int
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-
-         service-operations>Setting Timeouts for Queue Service Operations.</a>.
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         Timeouts for Queue Service Operations.</a>. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
+        :keyword peekonly: Peek message(s). Default value is "true". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype peekonly: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of PeekedMessageItem, or the result of cls(response)
         :rtype: list[~azure.storage.queue.models.PeekedMessageItem]
@@ -326,48 +505,45 @@ class MessagesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        peekonly = "true"
-        accept = "application/xml"
 
-        # Construct URL
-        url = self.peek.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        peekonly = kwargs.pop('peekonly', "true")  # type: str
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['peekonly'] = self._serialize.query("peekonly", peekonly, 'str')
-        if number_of_messages is not None:
-            query_parameters['numofmessages'] = self._serialize.query("number_of_messages", number_of_messages, 'int', minimum=1)
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        
+        request = build_peek_request(
+            url=self._config.url,
+            peekonly=peekonly,
+            version=self._config.version,
+            number_of_messages=number_of_messages,
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
+            template_url=self.peek.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
-        if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
         response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+
         deserialized = self._deserialize('[PeekedMessageItem]', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    peek.metadata = {'url': '/{queueName}/messages'}  # type: ignore
+
+    peek.metadata = {'url': "{url}/{queueName}/messages"}  # type: ignore
+

@@ -142,7 +142,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             account_url, share_name=share_name, file_path=file_path, snapshot=snapshot,
             credential=credential, loop=loop, **kwargs
         )
-        self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline, loop=loop)
+        self._client = AzureFileStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
         self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
         self._loop = loop
 
@@ -182,8 +182,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         self,
         size,  # type: int
         file_attributes="none",  # type: Union[str, NTFSAttributes]
-        file_creation_time="now",  # type: Union[str, datetime]
-        file_last_write_time="now",  # type: Union[str, datetime]
+        file_creation_time="now",  # type: Optional[Union[str, datetime]]
+        file_last_write_time="now",  # type: Optional[Union[str, datetime]]
         file_permission=None,  # type: Optional[str]
         permission_key=None,  # type: Optional[str]
         **kwargs  # type: Any
@@ -218,6 +218,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
+        :keyword file_change_time:
+            Change time for the file. If not specified, change time will be set to the current date/time.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
@@ -264,6 +271,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 file_content_disposition=content_settings.content_disposition,
             )
         file_permission = _get_file_permission(file_permission, permission_key, 'Inherit')
+        file_change_time = kwargs.pop('file_change_time', None)
         try:
             return await self._client.file.create(  # type: ignore
                 file_content_length=size,
@@ -271,6 +279,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 file_attributes=_str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
+                file_change_time=_datetime_to_str(file_change_time),
                 file_permission=file_permission,
                 file_permission_key=permission_key,
                 file_http_headers=file_http_headers,
@@ -288,8 +297,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         self, data,  # type: Any
         length=None,  # type: Optional[int]
         file_attributes="none",  # type: Union[str, NTFSAttributes]
-        file_creation_time="now",  # type: Union[str, datetime]
-        file_last_write_time="now",  # type: Union[str, datetime]
+        file_creation_time="now",  # type: Optional[Union[str, datetime]]
+        file_last_write_time="now",  # type: Optional[Union[str, datetime]]
         file_permission=None,  # type: Optional[str]
         permission_key=None,  # type: Optional[str]
         **kwargs  # type: Any
@@ -324,6 +333,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
+        :keyword file_change_time:
+            Change time for the file. If not specified, change time will be set to the current date/time.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword dict(str,str) metadata:
             Name-value pairs associated with the file as metadata.
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
@@ -464,6 +480,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 This parameter was introduced in API version '2019-07-07'.
 
         :paramtype file_last_write_time: str or ~datetime.datetime
+        :keyword file_change_time:
+            Change time for the file. If not specified, change time will be set to the current date/time.
+
+            .. versionadded:: 12.9.0
+                This parameter was introduced in API version '2021-06-08'.
+
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword bool ignore_read_only:
             Specifies the option to overwrite the target file if it already exists and has read-only attribute set.
 
@@ -564,9 +587,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         self,
         offset=None,  # type: Optional[int]
         length=None,  # type: Optional[int]
-        **kwargs
+        **kwargs  # type: Any
     ):
-        # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
+        # type: (...) -> StorageStreamDownloader
         """Downloads a file to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the file into
         a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.
@@ -710,7 +733,20 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :keyword file_last_write_time:
             Last write time for the file.
         :paramtype file_last_write_time:~datetime.datetime or str
-        :keyword dict(str,str) metadata:
+        :keyword file_change_time:
+            Change time for the file. If not specified, change time will be set to the current date/time.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
+        :paramtype file_change_time: str or ~datetime.datetime
+        :keyword str content_type:
+            The Content Type of the new file.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
+        :keyword Dict[str,str] metadata:
             A name-value pair to associate with a file storage object.
         :keyword source_lease:
             Required if the source file has an active lease. Value can be a ShareLeaseClient object
@@ -744,6 +780,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
         kwargs.update(get_rename_smb_properties(kwargs))
 
+        file_http_headers = None
+        content_type = kwargs.pop('content_type', None)
+        if content_type:
+            file_http_headers = FileHTTPHeaders(
+                file_content_type=content_type
+            )
+
         timeout = kwargs.pop('timeout', None)
         overwrite = kwargs.pop('overwrite', None)
         metadata = kwargs.pop('metadata', None)
@@ -758,6 +801,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 self.url,
                 timeout=timeout,
                 replace_if_exists=overwrite,
+                file_http_headers=file_http_headers,
                 source_lease_access_conditions=source_access_conditions,
                 destination_lease_access_conditions=dest_access_conditions,
                 headers=headers,
@@ -806,8 +850,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
     @distributed_trace_async
     async def set_http_headers(self, content_settings,  # type: ContentSettings
                                file_attributes="preserve",  # type: Union[str, NTFSAttributes]
-                               file_creation_time="preserve",  # type: Union[str, datetime]
-                               file_last_write_time="preserve",  # type: Union[str, datetime]
+                               file_creation_time="preserve",  # type: Optional[Union[str, datetime]]
+                               file_last_write_time="preserve",  # type: Optional[Union[str, datetime]]
                                file_permission=None,  # type: Optional[str]
                                permission_key=None,  # type: Optional[str]
                                **kwargs  # type: Any
@@ -840,6 +884,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
+        :keyword file_change_time:
+            Change time for the file. If not specified, change time will be set to the current date/time.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -864,6 +915,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             file_content_disposition=content_settings.content_disposition,
         )
         file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
+        file_change_time = kwargs.pop('file_change_time', None)
         try:
             return await self._client.file.set_http_headers(  # type: ignore
                 file_content_length=file_content_length,
@@ -871,6 +923,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 file_attributes=_str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
+                file_change_time=_datetime_to_str(file_change_time),
                 file_permission=file_permission,
                 file_permission_key=permission_key,
                 lease_access_conditions=access_conditions,
@@ -944,6 +997,15 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             bitflips on the wire if using http instead of https as https (the default)
             will already validate. Note that this MD5 hash is not stored with the
             file.
+        :keyword file_last_write_mode:
+            If the file last write time should be preserved or overwritten. Possible values
+            are "preserve" or "now". If not specified, file last write time will be changed to
+            the current date/time.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
+        :paramtype file_last_write_mode: Literal["preserve", "now"]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -961,6 +1023,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         validate_content = kwargs.pop('validate_content', False)
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
+        file_last_write_mode = kwargs.pop('file_last_write_mode', None)
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Encryption not supported.")
         if isinstance(data, six.text_type):
@@ -975,6 +1038,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 optionalbody=data,
                 timeout=timeout,
                 validate_content=validate_content,
+                file_last_written_mode=file_last_write_mode,
                 lease_access_conditions=access_conditions,
                 cls=return_response_headers,
                 **kwargs
@@ -1011,6 +1075,32 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :param int source_offset:
             This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
             The service will read the same number of bytes as the destination range (length-offset).
+        :keyword ~datetime.datetime source_if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this conditional header to copy the blob only if the source
+            blob has been modified since the specified date/time.
+        :keyword ~datetime.datetime source_if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this conditional header to copy the blob only if the source blob
+            has not been modified since the specified date/time.
+        :keyword str source_etag:
+            The source ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions source_match_condition:
+            The source match condition to use upon the etag.
+        :keyword file_last_write_mode:
+            If the file last write time should be preserved or overwritten. Possible values
+            are "preserve" or "now". If not specified, file last write time will be changed to
+            the current date/time.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
+        :paramtype file_last_write_mode: Literal["preserve", "now"]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.

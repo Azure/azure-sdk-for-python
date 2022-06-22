@@ -1,5 +1,34 @@
 # Release History
 
+## 1.24.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.24.1 (2022-06-01)
+
+### Bugs Fixed
+
+- Declare method level span as INTERNAL by default  #24492
+- Fixed type hints for `azure.core.paging.ItemPaged` #24548
+
+## 1.24.0 (2022-05-06)
+
+### Features Added
+
+- Add `SerializationError` and `DeserializationError` in `azure.core.exceptions` for errors raised during serialization / deserialization  #24312
+
+## 1.23.1 (2022-03-31)
+
+### Bugs Fixed
+
+- Allow stream inputs to the `content` kwarg of `azure.core.rest.HttpRequest` from objects with a `read` method  #23578
+
 ## 1.23.0 (2022-03-03)
 
 ### Features Added

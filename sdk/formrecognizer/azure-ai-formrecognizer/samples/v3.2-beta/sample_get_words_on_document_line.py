@@ -18,7 +18,7 @@ USAGE:
     python sample_get_words_on_document_line.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
+    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
 """
 
@@ -27,12 +27,12 @@ import os
 def format_bounding_region(bounding_regions):
     if not bounding_regions:
         return "N/A"
-    return ", ".join("Page #{}: {}".format(region.page_number, format_bounding_box(region.bounding_box)) for region in bounding_regions)
+    return ", ".join("Page #{}: {}".format(region.page_number, format_polygon(region.polygon)) for region in bounding_regions)
 
-def format_bounding_box(bounding_box):
-    if not bounding_box:
+def format_polygon(polygon):
+    if not polygon:
         return "N/A"
-    return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
+    return ", ".join(["[{}, {}]".format(p.x, p.y) for p in polygon])
 
 
 def get_words_on_document_line():
@@ -71,11 +71,11 @@ def get_words_on_document_line():
         for line_idx, line in enumerate(page.lines):
             words = line.get_words()
             print(
-                "...Line # {} has word count {} and text '{}' within bounding box '{}'".format(
+                "...Line # {} has word count {} and text '{}' within bounding polygon '{}'".format(
                     line_idx,
                     len(words),
                     line.content,
-                    format_bounding_box(line.bounding_box),
+                    format_polygon(line.polygon),
                 )
             )
 

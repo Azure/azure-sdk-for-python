@@ -27,7 +27,7 @@ USAGE:
     python sample_create_composed_model.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
+    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
     3) PURCHASE_ORDER_OFFICE_SUPPLIES_SAS_URL - a container SAS URL to your Azure Storage blob container.
     4) PURCHASE_ORDER_OFFICE_EQUIPMENT_SAS_URL - a container SAS URL to your Azure Storage blob container.

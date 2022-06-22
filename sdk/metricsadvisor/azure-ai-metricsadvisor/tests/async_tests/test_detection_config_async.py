@@ -78,8 +78,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                 assert config.metric_id == variables["data_feed_metric_id"]
                 assert config.description == "My test metric anomaly detection configuration"
                 assert config.name is not None
-                assert config.series_detection_conditions is None
-                assert config.series_group_detection_conditions is None
+                assert config.series_detection_conditions == []
+                assert config.series_group_detection_conditions == []
                 assert config.whole_series_detection_condition.condition_operator == "OR"
                 assert config.whole_series_detection_condition.change_threshold_condition.anomaly_detector_direction == "Both"
                 assert config.whole_series_detection_condition.change_threshold_condition.change_percentage == 50

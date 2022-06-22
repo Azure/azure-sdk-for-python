@@ -7,7 +7,7 @@
 import pytest
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import set_bodiless_matcher
+from devtools_testutils import set_custom_default_matcher
 from azure.ai.formrecognizer import FormRecognizerApiVersion
 from azure.ai.formrecognizer.aio import FormRecognizerClient
 from preparers import FormRecognizerPreparer
@@ -23,7 +23,10 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
     async def test_business_card_jpg_include_field_elements(self, client):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         async with client:
             poller = await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg, include_field_elements=True)
 

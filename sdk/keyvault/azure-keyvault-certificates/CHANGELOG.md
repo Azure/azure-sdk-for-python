@@ -1,6 +1,6 @@
 # Release History
 
-## 4.4.0b4 (Unreleased)
+## 4.5.0b2 (Unreleased)
 
 ### Features Added
 
@@ -9,7 +9,28 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.5.0b1 (2022-06-07)
+
+### Bugs Fixed
+- Port numbers are now preserved in the `vault_url` property of a `KeyVaultCertificateIdentifier`
+  ([#24446](https://github.com/Azure/azure-sdk-for-python/issues/24446))
+
+## 4.4.0 (2022-03-28)
+
+### Features Added
+- Key Vault API version 7.3 is now the default
+- Added support for multi-tenant authentication when using `azure-identity`
+  1.8.0 or newer ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698))
+
+### Bugs Fixed
+- `KeyType` now ignores casing during declaration, which resolves a scenario where Key Vault
+  keys created with non-standard casing could not be fetched with the SDK
+  ([#22797](https://github.com/Azure/azure-sdk-for-python/issues/22797))
+
+### Other Changes
 - (From 4.4.0b3) Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+- Updated minimum `azure-core` version to 1.20.0
 - (From 4.4.0b2) To support multi-tenant authentication, `get_token` calls during challenge
   authentication requests now pass in a `tenant_id` keyword argument
   ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698)). See

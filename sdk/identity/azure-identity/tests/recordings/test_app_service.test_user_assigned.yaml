@@ -13,10 +13,10 @@ interactions:
       secret:
       - redacted
     method: GET
-    uri: https://msi-endpoint/token?api-version=2017-09-01&resource=https://management.azure.com&clientid=client-id
+    uri: https://msi-endpoint/token?api-version=2019-08-01&resource=https://management.azure.com&client_id=client-id
   response:
     body:
-      string: '{"access_token": "redacted", "expires_on": "05/22/2021 17:18:21 +00:00",
+      string: '{"access_token": "redacted", "expires_on": "1646265298",
         "resource": "https://management.azure.com", "token_type": "Bearer", "client_id":
         "client-id"}'
     headers:

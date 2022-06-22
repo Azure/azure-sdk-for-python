@@ -33,7 +33,7 @@ class PacketCoreControlPlanesOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~mobile_network_management_client.models
+    :type models: ~azure.mgmt.mobilenetwork.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -159,7 +159,7 @@ class PacketCoreControlPlanesOperations:
         :type packet_core_control_plane_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PacketCoreControlPlane, or the result of cls(response)
-        :rtype: ~mobile_network_management_client.models.PacketCoreControlPlane
+        :rtype: ~azure.mgmt.mobilenetwork.models.PacketCoreControlPlane
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PacketCoreControlPlane"]
@@ -261,7 +261,7 @@ class PacketCoreControlPlanesOperations:
         :type packet_core_control_plane_name: str
         :param parameters: Parameters supplied to the create or update packet core control plane
          operation.
-        :type parameters: ~mobile_network_management_client.models.PacketCoreControlPlane
+        :type parameters: ~azure.mgmt.mobilenetwork.models.PacketCoreControlPlane
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -273,7 +273,7 @@ class PacketCoreControlPlanesOperations:
         :return: An instance of AsyncLROPoller that returns either PacketCoreControlPlane or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~mobile_network_management_client.models.PacketCoreControlPlane]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.mobilenetwork.models.PacketCoreControlPlane]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -333,10 +333,10 @@ class PacketCoreControlPlanesOperations:
         :param packet_core_control_plane_name: The name of the packet core control plane.
         :type packet_core_control_plane_name: str
         :param parameters: Parameters supplied to update PacketCoreControlPlane tags.
-        :type parameters: ~mobile_network_management_client.models.TagsObject
+        :type parameters: ~azure.mgmt.mobilenetwork.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PacketCoreControlPlane, or the result of cls(response)
-        :rtype: ~mobile_network_management_client.models.PacketCoreControlPlane
+        :rtype: ~azure.mgmt.mobilenetwork.models.PacketCoreControlPlane
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PacketCoreControlPlane"]
@@ -389,7 +389,7 @@ class PacketCoreControlPlanesOperations:
         :return: An iterator like instance of either PacketCoreControlPlaneListResult or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~mobile_network_management_client.models.PacketCoreControlPlaneListResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.mobilenetwork.models.PacketCoreControlPlaneListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PacketCoreControlPlaneListResult"]
@@ -458,7 +458,7 @@ class PacketCoreControlPlanesOperations:
         :return: An iterator like instance of either PacketCoreControlPlaneListResult or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~mobile_network_management_client.models.PacketCoreControlPlaneListResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.mobilenetwork.models.PacketCoreControlPlaneListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PacketCoreControlPlaneListResult"]

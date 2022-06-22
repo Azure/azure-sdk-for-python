@@ -12,12 +12,14 @@ from unittest import mock
 # pylint: disable=import-error
 from opentelemetry.sdk import trace, resources
 from opentelemetry.sdk.trace.export import SpanExportResult
+from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.trace import Link, SpanContext, SpanKind
 from opentelemetry.trace.status import Status, StatusCode
 
 from azure.monitor.opentelemetry.exporter.export._base import ExportResult
 from azure.monitor.opentelemetry.exporter.export.trace._exporter import (
-    AzureMonitorTraceExporter
+    AzureMonitorTraceExporter,
+    _get_trace_export_result,
 )
 from azure.monitor.opentelemetry.exporter._utils import azure_monitor_context
 
@@ -114,7 +116,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             self.assertEqual(result, SpanExportResult.SUCCESS)
             self.assertEqual(storage_mock.call_count, 1)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.trace._exporter.logger")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.trace._exporter._logger")
     def test_export_exception(self, logger_mock):
         test_span = trace._Span(
             name="test",
@@ -211,6 +213,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(test_span)
         self.assertEqual(envelope.tags.get("ai.cloud.role"), "testServiceName")
         self.assertEqual(envelope.tags.get("ai.cloud.roleInstance"), platform.node())
+        self.assertEqual(envelope.tags.get("ai.internal.nodeName"), envelope.tags.get("ai.cloud.roleInstance"))
 
     def test_span_to_envelope_client_http(self):
         exporter = self._exporter
@@ -257,6 +260,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         )
         self.assertEqual(envelope.data.base_data.result_code, "200")
         self.assertEqual(envelope.tags["ai.user.userAgent"], "agent")
+        self.assertEqual(len(envelope.data.base_data.properties), 0)
 
         # Name empty
         span._attributes = {
@@ -346,7 +350,7 @@ class TestAzureTraceExporter(unittest.TestCase):
                 is_remote=False,
             ),
             attributes={
-                "db.system": "postgresql",
+                "db.system": "db2 system",
                 "peer.service": "service",
                 "db.statement": "SELECT * from test",
             },
@@ -367,10 +371,11 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertTrue(envelope.data.base_data.success)
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
-        self.assertEqual(envelope.data.base_data.type, "postgresql")
+        self.assertEqual(envelope.data.base_data.type, "db2 system")
         self.assertEqual(envelope.data.base_data.target, "service")
         self.assertEqual(envelope.data.base_data.data, "SELECT * from test")
         self.assertEqual(envelope.data.base_data.result_code, "0")
+        self.assertEqual(len(envelope.data.base_data.properties), 0)
 
         # data
         span._attributes = {
@@ -415,6 +420,42 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.type, "SQL")
 
+        span._attributes = {
+            "db.system": "mysql",
+            "db.statement": "SELECT",
+            "db.name": "testDb",
+            "peer.service": "service",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.type, "mysql")
+
+        span._attributes = {
+            "db.system": "postgresql",
+            "db.statement": "SELECT",
+            "db.name": "testDb",
+            "peer.service": "service",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.type, "postgresql")
+
+        span._attributes = {
+            "db.system": "mongodb",
+            "db.statement": "SELECT",
+            "db.name": "testDb",
+            "peer.service": "service",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.type, "mongodb")
+
+        span._attributes = {
+            "db.system": "redis",
+            "db.statement": "SELECT",
+            "db.name": "testDb",
+            "peer.service": "service",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.type, "redis")
+
     def test_span_to_envelope_client_rpc(self):
         exporter = self._exporter
         start_time = 1575494316027613500
@@ -448,10 +489,12 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
         self.assertTrue(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.result_code, "0")
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
         self.assertEqual(envelope.data.base_data.type, "rpc.system")
         self.assertEqual(envelope.data.base_data.target, "service")
+        self.assertEqual(len(envelope.data.base_data.properties), 0)
         
         # target
         span._attributes = {
@@ -461,9 +504,98 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "rpc")
 
-        # TODO: data.data
-        # self.assertEqual(envelope.data.base_data.data, "SELECT")
+    def test_span_to_envelope_client_messaging(self):
+        exporter = self._exporter
+        start_time = 1575494316027613500
+        end_time = start_time + 1001000000
+
+        # SpanKind.CLIENT messaging
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            attributes={
+                "messaging.system": "messaging",
+                "messaging.destination": "celery",
+            },
+            kind=SpanKind.CLIENT,
+        )
+        span.start(start_time=start_time)
+        span.end(end_time=end_time)
+        span._status = Status(status_code=StatusCode.OK)
+        envelope = exporter._span_to_envelope(span)
+  
+        self.assertEqual(
+            envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
+        )
+        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
+        self.assertEqual(envelope.data.base_data.name, "test")
+        self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
+        self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
+        self.assertTrue(envelope.data.base_data.success)
         self.assertEqual(envelope.data.base_data.result_code, "0")
+
+        self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
+        self.assertEqual(envelope.data.base_data.type, "messaging")
+        self.assertEqual(envelope.data.base_data.target, "celery")
+        self.assertEqual(len(envelope.data.base_data.properties), 0)
+        
+        # target
+        span._attributes = {
+            "messaging.system": "messaging",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.target, "messaging")
+
+    def test_span_to_envelope_client_azure(self):
+        exporter = self._exporter
+        start_time = 1575494316027613500
+        end_time = start_time + 1001000000
+
+        # SpanKind.CLIENT messaging
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            attributes={
+                "az.namespace": "Microsoft.EventHub",
+                "peer.address": "test_address",
+                "message_bus.destination": "test_destination",
+            },
+            kind=SpanKind.CLIENT,
+        )
+        span.start(start_time=start_time)
+        span.end(end_time=end_time)
+        span._status = Status(status_code=StatusCode.OK)
+        envelope = exporter._span_to_envelope(span)
+  
+        self.assertEqual(
+            envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
+        )
+        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
+        self.assertEqual(envelope.data.base_data.name, "test")
+        self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
+        self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
+        self.assertTrue(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.result_code, "0")
+
+        self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
+        self.assertEqual(envelope.data.base_data.type, "Microsoft.EventHub")
+        self.assertEqual(envelope.data.base_data.target, "test_address/test_destination")
+        self.assertEqual(len(envelope.data.base_data.properties), 2)
+        
+        # target
+        span._attributes = {
+            "messaging.system": "messaging",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.target, "messaging")
 
     def test_span_to_envelope_producer_messaging(self):
         exporter = self._exporter
@@ -480,7 +612,6 @@ class TestAzureTraceExporter(unittest.TestCase):
             ),
             attributes={
                 "messaging.system": "messaging",
-                "net.peer.ip": "127.0.0.1",
                 "messaging.destination": "celery",
             },
             kind=SpanKind.PRODUCER,
@@ -498,14 +629,30 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
         self.assertTrue(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.result_code, "0")
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
-        self.assertEqual(envelope.data.base_data.type, "Queue Message")
-        # TODO: data.target
-        # self.assertEqual(envelope.data.base_data.target, "rpc")
-        # TODO: data.data
-        # self.assertEqual(envelope.data.base_data.data, "SELECT")
-        self.assertEqual(envelope.data.base_data.result_code, "0")
+        self.assertEqual(envelope.data.base_data.type, "Queue Message | messaging")
+        self.assertEqual(envelope.data.base_data.target, "celery")
+        self.assertEqual(len(envelope.data.base_data.properties), 0)
+
+        # target
+        span._attributes = {
+            "messaging.system": "messaging",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.target, "messaging")
+
+        # azure specific
+        span._attributes = {
+            "az.namespace": "Microsoft.EventHub",
+            "peer.address": "Test_peer",
+            "message_bus.destination": "/myeventhub",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.type, "Queue Message | Microsoft.EventHub")
+        self.assertEqual(envelope.data.base_data.target, "Test_peer//myeventhub")
+        self.assertEqual(len(envelope.data.base_data.properties), 2)
 
     def test_span_to_envelope_internal(self):
         exporter = self._exporter
@@ -542,11 +689,110 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
         self.assertEqual(envelope.data.base_data.type, "InProc")
         self.assertEqual(envelope.data.base_data.result_code, "0")
+        self.assertEqual(len(envelope.data.base_data.properties), 0)
 
-        # type
-        span._parent = None
+        # azure specific
+        span._attributes = {
+            "az.namespace": "Microsoft.EventHub",
+        }
         envelope = exporter._span_to_envelope(span)
-        self.assertIsNone(envelope.data.base_data.type)
+        self.assertEqual(envelope.data.base_data.type, "InProc | Microsoft.EventHub")
+        self.assertEqual(len(envelope.data.base_data.properties), 1)
+
+    def test_span_envelope_request_azure(self):
+        exporter = self._exporter
+        start_time = 4000000000000000000
+        end_time = start_time + 1001000000
+
+        # SpanKind.SERVER/CONSUMER Azure specific
+        links = []
+        links.append(
+            Link(
+                context=SpanContext(
+                    trace_id=36873507687745823477771305566750195432,
+                    span_id=12030755672171557338,
+                    is_remote=False,
+                ),
+                attributes={
+                    "enqueuedTime": 1000000000000
+                }
+            )
+        )
+        links.append(
+            Link(
+                context=SpanContext(
+                    trace_id=36873507687745823477771305566750195432,
+                    span_id=12030755672171557338,
+                    is_remote=False,
+                ),
+                attributes={
+                    "enqueuedTime": 3000000000000
+                }
+            )
+        )
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            attributes={
+                "az.namespace": "Microsoft.EventHub",
+                "peer.address": "Test_peer",
+                "message_bus.destination": "/myeventhub",
+            },
+            kind=SpanKind.CONSUMER,
+            links=links,
+        )
+        span._status = Status(status_code=StatusCode.OK)
+        span.start(start_time=start_time)
+        span.end(end_time=end_time)
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(
+            envelope.name, "Microsoft.ApplicationInsights.Request"
+        )
+        self.assertEqual(envelope.tags["ai.operation.name"], "test")
+        self.assertEqual(envelope.data.base_type, "RequestData")
+        self.assertEqual(envelope.data.base_data.name, "test")
+        self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
+        self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
+        self.assertEqual(envelope.data.base_data.response_code, "0")
+        self.assertTrue(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.source, "Test_peer//myeventhub")
+        self.assertEqual(envelope.data.base_data.measurements["timeSinceEnqueued"], 2000000000000)
+        self.assertEqual(len(envelope.data.base_data.properties), 3)
+
+        # enqueued time
+        links = []
+        links.append(
+            Link(
+                context=SpanContext(
+                    trace_id=36873507687745823477771305566750195432,
+                    span_id=12030755672171557338,
+                    is_remote=False,
+                ),
+                attributes={
+                    "enqueuedTime": 5000000000000
+                }
+            )
+        )
+        links.append(
+            Link(
+                context=SpanContext(
+                    trace_id=36873507687745823477771305566750195432,
+                    span_id=12030755672171557338,
+                    is_remote=False,
+                ),
+                attributes={
+                    "enqueuedTime": 6000000000000
+                }
+            )
+        )
+        span._links = links
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.measurements["timeSinceEnqueued"], 0)
+
 
     def test_span_envelope_server_http(self):
         exporter = self._exporter
@@ -590,6 +836,8 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.tags["ai.user.userAgent"], "agent")
         self.assertEqual(envelope.tags["ai.location.ip"], "client_ip")
         self.assertEqual(envelope.data.base_data.url, "https://www.wikipedia.org/wiki/Rabbit")
+        self.assertEqual(len(envelope.data.base_data.properties), 0)
+        
         
         # location
         span._attributes = {
@@ -670,12 +918,32 @@ class TestAzureTraceExporter(unittest.TestCase):
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.tags["ai.operation.name"], "test")
         self.assertEqual(envelope.data.base_type, "RequestData")
         self.assertEqual(envelope.data.base_data.name, "test")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
         self.assertTrue(envelope.data.base_data.success)
-        # TODO: messaging
+        
+        self.assertEqual(envelope.tags["ai.location.ip"], "127.0.0.1")
+        self.assertEqual(envelope.data.base_data.source, "test name/celery")
+        self.assertEqual(len(envelope.data.base_data.properties), 0)
+
+        # source
+        span._attributes = {
+            "messaging.system": "messaging",
+            "net.peer.ip": "127.0.0.1",
+            "messaging.destination": "celery",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.source, "127.0.0.1/celery")
+
+        span._attributes = {
+            "messaging.system": "messaging",
+            "messaging.destination": "celery",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.source, "celery")
 
     def test_span_to_envelope_success_error(self):
         exporter = self._exporter
@@ -732,7 +1000,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(len(envelope.data.base_data.properties), 1)
         self.assertEqual(envelope.data.base_data.properties["test"], "asd")
 
-    def test_span_to_envelope_properties(self):
+    def test_span_to_envelope_properties_links(self):
         exporter = self._exporter
         start_time = 1575494316027613500
         end_time = start_time + 1001000000
@@ -772,3 +1040,122 @@ class TestAzureTraceExporter(unittest.TestCase):
             envelope.data.base_data.properties["_MS.links"]
         )[0]
         self.assertEqual(json_dict["id"], "a6f5d48acb4d31da")
+
+    def test_span_events_to_envelopes_exception(self):
+        exporter = self._exporter
+        time = 1575494316027613500
+
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            parent=SpanContext(
+                trace_id=36873507687745823477771305566750195432,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            kind=SpanKind.CLIENT,
+        )
+        attributes = {
+            SpanAttributes.EXCEPTION_TYPE: "ZeroDivisionError",
+            SpanAttributes.EXCEPTION_MESSAGE: "zero division error",
+            SpanAttributes.EXCEPTION_STACKTRACE: "Traceback: ZeroDivisionError, division by zero",
+            SpanAttributes.EXCEPTION_ESCAPED: "True",
+        }
+        span.add_event("exception", attributes, time)
+        span.start()
+        span.end()
+        span._status = Status(status_code=StatusCode.OK)
+        envelopes = exporter._span_events_to_envelopes(span)
+  
+        self.assertEqual(len(envelopes), 1)
+        envelope = envelopes[0]
+        self.assertEqual(
+            envelope.name, "Microsoft.ApplicationInsights.Exception"
+        )
+        self.assertEqual(envelope.instrumentation_key,
+                         "1234abcd-5678-4efa-8abc-1234567890ab")
+        self.assertIsNotNone(envelope.tags)
+        self.assertEqual(envelope.tags.get("ai.device.id"), azure_monitor_context["ai.device.id"])
+        self.assertEqual(envelope.tags.get("ai.device.locale"), azure_monitor_context["ai.device.locale"])
+        self.assertEqual(envelope.tags.get("ai.device.osVersion"), azure_monitor_context["ai.device.osVersion"])
+        self.assertEqual(envelope.tags.get("ai.device.type"), azure_monitor_context["ai.device.type"])
+        self.assertEqual(envelope.tags.get("ai.internal.sdkVersion"), azure_monitor_context["ai.internal.sdkVersion"])
+        self.assertEqual(envelope.tags.get("ai.operation.id"), "{:032x}".format(span.context.trace_id))
+        self.assertEqual(envelope.tags.get("ai.operation.parentId"), "{:016x}".format(span.context.span_id))
+        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
+        self.assertEqual(len(envelope.data.base_data.properties), 0)
+        self.assertEqual(len(envelope.data.base_data.exceptions), 1)
+        self.assertEqual(envelope.data.base_data.exceptions[0].type_name, "ZeroDivisionError")
+        self.assertEqual(envelope.data.base_data.exceptions[0].message, "zero division error")
+        self.assertEqual(envelope.data.base_data.exceptions[0].has_full_stack, True)
+        self.assertEqual(envelope.data.base_data.exceptions[0].stack, "Traceback: ZeroDivisionError, division by zero")
+        self.assertEqual(envelope.data.base_type, "ExceptionData")
+
+    def test_span_events_to_envelopes_message(self):
+        exporter = self._exporter
+        time = 1575494316027613500
+
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            parent=SpanContext(
+                trace_id=36873507687745823477771305566750195432,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            kind=SpanKind.CLIENT,
+        )
+        attributes = {
+            "test": "asd",
+        }
+        span.add_event("test event", attributes, time)
+        span.start()
+        span.end()
+        span._status = Status(status_code=StatusCode.OK)
+        envelopes = exporter._span_events_to_envelopes(span)
+  
+        self.assertEqual(len(envelopes), 1)
+        envelope = envelopes[0]
+        self.assertEqual(
+            envelope.name, "Microsoft.ApplicationInsights.Message"
+        )
+        self.assertEqual(envelope.instrumentation_key,
+                         "1234abcd-5678-4efa-8abc-1234567890ab")
+        self.assertIsNotNone(envelope.tags)
+        self.assertEqual(envelope.tags.get("ai.device.id"), azure_monitor_context["ai.device.id"])
+        self.assertEqual(envelope.tags.get("ai.device.locale"), azure_monitor_context["ai.device.locale"])
+        self.assertEqual(envelope.tags.get("ai.device.osVersion"), azure_monitor_context["ai.device.osVersion"])
+        self.assertEqual(envelope.tags.get("ai.device.type"), azure_monitor_context["ai.device.type"])
+        self.assertEqual(envelope.tags.get("ai.internal.sdkVersion"), azure_monitor_context["ai.internal.sdkVersion"])
+        self.assertEqual(envelope.tags.get("ai.operation.id"), "{:032x}".format(span.context.trace_id))
+        self.assertEqual(envelope.tags.get("ai.operation.parentId"), "{:016x}".format(span.context.span_id))
+        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
+        self.assertEqual(len(envelope.data.base_data.properties), 1)
+        self.assertEqual(envelope.data.base_data.properties["test"], "asd")
+        self.assertEqual(envelope.data.base_data.message, "test event")
+        self.assertEqual(envelope.data.base_type, "MessageData")
+
+
+class TestAzureTraceExporterUtils(unittest.TestCase):
+    def test_get_trace_export_result(self):
+        self.assertEqual(
+            _get_trace_export_result(ExportResult.SUCCESS),
+            SpanExportResult.SUCCESS,
+        )
+        self.assertEqual(
+            _get_trace_export_result(ExportResult.FAILED_NOT_RETRYABLE),
+            SpanExportResult.FAILURE,
+        )
+        self.assertEqual(
+            _get_trace_export_result(ExportResult.FAILED_RETRYABLE),
+            SpanExportResult.FAILURE,
+        )
+        self.assertEqual(_get_trace_export_result(None), None)

@@ -5,10 +5,12 @@
 import hashlib
 import os
 
-from azure.keyvault.keys import KeyCurveName, KeyVaultKey
-from azure.keyvault.keys.crypto import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
-from azure.keyvault.keys.crypto._providers import get_local_cryptography_provider
 import pytest
+from azure.keyvault.keys import KeyCurveName, KeyVaultKey
+from azure.keyvault.keys.crypto import (EncryptionAlgorithm, KeyWrapAlgorithm,
+                                        SignatureAlgorithm)
+from azure.keyvault.keys.crypto._providers import \
+    get_local_cryptography_provider
 
 from keys import EC_KEYS, RSA_KEYS
 

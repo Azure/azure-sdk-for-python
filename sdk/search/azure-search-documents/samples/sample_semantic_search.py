@@ -34,7 +34,7 @@ def speller():
     client = SearchClient(endpoint=endpoint,
                           index_name=index_name,
                           credential=credential)
-    results = list(client.search(search_text="luxucy", query_language="en-us", query_speller="lexicon"))
+    results = list(client.search(search_text="luxury", query_language="en-us", query_speller="lexicon"))
 
     for result in results:
         print("{}\n{}\n)".format(result["HotelId"], result["HotelName"]))
