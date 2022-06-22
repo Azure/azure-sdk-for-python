@@ -768,7 +768,6 @@ class ShareFileClient(StorageAccountHostsMixin):
             config=self._config,
             start_range=offset,
             end_range=range_end,
-            encryption_options=None,
             name=self.file_name,
             path='/'.join(self.file_path),
             share=self.share_name,
