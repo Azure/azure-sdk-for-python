@@ -13,6 +13,7 @@
 ## 1.0.0 (Unreleased)
 
 ### Features Added
+* AAD authentication support
 * Added more resolution types for entities
 * Added support for authoring operations with `ConversationAuthoringClient` under the `azure.ai.language.conversations.authoring` namespace.
 
