@@ -30,9 +30,10 @@ from .._models import (
 )
 from .._queue_service_client import QueueServiceClient as QueueServiceClientBase
 from ._models import QueuePropertiesPaged
+from ._queue_client_async import QueueClient
 
 if TYPE_CHECKING:
-     from .._models import (
+    from .._models import (
         CorsRule,
         Metrics,
         QueueProperties,
@@ -96,7 +97,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop) # type: ignore
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._loop = loop
-        self.configure_encryption()
+        self.configure_encryption(kwargs)
 
     @distributed_trace_async
     async def get_service_stats(self, **kwargs):

@@ -39,7 +39,7 @@ if TYPE_CHECKING:
     BlobLeaseClient = TypeVar("BlobLeaseClient")
 
 
-async def upload_block_blob(  # pylint: disable=too-many-locals
+async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
         client=None,
         data=None,
         stream=None,

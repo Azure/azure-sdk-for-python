@@ -714,7 +714,8 @@ class PathClient(StorageAccountHostsMixin):
             error.continuation_token = last_continuation_token
             raise error
 
-    def _rename_path_options(self, rename_source,
+    def _rename_path_options(self,  # pylint: disable=no-self-use
+                             rename_source,  # type: str
                              content_settings=None,  # type: Optional[ContentSettings]
                              metadata=None,  # type: Optional[Dict[str, str]]
                              **kwargs):

@@ -23,7 +23,7 @@ from azure.storage.blob._encryption import (
 )
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
-from devtools_testutils.storage import StorageTestCase
+from devtools_testutils.storage import AsyncStorageTestCase
 from encryption_test_helper import (
     KeyWrapper,
     KeyResolver,
@@ -36,7 +36,7 @@ TEST_BLOB_PREFIX = 'encryptionv2_blob'
 MiB = 1024 * 1024
 
 
-class StorageBlobEncryptionV2TestAsync(StorageTestCase):
+class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
     # --Helpers-----------------------------------------------------------------
     async def _setup(self, storage_account_name, key):
         self.bsc = BlobServiceClient(

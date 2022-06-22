@@ -64,7 +64,7 @@ def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disab
     ])
 
 
-def upload_block_blob(  # pylint: disable=too-many-locals
+def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
         client=None,
         data=None,
         stream=None,

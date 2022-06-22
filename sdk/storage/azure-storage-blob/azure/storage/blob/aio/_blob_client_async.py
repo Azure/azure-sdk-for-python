@@ -35,6 +35,7 @@ from .._models import BlobType, BlobBlock, BlobProperties, PageRange
 from .._serialize import get_modify_conditions, get_api_version, get_access_conditions
 from ._download_async import StorageStreamDownloader
 from ._lease_async import BlobLeaseClient
+from ._models import PageRangePaged
 from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
