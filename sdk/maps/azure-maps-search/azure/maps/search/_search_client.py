@@ -108,7 +108,7 @@ class SearchClient(object):
         self,
         query,  # type: str
         *,
-        country_filter,  # type Optional[list[str]]
+        country_filter,  # type list[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -126,7 +126,8 @@ class SearchClient(object):
     def fuzzy_search(
         self,
         query,  # type: str
-        country_filter=None,
+        coordinates=None, # type: Optional[Union[str, LatLon]]
+        country_filter=None, # Optional[type list[str]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -205,8 +206,7 @@ class SearchClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        coordinates = kwargs.get("coordinates", LatLon())
-        # country_filter = kwargs.get("country_filter", None)
+        coordinates = LatLon() if not coordinates else coordinates
 
         return self._search_client.fuzzy_search(
             query,
@@ -655,7 +655,7 @@ class SearchClient(object):
         self,
         query,  # type: str
         *,
-        country_filter,  # type Optional[list[str]]
+        country_filter,  # type list[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -673,8 +673,8 @@ class SearchClient(object):
     def search_point_of_interest_category(
         self,
         query,  # type: str
-        coordinates=LatLon(),
-        country_filter=None,
+        coordinates=None, # type: Optional[Union[str, LatLon]]
+        country_filter=None, # type Optional[list[str]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -727,9 +727,8 @@ class SearchClient(object):
         :return: SearchAddressResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        # coordinates = kwargs.get("coordinates", LatLon())
-        # country_filter = kwargs.get("country_filter", None)
 
+        coordinates = LatLon() if not coordinates else coordinates
         result = self._search_client.search_point_of_interest_category(
             query,
             lat=coordinates.lat,

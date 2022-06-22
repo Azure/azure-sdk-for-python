@@ -48,7 +48,7 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
 
     @pytest.mark.live_test_only
     def test_fuzzy_search_poi_coordinates(self):
-        result = self.client.fuzzy_search("Taipei 101")
+        result = self.client.fuzzy_search("Taipei 101", coordinates=LatLon(25.0338053, 121.5640089))
         assert len(result.results) > 0
         top_answer = result.results[0]
         assert top_answer.point_of_interest.name == "Taipei 101"
@@ -123,11 +123,11 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
 
     @pytest.mark.live_test_only
     def test_search_point_of_interest_category(self):
-        result = self.client.search_point_of_interest_category("CAFE_PUB", coordinates=LatLon(25.0338053, 121.5640089))
+        result = self.client.search_point_of_interest_category("RESTAURANT", coordinates=LatLon(25.0338053, 121.5640089))
         assert len(result.results) > 0
         for item in result.results:
             assert item.type == "POI"
-            assert "CAFE_PUB" in [category.code for category in item.point_of_interest.classifications]
+            assert "RESTAURANT" in [category.code for category in item.point_of_interest.classifications]
 
     @pytest.mark.live_test_only
     def test_search_structured_address(self):
@@ -152,10 +152,6 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
 
 if __name__ == "__main__" :
     testArgs = [ "-v" , "-s" ] if len(sys.argv) == 1 else sys.argv[1:]
-    #testArgs = [ "-s" , "-n" , "auto" , "--dist=loadscope" ] if len(sys.argv) == 1 else sys.argv[1:]
-    #pytest-xdist: -n auto --dist=loadscope
-    #pytest-parallel: --tests-per-worker auto
-    #print( "testArgs={}".format(testArgs) )
 
     pytest.main(args=testArgs)
 
