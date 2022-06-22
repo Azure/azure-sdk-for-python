@@ -40,9 +40,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_list_projects_request(
-    *, top: Optional[int] = None, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
+def build_list_projects_request(*, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -57,8 +55,6 @@ def build_list_projects_request(
         _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
         _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -236,12 +232,7 @@ def build_train_request(project_name: str, **kwargs: Any) -> HttpRequest:
 
 
 def build_list_deployments_request(
-    project_name: str,
-    *,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
+    project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -262,8 +253,6 @@ def build_list_deployments_request(
         _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
         _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -481,12 +470,7 @@ def build_get_import_project_job_status_request(project_name: str, job_id: str, 
 
 
 def build_list_trained_models_request(
-    project_name: str,
-    *,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
+    project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -507,8 +491,6 @@ def build_list_trained_models_request(
         _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
         _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -574,7 +556,6 @@ def build_list_model_evaluation_results_request(
     string_index_type: str,
     top: Optional[int] = None,
     skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -598,8 +579,6 @@ def build_list_model_evaluation_results_request(
         _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
         _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -638,12 +617,7 @@ def build_get_model_evaluation_summary_request(
 
 
 def build_list_training_jobs_request(
-    project_name: str,
-    *,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
+    project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -664,8 +638,6 @@ def build_list_training_jobs_request(
         _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
         _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -749,12 +721,7 @@ def build_get_project_deletion_job_status_request(job_id: str, **kwargs: Any) ->
 
 
 def build_list_supported_languages_request(
-    *,
-    project_kind: str,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
+    *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -771,8 +738,6 @@ def build_list_supported_languages_request(
         _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
         _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -787,7 +752,6 @@ def build_list_supported_prebuilt_entities_request(
     multilingual: Optional[bool] = None,
     top: Optional[int] = None,
     skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -808,8 +772,6 @@ def build_list_supported_prebuilt_entities_request(
         _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
         _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -819,12 +781,7 @@ def build_list_supported_prebuilt_entities_request(
 
 
 def build_list_training_config_versions_request(
-    *,
-    project_kind: str,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
+    *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -841,8 +798,6 @@ def build_list_training_config_versions_request(
         _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
         _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -853,9 +808,7 @@ def build_list_training_config_versions_request(
 
 class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-public-methods
     @distributed_trace
-    def list_projects(
-        self, *, top: Optional[int] = None, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
-    ) -> Iterable[JSON]:
+    def list_projects(self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any) -> Iterable[JSON]:
         """Lists the existing projects.
 
         :keyword top: The maximum number of resources to return from the collection. Default value is
@@ -864,9 +817,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -914,7 +864,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 request = build_list_projects_request(
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2524,13 +2473,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @distributed_trace
     def list_deployments(
-        self,
-        project_name: str,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> Iterable[JSON]:
         """Lists the deployments belonging to a project.
 
@@ -2542,9 +2485,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2581,7 +2521,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     project_name=project_name,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3949,13 +3888,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @distributed_trace
     def list_trained_models(
-        self,
-        project_name: str,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> Iterable[JSON]:
         """Lists the trained models belonging to a project.
 
@@ -3967,9 +3900,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4005,7 +3935,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     project_name=project_name,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -4175,7 +4104,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         string_index_type: str,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> Iterable[JSON]:
         """Gets the detailed results of the evaluation for a trained model. This includes the raw
@@ -4194,9 +4122,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4257,7 +4182,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     string_index_type=string_index_type,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -4448,13 +4372,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @distributed_trace
     def list_training_jobs(
-        self,
-        project_name: str,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> Iterable[JSON]:
         """Lists the non-expired training jobs created for a project.
 
@@ -4466,9 +4384,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4579,7 +4494,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     project_name=project_name,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5085,13 +4999,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @distributed_trace
     def list_supported_languages(
-        self,
-        *,
-        project_kind: str,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> Iterable[JSON]:
         """Lists the supported languages for the given project type.
 
@@ -5104,9 +5012,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5137,7 +5042,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     project_kind=project_kind,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5191,7 +5095,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         multilingual: Optional[bool] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> Iterable[JSON]:
         """Lists the supported prebuilt entities that can be used while creating composed entities.
@@ -5209,9 +5112,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5242,7 +5142,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     multilingual=multilingual,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5290,13 +5189,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @distributed_trace
     def list_training_config_versions(
-        self,
-        *,
-        project_kind: str,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> Iterable[JSON]:
         """Lists the support training config version for a given project type.
 
@@ -5309,9 +5202,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5342,7 +5232,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     project_kind=project_kind,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
