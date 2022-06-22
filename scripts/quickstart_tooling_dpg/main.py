@@ -35,13 +35,16 @@ def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> No
         with open(ci_template_path, "r") as file_in:
             content = file_in.readlines()
         content = [line.replace("ServiceName", service_name).replace('PackageName', name) for line in content]
-        with open(str(ci), "w") as file_out:
-            file_out.writelines(content)
     else:
         with open(str(ci), "r") as file_in:
             content = file_in.readlines()
-
-
+            for line in content:
+                if f'{package_name}\n' in line:
+                    return
+            content.append(f'    - name: {package_name}\n')
+            content.append(f'      safeName: {package_name.replace("-", "")}\n')
+    with open(str(ci), "w") as file_out:
+        file_out.writelines(content)
 
 
 def generate_test_sample(template_path: Path, target_path: Path, **kwargs: Any) -> None:
