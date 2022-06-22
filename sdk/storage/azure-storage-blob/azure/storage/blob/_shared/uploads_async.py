@@ -16,7 +16,7 @@ import six
 from . import encode_base64, url_quote
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
-from .uploads import SubStream
+from .uploads import SubStream, IterStreamer  # pylint: disable=unused-import
 
 
 async def _parallel_uploads(uploader, pending, running):
