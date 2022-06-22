@@ -6,78 +6,42 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ActivationKeyResult
-    from ._models_py3 import CloudManifestFileDeploymentData
-    from ._models_py3 import CloudManifestFileProperties
-    from ._models_py3 import CloudManifestFileResponse
-    from ._models_py3 import Compatibility
-    from ._models_py3 import CustomerSubscription
-    from ._models_py3 import CustomerSubscriptionList
-    from ._models_py3 import DataDiskImage
-    from ._models_py3 import DeviceConfiguration
-    from ._models_py3 import Display
-    from ._models_py3 import ErrorDetails
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import ExtendedProduct
-    from ._models_py3 import ExtendedProductProperties
-    from ._models_py3 import IconUris
-    from ._models_py3 import LinkedSubscription
-    from ._models_py3 import LinkedSubscriptionParameter
-    from ._models_py3 import LinkedSubscriptionsList
-    from ._models_py3 import MarketplaceProductLogUpdate
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationList
-    from ._models_py3 import OsDiskImage
-    from ._models_py3 import Product
-    from ._models_py3 import ProductLink
-    from ._models_py3 import ProductList
-    from ._models_py3 import ProductLog
-    from ._models_py3 import ProductProperties
-    from ._models_py3 import Registration
-    from ._models_py3 import RegistrationList
-    from ._models_py3 import RegistrationParameter
-    from ._models_py3 import Resource
-    from ._models_py3 import SystemData
-    from ._models_py3 import TrackedResource
-    from ._models_py3 import VirtualMachineExtensionProductProperties
-    from ._models_py3 import VirtualMachineProductProperties
-except (SyntaxError, ImportError):
-    from ._models import ActivationKeyResult  # type: ignore
-    from ._models import CloudManifestFileDeploymentData  # type: ignore
-    from ._models import CloudManifestFileProperties  # type: ignore
-    from ._models import CloudManifestFileResponse  # type: ignore
-    from ._models import Compatibility  # type: ignore
-    from ._models import CustomerSubscription  # type: ignore
-    from ._models import CustomerSubscriptionList  # type: ignore
-    from ._models import DataDiskImage  # type: ignore
-    from ._models import DeviceConfiguration  # type: ignore
-    from ._models import Display  # type: ignore
-    from ._models import ErrorDetails  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import ExtendedProduct  # type: ignore
-    from ._models import ExtendedProductProperties  # type: ignore
-    from ._models import IconUris  # type: ignore
-    from ._models import LinkedSubscription  # type: ignore
-    from ._models import LinkedSubscriptionParameter  # type: ignore
-    from ._models import LinkedSubscriptionsList  # type: ignore
-    from ._models import MarketplaceProductLogUpdate  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationList  # type: ignore
-    from ._models import OsDiskImage  # type: ignore
-    from ._models import Product  # type: ignore
-    from ._models import ProductLink  # type: ignore
-    from ._models import ProductList  # type: ignore
-    from ._models import ProductLog  # type: ignore
-    from ._models import ProductProperties  # type: ignore
-    from ._models import Registration  # type: ignore
-    from ._models import RegistrationList  # type: ignore
-    from ._models import RegistrationParameter  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import TrackedResource  # type: ignore
-    from ._models import VirtualMachineExtensionProductProperties  # type: ignore
-    from ._models import VirtualMachineProductProperties  # type: ignore
+from ._models_py3 import ActivationKeyResult
+from ._models_py3 import CloudManifestFileDeploymentData
+from ._models_py3 import CloudManifestFileProperties
+from ._models_py3 import CloudManifestFileResponse
+from ._models_py3 import Compatibility
+from ._models_py3 import CustomerSubscription
+from ._models_py3 import CustomerSubscriptionList
+from ._models_py3 import DataDiskImage
+from ._models_py3 import DeviceConfiguration
+from ._models_py3 import Display
+from ._models_py3 import ErrorDetails
+from ._models_py3 import ErrorResponse
+from ._models_py3 import ExtendedProduct
+from ._models_py3 import ExtendedProductProperties
+from ._models_py3 import IconUris
+from ._models_py3 import LinkedSubscription
+from ._models_py3 import LinkedSubscriptionParameter
+from ._models_py3 import LinkedSubscriptionsList
+from ._models_py3 import MarketplaceProductLogUpdate
+from ._models_py3 import Operation
+from ._models_py3 import OperationList
+from ._models_py3 import OsDiskImage
+from ._models_py3 import Product
+from ._models_py3 import ProductLink
+from ._models_py3 import ProductList
+from ._models_py3 import ProductLog
+from ._models_py3 import ProductProperties
+from ._models_py3 import Registration
+from ._models_py3 import RegistrationList
+from ._models_py3 import RegistrationParameter
+from ._models_py3 import Resource
+from ._models_py3 import SystemData
+from ._models_py3 import TrackedResource
+from ._models_py3 import VirtualMachineExtensionProductProperties
+from ._models_py3 import VirtualMachineProductProperties
+
 
 from ._azure_stack_management_client_enums import (
     Category,
@@ -88,7 +52,9 @@ from ._azure_stack_management_client_enums import (
     OperatingSystem,
     ProvisioningState,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'ActivationKeyResult',
     'CloudManifestFileDeploymentData',
@@ -133,3 +99,5 @@ __all__ = [
     'OperatingSystem',
     'ProvisioningState',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

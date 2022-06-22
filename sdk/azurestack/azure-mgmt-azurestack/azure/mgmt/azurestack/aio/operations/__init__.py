@@ -13,6 +13,9 @@ from ._products_operations import ProductsOperations
 from ._registrations_operations import RegistrationsOperations
 from ._linked_subscriptions_operations import LinkedSubscriptionsOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'Operations',
     'CloudManifestFileOperations',
@@ -21,3 +24,5 @@ __all__ = [
     'RegistrationsOperations',
     'LinkedSubscriptionsOperations',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
