@@ -25,6 +25,17 @@ def check_parameters(
         _LOGGER.info(f'{output} is created')
 
 
+def generate_ci(package_name: str, folder_name: Path) -> None:
+    ci = Path(folder_name, "ci.yml")
+    if not ci.exists():
+        with open("ci_template.yml", "r") as file_in:
+            content = file_in.readlines()
+        name = package_name.split('-')[-1]
+        content = [line.replace("MyService", name) for line in content]
+        with open(str(ci), "w") as file_out:
+            file_out.writelines(content)
+
+
 def generate_test_sample(template_path: Path, target_path: Path, **kwargs: Any) -> None:
     if not os.path.exists(target_path):
         os.makedirs(target_path)
@@ -70,6 +81,10 @@ def build_package(**kwargs) -> None:
 
     _LOGGER.info("Build start: %s", package_name)
     check_parameters(output_folder)
+
+    #generate ci
+    generate_ci(package_name, Path(output_folder).parent)
+
 
     # generate swagger readme
     env = Environment(loader=FileSystemLoader(_TEMPLATE), keep_trailing_newline=True)
