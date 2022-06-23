@@ -4,7 +4,7 @@
 # ------------------------------------
 import json
 import datetime
-from typing import Any, List, Literal, Dict, Mapping, Sequence, Set, Tuple, Optional, Union, overload
+from typing import Any, Iterable, List, Literal, Dict, Mapping, Sequence, Set, Tuple, Optional, Union, overload
 import pytest
 import base64
 import isodate
@@ -2472,6 +2472,73 @@ def test_contains():
     child_c.c_prop = None
 
     assert not any(p for p in props if p in child_c)
+
+def test_iter():
+    dict_response = {
+        "platformUpdateDomainCount": 5,
+        "platformFaultDomainCount": 3,
+        "virtualMachines": []
+    }
+    assert isinstance(iter(dict_response), Iterable)
+    model = BasicResource(dict_response)
+    assert isinstance(iter(model), Iterable)
+
+    assert (
+        list(iter(dict_response)) ==
+        list(iter(model)) ==
+        ["platformUpdateDomainCount", "platformFaultDomainCount", "virtualMachines"]
+    )
+
+def test_len():
+    dict_response = {
+        "platformUpdateDomainCount": 5,
+        "platformFaultDomainCount": 3,
+        "virtualMachines": []
+    }
+    model = BasicResource(dict_response)
+    assert len(dict_response) == len(model) == 3
+
+    dict_response.pop("platformUpdateDomainCount")
+    model.pop("platformUpdateDomainCount")
+    assert len(dict_response) == len(model) == 2
+
+def test_keys():
+    class Inner(Model):
+        str_prop: str = rest_field(name="strProp")
+
+    class Outer(Model):
+        inner_prop: Inner = rest_field(name="innerProp")
+
+    outer_dict = {"innerProp": {"strProp": "hello"}}
+    outer = Outer(outer_dict)
+    assert outer.keys() == outer_dict.keys()
+    outer_dict["newProp"] = "hello"
+    outer["newProp"] = "hello"
+
+    assert outer.keys() == outer_dict.keys()
+
+    outer_dict.pop("newProp")
+    outer.pop("newProp")
+    assert outer_dict.keys() == outer.keys()
+
+def test_values():
+    class Inner(Model):
+        str_prop: str = rest_field(name="strProp")
+
+    class Outer(Model):
+        inner_prop: Inner = rest_field(name="innerProp")
+
+    outer_dict = {"innerProp": {"strProp": "hello"}}
+    outer = Outer(outer_dict)
+
+    assert list(outer.values()) == list(outer_dict.values())
+    assert len(outer.values()) == len(outer_dict.values()) == 1
+    assert list(outer.values())[0]["strProp"] == list(outer_dict.values())[0]["strProp"] == "hello"
+
+    outer_dict["innerProp"]["strProp"] = "goodbye"
+    outer.inner_prop.str_prop = "goodbye"
+
+    assert list(outer.inner_prop.values()) == list(outer_dict["innerProp"].values())
 
 
 

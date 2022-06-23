@@ -16,6 +16,7 @@ import typing
 from datetime import datetime, date, time, timedelta
 from .utils._utils import _FixedOffset
 from collections.abc import MutableMapping
+from azure.core.exceptions import DeserializationError
 import copy
 
 _LOGGER = logging.getLogger(__name__)
@@ -405,7 +406,10 @@ class Model(_MyMutableMapping):
         return super().__new__(cls)
 
 def _deserialize(deserializer: typing.Optional[typing.Callable[[typing.Any], typing.Any]], value: typing.Any):
-    return deserializer(value) if deserializer else value
+    try:
+        return deserializer(value) if deserializer else value
+    except Exception as e:
+        raise DeserializationError() from e
 
 class _RestField:
     def __init__(
