@@ -54,10 +54,8 @@ jobs:
 
         # import env variable
         export TOKEN=$(Yuchao-GitToken)
-        export PYTHON_BIGCAT_TOKEN=$(Jiefeng-GitToken)
-        export PYTHON_ZED_TOKEN=$(Zed-GitToken)
-        export PYTHON_MSYYC_TOKEN=$(Yuchao-GitToken)
         export AZURESDK_BOT_TOKEN=$(azuresdk-github-pat)
+        export PIPELINE_TOKEN=$(PIPELINE-TOKEN)
         export LANGUAGE=$(RUN_LANGUAGE)
 
 
