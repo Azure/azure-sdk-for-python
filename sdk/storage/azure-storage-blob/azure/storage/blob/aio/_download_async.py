@@ -12,8 +12,7 @@ from itertools import islice
 import warnings
 from typing import AsyncIterator
 
-from aiohttp import ClientPayloadError
-from azure.core.exceptions import HttpResponseError, ServiceResponseError
+from azure.core.exceptions import HttpResponseError, ServiceResponseError, IncompleteReadError
 from .._shared.encryption import (
     adjust_blob_size_for_encryption,
     decrypt_blob,
@@ -114,7 +113,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
 
                 except HttpResponseError as error:
                     process_storage_error(error)
-                except ClientPayloadError as error:
+                except IncompleteReadError as error:
                     retry_total -= 1
                     if retry_total <= 0:
                         raise ServiceResponseError(error, error=error)
