@@ -10,7 +10,7 @@ class AmqpTransport(ABC):
     """
     # define constants
     BATCH_MESSAGE = None
-    MAX_MESSAGE_LENGTH_BYTES = None
+    MAX_FRAME_SIZE_BYTES = None
     IDLE_TIMEOUT_FACTOR = None
 
     PRODUCT_SYMBOL = None
@@ -22,6 +22,9 @@ class AmqpTransport(ABC):
     # errors
     AMQP_LINK_ERROR = None
     LINK_STOLEN_CONDITION = None
+    MGMT_AUTH_EXCEPTION = None
+    CONNECTION_ERROR = None
+    AMQP_CONNECTION_ERROR = None
 
     @abstractmethod
     def to_outgoing_amqp_message(self, annotated_message):
@@ -63,12 +66,13 @@ class AmqpTransport(ABC):
         """
 
     @abstractmethod
-    def send_messages(self, producer, timeout_time, last_exception):
+    def send_messages(self, producer, timeout_time, last_exception, logger):
         """
         Handles sending of event data messages.
         :param ~azure.eventhub._producer.EventHubProducer producer: The producer with handler to send messages.
         :param int timeout_time: Timeout time.
         :param last_exception: Exception to raise if message timed out. Only used by uamqp transport.
+        :param logger: Logger.
         """
 
     @abstractmethod
@@ -96,7 +100,7 @@ class AmqpTransport(ABC):
         :param int offset: Required.
         :param bytes filter: Required.
         """
-    
+
     @abstractmethod
     def create_receive_client(self, *, config, **kwargs):
         """
@@ -119,9 +123,67 @@ class AmqpTransport(ABC):
         :keyword timeout: Required.
         """
     @abstractmethod
-    def open_receive_client(self, *, handler, client):
+    def open_receive_client(self, *, handler, client, auth):
         """
         Opens the receive client.
         :param ReceiveClient handler: The receive client.
         :param ~azure.eventhub.EventHubConsumerClient client: The consumer client.
+        """
+
+    @abstractmethod
+    def create_token_auth(self, auth_uri, get_token, token_type, config, **kwargs):
+        """
+        Creates the JWTTokenAuth.
+        :param str auth_uri: The auth uri to pass to JWTTokenAuth.
+        :param get_token: The callback function used for getting and refreshing
+         tokens. It should return a valid jwt token each time it is called.
+        :param bytes token_type: Token type.
+        :param ~azure.eventhub._configuration.Configuration config: EH config.
+
+        :keyword bool update_token: Whether to update token. If not updating token,
+         then pass 300 to refresh_window. Only used by uamqp.
+        """
+
+    @abstractmethod
+    def create_mgmt_client(self, address, mgmt_auth, config):
+        """
+        Creates and returns the mgmt AMQP client.
+        :param _Address address: Required. The Address.
+        :param JWTTokenAuth mgmt_auth: Auth for client.
+        :param ~azure.eventhub._configuration.Configuration config: The configuration.
+        """
+
+    @abstractmethod
+    def get_updated_token(self, mgmt_auth):
+        """
+        Return updated auth token.
+        :param mgmt_auth: Auth.
+        """
+
+    @abstractmethod
+    def mgmt_client_request(self, mgmt_client, mgmt_msg, **kwargs):
+        """
+        Send mgmt request.
+        :param AMQP Client mgmt_client: Client to send request with.
+        :param str mgmt_msg: Message.
+        :keyword bytes operation: Operation.
+        :keyword operation_type: Op type.
+        :keyword status_code_field: mgmt status code.
+        :keyword description_fields: mgmt status desc.
+        """
+
+    @abstractmethod
+    def get_error(self, error, message, *, condition=None):
+        """
+        Gets error and passes in error message, and, if applicable, condition.
+        :param error: The error to raise.
+        :param str message: Error message.
+        :param condition: Optional error condition. Will not be used by uamqp.
+        """
+
+    @abstractmethod
+    def get_link_max_message_size(self, handler):
+        """
+        Returns max peer message size.
+        :param AMQPClient handler: Client to get remote max message size on link from.
         """

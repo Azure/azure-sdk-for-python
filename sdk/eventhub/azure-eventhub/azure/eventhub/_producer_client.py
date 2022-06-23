@@ -129,7 +129,7 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
                     self._producers[  # type: ignore
                         ALL_PARTITIONS
                     ]._handler.message_handler._link.peer_max_message_size  # TODO: fix to fit pyamqp
-                    or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
+                    or self._amqp_transport.MAX_FRAME_SIZE_BYTES
                 )
 
     def _start_producer(self, partition_id, send_timeout):

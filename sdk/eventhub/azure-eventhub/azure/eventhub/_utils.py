@@ -270,7 +270,7 @@ def transform_outbound_single_message(message, message_type, to_outgoing_amqp_me
     except AttributeError:
         # pylint: disable=protected-access
         # AmqpAnnotatedMessage is converted to uamqp/pyamqp.Message during sending
-        amqp_message = to_outgoing_amqp_message(message.raw_amqp_message)
+        amqp_message = to_outgoing_amqp_message(message)
         return message_type._from_message(
             message=amqp_message, raw_amqp_message=message  # type: ignore
         )

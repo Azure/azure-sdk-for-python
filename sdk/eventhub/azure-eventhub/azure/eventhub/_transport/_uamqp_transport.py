@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from lib2to3.pgen2 import token
 import time
 from datetime import timedelta
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Union, Any
 from urllib.parse import urlparse, quote_plus
 from azure.core.credentials import AccessToken
 
@@ -18,12 +19,15 @@ from uamqp import (
     ReceiveClient,
     Source,
     utils,
+    authentication,
+    AMQPClient,
+    compat
 )
 from uamqp.message import (
     MessageHeader,
     MessageProperties,
 )
-from uamqp.errors import ErrorPolicy, ErrorAction, LinkDetach
+from uamqp.errors import ErrorPolicy, ErrorAction, LinkDetach, AuthenticationException, AMQPConnectionError
 
 from ._base import AmqpTransport
 from ..amqp._constants import AmqpMessageBodyType
@@ -31,10 +35,11 @@ from .._constants import (
     NO_RETRY_ERRORS,
     PROP_PARTITION_KEY_AMQP_SYMBOL,
 )
-from ..exceptions import OperationTimeoutError
+from ..exceptions import ConnectError, OperationTimeoutError
 
 if TYPE_CHECKING:
     import logging
+    from azure.core.credentials import AzureNamedKeyCredential
 
 def _error_handler(error):
     """
@@ -124,7 +129,7 @@ class UamqpTransport(AmqpTransport):
     """
     # define constants
     BATCH_MESSAGE = BatchMessage
-    MAX_MESSAGE_LENGTH_BYTES = constants.MAX_MESSAGE_LENGTH_BYTES
+    MAX_FRAME_SIZE_BYTES = constants.MAX_MESSAGE_LENGTH_BYTES
     IDLE_TIMEOUT_FACTOR = 1000 # pyamqp = 1
 
     # define symbols
@@ -137,6 +142,10 @@ class UamqpTransport(AmqpTransport):
     # define errors and conditions
     AMQP_LINK_ERROR = LinkDetach
     LINK_STOLEN_CONDITION = constants.ErrorCodes.LinkStolen
+    AUTH_EXCEPTION = AuthenticationException
+    CONNECTION_ERROR = ConnectError
+    AMQP_CONNECTION_ERROR = AMQPConnectionError
+    TIMEOUT_EXCEPTION = compat.TimeoutException
 
     def to_outgoing_amqp_message(self, annotated_message):
         """
@@ -244,8 +253,7 @@ class UamqpTransport(AmqpTransport):
             **kwargs
         )
 
-    def _set_msg_timeout(self, timeout_time, last_exception, logger):
-        # type: (Optional[float], Optional[Exception], logging.Logger) -> None
+    def _set_msg_timeout(self, producer, timeout_time, last_exception, logger):
         if not timeout_time:
             return
         remaining_time = timeout_time - time.time()
@@ -254,9 +262,9 @@ class UamqpTransport(AmqpTransport):
                 error = last_exception
             else:
                 error = OperationTimeoutError("Send operation timed out")
-            logger.info("%r send operation timed out. (%r)", self._name, error)
+            logger.info("%r send operation timed out. (%r)", producer._name, error)
             raise error
-        self._handler._msg_timeout = remaining_time * 1000  # type: ignore  # pylint: disable=protected-access
+        producer._handler._msg_timeout = remaining_time * 1000  # type: ignore  # pylint: disable=protected-access
 
     def send_messages(self, producer, timeout_time, last_exception, logger):
         """
@@ -264,10 +272,11 @@ class UamqpTransport(AmqpTransport):
         :param ~azure.eventhub._producer.EventHubProducer producer: The producer with handler to send messages.
         :param int timeout_time: Timeout time.
         :param last_exception: Exception to raise if message timed out. Only used by uamqp transport.
+        :param logger: Logger.
         """
         # pylint: disable=protected-access
         producer._unsent_events[0].on_send_complete = producer._on_outcome
-        self._set_msg_timeout(timeout_time, last_exception, logger)
+        self._set_msg_timeout(producer, timeout_time, last_exception, logger)
         producer._handler.queue_message(*producer._unsent_events)  # type: ignore
         producer._handler.wait()  # type: ignore
         producer._unsent_events = producer._handler.pending_messages  # type: ignore
@@ -359,7 +368,7 @@ class UamqpTransport(AmqpTransport):
             auto_complete=False,
             **kwargs
         )
-
+        # pylint:disable=protected-access
         client._streaming_receive = streaming_receive
         client._message_received_callback = (message_received_callback)
         return client
@@ -372,6 +381,95 @@ class UamqpTransport(AmqpTransport):
         :param auth: Auth.
         :rtype: bool
         """
+        # pylint:disable=protected-access
         handler.open(connection=client._conn_manager.get_connection(
             client._address.hostname, auth
         ))
+
+    def create_token_auth(self, auth_uri, get_token, token_type, config, **kwargs):
+        """
+        Creates the JWTTokenAuth.
+        :param str auth_uri: The auth uri to pass to JWTTokenAuth.
+        :param get_token: The callback function used for getting and refreshing
+         tokens. It should return a valid jwt token each time it is called.
+        :param bytes token_type: Token type.
+        :param ~azure.eventhub._configuration.Configuration config: EH config.
+
+        :keyword bool update_token: Whether to update token. If not updating token, then pass 300 to refresh_window.
+        """
+        update_token = kwargs.pop("update_token", False)
+        refresh_window = 300
+        if update_token:
+            refresh_window = 0
+
+        token_auth = authentication.JWTTokenAuth(
+            auth_uri,
+            auth_uri,
+            get_token,
+            token_type=token_type,
+            timeout=config.auth_timeout,
+            http_proxy=config.http_proxy,
+            transport_type=config.transport_type,
+            custom_endpoint_hostname=config.custom_endpoint_hostname,
+            port=config.connection_port,
+            verify=config.connection_verify,
+            refresh_window=refresh_window
+        )
+        if update_token:
+            token_auth.update_token()   # TODO: why don't we need to update in pyamqp?
+        return token_auth
+
+    def create_mgmt_client(self, address, mgmt_auth, config):
+        """
+        Creates and returns the mgmt AMQP client.
+        :param _Address address: Required. The Address.
+        :param JWTTokenAuth mgmt_auth: Auth for client.
+        :param ~azure.eventhub._configuration.Configuration config: The configuration.
+        """
+
+        mgmt_target = f"amqps://{address.hostname}{address.path}"
+        return AMQPClient(
+            mgmt_target,
+            auth=mgmt_auth,
+            debug=config.network_tracing
+        )
+
+    def get_updated_token(self, mgmt_auth):
+        """
+        Return updated auth token.
+        :param mgmt_auth: Auth.
+        """
+        return mgmt_auth.token
+
+    def mgmt_client_request(self, mgmt_client, mgmt_msg, **kwargs):
+        """
+        Send mgmt request.
+        :param AMQP Client mgmt_client: Client to send request with.
+        :param str mgmt_msg: Message.
+        :keyword bytes operation: Operation.
+        :keyword operation_type: Op type.
+        :keyword status_code_field: mgmt status code.
+        :keyword description_fields: mgmt status desc.
+        """
+        operation_type = kwargs.pop("operation_type")
+        return mgmt_client.mgmt_request(
+            mgmt_msg,
+            op_type=operation_type,
+            **kwargs
+        )
+
+    def get_error(self, error, message, *, condition=None): # pylint: disable=unused-argument
+        """
+        Gets error and passes in error message, and, if applicable, condition.
+        :param error: The error to raise.
+        :param str message: Error message.
+        :param condition: Optional error condition. Will not be used by uamqp.
+        """
+        return error(message)
+
+    def get_link_max_message_size(self, handler):
+        """
+        Returns max peer message size.
+        :param AMQPClient handler: Client to get remote max message size on link from.
+        """
+        return handler.message_handler._link.peer_max_message_size  # pylint: disable=protected-access

@@ -172,9 +172,9 @@ class EventHubConsumer(
                 self._handler.close()
             auth = self._client._create_auth()
             self._create_handler(auth)
-            self._handler.open()
-            while not self._handler.client_ready():	
-                time.sleep(0.05)	
+            self._handler.open()    # TODO: uamqp handler is not using the passed in connection anyway
+            while not self._handler.client_ready():
+                time.sleep(0.05)
             self.handler_ready = True
             self.running = True
 
