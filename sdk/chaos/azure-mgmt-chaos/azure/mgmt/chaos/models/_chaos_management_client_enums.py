@@ -7,17 +7,16 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
     """
 
     INTERNAL = "Internal"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource.
     """
 
@@ -26,7 +25,7 @@ class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system"
     """
@@ -35,14 +34,14 @@ class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
 
-class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """String of the resource identity type.
     """
 
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
 
-class SelectorType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum of the selector type.
     """
 

@@ -64,12 +64,24 @@ class ChaosManagementClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.capabilities = CapabilitiesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.experiments = ExperimentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.targets = TargetsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.target_types = TargetTypesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.capability_types = CapabilityTypesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.capabilities = CapabilitiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.experiments = ExperimentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.targets = TargetsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.target_types = TargetTypesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.capability_types = CapabilityTypesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(
