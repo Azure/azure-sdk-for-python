@@ -49,7 +49,6 @@ class IssueProcessPython(IssueProcess):
     @property
     def readme_comparison(self) -> bool:
         # to see whether need change readme
-        self.log(f'**** issue_package.labels_name: {self.issue_package.labels_name}')
         if 'package-' not in self.target_readme_tag:
             return True
         if _CONFIGURED in self.issue_package.labels_name:
@@ -78,9 +77,8 @@ class IssueProcessPython(IssueProcess):
                         self.issue_package.issue.remove_from_labels(_CONFIGURED)
                 else:
                     self.log(f'{issue_number} run pipeline fail')
-                self.issue_package.issue.add_to_labels(_AUTO_ASK_FOR_CHECK)
+                self.add_label(_AUTO_ASK_FOR_CHECK)
             else:
-                print(f'*** issue {issue_number} need config readme')
                 self.log(f'issue {issue_number} need config readme')
 
     def auto_close(self) -> None:
@@ -91,7 +89,7 @@ class IssueProcessPython(IssueProcess):
             comment = f'Hi @{self.owner}, pypi link: https://pypi.org/project/{self.package_name}/{last_version}/'
             self.issue_package.issue.create_comment(body=comment)
             self.issue_package.issue.edit(state='closed')
-            self.issue_package.issue.add_to_labels('auto-closed')
+            self.add_label('auto-closed')
             self.is_open = False
             self.log(f"{self.issue_package.issue.number} has been closed!")
             record_release(self.package_name, self.issue_package.issue, _FILE_OUT)
