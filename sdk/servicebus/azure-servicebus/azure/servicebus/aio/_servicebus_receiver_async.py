@@ -962,3 +962,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         message._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0] / 1000.0)  # type: ignore
 
         return message._expiry  # type: ignore
+
+    @property
+    def identifier(self) -> str:
+        """
+        Get the ServiceBusReceiver identifier associated with the receiver instance.
+
+        :rtype: str
+        """
+        return self._name

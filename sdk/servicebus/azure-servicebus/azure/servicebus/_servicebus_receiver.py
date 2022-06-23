@@ -989,3 +989,12 @@ class ServiceBusReceiver(
         )
 
         return message._expiry  # type: ignore
+    
+    @property
+    def identifier(self) -> str:
+        """
+        Get the ServiceBusReceiver identifier associated with the receiver instance.
+
+        :rtype: str
+        """
+        return self._name

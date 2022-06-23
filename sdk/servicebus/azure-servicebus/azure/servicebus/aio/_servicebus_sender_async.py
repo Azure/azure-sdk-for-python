@@ -408,3 +408,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         return ServiceBusMessageBatch(
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link)
         )
+    
+    @property
+    def identifier(self) -> str:
+        """
+        Get the ServiceBusSender identifier associated with the sender instance.
+
+        :rtype: str
+        """
+        return self._name
