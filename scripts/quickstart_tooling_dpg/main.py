@@ -36,7 +36,7 @@ def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> No
             content = file_in.readlines()
         content = [line.replace("ServiceName", service_name).replace('PackageName', name) for line in content]
     else:
-        with open(str(ci), "r") as file_in:
+        with open(ci, "r") as file_in:
             content = file_in.readlines()
             for line in content:
                 if f'{package_name}\n' in line:
