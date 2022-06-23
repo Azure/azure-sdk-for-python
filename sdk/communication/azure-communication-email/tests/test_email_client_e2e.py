@@ -14,7 +14,7 @@ class TestEmailClient(AzureRecordedTestCase):
     @email_decorator
     @recorded_by_proxy
     def test_send_email_single_recipient(self):
-        email_client = EmailClient(self.communication_connection_string)
+        email_client = EmailClient.from_connection_string(self.communication_connection_string)
 
         message = EmailMessage(
             sender=self.sender_address,
@@ -30,7 +30,7 @@ class TestEmailClient(AzureRecordedTestCase):
     @email_decorator
     @recorded_by_proxy
     def test_send_email_multiple_recipients(self):
-        email_client = EmailClient(self.communication_connection_string)
+        email_client = EmailClient.from_connection_string(self.communication_connection_string)
 
         message = EmailMessage(
             sender=self.sender_address,
@@ -49,7 +49,7 @@ class TestEmailClient(AzureRecordedTestCase):
     @email_decorator
     @recorded_by_proxy
     def test_send_email_attachment(self):
-        email_client = EmailClient(self.communication_connection_string)
+        email_client = EmailClient.from_connection_string(self.communication_connection_string)
 
         message = EmailMessage(
             sender=self.sender_address,
@@ -73,7 +73,7 @@ class TestEmailClient(AzureRecordedTestCase):
     # @email_decorator
     # @recorded_by_proxy
     # def test_check_message_status(self):
-    #     email_client = EmailClient(self.communication_connection_string)
+    #     email_client = EmailClient.from_connection_string(self.communication_connection_string)
 
     #     message = EmailMessage(
     #         sender=self.sender_address,

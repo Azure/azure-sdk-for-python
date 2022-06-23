@@ -40,7 +40,7 @@ class EmailCheckMessageStatusSampleAsync(object):
     
     async def check_message_status_async(self):
         # creating the email client
-        email_client = EmailClient(self.connection_string)
+        email_client = EmailClient.from_connection_string(self.connection_string)
 
         # creating the email message
         content = EmailContent(
