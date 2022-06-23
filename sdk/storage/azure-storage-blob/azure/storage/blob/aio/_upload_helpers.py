@@ -107,6 +107,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
 
         if use_original_upload_path:
             total_size = length
+            encryptor, padder = None, None
             if encryption_options and encryption_options.get('key'):
                 cek, iv, encryption_data = generate_blob_encryption_data(
                     encryption_options['key'],
@@ -115,8 +116,6 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
 
                 if encryption_options['version'] == _ENCRYPTION_PROTOCOL_V1:
                     encryptor, padder = get_blob_encryptor_and_padder(cek, iv, True)
-                    kwargs['encryptor'] = encryptor
-                    kwargs['padder'] = padder
 
                 # Adjust total_size for encryption V2
                 if encryption_options['version'] == _ENCRYPTION_PROTOCOL_V2:
@@ -135,6 +134,8 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
                 validate_content=validate_content,
                 encryption_options=encryption_options,
                 progress_hook=progress_hook,
+                encryptor=encryptor,
+                padder=padder,
                 headers=headers,
                 **kwargs
             )

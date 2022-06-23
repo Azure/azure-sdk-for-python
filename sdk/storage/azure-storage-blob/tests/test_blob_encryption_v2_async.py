@@ -23,7 +23,7 @@ from azure.storage.blob._encryption import (
 )
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
-from devtools_testutils.storage import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 from encryption_test_helper import (
     KeyWrapper,
     KeyResolver,
