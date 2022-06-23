@@ -835,7 +835,7 @@ def build_device_management_get_update_compliance_request(
 def build_device_management_list_groups_request(
     instance_id: str,
     *,
-    orderby: Optional[str] = None,
+    order_by: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -853,8 +853,8 @@ def build_device_management_list_groups_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    if orderby is not None:
-        _params['orderby'] = _SERIALIZER.query("orderby", orderby, 'str')
+    if order_by is not None:
+        _params['orderby'] = _SERIALIZER.query("order_by", order_by, 'str')
     _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
@@ -939,7 +939,7 @@ def build_device_management_delete_group_request(
     )
 
 
-def build_device_management_get_group_update_compliance_request(
+def build_device_management_get_update_compliance_for_group_request(
     instance_id: str,
     group_id: str,
     **kwargs: Any
@@ -1017,7 +1017,7 @@ def build_device_management_list_deployments_for_group_request(
     instance_id: str,
     group_id: str,
     *,
-    orderby: Optional[str] = None,
+    order_by: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1037,8 +1037,8 @@ def build_device_management_list_deployments_for_group_request(
 
     # Construct parameters
     _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-    if orderby is not None:
-        _params['orderby'] = _SERIALIZER.query("orderby", orderby, 'str')
+    if order_by is not None:
+        _params['orderby'] = _SERIALIZER.query("order_by", order_by, 'str')
 
     # Construct headers
     _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
@@ -1247,7 +1247,7 @@ def build_device_management_list_device_class_subgroups_for_group_request(
     )
 
 
-def build_device_management_get_device_class_subgroup_details_request(
+def build_device_management_get_device_class_subgroup_request(
     instance_id: str,
     group_id: str,
     device_class_id: str,
@@ -1358,7 +1358,7 @@ def build_device_management_get_device_class_subgroup_update_compliance_request(
     )
 
 
-def build_device_management_list_best_updates_for_device_class_subgroup_request(
+def build_device_management_get_best_updates_for_device_class_subgroup_request(
     instance_id: str,
     group_id: str,
     device_class_id: str,
@@ -1400,7 +1400,7 @@ def build_device_management_list_deployments_for_device_class_subgroup_request(
     group_id: str,
     device_class_id: str,
     *,
-    orderby: Optional[str] = None,
+    order_by: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1421,8 +1421,8 @@ def build_device_management_list_deployments_for_device_class_subgroup_request(
 
     # Construct parameters
     _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-    if orderby is not None:
-        _params['orderby'] = _SERIALIZER.query("orderby", orderby, 'str')
+    if order_by is not None:
+        _params['orderby'] = _SERIALIZER.query("order_by", order_by, 'str')
 
     # Construct headers
     _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
@@ -1475,7 +1475,7 @@ def build_device_management_get_deployment_for_device_class_subgroup_request(
     )
 
 
-def build_device_management_delete_device_class_subgroup_deployment_request(
+def build_device_management_delete_deployment_for_device_class_subgroup_request(
     instance_id: str,
     group_id: str,
     device_class_id: str,
@@ -1631,7 +1631,7 @@ def build_device_management_get_device_class_subgroup_deployment_status_request(
     )
 
 
-def build_device_management_list_devices_for_device_class_subgroup_deployment_request(
+def build_device_management_list_device_states_for_device_class_subgroup_deployment_request(
     instance_id: str,
     group_id: str,
     device_class_id: str,
@@ -1753,9 +1753,9 @@ def build_device_management_list_operations_request(
     )
 
 
-def build_device_management_collect_logs_request(
+def build_device_management_start_log_collection_request(
     instance_id: str,
-    operation_id: str,
+    log_collection_id: str,
     *,
     json: Optional[JSON] = None,
     content: Any = None,
@@ -1772,7 +1772,7 @@ def build_device_management_collect_logs_request(
     _url = "/deviceUpdate/{instanceId}/management/deviceDiagnostics/logCollections/{operationId}"
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
-        "operationId": _SERIALIZER.url("operation_id", operation_id, 'str', max_length=256, min_length=1),
+        "operationId": _SERIALIZER.url("log_collection_id", log_collection_id, 'str', max_length=256, min_length=1),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -1796,9 +1796,9 @@ def build_device_management_collect_logs_request(
     )
 
 
-def build_device_management_get_log_collection_operation_request(
+def build_device_management_get_log_collection_request(
     instance_id: str,
-    operation_id: str,
+    log_collection_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1811,7 +1811,7 @@ def build_device_management_get_log_collection_operation_request(
     _url = "/deviceUpdate/{instanceId}/management/deviceDiagnostics/logCollections/{operationId}"
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
-        "operationId": _SERIALIZER.url("operation_id", operation_id, 'str', max_length=256, min_length=1),
+        "operationId": _SERIALIZER.url("log_collection_id", log_collection_id, 'str', max_length=256, min_length=1),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -1831,7 +1831,7 @@ def build_device_management_get_log_collection_operation_request(
     )
 
 
-def build_device_management_list_log_collection_operations_request(
+def build_device_management_list_log_collections_request(
     instance_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -1864,7 +1864,7 @@ def build_device_management_list_log_collection_operations_request(
     )
 
 
-def build_device_management_get_log_collection_operation_detailed_status_request(
+def build_device_management_get_log_collection_detailed_status_request(
     instance_id: str,
     operation_id: str,
     **kwargs: Any
@@ -3728,7 +3728,12 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         device_class_id: str,
         **kwargs: Any
     ) -> None:
-        """Deletes a device class.
+        """Deletes a device class. Device classes are created automatically when Device Update-enabled
+        devices are connected to the hub but are not automatically cleaned up since they are referenced
+        by DeviceClassSubgroups. If the user has deleted all DeviceClassSubgroups for a device class
+        they can also delete the device class to remove the records from the system and to stop
+        checking the compatibility of this device class with new updates. If a device is ever
+        reconnected for this device class it will be re-created.
 
         :param device_class_id: Device class identifier.
         :type device_class_id: str
@@ -4512,15 +4517,15 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
     def list_groups(
         self,
         *,
-        orderby: Optional[str] = None,
+        order_by: Optional[str] = None,
         **kwargs: Any
     ) -> Iterable[JSON]:
         """Gets a list of all device groups.  The $default group will always be returned first.
 
-        :keyword orderby: Orders the set of groups returned. You can order by any combination of
+        :keyword order_by: Orders the set of groups returned. You can order by any combination of
          groupId, device count, created date, subgroupsWithNewUpdatesAvailableCount,
          subgroupsWithUpdatesInProgressCount, or subgroupsOnLatestUpdateCount. Default value is None.
-        :paramtype orderby: str
+        :paramtype order_by: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -4570,7 +4575,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 request = build_device_management_list_groups_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
-                    orderby=orderby,
+                    order_by=order_by,
                     headers=_headers,
                     params=_params,
                 )
@@ -4715,7 +4720,12 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         group_id: str,
         **kwargs: Any
     ) -> None:
-        """Deletes a device group.
+        """Deletes a device group. This group is automatically created when a Device Update-enabled device
+        is connected to the hub and reports its properties. Groups, subgroups, and deployments are not
+        automatically cleaned up but are retained for history purposes. Users can call this method to
+        delete a group if they do not need to retain any of the history of the group and no longer need
+        it. If a device is ever connected again for this group after the group was deleted it will be
+        automatically re-created but there will be no history.
 
         :param group_id: Group identity.
         :type group_id: str
@@ -4764,7 +4774,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
 
     @distributed_trace
-    def get_group_update_compliance(
+    def get_update_compliance_for_group(
         self,
         group_id: str,
         **kwargs: Any
@@ -4804,7 +4814,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
-        request = build_device_management_get_group_update_compliance_request(
+        request = build_device_management_get_update_compliance_for_group_request(
             instance_id=self._config.instance_id,
             group_id=group_id,
             api_version=api_version,
@@ -4853,7 +4863,8 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :param group_id: Group identity.
         :type group_id: str
         :keyword filter: Restricts the set of bestUpdates returned. You can filter on update Provider,
-         Name and Version property. Default value is None.
+         Name and Version property. This filter is deprecated and should not be used. Default value is
+         None.
         :paramtype filter: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
@@ -4967,16 +4978,16 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         self,
         group_id: str,
         *,
-        orderby: Optional[str] = None,
+        order_by: Optional[str] = None,
         **kwargs: Any
     ) -> Iterable[JSON]:
         """Gets a list of deployments for a device group.
 
         :param group_id: Group identity.
         :type group_id: str
-        :keyword orderby: Orders the set of deployments returned. You can order by start date. Default
+        :keyword order_by: Orders the set of deployments returned. You can order by start date. Default
          value is None.
-        :paramtype orderby: str
+        :paramtype order_by: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -4989,13 +5000,17 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                     "nextLink": "str",  # Optional. The link to the next page of items.
                     "value": [
                         {
-                            "deploymentId": "str",  # Required. The deployment
-                              identifier.
+                            "deploymentId": "str",  # Required. The caller-provided
+                              deployment identifier.
                             "deviceClassSubgroups": [
-                                "str"  # Optional. The device class subgroups for the
-                                  deployment.
+                                "str"  # Optional. The device class subgroups the
+                                  deployment is compatible with and subgroup deployments have been
+                                  created for. This is not provided by the caller during
+                                  CreateOrUpdateDeployment but is automatically determined by Device
+                                  Update.
                             ],
-                            "groupId": "str",  # Required. The group identity.
+                            "groupId": "str",  # Required. The group identity for the
+                              devices the deployment is intended to update.
                             "isCanceled": bool,  # Optional. Boolean flag indicating
                               whether the deployment was canceled.
                             "isCloudInitiatedRollback": bool,  # Optional. Boolean flag
@@ -5059,7 +5074,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                     instance_id=self._config.instance_id,
                     group_id=group_id,
                     api_version=api_version,
-                    orderby=orderby,
+                    order_by=order_by,
                     headers=_headers,
                     params=_params,
                 )
@@ -5138,11 +5153,16 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response.json() == {
-                    "deploymentId": "str",  # Required. The deployment identifier.
+                    "deploymentId": "str",  # Required. The caller-provided deployment
+                      identifier.
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups for the deployment.
+                        "str"  # Optional. The device class subgroups the deployment is
+                          compatible with and subgroup deployments have been created for. This is not
+                          provided by the caller during CreateOrUpdateDeployment but is automatically
+                          determined by Device Update.
                     ],
-                    "groupId": "str",  # Required. The group identity.
+                    "groupId": "str",  # Required. The group identity for the devices the
+                      deployment is intended to update.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -5252,11 +5272,16 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # JSON input template you can fill out and use as your body input.
                 deployment = {
-                    "deploymentId": "str",  # Required. The deployment identifier.
+                    "deploymentId": "str",  # Required. The caller-provided deployment
+                      identifier.
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups for the deployment.
+                        "str"  # Optional. The device class subgroups the deployment is
+                          compatible with and subgroup deployments have been created for. This is not
+                          provided by the caller during CreateOrUpdateDeployment but is automatically
+                          determined by Device Update.
                     ],
-                    "groupId": "str",  # Required. The group identity.
+                    "groupId": "str",  # Required. The group identity for the devices the
+                      deployment is intended to update.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -5295,11 +5320,16 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response.json() == {
-                    "deploymentId": "str",  # Required. The deployment identifier.
+                    "deploymentId": "str",  # Required. The caller-provided deployment
+                      identifier.
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups for the deployment.
+                        "str"  # Optional. The device class subgroups the deployment is
+                          compatible with and subgroup deployments have been created for. This is not
+                          provided by the caller during CreateOrUpdateDeployment but is automatically
+                          determined by Device Update.
                     ],
-                    "groupId": "str",  # Required. The group identity.
+                    "groupId": "str",  # Required. The group identity for the devices the
+                      deployment is intended to update.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -5591,7 +5621,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         *,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> JSON:
+    ) -> Iterable[JSON]:
         """Get the device class subgroups for the group.
 
         :param group_id: Group identity.
@@ -5599,8 +5629,8 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :keyword filter: Restricts the set of device class subgroups returned. You can filter on compat
          properties by name and value. Default value is None.
         :paramtype filter: str
-        :return: JSON object
-        :rtype: JSON
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -5612,68 +5642,94 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                     "value": [
                         {
                             "createdDateTime": "str",  # Required. Date and time when the
-                              deviceclass subgroup was created.
+                              device class subgroup was created.
                             "deploymentId": "str",  # Optional. The active deployment Id
-                              for the deviceclass subgroup.
+                              for the device class subgroup.
                             "deviceClassId": "str",  # Required. Device class subgroup
                               identity.
                             "deviceCount": 0,  # Optional. The number of devices in the
-                              deviceclass subgroup.
+                              device class subgroup.
                             "groupId": "str"  # Required. Group identity.
                         }
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        
-        request = build_device_management_list_device_class_subgroups_for_group_request(
-            instance_id=self._config.instance_id,
-            group_id=group_id,
-            api_version=api_version,
-            filter=filter,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        error_map.update(kwargs.pop('error_map', {}) or {})
+        def prepare_request(next_link=None):
+            if not next_link:
+                
+                request = build_device_management_list_device_class_subgroups_for_group_request(
+                    instance_id=self._config.instance_id,
+                    group_id=group_id,
+                    api_version=api_version,
+                    filter=filter,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            else:
+                
+                request = build_device_management_list_device_class_subgroups_for_group_request(
+                    instance_id=self._config.instance_id,
+                    group_id=group_id,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.method = "GET"
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["value"]
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink", None), iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+
+        return ItemPaged(
+            get_next, extract_data
         )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
-
-        if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
-
-        return cast(JSON, deserialized)
-
 
 
     @distributed_trace
-    def get_device_class_subgroup_details(
+    def get_device_class_subgroup(
         self,
         group_id: str,
         device_class_id: str,
@@ -5694,12 +5750,12 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response.json() == {
-                    "createdDateTime": "str",  # Required. Date and time when the deviceclass
+                    "createdDateTime": "str",  # Required. Date and time when the device class
                       subgroup was created.
-                    "deploymentId": "str",  # Optional. The active deployment Id for the
-                      deviceclass subgroup.
+                    "deploymentId": "str",  # Optional. The active deployment Id for the device
+                      class subgroup.
                     "deviceClassId": "str",  # Required. Device class subgroup identity.
-                    "deviceCount": 0,  # Optional. The number of devices in the deviceclass
+                    "deviceCount": 0,  # Optional. The number of devices in the device class
                       subgroup.
                     "groupId": "str"  # Required. Group identity.
                 }
@@ -5716,7 +5772,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
-        request = build_device_management_get_device_class_subgroup_details_request(
+        request = build_device_management_get_device_class_subgroup_request(
             instance_id=self._config.instance_id,
             group_id=group_id,
             device_class_id=device_class_id,
@@ -5892,7 +5948,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
 
     @distributed_trace
-    def list_best_updates_for_device_class_subgroup(
+    def get_best_updates_for_device_class_subgroup(
         self,
         group_id: str,
         device_class_id: str,
@@ -5942,7 +5998,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
-        request = build_device_management_list_best_updates_for_device_class_subgroup_request(
+        request = build_device_management_get_best_updates_for_device_class_subgroup_request(
             instance_id=self._config.instance_id,
             group_id=group_id,
             device_class_id=device_class_id,
@@ -5984,7 +6040,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         group_id: str,
         device_class_id: str,
         *,
-        orderby: Optional[str] = None,
+        order_by: Optional[str] = None,
         **kwargs: Any
     ) -> Iterable[JSON]:
         """Gets a list of deployments for a device class subgroup.
@@ -5993,9 +6049,9 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :type group_id: str
         :param device_class_id: Device class identifier.
         :type device_class_id: str
-        :keyword orderby: Orders the set of deployments returned. You can order by start date. Default
+        :keyword order_by: Orders the set of deployments returned. You can order by start date. Default
          value is None.
-        :paramtype orderby: str
+        :paramtype order_by: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -6008,13 +6064,17 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                     "nextLink": "str",  # Optional. The link to the next page of items.
                     "value": [
                         {
-                            "deploymentId": "str",  # Required. The deployment
-                              identifier.
+                            "deploymentId": "str",  # Required. The caller-provided
+                              deployment identifier.
                             "deviceClassSubgroups": [
-                                "str"  # Optional. The device class subgroups for the
-                                  deployment.
+                                "str"  # Optional. The device class subgroups the
+                                  deployment is compatible with and subgroup deployments have been
+                                  created for. This is not provided by the caller during
+                                  CreateOrUpdateDeployment but is automatically determined by Device
+                                  Update.
                             ],
-                            "groupId": "str",  # Required. The group identity.
+                            "groupId": "str",  # Required. The group identity for the
+                              devices the deployment is intended to update.
                             "isCanceled": bool,  # Optional. Boolean flag indicating
                               whether the deployment was canceled.
                             "isCloudInitiatedRollback": bool,  # Optional. Boolean flag
@@ -6079,7 +6139,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                     group_id=group_id,
                     device_class_id=device_class_id,
                     api_version=api_version,
-                    orderby=orderby,
+                    order_by=order_by,
                     headers=_headers,
                     params=_params,
                 )
@@ -6162,11 +6222,16 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response.json() == {
-                    "deploymentId": "str",  # Required. The deployment identifier.
+                    "deploymentId": "str",  # Required. The caller-provided deployment
+                      identifier.
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups for the deployment.
+                        "str"  # Optional. The device class subgroups the deployment is
+                          compatible with and subgroup deployments have been created for. This is not
+                          provided by the caller during CreateOrUpdateDeployment but is automatically
+                          determined by Device Update.
                     ],
-                    "groupId": "str",  # Required. The group identity.
+                    "groupId": "str",  # Required. The group identity for the devices the
+                      deployment is intended to update.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -6253,7 +6318,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
 
     @distributed_trace
-    def delete_device_class_subgroup_deployment(  # pylint: disable=inconsistent-return-statements
+    def delete_deployment_for_device_class_subgroup(  # pylint: disable=inconsistent-return-statements
         self,
         group_id: str,
         device_class_id: str,
@@ -6284,7 +6349,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
-        request = build_device_management_delete_device_class_subgroup_deployment_request(
+        request = build_device_management_delete_deployment_for_device_class_subgroup_request(
             instance_id=self._config.instance_id,
             group_id=group_id,
             device_class_id=device_class_id,
@@ -6339,11 +6404,16 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response.json() == {
-                    "deploymentId": "str",  # Required. The deployment identifier.
+                    "deploymentId": "str",  # Required. The caller-provided deployment
+                      identifier.
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups for the deployment.
+                        "str"  # Optional. The device class subgroups the deployment is
+                          compatible with and subgroup deployments have been created for. This is not
+                          provided by the caller during CreateOrUpdateDeployment but is automatically
+                          determined by Device Update.
                     ],
-                    "groupId": "str",  # Required. The group identity.
+                    "groupId": "str",  # Required. The group identity for the devices the
+                      deployment is intended to update.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -6454,11 +6524,16 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response.json() == {
-                    "deploymentId": "str",  # Required. The deployment identifier.
+                    "deploymentId": "str",  # Required. The caller-provided deployment
+                      identifier.
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups for the deployment.
+                        "str"  # Optional. The device class subgroups the deployment is
+                          compatible with and subgroup deployments have been created for. This is not
+                          provided by the caller during CreateOrUpdateDeployment but is automatically
+                          determined by Device Update.
                     ],
-                    "groupId": "str",  # Required. The group identity.
+                    "groupId": "str",  # Required. The group identity for the devices the
+                      deployment is intended to update.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -6655,7 +6730,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
 
     @distributed_trace
-    def list_devices_for_device_class_subgroup_deployment(
+    def list_device_states_for_device_class_subgroup_deployment(
         self,
         group_id: str,
         device_class_id: str,
@@ -6714,7 +6789,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_device_management_list_devices_for_device_class_subgroup_deployment_request(
+                request = build_device_management_list_device_states_for_device_class_subgroup_deployment_request(
                     instance_id=self._config.instance_id,
                     group_id=group_id,
                     device_class_id=device_class_id,
@@ -6731,7 +6806,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             else:
                 
-                request = build_device_management_list_devices_for_device_class_subgroup_deployment_request(
+                request = build_device_management_list_device_states_for_device_class_subgroup_deployment_request(
                     instance_id=self._config.instance_id,
                     group_id=group_id,
                     device_class_id=device_class_id,
@@ -7027,18 +7102,18 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
 
     @distributed_trace
-    def collect_logs(
+    def start_log_collection(
         self,
-        operation_id: str,
-        log_collection_request: JSON,
+        log_collection_id: str,
+        log_collection: JSON,
         **kwargs: Any
     ) -> JSON:
-        """Start the device diagnostics log collection operation on specified devices.
+        """Start the device diagnostics log collection on specified devices.
 
-        :param operation_id: Operation identifier.
-        :type operation_id: str
-        :param log_collection_request: The deployment properties.
-        :type log_collection_request: JSON
+        :param log_collection_id: Log collection identifier.
+        :type log_collection_id: str
+        :param log_collection: The log collection properties.
+        :type log_collection: JSON
         :return: JSON object
         :rtype: JSON
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -7047,7 +7122,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                log_collection_request = {
+                log_collection = {
                     "createdDateTime": "str",  # Optional. The timestamp when the operation was
                       created.
                     "description": "str",  # Optional. Description of the diagnostics operation.
@@ -7059,7 +7134,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                     ],
                     "lastActionDateTime": "str",  # Optional. A timestamp for when the current
                       state was entered.
-                    "operationId": "str",  # Optional. The diagnostics operation id.
+                    "operationId": "str",  # Optional. The log collection id.
                     "status": "str"  # Optional. Operation status. Known values are:
                       "NotStarted", "Running", "Succeeded", "Failed".
                 }
@@ -7077,7 +7152,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                     ],
                     "lastActionDateTime": "str",  # Optional. A timestamp for when the current
                       state was entered.
-                    "operationId": "str",  # Optional. The diagnostics operation id.
+                    "operationId": "str",  # Optional. The log collection id.
                     "status": "str"  # Optional. Operation status. Known values are:
                       "NotStarted", "Running", "Succeeded", "Failed".
                 }
@@ -7094,11 +7169,11 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        _json = log_collection_request
+        _json = log_collection
 
-        request = build_device_management_collect_logs_request(
+        request = build_device_management_start_log_collection_request(
             instance_id=self._config.instance_id,
-            operation_id=operation_id,
+            log_collection_id=log_collection_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -7134,15 +7209,15 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
 
     @distributed_trace
-    def get_log_collection_operation(
+    def get_log_collection(
         self,
-        operation_id: str,
+        log_collection_id: str,
         **kwargs: Any
     ) -> JSON:
-        """Get the device diagnostics log collection operation.
+        """Get the device diagnostics log collection.
 
-        :param operation_id: Operation identifier.
-        :type operation_id: str
+        :param log_collection_id: Log collection identifier.
+        :type log_collection_id: str
         :return: JSON object
         :rtype: JSON
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -7163,7 +7238,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                     ],
                     "lastActionDateTime": "str",  # Optional. A timestamp for when the current
                       state was entered.
-                    "operationId": "str",  # Optional. The diagnostics operation id.
+                    "operationId": "str",  # Optional. The log collection id.
                     "status": "str"  # Optional. Operation status. Known values are:
                       "NotStarted", "Running", "Succeeded", "Failed".
                 }
@@ -7180,9 +7255,9 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
-        request = build_device_management_get_log_collection_operation_request(
+        request = build_device_management_get_log_collection_request(
             instance_id=self._config.instance_id,
-            operation_id=operation_id,
+            log_collection_id=log_collection_id,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -7216,11 +7291,11 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
 
     @distributed_trace
-    def list_log_collection_operations(
+    def list_log_collections(
         self,
         **kwargs: Any
     ) -> Iterable[JSON]:
-        """Get all device diagnostics log collection operations.
+        """Get all device diagnostics log collections.
 
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
@@ -7246,8 +7321,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                             ],
                             "lastActionDateTime": "str",  # Optional. A timestamp for
                               when the current state was entered.
-                            "operationId": "str",  # Optional. The diagnostics operation
-                              id.
+                            "operationId": "str",  # Optional. The log collection id.
                             "status": "str"  # Optional. Operation status. Known values
                               are: "NotStarted", "Running", "Succeeded", "Failed".
                         }
@@ -7267,7 +7341,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_device_management_list_log_collection_operations_request(
+                request = build_device_management_list_log_collections_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                     headers=_headers,
@@ -7280,7 +7354,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             else:
                 
-                request = build_device_management_list_log_collection_operations_request(
+                request = build_device_management_list_log_collections_request(
                     instance_id=self._config.instance_id,
                     headers=_headers,
                     params=_params,
@@ -7326,12 +7400,12 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
 
     @distributed_trace
-    def get_log_collection_operation_detailed_status(
+    def get_log_collection_detailed_status(
         self,
         operation_id: str,
         **kwargs: Any
     ) -> JSON:
-        """Get device diagnostics log collection operation with detailed status.
+        """Get log collection with detailed status.
 
         :param operation_id: Operation identifier.
         :type operation_id: str
@@ -7378,7 +7452,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
-        request = build_device_management_get_log_collection_operation_detailed_status_request(
+        request = build_device_management_get_log_collection_detailed_status_request(
             instance_id=self._config.instance_id,
             operation_id=operation_id,
             api_version=api_version,
@@ -7419,13 +7493,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         *,
         filter: str,
         **kwargs: Any
-    ) -> JSON:
+    ) -> Iterable[JSON]:
         """Get list of device health.
 
         :keyword filter: Filter list by specified properties.
         :paramtype filter: str
-        :return: JSON object
-        :rtype: JSON
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -7454,49 +7528,74 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        
-        request = build_device_management_list_device_health_request(
-            instance_id=self._config.instance_id,
-            api_version=api_version,
-            filter=filter,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        error_map.update(kwargs.pop('error_map', {}) or {})
+        def prepare_request(next_link=None):
+            if not next_link:
+                
+                request = build_device_management_list_device_health_request(
+                    instance_id=self._config.instance_id,
+                    api_version=api_version,
+                    filter=filter,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            else:
+                
+                request = build_device_management_list_device_health_request(
+                    instance_id=self._config.instance_id,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.method = "GET"
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["value"]
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink", None), iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+
+        return ItemPaged(
+            get_next, extract_data
         )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
-
-        if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
-
-        return cast(JSON, deserialized)
-
 
