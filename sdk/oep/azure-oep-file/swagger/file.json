@@ -1,0 +1,728 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2021-06-01-preview",
+    "title": "Api Documentation",
+    "description": "Api Documentation",
+    "contact": {}
+  },
+
+  "securityDefinitions": {
+    "Authorization": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/file/v2/files/{id}/downloadURL": {
+      "get": {
+        "description": "downloadURL",
+        "summary": "downloadURLUsingGET",
+        "tags": [
+          "file-delivery-api"
+        ],
+        "operationId": "downloadURLUsingGET",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "frame-of-reference",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "reference"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "id"
+          },
+          {
+            "name": "expiryTime",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "expiryTime"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/DownloadUrlResponse"
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "downloadURLUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/downloadURLUsingGET_MaximumSet_Gen.json"
+          },
+          "downloadURLUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/downloadURLUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/file/v2/files/uploadURL": {
+      "get": {
+        "description": "getLocationFile",
+        "summary": "getLocationFileUsingGET",
+        "tags": [
+          "file-location-api"
+        ],
+        "operationId": "getLocationFileUsingGET",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "frame-of-reference",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "reference"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/LocationResponse"
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "getLocationFileUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/getLocationFileUsingGET_MaximumSet_Gen.json"
+          },
+          "getLocationFileUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/getLocationFileUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/file/v2/files/metadata": {
+      "post": {
+        "description": "postFilesMetadata",
+        "summary": "postFilesMetadataUsingPOST",
+        "tags": [
+          "file-metadata-api"
+        ],
+        "operationId": "postFilesMetadataUsingPOST",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "frame-of-reference",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "reference"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": false,
+            "enum": [
+              "application/json"
+            ],
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/FileMetadata"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/FileMetadataResponse"
+            },
+            "headers": {}
+          },
+          "201": {
+            "description": "Created",
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "postFilesMetadataUsingPOST_MaximumSet_Gen": {
+            "$ref": "./examples/postFilesMetadataUsingPOST_MaximumSet_Gen.json"
+          },
+          "postFilesMetadataUsingPOST_MinimumSet_Gen": {
+            "$ref": "./examples/postFilesMetadataUsingPOST_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/file/v2/files/{id}/metadata": {
+      "get": {
+        "description": "getFileMetadataById",
+        "summary": "getFileMetadataByIdUsingGET",
+        "tags": [
+          "file-metadata-api"
+        ],
+        "operationId": "getFileMetadataByIdUsingGET",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "frame-of-reference",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "reference"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/RecordVersion"
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "getFileMetadataByIdUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/getFileMetadataByIdUsingGET_MaximumSet_Gen.json"
+          },
+          "getFileMetadataByIdUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/getFileMetadataByIdUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/file/v2/liveness_check": {
+      "get": {
+        "description": "livenessCheck",
+        "summary": "livenessCheckUsingGET",
+        "tags": [
+          "health-check-api"
+        ],
+        "operationId": "livenessCheckUsingGET",
+        "deprecated": false,
+        "produces": [
+          "text/plain"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "frame-of-reference",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "reference"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Authorization": [
+              "global"
+            ]
+          }
+        ],
+        "x-ms-examples": {
+          "livenessCheckUsingGET_MaximumSet_Gen": {
+            "$ref": "./examples/livenessCheckUsingGET_MaximumSet_Gen.json"
+          },
+          "livenessCheckUsingGET_MinimumSet_Gen": {
+            "$ref": "./examples/livenessCheckUsingGET_MinimumSet_Gen.json"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Acl": {
+      "title": "Acl",
+      "type": "object",
+      "properties": {
+        "owners": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "viewers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Ancestry": {
+      "title": "Ancestry",
+      "type": "object",
+      "properties": {
+        "parents": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "DatasetProperties": {
+      "title": "DatasetProperties",
+      "type": "object",
+      "properties": {
+        "fileSourceInfo": {
+          "$ref": "#/definitions/FileSourceInfo"
+        }
+      },
+      "required": [
+        "fileSourceInfo"
+      ]
+    },
+    "DownloadUrlResponse": {
+      "title": "DownloadUrlResponse",
+      "type": "object",
+      "properties": {
+        "signedUrl": {
+          "type": "string"
+        }
+      }
+    },
+    "FileData": {
+      "title": "FileData",
+      "type": "object",
+      "properties": {
+        "checksum": {
+          "type": "string"
+        },
+        "datasetProperties": {
+          "$ref": "#/definitions/DatasetProperties"
+        },
+        "description": {
+          "type": "string"
+        },
+        "encodingFormatTypeID": {
+          "type": "string"
+        },
+        "endian": {
+          "$ref": "#/definitions/Endian"
+        },
+        "existenceKind": {
+          "type": "string"
+        },
+        "extensionProperties": {
+          "type": "object"
+        },
+        "name": {
+          "type": "string"
+        },
+        "resourceCurationStatus": {
+          "type": "string"
+        },
+        "resourceHomeRegionID": {
+          "type": "string"
+        },
+        "resourceHostRegionIDs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "resourceLifecycleStatus": {
+          "type": "string"
+        },
+        "resourceSecurityClassification": {
+          "type": "string"
+        },
+        "schemaFormatTypeID": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "totalSize": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "datasetProperties"
+      ]
+    },
+    "FileMetadata": {
+      "title": "FileMetadata",
+      "type": "object",
+      "properties": {
+        "acl": {
+          "$ref": "#/definitions/Acl"
+        },
+        "ancestry": {
+          "$ref": "#/definitions/Ancestry"
+        },
+        "data": {
+          "$ref": "#/definitions/FileData"
+        },
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "legal": {
+          "$ref": "#/definitions/Legal"
+        },
+        "meta": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "acl",
+        "data",
+        "kind",
+        "legal"
+      ]
+    },
+    "FileMetadataResponse": {
+      "title": "FileMetadataResponse",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "FileSourceInfo": {
+      "title": "FileSourceInfo",
+      "type": "object",
+      "properties": {
+        "checksum": {
+          "type": "string"
+        },
+        "checksumAlgorithm": {
+          "type": "string"
+        },
+        "encodingFormatTypeID": {
+          "type": "string"
+        },
+        "fileSize": {
+          "type": "string"
+        },
+        "fileSource": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "preLoadFilePath": {
+          "type": "string"
+        },
+        "preloadFileCreateDate": {
+          "type": "string"
+        },
+        "preloadFileCreateUser": {
+          "type": "string"
+        },
+        "preloadFileModifyDate": {
+          "type": "string"
+        },
+        "preloadFileModifyUser": {
+          "type": "string"
+        }
+      }
+    },
+    "Legal": {
+      "title": "Legal",
+      "type": "object",
+      "properties": {
+        "legaltags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "otherRelevantDataCountries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "status": {
+          "$ref": "#/definitions/Status"
+        }
+      }
+    },
+    "LocationResponse": {
+      "title": "LocationResponse",
+      "type": "object",
+      "properties": {
+        "fileID": {
+          "type": "string"
+        },
+        "location": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "RecordVersion": {
+      "title": "RecordVersion",
+      "type": "object",
+      "properties": {
+        "acl": {
+          "$ref": "#/definitions/Acl"
+        },
+        "ancestry": {
+          "$ref": "#/definitions/Ancestry"
+        },
+        "data": {
+          "$ref": "#/definitions/FileData"
+        },
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "legal": {
+          "$ref": "#/definitions/Legal"
+        },
+        "meta": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "version": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "required": [
+        "acl",
+        "data",
+        "kind",
+        "legal"
+      ]
+    },
+    "Endian": {
+      "title": "Endian",
+      "type": "string",
+      "enum": [
+        "BIG",
+        "LITTLE"
+      ]
+    },
+    "Status": {
+      "title": "Status",
+      "type": "string",
+      "enum": [
+        "compliant",
+        "incompliant"
+      ]
+    }
+  },
+  "security": [],
+  "tags": [
+    {
+      "name": "file-delivery-api",
+      "description": "File Delivery Api"
+    },
+    {
+      "name": "file-location-api",
+      "description": "File Location Api"
+    },
+    {
+      "name": "file-metadata-api",
+      "description": "File Metadata Api"
+    },
+    {
+      "name": "health-check-api",
+      "description": "Health Check Api"
+    }
+  ]
+}
