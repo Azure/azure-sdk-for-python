@@ -155,6 +155,9 @@
 # PRLabel: %Cognitive - Translator
 /sdk/translation/                                                    @kristapratico @mohamedshabanofficial
 
+# PRLabel: %Cognitive - Language
+/sdk/cognitivelanguage/                                              @kristapratico @mohamedshabanofficial
+
 # PRLabel: %Tables
 /sdk/tables/                                                         @annatisch @YalinLi0312
 
