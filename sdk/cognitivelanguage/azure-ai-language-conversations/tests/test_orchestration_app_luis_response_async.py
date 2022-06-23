@@ -15,6 +15,7 @@ from azure.ai.language.conversations.aio import ConversationAnalysisClient
 
 class OrchestrationAppLuisResponseAsyncTests(AsyncConversationTest):
 
+    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/24962")
     @GlobalConversationAccountPreparer()
     async def test_orchestration_app_luis_response(self, endpoint, key, orch_project_name, orch_deployment_name):
 

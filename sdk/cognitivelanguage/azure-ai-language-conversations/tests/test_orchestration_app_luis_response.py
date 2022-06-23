@@ -18,6 +18,7 @@ from azure.ai.language.conversations import ConversationAnalysisClient
 
 class OrchestrationAppLuisResponseTests(ConversationTest):
 
+    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/24962")
     @GlobalConversationAccountPreparer()
     def test_orchestration_app_luis_response(self, endpoint, key, orch_project_name, orch_deployment_name):
 
@@ -45,7 +46,7 @@ class OrchestrationAppLuisResponseTests(ConversationTest):
                     }
                 }
             )
-        
+            print(result)
             # assert - main object
             top_project = "RestaurantIntent"
             assert not result is None
