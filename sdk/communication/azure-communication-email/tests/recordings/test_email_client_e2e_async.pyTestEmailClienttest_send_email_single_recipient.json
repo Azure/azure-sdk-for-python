@@ -12,7 +12,7 @@
         "repeatability-request-id": "sanitized",
         "User-Agent": "azsdk-python-communication-email/1.0.0b1 Python/3.10.4 (Windows-10-10.0.19044-SP0)",
         "x-ms-content-sha256": "sanitized",
-        "x-ms-date": "Thu, 23 Jun 2022 00:31:48 GMT",
+        "x-ms-date": "Thu, 23 Jun 2022 18:29:48 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {

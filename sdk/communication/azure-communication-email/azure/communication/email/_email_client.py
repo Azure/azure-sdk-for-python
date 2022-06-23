@@ -1,3 +1,9 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 from uuid import uuid4
 from azure.core.tracing.decorator import distributed_trace
 from ._shared.utils import parse_connection_str, get_current_utc_time
@@ -6,23 +12,24 @@ from ._generated._azure_communication_email_service import AzureCommunicationEma
 from ._version import SDK_MONIKER
 from ._generated.models import SendEmailResult, SendStatusResult, EmailMessage
 
-class EmailClient(object):
+class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with the AzureCommunicationService Email gateway.
 
     This client provides operations to send an email and monitor its status.
 
-    :param str conn_string:
-        The connection string to connect to an Azure Communication Service resource.
-        Example: "endpoint=https://contoso.eastus.communications.azure.net/;accesskey=secret";
+    :param str endpoint:
+        The endpoint url for Azure Communication Service resource.
+    :param TokenCredential credential:
+        The TokenCredential we use to authenticate against the service.
     """
     def __init__(
             self,
-            conn_str, # type: str
+            endpoint, # type: str
+            credential, # type: str
             **kwargs # type: Any
         ):
         # type: (...) -> None
-        endpoint, access_key = parse_connection_str(conn_str)
-        authentication_policy = HMACCredentialsPolicy(endpoint, access_key)
+        authentication_policy = HMACCredentialsPolicy(endpoint, credential)
 
         self._generated_client = AzureCommunicationEmailService(
             endpoint,
@@ -30,6 +37,23 @@ class EmailClient(object):
             sdk_moniker=SDK_MONIKER,
             **kwargs
         )
+    
+    @classmethod
+    def from_connection_string(
+        cls,
+        conn_str, # type: str
+        **kwargs # type: Any
+    ): # type: (...) -> EmailClient
+        """Create EmailClient from a Connection String.
+
+        :param str conn_str:
+            A connection string to an Azure Communication Service resource.
+        :returns: Instance of EmailClient.
+        :rtype: ~azure.communication.EmailClient
+        """
+        endpoint, access_key = parse_connection_str(conn_str)
+
+        return cls(endpoint, access_key, **kwargs)
 
     @distributed_trace
     def send(
@@ -51,7 +75,7 @@ class EmailClient(object):
             email_message=email_message,
             **kwargs
         )
-    
+
     @distributed_trace
     def get_send_status(
         self,
