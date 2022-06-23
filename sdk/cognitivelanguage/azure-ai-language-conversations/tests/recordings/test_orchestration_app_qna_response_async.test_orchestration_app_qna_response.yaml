@@ -8,11 +8,11 @@ interactions:
       Accept:
       - application/json
       Content-Length:
-      - '290'
+      - '298'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-conversations/1.0GA Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-conversations/1.0.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?api-version=2022-05-01
   response:
@@ -27,21 +27,21 @@ interactions:
         how are you doing?","How''s the day treating you?","How''s life?","How''s
         life treating you?","How are you today?","Yo, how are you?","How you doing?","How
         you doing bot?","How ya doing?","How is the day treating ya?","How''s it hanging?"],"answer":"I''m
-        doing great, thanks for asking!","confidenceScore":1.0,"id":72,"source":"qna_chitchat_friendly.tsv","metadata":{"editorial":"chitchat"},"dialog":{"isContextOnly":false,"prompts":[]}}]}},"RestaurantIntent":{"confidenceScore":0.52488816,"targetProjectKind":"Luis"},"EmailIntent":{"confidenceScore":0.20137204,"targetProjectKind":"Conversation"},"None":{"confidenceScore":0.16740131,"targetProjectKind":"NonLinked"}}}}}'
+        doing great, thanks for asking!","confidenceScore":1.0,"id":72,"source":"qna_chitchat_friendly.tsv","metadata":{"editorial":"chitchat"},"dialog":{"isContextOnly":false,"prompts":[]}}]}},"EmailIntent":{"confidenceScore":0.2013731,"targetProjectKind":"Conversation"},"None":{"confidenceScore":0.1674014,"targetProjectKind":"NonLinked"}}}}}'
     headers:
-      apim-request-id: 2fc570ea-3ea0-4f49-921b-aa2839e62785
+      apim-request-id: 5a6de398-5183-4de1-9791-35fa9cba9292
       cache-control: no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.Language.OrchestrationWorkflow.Prediction=1
-      date: Tue, 31 May 2022 14:25:22 GMT
+      date: Thu, 23 Jun 2022 21:02:46 GMT
       pragma: no-cache
-      request-id: 2fc570ea-3ea0-4f49-921b-aa2839e62785
+      request-id: 5a6de398-5183-4de1-9791-35fa9cba9292
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '1211'
+      x-envoy-upstream-service-time: '672'
     status:
       code: 200
       message: OK
-    url: https://languagesdktest.cognitiveservices.azure.com//language/:analyze-conversations?api-version=2022-05-01
+    url: https://languagesdkresource.cognitiveservices.azure.com//language/:analyze-conversations?api-version=2022-05-01
 version: 1

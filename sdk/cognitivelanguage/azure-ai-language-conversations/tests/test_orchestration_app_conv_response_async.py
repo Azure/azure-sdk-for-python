@@ -8,16 +8,14 @@ import pytest
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
-
 from testcase import GlobalConversationAccountPreparer
 from asynctestcase import AsyncConversationTest
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 
-
-class ConversationAppAsyncTests(AsyncConversationTest):
+class OrchestrationAppConvResponseAsyncTests(AsyncConversationTest):
 
     @GlobalConversationAccountPreparer()
-    async def test_conversation_app(self, endpoint, key, conv_project_name, conv_deployment_name):
+    async def test_orchestration_app_conv_response(self, endpoint, key, orch_project_name, orch_deployment_name):
 
         # analyze query
         client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
@@ -37,29 +35,36 @@ class ConversationAppAsyncTests(AsyncConversationTest):
                         "isLoggingEnabled": False
                     },
                     "parameters": {
-                        "projectName": conv_project_name,
-                        "deploymentName": conv_deployment_name,
+                        "projectName": orch_project_name,
+                        "deploymentName": orch_deployment_name,
                         "verbose": True
                     }
                 }
             )
         
             # assert - main object
+            top_project = "EmailIntent"
             assert not result is None
             assert result["kind"] == "ConversationResult"
+            assert result["result"]["query"] == query
             
             # assert - prediction type
-            assert result["result"]["query"] == query
-            assert result["result"]["prediction"]["projectKind"] == 'Conversation'
+            assert result["result"]["prediction"]["projectKind"] == "Orchestration"
             
-            # assert - top intent
-            assert result["result"]["prediction"]["topIntent"] == 'Setup'
-            assert len(result["result"]["prediction"]["intents"]) > 0
-            assert result["result"]["prediction"]["intents"][0]["category"] == 'Setup'
-            assert result["result"]["prediction"]["intents"][0]["confidenceScore"] > 0
+            # assert - top matching project
+            assert result["result"]["prediction"]["topIntent"] == top_project
+            top_intent_object = result["result"]["prediction"]["intents"][top_project]
+            assert top_intent_object["targetProjectKind"] == "Conversation"
+            
+            # assert intent and entities
+            conversation_result = top_intent_object["result"]["prediction"]
+            assert conversation_result["topIntent"] == 'Send'
+            assert len(conversation_result["intents"]) > 0
+            assert conversation_result["intents"][0]["category"] == 'Send'
+            assert conversation_result["intents"][0]["confidenceScore"] > 0
             
             # assert - entities
-            assert len(result["result"]["prediction"]["entities"]) > 0
-            assert result["result"]["prediction"]["entities"][0]["category"] == 'Contact'
-            assert result["result"]["prediction"]["entities"][0]["text"] == 'Carol'
-            assert result["result"]["prediction"]["entities"][0]["confidenceScore"] > 0
+            assert len(conversation_result["entities"]) > 0
+            assert conversation_result["entities"][0]["category"] == 'Contact'
+            assert conversation_result["entities"][0]["text"] == 'Carol'
+            assert conversation_result["entities"][0]["confidenceScore"] > 0

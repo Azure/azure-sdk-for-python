@@ -7,10 +7,6 @@ interactions:
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
       - '334'
       Content-Type:
@@ -25,29 +21,19 @@ interactions:
         about the tomorrow''s demo","prediction":{"topIntent":"EmailIntent","projectKind":"Orchestration","intents":{"EmailIntent":{"confidenceScore":0.7871725,"targetProjectKind":"Conversation","result":{"query":"Send
         an email to Carol about the tomorrow''s demo","prediction":{"topIntent":"Send","projectKind":"Conversation","intents":[{"category":"Send","confidenceScore":0.9053172},{"category":"Read","confidenceScore":0.44011447},{"category":"Setup","confidenceScore":0.41303915},{"category":"Set","confidenceScore":0.21186642},{"category":"None","confidenceScore":0.20198277},{"category":"Find","confidenceScore":0.19216746},{"category":"Call","confidenceScore":0.16446844},{"category":"Play","confidenceScore":0.15655291},{"category":"Open","confidenceScore":0.08699014}],"entities":[{"category":"Contact","text":"Carol","offset":17,"length":5,"confidenceScore":1,"extraInformation":[{"extraInformationKind":"EntitySubtype","value":"person.name"}]},{"category":"MeetingDate","text":"tomorrow","offset":33,"length":8,"confidenceScore":1,"resolutions":[{"resolutionKind":"DateTimeResolution","dateTimeSubKind":"Date","timex":"2022-06-24","value":"2022-06-24"}],"extraInformation":[{"extraInformationKind":"EntitySubtype","value":"datetime.date"}]}]}}},"ChitChat-QnA":{"confidenceScore":0.65083516,"targetProjectKind":"QuestionAnswering"},"None":{"confidenceScore":0.15003009,"targetProjectKind":"NonLinked"}}}}}'
     headers:
-      apim-request-id:
-      - 5f0228b5-1ca9-4d59-a52e-ef0aa816997e
-      cache-control:
-      - no-store, proxy-revalidate, no-cache, max-age=0, private
-      content-type:
-      - application/json; charset=utf-8
-      csp-billing-usage:
-      - CognitiveServices.TextAnalytics.Language.OrchestrationWorkflow.Prediction=1
-      date:
-      - Thu, 23 Jun 2022 21:02:42 GMT
-      pragma:
-      - no-cache
-      request-id:
-      - 5f0228b5-1ca9-4d59-a52e-ef0aa816997e
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '217'
+      apim-request-id: cee88da1-a191-496c-b57a-15d6d1ef768d
+      cache-control: no-store, proxy-revalidate, no-cache, max-age=0, private
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.Language.OrchestrationWorkflow.Prediction=1
+      date: Thu, 23 Jun 2022 21:02:43 GMT
+      pragma: no-cache
+      request-id: cee88da1-a191-496c-b57a-15d6d1ef768d
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '192'
     status:
       code: 200
       message: OK
+    url: https://languagesdkresource.cognitiveservices.azure.com//language/:analyze-conversations?api-version=2022-05-01
 version: 1

@@ -322,6 +322,10 @@ result = client.analyze_conversation(..., logging_enable=True)
 
 ## Next steps
 
+### More sample code
+
+See the [Sample README][conversationallanguage_samples] for several code snippets illustrating common patterns used in the CLU Python API.
+
 ## Contributing
 
 See the [CONTRIBUTING.md][contributing] for details on building, testing, and contributing to this library.
