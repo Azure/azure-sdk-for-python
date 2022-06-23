@@ -4,6 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 
-VERSION = "1.1.0b3"
 
-SDK_MONIKER = "communication-phonenumbers/{}".format(VERSION)  # type: str
+from ._sip_routing_client import SipRoutingClient
+from ._generated.models import SipTrunkRoute
+from ._models import SipTrunk
+
+__all__ = [
+    'SipRoutingClient',
+    'SipTrunk',
+    'SipTrunkRoute'
+]
