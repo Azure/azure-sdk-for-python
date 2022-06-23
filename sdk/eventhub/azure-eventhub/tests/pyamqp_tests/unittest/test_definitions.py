@@ -24,21 +24,3 @@ def test_annotations():
 
     assert value is not test_value
 
-
-# def test_delivery_annotations():
-#     test_value = c_uamqp.bool_value(True)
-#     value = c_uamqp.create_delivery_annotations(test_value)
-
-#     # TODO
-#     #a_map = value.value
-#     #assert a_map.type == c_uamqp.AMQPType.DictValue
-
-
-# def test_message_annotations():
-#     test_value = c_uamqp.bool_value(True)
-#     value = c_uamqp.create_message_annotations(test_value)
-
-#     # TODO
-#     #a_map = value.value
-#     #assert a_map.type == c_uamqp.AMQPType.DictValue
-

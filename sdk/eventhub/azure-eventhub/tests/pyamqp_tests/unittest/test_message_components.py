@@ -72,6 +72,7 @@ def test_message_pickle():
 
     message = Message(value="test", properties=properties, header=header)
     message = message._replace(footer = {'a':2})
+    
     pickle_list = []
     pickle_list.append(message)
 
