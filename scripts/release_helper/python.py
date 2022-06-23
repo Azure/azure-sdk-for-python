@@ -89,7 +89,7 @@ class IssueProcessPython(IssueProcess):
             comment = f'Hi @{self.owner}, pypi link: https://pypi.org/project/{self.package_name}/{last_version}/'
             self.issue_package.issue.create_comment(body=comment)
             self.issue_package.issue.edit(state='closed')
-            self.add_label('auto-closed')
+            self.add_label(AUTO_CLOSE_LABEL)
             self.is_open = False
             self.log(f"{self.issue_package.issue.number} has been closed!")
             record_release(self.package_name, self.issue_package.issue, _FILE_OUT)
