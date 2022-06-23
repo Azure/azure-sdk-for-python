@@ -46,7 +46,7 @@ class OrchestrationAppLuisResponseTests(ConversationTest):
                     }
                 }
             )
-            print(result)
+
             # assert - main object
             top_project = "RestaurantIntent"
             assert not result is None
