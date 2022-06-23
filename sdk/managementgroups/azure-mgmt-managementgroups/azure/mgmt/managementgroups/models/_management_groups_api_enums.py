@@ -6,33 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class Enum0(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    CHILDREN = "children"
-    PATH = "path"
-    ANCESTORS = "ancestors"
-
-class Enum2(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EntitySearchType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ALLOWED_PARENTS = "AllowedParents"
     ALLOWED_CHILDREN = "AllowedChildren"
@@ -40,21 +18,27 @@ class Enum2(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PARENT_ONLY = "ParentOnly"
     CHILDREN_ONLY = "ChildrenOnly"
 
-class Enum3(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EntityViewParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     FULL_HIERARCHY = "FullHierarchy"
     GROUPS_ONLY = "GroupsOnly"
     SUBSCRIPTIONS_ONLY = "SubscriptionsOnly"
     AUDIT = "Audit"
 
-class ManagementGroupChildType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ManagementGroupChildType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of child resource.
     """
 
     MICROSOFT_MANAGEMENT_MANAGEMENT_GROUPS = "Microsoft.Management/managementGroups"
     _SUBSCRIPTIONS = "/subscriptions"
 
-class Permissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ManagementGroupExpandType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+
+    CHILDREN = "children"
+    PATH = "path"
+    ANCESTORS = "ancestors"
+
+class Permissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The users specific permissions to this item.
     """
 
@@ -63,7 +47,7 @@ class Permissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     EDIT = "edit"
     DELETE = "delete"
 
-class Reason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Required if nameAvailable == false. Invalid indicates the name provided does not match the
     resource provider's naming requirements (incorrect length, unsupported characters, etc.)
     AlreadyExists indicates that the name is already in use and is therefore unavailable.
@@ -72,7 +56,7 @@ class Reason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the Tenant Backfill
     """
 
