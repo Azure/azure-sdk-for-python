@@ -489,8 +489,8 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
         with servicebus_client:
             queue_sender = servicebus_client.get_queue_sender(queue_name=queue_name, client_identifier=custom_id)
-            assert queue_sender._name is not None
-            assert queue_sender._name == custom_id
+            assert queue_sender.identifier is not None
+            assert queue_sender.identifier == custom_id
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -502,8 +502,8 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
         with servicebus_client:
             queue_sender = servicebus_client.get_queue_sender(queue_name=queue_name)
-            assert queue_sender._name is not None
-            assert "SBSender" in queue_sender._name
+            assert queue_sender.identifier is not None
+            assert "SBSender" in queue_sender.identifier
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -516,8 +516,8 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
         with servicebus_client:
             queue_sender = servicebus_client.get_queue_receiver(queue_name=queue_name, client_identifier=custom_id)
-            assert queue_sender._name is not None
-            assert queue_sender._name == custom_id
+            assert queue_sender.identifier is not None
+            assert queue_sender.identifier == custom_id
 
     
     @pytest.mark.liveTest
@@ -530,5 +530,5 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
         with servicebus_client:
             queue_sender = servicebus_client.get_queue_receiver(queue_name=queue_name)
-            assert queue_sender._name is not None
-            assert "SBSender" in queue_sender._name
+            assert queue_sender.identifier is not None
+            assert "SBSender" in queue_sender.identifier
