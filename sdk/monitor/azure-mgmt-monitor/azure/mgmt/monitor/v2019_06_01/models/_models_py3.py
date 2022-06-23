@@ -6,10 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ActionGroupList(msrest.serialization.Model):
@@ -29,7 +33,7 @@ class ActionGroupList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ActionGroupResource"]] = None,
+        value: Optional[List["_models.ActionGroupResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -238,16 +242,16 @@ class ActionGroupResource(AzureResource):
         tags: Optional[Dict[str, str]] = None,
         group_short_name: Optional[str] = None,
         enabled: Optional[bool] = True,
-        email_receivers: Optional[List["EmailReceiver"]] = None,
-        sms_receivers: Optional[List["SmsReceiver"]] = None,
-        webhook_receivers: Optional[List["WebhookReceiver"]] = None,
-        itsm_receivers: Optional[List["ItsmReceiver"]] = None,
-        azure_app_push_receivers: Optional[List["AzureAppPushReceiver"]] = None,
-        automation_runbook_receivers: Optional[List["AutomationRunbookReceiver"]] = None,
-        voice_receivers: Optional[List["VoiceReceiver"]] = None,
-        logic_app_receivers: Optional[List["LogicAppReceiver"]] = None,
-        azure_function_receivers: Optional[List["AzureFunctionReceiver"]] = None,
-        arm_role_receivers: Optional[List["ArmRoleReceiver"]] = None,
+        email_receivers: Optional[List["_models.EmailReceiver"]] = None,
+        sms_receivers: Optional[List["_models.SmsReceiver"]] = None,
+        webhook_receivers: Optional[List["_models.WebhookReceiver"]] = None,
+        itsm_receivers: Optional[List["_models.ItsmReceiver"]] = None,
+        azure_app_push_receivers: Optional[List["_models.AzureAppPushReceiver"]] = None,
+        automation_runbook_receivers: Optional[List["_models.AutomationRunbookReceiver"]] = None,
+        voice_receivers: Optional[List["_models.VoiceReceiver"]] = None,
+        logic_app_receivers: Optional[List["_models.LogicAppReceiver"]] = None,
+        azure_function_receivers: Optional[List["_models.AzureFunctionReceiver"]] = None,
+        arm_role_receivers: Optional[List["_models.ArmRoleReceiver"]] = None,
         **kwargs
     ):
         """
@@ -553,8 +557,8 @@ class EmailReceiver(msrest.serialization.Model):
     :vartype email_address: str
     :ivar use_common_alert_schema: Indicates whether to use common alert schema.
     :vartype use_common_alert_schema: bool
-    :ivar status: The receiver status of the e-mail. Possible values include: "NotSpecified",
-     "Enabled", "Disabled".
+    :ivar status: The receiver status of the e-mail. Known values are: "NotSpecified", "Enabled",
+     "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2019_06_01.models.ReceiverStatus
     """
 
@@ -799,7 +803,7 @@ class SmsReceiver(msrest.serialization.Model):
     :vartype country_code: str
     :ivar phone_number: Required. The phone number of the SMS receiver.
     :vartype phone_number: str
-    :ivar status: The status of the receiver. Possible values include: "NotSpecified", "Enabled",
+    :ivar status: The status of the receiver. Known values are: "NotSpecified", "Enabled",
      "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2019_06_01.models.ReceiverStatus
     """

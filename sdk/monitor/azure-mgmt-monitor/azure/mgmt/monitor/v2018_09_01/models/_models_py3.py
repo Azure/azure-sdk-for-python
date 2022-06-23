@@ -6,13 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._monitor_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ActionGroupList(msrest.serialization.Model):
@@ -32,7 +33,7 @@ class ActionGroupList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ActionGroupResource"]] = None,
+        value: Optional[List["_models.ActionGroupResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -223,16 +224,16 @@ class ActionGroupResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         group_short_name: Optional[str] = None,
         enabled: Optional[bool] = True,
-        email_receivers: Optional[List["EmailReceiver"]] = None,
-        sms_receivers: Optional[List["SmsReceiver"]] = None,
-        webhook_receivers: Optional[List["WebhookReceiver"]] = None,
-        itsm_receivers: Optional[List["ItsmReceiver"]] = None,
-        azure_app_push_receivers: Optional[List["AzureAppPushReceiver"]] = None,
-        automation_runbook_receivers: Optional[List["AutomationRunbookReceiver"]] = None,
-        voice_receivers: Optional[List["VoiceReceiver"]] = None,
-        logic_app_receivers: Optional[List["LogicAppReceiver"]] = None,
-        azure_function_receivers: Optional[List["AzureFunctionReceiver"]] = None,
-        arm_role_receivers: Optional[List["ArmRoleReceiver"]] = None,
+        email_receivers: Optional[List["_models.EmailReceiver"]] = None,
+        sms_receivers: Optional[List["_models.SmsReceiver"]] = None,
+        webhook_receivers: Optional[List["_models.WebhookReceiver"]] = None,
+        itsm_receivers: Optional[List["_models.ItsmReceiver"]] = None,
+        azure_app_push_receivers: Optional[List["_models.AzureAppPushReceiver"]] = None,
+        automation_runbook_receivers: Optional[List["_models.AutomationRunbookReceiver"]] = None,
+        voice_receivers: Optional[List["_models.VoiceReceiver"]] = None,
+        logic_app_receivers: Optional[List["_models.LogicAppReceiver"]] = None,
+        azure_function_receivers: Optional[List["_models.AzureFunctionReceiver"]] = None,
+        arm_role_receivers: Optional[List["_models.ArmRoleReceiver"]] = None,
         **kwargs
     ):
         """
@@ -503,337 +504,6 @@ class AzureFunctionReceiver(msrest.serialization.Model):
         self.http_trigger_url = http_trigger_url
 
 
-class Baseline(msrest.serialization.Model):
-    """The baseline values for a single sensitivity value.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar sensitivity: Required. The sensitivity of the baseline. Possible values include: "Low",
-     "Medium", "High".
-    :vartype sensitivity: str or ~$(python-base-namespace).v2018_09_01.models.Sensitivity
-    :ivar low_thresholds: Required. The low thresholds of the baseline.
-    :vartype low_thresholds: list[float]
-    :ivar high_thresholds: Required. The high thresholds of the baseline.
-    :vartype high_thresholds: list[float]
-    :ivar timestamps: the array of timestamps of the baselines.
-    :vartype timestamps: list[~datetime.datetime]
-    :ivar prediction_result_type: The prediction result type of the baseline. Possible values
-     include: 0, 1, 2.
-    :vartype prediction_result_type: int or
-     ~$(python-base-namespace).v2018_09_01.models.PredictionResultType
-    :ivar error_type: The error type of the baseline. Possible values include: 0, 1, 2, 3, 4, 100,
-     200.
-    :vartype error_type: int or ~$(python-base-namespace).v2018_09_01.models.ErrorType
-    """
-
-    _validation = {
-        'sensitivity': {'required': True},
-        'low_thresholds': {'required': True},
-        'high_thresholds': {'required': True},
-    }
-
-    _attribute_map = {
-        'sensitivity': {'key': 'sensitivity', 'type': 'str'},
-        'low_thresholds': {'key': 'lowThresholds', 'type': '[float]'},
-        'high_thresholds': {'key': 'highThresholds', 'type': '[float]'},
-        'timestamps': {'key': 'timestamps', 'type': '[iso-8601]'},
-        'prediction_result_type': {'key': 'PredictionResultType', 'type': 'int'},
-        'error_type': {'key': 'ErrorType', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        *,
-        sensitivity: Union[str, "Sensitivity"],
-        low_thresholds: List[float],
-        high_thresholds: List[float],
-        timestamps: Optional[List[datetime.datetime]] = None,
-        prediction_result_type: Optional[Union[int, "PredictionResultType"]] = None,
-        error_type: Optional[Union[int, "ErrorType"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword sensitivity: Required. The sensitivity of the baseline. Possible values include:
-         "Low", "Medium", "High".
-        :paramtype sensitivity: str or ~$(python-base-namespace).v2018_09_01.models.Sensitivity
-        :keyword low_thresholds: Required. The low thresholds of the baseline.
-        :paramtype low_thresholds: list[float]
-        :keyword high_thresholds: Required. The high thresholds of the baseline.
-        :paramtype high_thresholds: list[float]
-        :keyword timestamps: the array of timestamps of the baselines.
-        :paramtype timestamps: list[~datetime.datetime]
-        :keyword prediction_result_type: The prediction result type of the baseline. Possible values
-         include: 0, 1, 2.
-        :paramtype prediction_result_type: int or
-         ~$(python-base-namespace).v2018_09_01.models.PredictionResultType
-        :keyword error_type: The error type of the baseline. Possible values include: 0, 1, 2, 3, 4,
-         100, 200.
-        :paramtype error_type: int or ~$(python-base-namespace).v2018_09_01.models.ErrorType
-        """
-        super(Baseline, self).__init__(**kwargs)
-        self.sensitivity = sensitivity
-        self.low_thresholds = low_thresholds
-        self.high_thresholds = high_thresholds
-        self.timestamps = timestamps
-        self.prediction_result_type = prediction_result_type
-        self.error_type = error_type
-
-
-class BaselineMetadataValue(msrest.serialization.Model):
-    """Represents a baseline metadata value.
-
-    :ivar name: The name of the metadata.
-    :vartype name: ~$(python-base-namespace).v2018_09_01.models.LocalizableString
-    :ivar value: The value of the metadata.
-    :vartype value: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'LocalizableString'},
-        'value': {'key': 'value', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional["LocalizableString"] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword name: The name of the metadata.
-        :paramtype name: ~$(python-base-namespace).v2018_09_01.models.LocalizableString
-        :keyword value: The value of the metadata.
-        :paramtype value: str
-        """
-        super(BaselineMetadataValue, self).__init__(**kwargs)
-        self.name = name
-        self.value = value
-
-
-class BaselineResponse(msrest.serialization.Model):
-    """The response to a baseline query.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The metric baseline ID.
-    :vartype id: str
-    :ivar type: The resource type of the baseline resource.
-    :vartype type: str
-    :ivar name: The name and the display name of the metric, i.e. it is localizable string.
-    :vartype name: ~$(python-base-namespace).v2018_09_01.models.LocalizableString
-    :ivar timestamps: The array of timestamps of the baselines.
-    :vartype timestamps: list[~datetime.datetime]
-    :ivar baseline: The baseline values for each sensitivity.
-    :vartype baseline: list[~$(python-base-namespace).v2018_09_01.models.Baseline]
-    :ivar metdata: The baseline metadata values.
-    :vartype metdata: list[~$(python-base-namespace).v2018_09_01.models.BaselineMetadataValue]
-    :ivar prediction_result_type: The prediction result type of the baseline. Possible values
-     include: 0, 1, 2.
-    :vartype prediction_result_type: int or
-     ~$(python-base-namespace).v2018_09_01.models.PredictionResultType
-    :ivar error_type: The error type of the baseline. Possible values include: 0, 1, 2, 3, 4, 100,
-     200.
-    :vartype error_type: int or ~$(python-base-namespace).v2018_09_01.models.ErrorType
-    :ivar timespan: The timespan for which the data was retrieved. Its value consists of two
-     datetimes concatenated, separated by '/'.  This may be adjusted in the future and returned back
-     from what was originally requested.
-    :vartype timespan: str
-    :ivar interval: The interval (window size) for which the metric data was returned in.  This may
-     be adjusted in the future and returned back from what was originally requested.  This is not
-     present if a metadata request was made.
-    :vartype interval: ~datetime.timedelta
-    :ivar aggregation: The aggregation type of the metric.
-    :vartype aggregation: str
-    :ivar internal_operation_id: internal operation id.
-    :vartype internal_operation_id: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
-        'internal_operation_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'LocalizableString'},
-        'timestamps': {'key': 'timestamps', 'type': '[iso-8601]'},
-        'baseline': {'key': 'baseline', 'type': '[Baseline]'},
-        'metdata': {'key': 'metdata', 'type': '[BaselineMetadataValue]'},
-        'prediction_result_type': {'key': 'predictionResultType', 'type': 'int'},
-        'error_type': {'key': 'errorType', 'type': 'int'},
-        'timespan': {'key': 'properties.timespan', 'type': 'str'},
-        'interval': {'key': 'properties.interval', 'type': 'duration'},
-        'aggregation': {'key': 'properties.aggregation', 'type': 'str'},
-        'internal_operation_id': {'key': 'properties.internalOperationId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        timestamps: Optional[List[datetime.datetime]] = None,
-        baseline: Optional[List["Baseline"]] = None,
-        metdata: Optional[List["BaselineMetadataValue"]] = None,
-        prediction_result_type: Optional[Union[int, "PredictionResultType"]] = None,
-        error_type: Optional[Union[int, "ErrorType"]] = None,
-        timespan: Optional[str] = None,
-        interval: Optional[datetime.timedelta] = None,
-        aggregation: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword timestamps: The array of timestamps of the baselines.
-        :paramtype timestamps: list[~datetime.datetime]
-        :keyword baseline: The baseline values for each sensitivity.
-        :paramtype baseline: list[~$(python-base-namespace).v2018_09_01.models.Baseline]
-        :keyword metdata: The baseline metadata values.
-        :paramtype metdata: list[~$(python-base-namespace).v2018_09_01.models.BaselineMetadataValue]
-        :keyword prediction_result_type: The prediction result type of the baseline. Possible values
-         include: 0, 1, 2.
-        :paramtype prediction_result_type: int or
-         ~$(python-base-namespace).v2018_09_01.models.PredictionResultType
-        :keyword error_type: The error type of the baseline. Possible values include: 0, 1, 2, 3, 4,
-         100, 200.
-        :paramtype error_type: int or ~$(python-base-namespace).v2018_09_01.models.ErrorType
-        :keyword timespan: The timespan for which the data was retrieved. Its value consists of two
-         datetimes concatenated, separated by '/'.  This may be adjusted in the future and returned back
-         from what was originally requested.
-        :paramtype timespan: str
-        :keyword interval: The interval (window size) for which the metric data was returned in.  This
-         may be adjusted in the future and returned back from what was originally requested.  This is
-         not present if a metadata request was made.
-        :paramtype interval: ~datetime.timedelta
-        :keyword aggregation: The aggregation type of the metric.
-        :paramtype aggregation: str
-        """
-        super(BaselineResponse, self).__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
-        self.timestamps = timestamps
-        self.baseline = baseline
-        self.metdata = metdata
-        self.prediction_result_type = prediction_result_type
-        self.error_type = error_type
-        self.timespan = timespan
-        self.interval = interval
-        self.aggregation = aggregation
-        self.internal_operation_id = None
-
-
-class CalculateBaselineResponse(msrest.serialization.Model):
-    """The response to a calculate baseline call.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar type: Required. The resource type of the baseline resource.
-    :vartype type: str
-    :ivar timestamps: The array of timestamps of the baselines.
-    :vartype timestamps: list[~datetime.datetime]
-    :ivar baseline: Required. The baseline values for each sensitivity.
-    :vartype baseline: list[~$(python-base-namespace).v2018_09_01.models.Baseline]
-    :ivar statistics: The statistics.
-    :vartype statistics:
-     ~$(python-base-namespace).v2018_09_01.models.CalculateBaselineResponseStatistics
-    :ivar internal_operation_id: internal operation id.
-    :vartype internal_operation_id: str
-    :ivar error_type: The error type for calculating the baseline. Possible values include: 0, 1,
-     2, 3, 4, 100, 200.
-    :vartype error_type: int or ~$(python-base-namespace).v2018_09_01.models.ErrorType
-    """
-
-    _validation = {
-        'type': {'required': True},
-        'baseline': {'required': True},
-        'internal_operation_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'timestamps': {'key': 'timestamps', 'type': '[iso-8601]'},
-        'baseline': {'key': 'baseline', 'type': '[Baseline]'},
-        'statistics': {'key': 'statistics', 'type': 'CalculateBaselineResponseStatistics'},
-        'internal_operation_id': {'key': 'internalOperationId', 'type': 'str'},
-        'error_type': {'key': 'errorType', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        *,
-        type: str,
-        baseline: List["Baseline"],
-        timestamps: Optional[List[datetime.datetime]] = None,
-        statistics: Optional["CalculateBaselineResponseStatistics"] = None,
-        error_type: Optional[Union[int, "ErrorType"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword type: Required. The resource type of the baseline resource.
-        :paramtype type: str
-        :keyword timestamps: The array of timestamps of the baselines.
-        :paramtype timestamps: list[~datetime.datetime]
-        :keyword baseline: Required. The baseline values for each sensitivity.
-        :paramtype baseline: list[~$(python-base-namespace).v2018_09_01.models.Baseline]
-        :keyword statistics: The statistics.
-        :paramtype statistics:
-         ~$(python-base-namespace).v2018_09_01.models.CalculateBaselineResponseStatistics
-        :keyword error_type: The error type for calculating the baseline. Possible values include: 0,
-         1, 2, 3, 4, 100, 200.
-        :paramtype error_type: int or ~$(python-base-namespace).v2018_09_01.models.ErrorType
-        """
-        super(CalculateBaselineResponse, self).__init__(**kwargs)
-        self.type = type
-        self.timestamps = timestamps
-        self.baseline = baseline
-        self.statistics = statistics
-        self.internal_operation_id = None
-        self.error_type = error_type
-
-
-class CalculateBaselineResponseStatistics(msrest.serialization.Model):
-    """The statistics.
-
-    :ivar is_eligible: is series eligible for dynamic threshold analysis.
-    :vartype is_eligible: bool
-    :ivar status: The list of extended status for calculating the baseline.
-    :vartype status: list[str]
-    :ivar seasonality_period: The seasonality period for calculating the baseline.
-    :vartype seasonality_period: int
-    """
-
-    _attribute_map = {
-        'is_eligible': {'key': 'isEligible', 'type': 'bool'},
-        'status': {'key': 'status', 'type': '[str]'},
-        'seasonality_period': {'key': 'seasonalityPeriod', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        *,
-        is_eligible: Optional[bool] = None,
-        status: Optional[List[str]] = None,
-        seasonality_period: Optional[int] = None,
-        **kwargs
-    ):
-        """
-        :keyword is_eligible: is series eligible for dynamic threshold analysis.
-        :paramtype is_eligible: bool
-        :keyword status: The list of extended status for calculating the baseline.
-        :paramtype status: list[str]
-        :keyword seasonality_period: The seasonality period for calculating the baseline.
-        :paramtype seasonality_period: int
-        """
-        super(CalculateBaselineResponseStatistics, self).__init__(**kwargs)
-        self.is_eligible = is_eligible
-        self.status = status
-        self.seasonality_period = seasonality_period
-
-
 class EmailReceiver(msrest.serialization.Model):
     """An email receiver.
 
@@ -846,8 +516,8 @@ class EmailReceiver(msrest.serialization.Model):
     :vartype name: str
     :ivar email_address: Required. The email address of this receiver.
     :vartype email_address: str
-    :ivar status: The receiver status of the e-mail. Possible values include: "NotSpecified",
-     "Enabled", "Disabled".
+    :ivar status: The receiver status of the e-mail. Known values are: "NotSpecified", "Enabled",
+     "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2018_09_01.models.ReceiverStatus
     """
 
@@ -1017,44 +687,6 @@ class ItsmReceiver(msrest.serialization.Model):
         self.region = region
 
 
-class LocalizableString(msrest.serialization.Model):
-    """The localizable string class.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: Required. The invariant value.
-    :vartype value: str
-    :ivar localized_value: The locale specific value.
-    :vartype localized_value: str
-    """
-
-    _validation = {
-        'value': {'required': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: str,
-        localized_value: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword value: Required. The invariant value.
-        :paramtype value: str
-        :keyword localized_value: The locale specific value.
-        :paramtype localized_value: str
-        """
-        super(LocalizableString, self).__init__(**kwargs)
-        self.value = value
-        self.localized_value = localized_value
-
-
 class LogicAppReceiver(msrest.serialization.Model):
     """A logic app receiver.
 
@@ -1118,7 +750,7 @@ class SmsReceiver(msrest.serialization.Model):
     :vartype country_code: str
     :ivar phone_number: Required. The phone number of the SMS receiver.
     :vartype phone_number: str
-    :ivar status: The status of the receiver. Possible values include: "NotSpecified", "Enabled",
+    :ivar status: The status of the receiver. Known values are: "NotSpecified", "Enabled",
      "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2018_09_01.models.ReceiverStatus
     """
@@ -1159,52 +791,6 @@ class SmsReceiver(msrest.serialization.Model):
         self.country_code = country_code
         self.phone_number = phone_number
         self.status = None
-
-
-class TimeSeriesInformation(msrest.serialization.Model):
-    """The time series info needed for calculating the baseline.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar sensitivities: Required. The list of sensitivities for calculating the baseline.
-    :vartype sensitivities: list[str]
-    :ivar values: Required. The metric values to calculate the baseline.
-    :vartype values: list[float]
-    :ivar timestamps: The array of timestamps of the baselines.
-    :vartype timestamps: list[~datetime.datetime]
-    """
-
-    _validation = {
-        'sensitivities': {'required': True},
-        'values': {'required': True},
-    }
-
-    _attribute_map = {
-        'sensitivities': {'key': 'sensitivities', 'type': '[str]'},
-        'values': {'key': 'values', 'type': '[float]'},
-        'timestamps': {'key': 'timestamps', 'type': '[iso-8601]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        sensitivities: List[str],
-        values: List[float],
-        timestamps: Optional[List[datetime.datetime]] = None,
-        **kwargs
-    ):
-        """
-        :keyword sensitivities: Required. The list of sensitivities for calculating the baseline.
-        :paramtype sensitivities: list[str]
-        :keyword values: Required. The metric values to calculate the baseline.
-        :paramtype values: list[float]
-        :keyword timestamps: The array of timestamps of the baselines.
-        :paramtype timestamps: list[~datetime.datetime]
-        """
-        super(TimeSeriesInformation, self).__init__(**kwargs)
-        self.sensitivities = sensitivities
-        self.values = values
-        self.timestamps = timestamps
 
 
 class VoiceReceiver(msrest.serialization.Model):
