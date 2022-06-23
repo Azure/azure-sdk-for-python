@@ -24,10 +24,6 @@ class TestBusinessCard(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_passing_enum_content_type(self, client):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         with open(self.business_card_png, "rb") as fd:
             my_file = fd.read()
         poller = client.begin_recognize_business_cards(

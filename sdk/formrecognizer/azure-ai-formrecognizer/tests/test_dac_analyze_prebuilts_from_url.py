@@ -26,10 +26,6 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
     def test_business_card_multipage_pdf(self, client):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         poller = client.begin_analyze_document_from_url("prebuilt-businessCard", self.business_card_multipage_url_pdf)
         result = poller.result()
 
@@ -89,10 +85,6 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
     def test_identity_document_jpg_passport(self, client):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         poller = client.begin_analyze_document_from_url("prebuilt-idDocument", self.identity_document_url_jpg_passport)
 
         result = poller.result()
