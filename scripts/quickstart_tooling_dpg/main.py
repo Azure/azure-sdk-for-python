@@ -43,7 +43,7 @@ def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> No
                     return
             content.append(f'    - name: {package_name}\n')
             content.append(f'      safeName: {package_name.replace("-", "")}\n')
-    with open(str(ci), "w") as file_out:
+    with open(ci, "w") as file_out:
         file_out.writelines(content)
 
 
