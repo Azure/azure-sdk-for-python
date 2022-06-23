@@ -79,14 +79,14 @@ Authentication with AAD requires some initial setup:
 
 - [Install azure-identity][install_azure_identity]
 - [Register a new AAD application][register_aad_app]
-- [Grant access][grant_role_access] to the Language service by assigning the `"Cognitive Services User"` role to your service principal.
+- [Grant access][grant_role_access] to the Language service by assigning the "Cognitive Services User" role to your service principal.
 
 After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
 As an example, [DefaultAzureCredential][default_azure_credential]
 can be used to authenticate the client:
 
 Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`
 
 Use the returned token credential to authenticate the client:
 
