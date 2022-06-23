@@ -5,7 +5,6 @@
 # pylint: disable=too-many-lines
 
 from typing import Union, Any, List, Dict, TYPE_CHECKING, cast
-from functools import partial
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
@@ -25,6 +24,7 @@ from .._response_handlers import (
     sentiment_result,
     language_result,
     pii_entities_result,
+    _get_result_from_continuation_token
 )
 from ._response_handlers_async import healthcare_paged_result, analyze_paged_result
 from .._models import (
@@ -58,6 +58,7 @@ from ._lro_async import (
     AsyncAnalyzeActionsLROPollingMethod,
     AsyncAnalyzeHealthcareEntitiesLROPoller,
     AsyncAnalyzeActionsLROPoller,
+    AsyncTextAnalyticsLROPoller,
 )
 
 
@@ -813,7 +814,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             return process_http_response_error(error)
 
     def _healthcare_result_callback(
-        self, doc_id_order, raw_response, deserialized, headers, show_stats=False
+        self, raw_response, deserialized, doc_id_order, task_id_order=None, show_stats=False, bespoke=False
     ):
         if deserialized is None:
             models = self._client.models(api_version=self._api_version)
@@ -825,7 +826,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             self._client.analyze_text_job_status if is_language_api(self._api_version) else self._client.health_status,
             raw_response,
             deserialized,
-            headers,
             show_stats=show_stats,
         )
 
@@ -917,26 +917,20 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         display_name = kwargs.pop("display_name", None)
 
         if continuation_token:
-            def get_result_from_cont_token(initial_response, pipeline_response):
-                doc_id_order = initial_response.context.options["doc_id_order"]
-                show_stats = initial_response.context.options["show_stats"]
-                return self._healthcare_result_callback(
-                    doc_id_order, pipeline_response, None, {}, show_stats=show_stats
-                )
-
             return cast(
                 AsyncAnalyzeHealthcareEntitiesLROPoller[
                     AsyncItemPaged[Union[AnalyzeHealthcareEntitiesResult, DocumentError]]
                 ],
-                AsyncAnalyzeHealthcareEntitiesLROPoller.from_continuation_token(
-                    polling_method=AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
+                _get_result_from_continuation_token(
+                    self._client._client,  # pylint: disable=protected-access
+                    continuation_token,
+                    AsyncAnalyzeHealthcareEntitiesLROPoller,
+                    AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
                         text_analytics_client=self._client,
                         timeout=polling_interval,
                         **kwargs
                     ),
-                    client=self._client._client,  # pylint: disable=protected-access
-                    deserialization_callback=get_result_from_cont_token,
-                    continuation_token=continuation_token
+                    self._healthcare_result_callback
                 )
             )
 
@@ -944,8 +938,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         doc_id_order = [doc.get("id") for doc in docs]
         my_cls = kwargs.pop(
             "cls",
-            partial(
-                self._healthcare_result_callback, doc_id_order, show_stats=show_stats
+            lambda pipeline_response, deserialized, _: self._healthcare_result_callback(
+                pipeline_response, deserialized, doc_id_order, show_stats=show_stats
             ),
         )
         models = self._client.models(api_version=self._api_version)
@@ -1024,7 +1018,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             return process_http_response_error(error)
 
     def _analyze_result_callback(
-        self, doc_id_order, task_order, raw_response, deserialized, headers, show_stats=False
+        self, raw_response, deserialized, doc_id_order, task_id_order=None, show_stats=False, bespoke=False
     ):
 
         if deserialized is None:
@@ -1033,12 +1027,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             deserialized = response_cls.deserialize(raw_response)
         return analyze_paged_result(
             doc_id_order,
-            task_order,
+            task_id_order,
             self._client.analyze_text_job_status if is_language_api(self._api_version) else self._client.analyze_status,
             raw_response,
             deserialized,
-            headers,
             show_stats=show_stats,
+            bespoke=bespoke
         )
 
     @distributed_trace_async
@@ -1161,26 +1155,22 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", None)
         polling_interval = kwargs.pop("polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
+        poller_cls = kwargs.pop("poller_cls", AsyncAnalyzeActionsLROPoller)
+        bespoke = kwargs.pop("bespoke", False)
 
         if continuation_token:
-            def get_result_from_cont_token(initial_response, pipeline_response):
-                doc_id_order = initial_response.context.options["doc_id_order"]
-                task_id_order = initial_response.context.options["task_id_order"]
-                show_stats = initial_response.context.options["show_stats"]
-                return self._analyze_result_callback(
-                    doc_id_order, task_id_order, pipeline_response, None, {}, show_stats=show_stats
-                )
-
             return cast(
                 AsyncAnalyzeActionsResponse,
-                AsyncAnalyzeActionsLROPoller.from_continuation_token(
-                    polling_method=AsyncAnalyzeActionsLROPollingMethod(
+                _get_result_from_continuation_token(
+                    self._client._client,  # pylint: disable=protected-access
+                    continuation_token,
+                    AsyncAnalyzeActionsLROPoller,
+                    AsyncAnalyzeActionsLROPollingMethod(
                         timeout=polling_interval,
                         **kwargs
                     ),
-                    client=self._client._client,  # pylint: disable=protected-access
-                    deserialization_callback=get_result_from_cont_token,
-                    continuation_token=continuation_token
+                    self._analyze_result_callback,
+                    bespoke
                 )
             )
 
@@ -1201,6 +1191,19 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             raise TypeError("Unsupported action type in list.") from e
         task_order = [(_determine_action_type(a), a.task_name) for a in generated_tasks]
 
+        response_cls = kwargs.pop(
+            "cls",
+            lambda pipeline_response, deserialized, _:
+                self._analyze_result_callback(
+                    pipeline_response,
+                    deserialized,
+                    doc_id_order,
+                    task_id_order=task_order,
+                    show_stats=show_stats,
+                    bespoke=bespoke
+                ),
+        )
+
         try:
             if is_language_api(self._api_version):
                 return cast(
@@ -1211,15 +1214,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                             display_name=display_name,
                             tasks=generated_tasks
                         ),
-                        cls=kwargs.pop(
-                            "cls",
-                            partial(
-                                self._analyze_result_callback,
-                                doc_id_order,
-                                task_order,
-                                show_stats=show_stats,
-                            ),
-                        ),
+                        cls=response_cls,
                         polling=AsyncAnalyzeActionsLROPollingMethod(
                             timeout=polling_interval,
                             show_stats=show_stats,
@@ -1233,6 +1228,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                             **kwargs
                         ),
                         continuation_token=continuation_token,
+                        poller_cls=poller_cls,
                         **kwargs
                     )
                 )
@@ -1267,15 +1263,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 AsyncAnalyzeActionsResponse,
                 await self._client.begin_analyze(
                     body=analyze_body,
-                    cls=kwargs.pop(
-                        "cls",
-                        partial(
-                            self._analyze_result_callback,
-                            doc_id_order,
-                            task_order,
-                            show_stats=show_stats,
-                        ),
-                    ),
+                    cls=response_cls,
                     polling=AsyncAnalyzeActionsLROPollingMethod(
                         timeout=polling_interval,
                         show_stats=show_stats,
@@ -1292,5 +1280,64 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     **kwargs,
                 )
             )
+        except HttpResponseError as error:
+            return process_http_response_error(error)
+
+
+    @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="2022-05-01"
+    )
+    async def begin_recognize_custom_entities(
+        self,
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        project_name: str,
+        deployment_name: str,
+        **kwargs: Any,
+    ) -> AsyncTextAnalyticsLROPoller[AsyncItemPaged[Union[RecognizeCustomEntitiesResult, DocumentError]]]:
+
+        continuation_token = kwargs.pop("continuation_token", None)
+        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
+        polling_interval = kwargs.pop("polling_interval", 5)
+
+        if continuation_token:
+            return cast(
+                AsyncTextAnalyticsLROPoller[AsyncItemPaged[Union[RecognizeCustomEntitiesResult, DocumentError]]],
+                _get_result_from_continuation_token(
+                    self._client._client,
+                    continuation_token,
+                    AsyncTextAnalyticsLROPoller,
+                    AsyncAnalyzeActionsLROPollingMethod(
+                        timeout=polling_interval,
+                        **kwargs
+                    ),
+                    self._analyze_result_callback,
+                    bespoke=True
+                )
+            )
+
+        try:
+            return cast(
+                AsyncTextAnalyticsLROPoller[
+                    AsyncItemPaged[Union[RecognizeCustomEntitiesResult, DocumentError]]
+                ],
+                await self.begin_analyze_actions(
+                    documents,
+                    actions=[
+                        RecognizeCustomEntitiesAction(
+                            project_name=project_name,
+                            deployment_name=deployment_name,
+                            string_index_type=string_index_type,
+                            disable_service_logs=disable_service_logs
+                        )
+                    ],
+                    polling_interval=polling_interval,
+                    poller_cls=AsyncTextAnalyticsLROPoller,
+                    bespoke=True,
+                    **kwargs
+                )
+            )
+
         except HttpResponseError as error:
             return process_http_response_error(error)
