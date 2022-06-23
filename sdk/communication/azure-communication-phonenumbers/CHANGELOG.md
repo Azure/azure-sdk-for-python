@@ -1,4 +1,9 @@
 # Release History
+## 1.1.0b3 (Unreleased)
+- Users can now manage SIP configuration for Direct routing.
+
+### Features Added
+- Added new SIP routing client for handling Direct routing numbers.
 
 ## 1.1.0b2 (2022-03-30)
 

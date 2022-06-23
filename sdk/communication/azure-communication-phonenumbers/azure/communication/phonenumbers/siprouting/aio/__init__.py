@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-VERSION = "1.1.0b3"
+from ._sip_routing_client_async import SipRoutingClient
 
-SDK_MONIKER = "communication-phonenumbers/{}".format(VERSION)  # type: str
+__all__ = [
+    'SipRoutingClient'
+]
