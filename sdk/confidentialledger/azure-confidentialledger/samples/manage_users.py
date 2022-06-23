@@ -40,6 +40,12 @@ from azure.identity import DefaultAzureCredential
 logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger()
 
+# Example values identifying users.
+# This is an example thumbprint for certificate identifying a certificate-based user.
+cert_thumbprint = "4F:E1:61:D8:6E:5A:7B:E6:00:25:A6:D8:5D:EC:2C:71:E5:86:C3:E4:70:BE:D0:3C:73:7E:69:00:87:98:B0:25"
+# This is an example AAD object id identifying an AAD-based user.
+aad_object_id = "0" * 36  # AAD Object Ids have length 36
+
 # Set the values of the client ID, tenant ID, and client secret of the AAD application as
 # environment variables:
 #   AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, CONFIDENTIALLEDGER_ENDPOINT
@@ -77,18 +83,26 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
         ledger_certificate_path=ledger_certificate_file.name,
     )
 
-    post_poller = ledger_client.begin_post_ledger_entry({"contents": "First message"})
-    first_transaction_id = post_poller.result()["transactionId"]
+    try:
+        role = "Reader"
+        ledger_client.create_or_update_user(aad_object_id, {"assignedRole": role})
+        print(f"User {aad_object_id} has been added as a {role}")
 
-    for i in range(10):
-        ledger_client.post_ledger_entry({"contents": f"Message {i}"})
+        role = "Contributor"
+        ledger_client.create_or_update_user(cert_thumbprint, {"assignedRole": role})
+        print(f"User {cert_thumbprint} has been added as a {role}")
 
-    post_poller = ledger_client.begin_post_ledger_entry({"contents": "Last message"})
-    last_transaction_id = post_poller.result()["transactionId"]
+        aad_user_details = ledger_client.get_user(aad_object_id)
+        print(f"Details about user {aad_object_id}: {aad_user_details}")
 
-    ranged_result = ledger_client.list_ledger_entries(
-        from_transaction_id=first_transaction_id,
-        to_transaction_id=last_transaction_id,
-    )
-    for entry in ranged_result:
-        print(f'Contents at {entry["transactionId"]}: {entry["contents"]}')
+        cert_user_details = ledger_client.get_user(cert_thumbprint)
+        print(f"Details about user {cert_thumbprint}: {cert_user_details}")
+
+    # Always delete the user in case an exception is raised.
+    finally:
+        try:
+            ledger_client.delete_user(aad_object_id)
+            print(f"User {aad_object_id} deleted")
+        finally:
+            ledger_client.delete_user(cert_thumbprint)
+            print(f"User {cert_thumbprint} deleted")
