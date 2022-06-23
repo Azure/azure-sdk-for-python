@@ -91,9 +91,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
     # For some scenarios, users may want to eventually ensure the written entry is durably
     # committed.
     try:
-        wait_poller = ledger_client.begin_wait_for_commit(
-            transaction_id
-        )
+        wait_poller = ledger_client.begin_wait_for_commit(transaction_id)
         wait_poller.wait()
         print(
             f"Ledger entry at transaction id {transaction_id} has been committed successfully"
@@ -104,9 +102,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
 
     # Get the latest ledger entry.
     try:
-        current_ledger_entry = (
-            ledger_client.get_current_ledger_entry()["contents"]
-        )
+        current_ledger_entry = ledger_client.get_current_ledger_entry()["contents"]
         print(f"The current ledger entry is {current_ledger_entry}")
     except HttpResponseError as e:
         print("Request failed: {}".format(e.response.json()))
@@ -129,9 +125,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
 
     # Get the latest ledger entry.
     try:
-        current_ledger_entry = (
-            ledger_client.get_current_ledger_entry()["contents"]
-        )
+        current_ledger_entry = ledger_client.get_current_ledger_entry()["contents"]
         print(f"The current ledger entry is {current_ledger_entry}")
     except HttpResponseError as e:
         print("Request failed: {}".format(e.response.json()))
@@ -140,9 +134,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
     # Make a query for a prior ledger entry. The service may take some time to load the result, so a
     # poller is provided.
     try:
-        get_entry_poller = ledger_client.begin_get_ledger_entry(
-            transaction_id
-        )
+        get_entry_poller = ledger_client.begin_get_ledger_entry(transaction_id)
         get_entry_result = get_entry_poller.result()
         print(
             f'At transaction id {get_entry_result["transactionId"]}, the ledger entry contains '
@@ -154,9 +146,7 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
 
     # Get a receipt for a  ledger entry.
     try:
-        get_receipt_poller = ledger_client.begin_get_receipt(
-            transaction_id
-        )
+        get_receipt_poller = ledger_client.begin_get_receipt(transaction_id)
         get_receipt_result = get_receipt_poller.result()
         print(
             f'Receipt for transaction id {get_entry_result["transactionId"]}: {get_receipt_result}'
@@ -183,11 +173,9 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
 
     # Get the latest ledger entry in the collection.
     try:
-        current_ledger_entry = (
-            ledger_client.get_current_ledger_entry(
-                collection_id=collection_id
-            )["contents"]
-        )
+        current_ledger_entry = ledger_client.get_current_ledger_entry(
+            collection_id=collection_id
+        )["contents"]
         print(f"The current ledger entry in {collection_id} is {current_ledger_entry}")
     except HttpResponseError as e:
         print("Request failed: {}".format(e.response.json()))

@@ -12,7 +12,9 @@ from typing import Any, List, Union
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline import policies
 
-from azure.confidentialledger.aio.operations import ConfidentialLedgerOperations as OperationsMixin
+from azure.confidentialledger.aio.operations import (
+    ConfidentialLedgerOperations as OperationsMixin,
+)
 from azure.confidentialledger.aio._client import (
     ConfidentialLedgerClient as GeneratedClient,
 )

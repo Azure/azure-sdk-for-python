@@ -78,19 +78,13 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
         ledger_certificate_path=ledger_certificate_file.name,
     )
 
-    post_poller = ledger_client.begin_post_ledger_entry(
-        {"contents": "First message"}
-    )
+    post_poller = ledger_client.begin_post_ledger_entry({"contents": "First message"})
     first_transaction_id = post_poller.result()["transactionId"]
 
     for i in range(10):
-        ledger_client.post_ledger_entry(
-            {"contents": f"Message {i}"}
-        )
+        ledger_client.post_ledger_entry({"contents": f"Message {i}"})
 
-    post_poller = ledger_client.begin_post_ledger_entry(
-        {"contents": "Last message"}
-    )
+    post_poller = ledger_client.begin_post_ledger_entry({"contents": "Last message"})
     last_transaction_id = post_poller.result()["transactionId"]
 
     ranged_result = ledger_client.list_ledger_entries(

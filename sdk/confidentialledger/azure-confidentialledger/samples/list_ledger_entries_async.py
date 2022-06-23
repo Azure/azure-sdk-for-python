@@ -85,9 +85,7 @@ async def main():
         first_transaction_id = await post_poller.result()["transactionId"]
 
         for i in range(10):
-            await ledger_client.post_ledger_entry(
-                {"contents": f"Message {i}"}
-            )
+            await ledger_client.post_ledger_entry({"contents": f"Message {i}"})
 
         post_poller = await ledger_client.begin_post_ledger_entry(
             {"contents": "Last message"}

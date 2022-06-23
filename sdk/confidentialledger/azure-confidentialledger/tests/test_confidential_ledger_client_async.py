@@ -61,9 +61,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
 
     async def append_entry_flow_actions(self, client):
         entry_contents = "Test entry from Python SDK"
-        append_result = await client.post_ledger_entry(
-            {"contents": entry_contents}
-        )
+        append_result = await client.post_ledger_entry({"contents": entry_contents})
         self.assertTrue(append_result["transactionId"])
         self.assertTrue(append_result["collectionId"])
 
