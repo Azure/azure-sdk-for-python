@@ -127,7 +127,7 @@ def get_client_credential(certificate_path, password=None, certificate_data=None
         password = six.ensure_binary(password, "utf-8")
     password = cast("Optional[bytes]", password)
 
-    if certificate_data.startswith(b"-----"):
+    if b"-----BEGIN" in certificate_data:
         cert = load_pem_certificate(certificate_data, password)
     else:
         cert = load_pkcs12_certificate(certificate_data, password)

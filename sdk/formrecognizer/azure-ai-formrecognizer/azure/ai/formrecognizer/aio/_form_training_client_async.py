@@ -317,7 +317,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         )
         if (
             hasattr(response, "composed_train_results")
-            and response.composed_train_results
+            and response.composed_train_results  # type: ignore
         ):
             return CustomFormModel._from_generated_composed(response)
         return CustomFormModel._from_generated(response, api_version=self._api_version)
@@ -484,7 +484,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
 
         try:
             return await self._client.begin_compose_custom_models_async(  # type: ignore
-                {"model_ids": model_ids, "model_name": model_name},
+                {"model_ids": model_ids, "model_name": model_name},  # type: ignore
                 cls=kwargs.pop("cls", _compose_callback),
                 polling=AsyncLROBasePolling(
                     timeout=polling_interval,

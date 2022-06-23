@@ -1,0 +1,54 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: command
+
+name: microsoftsamples_command_component_basic_with_invalid_input_names
+display_name: CommandComponentBasic
+description: This is the basic command component
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+version: 0.0.1
+
+inputs:
+  sanitiza_version:
+    description: sanitiza version
+    type: number
+    default: 10.99
+    optional: True
+  CamelCase:
+    description: camel case
+    type: number
+    default: 10.99
+    optional: True
+  have_number1:
+    description: have number
+    type: number
+    default: 10.99
+    optional: True
+  _start_with_underscore:
+    description: start with underscore
+    type: number
+    default: 10.99
+    optional: True
+  1start_with_number:
+    description: start with number
+    type: number
+    default: 10.99
+    optional: True
+
+outputs:
+  component_out_path:
+    type: uri_folder
+
+# Write some output to work around a bug when pipeline node failed to run with empty dataset as input
+command: >-
+  echo Hello World &
+  [& echo ${{inputs.sanitiza_version}}]
+  [& echo ${{inputs.CamelCase}}]
+  [& echo ${{inputs.have_number1}}]
+  [& echo ${{inputs._start_with_underscore}}]
+  [& echo ${{inputs.1start_with_number}}]
+  echo ${{outputs.component_out_path}} > ${{outputs.component_out_path}}/component_in_number
+
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1

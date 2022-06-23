@@ -34,6 +34,7 @@ from ._utils import (
     transform_outbound_single_message,
 )
 from ._constants import TIMEOUT_SYMBOL
+from .amqp import AmqpAnnotatedMessage
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -102,7 +103,8 @@ class EventHubProducer(
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
         self._retry_policy = errors.ErrorPolicy(
-            max_retries=self._client._config.max_retries, on_error=_error_handler  # pylint: disable=protected-access
+            max_retries=self._client._config.max_retries,
+            on_error=_error_handler,  # pylint: disable=protected-access
         )
         self._reconnect_backoff = 1
         self._name = "EHProducer-{}".format(uuid.uuid4())
@@ -130,7 +132,9 @@ class EventHubProducer(
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
             link_properties=self._link_properties,
-            properties=create_properties(self._client._config.user_agent),  # pylint: disable=protected-access
+            properties=create_properties(
+                self._client._config.user_agent # pylint: disable=protected-access
+            ),
         )
 
     def _open_with_retry(self):
@@ -184,13 +188,15 @@ class EventHubProducer(
 
     def _wrap_eventdata(
         self,
-        event_data,  # type: Union[EventData, EventDataBatch, Iterable[EventData]]
+        event_data,  # type: Union[EventData, AmqpAnnotatedMessage, EventDataBatch, Iterable[EventData]]
         span,  # type: Optional[AbstractSpan]
         partition_key,  # type: Optional[AnyStr]
     ):
         # type: (...) -> Union[EventData, EventDataBatch]
-        if isinstance(event_data, EventData):
-            outgoing_event_data = transform_outbound_single_message(event_data, EventData)
+        if isinstance(event_data, (EventData, AmqpAnnotatedMessage)):
+            outgoing_event_data = transform_outbound_single_message(
+                event_data, EventData
+            )
             if partition_key:
                 set_message_partition_key(outgoing_event_data.message, partition_key)
             wrapper_event_data = outgoing_event_data
@@ -199,13 +205,19 @@ class EventHubProducer(
             if isinstance(
                 event_data, EventDataBatch
             ):  # The partition_key in the param will be omitted.
+                if not event_data:
+                    return event_data
                 if (
-                    partition_key and partition_key != event_data._partition_key  # pylint: disable=protected-access
+                    partition_key
+                    and partition_key
+                    != event_data._partition_key  # pylint: disable=protected-access
                 ):
                     raise ValueError(
                         "The partition_key does not match the one of the EventDataBatch"
                     )
-                for event in event_data.message._body_gen: # pylint: disable=protected-access
+                for (
+                    event
+                ) in event_data.message._body_gen:  # pylint: disable=protected-access
                     trace_message(event, span)
                 wrapper_event_data = event_data  # type:ignore
             else:
@@ -218,7 +230,7 @@ class EventHubProducer(
 
     def send(
         self,
-        event_data,  # type: Union[EventData, EventDataBatch, Iterable[EventData]]
+        event_data,  # type: Union[EventData, AmqpAnnotatedMessage, EventDataBatch, Iterable[EventData]]
         partition_key=None,  # type: Optional[AnyStr]
         timeout=None,  # type: Optional[float]
     ):
@@ -250,7 +262,13 @@ class EventHubProducer(
         with self._lock:
             with send_context_manager() as child:
                 self._check_closed()
-                wrapper_event_data = self._wrap_eventdata(event_data, child, partition_key)
+                wrapper_event_data = self._wrap_eventdata(
+                    event_data, child, partition_key
+                )
+
+                if not wrapper_event_data:
+                    return
+
                 self._unsent_events = [wrapper_event_data.message]
 
                 if child:

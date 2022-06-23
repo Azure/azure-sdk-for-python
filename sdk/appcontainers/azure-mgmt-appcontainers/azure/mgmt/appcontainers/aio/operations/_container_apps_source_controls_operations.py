@@ -138,7 +138,7 @@ class ContainerAppsSourceControlsOperations:
         self,
         resource_group_name: str,
         container_app_name: str,
-        name: str,
+        source_control_name: str,
         **kwargs: Any
     ) -> "_models.SourceControl":
         """Get a SourceControl of a Container App.
@@ -149,8 +149,8 @@ class ContainerAppsSourceControlsOperations:
         :type resource_group_name: str
         :param container_app_name: Name of the Container App.
         :type container_app_name: str
-        :param name: Name of the Container App SourceControl.
-        :type name: str
+        :param source_control_name: Name of the Container App SourceControl.
+        :type source_control_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SourceControl, or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.SourceControl
@@ -169,7 +169,7 @@ class ContainerAppsSourceControlsOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
-            name=name,
+            source_control_name=source_control_name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
         )
@@ -195,14 +195,14 @@ class ContainerAppsSourceControlsOperations:
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/sourcecontrols/{name}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/sourcecontrols/{sourceControlName}"}  # type: ignore
 
 
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         container_app_name: str,
-        name: str,
+        source_control_name: str,
         source_control_envelope: "_models.SourceControl",
         **kwargs: Any
     ) -> "_models.SourceControl":
@@ -221,7 +221,7 @@ class ContainerAppsSourceControlsOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
-            name=name,
+            source_control_name=source_control_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -252,7 +252,7 @@ class ContainerAppsSourceControlsOperations:
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/sourcecontrols/{name}"}  # type: ignore
+    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/sourcecontrols/{sourceControlName}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -260,7 +260,7 @@ class ContainerAppsSourceControlsOperations:
         self,
         resource_group_name: str,
         container_app_name: str,
-        name: str,
+        source_control_name: str,
         source_control_envelope: "_models.SourceControl",
         **kwargs: Any
     ) -> AsyncLROPoller["_models.SourceControl"]:
@@ -272,8 +272,8 @@ class ContainerAppsSourceControlsOperations:
         :type resource_group_name: str
         :param container_app_name: Name of the Container App.
         :type container_app_name: str
-        :param name: Name of the Container App SourceControl.
-        :type name: str
+        :param source_control_name: Name of the Container App SourceControl.
+        :type source_control_name: str
         :param source_control_envelope: Properties used to create a Container App SourceControl.
         :type source_control_envelope: ~azure.mgmt.appcontainers.models.SourceControl
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -302,7 +302,7 @@ class ContainerAppsSourceControlsOperations:
             raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 container_app_name=container_app_name,
-                name=name,
+                source_control_name=source_control_name,
                 source_control_envelope=source_control_envelope,
                 api_version=api_version,
                 content_type=content_type,
@@ -331,13 +331,13 @@ class ContainerAppsSourceControlsOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/sourcecontrols/{name}"}  # type: ignore
+    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/sourcecontrols/{sourceControlName}"}  # type: ignore
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         container_app_name: str,
-        name: str,
+        source_control_name: str,
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -353,7 +353,7 @@ class ContainerAppsSourceControlsOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
-            name=name,
+            source_control_name=source_control_name,
             api_version=api_version,
             template_url=self._delete_initial.metadata['url'],
         )
@@ -374,7 +374,7 @@ class ContainerAppsSourceControlsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/sourcecontrols/{name}"}  # type: ignore
+    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/sourcecontrols/{sourceControlName}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -382,7 +382,7 @@ class ContainerAppsSourceControlsOperations:
         self,
         resource_group_name: str,
         container_app_name: str,
-        name: str,
+        source_control_name: str,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete a Container App SourceControl.
@@ -393,8 +393,8 @@ class ContainerAppsSourceControlsOperations:
         :type resource_group_name: str
         :param container_app_name: Name of the Container App.
         :type container_app_name: str
-        :param name: Name of the Container App SourceControl.
-        :type name: str
+        :param source_control_name: Name of the Container App SourceControl.
+        :type source_control_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -419,7 +419,7 @@ class ContainerAppsSourceControlsOperations:
             raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
                 container_app_name=container_app_name,
-                name=name,
+                source_control_name=source_control_name,
                 api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -443,4 +443,4 @@ class ContainerAppsSourceControlsOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/sourcecontrols/{name}"}  # type: ignore
+    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/sourcecontrols/{sourceControlName}"}  # type: ignore

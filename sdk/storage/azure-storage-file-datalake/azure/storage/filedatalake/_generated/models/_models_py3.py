@@ -7,10 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional
+from typing import List, Optional, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AclFailedEntry(msrest.serialization.Model):
@@ -78,8 +82,8 @@ class BlobHierarchyListSegment(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        blob_items: List["BlobItemInternal"],
-        blob_prefixes: Optional[List["BlobPrefix"]] = None,
+        blob_items: List["_models.BlobItemInternal"],
+        blob_prefixes: Optional[List["_models.BlobPrefix"]] = None,
         **kwargs
     ):
         """
@@ -140,7 +144,7 @@ class BlobItemInternal(msrest.serialization.Model):
         name: str,
         deleted: bool,
         snapshot: str,
-        properties: "BlobPropertiesInternal",
+        properties: "_models.BlobPropertiesInternal",
         version_id: Optional[str] = None,
         is_current_version: Optional[bool] = None,
         deletion_id: Optional[str] = None,
@@ -545,7 +549,7 @@ class FileSystemList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        filesystems: Optional[List["FileSystem"]] = None,
+        filesystems: Optional[List["_models.FileSystem"]] = None,
         **kwargs
     ):
         """
@@ -631,7 +635,7 @@ class ListBlobsHierarchySegmentResponse(msrest.serialization.Model):
         *,
         service_endpoint: str,
         container_name: str,
-        segment: "BlobHierarchyListSegment",
+        segment: "_models.BlobHierarchyListSegment",
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
@@ -906,7 +910,7 @@ class PathList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        paths: Optional[List["Path"]] = None,
+        paths: Optional[List["_models.Path"]] = None,
         **kwargs
     ):
         """
@@ -943,7 +947,7 @@ class SetAccessControlRecursiveResponse(msrest.serialization.Model):
         directories_successful: Optional[int] = None,
         files_successful: Optional[int] = None,
         failure_count: Optional[int] = None,
-        failed_entries: Optional[List["AclFailedEntry"]] = None,
+        failed_entries: Optional[List["_models.AclFailedEntry"]] = None,
         **kwargs
     ):
         """
@@ -1029,7 +1033,7 @@ class StorageError(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["StorageErrorError"] = None,
+        error: Optional["_models.StorageErrorError"] = None,
         **kwargs
     ):
         """

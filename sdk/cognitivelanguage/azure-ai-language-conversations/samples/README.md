@@ -5,7 +5,7 @@ languages:
 products:
   - azure
   - azure-cognitive-services
-  - azure-ai-language-understanding
+  - azure-language-service
 urlFragment: conversationslanguageunderstanding-samples
 ---
 
@@ -37,7 +37,7 @@ These sample programs show common scenarios for the Conversational Language Unde
 1. Install the Azure Conversational Language Understanding client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-language-conversations --pre
+pip install azure-ai-language-conversations
 ```
 
 For more information about how the versioning of the SDK corresponds to the versioning of the service's API, see [here][versioning_story_readme].
@@ -76,6 +76,12 @@ what you can do with the Azure Conversational Language Understanding client libr
 
 [sample_analyze_orchestration_app_qna_response]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_analyze_orchestration_app_qna_response.py
 [sample_analyze_orchestration_app_qna_response_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_analyze_orchestration_app_qna_response_async.py
+
+[sample_conv_summarization]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_conv_summarization.py
+[sample_conv_summarization_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_conv_summarization_async.py
+
+[sample_conv_pii_transcript_input]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_conv_pii_transcript_input.py
+[sample_conv_pii_transcript_input_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_conv_pii_transcript_input_async.py
 
 [api_reference_documentation]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html
 [versioning_story_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations#install-the-package

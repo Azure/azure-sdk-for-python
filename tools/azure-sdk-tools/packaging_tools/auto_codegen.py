@@ -6,7 +6,7 @@ from subprocess import check_call
 
 from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE, CONFIG_FILE_DPG
 from .generate_sdk import generate
-from .generate_utils import get_package_names, init_new_service, update_servicemetadata
+from .generate_utils import get_package_names, init_new_service, update_servicemetadata, judge_tag_preview
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -18,12 +18,13 @@ def main(generate_input, generate_output):
     spec_folder = data["specFolder"]
     sdk_folder = "."
     result = {}
+    python_tag = data.get('python_tag')
     package_total = set()
     for input_readme in data["relatedReadmeMdFiles"]:
         relative_path_readme = str(Path(spec_folder, input_readme))
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
         config_file = CONFIG_FILE if 'resource-manager' in input_readme else CONFIG_FILE_DPG
-        config = generate(config_file, sdk_folder, [], relative_path_readme, spec_folder, force_generation=True)
+        config = generate(config_file, sdk_folder, [], relative_path_readme, spec_folder, force_generation=True, python_tag=python_tag)
         package_names = get_package_names(sdk_folder)
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 
@@ -32,11 +33,13 @@ def main(generate_input, generate_output):
                 continue
 
             package_total.add(package_name)
+            sdk_code_path = str(Path(sdk_folder, folder_name, package_name))
             if package_name not in result:
                 package_entry = {}
                 package_entry["packageName"] = package_name
                 package_entry["path"] = [folder_name]
                 package_entry["readmeMd"] = [input_readme]
+                package_entry["tagIsStable"] = not judge_tag_preview(sdk_code_path)
                 result[package_name] = package_entry
             else:
                 result[package_name]["path"].append(folder_name)
@@ -53,7 +56,7 @@ def main(generate_input, generate_output):
 
             # Setup package locally
             check_call(
-                f"pip install --ignore-requires-python -e {str(Path(sdk_folder, folder_name, package_name))}",
+                f"pip install --ignore-requires-python -e {sdk_code_path}",
                 shell=True,
             )
 

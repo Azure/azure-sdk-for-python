@@ -1,0 +1,34 @@
+#source ../configs/parallel-job/batch-score-ParallelComponent.yaml
+$schema: http://azureml/sdk-2-0/ParallelComponent.json
+name: file_batch_score
+type: parallel
+version: 1.0.0
+display_name: BatchScore
+description: parallel component for batch score
+
+inputs:
+  job_data_path:
+    type: mltable
+    description: The data to be split and scored in parallel.
+    optional: false
+
+outputs:
+  job_output_path:
+    type: uri_folder
+
+resources:
+  instance_count: 2
+
+mini_batch_size: "1"
+input_data: ${{inputs.job_data_path}}
+mini_batch_error_threshold: 1
+max_concurrency_per_instance: 1
+
+
+task:
+  type: function
+  code: ./src
+  entry_script: file_batch_inference.py
+  args: >-
+    --job_output_path ${{outputs.job_output_path}}
+  environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1

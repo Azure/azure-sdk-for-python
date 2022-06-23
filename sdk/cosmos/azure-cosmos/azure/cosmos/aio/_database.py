@@ -124,7 +124,7 @@ class DatabaseProxy(object):
         """Read the database properties.
 
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
@@ -132,7 +132,7 @@ class DatabaseProxy(object):
         :rtype: Dict[str, Any]
         """
         # TODO this helper function should be extracted from CosmosClient
-        from .cosmos_client import CosmosClient
+        from ._cosmos_client import CosmosClient
 
         database_link = CosmosClient._get_database_link(self)
         request_options = _build_options(kwargs)
@@ -161,14 +161,14 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.partition_key.PartitionKey
-        :keyword Dict[str, str] indexing_policy: The indexing policy to apply to the container.
+        :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
         :keyword int offer_throughput: The provisioned throughput for this offer.
-        :keyword Dict[str, str] unique_key_policy: The unique key policy to apply to the container.
-        :keyword Dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword dict[str, str] unique_key_policy: The unique key policy to apply to the container.
+        :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
@@ -255,14 +255,14 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.partition_key.PartitionKey
-        :keyword Dict[str, str] indexing_policy: The indexing policy to apply to the container.
+        :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
         :keyword int offer_throughput: The provisioned throughput for this offer.
-        :keyword Dict[str, str] unique_key_policy: The unique key policy to apply to the container.
-        :keyword Dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword dict[str, str] unique_key_policy: The unique key policy to apply to the container.
+        :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
@@ -340,7 +340,7 @@ class DatabaseProxy(object):
 
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of container properties (dicts).
@@ -382,7 +382,7 @@ class DatabaseProxy(object):
         :paramtype parameters: Optional[List[Dict[str, Any]]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of container properties (dicts).
@@ -423,16 +423,16 @@ class DatabaseProxy(object):
         :type container: Union[str, Dict[str, Any], ~azure.cosmos.aio.ContainerProxy]
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.partition_key.PartitionKey
-        :keyword Dict[str, str] indexing_policy: The indexing policy to apply to the container.
+        :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
-        :keyword Dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword str session_token: Token for use with Session consistency.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
@@ -494,7 +494,7 @@ class DatabaseProxy(object):
             a dict representing the properties of the container.
         :type container: str or Dict[str, Any] or ~azure.cosmos.aio.ContainerProxy
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
@@ -725,7 +725,7 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the database
             or the throughput properties could not be retrieved.
         :returns: ThroughputProperties for the database.
-        :rtype: ~azure.cosmos.ThroughputProperties
+        :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = await self._get_properties()
@@ -760,7 +760,7 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the database
             or the throughput properties could not be updated.
         :returns: ThroughputProperties for the database, updated with new throughput.
-        :rtype: ~azure.cosmos.ThroughputProperties
+        :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = await self._get_properties()

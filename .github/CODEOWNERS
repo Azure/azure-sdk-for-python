@@ -6,7 +6,7 @@
 ################
 
 # Git Hub integration and bot rules
-/.github/                                       @AlexGhiondea @jsquire
+/.github/                                       @jsquire
 
 ###########
 # SDK
@@ -30,10 +30,10 @@
 /sdk/identity/                                                       @mccoyp @schaabs @xiangyan99
 
 # PRLabel: %Event Hubs
-/sdk/eventhub/                                                       @annatisch @yunhaoling @swathipil @rakshith91
+/sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
 
 # PRLabel: %Storage
-/sdk/storage/                                                        @annatisch @tasherif-msft @jalauzon-msft @vincenttran-msft
+/sdk/storage/                                                        @annatisch @jalauzon-msft @vincenttran-msft
 
 # PRLabel: %App Configuration
 /sdk/appconfiguration/                                               @xiangyan99 @YalinLi0312
@@ -55,6 +55,9 @@
 
 # PRLabel: %Communication - Identity
 /sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @martinbarnas-ms
+
+# PRLabel: %Communication - NetworkTraversal
+/sdk/communication/azure-communication-networktraversal/             @ajpeacock0 @nathpete-msft
 
 # PRLabel: %Communication - Common
 /sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @martinbarnas-ms
@@ -99,7 +102,7 @@
 /sdk/deviceupdate/                                                   @dpokluda @sedols
 
 # PRLabel: %Event Grid
-/sdk/eventgrid/                                                      @lmazuel @yunhaoling @swathipil @rakshith91
+/sdk/eventgrid/                                                      @lmazuel @rakshith91
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
@@ -110,14 +113,17 @@
 # PRLabel: %Machine Learning Compute
 /sdk/machinelearningcompute/                                         @shutchings
 
+# PRLabel: %Machine Learning
+/sdk/ml/                                                             @azureml-github @Azure/azure-ml-sdk
+
 # PRLabel: %Recovery Services
 /sdk/recoveryservices/                                               @DheerendraRathor
 
 # PRLabel: %Schema Registry
-/sdk/schemaregistry/                                                 @yunhaoling
+/sdk/schemaregistry/                                                 @kashifkhan
 
 # PRLabel: %Search
-/sdk/search/                                                         @kashifkhan
+/sdk/search/                                                         @rakshith91
 
 # PRLabel: %Service Fabric
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
@@ -126,7 +132,7 @@
 /sql/sql/                                                            @jaredmoo
 
 # PRLabel: %Service Bus
-/sdk/servicebus/                                                     @annatisch @yunhaoling @swathipil @rakshith91
+/sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence
 
 # PRLabel: %Synapse
 /sdk/synapse/                                                        @wonner @idear1203 @xiangyan99
@@ -444,7 +450,7 @@
 #/<NotInRepo>/          @varunkch
 
 # ServiceLabel: %Machine Learning %Service Attention
-#/<NotInRepo>/          @azureml-github
+#/<NotInRepo>/          @azureml-github @Azure/azure-ml-sdk
 
 # ServiceLabel: %Machine Learning Compute %Service Attention
 #/<NotInRepo>/          @azureml-github

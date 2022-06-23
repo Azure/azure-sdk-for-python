@@ -149,9 +149,9 @@ class ContainerProxy(object):
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
-        populate_partition_key_range_statistics = args[1] if args and len(args) > 0 else kwargs.pop(
+        populate_partition_key_range_statistics = args[1] if args and len(args) > 1 else kwargs.pop(
             "populate_partition_key_range_statistics", None)
-        populate_quota_info = args[2] if args and len(args) > 1 else kwargs.pop("populate_quota_info", None)
+        populate_quota_info = args[2] if args and len(args) > 2 else kwargs.pop("populate_quota_info", None)
         if populate_partition_key_range_statistics is not None:
             request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
         if populate_quota_info is not None:

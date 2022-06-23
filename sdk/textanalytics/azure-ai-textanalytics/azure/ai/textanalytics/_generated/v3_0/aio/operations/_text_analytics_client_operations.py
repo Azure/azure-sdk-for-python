@@ -17,19 +17,22 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._text_analytics_client_operations import build_entities_linking_request, build_entities_recognition_general_request, build_key_phrases_request, build_languages_request, build_sentiment_request
+from .._vendor import MixinABC
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class TextAnalyticsClientOperationsMixin:
+class TextAnalyticsClientOperationsMixin(MixinABC):
 
     @distributed_trace_async
     async def entities_recognition_general(
         self,
-        documents: List["_models.MultiLanguageInput"],
+        documents: List[_models.MultiLanguageInput],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
+        *,
+        content_type: Optional[str] = "application/json",
         **kwargs: Any
-    ) -> "_models.EntitiesResult":
+    ) -> _models.EntitiesResult:
         """Named Entity Recognition.
 
         The API returns a list of general named entities in a given document. For the list of supported
@@ -41,22 +44,28 @@ class TextAnalyticsClientOperationsMixin:
         :type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
+         Default value is None.
         :type model_version: str
         :param show_stats: (Optional) if set to true, response will contain input and document level
-         statistics.
+         statistics. Default value is None.
         :type show_stats: bool
+        :keyword content_type: Media type of the body sent to the API. Known values are:
+         "application/json" or "text/json". Default value is "application/json".
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EntitiesResult, or the result of cls(response)
         :rtype: ~azure.ai.textanalytics.v3_0.models.EntitiesResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EntitiesResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.EntitiesResult]
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
         _json = self._serialize.body(_input, 'MultiLanguageBatchInput')
@@ -67,14 +76,16 @@ class TextAnalyticsClientOperationsMixin:
             model_version=model_version,
             show_stats=show_stats,
             template_url=self.entities_recognition_general.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -99,11 +110,13 @@ class TextAnalyticsClientOperationsMixin:
     @distributed_trace_async
     async def entities_linking(
         self,
-        documents: List["_models.MultiLanguageInput"],
+        documents: List[_models.MultiLanguageInput],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
+        *,
+        content_type: Optional[str] = "application/json",
         **kwargs: Any
-    ) -> "_models.EntityLinkingResult":
+    ) -> _models.EntityLinkingResult:
         """Linked entities from a well-known knowledge base.
 
         The API returns a list of recognized entities with links to a well-known knowledge base. See
@@ -114,22 +127,28 @@ class TextAnalyticsClientOperationsMixin:
         :type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
+         Default value is None.
         :type model_version: str
         :param show_stats: (Optional) if set to true, response will contain input and document level
-         statistics.
+         statistics. Default value is None.
         :type show_stats: bool
+        :keyword content_type: Media type of the body sent to the API. Known values are:
+         "application/json" or "text/json". Default value is "application/json".
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EntityLinkingResult, or the result of cls(response)
         :rtype: ~azure.ai.textanalytics.v3_0.models.EntityLinkingResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EntityLinkingResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.EntityLinkingResult]
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
         _json = self._serialize.body(_input, 'MultiLanguageBatchInput')
@@ -140,14 +159,16 @@ class TextAnalyticsClientOperationsMixin:
             model_version=model_version,
             show_stats=show_stats,
             template_url=self.entities_linking.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -172,11 +193,13 @@ class TextAnalyticsClientOperationsMixin:
     @distributed_trace_async
     async def key_phrases(
         self,
-        documents: List["_models.MultiLanguageInput"],
+        documents: List[_models.MultiLanguageInput],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
+        *,
+        content_type: Optional[str] = "application/json",
         **kwargs: Any
-    ) -> "_models.KeyPhraseResult":
+    ) -> _models.KeyPhraseResult:
         """Key Phrases.
 
         The API returns a list of strings denoting the key phrases in the input text. See the :code:`<a
@@ -187,22 +210,28 @@ class TextAnalyticsClientOperationsMixin:
         :type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
+         Default value is None.
         :type model_version: str
         :param show_stats: (Optional) if set to true, response will contain input and document level
-         statistics.
+         statistics. Default value is None.
         :type show_stats: bool
+        :keyword content_type: Media type of the body sent to the API. Known values are:
+         "application/json" or "text/json". Default value is "application/json".
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyPhraseResult, or the result of cls(response)
         :rtype: ~azure.ai.textanalytics.v3_0.models.KeyPhraseResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyPhraseResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.KeyPhraseResult]
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
         _json = self._serialize.body(_input, 'MultiLanguageBatchInput')
@@ -213,14 +242,16 @@ class TextAnalyticsClientOperationsMixin:
             model_version=model_version,
             show_stats=show_stats,
             template_url=self.key_phrases.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -245,11 +276,13 @@ class TextAnalyticsClientOperationsMixin:
     @distributed_trace_async
     async def languages(
         self,
-        documents: List["_models.LanguageInput"],
+        documents: List[_models.LanguageInput],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
+        *,
+        content_type: Optional[str] = "application/json",
         **kwargs: Any
-    ) -> "_models.LanguageResult":
+    ) -> _models.LanguageResult:
         """Detect Language.
 
         The API returns the detected language and a numeric score between 0 and 1. Scores close to 1
@@ -261,22 +294,28 @@ class TextAnalyticsClientOperationsMixin:
         :type documents: list[~azure.ai.textanalytics.v3_0.models.LanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
+         Default value is None.
         :type model_version: str
         :param show_stats: (Optional) if set to true, response will contain input and document level
-         statistics.
+         statistics. Default value is None.
         :type show_stats: bool
+        :keyword content_type: Media type of the body sent to the API. Known values are:
+         "application/json" or "text/json". Default value is "application/json".
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LanguageResult, or the result of cls(response)
         :rtype: ~azure.ai.textanalytics.v3_0.models.LanguageResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LanguageResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.LanguageResult]
 
         _input = _models.LanguageBatchInput(documents=documents)
         _json = self._serialize.body(_input, 'LanguageBatchInput')
@@ -287,14 +326,16 @@ class TextAnalyticsClientOperationsMixin:
             model_version=model_version,
             show_stats=show_stats,
             template_url=self.languages.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -319,11 +360,13 @@ class TextAnalyticsClientOperationsMixin:
     @distributed_trace_async
     async def sentiment(
         self,
-        documents: List["_models.MultiLanguageInput"],
+        documents: List[_models.MultiLanguageInput],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
+        *,
+        content_type: Optional[str] = "application/json",
         **kwargs: Any
-    ) -> "_models.SentimentResponse":
+    ) -> _models.SentimentResponse:
         """Sentiment.
 
         The API returns a sentiment prediction, as well as sentiment scores for each sentiment class
@@ -335,22 +378,28 @@ class TextAnalyticsClientOperationsMixin:
         :type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
+         Default value is None.
         :type model_version: str
         :param show_stats: (Optional) if set to true, response will contain input and document level
-         statistics.
+         statistics. Default value is None.
         :type show_stats: bool
+        :keyword content_type: Media type of the body sent to the API. Known values are:
+         "application/json" or "text/json". Default value is "application/json".
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SentimentResponse, or the result of cls(response)
         :rtype: ~azure.ai.textanalytics.v3_0.models.SentimentResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SentimentResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SentimentResponse]
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
         _json = self._serialize.body(_input, 'MultiLanguageBatchInput')
@@ -361,14 +410,16 @@ class TextAnalyticsClientOperationsMixin:
             model_version=model_version,
             show_stats=show_stats,
             template_url=self.sentiment.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
