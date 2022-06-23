@@ -35,6 +35,8 @@ extends:
       safeName: azurecommunicationidentity
     - name: azure-communication-chat
       safeName: azurecommunicationchat
+    - name: azure-communication-email
+      safeName: azurecommunicationemail
     - name: azure-mgmt-communication
       safeName: azuremgmtcommunication
     - name: azure-communication-sms
