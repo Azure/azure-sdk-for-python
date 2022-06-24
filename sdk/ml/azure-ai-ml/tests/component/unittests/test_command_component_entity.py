@@ -3,7 +3,7 @@ import pytest
 from unittest.mock import patch
 from io import StringIO
 
-from azure.ai.ml import command, MpiDistribution, dsl, Input, Output
+from azure.ai.ml import command, MpiDistribution, Input, Output, load_component
 from azure.ai.ml._restclient.v2022_05_01.models import TensorFlow
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.entities import (
@@ -11,7 +11,6 @@ from azure.ai.ml.entities import (
     CommandComponent,
     ResourceConfiguration,
     CommandJobLimits,
-    load_component,
 )
 from azure.ai.ml.sweep import Choice
 from azure.ai.ml.entities._job.pipeline._exceptions import UnexpectedKeywordError
@@ -24,12 +23,12 @@ class TestCommandComponentEntity:
     def test_component_load(self):
         # code is specified in yaml, value is respected
         component_yaml = "./tests/test_configs/components/basic_component_code_local_path.yml"
-        command_component = Component.load(
+        command_component = load_component(
             path=component_yaml,
         )
         assert command_component.code == "./helloworld_components_with_env"
         component_yaml = "./tests/test_configs/components/basic_component_code_arm_id.yml"
-        command_component = Component.load(
+        command_component = load_component(
             path=component_yaml,
         )
         expected_code = (
@@ -74,7 +73,7 @@ class TestCommandComponentEntity:
         component_dict = pydash.omit(component_dict, "properties.component_spec.$schema")
 
         yaml_path = "./tests/test_configs/components/basic_component_code_arm_id.yml"
-        yaml_component = Component.load(path=yaml_path)
+        yaml_component = load_component(path=yaml_path)
         yaml_component_dict = yaml_component._to_rest_object().as_dict()
         yaml_component_dict = pydash.omit(yaml_component_dict, "properties.component_spec.$schema")
 
@@ -105,7 +104,7 @@ class TestCommandComponentEntity:
         component_dict = component._to_rest_object().as_dict()
 
         yaml_path = "./tests/test_configs/components/helloworld_component_tensorflow.yml"
-        yaml_component = Component.load(path=yaml_path)
+        yaml_component = load_component(path=yaml_path)
         yaml_component_dict = yaml_component._to_rest_object().as_dict()
 
         component_dict = pydash.omit(
@@ -136,7 +135,7 @@ class TestCommandComponentEntity:
         )
 
         yaml_path = "./tests/test_configs/components/basic_component_code_local_path.yml"
-        yaml_component = Component.load(path=yaml_path)
+        yaml_component = load_component(path=yaml_path)
         assert component.code == yaml_component.code
 
     def test_command_component_version_as_a_function(self):
@@ -155,7 +154,7 @@ class TestCommandComponentEntity:
         }
 
         yaml_path = "./tests/test_configs/components/basic_component_code_local_path.yml"
-        yaml_component_version = Component.load(path=yaml_path)
+        yaml_component_version = load_component(path=yaml_path)
         assert isinstance(yaml_component_version, CommandComponent)
 
         yaml_component = yaml_component_version()
@@ -194,7 +193,7 @@ class TestCommandComponentEntity:
         }
 
         yaml_path = "./tests/test_configs/components/helloworld_component.yml"
-        yaml_component_version = Component.load(path=yaml_path)
+        yaml_component_version = load_component(path=yaml_path)
         pipeline_input = PipelineInput(name="pipeline_input", owner="pipeline", meta=None)
         yaml_component = yaml_component_version(component_in_number=10, component_in_path=pipeline_input)
 
@@ -222,10 +221,8 @@ class TestCommandComponentEntity:
             # we're using a curated environment
             environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:9",
         )
-        basic_component = load_component(
-            yaml_file="./tests/test_configs/components/basic_component_code_local_path.yml"
-        )
-        sweep_component = load_component(yaml_file="./tests/test_configs/components/helloworld_component_for_sweep.yml")
+        basic_component = load_component(path="./tests/test_configs/components/basic_component_code_local_path.yml")
+        sweep_component = load_component(path="./tests/test_configs/components/helloworld_component_for_sweep.yml")
 
         with patch("sys.stdout", new=StringIO()) as std_out:
             help(download_unzip_component._func)
@@ -286,7 +283,7 @@ class TestCommandComponentEntity:
     def test_sweep_help_function(self):
         yaml_file = "./tests/test_configs/components/helloworld_component.yml"
 
-        component_to_sweep: CommandComponent = load_component(yaml_file=yaml_file)
+        component_to_sweep: CommandComponent = load_component(path=yaml_file)
         cmd_node1: Command = component_to_sweep(
             component_in_number=Choice([2, 3, 4, 5]), component_in_path=Input(path="/a/path/on/ds")
         )

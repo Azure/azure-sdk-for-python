@@ -26,7 +26,7 @@ from azure.ai.ml.entities import BatchDeployment
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
 from azure.ai.ml.entities._assets._artifacts.code import Code
 
-from azure.ai.ml._operations.operation_orchestrator import OperationOrchestrator
+from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
 
 module_logger = logging.getLogger(__name__)
 initialize_logger_info(module_logger, terminator="")
@@ -130,7 +130,7 @@ def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestr
 
     module_logger.debug(f"Uploading the dependencies for deployment {deployment.name}")
 
-    # Create a code asset if code is not alrady an ARM ID
+    # Create a code asset if code is not already an ARM ID
     if deployment.code_configuration and not is_ARM_id_for_resource(
         deployment.code_configuration.code, AzureMLResourceType.CODE
     ):

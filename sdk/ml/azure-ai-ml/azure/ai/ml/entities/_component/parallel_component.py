@@ -4,6 +4,7 @@
 import json
 import re
 import os
+
 from marshmallow import INCLUDE, Schema
 from typing import Dict, Any, Union
 
@@ -235,7 +236,7 @@ class ParallelComponent(Component, ParameterizedParallel):
         """Dump the parallel component content into a dictionary."""
 
         # Replace the name of $schema to schema.
-        component_schema_dict = ParallelComponentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        component_schema_dict = self._dump_for_validation()
         component_schema_dict.pop("base_path", None)
         return {**self._other_parameter, **component_schema_dict}
 
@@ -248,7 +249,6 @@ class ParallelComponent(Component, ParameterizedParallel):
         )
 
     def _to_rest_object(self) -> ComponentVersionData:
-        self._validate(raise_error=True)
         # Convert nested ordered dict to dict.
         # TODO: we may need to use original dict from component YAML(only change code and environment), returning
         # parsed dict might add default value for some field, eg: if we add property "optional" with default value
@@ -291,10 +291,10 @@ class ParallelComponent(Component, ParameterizedParallel):
         return parallel_component
 
     @classmethod
-    def _get_schema(cls) -> Union[Schema, PathAwareSchema]:
+    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         from azure.ai.ml._schema.component import ParallelComponentSchema
 
-        return ParallelComponentSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
+        return ParallelComponentSchema(context=context)
 
     def __str__(self):
         try:

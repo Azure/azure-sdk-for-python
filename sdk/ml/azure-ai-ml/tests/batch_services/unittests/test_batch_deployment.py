@@ -6,7 +6,7 @@ from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
 import pytest
 
 from azure.core.polling import LROPoller
-from azure.ai.ml._operations import (
+from azure.ai.ml.operations import (
     BatchDeploymentOperations,
     WorkspaceOperations,
 )
@@ -14,6 +14,7 @@ from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.constants import (
     AzureMLResourceType,
 )
+from azure.ai.ml import load_batch_deployment
 
 from pytest_mock import MockFixture
 
@@ -87,13 +88,13 @@ class TestBatchDeploymentOperations:
         mocker: MockFixture,
     ) -> None:
         mocker.patch(
-            "azure.ai.ml._operations.batch_deployment_operations.BatchDeploymentOperations._get_workspace_location",
+            "azure.ai.ml.operations._batch_deployment_operations.BatchDeploymentOperations._get_workspace_location",
             return_value="xxx",
         )
         mock_create_or_update_batch_deployment = mocker.patch.object(
             BatchDeploymentOperations, "begin_create_or_update", autospec=True
         )
-        batch_deployment = BatchDeployment.load(create_yaml_happy_path)
+        batch_deployment = load_batch_deployment(create_yaml_happy_path)
         batch_deployment.name = rand_compute_name()
         mock_batch_deployment_operations.begin_create_or_update(deployment=batch_deployment)
         mock_create_or_update_batch_deployment.assert_called_once()
@@ -106,7 +107,7 @@ class TestBatchDeploymentOperations:
         self, mock_batch_deployment_operations: BatchDeploymentOperations, mocker: MockFixture
     ) -> None:
         mocker.patch(
-            "azure.ai.ml._operations.batch_deployment_operations._get_mfe_base_url_from_discovery_service",
+            "azure.ai.ml.operations._batch_deployment_operations._get_mfe_base_url_from_discovery_service",
             return_value="https://somebatch-url.com",
         )
         mockresponse = Mock()

@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed the bug that azure-core could not be imported under Python 3.11.0b3  #24928
+
 ### Other Changes
 
 ## 1.24.1 (2022-06-01)

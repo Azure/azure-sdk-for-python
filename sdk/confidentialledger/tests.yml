@@ -1,0 +1,13 @@
+trigger: none
+
+stages:
+  - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      BuildTargetingString: azure-confidentialledger*
+      ServiceDirectory: confidentialledger
+      MatrixReplace:
+        - TestSamples=.*/true
+      MaxParallel: 1
+      EnvVars:
+        TEST_MODE: "RunLiveNoRecord" # use when allowing preparers to create the rgs for you
+        AZURE_TEST_RUN_LIVE: "true" # use when utilizing the New-TestResources Script

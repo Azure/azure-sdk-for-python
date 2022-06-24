@@ -1,7 +1,23 @@
 from unittest.mock import Mock, patch
 
 import pytest
-from azure.ai.ml import MLClient
+
+from azure.ai.ml import (
+    MLClient,
+    load_job,
+    load_workspace,
+    load_batch_deployment,
+    load_batch_endpoint,
+    load_component,
+    load_compute,
+    load_data,
+    load_datastore,
+    load_environment,
+    load_model,
+    load_online_deployment,
+    load_online_endpoint,
+    load_workspace_connection,
+)
 from azure.ai.ml.entities import (
     BatchDeployment,
     BatchEndpoint,
@@ -103,37 +119,37 @@ class TestMachineLearningClient:
         "args, kwargs, ops_name, call_times, create_method_name",
         [
             (
-                [CommandJob.load("tests/test_configs/command_job/simple_train_test.yml")],
+                [load_job("tests/test_configs/command_job/simple_train_test.yml")],
                 {},
                 "jobs",
                 1,
                 "create_or_update",
             ),
             (
-                [SweepJob.load("tests/test_configs/sweep_job/sweep_job_minimal_test.yaml")],
+                [load_job("tests/test_configs/sweep_job/sweep_job_minimal_test.yaml")],
                 {},
                 "jobs",
                 3,
                 "create_or_update",
             ),
             (
-                [PipelineJob.load("tests/test_configs/pipeline_jobs/helloworld_pipeline_job.yml")],
+                [load_job("tests/test_configs/pipeline_jobs/helloworld_pipeline_job.yml")],
                 {},
                 "jobs",
                 3,
                 "create_or_update",
             ),
-            ([Model.load("tests/test_configs/model/model_full.yml")], {}, "models", 1, "create_or_update"),
+            ([load_model("tests/test_configs/model/model_full.yml")], {}, "models", 1, "create_or_update"),
             (
-                [Environment.load("tests/test_configs/environment/environment_conda.yml")],
+                [load_environment("tests/test_configs/environment/environment_conda.yml")],
                 {},
                 "environments",
                 1,
                 "create_or_update",
             ),
-            ([Datastore.load("tests/test_configs/datastore/blob_store.yml")], {}, "datastores", 1, "create_or_update"),
+            ([load_datastore("tests/test_configs/datastore/blob_store.yml")], {}, "datastores", 1, "create_or_update"),
             (
-                [CommandJob.load("tests/test_configs/command_job/simple_train_test.yml"), "soemthing_else"],
+                [load_job("tests/test_configs/command_job/simple_train_test.yml"), "soemthing_else"],
                 {},
                 "takes 2 positional arguments but 3 were given",
                 -1,
@@ -183,45 +199,45 @@ class TestMachineLearningClient:
     @pytest.mark.parametrize(
         "args, kwargs, ops_name, call_times, create_method_name",
         [
-            ([Compute.load("tests/test_configs/compute/compute-ci.yaml")], {}, "compute", 1, "begin_create_or_update"),
-            ([Workspace.load("tests/test_configs/workspace/workspace_full.yaml")], {}, "workspaces", 1, "begin_create"),
+            ([load_compute("tests/test_configs/compute/compute-ci.yaml")], {}, "compute", 1, "begin_create_or_update"),
+            ([load_workspace("tests/test_configs/workspace/workspace_full.yaml")], {}, "workspaces", 1, "begin_create"),
             (
-                [OnlineEndpoint.load("tests/test_configs/endpoints/online/online_endpoint_create_k8s.yml")],
+                [load_online_endpoint("tests/test_configs/endpoints/online/online_endpoint_create_k8s.yml")],
                 {},
                 "online_endpoints",
                 1,
                 "begin_create_or_update",
             ),
             (
-                [OnlineDeployment.load("tests/test_configs/deployments/online/online_deployment_blue.yaml")],
+                [load_online_deployment("tests/test_configs/deployments/online/online_deployment_blue.yaml")],
                 {},
                 "online_deployments",
                 1,
                 "begin_create_or_update",
             ),
             (
-                [OnlineDeployment.load("tests/test_configs/deployments/online/online_deployment_blue.yaml")],
+                [load_online_deployment("tests/test_configs/deployments/online/online_deployment_blue.yaml")],
                 {"local": True, "vscode_debug": True, "no_wait": True},
                 "online_deployments",
                 2,
                 "begin_create_or_update",
             ),
             (
-                [OnlineDeployment.load("tests/test_configs/deployments/online/online_deployment_blue.yaml")],
+                [load_online_deployment("tests/test_configs/deployments/online/online_deployment_blue.yaml")],
                 {"local": True, "no_wait": True},
                 "online_deployments",
                 2,
                 "begin_create_or_update",
             ),
             (
-                [BatchEndpoint.load("tests/test_configs/endpoints/batch/batch_endpoint_mlflow.yaml")],
+                [load_batch_endpoint("tests/test_configs/endpoints/batch/batch_endpoint_mlflow.yaml")],
                 {},
                 "batch_endpoints",
                 1,
                 "begin_create_or_update",
             ),
             (
-                [BatchDeployment.load("tests/test_configs/deployments/batch/batch_deployment_1.yaml")],
+                [load_batch_deployment("tests/test_configs/deployments/batch/batch_deployment_1.yaml")],
                 {},
                 "batch_deployments",
                 1,

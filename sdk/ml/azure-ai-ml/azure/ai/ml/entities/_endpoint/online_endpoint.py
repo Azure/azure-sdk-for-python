@@ -8,7 +8,7 @@ from os import PathLike
 from typing import Any, Dict, Optional, Union
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     OnlineEndpointData,
-    IdentityConfiguration as IdentityConfiguration,
+    IdentityConfiguration,
     OnlineEndpointDetails as RestOnlineEndpoint,
     EndpointAuthMode,
 )
@@ -19,14 +19,10 @@ from azure.ai.ml.constants import (
     AML_TOKEN_YAML,
     BASE_PATH_CONTEXT_KEY,
     KEY,
-    ONLINE_ENDPOINT_TYPE,
-    TYPE,
     PARAMS_OVERRIDE_KEY,
     EndpointYamlFields,
-    CommonYamlFields,
 )
-
-from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.entities._util import load_from_dict, is_compute_in_override
 from ._endpoint_helpers import (
     validate_endpoint_or_deployment_name,
     validate_identity_type_defined,
@@ -227,31 +223,20 @@ class OnlineEndpoint(Endpoint):
         return not self.__eq__(other)
 
     @classmethod
-    def load(
-        cls,
-        path: Union[PathLike, str] = None,
-        params_override: list = None,
-        **kwargs,
-    ) -> "Endpoint":
-        params_override = params_override or []
-        data = load_yaml(path)
-        return OnlineEndpoint.load_from_dict(data=data, path=path, params_override=params_override)
-
-    @classmethod
-    def load_from_dict(
+    def _load(
         cls,
         data: dict,
-        path: Union[PathLike, str] = None,
+        yaml_path: Union[PathLike, str] = None,
         params_override: list = None,
         **kwargs,
     ) -> "Endpoint":
         params_override = params_override or []
         context = {
-            BASE_PATH_CONTEXT_KEY: Path(path).parent if path else Path.cwd(),
+            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path.cwd(),
             PARAMS_OVERRIDE_KEY: params_override,
         }
 
-        if data.get(EndpointYamlFields.COMPUTE):
+        if data.get(EndpointYamlFields.COMPUTE) or is_compute_in_override(params_override):
             return load_from_dict(KubernetesOnlineEndpointSchema, data, context)
         else:
             return load_from_dict(ManagedOnlineEndpointSchema, data, context)

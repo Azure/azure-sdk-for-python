@@ -8,7 +8,7 @@ import contextlib
 import inspect
 import importlib
 from pathlib import Path
-from azure.ai.ml.dsl._constants import VALID_NAME_CHARS, DSL_COMPONENT_EXECUTION
+from azure.ai.ml.dsl._constants import VALID_NAME_CHARS
 from azure.ai.ml._ml_exceptions import ErrorTarget, ComponentException
 
 
@@ -82,17 +82,6 @@ def _relative_to(path, basedir, raises_if_impossible=False):
         if raises_if_impossible:
             raise
         return None
-
-
-def dsl_component_execution() -> bool:
-    """Return True if dsl component is executing."""
-    if os.getenv(DSL_COMPONENT_EXECUTION, "false").lower() == "true":
-        return True
-    return False
-
-
-def is_dsl_component(function):
-    return hasattr(function, "_is_dsl_component")
 
 
 @contextlib.contextmanager

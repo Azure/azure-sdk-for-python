@@ -156,6 +156,26 @@ class ComponentException(MlException):
         )
 
 
+class DataException(MlException):
+    def __init__(
+        self,
+        message: str,
+        no_personal_data_message: str,
+        target: ErrorTarget = ErrorTarget.UNKNOWN,
+        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        *args,
+        **kwargs
+    ):
+        super(DataException, self).__init__(
+            message=message,
+            target=target,
+            error_category=error_category,
+            no_personal_data_message=no_personal_data_message,
+            *args,
+            **kwargs
+        )
+
+
 class DatastoreException(MlException):
     def __init__(
         self,
