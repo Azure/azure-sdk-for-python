@@ -2,6 +2,12 @@
 
 This package contains a Python SDK for Azure Communication Services for Email.
 
+## Key concepts
+
+The Azure Communication Email package is used to do following:
+- Send emails to multiple types of recipients
+- Query the status of a sent email message
+
 ## Getting started
 
 ### Prerequisites
@@ -30,7 +36,7 @@ Email clients can be authenticated using the connection string acquired from an 
 from azure.communication.email import EmailClient
 
 connection_string = "endpoint=https://<resource-name>.communication.azure.com/;accessKey=<Base64-Encoded-Key>"
-client = EmailClient(connectionString);
+client = EmailClient.from_connection_string(connection_string);
 ```
 
 ### Send an Email Message
@@ -125,6 +131,18 @@ The result from the `send` call contains a `message_id` which can be used to que
 ```python
 response = client.send(message)
 status = client.get_sent_status(message_id)
+```
+
+## Troubleshooting
+
+Email operations will throw an exception if the request to the server fails. The Email client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md).
+
+```Python
+try:
+    response = email_client.send(message)
+except Exception as ex:
+    print('Exception:')
+    print(ex)
 ```
 
 ## Next steps

@@ -30,6 +30,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: communication
+    TestProxy: true
     Artifacts:
     - name: azure-communication-identity
       safeName: azurecommunicationidentity
