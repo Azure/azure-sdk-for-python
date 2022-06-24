@@ -6,13 +6,25 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._oep_storage_client_operations import OepStorageClientOperationsMixin
+from ._health_operations import HealthOperations
+from ._info_operations import InfoOperations
+from ._patch_operations import PatchOperations
+from ._record_operations import RecordOperations
+from ._pub_sub_operations import PubSubOperations
+from ._query_operations import QueryOperations
+from ._schema_operations import SchemaOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 __all__ = [
-    'OepStorageClientOperationsMixin',
+    'HealthOperations',
+    'InfoOperations',
+    'PatchOperations',
+    'RecordOperations',
+    'PubSubOperations',
+    'QueryOperations',
+    'SchemaOperations',
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

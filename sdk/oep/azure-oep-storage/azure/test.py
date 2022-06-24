@@ -34,6 +34,8 @@ def health_check():
         base_url='https://bvtstglf7zn1c.oep.ppe.azure-int.net'
     )
     client.health.get(data_partition_id='bvtstglf7zn1c-testdata', frame_of_reference='none')
+    x = client.record.list_record_versions_by_id(id='bvtstglf7zn1c-testdata:999571446469:999571446469', data_partition_id='bvtstglf7zn1c-testdata', frame_of_reference='none')
+    print(x)
 
 if __name__ == "__main__":
     health_check()
