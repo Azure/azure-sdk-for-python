@@ -41,7 +41,7 @@ def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> No
         with open(ci, "r") as file_in:
             content = file_in.readlines()
             for line in content:
-                if f'{package_name}\n' in line:
+                if f'{package_name}' in line:
                     return
             content.append(f'    - name: {package_name}\n')
             content.append(f'      safeName: {package_name.replace("-", "")}\n')
@@ -110,8 +110,9 @@ def build_package(**kwargs) -> None:
     swagger_readme = generate_swagger_readme(output_folder, env, **kwargs)
 
     # generate code with autorest and swagger readme
-    _LOGGER.info("generate SDK code with autorest")
-    check_call(f'autorest {swagger_readme} {get_autorest_version()} ', shell=True)
+    autorest_cmd = f'autorest {swagger_readme} {get_autorest_version()} '
+    _LOGGER.info(f"generate SDK code with autorest: {autorest_cmd}")
+    check_call(autorest_cmd, shell=True)
 
     # generate necessary file(setup.py, CHANGELOG.md, etc)
     work_path = Path(output_folder)
