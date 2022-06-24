@@ -5,13 +5,16 @@ import os
 from jinja2 import Environment, FileSystemLoader
 from subprocess import check_call
 import time
-from typing import Any, Dict
+from typing import Any
+import json
 
 _LOGGER = logging.getLogger(__name__)
 
 _TEMPLATE = Path(__file__).resolve().parent / "template"
 _TEMPLATE_TESTS = Path(__file__).resolve().parent / "template_tests"
 _TEMPLATE_SAMPLES = Path(__file__).resolve().parent / "template_samples"
+_TEMPLATE_CI = Path(__file__).resolve().parent / "template_ci"
+_CONFIG_FILE = Path(__file__).resolve() / "../../../swagger_to_sdk_config_dpg.json"
 
 
 def check_parameters(
@@ -23,6 +26,27 @@ def check_parameters(
         _LOGGER.info(f'{output} does not exist and try to create it')
         os.makedirs(output)
         _LOGGER.info(f'{output} is created')
+
+
+def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> None:
+    ci = Path(folder_path, "ci.yml")
+    ci_template_path = template_path / 'ci.yml'
+    service_name = folder_path.name
+    name = package_name.split('-')[-1]
+    if not ci.exists():
+        with open(ci_template_path, "r") as file_in:
+            content = file_in.readlines()
+        content = [line.replace("ServiceName", service_name).replace('PackageName', name) for line in content]
+    else:
+        with open(ci, "r") as file_in:
+            content = file_in.readlines()
+            for line in content:
+                if f'{package_name}' in line:
+                    return
+            content.append(f'    - name: {package_name}\n')
+            content.append(f'      safeName: {package_name.replace("-", "")}\n')
+    with open(ci, "w") as file_out:
+        file_out.writelines(content)
 
 
 def generate_test_sample(template_path: Path, target_path: Path, **kwargs: Any) -> None:
@@ -53,6 +77,13 @@ def generate_swagger_readme(work_path: str, env: Environment, **kwargs: Any) -> 
     return swagger_readme
 
 
+def get_autorest_version() -> str:
+    with open(_CONFIG_FILE, 'r') as file_in:
+        config = json.load(file_in)
+    autorest_use = " ".join(["--use=" + item for item in config["meta"]["autorest_options"]["use"]])
+    return "--version={} {}".format(config["meta"]["autorest_options"]["version"], autorest_use)
+
+
 def build_package(**kwargs) -> None:
     # prepare template render parameters
     output_folder = kwargs.get("output_folder")
@@ -71,14 +102,17 @@ def build_package(**kwargs) -> None:
     _LOGGER.info("Build start: %s", package_name)
     check_parameters(output_folder)
 
+    # generate ci
+    generate_ci(_TEMPLATE_CI, Path(output_folder).parent, package_name)
+
     # generate swagger readme
     env = Environment(loader=FileSystemLoader(_TEMPLATE), keep_trailing_newline=True)
     swagger_readme = generate_swagger_readme(output_folder, env, **kwargs)
 
     # generate code with autorest and swagger readme
-    _LOGGER.info("generate SDK code with autorest")
-    check_call(f'autorest --version=3.8.1 --use=@autorest/python@5.17.0 --use=@autorest/modelerfour@4.23.5'
-               f' {swagger_readme}', shell=True)
+    autorest_cmd = f'autorest {swagger_readme} {get_autorest_version()} '
+    _LOGGER.info(f"generate SDK code with autorest: {autorest_cmd}")
+    check_call(autorest_cmd, shell=True)
 
     # generate necessary file(setup.py, CHANGELOG.md, etc)
     work_path = Path(output_folder)

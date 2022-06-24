@@ -21,7 +21,10 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Dict
 
-class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+
+class ConversationAnalysisClient(
+    ConversationAnalysisClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword
     """The language service conversations API is a suite of natural language processing (NLP) skills
     that can be used to analyze structured conversations (textual or spoken). The synchronous API
     in this suite accepts a request and mediates among multiple language projects, such as LUIS
@@ -43,13 +46,8 @@ class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):  # 
     :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        endpoint: str,
-        credential: AzureKeyCredential,
-        **kwargs: Any
-    ) -> None:
-        _endpoint = '{Endpoint}/language'
+    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
+        _endpoint = "{Endpoint}/language"
         self._config = ConversationAnalysisClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
@@ -57,12 +55,7 @@ class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):  # 
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-
-    def send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -82,7 +75,7 @@ class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):  # 
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

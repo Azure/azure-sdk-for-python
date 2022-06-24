@@ -9,7 +9,13 @@
 import sys
 from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -18,24 +24,19 @@ from azure.core.utils import case_insensitive_dict
 
 from ..._operations._operations import build_analyze_conversation_request
 from .._vendor import MixinABC
+
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
-T = TypeVar('T')
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class ConversationAnalysisClientOperationsMixin(MixinABC):
 
+class ConversationAnalysisClientOperationsMixin(MixinABC):
     @overload
-    async def analyze_conversation(
-        self,
-        task: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> JSON:
+    async def analyze_conversation(self, task: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         """Analyzes the input conversation utterance.
 
         :param task: A single conversational task to execute. Required.
@@ -109,13 +110,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         """
 
     @overload
-    async def analyze_conversation(
-        self,
-        task: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> JSON:
+    async def analyze_conversation(self, task: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         """Analyzes the input conversation utterance.
 
         :param task: A single conversational task to execute. Required.
@@ -148,13 +143,8 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                 response == analyze_conversation_task_result
         """
 
-
     @distributed_trace_async
-    async def analyze_conversation(
-        self,
-        task: Union[JSON, IO],
-        **kwargs: Any
-    ) -> JSON:
+    async def analyze_conversation(self, task: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Analyzes the input conversation utterance.
 
         :param task: A single conversational task to execute. Is either a model type or a IO type.
@@ -187,16 +177,14 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                 # response body for status code(s): 200
                 response == analyze_conversation_task_result
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/json"
         _json = None
@@ -215,14 +203,12 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -240,5 +226,3 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
             return cls(pipeline_response, cast(JSON, deserialized), {})
 
         return cast(JSON, deserialized)
-
-

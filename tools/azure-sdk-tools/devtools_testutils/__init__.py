@@ -32,6 +32,7 @@ from .sanitizers import (
     add_uri_regex_sanitizer,
     set_bodiless_matcher,
     set_custom_default_matcher,
+    set_default_settings,
 )
 from .helpers import ResponseCallback, RetryCounter
 from .fake_credentials import FakeTokenCredential
@@ -68,6 +69,7 @@ __all__ = [
     "test_proxy",
     "set_bodiless_matcher",
     "set_custom_default_matcher",
+    "set_default_settings",
     "start_test_proxy",
     "stop_test_proxy",
     "ResponseCallback",

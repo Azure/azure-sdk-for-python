@@ -8,8 +8,15 @@
 # --------------------------------------------------------------------------
 import sys
 from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
+from urllib.parse import parse_qs, urljoin, urlparse
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -21,154 +28,115 @@ from azure.core.utils import case_insensitive_dict
 
 from .._serialization import Serializer
 from .._vendor import MixinABC, _format_url_section
+
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
-T = TypeVar('T')
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-def build_list_projects_request(
-    *,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
-) -> HttpRequest:
+
+def build_list_projects_request(*, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects"
 
     # Construct parameters
     if top is not None:
-        _params['top'] = _SERIALIZER.query("top", top, 'int')
+        _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
-        _params['skip'] = _SERIALIZER.query("skip", skip, 'int')
-    if maxpagesize is not None:
-        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_create_project_request(
-    project_name: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_create_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="PATCH",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_project_request(
-    project_name: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_project_request(
-    project_name: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_delete_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="DELETE",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_export_project_request(
@@ -182,552 +150,404 @@ def build_export_project_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/:export"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if exported_project_format is not None:
-        _params['format'] = _SERIALIZER.query("exported_project_format", exported_project_format, 'str')
-    _params['stringIndexType'] = _SERIALIZER.query("string_index_type", string_index_type, 'str')
+        _params["format"] = _SERIALIZER.query("exported_project_format", exported_project_format, "str")
+    _params["stringIndexType"] = _SERIALIZER.query("string_index_type", string_index_type, "str")
     if asset_kind is not None:
-        _params['assetKind'] = _SERIALIZER.query("asset_kind", asset_kind, 'str')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["assetKind"] = _SERIALIZER.query("asset_kind", asset_kind, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_import_project_request(
-    project_name: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_import_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    exported_project_format = kwargs.pop('exported_project_format', _params.pop('format', None))  # type: Optional[str]
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    exported_project_format = kwargs.pop("exported_project_format", _params.pop("format", None))  # type: Optional[str]
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/:import"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if exported_project_format is not None:
-        _params['format'] = _SERIALIZER.query("exported_project_format", exported_project_format, 'str')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["format"] = _SERIALIZER.query("exported_project_format", exported_project_format, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_train_request(
-    project_name: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_train_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/:train"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_deployments_request(
-    project_name: str,
-    *,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
+    project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/deployments"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if top is not None:
-        _params['top'] = _SERIALIZER.query("top", top, 'int')
+        _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
-        _params['skip'] = _SERIALIZER.query("skip", skip, 'int')
-    if maxpagesize is not None:
-        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_swap_deployments_request(
-    project_name: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_swap_deployments_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/deployments/:swap"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_deployment_request(
-    project_name: str,
-    deployment_name: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_deployment_request(project_name: str, deployment_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/deployments/{deploymentName}"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, 'str'),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deploy_project_request(
-    project_name: str,
-    deployment_name: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_deploy_project_request(project_name: str, deployment_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/deployments/{deploymentName}"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, 'str'),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="PUT",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_deployment_request(
-    project_name: str,
-    deployment_name: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_delete_deployment_request(project_name: str, deployment_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/deployments/{deploymentName}"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, 'str'),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="DELETE",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_deployment_job_status_request(
-    project_name: str,
-    deployment_name: str,
-    job_id: str,
-    **kwargs: Any
+    project_name: str, deployment_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/deployments/{deploymentName}/jobs/{jobId}"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, 'str'),
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_swap_deployments_job_status_request(
-    project_name: str,
-    job_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_swap_deployments_job_status_request(project_name: str, job_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/deployments/swap/jobs/{jobId}"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_export_project_job_status_request(
-    project_name: str,
-    job_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_export_project_job_status_request(project_name: str, job_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/export/jobs/{jobId}"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_import_project_job_status_request(
-    project_name: str,
-    job_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_import_project_job_status_request(project_name: str, job_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/import/jobs/{jobId}"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_trained_models_request(
-    project_name: str,
-    *,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
+    project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/models"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if top is not None:
-        _params['top'] = _SERIALIZER.query("top", top, 'int')
+        _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
-        _params['skip'] = _SERIALIZER.query("skip", skip, 'int')
-    if maxpagesize is not None:
-        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_trained_model_request(
-    project_name: str,
-    trained_model_label: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_trained_model_request(project_name: str, trained_model_label: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/models/{trainedModelLabel}"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, 'str'),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_trained_model_request(
-    project_name: str,
-    trained_model_label: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_delete_trained_model_request(project_name: str, trained_model_label: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/models/{trainedModelLabel}"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, 'str'),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="DELETE",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_model_evaluation_results_request(
@@ -737,264 +557,194 @@ def build_list_model_evaluation_results_request(
     string_index_type: str,
     top: Optional[int] = None,
     skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/models/{trainedModelLabel}/evaluation/result"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, 'str'),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['stringIndexType'] = _SERIALIZER.query("string_index_type", string_index_type, 'str')
+    _params["stringIndexType"] = _SERIALIZER.query("string_index_type", string_index_type, "str")
     if top is not None:
-        _params['top'] = _SERIALIZER.query("top", top, 'int')
+        _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
-        _params['skip'] = _SERIALIZER.query("skip", skip, 'int')
-    if maxpagesize is not None:
-        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_model_evaluation_summary_request(
-    project_name: str,
-    trained_model_label: str,
-    **kwargs: Any
+    project_name: str, trained_model_label: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/models/{trainedModelLabel}/evaluation/summary-result"
+    _url = (
+        "/authoring/analyze-conversations/projects/{projectName}/models/{trainedModelLabel}/evaluation/summary-result"
+    )
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, 'str'),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_training_jobs_request(
-    project_name: str,
-    *,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
+    project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/train/jobs"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if top is not None:
-        _params['top'] = _SERIALIZER.query("top", top, 'int')
+        _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
-        _params['skip'] = _SERIALIZER.query("skip", skip, 'int')
-    if maxpagesize is not None:
-        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_training_job_status_request(
-    project_name: str,
-    job_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_training_job_status_request(project_name: str, job_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/train/jobs/{jobId}"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_cancel_training_job_request(
-    project_name: str,
-    job_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_cancel_training_job_request(project_name: str, job_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/train/jobs/{jobId}/:cancel"
     path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100),
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_project_deletion_job_status_request(
-    job_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_project_deletion_job_status_request(job_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/global/deletion-jobs/{jobId}"
     path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_supported_languages_request(
-    *,
-    project_kind: str,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
+    *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/global/languages"
 
     # Construct parameters
-    _params['projectKind'] = _SERIALIZER.query("project_kind", project_kind, 'str')
+    _params["projectKind"] = _SERIALIZER.query("project_kind", project_kind, "str")
     if top is not None:
-        _params['top'] = _SERIALIZER.query("top", top, 'int')
+        _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
-        _params['skip'] = _SERIALIZER.query("skip", skip, 'int')
-    if maxpagesize is not None:
-        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_supported_prebuilt_entities_request(
@@ -1003,92 +753,63 @@ def build_list_supported_prebuilt_entities_request(
     multilingual: Optional[bool] = None,
     top: Optional[int] = None,
     skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/global/prebuilt-entities"
 
     # Construct parameters
     if language is not None:
-        _params['language'] = _SERIALIZER.query("language", language, 'str')
+        _params["language"] = _SERIALIZER.query("language", language, "str")
     if multilingual is not None:
-        _params['multilingual'] = _SERIALIZER.query("multilingual", multilingual, 'bool')
+        _params["multilingual"] = _SERIALIZER.query("multilingual", multilingual, "bool")
     if top is not None:
-        _params['top'] = _SERIALIZER.query("top", top, 'int')
+        _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
-        _params['skip'] = _SERIALIZER.query("skip", skip, 'int')
-    if maxpagesize is not None:
-        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_training_config_versions_request(
-    *,
-    project_kind: str,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
+    *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/global/training-config-versions"
 
     # Construct parameters
-    _params['projectKind'] = _SERIALIZER.query("project_kind", project_kind, 'str')
+    _params["projectKind"] = _SERIALIZER.query("project_kind", project_kind, "str")
     if top is not None:
-        _params['top'] = _SERIALIZER.query("top", top, 'int')
+        _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
-        _params['skip'] = _SERIALIZER.query("skip", skip, 'int')
-    if maxpagesize is not None:
-        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
 
 class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-public-methods
-
     @distributed_trace
-    def list_projects(
-        self,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
-    ) -> Iterable[JSON]:
+    def list_projects(self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any) -> Iterable[JSON]:
         """Lists the existing projects.
 
         :keyword top: The maximum number of resources to return from the collection. Default value is
@@ -1097,9 +818,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1136,43 +854,41 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_projects_request(
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_list_projects_request(
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
@@ -1186,9 +902,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             request = prepare_request(next_link)
 
             pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1198,20 +912,11 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
             return pipeline_response
 
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-
+        return ItemPaged(get_next, extract_data)
 
     @overload
     def create_project(
-        self,
-        project_name: str,
-        project: JSON,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        self, project_name: str, project: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Creates a new project or updates an existing one.
 
@@ -1276,12 +981,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @overload
     def create_project(
-        self,
-        project_name: str,
-        project: IO,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        self, project_name: str, project: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Creates a new project or updates an existing one.
 
@@ -1326,14 +1026,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 }
         """
 
-
     @distributed_trace
-    def create_project(
-        self,
-        project_name: str,
-        project: Union[JSON, IO],
-        **kwargs: Any
-    ) -> JSON:
+    def create_project(self, project_name: str, project: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Creates a new project or updates an existing one.
 
         :param project_name: The name of the project to use. Required.
@@ -1376,16 +1070,14 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     }
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -1405,14 +1097,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1438,14 +1128,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
-    def get_project(
-        self,
-        project_name: str,
-        **kwargs: Any
-    ) -> JSON:
+    def get_project(self, project_name: str, **kwargs: Any) -> JSON:
         """Gets the details of a project.
 
         :param project_name: The name of the project to use. Required.
@@ -1483,17 +1167,14 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     }
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_get_project_request(
             project_name=project_name,
             api_version=self._config.api_version,
@@ -1501,14 +1182,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1527,24 +1206,15 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         return cast(JSON, deserialized)
 
-
-
-    def _delete_project_initial(
-        self,
-        project_name: str,
-        **kwargs: Any
-    ) -> Optional[JSON]:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+    def _delete_project_initial(self, project_name: str, **kwargs: Any) -> Optional[JSON]:
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
-        
         request = build_delete_project_request(
             project_name=project_name,
             api_version=self._config.api_version,
@@ -1552,14 +1222,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1577,22 +1245,17 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 deserialized = None
 
         if response.status_code == 202:
-            response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
-            
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-
-
     @distributed_trace
-    def begin_delete_project(
-        self,
-        project_name: str,
-        **kwargs: Any
-    ) -> LROPoller[JSON]:
+    def begin_delete_project(self, project_name: str, **kwargs: Any) -> LROPoller[JSON]:
         """Deletes a project.
 
         :param project_name: The name of the project to use. Required.
@@ -1669,22 +1332,15 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._delete_project_initial(  # type: ignore
-                project_name=project_name,
-                cls=lambda x,y,z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
+                project_name=project_name, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
@@ -1696,30 +1352,26 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-
 
     def _export_project_initial(
         self,
@@ -1730,17 +1382,14 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         asset_kind: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[JSON]:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
-        
         request = build_export_project_request(
             project_name=project_name,
             string_index_type=string_index_type,
@@ -1751,14 +1400,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1776,15 +1423,14 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 deserialized = None
 
         if response.status_code == 202:
-            response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
-            
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-
-
 
     @distributed_trace
     def begin_export_project(
@@ -1882,25 +1528,22 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._export_project_initial(  # type: ignore
                 project_name=project_name,
                 string_index_type=string_index_type,
                 exported_project_format=exported_project_format,
                 asset_kind=asset_kind,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
@@ -1912,30 +1555,26 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-
 
     def _import_project_initial(
         self,
@@ -1945,16 +1584,14 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         exported_project_format: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[JSON]:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
         content_type = content_type or "application/json"
         _json = None
@@ -1975,14 +1612,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2000,15 +1635,14 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 deserialized = None
 
         if response.status_code == 202:
-            response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
-            
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-
-
 
     @overload
     def begin_import_project(
@@ -2221,7 +1855,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 }
         """
 
-
     @distributed_trace
     def begin_import_project(
         self,
@@ -2316,26 +1949,23 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._import_project_initial(  # type: ignore
                 project_name=project_name,
                 project=project,
                 exported_project_format=exported_project_format,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
@@ -2347,47 +1977,36 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-
-
-    def _train_initial(
-        self,
-        project_name: str,
-        configuration: Union[JSON, IO],
-        **kwargs: Any
-    ) -> Optional[JSON]:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+    def _train_initial(self, project_name: str, configuration: Union[JSON, IO], **kwargs: Any) -> Optional[JSON]:
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
         content_type = content_type or "application/json"
         _json = None
@@ -2407,14 +2026,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2432,24 +2049,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 deserialized = None
 
         if response.status_code == 202:
-            response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
-            
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-
-
     @overload
     def begin_train(
-        self,
-        project_name: str,
-        configuration: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, project_name: str, configuration: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[JSON]:
         """Triggers a training job for a project.
 
@@ -2586,12 +2197,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @overload
     def begin_train(
-        self,
-        project_name: str,
-        configuration: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, project_name: str, configuration: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[JSON]:
         """Triggers a training job for a project.
 
@@ -2705,14 +2311,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 }
         """
 
-
     @distributed_trace
-    def begin_train(
-        self,
-        project_name: str,
-        configuration: Union[JSON, IO],
-        **kwargs: Any
-    ) -> LROPoller[JSON]:
+    def begin_train(self, project_name: str, configuration: Union[JSON, IO], **kwargs: Any) -> LROPoller[JSON]:
         """Triggers a training job for a project.
 
         :param project_name: The name of the project to use. Required.
@@ -2828,25 +2428,22 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._train_initial(  # type: ignore
                 project_name=project_name,
                 configuration=configuration,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
@@ -2858,40 +2455,30 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-
-
     @distributed_trace
     def list_deployments(
-        self,
-        project_name: str,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> Iterable[JSON]:
         """Lists the deployments belonging to a project.
 
@@ -2903,9 +2490,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2930,45 +2514,42 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_deployments_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_list_deployments_request(
-                    project_name=project_name,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
@@ -2982,9 +2563,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             request = prepare_request(next_link)
 
             pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2994,28 +2573,19 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
             return pipeline_response
 
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-
+        return ItemPaged(get_next, extract_data)
 
     def _swap_deployments_initial(
-        self,
-        project_name: str,
-        deployments: Union[JSON, IO],
-        **kwargs: Any
+        self, project_name: str, deployments: Union[JSON, IO], **kwargs: Any
     ) -> Optional[JSON]:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
         content_type = content_type or "application/json"
         _json = None
@@ -3035,14 +2605,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3060,24 +2628,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 deserialized = None
 
         if response.status_code == 202:
-            response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
-            
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-
-
     @overload
     def begin_swap_deployments(
-        self,
-        project_name: str,
-        deployments: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, project_name: str, deployments: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[JSON]:
         """Swaps two existing deployments with each other.
 
@@ -3168,12 +2730,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @overload
     def begin_swap_deployments(
-        self,
-        project_name: str,
-        deployments: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, project_name: str, deployments: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[JSON]:
         """Swaps two existing deployments with each other.
 
@@ -3254,14 +2811,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 }
         """
 
-
     @distributed_trace
-    def begin_swap_deployments(
-        self,
-        project_name: str,
-        deployments: Union[JSON, IO],
-        **kwargs: Any
-    ) -> LROPoller[JSON]:
+    def begin_swap_deployments(self, project_name: str, deployments: Union[JSON, IO], **kwargs: Any) -> LROPoller[JSON]:
         """Swaps two existing deployments with each other.
 
         :param project_name: The name of the project to use. Required.
@@ -3344,25 +2895,22 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._swap_deployments_initial(  # type: ignore
                 project_name=project_name,
                 deployments=deployments,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
@@ -3374,38 +2922,29 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-
-
     @distributed_trace
-    def get_deployment(
-        self,
-        project_name: str,
-        deployment_name: str,
-        **kwargs: Any
-    ) -> JSON:
+    def get_deployment(self, project_name: str, deployment_name: str, **kwargs: Any) -> JSON:
         """Gets the details of a deployment.
 
         :param project_name: The name of the project to use. Required.
@@ -3433,17 +2972,14 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                       version. Required.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_get_deployment_request(
             project_name=project_name,
             deployment_name=deployment_name,
@@ -3452,14 +2988,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3478,25 +3012,17 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         return cast(JSON, deserialized)
 
-
-
     def _deploy_project_initial(
-        self,
-        project_name: str,
-        deployment_name: str,
-        deployment: Union[JSON, IO],
-        **kwargs: Any
+        self, project_name: str, deployment_name: str, deployment: Union[JSON, IO], **kwargs: Any
     ) -> Optional[JSON]:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
         content_type = content_type or "application/json"
         _json = None
@@ -3517,14 +3043,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3542,15 +3066,14 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 deserialized = None
 
         if response.status_code == 202:
-            response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
-            
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-
-
 
     @overload
     def begin_deploy_project(
@@ -3657,14 +3180,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 }
         """
 
-
     @distributed_trace
     def begin_deploy_project(
-        self,
-        project_name: str,
-        deployment_name: str,
-        deployment: Union[JSON, IO],
-        **kwargs: Any
+        self, project_name: str, deployment_name: str, deployment: Union[JSON, IO], **kwargs: Any
     ) -> LROPoller[JSON]:
         """Creates a new deployment or replaces an existing one.
 
@@ -3708,26 +3226,23 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._deploy_project_initial(  # type: ignore
                 project_name=project_name,
                 deployment_name=deployment_name,
                 deployment=deployment,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
@@ -3739,48 +3254,36 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-
-
-    def _delete_deployment_initial(
-        self,
-        project_name: str,
-        deployment_name: str,
-        **kwargs: Any
-    ) -> Optional[JSON]:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+    def _delete_deployment_initial(self, project_name: str, deployment_name: str, **kwargs: Any) -> Optional[JSON]:
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
-        
         request = build_delete_deployment_request(
             project_name=project_name,
             deployment_name=deployment_name,
@@ -3789,14 +3292,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3814,23 +3315,17 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 deserialized = None
 
         if response.status_code == 202:
-            response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
-            
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-
-
     @distributed_trace
-    def begin_delete_deployment(
-        self,
-        project_name: str,
-        deployment_name: str,
-        **kwargs: Any
-    ) -> LROPoller[JSON]:
+    def begin_delete_deployment(self, project_name: str, deployment_name: str, **kwargs: Any) -> LROPoller[JSON]:
         """Deletes a project deployment.
 
         :param project_name: The name of the project to use. Required.
@@ -3909,23 +3404,20 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._delete_deployment_initial(  # type: ignore
                 project_name=project_name,
                 deployment_name=deployment_name,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
@@ -3937,39 +3429,29 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-
-
     @distributed_trace
-    def get_deployment_job_status(
-        self,
-        project_name: str,
-        deployment_name: str,
-        job_id: str,
-        **kwargs: Any
-    ) -> JSON:
+    def get_deployment_job_status(self, project_name: str, deployment_name: str, job_id: str, **kwargs: Any) -> JSON:
         """Gets the status of an existing deployment job.
 
         :param project_name: The name of the project to use. Required.
@@ -4040,17 +3522,14 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_get_deployment_job_status_request(
             project_name=project_name,
             deployment_name=deployment_name,
@@ -4060,14 +3539,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4086,15 +3563,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
-    def get_swap_deployments_job_status(
-        self,
-        project_name: str,
-        job_id: str,
-        **kwargs: Any
-    ) -> JSON:
+    def get_swap_deployments_job_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
         """Gets the status of an existing swap deployment job.
 
         :param project_name: The name of the project to use. Required.
@@ -4163,17 +3633,14 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_get_swap_deployments_job_status_request(
             project_name=project_name,
             job_id=job_id,
@@ -4182,14 +3649,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4208,15 +3673,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
-    def get_export_project_job_status(
-        self,
-        project_name: str,
-        job_id: str,
-        **kwargs: Any
-    ) -> JSON:
+    def get_export_project_job_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
         """Gets the status of an export job. Once job completes, returns the project metadata, and assets.
 
         :param project_name: The name of the project to use. Required.
@@ -4287,17 +3745,14 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_get_export_project_job_status_request(
             project_name=project_name,
             job_id=job_id,
@@ -4306,14 +3761,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4332,15 +3785,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
-    def get_import_project_job_status(
-        self,
-        project_name: str,
-        job_id: str,
-        **kwargs: Any
-    ) -> JSON:
+    def get_import_project_job_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
         """Gets the status for an import.
 
         :param project_name: The name of the project to use. Required.
@@ -4409,17 +3855,14 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_get_import_project_job_status_request(
             project_name=project_name,
             job_id=job_id,
@@ -4428,14 +3871,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4454,17 +3895,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
     def list_trained_models(
-        self,
-        project_name: str,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> Iterable[JSON]:
         """Lists the trained models belonging to a project.
 
@@ -4476,9 +3909,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4502,45 +3932,42 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_trained_models_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_list_trained_models_request(
-                    project_name=project_name,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
@@ -4554,9 +3981,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             request = prepare_request(next_link)
 
             pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -4566,19 +3991,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
             return pipeline_response
 
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_trained_model(
-        self,
-        project_name: str,
-        trained_model_label: str,
-        **kwargs: Any
-    ) -> JSON:
+    def get_trained_model(self, project_name: str, trained_model_label: str, **kwargs: Any) -> JSON:
         """Gets the details of a trained model.
 
         :param project_name: The name of the project to use. Required.
@@ -4605,17 +4021,14 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                       Required.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_get_trained_model_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
@@ -4624,14 +4037,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4650,14 +4061,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
     def delete_trained_model(  # pylint: disable=inconsistent-return-statements
-        self,
-        project_name: str,
-        trained_model_label: str,
-        **kwargs: Any
+        self, project_name: str, trained_model_label: str, **kwargs: Any
     ) -> None:
         """Deletes an existing trained model.
 
@@ -4669,17 +4075,14 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_delete_trained_model_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
@@ -4688,14 +4091,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4707,8 +4108,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace
     def list_model_evaluation_results(
         self,
@@ -4718,7 +4117,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         string_index_type: str,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> Iterable[JSON]:
         """Gets the detailed results of the evaluation for a trained model. This includes the raw
@@ -4737,9 +4135,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4786,48 +4181,44 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_model_evaluation_results_request(
                     project_name=project_name,
                     trained_model_label=trained_model_label,
                     string_index_type=string_index_type,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_list_model_evaluation_results_request(
-                    project_name=project_name,
-                    trained_model_label=trained_model_label,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
@@ -4841,9 +4232,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             request = prepare_request(next_link)
 
             pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -4853,19 +4242,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
             return pipeline_response
 
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_model_evaluation_summary(
-        self,
-        project_name: str,
-        trained_model_label: str,
-        **kwargs: Any
-    ) -> JSON:
+    def get_model_evaluation_summary(self, project_name: str, trained_model_label: str, **kwargs: Any) -> JSON:
         """Gets the evaluation summary of a trained model. The summary includes high level performance
         measurements of the model e.g., F1, Precision, Recall, etc.
 
@@ -4967,17 +4347,14 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     }
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_get_model_evaluation_summary_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
@@ -4986,14 +4363,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5012,17 +4387,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
     def list_training_jobs(
-        self,
-        project_name: str,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> Iterable[JSON]:
         """Lists the non-expired training jobs created for a project.
 
@@ -5034,9 +4401,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5135,45 +4499,42 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_training_jobs_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_list_training_jobs_request(
-                    project_name=project_name,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
@@ -5187,9 +4548,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             request = prepare_request(next_link)
 
             pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -5199,19 +4558,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
             return pipeline_response
 
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_training_job_status(
-        self,
-        project_name: str,
-        job_id: str,
-        **kwargs: Any
-    ) -> JSON:
+    def get_training_job_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
         """Gets the status for a training job.
 
         :param project_name: The name of the project to use. Required.
@@ -5313,17 +4663,14 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_get_training_job_status_request(
             project_name=project_name,
             job_id=job_id,
@@ -5332,14 +4679,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5358,25 +4703,15 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         return cast(JSON, deserialized)
 
-
-
-    def _cancel_training_job_initial(
-        self,
-        project_name: str,
-        job_id: str,
-        **kwargs: Any
-    ) -> Optional[JSON]:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+    def _cancel_training_job_initial(self, project_name: str, job_id: str, **kwargs: Any) -> Optional[JSON]:
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
-        
         request = build_cancel_training_job_request(
             project_name=project_name,
             job_id=job_id,
@@ -5385,14 +4720,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5410,23 +4743,17 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 deserialized = None
 
         if response.status_code == 202:
-            response_headers['operation-location']=self._deserialize('str', response.headers.get('operation-location'))
-            
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-
-
     @distributed_trace
-    def begin_cancel_training_job(
-        self,
-        project_name: str,
-        job_id: str,
-        **kwargs: Any
-    ) -> LROPoller[JSON]:
+    def begin_cancel_training_job(self, project_name: str, job_id: str, **kwargs: Any) -> LROPoller[JSON]:
         """Triggers a cancellation for a running training job.
 
         :param project_name: The name of the project to use. Required.
@@ -5538,23 +4865,20 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._cancel_training_job_initial(  # type: ignore
                 project_name=project_name,
                 job_id=job_id,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
@@ -5566,37 +4890,29 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-
-
     @distributed_trace
-    def get_project_deletion_job_status(
-        self,
-        job_id: str,
-        **kwargs: Any
-    ) -> JSON:
+    def get_project_deletion_job_status(self, job_id: str, **kwargs: Any) -> JSON:
         """Gets the status for a project deletion job.
 
         :param job_id: The job ID. Required.
@@ -5663,17 +4979,14 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_get_project_deletion_job_status_request(
             job_id=job_id,
             api_version=self._config.api_version,
@@ -5681,14 +4994,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5707,17 +5018,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
     def list_supported_languages(
-        self,
-        *,
-        project_kind: str,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> Iterable[JSON]:
         """Lists the supported languages for the given project type.
 
@@ -5730,9 +5033,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5751,44 +5051,42 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_supported_languages_request(
                     project_kind=project_kind,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_list_supported_languages_request(
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
@@ -5802,9 +5100,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             request = prepare_request(next_link)
 
             pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -5814,11 +5110,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
             return pipeline_response
 
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     def list_supported_prebuilt_entities(
@@ -5828,7 +5120,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         multilingual: Optional[bool] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> Iterable[JSON]:
         """Lists the supported prebuilt entities that can be used while creating composed entities.
@@ -5846,9 +5137,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5866,45 +5154,43 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_supported_prebuilt_entities_request(
                     language=language,
                     multilingual=multilingual,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_list_supported_prebuilt_entities_request(
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
@@ -5918,9 +5204,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             request = prepare_request(next_link)
 
             pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -5930,21 +5214,11 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
             return pipeline_response
 
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     def list_training_config_versions(
-        self,
-        *,
-        project_kind: str,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> Iterable[JSON]:
         """Lists the support training config version for a given project type.
 
@@ -5957,9 +5231,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :keyword maxpagesize: The maximum number of resources to include in a single response. Default
-         value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5978,44 +5249,42 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_training_config_versions_request(
                     project_kind=project_kind,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_list_training_config_versions_request(
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
@@ -6029,9 +5298,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             request = prepare_request(next_link)
 
             pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -6041,8 +5308,4 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
             return pipeline_response
 
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-
+        return ItemPaged(get_next, extract_data)
