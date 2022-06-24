@@ -1,3 +1,4 @@
+from datetime import datetime
 import re
 from typing import Any, List, Dict, Set
 
@@ -11,6 +12,8 @@ _PYTHON_OWNER = {'BigCat20196', 'msyyc', 'Wzb123456789', 'azure-sdk'}
 # labels
 _CONFIGURED = 'Configured'
 _AUTO_ASK_FOR_CHECK = 'auto-ask-check'
+_BRANCH_ATTENTION = 'base-branch-attention'
+_7_DAY_ATTENTION = '7days attention'
 # record published issues
 _FILE_OUT = 'published_issues_python.csv'
 
@@ -23,6 +26,13 @@ class IssueProcessPython(IssueProcess):
         self.output_folder = ''
         self.is_multiapi = False
         self.pattern_resource_manager = re.compile(r'/specification/([\w-]+/)+resource-manager')
+        self.delay_time = self.get_delay_time()
+
+    def get_delay_time(self):
+        q = [comment.updated_at
+             for comment in self.issue_package.issue.get_comments() if comment.user.login not in _PYTHON_OWNER]
+        q.sort()
+        return (datetime.now() - (self.created_time if not q else q[-1])).days
 
     def init_readme_link(self) -> None:
         issue_body_list = self.get_issue_body()
@@ -80,6 +90,27 @@ class IssueProcessPython(IssueProcess):
                 self.add_label(_AUTO_ASK_FOR_CHECK)
             else:
                 self.log(f'issue {issue_number} need config readme')
+
+    def attention_policy(self):
+        if _BRANCH_ATTENTION in self.issue_package.labels_name:
+            self.bot_advice.append('new version is 0.0.0, please check base branch!')
+
+    def remind_policy(self):
+        if self.delay_time >= 15 and _7_DAY_ATTENTION in self.issue_package.labels_name and self.date_from_target < 0:
+            self.comment(
+                f'hi @{self.owner}, the issue is closed since there is no reply for a long time. '
+                'Please reopen it if necessary or create new one.')
+            self.issue_package.issue.edit(state='close')
+        elif self.delay_time >= 7 and _7_DAY_ATTENTION not in self.issue_package.labels_name and self.date_from_target < 7:
+            self.comment(
+                f'hi @{self.owner}, this release-request has been delayed more than 7 days,'
+                ' please deal with it ASAP. We will close the issue if there is still no response after 7 days!')
+            self.add_label(_7_DAY_ATTENTION)
+
+    def auto_bot_advice(self):
+        super().auto_bot_advice()
+        self.attention_policy()
+        self.remind_policy()
 
     def auto_close(self) -> None:
         if AUTO_CLOSE_LABEL in self.issue_package.labels_name:
