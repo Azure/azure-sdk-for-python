@@ -16,9 +16,7 @@ from datetime import datetime, timedelta
 import calendar
 import unittest
 
-import uamqp
-import uamqp.errors
-from uamqp import compat
+from azure.servicebus._pyamqp.message import Message
 from azure.servicebus import (
     ServiceBusClient,
     AutoLockRenewer,
@@ -1886,16 +1884,17 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         except AttributeError:
             timestamp = calendar.timegm(new_scheduled_time.timetuple()) * 1000
 
-        uamqp_received_message = uamqp.message.Message(
-            body=b'data',
-            annotations={
+        my_frame = [0,0,0]
+        amqp_received_message = (my_frame, Message(
+            data=b'data',
+            message_annotations={
                 _X_OPT_PARTITION_KEY: b'r_key',
                 _X_OPT_VIA_PARTITION_KEY: b'r_via_key',
                 _X_OPT_SCHEDULED_ENQUEUE_TIME: timestamp,
             },
-            properties=uamqp.message.MessageProperties()
-        )
-        received_message = ServiceBusReceivedMessage(uamqp_received_message, receiver=None)
+            properties={}
+        ))
+        received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
         assert received_message.scheduled_enqueue_time_utc == new_scheduled_time
 
         new_scheduled_time = utc_now() + timedelta(hours=1, minutes=49, seconds=32)
