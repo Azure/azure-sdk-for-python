@@ -7,7 +7,7 @@
 import uuid
 import pytest
 import functools
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher, set_custom_default_matcher
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
@@ -25,10 +25,6 @@ class TestDMACTraining(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_build_model_polling_interval(self, client, formrecognizer_storage_container_sas_url, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         def check_poll_value(poll):
             if self.is_live:
                 assert poll == 5
@@ -47,10 +43,6 @@ class TestDMACTraining(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_build_model_encoded_url(self, client):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         with pytest.raises(HttpResponseError):
             poller = client.begin_build_model(
                 source="https://fakeuri.com/blank%20space", build_mode="template"
@@ -61,10 +53,6 @@ class TestDMACTraining(FormRecognizerTest):
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_build_model_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with pytest.raises(ClientAuthenticationError):
             poller = client.begin_build_model("xx", build_mode="template")
@@ -73,10 +61,6 @@ class TestDMACTraining(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_build_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         model_id = str(uuid.uuid4())
         poller = client.begin_build_model(
             formrecognizer_storage_container_sas_url,
@@ -105,10 +89,6 @@ class TestDMACTraining(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_build_model_multipage(self, client, formrecognizer_multipage_storage_container_sas_url, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         
         poller = client.begin_build_model(formrecognizer_multipage_storage_container_sas_url, "template")
         model = poller.result()
@@ -130,10 +110,6 @@ class TestDMACTraining(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_build_model_nested_schema(self, client, formrecognizer_table_variable_rows_container_sas_url, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         
         poller = client.begin_build_model(formrecognizer_table_variable_rows_container_sas_url, "template")
         model = poller.result()
@@ -152,10 +128,6 @@ class TestDMACTraining(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_build_model_transform(self, client, formrecognizer_storage_container_sas_url, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         
         raw_response = []
 
@@ -182,10 +154,6 @@ class TestDMACTraining(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_build_model_multipage_transform(self, client, formrecognizer_multipage_storage_container_sas_url, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         
         raw_response = []
 
@@ -207,10 +175,6 @@ class TestDMACTraining(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_build_model_nested_schema_transform(self, client, formrecognizer_table_variable_rows_container_sas_url, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         
         raw_response = []
 
@@ -260,10 +224,6 @@ class TestDMACTraining(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_build_model_poller_metadata(self, client, formrecognizer_storage_container_sas_url, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
         assert poller.operation_id
         assert poller.percent_completed is not None

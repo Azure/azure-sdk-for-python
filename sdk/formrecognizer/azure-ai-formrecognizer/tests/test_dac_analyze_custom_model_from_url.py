@@ -6,7 +6,7 @@
 
 import pytest
 import functools
-from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
+from devtools_testutils import recorded_by_proxy
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient, DocumentModelAdministrationClient, AnalyzeResult
 from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import AnalyzeResultOperation
@@ -38,10 +38,6 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_custom_document_selection_mark(self, client, formrecognizer_selection_mark_storage_container_sas_url, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         da_client = client.get_document_analysis_client()
 
         poller = client.begin_build_model(formrecognizer_selection_mark_storage_container_sas_url, "template")
@@ -83,10 +79,6 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_label_tables_variable_rows(self, client, formrecognizer_table_variable_rows_container_sas_url, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         da_client = client.get_document_analysis_client()
 
         build_poller = client.begin_build_model(formrecognizer_table_variable_rows_container_sas_url, "template")
@@ -127,10 +119,6 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_label_tables_fixed_rows(self, client, formrecognizer_table_fixed_rows_container_sas_url, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         da_client = client.get_document_analysis_client()
 
         build_poller = client.begin_build_model(formrecognizer_table_fixed_rows_container_sas_url, "template")

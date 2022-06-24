@@ -8,7 +8,6 @@ import pytest
 import uuid
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import set_custom_default_matcher
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
 from azure.ai.formrecognizer import DocumentModel
 from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
@@ -24,10 +23,6 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_compose_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         model_id_1 = str(uuid.uuid4())
         model_id_2 = str(uuid.uuid4())
         composed_id = str(uuid.uuid4())
@@ -59,10 +54,6 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_compose_model_transform(self, client, formrecognizer_storage_container_sas_url, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         raw_response = []
 
         def callback(response, _, headers):
@@ -116,10 +107,6 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
             model_1 = await poller.result()
