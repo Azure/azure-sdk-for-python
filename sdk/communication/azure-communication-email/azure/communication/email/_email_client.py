@@ -75,7 +75,7 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
             email_message=email_message,
             **kwargs
         )
-    
+
     @distributed_trace
     def get_send_status(
         self,
