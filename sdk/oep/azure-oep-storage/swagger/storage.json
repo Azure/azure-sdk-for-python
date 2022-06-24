@@ -32,7 +32,7 @@
         "tags": [
           "health-check-api"
         ],
-        "operationId": "healthMessageUsingGET",
+        "operationId": "Health_Get",
         "deprecated": false,
         "produces": [
           "text/plain"
@@ -107,7 +107,7 @@
         "tags": [
           "info-api"
         ],
-        "operationId": "infoUsingGET",
+        "operationId": "Info_GetStorageDetails",
         "deprecated": false,
         "produces": [
           "application/json"
@@ -181,7 +181,7 @@
         "tags": [
           "patch-api"
         ],
-        "operationId": "updateRecordsMetadataUsingPATCH",
+        "operationId": "Patch_UpdateRecordMetaData",
         "deprecated": false,
         "produces": [
           "application/json"
@@ -275,7 +275,7 @@
         "tags": [
           "record-api"
         ],
-        "operationId": "createOrUpdateRecordsUsingPUT",
+        "operationId": "Record_CreateOrUpdateRecord",
         "deprecated": false,
         "produces": [
           "application/json"
@@ -378,7 +378,7 @@
         "tags": [
           "pubsub-endpoints"
         ],
-        "operationId": "legaltagChangedUsingPOST",
+        "operationId": "PubSub_ChangeLegalTag",
         "deprecated": false,
         "produces": [
           "application/json"
@@ -458,7 +458,7 @@
         "tags": [
           "query-api"
         ],
-        "operationId": "getKindsUsingGET",
+        "operationId": "Query_ListByKinds",
         "deprecated": false,
         "produces": [
           "application/json"
@@ -547,7 +547,7 @@
         "tags": [
           "query-api"
         ],
-        "operationId": "getAllRecordsUsingGET",
+        "operationId": "Query_ListRecordsByKind",
         "deprecated": false,
         "produces": [
           "application/json"
@@ -641,7 +641,7 @@
         "tags": [
           "query-api"
         ],
-        "operationId": "getRecordsUsingPOST",
+        "operationId": "Query_ListRecord",
         "deprecated": false,
         "produces": [
           "application/json"
@@ -740,7 +740,7 @@
         "tags": [
           "query-api"
         ],
-        "operationId": "fetchRecordsUsingPOST",
+        "operationId": "Query_ListBatchRecords",
         "deprecated": false,
         "produces": [
           "application/json"
@@ -842,7 +842,7 @@
         "tags": [
           "record-api"
         ],
-        "operationId": "bulkDeleteRecordsUsingPOST",
+        "operationId": "Record_DeleteBulkRecords",
         "deprecated": false,
         "produces": [
           "application/json"
@@ -944,7 +944,7 @@
         "tags": [
           "record-api"
         ],
-        "operationId": "getRecordVersionsUsingGET",
+        "operationId": "Record_ListRecordVersionsById",
         "deprecated": false,
         "produces": [
           "application/json"
@@ -1023,7 +1023,7 @@
         "tags": [
           "record-api"
         ],
-        "operationId": "getLatestRecordVersionUsingGET",
+        "operationId": "Record_GetLatestRecordVersionById",
         "deprecated": false,
         "produces": [
           "application/json"
@@ -1108,7 +1108,7 @@
         "tags": [
           "record-api"
         ],
-        "operationId": "purgeRecordUsingDELETE",
+        "operationId": "Record_PurgeRecordById",
         "deprecated": false,
         "produces": [
           "application/json"
@@ -1187,7 +1187,7 @@
         "tags": [
           "record-api"
         ],
-        "operationId": "getSpecificRecordVersionUsingGET",
+        "operationId": "Record_GetSpecificRecordVersion",
         "deprecated": false,
         "produces": [
           "application/json"
@@ -1282,7 +1282,7 @@
         "tags": [
           "record-api"
         ],
-        "operationId": "deleteRecordUsingPOST",
+        "operationId": "Record_PurgeRecord",
         "deprecated": false,
         "produces": [
           "application/json"
@@ -1367,7 +1367,7 @@
         "tags": [
           "schema-api"
         ],
-        "operationId": "createSchemaUsingPOST",
+        "operationId": "Schema_CreateSchema",
         "deprecated": true,
         "produces": [
           "application/json"
@@ -1466,7 +1466,7 @@
         "tags": [
           "schema-api"
         ],
-        "operationId": "getSchemaUsingGET",
+        "operationId": "Schema_GetSchema",
         "deprecated": true,
         "produces": [
           "application/json"
@@ -1545,7 +1545,7 @@
         "tags": [
           "schema-api"
         ],
-        "operationId": "deleteSchemaUsingDELETE",
+        "operationId": "Schema_PurgeSchema",
         "deprecated": true,
         "produces": [
           "application/json"
