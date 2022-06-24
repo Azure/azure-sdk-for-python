@@ -7,9 +7,11 @@ import logging
 import uuid
 import warnings
 from typing import (  # pylint: disable=unused-import
-    Optional,
     Any,
+    Dict,
     Tuple,
+    Union,
+    Optional
 )
 
 try:
@@ -71,7 +73,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self,
         parsed_url,  # type: Any
         service,  # type: str
-        credential=None,  # type: Optional[Any]
+        credential=None,  # type: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, Dict[str,str], str, "TokenCredential"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
