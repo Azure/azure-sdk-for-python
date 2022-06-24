@@ -37,7 +37,7 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
             sdk_moniker=SDK_MONIKER,
             **kwargs
         )
-    
+
     @classmethod
     def from_connection_string(
         cls,
