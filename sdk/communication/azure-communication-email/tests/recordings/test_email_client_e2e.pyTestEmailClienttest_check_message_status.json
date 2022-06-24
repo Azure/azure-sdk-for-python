@@ -15,7 +15,7 @@
         "User-Agent": "azsdk-python-communication-email/1.0.0b1 Python/3.10.4 (Windows-10-10.0.19044-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
-        "x-ms-date": "Fri, 24 Jun 2022 21:20:55 GMT",
+        "x-ms-date": "Fri, 24 Jun 2022 21:20:56 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -46,6 +46,36 @@
         "x-ms-request-id": "someMessageId"
       },
       "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://someEndpoint/emails/someMessageId/status?api-version=2021-10-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-communication-email/1.0.0b1 Python/3.10.4 (Windows-10-10.0.19044-SP0)",
+        "x-ms-client-request-id": "sanitized",
+        "x-ms-content-sha256": "sanitized",
+        "x-ms-date": "Fri, 24 Jun 2022 21:20:56 GMT",
+        "x-ms-return-client-request-id": "true"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-10-01-preview",
+        "Content-Length": "48",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "sanitized",
+        "Retry-After": "60",
+        "X-Azure-Ref": "sanitized",
+        "X-Cache": "CONFIG_NOCACHE"
+      },
+      "ResponseBody": {
+        "messageId": "someMessageId",
+        "status": "Queued"
+      }
     }
   ],
   "Variables": {}
