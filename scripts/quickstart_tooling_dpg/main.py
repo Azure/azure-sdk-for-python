@@ -5,7 +5,8 @@ import os
 from jinja2 import Environment, FileSystemLoader
 from subprocess import check_call
 import time
-from typing import Any, Dict
+from typing import Any
+import json
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -13,6 +14,7 @@ _TEMPLATE = Path(__file__).resolve().parent / "template"
 _TEMPLATE_TESTS = Path(__file__).resolve().parent / "template_tests"
 _TEMPLATE_SAMPLES = Path(__file__).resolve().parent / "template_samples"
 _TEMPLATE_CI = Path(__file__).resolve().parent / "template_ci"
+_CONFIG_FILE = Path(__file__).resolve() / "../../swagger_to_sdk_config_dpg.json"
 
 
 def check_parameters(
@@ -75,6 +77,13 @@ def generate_swagger_readme(work_path: str, env: Environment, **kwargs: Any) -> 
     return swagger_readme
 
 
+def get_autorest_version() -> str:
+    with open(_CONFIG_FILE, 'r') as file_in:
+        config = json.load(file_in)
+    autorest_use = " ".join(["--use=" + item for item in config["meta"]["autorest_options"]["use"]])
+    return "--version={} {}".format(config["meta"]["autorest_options"]["version"], autorest_use)
+
+
 def build_package(**kwargs) -> None:
     # prepare template render parameters
     output_folder = kwargs.get("output_folder")
@@ -93,7 +102,7 @@ def build_package(**kwargs) -> None:
     _LOGGER.info("Build start: %s", package_name)
     check_parameters(output_folder)
 
-    #generate ci
+    # generate ci
     generate_ci(_TEMPLATE_CI, Path(output_folder).parent, package_name)
 
     # generate swagger readme
@@ -102,8 +111,7 @@ def build_package(**kwargs) -> None:
 
     # generate code with autorest and swagger readme
     _LOGGER.info("generate SDK code with autorest")
-    check_call(f'autorest --version=3.8.1 --use=@autorest/python@5.17.0 --use=@autorest/modelerfour@4.23.5'
-               f' {swagger_readme}', shell=True)
+    check_call(f'autorest {swagger_readme} {get_autorest_version()} ', shell=True)
 
     # generate necessary file(setup.py, CHANGELOG.md, etc)
     work_path = Path(output_folder)
