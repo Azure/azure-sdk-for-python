@@ -1698,15 +1698,15 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
         sb_client = ServiceBusClient.from_connection_string(mock_conn_str, http_proxy=http_proxy)
         assert sb_client._config.http_proxy == http_proxy
-        assert sb_client._config.transport_type == TransportType.AmqpOverWebsocket
+        assert sb_client._config.transport_type.name == TransportType.AmqpOverWebsocket.name
 
         sender = sb_client.get_queue_sender(queue_name="mock")
         assert sender._config.http_proxy == http_proxy
-        assert sender._config.transport_type == TransportType.AmqpOverWebsocket
+        assert sender._config.transport_type.name == TransportType.AmqpOverWebsocket.name
 
         receiver = sb_client.get_queue_receiver(queue_name="mock")
         assert receiver._config.http_proxy == http_proxy
-        assert receiver._config.transport_type == TransportType.AmqpOverWebsocket
+        assert receiver._config.transport_type.name == TransportType.AmqpOverWebsocket.name
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
