@@ -36,6 +36,9 @@ class ConversationAuthoringClient(GeneratedConversationAuthoringClient): # pylin
     detection and question answering. Further documentation can be found in
     https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview.
 
+    See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring for more information about
+    requests and responses you can pass to this client.
+
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
     :type endpoint: str
