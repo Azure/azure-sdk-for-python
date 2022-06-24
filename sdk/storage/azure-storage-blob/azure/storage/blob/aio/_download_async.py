@@ -12,7 +12,7 @@ from itertools import islice
 import warnings
 from typing import AsyncIterator
 
-from azure.core.exceptions import HttpResponseError, ServiceResponseError, IncompleteReadError
+from azure.core.exceptions import HttpResponseError
 from .._shared.encryption import (
     adjust_blob_size_for_encryption,
     decrypt_blob,
@@ -98,7 +98,6 @@ class _AsyncChunkDownloader(_ChunkDownloader):
                 check_content_md5=self.validate_content
             )
             retry_active = True
-            retry_total = 3
             while retry_active:
                 try:
                     _, response = await self.client.download(
@@ -110,14 +109,8 @@ class _AsyncChunkDownloader(_ChunkDownloader):
                         **self.request_options
                     )
                     retry_active = False
-
                 except HttpResponseError as error:
                     process_storage_error(error)
-                except IncompleteReadError as error:
-                    retry_total -= 1
-                    if retry_total <= 0:
-                        raise ServiceResponseError(error, error=error)
-                    await asyncio.sleep(1)
 
             chunk_data = await process_content(response, offset[0], offset[1], self.encryption_options)
 
@@ -323,7 +316,6 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             check_content_md5=self._validate_content)
 
         retry_active = True
-        retry_total = 3
         while retry_active:
             try:
                 location_mode, response = await self._clients.blob.download(
@@ -373,12 +365,6 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                     self._file_size = 0
                 else:
                     process_storage_error(error)
-
-            except ClientPayloadError as error:
-                retry_total -= 1
-                if retry_total <= 0:
-                    raise ServiceResponseError(error, error=error)
-                await asyncio.sleep(1)
 
         # get page ranges to optimize downloading sparse page blob
         if response.properties.blob_type == 'PageBlob':
