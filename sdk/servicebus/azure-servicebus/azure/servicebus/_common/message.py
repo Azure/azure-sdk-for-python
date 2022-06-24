@@ -308,7 +308,7 @@ class ServiceBusMessage(
             if opt_p_key is not None:
                 return opt_p_key.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
-            pass
+            return opt_p_key
         return None
 
     @partition_key.setter
