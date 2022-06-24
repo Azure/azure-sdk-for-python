@@ -132,7 +132,6 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
                 max_concurrency=max_concurrency,
                 stream=stream,
                 validate_content=validate_content,
-                encryption_options=encryption_options,
                 progress_hook=progress_hook,
                 encryptor=encryptor,
                 padder=padder,
@@ -240,7 +239,6 @@ async def upload_page_blob(
             stream=stream,
             max_concurrency=max_concurrency,
             validate_content=validate_content,
-            encryption_options=encryption_options,
             progress_hook=progress_hook,
             headers=headers,
             **kwargs)
