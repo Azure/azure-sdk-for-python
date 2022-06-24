@@ -1,5 +1,11 @@
 # Release History
 
+## 2.0.0b3 (2022-06-24)
+
+**Bugfixes**
+
+  - Fix multi inheritance problem for Model `Site`
+ 
 ## 2.0.0b2 (2022-04-15)
 
 **Features**
