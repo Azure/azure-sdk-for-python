@@ -1,0 +1,7 @@
+recursive-include tests *.py
+recursive-include samples *.py *.md
+include *.md
+include LICENSE
+include azure/__init__.py
+include azure/oep/__init__.py
+include azure/oep/storage/py.typed

@@ -1,0 +1,67 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - text/plain
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-oep-storage/1.0.0b1 Python/3.10.4 (Windows-10-10.0.22000-SP0)
+      data-partition-id:
+      - data-partition
+      frame-of-reference:
+      - none
+    method: GET
+    uri: https://testInstance.oep.ppe.azure-int.net/api/storage/v2/health
+  response:
+    body:
+      string: Alive
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-headers:
+      - access-control-allow-origin, origin, content-type, accept, authorization,
+        data-partition-id, correlation-id, appkey
+      access-control-allow-methods:
+      - GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH
+      access-control-allow-origin:
+      - '*'
+      access-control-max-age:
+      - '3600'
+      cache-control:
+      - no-cache, no-store, must-revalidate
+      connection:
+      - keep-alive
+      content-length:
+      - '5'
+      content-security-policy:
+      - default-src 'self'
+      content-type:
+      - text/plain;charset=UTF-8
+      correlation-id:
+      - 34b10d7f-d0af-4d3e-860e-cf4099fceed2
+      date:
+      - Fri, 24 Jun 2022 13:49:47 GMT
+      expires:
+      - '0'
+      request-context:
+      - appId=cid-v1:e47e63c9-ae7e-4859-ae92-5deb2d973678
+      server:
+      - istio-envoy
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '7'
+      x-frame-options:
+      - DENY
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+version: 1
