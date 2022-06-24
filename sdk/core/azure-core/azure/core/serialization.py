@@ -299,21 +299,21 @@ class _MyMutableMapping(MutableMapping):
     def clear(self) -> None:
         self._data.clear()
 
-    def update(self, **kwargs: typing.Any) -> None:
-        self._data.update(**kwargs)
+    def update(self, *args: typing.Any, **kwargs: typing.Any) -> None:
+        self._data.update(*args, **kwargs)
 
     @typing.overload
-    def setdefault(self, key: str) -> None:
+    def setdefault(self, key: str) -> typing.Any:
         ...
 
     @typing.overload
-    def setdefault(self, key: str, default: typing.Any) -> None:
+    def setdefault(self, key: str, default: typing.Any) -> typing.Any:
         ...
 
-    def setdefault(self, key: str, default: typing.Any = _UNSET) -> None:
+    def setdefault(self, key: str, default: typing.Any = _UNSET) -> typing.Any:
         if default is _UNSET:
-            self._data.setdefault(key)
-        self._data.setdefault(key, default)
+            return self._data.setdefault(key)
+        return self._data.setdefault(key, default)
 
     def __eq__(self, other: typing.Any) -> bool:
         try:
@@ -439,6 +439,8 @@ class _RestField:
         # by this point, type and rest_name will have a value bc we default
         # them in __new__ of the Model class
         item = obj.get(self._rest_name)
+        if item is None:
+            return item
         return _deserialize(self._type, _serialize(item))
 
     def __set__(self, obj: Model, value) -> None:

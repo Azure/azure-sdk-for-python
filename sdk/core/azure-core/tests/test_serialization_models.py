@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import copy
 import json
 import datetime
 from typing import Any, Iterable, List, Literal, Dict, Mapping, Sequence, Set, Tuple, Optional, Union, overload
@@ -2540,7 +2541,277 @@ def test_values():
 
     assert list(outer.inner_prop.values()) == list(outer_dict["innerProp"].values())
 
+def test_items():
+    class Inner(Model):
+        str_prop: str = rest_field(name="strProp")
 
+    class Outer(Model):
+        inner_prop: Inner = rest_field(name="innerProp")
+
+    outer_dict = {"innerProp": {"strProp": "hello"}}
+    outer = Outer(outer_dict)
+
+    assert list(outer.items()) == list(outer_dict.items())
+
+    outer_dict["innerProp"]["strProp"] = "goodbye"
+    outer.inner_prop.str_prop = "goodbye"
+
+    assert list(outer.inner_prop.items()) == list(outer_dict["innerProp"].items())
+
+    outer_dict["newProp"] = "bonjour"
+    outer["newProp"] = "bonjour"
+
+    assert list(outer.items()) == list(outer_dict.items())
+
+def test_get():
+    class MyModel(Model):
+        prop: str = rest_field()
+        rest_prop: str = rest_field(name="restProp")
+
+    my_dict = {"prop": "hello", "restProp": "bonjour"}
+    my_model = MyModel(my_dict)
+
+    assert my_dict.get("prop") == my_model.get("prop") == "hello"
+    my_dict["prop"] = "nihao"
+    my_model.prop = "nihao"
+
+    assert my_dict.get("prop") == my_model.get("prop") == "nihao"
+
+    my_dict["restProp"] = "buongiorno"
+    my_model.rest_prop = "buongiorno"
+
+    assert my_dict.get("restProp") == my_model.get("restProp") == "buongiorno"
+    assert my_dict.get("rest_prop") is None  # attr case should not work here
+
+    my_dict["newProp"] = "i'm new"
+    my_model["newProp"] = "i'm new"
+
+    assert my_dict.get("newProp") == my_model.get("newProp") == "i'm new"
+    assert my_dict.get("nonexistent") is my_model.get("nonexistent") is None
+
+    assert my_dict.get("nonexistent", 0) == my_model.get("nonexistent", 0) == 0
+
+def test_pop():
+    class MyModel(Model):
+        prop: str = rest_field()
+        rest_prop: str = rest_field(name="restProp")
+
+    my_dict = {"prop": "hello", "restProp": "bonjour"}
+    my_model = MyModel(my_dict)
+
+    assert my_dict.pop("prop") == my_model.pop("prop") == "hello"
+    with pytest.raises(KeyError):
+        my_dict.pop("prop")
+    with pytest.raises(KeyError):
+        my_model.pop("prop")
+
+    my_dict["prop"] = "nihao"
+    my_model.prop = "nihao"
+
+    assert my_dict.pop("prop") == my_model.pop("prop") == "nihao"
+
+    with pytest.raises(KeyError):
+        my_dict.pop("prop")
+    with pytest.raises(KeyError):
+        my_model.pop("prop")
+
+    my_dict["restProp"] = "buongiorno"
+    my_model.rest_prop = "buongiorno"
+
+    assert my_dict.pop("restProp") == my_model.pop("restProp") == "buongiorno"
+    with pytest.raises(KeyError):
+        my_dict.pop("rest_prop")  # attr case should not work here
+
+    my_dict["newProp"] = "i'm new"
+    my_model["newProp"] = "i'm new"
+
+    assert my_dict.pop("newProp") == my_model.pop("newProp") == "i'm new"
+    assert my_dict.pop("nonexistent", 0) == my_model.pop("nonexistent", 0) == 0
+
+def test_popitem():
+    class ModelA(Model):
+        a_str_prop: str = rest_field(name="aStrProp")
+
+    class ModelB(Model):
+        b_str_prop: str = rest_field(name="bStrProp")
+
+    class ModelC(Model):
+        c_str_prop: str = rest_field(name="cStrProp")
+
+    class MainModel(Model):
+        a_prop: ModelA = rest_field(name="aProp")
+        b_prop: ModelB = rest_field(name="bProp")
+        c_prop: ModelC = rest_field(name="cProp")
+
+    my_dict = {"aProp": {"aStrProp": "a"}, "bProp": {"bStrProp": "b"}, "cProp": {"cStrProp": "c"}}
+
+    def _tests(my_dict: Dict[str, Any], my_model: MainModel):
+        my_dict = copy.deepcopy(my_dict)  # so we don't get rid of the dict each time we run tests
+
+        # pop c prop
+        dict_popitem = my_dict.popitem()
+        model_popitem = my_model.popitem()
+        assert dict_popitem[0] == model_popitem[0] == "cProp"
+        assert dict_popitem[1]["cStrProp"] == model_popitem[1]["cStrProp"] == model_popitem[1].c_str_prop == "c"
+
+        # pop b prop
+        dict_popitem = my_dict.popitem()
+        model_popitem = my_model.popitem()
+        assert dict_popitem[0] == model_popitem[0] == "bProp"
+        assert dict_popitem[1]["bStrProp"] == model_popitem[1]["bStrProp"] == model_popitem[1].b_str_prop == "b"
+
+        # pop a prop
+        dict_popitem = my_dict.popitem()
+        model_popitem = my_model.popitem()
+        assert dict_popitem[0] == model_popitem[0] == "aProp"
+        assert dict_popitem[1]["aStrProp"] == model_popitem[1]["aStrProp"] == model_popitem[1].a_str_prop == "a"
+
+        with pytest.raises(KeyError):
+            my_dict.popitem()
+
+        with pytest.raises(KeyError):
+            my_model.popitem()
+
+    _tests(my_dict, MainModel(my_dict))
+    _tests(
+        my_dict,
+        MainModel(
+            a_prop=ModelA(a_str_prop="a"),
+            b_prop=ModelB(b_str_prop="b"),
+            c_prop=ModelC(c_str_prop="c")
+        )
+    )
+
+def test_clear():
+    class ModelA(Model):
+        a_str_prop: str = rest_field(name="aStrProp")
+
+    class ModelB(Model):
+        b_str_prop: str = rest_field(name="bStrProp")
+
+    class ModelC(Model):
+        c_str_prop: str = rest_field(name="cStrProp")
+
+    class MainModel(Model):
+        a_prop: ModelA = rest_field(name="aProp")
+        b_prop: ModelB = rest_field(name="bProp")
+        c_prop: ModelC = rest_field(name="cProp")
+
+    my_dict = {"aProp": {"aStrProp": "a"}, "bProp": {"bStrProp": "b"}, "cProp": {"cStrProp": "c"}}
+
+    def _tests(my_dict: Dict[str, Any], my_model: MainModel):
+        my_dict = copy.deepcopy(my_dict)  # so we don't get rid of the dict each time we run tests
+
+        assert my_dict["aProp"] == my_model.a_prop == my_model["aProp"] == {"aStrProp": "a"}
+        my_dict.clear()
+        my_model.clear()
+        assert my_dict == my_model == {}
+
+        assert my_model.a_prop is None
+        assert my_model.b_prop is None
+        assert my_model.c_prop is None
+
+        my_dict.clear()
+        my_model.clear()
+        assert my_dict == my_model == {}
+
+    _tests(my_dict, MainModel(my_dict))
+    _tests(
+        my_dict,
+        MainModel(
+            a_prop=ModelA(a_str_prop="a"),
+            b_prop=ModelB(b_str_prop="b"),
+            c_prop=ModelC(c_str_prop="c")
+        )
+    )
+
+def test_update():
+    class ModelA(Model):
+        a_str_prop: str = rest_field(name="aStrProp")
+
+    class ModelB(Model):
+        b_str_prop: str = rest_field(name="bStrProp")
+
+    class ModelC(Model):
+        c_str_prop: str = rest_field(name="cStrProp")
+
+    class MainModel(Model):
+        a_prop: ModelA = rest_field(name="aProp")
+        b_prop: ModelB = rest_field(name="bProp")
+        c_prop: ModelC = rest_field(name="cProp")
+
+    my_dict = {"aProp": {"aStrProp": "a"}, "bProp": {"bStrProp": "b"}, "cProp": {"cStrProp": "c"}}
+
+    def _tests(my_dict: Dict[str, Any], my_model: MainModel):
+        my_dict = copy.deepcopy(my_dict)  # so we don't get rid of the dict each time we run tests
+
+        assert my_dict["aProp"] == my_model.a_prop == my_model["aProp"] == {"aStrProp": "a"}
+        my_dict.update({"aProp": {"aStrProp": "newA"}})
+        my_model.a_prop.update({"aStrProp": "newA"})
+        assert my_dict["aProp"] == my_model.a_prop == my_model["aProp"] == {"aStrProp": "newA"}
+
+        my_dict["bProp"].update({"newBProp": "hello"})
+        my_model.b_prop.update({"newBProp": "hello"})
+
+        assert my_dict["bProp"] == my_model.b_prop == my_model["bProp"] == {"bStrProp": "b", "newBProp": "hello"}
+
+        my_dict.update({"dProp": "hello"})
+        my_model.update({"dProp": "hello"})
+
+        assert my_dict["dProp"] == my_model["dProp"] == "hello"
+
+    _tests(my_dict, MainModel(my_dict))
+    _tests(
+        my_dict,
+        MainModel(
+            a_prop=ModelA(a_str_prop="a"),
+            b_prop=ModelB(b_str_prop="b"),
+            c_prop=ModelC(c_str_prop="c")
+        )
+    )
+
+def test_setdefault():
+    class Inner(Model):
+        str_prop: str = rest_field(name="strProp", default="modelDefault")
+
+    class Outer(Model):
+        inner_prop: Inner = rest_field(name="innerProp")
+
+    og_dict = {"innerProp": {}}
+    og_dict["innerProp"].setdefault("strProp", "actualDefault")
+    og_model = Outer(og_dict)
+    og_model.inner_prop.setdefault("strProp", "actualDefault")
+
+    assert og_dict["innerProp"] == og_model["innerProp"] == og_model.inner_prop == {"strProp": "actualDefault"}
+
+    assert (
+        og_dict["innerProp"].setdefault("strProp") ==
+        og_model["innerProp"].setdefault("strProp") ==
+        og_model.inner_prop.setdefault("strProp") ==
+        "actualDefault"
+    )
+
+    assert og_dict.setdefault("newProp") is og_model.setdefault("newProp") is None
+    assert og_dict["newProp"] is og_model["newProp"] is None
+
+def test_repr():
+    class ModelA(Model):
+        a_str_prop: str = rest_field(name="aStrProp")
+
+    class ModelB(Model):
+        b_str_prop: str = rest_field(name="bStrProp")
+
+    class ModelC(Model):
+        c_str_prop: str = rest_field(name="cStrProp")
+
+    class MainModel(Model):
+        a_prop: ModelA = rest_field(name="aProp")
+        b_prop: ModelB = rest_field(name="bProp")
+        c_prop: ModelC = rest_field(name="cProp")
+
+    my_dict = {"aProp": {"aStrProp": "a"}, "bProp": {"bStrProp": "b"}, "cProp": {"cStrProp": "c"}}
+
+    assert repr(my_dict) == repr(MainModel(my_dict))
 
 ##### REWRITE BODY COMPLEX INTO THIS FILE #####
 
