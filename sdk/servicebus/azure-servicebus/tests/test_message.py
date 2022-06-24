@@ -1,5 +1,6 @@
 # from __future__ import annotations
 import os
+import uamqp
 import pytest
 from datetime import datetime, timedelta
 from azure.servicebus import (
@@ -53,77 +54,79 @@ def test_servicebus_message_repr_with_props():
 
 
 def test_servicebus_received_message_repr():
-    uamqp_received_message = Message(
-        body=b'data',
-        annotations={
+    my_frame = [0,0,0]
+    received_message = (my_frame, Message(
+        data=b'data',
+        message_annotations={
             _X_OPT_PARTITION_KEY: b'r_key',
             _X_OPT_VIA_PARTITION_KEY: b'r_via_key',
             _X_OPT_SCHEDULED_ENQUEUE_TIME: 123424566,
         },
-        properties=uamqp_received_message.properties
-    )
-    received_message = ServiceBusReceivedMessage(uamqp_received_message, receiver=None)
+        properties={}
+    ))
+    received_message = ServiceBusReceivedMessage(received_message, receiver=None)
     repr_str = received_message.__repr__()
     assert "application_properties=None, session_id=None" in repr_str
-    assert "content_type=None, correlation_id=None, to=None, reply_to=None, reply_to_session_id=None, subject=None,"
+    assert "content_type=None, correlation_id=None, to=None, reply_to=None, reply_to_session_id=None, subject=None," in repr_str
     assert "partition_key=r_key, scheduled_enqueue_time_utc" in repr_str
 
 def test_servicebus_received_state():
-    uamqp_received_message = uamqp.message.Message(
-        body=b'data',
-        annotations={
+    my_frame = [0,0,0]
+    amqp_received_message = (my_frame, Message(
+        data=b'data',
+        message_annotations={
             b"x-opt-message-state": 3
         },
-        properties=uamqp.message.MessageProperties()
-    )
-    received_message = ServiceBusReceivedMessage(uamqp_received_message, receiver=None)
+    ))
+    received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
     assert received_message.state == 3
 
-    uamqp_received_message = uamqp.message.Message(
-        body=b'data',
-        annotations={
+    amqp_received_message = (my_frame, Message(
+        data=b'data',
+        message_annotations={
             b"x-opt-message-state": 1
         },
-        properties=uamqp.message.MessageProperties()
-    )
-    received_message = ServiceBusReceivedMessage(uamqp_received_message, receiver=None)
+        properties={}
+    ))
+    received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
     assert received_message.state == ServiceBusMessageState.DEFERRED
 
-    uamqp_received_message = uamqp.message.Message(
-        body=b'data',
-        annotations={
+    amqp_received_message = (my_frame, Message(
+        data=b'data',
+        message_annotations={
         },
-        properties=uamqp.message.MessageProperties()
-    )
-    received_message = ServiceBusReceivedMessage(uamqp_received_message, receiver=None)
+        properties={}
+    ))
+    received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
     assert received_message.state == ServiceBusMessageState.ACTIVE
 
-    uamqp_received_message = uamqp.message.Message(
-        body=b'data',
-        properties=uamqp.message.MessageProperties()
-    )
-    received_message = ServiceBusReceivedMessage(uamqp_received_message, receiver=None)
+    amqp_received_message = (my_frame, Message(
+        data=b'data',
+        properties={}
+    ))
+    received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
     assert received_message.state == ServiceBusMessageState.ACTIVE
 
-    uamqp_received_message = uamqp.message.Message(
-        body=b'data',
-        annotations={
+    amqp_received_message = (my_frame, Message(
+        data=b'data',
+        message_annotations={
             b"x-opt-message-state": 0
         },
-        properties=uamqp.message.MessageProperties()
-    )
-    received_message = ServiceBusReceivedMessage(uamqp_received_message, receiver=None)
+        properties={}
+    ))
+    received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
     assert received_message.state == ServiceBusMessageState.ACTIVE
 
 def test_servicebus_received_message_repr_with_props():
-    uamqp_received_message = uamqp.message.Message(
-        body=b'data',
-        annotations={
+    my_frame = [0,0,0]
+    amqp_received_message = (my_frame, Message(
+        data=b'data',
+        message_annotations={
             _X_OPT_PARTITION_KEY: b'r_key',
             _X_OPT_VIA_PARTITION_KEY: b'r_via_key',
             _X_OPT_SCHEDULED_ENQUEUE_TIME: 123424566,
         },
-        properties=uamqp.message.MessageProperties(
+        properties=AmqpMessageProperties(
             message_id="id_message",
             absolute_expiry_time=100,
             content_type="content type",
@@ -133,9 +136,9 @@ def test_servicebus_received_message_repr_with_props():
             reply_to="reply to",
             reply_to_group_id="reply to group"
         )
-    )
+    ))
     received_message = ServiceBusReceivedMessage(
-        message=uamqp_received_message,
+        message=amqp_received_message,
         receiver=None,
         )
     assert "application_properties=None, session_id=id_session" in received_message.__repr__()
