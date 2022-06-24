@@ -679,8 +679,8 @@ def validate_cache_staleness_value(max_integrated_cache_staleness):
 
 
 def auto_scale_header(auto_scale):
-    max_throughput = auto_scale.auto_scale_max_throughput
-    increment_percent = auto_scale.auto_upgrade_throughput_increment_percent
+    max_throughput = auto_scale.max_throughput
+    increment_percent = auto_scale.increment_percent
 
     auto_scale_params = {"maxThroughput": max_throughput, "autoUpgradePolicy":
         {"throughputPolicy": {"incrementPercent": increment_percent}}}
