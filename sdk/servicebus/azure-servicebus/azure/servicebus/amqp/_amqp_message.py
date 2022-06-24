@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from __future__ import annotations
+# from __future__ import annotations
 import time
 import uuid
 from datetime import datetime

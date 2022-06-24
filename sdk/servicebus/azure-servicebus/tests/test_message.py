@@ -1,5 +1,4 @@
-from __future__ import annotations
-import uamqp
+# from __future__ import annotations
 import os
 import pytest
 from datetime import datetime, timedelta
@@ -21,6 +20,7 @@ from azure.servicebus.amqp import (
     AmqpMessageProperties,
     AmqpMessageHeader
 )
+from azure.servicebus._pyamqp.message import Message
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import CachedServiceBusNamespacePreparer, ServiceBusQueuePreparer
@@ -53,14 +53,14 @@ def test_servicebus_message_repr_with_props():
 
 
 def test_servicebus_received_message_repr():
-    uamqp_received_message = uamqp.message.Message(
+    uamqp_received_message = Message(
         body=b'data',
         annotations={
             _X_OPT_PARTITION_KEY: b'r_key',
             _X_OPT_VIA_PARTITION_KEY: b'r_via_key',
             _X_OPT_SCHEDULED_ENQUEUE_TIME: 123424566,
         },
-        properties=uamqp.message.MessageProperties()
+        properties=uamqp_received_message.properties
     )
     received_message = ServiceBusReceivedMessage(uamqp_received_message, receiver=None)
     repr_str = received_message.__repr__()
