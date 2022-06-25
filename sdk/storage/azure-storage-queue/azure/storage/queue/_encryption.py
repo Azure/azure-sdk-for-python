@@ -7,6 +7,7 @@
 import os
 import math
 import sys
+import warnings
 from collections import OrderedDict
 from io import BytesIO
 from json import (
@@ -24,8 +25,8 @@ from cryptography.hazmat.primitives.padding import PKCS7
 
 from azure.core.exceptions import HttpResponseError
 
-from .._version import VERSION
-from . import encode_base64, decode_base64_to_bytes
+from ._version import VERSION
+from ._shared import encode_base64, decode_base64_to_bytes
 
 
 _ENCRYPTION_PROTOCOL_V1 = '1.0'
@@ -51,6 +52,19 @@ def _validate_key_encryption_key_wrap(kek):
         raise AttributeError(_ERROR_OBJECT_INVALID.format('key encryption key', 'get_kid'))
     if not hasattr(kek, 'get_key_wrap_algorithm') or not callable(kek.get_key_wrap_algorithm):
         raise AttributeError(_ERROR_OBJECT_INVALID.format('key encryption key', 'get_key_wrap_algorithm'))
+
+
+class StorageEncryptionMixin(object):
+    def configure_encryption(self, kwargs):
+        self.require_encryption = kwargs.get("require_encryption", False)
+        self.encryption_version = kwargs.get("encryption_version", "1.0")
+        self.key_encryption_key = kwargs.get("key_encryption_key")
+        self.key_resolver_function = kwargs.get("key_resolver_function")
+        if self.key_encryption_key and self.encryption_version == '1.0':
+            warnings.warn("This client has been configured to use encryption with version 1.0. " +
+                          "Version 1.0 is deprecated and no longer considered secure. It is highly " +
+                          "recommended that you switch to using version 2.0. The version can be " +
+                          "specified using the 'encryption_version' keyword.")
 
 
 class _EncryptionAlgorithm(object):
