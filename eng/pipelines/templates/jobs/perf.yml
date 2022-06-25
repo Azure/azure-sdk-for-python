@@ -25,12 +25,7 @@ parameters:
     default: ''
 
 variables:
-  - name: NugetSecurityAnalysisWarningLevel
-    value: 'none'
-  - name: skipComponentGovernanceDetection
-    value: 'true'
-  - name: DisableDockerDetector
-    value: 'true'
+  - template: /eng/pipelines/templates/variables/globals.yml
   - name: Pool
     value: 'azsdk-pool-mms-ubuntu-2004-perf'
   - name: OSVmImage
@@ -67,7 +62,7 @@ jobs:
       inputs:
         versionSpec: $(PythonVersion)
 
-    - template: ../../../common/TestResources/deploy-test-resources.yml
+    - template: /eng/common/TestResources/deploy-test-resources.yml
       parameters:
         ServiceDirectory: ${{ parameters.serviceDirectory }}
         Location: westus
@@ -105,7 +100,7 @@ jobs:
       workingDirectory: azure-sdk-tools/tools/perf-automation/Azure.Sdk.Tools.PerfAutomation/results
       displayName: Print results.json
 
-    - template: ../../../common/TestResources/remove-test-resources.yml
+    - template: /eng/common/TestResources/remove-test-resources.yml
       parameters:
         ServiceDirectory: ${{ parameters.serviceDirectory }}
         ResourceType: perf
