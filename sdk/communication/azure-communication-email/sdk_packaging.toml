@@ -1,4 +1,5 @@
 [packaging]
+auto_update = false
 package_name = "azure-communication-email"
 package_nspkg = "azure-communication-nspkg"
 package_pprint_name = "MyService Management"
