@@ -103,9 +103,6 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip('/')
             self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
 
-        self.require_encryption = kwargs.get("require_encryption", False)
-        self.key_encryption_key = kwargs.get("key_encryption_key")
-        self.key_resolver_function = kwargs.get("key_resolver_function")
         self._config, self._pipeline = self._create_pipeline(self.credential, storage_sdk=service, **kwargs)
 
     def __enter__(self):
@@ -401,7 +398,8 @@ def parse_connection_str(conn_str, credential, service):
             raise ValueError("Connection string missing required connection details.")
     if service == "dfs":
         primary = primary.replace(".blob.", ".dfs.")
-        secondary = secondary.replace(".blob.", ".dfs.")
+        if secondary:
+            secondary = secondary.replace(".blob.", ".dfs.")
     return primary, secondary, credential
 
 

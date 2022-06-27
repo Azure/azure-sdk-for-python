@@ -47,6 +47,10 @@ setup(
         "Programming Language :: Python :: 3.10",
         "License :: OSI Approved :: MIT License",
     ],
+    include_package_data=True,
+    package_data={
+        "pytyped": ["py.typed"],
+    },
     zip_safe=False,
     packages=find_packages(
         exclude=[
@@ -56,8 +60,8 @@ setup(
         ]
     ),
     install_requires=[
-        "azure-core<2.0.0,>=1.23.0",
-        "msrest>=0.6.21",
+        "azure-core<2.0.0,>=1.24.0",
+        "msrest>=0.7.0",
     ],
     python_requires=">=3.6",
 )

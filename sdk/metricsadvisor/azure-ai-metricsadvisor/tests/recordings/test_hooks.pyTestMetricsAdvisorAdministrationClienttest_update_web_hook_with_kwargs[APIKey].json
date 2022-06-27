@@ -1,32 +1,44 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/75b096f4-60da-422a-b2eb-8e632ee1c75f",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/d88a1f73-c630-40ab-a6ac-7201072e6b3a",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "241",
+        "Content-Length": "294",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "4058783d-5e20-11ec-878a-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.9.7 (macOS-12.2.1-x86_64-i386-64bit)",
+        "x-ms-client-request-id": "76781348-9e60-11ec-8380-acde48001122"
       },
-      "RequestBody": "{\u0022hookName\u0022: \u0022update47b85f50-3a5d-4121-81e2-e8135cebecab\u0022, \u0022description\u0022: \u0022update\u0022, \u0022externalLink\u0022: \u0022update\u0022, \u0022hookType\u0022: \u0022Webhook\u0022, \u0022hookParameter\u0022: {\u0022endpoint\u0022: \u0022https://httpbin.org/post\u0022, \u0022username\u0022: \u0022myusername\u0022, \u0022password\u0022: \u0022password\u0022}}",
+      "RequestBody": {
+        "hookType": "Webhook",
+        "hookName": "update18ba8646-c9cd-4e7d-9da4-4a0d42c2826b",
+        "description": "update",
+        "externalLink": "update",
+        "hookParameter": {
+          "endpoint": "https://httpbin.org/post",
+          "username": "myusername",
+          "password": "password",
+          "certificateKey": null,
+          "certificatePassword": null
+        }
+      },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "a9dd804f-d65e-4027-9a2a-93925615738c",
-        "Content-Length": "311",
+        "apim-request-id": "f8dcf592-5398-42d1-99fa-f9a4a27f70fe",
+        "Content-Length": "356",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 03:28:35 GMT",
+        "Date": "Mon, 07 Mar 2022 21:49:28 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "664",
-        "X-Request-ID": "a9dd804f-d65e-4027-9a2a-93925615738c"
+        "x-envoy-upstream-service-time": "570",
+        "X-Request-ID": "f8dcf592-5398-42d1-99fa-f9a4a27f70fe"
       },
       "ResponseBody": {
-        "hookId": "75b096f4-60da-422a-b2eb-8e632ee1c75f",
-        "hookName": "update47b85f50-3a5d-4121-81e2-e8135cebecab",
+        "hookId": "d88a1f73-c630-40ab-a6ac-7201072e6b3a",
+        "hookName": "update18ba8646-c9cd-4e7d-9da4-4a0d42c2826b",
         "hookType": "Webhook",
         "externalLink": "update",
         "description": "update",
@@ -36,35 +48,37 @@
         "hookParameter": {
           "endpoint": "https://httpbin.org/post",
           "username": "myusername",
-          "password": "password"
+          "password": "password",
+          "certificateKey": "",
+          "certificatePassword": ""
         }
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/75b096f4-60da-422a-b2eb-8e632ee1c75f",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/d88a1f73-c630-40ab-a6ac-7201072e6b3a",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "40c755aa-5e20-11ec-b988-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.9.7 (macOS-12.2.1-x86_64-i386-64bit)",
+        "x-ms-client-request-id": "76e201e0-9e60-11ec-8380-acde48001122"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "1c9ce6af-aadf-4a5c-a217-586901e84db7",
-        "Content-Length": "311",
+        "apim-request-id": "228844af-45aa-477b-a7d6-a6d7649313ca",
+        "Content-Length": "356",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 03:28:35 GMT",
+        "Date": "Mon, 07 Mar 2022 21:49:29 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "163",
-        "X-Request-ID": "1c9ce6af-aadf-4a5c-a217-586901e84db7"
+        "x-envoy-upstream-service-time": "153",
+        "X-Request-ID": "228844af-45aa-477b-a7d6-a6d7649313ca"
       },
       "ResponseBody": {
-        "hookId": "75b096f4-60da-422a-b2eb-8e632ee1c75f",
-        "hookName": "update47b85f50-3a5d-4121-81e2-e8135cebecab",
+        "hookId": "d88a1f73-c630-40ab-a6ac-7201072e6b3a",
+        "hookName": "update18ba8646-c9cd-4e7d-9da4-4a0d42c2826b",
         "hookType": "Webhook",
         "externalLink": "update",
         "description": "update",
@@ -74,38 +88,40 @@
         "hookParameter": {
           "endpoint": "https://httpbin.org/post",
           "username": "myusername",
-          "password": "password"
+          "password": "password",
+          "certificateKey": "",
+          "certificatePassword": ""
         }
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/75b096f4-60da-422a-b2eb-8e632ee1c75f",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/d88a1f73-c630-40ab-a6ac-7201072e6b3a",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "40e6d68a-5e20-11ec-a9cf-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.9.7 (macOS-12.2.1-x86_64-i386-64bit)",
+        "x-ms-client-request-id": "770a918c-9e60-11ec-8380-acde48001122"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "apim-request-id": "1051e8bd-a99e-469f-af2f-8baec91fca45",
+        "apim-request-id": "0a9a027e-f14d-4885-89b7-50bd23280d2d",
         "Content-Length": "0",
-        "Date": "Thu, 16 Dec 2021 03:28:35 GMT",
+        "Date": "Mon, 07 Mar 2022 21:49:29 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "247",
-        "X-Request-ID": "1051e8bd-a99e-469f-af2f-8baec91fca45"
+        "x-envoy-upstream-service-time": "174",
+        "X-Request-ID": "0a9a027e-f14d-4885-89b7-50bd23280d2d"
       },
       "ResponseBody": null
     }
   ],
   "Variables": {
-    "hook_updated_name": "update47b85f50-3a5d-4121-81e2-e8135cebecab",
-    "web_hook_id": "75b096f4-60da-422a-b2eb-8e632ee1c75f",
-    "web_hook_name": "web_hookschfbyvh2jah37js"
+    "hook_updated_name": "update18ba8646-c9cd-4e7d-9da4-4a0d42c2826b",
+    "web_hook_id": "d88a1f73-c630-40ab-a6ac-7201072e6b3a",
+    "web_hook_name": "web_hookd67174ef-0b7e-4685-85ae-0cfb25894517"
   }
 }

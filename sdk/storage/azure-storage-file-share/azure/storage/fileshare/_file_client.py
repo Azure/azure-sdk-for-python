@@ -350,12 +350,13 @@ class ShareFileClient(StorageAccountHostsMixin):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
-        :keyword ~datetime.datetime file_change_time
+        :keyword file_change_time:
             Change time for the file. If not specified, change time will be set to the current date/time.
 
             .. versionadded:: 12.8.0
                 This parameter was introduced in API version '2021-06-08'.
 
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
@@ -386,9 +387,6 @@ class ShareFileClient(StorageAccountHostsMixin):
         content_settings = kwargs.pop('content_settings', None)
         metadata = kwargs.pop('metadata', None)
         timeout = kwargs.pop('timeout', None)
-        if self.require_encryption and not self.key_encryption_key:
-            raise ValueError("Encryption required but no key was provided.")
-
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         file_http_headers = None
@@ -463,12 +461,13 @@ class ShareFileClient(StorageAccountHostsMixin):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
-        :keyword ~datetime.datetime file_change_time
+       :keyword file_change_time:
             Change time for the file. If not specified, change time will be set to the current date/time.
 
             .. versionadded:: 12.8.0
                 This parameter was introduced in API version '2021-06-08'.
 
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword dict(str,str) metadata:
             Name-value pairs associated with the file as metadata.
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
@@ -512,8 +511,6 @@ class ShareFileClient(StorageAccountHostsMixin):
         validate_content = kwargs.pop('validate_content', False)
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError("Encryption not supported.")
 
         if isinstance(data, six.text_type):
             data = data.encode(encoding)
@@ -608,6 +605,13 @@ class ShareFileClient(StorageAccountHostsMixin):
                 This parameter was introduced in API version '2019-07-07'.
 
         :paramtype file_last_write_time: str or ~datetime.datetime
+        :keyword file_change_time:
+            Change time for the file. If not specified, change time will be set to the current date/time.
+
+            .. versionadded:: 12.9.0
+                This parameter was introduced in API version '2021-06-08'.
+
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword bool ignore_read_only:
             Specifies the option to overwrite the target file if it already exists and has read-only attribute set.
 
@@ -750,8 +754,6 @@ class ShareFileClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Download a file.
         """
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError("Encryption not supported.")
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
 
@@ -766,7 +768,6 @@ class ShareFileClient(StorageAccountHostsMixin):
             config=self._config,
             start_range=offset,
             end_range=range_end,
-            encryption_options=None,
             name=self.file_name,
             path='/'.join(self.file_path),
             share=self.share_name,
@@ -848,12 +849,13 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword file_last_write_time:
             Last write time for the file.
         :paramtype file_last_write_time:~datetime.datetime or str
-        :keyword ~datetime.datetime file_change_time
+        :keyword file_change_time:
             Change time for the file. If not specified, change time will be set to the current date/time.
 
             .. versionadded:: 12.8.0
                 This parameter was introduced in API version '2021-06-08'.
 
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword str content_type:
             The Content Type of the new file.
 
@@ -888,8 +890,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             '{}://{}'.format(self.scheme, self.primary_hostname), self.share_name, new_file_path,
             credential=new_file_sas or self.credential, api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function
+            _location_mode=self._location_mode
         )
 
         kwargs.update(get_rename_smb_properties(kwargs))
@@ -997,12 +998,13 @@ class ShareFileClient(StorageAccountHostsMixin):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
-        :keyword ~datetime.datetime file_change_time
+        :keyword file_change_time:
             Change time for the file. If not specified, change time will be set to the current date/time.
 
             .. versionadded:: 12.8.0
                 This parameter was introduced in API version '2021-06-08'.
 
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -1137,8 +1139,6 @@ class ShareFileClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
         file_last_write_mode = kwargs.pop('file_last_write_mode', None)
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError("Encryption not supported.")
         if isinstance(data, six.text_type):
             data = data.encode(encoding)
 
@@ -1285,8 +1285,6 @@ class ShareFileClient(StorageAccountHostsMixin):
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError("Unsupported method for encryption.")
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
 
         content_range = None
@@ -1422,8 +1420,6 @@ class ShareFileClient(StorageAccountHostsMixin):
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError("Unsupported method for encryption.")
 
         if offset is None or offset % 512 != 0:
             raise ValueError("offset must be an integer that aligns with 512 bytes file size")

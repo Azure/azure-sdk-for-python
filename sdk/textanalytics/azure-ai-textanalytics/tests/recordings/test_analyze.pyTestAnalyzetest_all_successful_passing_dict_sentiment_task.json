@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-04-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "448",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -43,41 +43,41 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "679550c0-6250-4839-900b-976d26ee6fb1",
+        "apim-request-id": "28fb45c3-263d-4bc2-ba59-2209026ebb31",
         "Content-Length": "0",
-        "Date": "Tue, 03 May 2022 00:03:04 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/6e573303-1e06-44f0-8cdf-87a03d144e89?api-version=2022-04-01-preview",
+        "Date": "Fri, 17 Jun 2022 17:40:13 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/1a10dcea-de69-4e95-b55c-6123939ce109?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "1633"
+        "x-envoy-upstream-service-time": "183"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/6e573303-1e06-44f0-8cdf-87a03d144e89?api-version=2022-04-01-preview\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/1a10dcea-de69-4e95-b55c-6123939ce109?api-version=2022-05-01\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "f8ae1e4e-4f41-4db7-b20b-ab7a1ec1332b",
-        "Content-Length": "279",
+        "apim-request-id": "5e1152e2-c758-451d-a303-fae2e2897749",
+        "Content-Length": "280",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 03 May 2022 00:03:11 GMT",
+        "Date": "Fri, 17 Jun 2022 17:40:17 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "1080"
+        "x-envoy-upstream-service-time": "7"
       },
       "ResponseBody": {
-        "jobId": "6e573303-1e06-44f0-8cdf-87a03d144e89",
-        "lastUpdateDateTime": "2022-05-03T00:03:05Z",
-        "createdDateTime": "2022-05-03T00:03:05Z",
-        "expirationDateTime": "2022-05-04T00:03:05Z",
+        "jobId": "1a10dcea-de69-4e95-b55c-6123939ce109",
+        "lastUpdatedDateTime": "2022-06-17T17:40:13Z",
+        "createdDateTime": "2022-06-17T17:40:13Z",
+        "expirationDateTime": "2022-06-18T17:40:13Z",
         "status": "running",
         "errors": [],
         "tasks": {
@@ -90,30 +90,30 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/6e573303-1e06-44f0-8cdf-87a03d144e89?api-version=2022-04-01-preview\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/1a10dcea-de69-4e95-b55c-6123939ce109?api-version=2022-05-01\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "1e3a876e-74aa-4373-a86e-08cf5d7d7f7a",
-        "Content-Length": "1935",
+        "apim-request-id": "00f96c4f-b023-4ae3-912d-a0764d1946bd",
+        "Content-Length": "1944",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 03 May 2022 00:03:16 GMT",
+        "Date": "Fri, 17 Jun 2022 17:40:22 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "75"
+        "x-envoy-upstream-service-time": "42"
       },
       "ResponseBody": {
-        "jobId": "6e573303-1e06-44f0-8cdf-87a03d144e89",
-        "lastUpdateDateTime": "2022-05-03T00:03:13Z",
-        "createdDateTime": "2022-05-03T00:03:05Z",
-        "expirationDateTime": "2022-05-04T00:03:05Z",
+        "jobId": "1a10dcea-de69-4e95-b55c-6123939ce109",
+        "lastUpdatedDateTime": "2022-06-17T17:40:21Z",
+        "createdDateTime": "2022-06-17T17:40:13Z",
+        "expirationDateTime": "2022-06-18T17:40:13Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -125,7 +125,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-05-03T00:03:13.2811674Z",
+              "lastUpdateDateTime": "2022-06-17T17:40:21.2897764Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -144,16 +144,16 @@
                     },
                     "confidenceScores": {
                       "positive": 0.01,
-                      "neutral": 0.99,
-                      "negative": 0.0
+                      "neutral": 0.97,
+                      "negative": 0.02
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
                           "positive": 0.01,
-                          "neutral": 0.99,
-                          "negative": 0.0
+                          "neutral": 0.97,
+                          "negative": 0.02
                         },
                         "offset": 0,
                         "length": 51,
@@ -171,27 +171,27 @@
                     },
                     "confidenceScores": {
                       "positive": 0.01,
-                      "neutral": 0.22,
-                      "negative": 0.77
+                      "neutral": 0.01,
+                      "negative": 0.98
                     },
                     "sentences": [
                       {
                         "sentiment": "negative",
                         "confidenceScores": {
                           "positive": 0.01,
-                          "neutral": 0.45,
-                          "negative": 0.54
+                          "neutral": 0.01,
+                          "negative": 0.98
                         },
                         "offset": 0,
-                        "length": 38,
-                        "text": "I did not like the hotel we stayed at."
+                        "length": 39,
+                        "text": "I did not like the hotel we stayed at. "
                       },
                       {
                         "sentiment": "negative",
                         "confidenceScores": {
                           "positive": 0.0,
-                          "neutral": 0.0,
-                          "negative": 1.0
+                          "neutral": 0.01,
+                          "negative": 0.99
                         },
                         "offset": 39,
                         "length": 21,
@@ -209,20 +209,20 @@
                     },
                     "confidenceScores": {
                       "positive": 0.98,
-                      "neutral": 0.02,
-                      "negative": 0.0
+                      "neutral": 0.01,
+                      "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "positive",
                         "confidenceScores": {
-                          "positive": 1.0,
+                          "positive": 0.99,
                           "neutral": 0.0,
                           "negative": 0.0
                         },
                         "offset": 0,
-                        "length": 36,
-                        "text": "The restaurant had really good food."
+                        "length": 37,
+                        "text": "The restaurant had really good food. "
                       },
                       {
                         "sentiment": "positive",
@@ -240,7 +240,7 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2020-04-01"
+                "modelVersion": "2021-10-01"
               }
             }
           ]

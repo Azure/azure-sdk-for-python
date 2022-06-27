@@ -1,0 +1,95 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: command
+
+name: microsoftsamples_command_component_multiple_data
+display_name: CommandComponentMultipleData
+description: This is a command component with a lot of inputs
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+version: 1
+
+inputs:
+  component_in_1:
+    type: uri_folder
+  component_in_2:
+    type: uri_folder
+  component_in_3:
+    type: uri_folder
+  component_in_4:
+    type: uri_folder
+  component_in_5:
+    type: uri_folder
+  component_in_6:
+    type: uri_folder
+  component_in_7:
+    type: uri_folder
+  component_in_8:
+    type: uri_folder
+  component_in_9:
+    type: uri_folder
+  component_in_10:
+    type: uri_folder
+  component_in_11:
+    type: uri_folder
+  component_in_12:
+    type: uri_folder
+  component_in_13:
+    type: uri_folder
+  component_in_14:
+    type: uri_folder
+  component_in_15:
+    type: uri_folder
+
+outputs:
+  component_out_1:
+    type: uri_folder
+  component_out_2:
+    type: uri_folder
+  component_out_3:
+    type: uri_folder
+  component_out_4:
+    type: uri_folder
+  component_out_5:
+    type: uri_folder
+  component_out_6:
+    type: uri_folder
+  component_out_7:
+    type: uri_folder
+  component_out_8:
+    type: uri_folder
+  component_out_9:
+    type: uri_folder
+  component_out_10:
+    type: uri_folder
+
+command: >-
+  echo Multiple Data &
+  echo ${{inputs.component_in_1}} &
+  echo ${{inputs.component_in_2}} &
+  echo ${{inputs.component_in_3}} &
+  echo ${{inputs.component_in_4}} &
+  echo ${{inputs.component_in_5}} &
+  echo ${{inputs.component_in_6}} &
+  echo ${{inputs.component_in_7}} &
+  echo ${{inputs.component_in_8}} &
+  echo ${{inputs.component_in_9}} &
+  echo ${{inputs.component_in_10}} &
+  echo ${{inputs.component_in_11}} &
+  echo ${{inputs.component_in_12}} &
+  echo ${{inputs.component_in_13}} &
+  echo ${{inputs.component_in_14}} &
+  echo ${{inputs.component_in_15}} &
+  echo ${{outputs.component_out_1}} &
+  echo ${{outputs.component_out_2}} &
+  echo ${{outputs.component_out_3}} &
+  echo ${{outputs.component_out_4}} &
+  echo ${{outputs.component_out_5}} &
+  echo ${outputs.component_out_6}} &
+  echo ${{outputs.component_out_7}} &
+  echo ${{outputs.component_out_8}} &
+  echo ${{outputs.component_out_9}} &
+  echo ${{outputs.component_out_10}}
+
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1

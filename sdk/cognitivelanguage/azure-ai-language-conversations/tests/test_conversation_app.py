@@ -14,7 +14,7 @@ from testcase import (
 )
 from azure.ai.language.conversations import ConversationAnalysisClient
 
-class ConversationAppTests(ConversationTest):
+class TestConversationAppTests(ConversationTest):
 
     @GlobalConversationAccountPreparer()
     def test_conversation_app(self, endpoint, key, conv_project_name, conv_deployment_name):
@@ -53,9 +53,9 @@ class ConversationAppTests(ConversationTest):
             assert result["result"]["prediction"]["projectKind"] == 'Conversation'
             
             # assert - top intent
-            assert result["result"]["prediction"]["topIntent"] == 'Read'
+            assert result["result"]["prediction"]["topIntent"] == 'Send'
             assert len(result["result"]["prediction"]["intents"]) > 0
-            assert result["result"]["prediction"]["intents"][0]["category"] == 'Read'
+            assert result["result"]["prediction"]["intents"][0]["category"] == 'Send'
             assert result["result"]["prediction"]["intents"][0]["confidenceScore"] > 0
             
             # assert - entities

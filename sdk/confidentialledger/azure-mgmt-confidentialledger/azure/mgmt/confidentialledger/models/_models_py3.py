@@ -18,13 +18,13 @@ from ._confidential_ledger_enums import *
 class AADBasedSecurityPrincipal(msrest.serialization.Model):
     """AAD based security principal with associated Ledger RoleName.
 
-    :param principal_id: UUID/GUID based Principal Id of the Security Principal.
-    :type principal_id: str
-    :param tenant_id: UUID/GUID based Tenant Id of the Security Principal.
-    :type tenant_id: str
-    :param ledger_role_name: LedgerRole associated with the Security Principal of Ledger. Possible
+    :ivar principal_id: UUID/GUID based Principal Id of the Security Principal.
+    :vartype principal_id: str
+    :ivar tenant_id: UUID/GUID based Tenant Id of the Security Principal.
+    :vartype tenant_id: str
+    :ivar ledger_role_name: LedgerRole associated with the Security Principal of Ledger. Possible
      values include: "Reader", "Contributor", "Administrator".
-    :type ledger_role_name: str or ~confidential_ledger.models.LedgerRoleName
+    :vartype ledger_role_name: str or ~azure.mgmt.confidentialledger.models.LedgerRoleName
     """
 
     _attribute_map = {
@@ -41,6 +41,15 @@ class AADBasedSecurityPrincipal(msrest.serialization.Model):
         ledger_role_name: Optional[Union[str, "LedgerRoleName"]] = None,
         **kwargs
     ):
+        """
+        :keyword principal_id: UUID/GUID based Principal Id of the Security Principal.
+        :paramtype principal_id: str
+        :keyword tenant_id: UUID/GUID based Tenant Id of the Security Principal.
+        :paramtype tenant_id: str
+        :keyword ledger_role_name: LedgerRole associated with the Security Principal of Ledger.
+         Possible values include: "Reader", "Contributor", "Administrator".
+        :paramtype ledger_role_name: str or ~azure.mgmt.confidentialledger.models.LedgerRoleName
+        """
         super(AADBasedSecurityPrincipal, self).__init__(**kwargs)
         self.principal_id = principal_id
         self.tenant_id = tenant_id
@@ -50,11 +59,11 @@ class AADBasedSecurityPrincipal(msrest.serialization.Model):
 class CertBasedSecurityPrincipal(msrest.serialization.Model):
     """Cert based security principal with Ledger RoleName.
 
-    :param cert: Base64 encoded public key of the user cert (.pem or .cer).
-    :type cert: str
-    :param ledger_role_name: LedgerRole associated with the Security Principal of Ledger. Possible
+    :ivar cert: Public key of the user cert (.pem or .cer).
+    :vartype cert: str
+    :ivar ledger_role_name: LedgerRole associated with the Security Principal of Ledger. Possible
      values include: "Reader", "Contributor", "Administrator".
-    :type ledger_role_name: str or ~confidential_ledger.models.LedgerRoleName
+    :vartype ledger_role_name: str or ~azure.mgmt.confidentialledger.models.LedgerRoleName
     """
 
     _attribute_map = {
@@ -69,16 +78,96 @@ class CertBasedSecurityPrincipal(msrest.serialization.Model):
         ledger_role_name: Optional[Union[str, "LedgerRoleName"]] = None,
         **kwargs
     ):
+        """
+        :keyword cert: Public key of the user cert (.pem or .cer).
+        :paramtype cert: str
+        :keyword ledger_role_name: LedgerRole associated with the Security Principal of Ledger.
+         Possible values include: "Reader", "Contributor", "Administrator".
+        :paramtype ledger_role_name: str or ~azure.mgmt.confidentialledger.models.LedgerRoleName
+        """
         super(CertBasedSecurityPrincipal, self).__init__(**kwargs)
         self.cert = cert
         self.ledger_role_name = ledger_role_name
 
 
+class CheckNameAvailabilityRequest(msrest.serialization.Model):
+    """The check availability request body.
+
+    :ivar name: The name of the resource for which availability needs to be checked.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        type: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword name: The name of the resource for which availability needs to be checked.
+        :paramtype name: str
+        :keyword type: The resource type.
+        :paramtype type: str
+        """
+        super(CheckNameAvailabilityRequest, self).__init__(**kwargs)
+        self.name = name
+        self.type = type
+
+
+class CheckNameAvailabilityResponse(msrest.serialization.Model):
+    """The check availability result.
+
+    :ivar name_available: Indicates if the resource name is available.
+    :vartype name_available: bool
+    :ivar reason: The reason why the given name is not available. Possible values include:
+     "Invalid", "AlreadyExists".
+    :vartype reason: str or ~azure.mgmt.confidentialledger.models.CheckNameAvailabilityReason
+    :ivar message: Detailed reason why the given name is available.
+    :vartype message: str
+    """
+
+    _attribute_map = {
+        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
+        'reason': {'key': 'reason', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name_available: Optional[bool] = None,
+        reason: Optional[Union[str, "CheckNameAvailabilityReason"]] = None,
+        message: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword name_available: Indicates if the resource name is available.
+        :paramtype name_available: bool
+        :keyword reason: The reason why the given name is not available. Possible values include:
+         "Invalid", "AlreadyExists".
+        :paramtype reason: str or ~azure.mgmt.confidentialledger.models.CheckNameAvailabilityReason
+        :keyword message: Detailed reason why the given name is available.
+        :paramtype message: str
+        """
+        super(CheckNameAvailabilityResponse, self).__init__(**kwargs)
+        self.name_available = name_available
+        self.reason = reason
+        self.message = message
+
+
 class Tags(msrest.serialization.Model):
     """Tags for Confidential Ledger Resource.
 
-    :param tags: A set of tags. Additional tags for Confidential Ledger.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Additional tags for Confidential Ledger.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -91,15 +180,19 @@ class Tags(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Additional tags for Confidential Ledger.
+        :paramtype tags: dict[str, str]
+        """
         super(Tags, self).__init__(**kwargs)
         self.tags = tags
 
 
-class Location(msrest.serialization.Model):
+class ResourceLocation(msrest.serialization.Model):
     """Location of the ARM Resource.
 
-    :param location: The Azure location where the Confidential Ledger is running.
-    :type location: str
+    :ivar location: The Azure location where the Confidential Ledger is running.
+    :vartype location: str
     """
 
     _attribute_map = {
@@ -112,7 +205,11 @@ class Location(msrest.serialization.Model):
         location: Optional[str] = None,
         **kwargs
     ):
-        super(Location, self).__init__(**kwargs)
+        """
+        :keyword location: The Azure location where the Confidential Ledger is running.
+        :paramtype location: str
+        """
+        super(ResourceLocation, self).__init__(**kwargs)
         self.location = location
 
 
@@ -128,7 +225,7 @@ class Resource(msrest.serialization.Model):
     :ivar type: The type of the resource.
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~confidential_ledger.models.SystemData
+    :vartype system_data: ~azure.mgmt.confidentialledger.models.SystemData
     """
 
     _validation = {
@@ -149,6 +246,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.name = None
         self.id = None
@@ -156,15 +255,15 @@ class Resource(msrest.serialization.Model):
         self.system_data = None
 
 
-class ConfidentialLedger(Resource, Location, Tags):
+class ConfidentialLedger(Resource, ResourceLocation, Tags):
     """Confidential Ledger. Contains the properties of Confidential Ledger Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param tags: A set of tags. Additional tags for Confidential Ledger.
-    :type tags: dict[str, str]
-    :param location: The Azure location where the Confidential Ledger is running.
-    :type location: str
+    :ivar tags: A set of tags. Additional tags for Confidential Ledger.
+    :vartype tags: dict[str, str]
+    :ivar location: The Azure location where the Confidential Ledger is running.
+    :vartype location: str
     :ivar name: Name of the Resource.
     :vartype name: str
     :ivar id: Fully qualified resource Id for the resource.
@@ -172,9 +271,9 @@ class ConfidentialLedger(Resource, Location, Tags):
     :ivar type: The type of the resource.
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~confidential_ledger.models.SystemData
-    :param properties: Properties of Confidential Ledger Resource.
-    :type properties: ~confidential_ledger.models.LedgerProperties
+    :vartype system_data: ~azure.mgmt.confidentialledger.models.SystemData
+    :ivar properties: Properties of Confidential Ledger Resource.
+    :vartype properties: ~azure.mgmt.confidentialledger.models.LedgerProperties
     """
 
     _validation = {
@@ -202,32 +301,31 @@ class ConfidentialLedger(Resource, Location, Tags):
         properties: Optional["LedgerProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Additional tags for Confidential Ledger.
+        :paramtype tags: dict[str, str]
+        :keyword location: The Azure location where the Confidential Ledger is running.
+        :paramtype location: str
+        :keyword properties: Properties of Confidential Ledger Resource.
+        :paramtype properties: ~azure.mgmt.confidentialledger.models.LedgerProperties
+        """
         super(ConfidentialLedger, self).__init__(location=location, tags=tags, **kwargs)
         self.tags = tags
         self.location = location
         self.properties = properties
-        self.tags = tags
         self.name = None
         self.id = None
         self.type = None
         self.system_data = None
-        self.properties = properties
-        self.location = location
-        self.name = None
-        self.id = None
-        self.type = None
-        self.system_data = None
-        self.properties = properties
 
 
 class ConfidentialLedgerList(msrest.serialization.Model):
     """Object that includes an array of Confidential Ledgers and a possible link for next set.
 
-    :param value: List of Confidential Ledgers.
-    :type value: list[~confidential_ledger.models.ConfidentialLedger]
-    :param next_link: The URL the client should use to fetch the next page (per server side
-     paging).
-    :type next_link: str
+    :ivar value: List of Confidential Ledgers.
+    :vartype value: list[~azure.mgmt.confidentialledger.models.ConfidentialLedger]
+    :ivar next_link: The URL the client should use to fetch the next page (per server side paging).
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -242,6 +340,13 @@ class ConfidentialLedgerList(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of Confidential Ledgers.
+        :paramtype value: list[~azure.mgmt.confidentialledger.models.ConfidentialLedger]
+        :keyword next_link: The URL the client should use to fetch the next page (per server side
+         paging).
+        :paramtype next_link: str
+        """
         super(ConfidentialLedgerList, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -255,7 +360,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -272,6 +377,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -289,9 +396,9 @@ class ErrorDetail(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~confidential_ledger.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.confidentialledger.models.ErrorDetail]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~confidential_ledger.models.ErrorAdditionalInfo]
+    :vartype additional_info: list[~azure.mgmt.confidentialledger.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -314,6 +421,8 @@ class ErrorDetail(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -325,8 +434,8 @@ class ErrorDetail(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~confidential_ledger.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.confidentialledger.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -339,6 +448,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorDetail"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.confidentialledger.models.ErrorDetail
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -356,20 +469,18 @@ class LedgerProperties(msrest.serialization.Model):
     :vartype identity_service_uri: str
     :ivar ledger_internal_namespace: Internal namespace for the Ledger.
     :vartype ledger_internal_namespace: str
-    :param ledger_storage_account: Name of the Blob Storage Account for saving ledger files.
-    :type ledger_storage_account: str
-    :param ledger_type: Type of Confidential Ledger. Possible values include: "Unknown", "Public",
+    :ivar ledger_type: Type of Confidential Ledger. Possible values include: "Unknown", "Public",
      "Private".
-    :type ledger_type: str or ~confidential_ledger.models.LedgerType
+    :vartype ledger_type: str or ~azure.mgmt.confidentialledger.models.LedgerType
     :ivar provisioning_state: Provisioning state of Ledger Resource. Possible values include:
      "Unknown", "Succeeded", "Failed", "Canceled", "Creating", "Deleting", "Updating".
-    :vartype provisioning_state: str or ~confidential_ledger.models.ProvisioningState
-    :param aad_based_security_principals: Array of all AAD based Security Principals.
-    :type aad_based_security_principals:
-     list[~confidential_ledger.models.AADBasedSecurityPrincipal]
-    :param cert_based_security_principals: Array of all cert based Security Principals.
-    :type cert_based_security_principals:
-     list[~confidential_ledger.models.CertBasedSecurityPrincipal]
+    :vartype provisioning_state: str or ~azure.mgmt.confidentialledger.models.ProvisioningState
+    :ivar aad_based_security_principals: Array of all AAD based Security Principals.
+    :vartype aad_based_security_principals:
+     list[~azure.mgmt.confidentialledger.models.AADBasedSecurityPrincipal]
+    :ivar cert_based_security_principals: Array of all cert based Security Principals.
+    :vartype cert_based_security_principals:
+     list[~azure.mgmt.confidentialledger.models.CertBasedSecurityPrincipal]
     """
 
     _validation = {
@@ -385,7 +496,6 @@ class LedgerProperties(msrest.serialization.Model):
         'ledger_uri': {'key': 'ledgerUri', 'type': 'str'},
         'identity_service_uri': {'key': 'identityServiceUri', 'type': 'str'},
         'ledger_internal_namespace': {'key': 'ledgerInternalNamespace', 'type': 'str'},
-        'ledger_storage_account': {'key': 'ledgerStorageAccount', 'type': 'str'},
         'ledger_type': {'key': 'ledgerType', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'aad_based_security_principals': {'key': 'aadBasedSecurityPrincipals', 'type': '[AADBasedSecurityPrincipal]'},
@@ -395,18 +505,27 @@ class LedgerProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        ledger_storage_account: Optional[str] = None,
         ledger_type: Optional[Union[str, "LedgerType"]] = None,
         aad_based_security_principals: Optional[List["AADBasedSecurityPrincipal"]] = None,
         cert_based_security_principals: Optional[List["CertBasedSecurityPrincipal"]] = None,
         **kwargs
     ):
+        """
+        :keyword ledger_type: Type of Confidential Ledger. Possible values include: "Unknown",
+         "Public", "Private".
+        :paramtype ledger_type: str or ~azure.mgmt.confidentialledger.models.LedgerType
+        :keyword aad_based_security_principals: Array of all AAD based Security Principals.
+        :paramtype aad_based_security_principals:
+         list[~azure.mgmt.confidentialledger.models.AADBasedSecurityPrincipal]
+        :keyword cert_based_security_principals: Array of all cert based Security Principals.
+        :paramtype cert_based_security_principals:
+         list[~azure.mgmt.confidentialledger.models.CertBasedSecurityPrincipal]
+        """
         super(LedgerProperties, self).__init__(**kwargs)
         self.ledger_name = None
         self.ledger_uri = None
         self.identity_service_uri = None
         self.ledger_internal_namespace = None
-        self.ledger_storage_account = ledger_storage_account
         self.ledger_type = ledger_type
         self.provisioning_state = None
         self.aad_based_security_principals = aad_based_security_principals
@@ -416,12 +535,12 @@ class LedgerProperties(msrest.serialization.Model):
 class ResourceProviderOperationDefinition(msrest.serialization.Model):
     """Describes the Resource Provider Operation.
 
-    :param name: Resource provider operation name.
-    :type name: str
-    :param is_data_action: Indicates whether the operation is data action or not.
-    :type is_data_action: bool
-    :param display: Details about the operations.
-    :type display: ~confidential_ledger.models.ResourceProviderOperationDisplay
+    :ivar name: Resource provider operation name.
+    :vartype name: str
+    :ivar is_data_action: Indicates whether the operation is data action or not.
+    :vartype is_data_action: bool
+    :ivar display: Details about the operations.
+    :vartype display: ~azure.mgmt.confidentialledger.models.ResourceProviderOperationDisplay
     """
 
     _attribute_map = {
@@ -438,6 +557,14 @@ class ResourceProviderOperationDefinition(msrest.serialization.Model):
         display: Optional["ResourceProviderOperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Resource provider operation name.
+        :paramtype name: str
+        :keyword is_data_action: Indicates whether the operation is data action or not.
+        :paramtype is_data_action: bool
+        :keyword display: Details about the operations.
+        :paramtype display: ~azure.mgmt.confidentialledger.models.ResourceProviderOperationDisplay
+        """
         super(ResourceProviderOperationDefinition, self).__init__(**kwargs)
         self.name = name
         self.is_data_action = is_data_action
@@ -447,14 +574,14 @@ class ResourceProviderOperationDefinition(msrest.serialization.Model):
 class ResourceProviderOperationDisplay(msrest.serialization.Model):
     """Describes the properties of the Operation.
 
-    :param provider: Name of the resource provider.
-    :type provider: str
-    :param resource: Name of the resource type.
-    :type resource: str
-    :param operation: Name of the resource provider operation.
-    :type operation: str
-    :param description: Description of the resource provider operation.
-    :type description: str
+    :ivar provider: Name of the resource provider.
+    :vartype provider: str
+    :ivar resource: Name of the resource type.
+    :vartype resource: str
+    :ivar operation: Name of the resource provider operation.
+    :vartype operation: str
+    :ivar description: Description of the resource provider operation.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -473,6 +600,16 @@ class ResourceProviderOperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Name of the resource provider.
+        :paramtype provider: str
+        :keyword resource: Name of the resource type.
+        :paramtype resource: str
+        :keyword operation: Name of the resource provider operation.
+        :paramtype operation: str
+        :keyword description: Description of the resource provider operation.
+        :paramtype description: str
+        """
         super(ResourceProviderOperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -486,7 +623,7 @@ class ResourceProviderOperationList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Resource provider operations list.
-    :vartype value: list[~confidential_ledger.models.ResourceProviderOperationDefinition]
+    :vartype value: list[~azure.mgmt.confidentialledger.models.ResourceProviderOperationDefinition]
     :ivar next_link: The URI that can be used to request the next page for list of Azure
      operations.
     :vartype next_link: str
@@ -506,6 +643,8 @@ class ResourceProviderOperationList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceProviderOperationList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -514,20 +653,20 @@ class ResourceProviderOperationList(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~confidential_ledger.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.confidentialledger.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~confidential_ledger.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :vartype last_modified_by_type: str or ~azure.mgmt.confidentialledger.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -550,6 +689,22 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.confidentialledger.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.confidentialledger.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type

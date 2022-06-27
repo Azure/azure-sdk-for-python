@@ -30,7 +30,8 @@ extends:
   parameters:
     ServiceDirectory: storage
     TestTimeoutInMinutes: 120
-    # Override the base matrix due to https://github.com/Azure/azure-sdk-for-python/issues/17837
+    # Override the base matrix due to the issues with building cryptography on unsupported platforms
+    # https://github.com/Azure/azure-sdk-for-python/issues/17837
     MatrixConfigs:
       - Name: storage_ci_matrix
         Path: eng/pipelines/templates/stages/platform-matrix-cryptography-dependency.json
@@ -62,13 +63,13 @@ extends:
       checkout:
         - package: azure-storage-blob
           checkout_path: sdk/storage
-          version: 12.8.0
+          version: 12.12.0
         - package: azure-storage-queue
           checkout_path: sdk/storage
-          version: 12.1.5
+          version: 12.3.0
         - package: azure-storage-file-share
           checkout_path: sdk/storage
-          version: 12.4.1
+          version: 12.8.0
         - package: azure-storage-file-datalake
           checkout_path: sdk/storage
-          version: 12.3.0
+          version: 12.7.0
