@@ -5,7 +5,7 @@
 ### Features Added
 
 ### Bugs Fixed
-- Removed `aiohttp` import from `azure.storage.blob._download_async`.
+- Removed `aiohttp` import from `azure.storage.blob._download_async`.  #24965
 
 ## 12.13.0b1 (2022-06-15)
 
