@@ -1,14 +1,14 @@
 # Release History
 
-## 1.1.0b1 (2022-05-26)
+## 1.0.1 (Unreleased)
 
 ### Features Added
-* Conversation summarization task (Long-running operation)
-* Conversation PII extraction task (Long-running operation)
 
 ### Breaking Changes
-* Client now uses python dictionaries for method parameters and results instead of classes.
-* Many input and result parameter name changes in `analyze_conversation()` method
+
+### Bugs Fixed
+
+### Other Changes
 
 ## 1.0.0 (2022-06-27)
 
@@ -19,6 +19,16 @@
 
 ### Breaking Changes
 * Client now uses python dictionaries for method parameters and results instead of classes.
+
+## 1.1.0b1 (2022-05-26)
+
+### Features Added
+* Conversation summarization task (Long-running operation)
+* Conversation PII extraction task (Long-running operation)
+
+### Breaking Changes
+* Client now uses python dictionaries for method parameters and results instead of classes.
+* Many input and result parameter name changes in `analyze_conversation()` method
 
 ## 1.0.0b3 (2022-04-19)
 
