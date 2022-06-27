@@ -38,6 +38,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         stream=None,
         parallel=None,
         validate_content=None,
+        progress_hook=None,
         etag=None,
         **kwargs
     ):
@@ -53,6 +54,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         self.stream = stream
         self.stream_lock = threading.Lock() if parallel else None
         self.progress_lock = threading.Lock() if parallel else None
+        self.progress_hook = progress_hook
 
         # For a parallel download, the stream is always seekable, so we note down the current position
         # in order to seek to the right place when out-of-order chunks come in
@@ -96,6 +98,9 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                 self.progress_total += length
         else:
             self.progress_total += length
+
+        if self.progress_hook:
+            self.progress_hook(self.progress_total, self.total_size)
 
     def _write_to_stream(self, chunk_data, chunk_start):
         if self.stream_lock:
@@ -227,6 +232,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._max_concurrency = max_concurrency
         self._encoding = encoding
         self._validate_content = validate_content
+        self._progress_hook = kwargs.pop('progress_hook', None)
         self._request_options = kwargs
         self._location_mode = None
         self._download_complete = False
@@ -446,6 +452,9 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         # Write the content to the user stream
         stream.write(self._current_content)
+        if self._progress_hook:
+            self._progress_hook(len(self._current_content), self.size)
+
         if self._download_complete:
             return self.size
 
@@ -465,6 +474,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             parallel=parallel,
             validate_content=self._validate_content,
             use_location=self._location_mode,
+            progress_hook=self._progress_hook,
             etag=self._etag,
             **self._request_options
         )
