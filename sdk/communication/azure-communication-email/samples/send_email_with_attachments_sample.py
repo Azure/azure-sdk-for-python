@@ -16,7 +16,7 @@ USAGE:
     Set the environment variable with your own value before running the sample:
     1) COMMUNICATION_CONNECTION_STRING - the connection string in your ACS resource
     2) SENDER_ADDRESS - the address found in the linked domain that will send the email
-    3) RECIPIENT_ADDRESS - the address that will recieve the email
+    3) RECIPIENT_ADDRESS - the address that will receive the email
 """
 
 import os
@@ -56,7 +56,7 @@ class EmailWithAttachmentSample(object):
         attachment = EmailAttachment(
             name="readme.txt",
             attachment_type="txt",
-            content_bytes_base64="ZW1haWwgdGVzdCBhdHRhY2htZW50"
+            content_bytes_base64="ZW1haWwgdGVzdCBhdHRhY2htZW50" #cspell:disable-line
         )
 
         message = EmailMessage(
