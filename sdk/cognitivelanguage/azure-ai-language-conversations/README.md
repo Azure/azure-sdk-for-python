@@ -101,10 +101,10 @@ client = ConversationAnalysisClient(endpoint="https://<my-custom-subdomain>.cogn
 ## Key concepts
 
 ### ConversationAnalysisClient
-The [ConversationAnalysisClient][conversationanalysis_client_class] is the primary interface for making predictions using your deployed Conversations models. For asynchronous operations, an async `ConversationAnalysisClient` is in the `azure.ai.language.conversation.aio` namespace.
+The [ConversationAnalysisClient][conversationanalysisclient_class] is the primary interface for making predictions using your deployed Conversations models. For asynchronous operations, an async `ConversationAnalysisClient` is in the `azure.ai.language.conversation.aio` namespace.
 
 ### ConversationAnalysisClient
-You can use the [ConversationAuthoringClient][conversationauthoring_client_class] to interface with the [Azure Language Portal][azure_language_portal] to carry out authoring operations on your language resource/project. For example, you can use it to create a project, populate with training data, train, test, and deploy. For asynchronous operations, an async `ConversationAnalysisClient` is in the `azure.ai.language.conversation.authoring.aio` namespace.
+You can use the [ConversationAuthoringClient][conversationauthoringclient_class] to interface with the [Azure Language Portal][azure_language_portal] to carry out authoring operations on your language resource/project. For example, you can use it to create a project, populate with training data, train, test, and deploy. For asynchronous operations, an async `ConversationAnalysisClient` is in the `azure.ai.language.conversation.authoring.aio` namespace.
 
 ## Examples
 The `azure-ai-language-conversation` client library provides both synchronous and asynchronous APIs.
