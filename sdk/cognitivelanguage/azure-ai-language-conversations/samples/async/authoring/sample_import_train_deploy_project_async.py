@@ -112,7 +112,7 @@ async def sample_deploy_model():
         clu_endpoint, AzureKeyCredential(clu_key)
     )
 
-    poller = client.begin_deploy_project(
+    poller = await client.begin_deploy_project(
         project_name=project_name,
         deployment_name=deployment_name,
         deployment={"trainedModelLabel": "sample"},

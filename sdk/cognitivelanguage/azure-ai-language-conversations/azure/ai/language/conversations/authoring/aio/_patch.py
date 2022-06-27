@@ -58,7 +58,7 @@ class ConversationAuthoringClient(GeneratedConversationAuthoringClient): # pylin
     ) -> None:
         super().__init__(
             endpoint=endpoint,
-            credential=credential,
+            credential=credential,  # type: ignore
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
             **kwargs
         )
