@@ -9,6 +9,7 @@ license-header: MICROSOFT_MIT_NO_VERSION
 title: {{ client_name }}
 package-version: 1.0.0b1
 package-mode: dataplane
+package-pprint-name: {{ package_pprint_name }}
 {%- if security_scope %}
 security: AADToken
 security-scopes: {{ security_scope }}

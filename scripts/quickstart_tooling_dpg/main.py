@@ -90,12 +90,7 @@ def build_package(**kwargs) -> None:
     package_name = kwargs.get("package_name")
     namespace = package_name.replace('-', '.')
     kwargs['namespace'] = namespace
-    kwargs['date'] = time.strftime('%Y-%m-%d', time.localtime())
-    folder_list = package_name.split('-')
-    kwargs['folder_first'] = folder_list[0]
-    kwargs['folder_second'] = folder_list[1]
-    kwargs['folder_parent'] = Path(output_folder).parts[-2]
-    kwargs['test_prefix'] = folder_list[-1]
+    kwargs['test_prefix'] = package_name.split('-')[-1]
 
     _LOGGER.info("Build start: %s", package_name)
     check_parameters(output_folder)
