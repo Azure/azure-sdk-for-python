@@ -31,7 +31,7 @@ logging.basicConfig(level=logging.ERROR)
 LOG = logging.getLogger()
 
 
-def list_ledger_entries_sample():
+def main():
     # Set the values of the client ID, tenant ID, and client secret of the AAD application as
     # environment variables:
     #   AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, CONFIDENTIALLEDGER_ENDPOINT
@@ -103,4 +103,4 @@ def list_ledger_entries_sample():
 
 
 if __name__ == "__main__":
-    list_ledger_entries_sample()
+    main()

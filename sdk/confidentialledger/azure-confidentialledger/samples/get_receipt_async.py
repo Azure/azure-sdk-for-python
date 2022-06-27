@@ -5,12 +5,12 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: list_ledger_entries_async.py
+FILE: get_receipt_async.py
 DESCRIPTION:
-    This sample demonstrates how to iteratively retrieve a batch of ledger entries. In this sample,
-    we write many ledger entries before retrieving them at once.
+    This sample demonstrates how to retrieve Confidential Ledger receipts. In this sample, we write
+    a ledger entry and retrieve a receipt certifying that it was written correctly. 
 USAGE:
-    python list_ledger_entries_async.py
+    python get_receipt_async.py
     Set the environment variables with your own values before running the sample:
     1) CONFIDENTIALLEDGER_ENDPOINT - the endpoint of the Confidential Ledger.
 """
@@ -25,6 +25,7 @@ from azure.confidentialledger_identity_service.aio import (
     ConfidentialLedgerIdentityServiceClient,
 )
 from azure.confidentialledger.aio import ConfidentialLedgerClient
+from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import DefaultAzureCredential
 
 
@@ -62,11 +63,6 @@ async def main():
         ledger_certificate_file.write(ledger_certificate["ledgerTlsCertificate"])
         ledger_certificate_file.flush()
 
-        print(
-            f"Ledger certificate has been written to {ledger_certificate_file.name}. "
-            "It will be deleted when the script completes."
-        )
-
         # Build a client through AAD
         credential = DefaultAzureCredential()
         ledger_client = ConfidentialLedgerClient(
@@ -78,41 +74,39 @@ async def main():
         # Using the async objects as a context manager ensures they are properly closed after use.
         async with credential:
             async with ledger_client:
-                post_poller = await ledger_client.begin_post_ledger_entry(
-                    {"contents": "First message"}
-                )
-                poller_result = await post_poller.result()
-                first_transaction_id = poller_result["transactionId"]
-
-                print(
-                    "Wrote 'First message' to the ledger. It is recorded at transaction id "
-                    f"{first_transaction_id}."
-                )
-
-                for i in range(10):
-                    entry_contents = f"Message {i}"
-                    print(
-                        f"Writing '{entry_contents}' to the ledger."
+                # Write a ledger entry.
+                try:
+                    entry_contents = "Hello world!"
+                    post_poller = await ledger_client.begin_post_ledger_entry(
+                        {"contents": entry_contents}
                     )
-                    await ledger_client.post_ledger_entry({"contents": entry_contents})
+                    post_entry_result = await post_poller.result()
+                    transaction_id = post_entry_result["transactionId"]
+                    print(f"Wrote '{entry_contents}' to the ledger at transaction {transaction_id}.")
+                except HttpResponseError as e:
+                    print("Request failed: {}".format(e.response.json()))
+                    raise
 
-                post_poller = await ledger_client.begin_post_ledger_entry(
-                    {"contents": "Last message"}
-                )
-                poller_result = await post_poller.result()
-                last_transaction_id = poller_result["transactionId"]
-
-                print(
-                    "Wrote 'Last message' to the ledger. It is recorded at transaction id "
-                    f"{last_transaction_id}."
-                )
-
-                ranged_result = ledger_client.list_ledger_entries(
-                    from_transaction_id=first_transaction_id,
-                    to_transaction_id=last_transaction_id,
-                )
-                async for entry in ranged_result:
-                    print(f'Contents at {entry["transactionId"]}: {entry["contents"]}')
+                # Get a receipt for a ledger entry.
+                # A receipt can be retrieved for any transaction id to provide cryptographic proof
+                # of the contents of the transaction.
+                try:
+                    print(
+                        f"Retrieving a receipt for {transaction_id}. The receipt may be used to "
+                        "cryptographically verify the contents of the transaction."
+                    )
+                    print(
+                        "For more information about receipts, please see "
+                        "https://microsoft.github.io/CCF/main/audit/receipts.html#receipts"
+                    )
+                    get_receipt_poller = await ledger_client.begin_get_receipt(transaction_id)
+                    get_receipt_result = await get_receipt_poller.result()
+                    print(
+                        f'Receipt for transaction id {transaction_id}: {get_receipt_result}'
+                    )
+                except HttpResponseError as e:
+                    print("Request failed: {}".format(e.response.json()))
+                    raise
 
 
 if __name__ == "__main__":
