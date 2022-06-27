@@ -12,9 +12,6 @@ from typing import Any, List, Union
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline import policies
 
-from azure.confidentialledger.operations import (
-    ConfidentialLedgerOperations as OperationsMixin,
-)
 from azure.confidentialledger._client import ConfidentialLedgerClient as GeneratedClient
 
 __all__: List[str] = [
@@ -43,7 +40,7 @@ class ConfidentialLedgerCertificateCredential:
         self.certificate_path = certificate_path
 
 
-class ConfidentialLedgerClient(GeneratedClient, OperationsMixin):
+class ConfidentialLedgerClient(GeneratedClient):
     """The ConfidentialLedgerClient writes and retrieves ledger entries against the Confidential
     Ledger service.
 

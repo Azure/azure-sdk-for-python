@@ -9,27 +9,24 @@
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
+from .._serialization import Deserializer, Serializer
 from ._configuration import ConfidentialLedgerIdentityServiceClientConfiguration
-from .operations import ConfidentialLedgerIdentityServiceOperations
+from ._operations import ConfidentialLedgerIdentityServiceClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Dict
 
 
-class ConfidentialLedgerIdentityServiceClient:  # pylint: disable=client-accepts-api-version-keyword
+class ConfidentialLedgerIdentityServiceClient(
+    ConfidentialLedgerIdentityServiceClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword
     """The ConfidentialLedgerIdentityServiceClient is used to retrieve the TLS certificate required
     for connecting to a Confidential Ledger.
 
-    :ivar confidential_ledger_identity_service: ConfidentialLedgerIdentityServiceOperations
-     operations
-    :vartype confidential_ledger_identity_service:
-     azure.acl_identity_service.aio.operations.ConfidentialLedgerIdentityServiceOperations
     :param identity_service_uri: The Identity Service URL, for example
      https://identity.accledger.azure.com. Required.
     :type identity_service_uri: str
@@ -43,22 +40,13 @@ class ConfidentialLedgerIdentityServiceClient:  # pylint: disable=client-accepts
         self._config = ConfidentialLedgerIdentityServiceClientConfiguration(
             identity_service_uri=identity_service_uri, **kwargs
         )
-        self._client = AsyncPipelineClient(
-            base_url=_endpoint, config=self._config, **kwargs
-        )
+        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.confidential_ledger_identity_service = (
-            ConfidentialLedgerIdentityServiceOperations(
-                self._client, self._config, self._serialize, self._deserialize
-            )
-        )
 
-    def send_request(
-        self, request: HttpRequest, **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -67,7 +55,7 @@ class ConfidentialLedgerIdentityServiceClient:  # pylint: disable=client-accepts
         >>> response = await client.send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -79,16 +67,11 @@ class ConfidentialLedgerIdentityServiceClient:  # pylint: disable=client-accepts
         request_copy = deepcopy(request)
         path_format_arguments = {
             "identityServiceUri": self._serialize.url(
-                "self._config.identity_service_uri",
-                self._config.identity_service_uri,
-                "str",
-                skip_quote=True,
+                "self._config.identity_service_uri", self._config.identity_service_uri, "str", skip_quote=True
             ),
         }
 
-        request_copy.url = self._client.format_url(
-            request_copy.url, **path_format_arguments
-        )
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
     async def close(self) -> None:

@@ -7,18 +7,18 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-import time
-from typing import Any, IO, Callable, List, Optional, Union, cast
+import asyncio
+from typing import Any, Callable, IO, Coroutine, List, Optional, Union, cast
 
-from azure.core.polling import PollingMethod, LROPoller, NoPolling
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 
-from azure.confidentialledger.operations._operations import (
-    ConfidentialLedgerOperations as GeneratedOperations,
+from azure.confidentialledger.aio._operations._operations import (
+    ConfidentialLedgerClientOperationsMixin as GeneratedOperationsMixin,
 )
-from azure.confidentialledger.operations._operations import JSON
+from azure.confidentialledger.aio._operations._operations import JSON
 
 __all__: List[str] = [
-    "ConfidentialLedgerOperations"
+    "ConfidentialLedgerClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
 
 
@@ -31,14 +31,14 @@ def patch_sdk():
     """
 
 
-class StatePollingMethod(PollingMethod):
+class StatePollingMethod(AsyncPollingMethod):
     """Polling method for methods returning responses containing a 'state' field; the polling
     completes when 'state' becomes a desired value.
     """
 
     def __init__(
         self,
-        operation: Callable[[], JSON],
+        operation: Callable[[], Coroutine[Any, Any, JSON]],
         desired_state: str,
         polling_interval_s: float,
     ):
@@ -54,14 +54,14 @@ class StatePollingMethod(PollingMethod):
         self._status = "finished" if response["state"] == self._desired_state else "polling"
         self._latest_response = response
 
-    def run(self) -> None:
+    async def run(self) -> None:
         try:
             while not self.finished():
-                response = self._operation()
+                response = await self._operation()
                 self._evaluate_response(response)
 
                 if not self.finished():
-                    time.sleep(self._polling_interval_s)
+                    await asyncio.sleep(self._polling_interval_s)
         except Exception:
             self._status = "failed"
             raise
@@ -79,54 +79,56 @@ class StatePollingMethod(PollingMethod):
         return self._latest_response
 
 
-class ConfidentialLedgerOperations(GeneratedOperations):
-    def begin_get_ledger_entry(
+class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
+    async def begin_get_ledger_entry(
         self, transaction_id: str, *, collection_id: Optional[str] = None, **kwargs: Any
-    ) -> LROPoller[JSON]:
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+    ) -> AsyncLROPoller[JSON]:
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
-        def operation() -> JSON:
-            return super(ConfidentialLedgerOperations, self).get_ledger_entry(
+        async def operation() -> JSON:
+            return await super(ConfidentialLedgerClientOperationsMixin, self).get_ledger_entry(
                 transaction_id, collection_id=collection_id, **kwargs
             )
 
-        initial_response = operation()
+        initial_response = await operation()
 
         if polling is True:
-            polling_method = cast(PollingMethod, StatePollingMethod(operation, "Ready", lro_delay))
+            polling_method = cast(AsyncPollingMethod, StatePollingMethod(operation, "Ready", lro_delay))
         elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
             polling_method = polling
 
-        return LROPoller(self._client, initial_response, None, polling_method)
+        return AsyncLROPoller(self._client, initial_response, None, polling_method)
 
-    def begin_get_receipt(self, transaction_id: str, **kwargs: Any) -> LROPoller[JSON]:
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+    async def begin_get_receipt(self, transaction_id: str, **kwargs: Any) -> AsyncLROPoller[JSON]:
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
-        def operation() -> JSON:
-            return super(ConfidentialLedgerOperations, self).get_receipt(transaction_id=transaction_id, **kwargs)
+        async def operation() -> JSON:
+            return await super(ConfidentialLedgerClientOperationsMixin, self).get_receipt(
+                transaction_id=transaction_id, **kwargs
+            )
 
-        initial_response = operation()
+        initial_response = await operation()
 
         if polling is True:
-            polling_method = cast(PollingMethod, StatePollingMethod(operation, "Ready", lro_delay))
+            polling_method = cast(AsyncPollingMethod, StatePollingMethod(operation, "Ready", lro_delay))
         elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
             polling_method = polling
 
-        return LROPoller(self._client, initial_response, None, polling_method)
+        return AsyncLROPoller(self._client, initial_response, None, polling_method)
 
-    def begin_post_ledger_entry(
+    async def begin_post_ledger_entry(
         self,
         entry: Union[JSON, IO],
         *,
         collection_id: Optional[str] = None,
         **kwargs: Any,
-    ) -> LROPoller[JSON]:
+    ) -> AsyncLROPoller[JSON]:
         """Writes a ledger entry and returns a poller to wait for it to be durably committed.
 
         A collection id may optionally be specified.
@@ -136,19 +138,19 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
-        post_result = self.post_ledger_entry(entry, collection_id=collection_id, **kwargs)
+        post_result = await self.post_ledger_entry(entry, collection_id=collection_id, **kwargs)
         transaction_id = post_result["transactionId"]
 
         kwargs["polling"] = polling
         kwargs["polling_interval"] = lro_delay
         kwargs["_post_ledger_entry_response"] = post_result
-        return self.begin_wait_for_commit(transaction_id, **kwargs)
+        return await self.begin_wait_for_commit(transaction_id, **kwargs)
 
-    def begin_wait_for_commit(
+    async def begin_wait_for_commit(
         self,
         transaction_id,  # type: str
         **kwargs,  # type: Any
-    ) -> LROPoller[JSON]:
+    ) -> AsyncLROPoller[JSON]:
         """Creates a poller that queries the state of the specified transaction until it is
         Committed, a state that indicates the transaction is durably stored in the Confidential
         Ledger.
@@ -161,23 +163,26 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         post_result = kwargs.pop("_post_ledger_entry_response", None)
         deserialization_callback = lambda x: x if post_result is None else post_result
 
-        def operation() -> JSON:
-            return super(ConfidentialLedgerOperations, self).get_transaction_status(
+        async def operation() -> JSON:
+            return await super(ConfidentialLedgerClientOperationsMixin, self).get_transaction_status(
                 transaction_id=transaction_id, **kwargs
             )
 
-        initial_response = operation()
+        initial_response = await operation()
 
         if polling is True:
-            polling_method = cast(PollingMethod, StatePollingMethod(operation, "Committed", lro_delay))
+            polling_method = cast(
+                AsyncPollingMethod,
+                StatePollingMethod(operation, "Committed", lro_delay),
+            )
         elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
             polling_method = polling
 
-        return LROPoller(self._client, initial_response, deserialization_callback, polling_method)
+        return AsyncLROPoller(self._client, initial_response, deserialization_callback, polling_method)
 
-    def post_ledger_entry(
+    async def post_ledger_entry(
         self,
         entry: Union[JSON, IO],
         *,
@@ -221,4 +226,4 @@ class ConfidentialLedgerOperations(GeneratedOperations):
                 "transactionId": headers["x-ms-ccf-transaction-id"],
             },
         )
-        return super().post_ledger_entry(entry, collection_id=collection_id, **kwargs)
+        return await super().post_ledger_entry(entry, collection_id=collection_id, **kwargs)

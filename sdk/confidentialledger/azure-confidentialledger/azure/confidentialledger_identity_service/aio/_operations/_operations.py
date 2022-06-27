@@ -20,11 +20,9 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.utils import case_insensitive_dict
 
-from ...operations._operations import (
-    build_confidential_ledger_identity_service_get_ledger_identity_request,
-)
+from ..._operations._operations import build_get_ledger_identity_request
+from .._vendor import MixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -32,30 +30,10 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class ConfidentialLedgerIdentityServiceOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.acl_identity_service.aio.ConfidentialLedgerIdentityServiceClient`'s
-        :attr:`confidential_ledger_identity_service` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = (
-            input_args.pop(0) if input_args else kwargs.pop("deserializer")
-        )
-
+class ConfidentialLedgerIdentityServiceClientOperationsMixin(MixinABC):
     @distributed_trace_async
     async def get_ledger_identity(self, ledger_id: str, **kwargs: Any) -> JSON:
         """Gets identity information for a Confidential Ledger instance.
@@ -72,41 +50,29 @@ class ConfidentialLedgerIdentityServiceOperations:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "ledgerId": "str",  # Optional. Id for the ledger.
                     "ledgerTlsCertificate": "str"  # PEM-encoded certificate used for TLS by the
                       Confidential Ledger. Required.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = (
-            build_confidential_ledger_identity_service_get_ledger_identity_request(
-                ledger_id=ledger_id,
-                api_version=api_version,
-                headers=_headers,
-                params=_params,
-            )
+        request = build_get_ledger_identity_request(
+            ledger_id=ledger_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "identityServiceUri": self._serialize.url(
-                "self._config.identity_service_uri",
-                self._config.identity_service_uri,
-                "str",
-                skip_quote=True,
+                "self._config.identity_service_uri", self._config.identity_service_uri, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -118,9 +84,7 @@ class ConfidentialLedgerIdentityServiceOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if response.content:

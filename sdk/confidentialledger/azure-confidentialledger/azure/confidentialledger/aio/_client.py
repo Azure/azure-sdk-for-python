@@ -14,20 +14,19 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
 from ._configuration import ConfidentialLedgerClientConfiguration
-from .operations import ConfidentialLedgerOperations
+from ._operations import ConfidentialLedgerClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Dict
 
 
-class ConfidentialLedgerClient:  # pylint: disable=client-accepts-api-version-keyword
+class ConfidentialLedgerClient(
+    ConfidentialLedgerClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword
     """The ConfidentialLedgerClient writes and retrieves ledger entries against the Confidential
     Ledger service.
 
-    :ivar confidential_ledger: ConfidentialLedgerOperations operations
-    :vartype confidential_ledger:
-     azure.confidentialledger.aio.operations.ConfidentialLedgerOperations
     :param ledger_uri: The Confidential Ledger URL, for example
      https://contoso.confidentialledger.azure.com. Required.
     :type ledger_uri: str
@@ -44,9 +43,6 @@ class ConfidentialLedgerClient:  # pylint: disable=client-accepts-api-version-ke
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.confidential_ledger = ConfidentialLedgerOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
 
     def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

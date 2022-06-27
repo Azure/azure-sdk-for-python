@@ -12,9 +12,6 @@ from typing import Any, List, Union
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline import policies
 
-from azure.confidentialledger.aio.operations import (
-    ConfidentialLedgerOperations as OperationsMixin,
-)
 from azure.confidentialledger.aio._client import (
     ConfidentialLedgerClient as GeneratedClient,
 )
@@ -34,7 +31,7 @@ def patch_sdk():
     """
 
 
-class ConfidentialLedgerClient(GeneratedClient, OperationsMixin):
+class ConfidentialLedgerClient(GeneratedClient):
     """The ConfidentialLedgerClient writes and retrieves ledger entries against the Confidential
     Ledger service.
 

@@ -8,9 +8,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import Any, List, Optional
 
-from azure.confidentialledger_identity_service.aio.operations import (
-    ConfidentialLedgerIdentityServiceOperations as OperationsMixin,
-)
 from azure.confidentialledger_identity_service.aio._client import (
     ConfidentialLedgerIdentityServiceClient as GeneratedClient,
 )
@@ -29,7 +26,7 @@ def patch_sdk():
     """
 
 
-class ConfidentialLedgerIdentityServiceClient(GeneratedClient, OperationsMixin):
+class ConfidentialLedgerIdentityServiceClient(GeneratedClient):
     def __init__(self, identity_service_uri: Optional[str] = None, **kwargs: Any):
         """
         :param identity_service_uri: The Identity Service URL, for example
