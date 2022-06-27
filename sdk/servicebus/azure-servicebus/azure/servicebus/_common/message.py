@@ -631,7 +631,7 @@ class ServiceBusMessageBatch(object):
         self._size = get_message_encoded_size(BatchMessage(*self._message))
         self._count = 0
         self._messages: List[ServiceBusMessage] = []
-        self._uamqp_mesage = None
+        self._uamqp_message = None
 
     def __repr__(self) -> str:
         batch_repr = "max_size_in_bytes={}, message_count={}".format(
@@ -686,11 +686,11 @@ class ServiceBusMessageBatch(object):
 
     @property
     def message(self) -> LegacyBatchMessage:
-        if not self._uamqp_mesage:
+        if not self._uamqp_message:
             raise Exception("Attempting to use legacy batch")
             message = AmqpAnnotatedMessage(message=Message(*self._message))
-            self._uamqp_mesage = LegacyBatchMessage(message)
-        return self._uamqp_mesage
+            self._uamqp_message = LegacyBatchMessage(message)
+        return self._uamqp_message
 
     @property
     def max_size_in_bytes(self) -> int:
