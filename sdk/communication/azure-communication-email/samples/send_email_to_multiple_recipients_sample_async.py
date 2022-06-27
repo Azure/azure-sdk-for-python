@@ -17,7 +17,7 @@ USAGE:
     1) COMMUNICATION_CONNECTION_STRING - the connection string in your ACS resource
     2) SENDER_ADDRESS - the address found in the linked domain that will send the email
     3) RECIPIENT_ADDRESS - the address that will receive the email
-    4) SECOND_RECIPIENT_ADDRESS - the second address that will recieve the email
+    4) SECOND_RECIPIENT_ADDRESS - the second address that will receive the email
 """
 
 import os
