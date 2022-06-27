@@ -111,7 +111,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
                     )
                     retry_active = False
 
-                except ServiceResponseError as error:
+                except IncompleteReadError as error:
                     retry_total -= 1
                     if retry_total <= 0:
                         raise ServiceResponseError(error, error=error)
@@ -354,10 +354,10 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                     self.size = self._file_size
                 retry_active = False
 
-            except ServiceResponseError as error:
+            except IncompleteReadError as error:
                 retry_total -= 1
                 if retry_total <= 0:
-                    raise error
+                    raise ServiceResponseError(error, error=error)
                 await asyncio.sleep(1)
 
             except HttpResponseError as error:
