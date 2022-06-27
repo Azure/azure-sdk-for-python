@@ -5,12 +5,12 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: list_ledger_entries.py
+FILE: list_ledger_entries_async.py
 DESCRIPTION:
     This sample demonstrates how to iteratively retrieve a batch of ledger entries. In this sample,
     we write many ledger entries before retrieving them at once.
 USAGE:
-    python list_ledger_entries.py
+    python list_ledger_entries_async.py
     Set the environment variables with your own values before running the sample:
     1) CONFIDENTIALLEDGER_ENDPOINT - the endpoint of the Confidential Ledger.
 """
