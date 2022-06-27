@@ -1,5 +1,40 @@
 interactions:
 - request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-acl-identity-service/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: GET
+    uri: https://identity.confidential-ledger.core.azure.com/ledgerIdentity/fake?api-version=2022-05-13
+  response:
+    body:
+      string: '{"ledgerTlsCertificate":"-----BEGIN CERTIFICATE-----\nMIIBeTCCASCgAwIBAgIQcTrTRLjb9eOoGTXSvOEgxjAKBggqhkjOPQQDAjAWMRQw\nEgYDVQQDDAtDQ0YgTmV0d29yazAeFw0yMjA2MjcxNjA3MjNaFw0yMjA5MjUxNjA3\nMjJaMBYxFDASBgNVBAMMC0NDRiBOZXR3b3JrMFkwEwYHKoZIzj0CAQYIKoZIzj0D\nAQcDQgAEyn3oh7/D+m/yuzdWNSEh3ZOupuUiO6U7MIcwiM6RBZ3nsWQHGeVyT0Ai\n+7cYDtPGo/8VRio+Brknl7VALE3q9aNQME4wDAYDVR0TBAUwAwEB/zAdBgNVHQ4E\nFgQUh1gNHgpIlTONmFbFX7HeG1rcT6gwHwYDVR0jBBgwFoAUh1gNHgpIlTONmFbF\nX7HeG1rcT6gwCgYIKoZIzj0EAwIDRwAwRAIgdd7rQszgGJ+jtjuiECigiFxoAvDk\nOPPBwTvMsE8TzsYCIDgYQ1mGHyZ52NXgoxPfqVVFTive8JIsjeQuczMZFq+9\n-----END
+        CERTIFICATE-----\n","ledgerId":"fake"}'
+    headers:
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 27 Jun 2022 16:42:05 GMT
+      server:
+      - Kestrel
+      transfer-encoding:
+      - chunked
+      x-ms-image-digest:
+      - sha256:7a76c9097c3450987501c23e71a3e16b89f727059ab6de727807ac97b808810e
+      x-ms-image-tag:
+      - 1.0.01999.541-e02672ed644876c9cf10c5494e0203a0dc9da070
+      x-ms-machinename:
+      - identityservice-6499ffbf45-g48zc
+    status:
+      code: 200
+      message: OK
+- request:
     body: '{"assignedRole": "Contributor"}'
     headers:
       Accept:
@@ -11,7 +46,7 @@ interactions:
       Content-Length:
       - '31'
       Content-Type:
-      - application/json
+      - application/merge-patch+json
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: PATCH
@@ -25,7 +60,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.9895'
+      - '2.4772'
     status:
       code: 200
       message: OK
@@ -51,7 +86,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.9896'
+      - '2.4772'
     status:
       code: 200
       message: OK
@@ -77,7 +112,7 @@ interactions:
       content-length:
       - '0'
       x-ms-ccf-transaction-id:
-      - '2.9897'
+      - '2.4773'
     status:
       code: 204
       message: No Content
@@ -93,7 +128,7 @@ interactions:
       Content-Length:
       - '26'
       Content-Type:
-      - application/json
+      - application/merge-patch+json
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: PATCH
@@ -107,7 +142,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.9898'
+      - '2.4774'
     status:
       code: 200
       message: OK
@@ -133,7 +168,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.9898'
+      - '2.4775'
     status:
       code: 200
       message: OK
@@ -159,7 +194,7 @@ interactions:
       content-length:
       - '0'
       x-ms-ccf-transaction-id:
-      - '2.9899'
+      - '2.4776'
     status:
       code: 204
       message: No Content
@@ -175,7 +210,7 @@ interactions:
       Content-Length:
       - '31'
       Content-Type:
-      - application/json
+      - application/merge-patch+json
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: PATCH
@@ -189,7 +224,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.9900'
+      - '2.4777'
     status:
       code: 200
       message: OK
@@ -215,7 +250,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.9900'
+      - '2.4777'
     status:
       code: 200
       message: OK
@@ -241,7 +276,7 @@ interactions:
       content-length:
       - '0'
       x-ms-ccf-transaction-id:
-      - '2.9901'
+      - '2.4778'
     status:
       code: 204
       message: No Content
@@ -257,7 +292,7 @@ interactions:
       Content-Length:
       - '26'
       Content-Type:
-      - application/json
+      - application/merge-patch+json
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: PATCH
@@ -271,7 +306,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.9903'
+      - '2.4780'
     status:
       code: 200
       message: OK
@@ -297,7 +332,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.9903'
+      - '2.4780'
     status:
       code: 200
       message: OK
@@ -323,7 +358,7 @@ interactions:
       content-length:
       - '0'
       x-ms-ccf-transaction-id:
-      - '2.9904'
+      - '2.4781'
     status:
       code: 204
       message: No Content

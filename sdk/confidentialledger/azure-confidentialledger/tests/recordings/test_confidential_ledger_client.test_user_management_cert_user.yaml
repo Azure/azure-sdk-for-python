@@ -11,26 +11,26 @@ interactions:
       User-Agent:
       - azsdk-python-acl-identity-service/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://identity.confidential-ledger.core.azure.com/ledgerIdentity/lyshi-python-sdk?api-version=2022-05-13
+    uri: https://identity.confidential-ledger.core.azure.com/ledgerIdentity/fake?api-version=2022-05-13
   response:
     body:
-      string: '{"ledgerTlsCertificate":"-----BEGIN CERTIFICATE-----\nMIIBejCCASCgAwIBAgIQPo6ESCqpf+JvsHyfbk3F3jAKBggqhkjOPQQDAjAWMRQw\nEgYDVQQDDAtDQ0YgTmV0d29yazAeFw0yMjA2MTcyMjUzMjJaFw0yMjA5MTUyMjUz\nMjFaMBYxFDASBgNVBAMMC0NDRiBOZXR3b3JrMFkwEwYHKoZIzj0CAQYIKoZIzj0D\nAQcDQgAE0AtPX/j3WA/R3MBXcOT/XRPdmRyDx7a4mj25AnxaOUELWKayTkvZV4ly\ndlnP72oLaIWrKIN+aIjEhNytANcudqNQME4wDAYDVR0TBAUwAwEB/zAdBgNVHQ4E\nFgQUfIOFLnFPQ8uUL0xlsoiDLUmMfdkwHwYDVR0jBBgwFoAUfIOFLnFPQ8uUL0xl\nsoiDLUmMfdkwCgYIKoZIzj0EAwIDSAAwRQIgG9FxH5Dm6Dq+1nLCRi+0yCZbNxAE\np1cSqjTGTlxHf10CIQDjsEmZhmACgyB1wMd3HtPBhAVj0xTJXdc+/lZPtG2i/w==\n-----END
-        CERTIFICATE-----\n","ledgerId":"lyshi-python-sdk"}'
+      string: '{"ledgerTlsCertificate":"-----BEGIN CERTIFICATE-----\nMIIBeTCCASCgAwIBAgIQcTrTRLjb9eOoGTXSvOEgxjAKBggqhkjOPQQDAjAWMRQw\nEgYDVQQDDAtDQ0YgTmV0d29yazAeFw0yMjA2MjcxNjA3MjNaFw0yMjA5MjUxNjA3\nMjJaMBYxFDASBgNVBAMMC0NDRiBOZXR3b3JrMFkwEwYHKoZIzj0CAQYIKoZIzj0D\nAQcDQgAEyn3oh7/D+m/yuzdWNSEh3ZOupuUiO6U7MIcwiM6RBZ3nsWQHGeVyT0Ai\n+7cYDtPGo/8VRio+Brknl7VALE3q9aNQME4wDAYDVR0TBAUwAwEB/zAdBgNVHQ4E\nFgQUh1gNHgpIlTONmFbFX7HeG1rcT6gwHwYDVR0jBBgwFoAUh1gNHgpIlTONmFbF\nX7HeG1rcT6gwCgYIKoZIzj0EAwIDRwAwRAIgdd7rQszgGJ+jtjuiECigiFxoAvDk\nOPPBwTvMsE8TzsYCIDgYQ1mGHyZ52NXgoxPfqVVFTive8JIsjeQuczMZFq+9\n-----END
+        CERTIFICATE-----\n","ledgerId":"fake"}'
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 17 Jun 2022 23:05:02 GMT
+      - Mon, 27 Jun 2022 16:42:08 GMT
       server:
       - Kestrel
       transfer-encoding:
       - chunked
       x-ms-image-digest:
-      - sha256:29bbfd3911930b3c6bc6ff9b8b9744695478f16e37f5faf310a9310501ee7e21
+      - sha256:7a76c9097c3450987501c23e71a3e16b89f727059ab6de727807ac97b808810e
       x-ms-image-tag:
-      - 1.0.01994.526-688809e45fe53dbeda7757e735f2db0f0b911134
+      - 1.0.01999.541-e02672ed644876c9cf10c5494e0203a0dc9da070
       x-ms-machinename:
-      - identityservice-7cbdbd8dcb-jrkwn
+      - identityservice-6499ffbf45-88b57
     status:
       code: 200
       message: OK
@@ -60,7 +60,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.62'
+      - '2.4783'
     status:
       code: 200
       message: OK
@@ -90,7 +90,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.63'
+      - '2.4785'
     status:
       code: 200
       message: OK
@@ -116,7 +116,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.63'
+      - '2.4785'
     status:
       code: 200
       message: OK
@@ -142,7 +142,7 @@ interactions:
       content-length:
       - '0'
       x-ms-ccf-transaction-id:
-      - '2.64'
+      - '2.4786'
     status:
       code: 204
       message: No Content
@@ -172,7 +172,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.66'
+      - '2.4787'
     status:
       code: 200
       message: OK
@@ -198,7 +198,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.66'
+      - '2.4787'
     status:
       code: 200
       message: OK
@@ -224,7 +224,7 @@ interactions:
       content-length:
       - '0'
       x-ms-ccf-transaction-id:
-      - '2.67'
+      - '2.4789'
     status:
       code: 204
       message: No Content
@@ -254,7 +254,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.68'
+      - '2.4790'
     status:
       code: 200
       message: OK
@@ -280,7 +280,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.68'
+      - '2.4790'
     status:
       code: 200
       message: OK
@@ -306,7 +306,7 @@ interactions:
       content-length:
       - '0'
       x-ms-ccf-transaction-id:
-      - '2.69'
+      - '2.4791'
     status:
       code: 204
       message: No Content
@@ -336,7 +336,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.71'
+      - '2.4792'
     status:
       code: 200
       message: OK
@@ -362,7 +362,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.71'
+      - '2.4792'
     status:
       code: 200
       message: OK
@@ -388,7 +388,7 @@ interactions:
       content-length:
       - '0'
       x-ms-ccf-transaction-id:
-      - '2.72'
+      - '2.4794'
     status:
       code: 204
       message: No Content

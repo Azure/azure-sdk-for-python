@@ -20,7 +20,7 @@ class ConfidentialLedgerIdentityServiceClientTest(AzureTestCase):
                 0
             ]
             network_identity = (
-                await client.confidential_ledger_identity_service.get_ledger_identity(
+                await client.get_ledger_identity(
                     ledger_id=ledger_id
                 )
             )

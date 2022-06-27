@@ -1,130 +1,63 @@
 interactions:
 - request:
-    body: '{"assignedRole": "Contributor"}'
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-acl-identity-service/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: GET
+    uri: https://identity.confidential-ledger.core.azure.com/ledgerIdentity/fake?api-version=2022-05-13
+  response:
+    body:
+      string: '{"ledgerTlsCertificate":"-----BEGIN CERTIFICATE-----\nMIIBeTCCASCgAwIBAgIQcTrTRLjb9eOoGTXSvOEgxjAKBggqhkjOPQQDAjAWMRQw\nEgYDVQQDDAtDQ0YgTmV0d29yazAeFw0yMjA2MjcxNjA3MjNaFw0yMjA5MjUxNjA3\nMjJaMBYxFDASBgNVBAMMC0NDRiBOZXR3b3JrMFkwEwYHKoZIzj0CAQYIKoZIzj0D\nAQcDQgAEyn3oh7/D+m/yuzdWNSEh3ZOupuUiO6U7MIcwiM6RBZ3nsWQHGeVyT0Ai\n+7cYDtPGo/8VRio+Brknl7VALE3q9aNQME4wDAYDVR0TBAUwAwEB/zAdBgNVHQ4E\nFgQUh1gNHgpIlTONmFbFX7HeG1rcT6gwHwYDVR0jBBgwFoAUh1gNHgpIlTONmFbF\nX7HeG1rcT6gwCgYIKoZIzj0EAwIDRwAwRAIgdd7rQszgGJ+jtjuiECigiFxoAvDk\nOPPBwTvMsE8TzsYCIDgYQ1mGHyZ52NXgoxPfqVVFTive8JIsjeQuczMZFq+9\n-----END
+        CERTIFICATE-----\n","ledgerId":"fake"}'
+    headers:
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 27 Jun 2022 17:19:36 GMT
+      server:
+      - Kestrel
+      transfer-encoding:
+      - chunked
+      x-ms-image-digest:
+      - sha256:7a76c9097c3450987501c23e71a3e16b89f727059ab6de727807ac97b808810e
+      x-ms-image-tag:
+      - 1.0.01999.541-e02672ed644876c9cf10c5494e0203a0dc9da070
+      x-ms-machinename:
+      - identityservice-6499ffbf45-jh62d
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"assignedRole": "Administrator"}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '31'
+      - '33'
       Content-Type:
-      - application/json
+      - application/merge-patch+json
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: PATCH
-    uri: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+    uri: https://fake.confidential-ledger.azure.com/app/users/5F:23:3D:26:E2:28:88:9C:06:E0:88:21:FA:C7:B2:9A:F8:81:30:6B:F9:15:41:F2:34:05:05:44:4C:AD:5A:B5?api-version=2022-05-13
   response:
     body:
-      string: '{"assignedRole":"Contributor","userId":"000000000000000000000000000000000000"}'
+      string: '{"assignedRole":"Administrator","userId":"5F:23:3D:26:E2:28:88:9C:06:E0:88:21:FA:C7:B2:9A:F8:81:30:6B:F9:15:41:F2:34:05:05:44:4C:AD:5A:B5"}'
     headers:
-      content-length: '78'
+      content-length: '139'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.52145'
+      x-ms-ccf-transaction-id: '2.10843'
     status:
       code: 200
       message: OK
-    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
-    method: GET
-    uri: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
-  response:
-    body:
-      string: '{"assignedRole":"Contributor","userId":"000000000000000000000000000000000000"}'
-    headers:
-      content-length: '78'
-      content-type: application/json
-      x-ms-ccf-transaction-id: '2.52146'
-    status:
-      code: 200
-      message: OK
-    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
-    method: DELETE
-    uri: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
-  response:
-    body:
-      string: ''
-    headers:
-      content-length: '0'
-      x-ms-ccf-transaction-id: '2.52147'
-    status:
-      code: 204
-      message: No Content
-    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
-- request:
-    body: '{"assignedRole": "Reader"}'
-    headers:
-      Accept:
-      - application/json
-      Content-Length:
-      - '26'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
-    method: PATCH
-    uri: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
-  response:
-    body:
-      string: '{"assignedRole":"Reader","userId":"000000000000000000000000000000000000"}'
-    headers:
-      content-length: '73'
-      content-type: application/json
-      x-ms-ccf-transaction-id: '2.52148'
-    status:
-      code: 200
-      message: OK
-    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
-    method: GET
-    uri: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
-  response:
-    body:
-      string: '{"assignedRole":"Reader","userId":"000000000000000000000000000000000000"}'
-    headers:
-      content-length: '73'
-      content-type: application/json
-      x-ms-ccf-transaction-id: '2.52149'
-    status:
-      code: 200
-      message: OK
-    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
-    method: DELETE
-    uri: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
-  response:
-    body:
-      string: ''
-    headers:
-      content-length: '0'
-      x-ms-ccf-transaction-id: '2.52150'
-    status:
-      code: 204
-      message: No Content
-    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+    url: https://fake.confidential-ledger.azure.com/app/users/5F:23:3D:26:E2:28:88:9C:06:E0:88:21:FA:C7:B2:9A:F8:81:30:6B:F9:15:41:F2:34:05:05:44:4C:AD:5A:B5?api-version=2022-05-13
 - request:
     body: '{"assignedRole": "Contributor"}'
     headers:
@@ -133,22 +66,22 @@ interactions:
       Content-Length:
       - '31'
       Content-Type:
-      - application/json
+      - application/merge-patch+json
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: PATCH
-    uri: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=0.1-preview
+    uri: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
   response:
     body:
-      string: '{"assignedRole":"Contributor","userId":"7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F"}'
+      string: '{"assignedRole":"Contributor","userId":"000000000000000000000000000000000000"}'
     headers:
-      content-length: '137'
+      content-length: '78'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.52152'
+      x-ms-ccf-transaction-id: '2.10844'
     status:
       code: 200
       message: OK
-    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=0.1-preview
+    url: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
 - request:
     body: null
     headers:
@@ -157,18 +90,18 @@ interactions:
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=0.1-preview
+    uri: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
   response:
     body:
-      string: '{"assignedRole":"Contributor","userId":"7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F"}'
+      string: '{"assignedRole":"Contributor","userId":"000000000000000000000000000000000000"}'
     headers:
-      content-length: '137'
+      content-length: '78'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.52152'
+      x-ms-ccf-transaction-id: '2.10844'
     status:
       code: 200
       message: OK
-    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=0.1-preview
+    url: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
 - request:
     body: null
     headers:
@@ -177,17 +110,17 @@ interactions:
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: DELETE
-    uri: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=0.1-preview
+    uri: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      x-ms-ccf-transaction-id: '2.52154'
+      x-ms-ccf-transaction-id: '2.10846'
     status:
       code: 204
       message: No Content
-    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=0.1-preview
+    url: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
 - request:
     body: '{"assignedRole": "Reader"}'
     headers:
@@ -196,22 +129,22 @@ interactions:
       Content-Length:
       - '26'
       Content-Type:
-      - application/json
+      - application/merge-patch+json
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: PATCH
-    uri: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=0.1-preview
+    uri: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
   response:
     body:
-      string: '{"assignedRole":"Reader","userId":"7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F"}'
+      string: '{"assignedRole":"Reader","userId":"000000000000000000000000000000000000"}'
     headers:
-      content-length: '132'
+      content-length: '73'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.52155'
+      x-ms-ccf-transaction-id: '2.10847'
     status:
       code: 200
       message: OK
-    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=0.1-preview
+    url: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
 - request:
     body: null
     headers:
@@ -220,18 +153,18 @@ interactions:
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=0.1-preview
+    uri: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
   response:
     body:
-      string: '{"assignedRole":"Reader","userId":"7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F"}'
+      string: '{"assignedRole":"Reader","userId":"000000000000000000000000000000000000"}'
     headers:
-      content-length: '132'
+      content-length: '73'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.52156'
+      x-ms-ccf-transaction-id: '2.10848'
     status:
       code: 200
       message: OK
-    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=0.1-preview
+    url: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
 - request:
     body: null
     headers:
@@ -240,15 +173,141 @@ interactions:
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: DELETE
-    uri: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=0.1-preview
+    uri: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      x-ms-ccf-transaction-id: '2.52157'
+      x-ms-ccf-transaction-id: '2.10849'
     status:
       code: 204
       message: No Content
-    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=0.1-preview
+    url: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
+- request:
+    body: '{"assignedRole": "Contributor"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '31'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: PATCH
+    uri: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
+  response:
+    body:
+      string: '{"assignedRole":"Contributor","userId":"7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F"}'
+    headers:
+      content-length: '137'
+      content-type: application/json
+      x-ms-ccf-transaction-id: '2.10851'
+    status:
+      code: 200
+      message: OK
+    url: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: GET
+    uri: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
+  response:
+    body:
+      string: '{"assignedRole":"Contributor","userId":"7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F"}'
+    headers:
+      content-length: '137'
+      content-type: application/json
+      x-ms-ccf-transaction-id: '2.10851'
+    status:
+      code: 200
+      message: OK
+    url: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: DELETE
+    uri: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      x-ms-ccf-transaction-id: '2.10853'
+    status:
+      code: 204
+      message: No Content
+    url: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
+- request:
+    body: '{"assignedRole": "Reader"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '26'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: PATCH
+    uri: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
+  response:
+    body:
+      string: '{"assignedRole":"Reader","userId":"7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F"}'
+    headers:
+      content-length: '132'
+      content-type: application/json
+      x-ms-ccf-transaction-id: '2.10854'
+    status:
+      code: 200
+      message: OK
+    url: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: GET
+    uri: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
+  response:
+    body:
+      string: '{"assignedRole":"Reader","userId":"7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F"}'
+    headers:
+      content-length: '132'
+      content-type: application/json
+      x-ms-ccf-transaction-id: '2.10855'
+    status:
+      code: 200
+      message: OK
+    url: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: DELETE
+    uri: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      x-ms-ccf-transaction-id: '2.10856'
+    status:
+      code: 204
+      message: No Content
+    url: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
 version: 1
