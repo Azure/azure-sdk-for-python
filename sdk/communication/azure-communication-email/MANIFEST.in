@@ -1,6 +1,5 @@
 include _meta.json
 recursive-include tests *.py *.yaml
-recursive-include samples *.py *.md
 include *.md
 include azure/__init__.py
 include azure/communication/__init__.py
