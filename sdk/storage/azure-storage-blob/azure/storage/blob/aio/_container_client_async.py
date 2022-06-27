@@ -1,22 +1,22 @@
-# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=invalid-overridden-method
+# pylint: disable=too-many-lines, invalid-overridden-method
+
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, AnyStr, Dict, List, IO, AsyncIterator,
+    Any, AnyStr, AsyncIterator, Dict, List, IO, Iterable, Optional, Union,
     TYPE_CHECKING
 )
 
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.core.tracing.decorator import distributed_trace
-from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
@@ -24,29 +24,31 @@ from .._shared.request_handlers import add_metadata_headers, serialize_iso
 from .._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
-    return_headers_and_deserialized)
+    return_headers_and_deserialized
+)
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import SignedIdentifier
-from .._deserialize import deserialize_container_properties
-from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 from .._container_client import ContainerClient as ContainerClientBase, _get_blob_name
-from .._models import ContainerProperties, BlobType, BlobProperties, FilteredBlob  # pylint: disable=unused-import
-from ._list_blobs_helper import BlobPropertiesPaged, BlobPrefix
-from ._lease_async import BlobLeaseClient
+from .._deserialize import deserialize_container_properties
+from .._encryption import StorageEncryptionMixin
+from .._models import ContainerProperties, BlobType, BlobProperties, FilteredBlob
+from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 from ._blob_client_async import BlobClient
+from ._lease_async import BlobLeaseClient
+from ._list_blobs_helper import BlobPropertiesPaged, BlobPrefix
 from ._models import FilteredBlobPaged
 
 if TYPE_CHECKING:
-    from .._models import PublicAccess
-    from ._download_async import StorageStreamDownloader
     from datetime import datetime
+    from ._download_async import StorageStreamDownloader
     from .._models import ( # pylint: disable=unused-import
         AccessPolicy,
         StandardBlobTier,
-        PremiumPageBlobTier)
+        PremiumPageBlobTier,
+        PublicAccess)
 
 
-class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
+class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, StorageEncryptionMixin):
     """A client to interact with a specific container, although that container
     may not yet exist.
 
@@ -119,6 +121,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self.configure_encryption(kwargs)
 
     @distributed_trace_async
     async def create_container(self, metadata=None, public_access=None, **kwargs):
