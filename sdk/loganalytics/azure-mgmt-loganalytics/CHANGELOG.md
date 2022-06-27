@@ -1,8 +1,10 @@
 # Release History
 
-## 0.0.0 (2022-06-24)
+## 13.0.0 (2022-06-27)
 
+**Features**
 
+  - Model.DataSourceType has a new enum type `INGESTION`
 
 ## 13.0.0b4 (2022-04-08)
 
