@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._monitor_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AutoscaleErrorResponse(msrest.serialization.Model):
@@ -39,7 +41,7 @@ class AutoscaleErrorResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["AutoscaleErrorResponseError"] = None,
+        error: Optional["_models.AutoscaleErrorResponseError"] = None,
         **kwargs
     ):
         """
@@ -130,8 +132,8 @@ class AutoscaleNotification(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        email: Optional["EmailNotification"] = None,
-        webhooks: Optional[List["WebhookNotification"]] = None,
+        email: Optional["_models.EmailNotification"] = None,
+        webhooks: Optional[List["_models.WebhookNotification"]] = None,
         **kwargs
     ):
         """
@@ -184,10 +186,10 @@ class AutoscaleProfile(msrest.serialization.Model):
         self,
         *,
         name: str,
-        capacity: "ScaleCapacity",
-        rules: List["ScaleRule"],
-        fixed_date: Optional["TimeWindow"] = None,
-        recurrence: Optional["Recurrence"] = None,
+        capacity: "_models.ScaleCapacity",
+        rules: List["_models.ScaleRule"],
+        fixed_date: Optional["_models.TimeWindow"] = None,
+        recurrence: Optional["_models.Recurrence"] = None,
         **kwargs
     ):
         """
@@ -286,11 +288,11 @@ class AutoscaleSettingResource(msrest.serialization.Model):
         self,
         *,
         location: str,
-        profiles: List["AutoscaleProfile"],
+        profiles: List["_models.AutoscaleProfile"],
         tags: Optional[Dict[str, str]] = None,
-        notifications: Optional[List["AutoscaleNotification"]] = None,
+        notifications: Optional[List["_models.AutoscaleNotification"]] = None,
         enabled: Optional[bool] = True,
-        predictive_autoscale_policy: Optional["PredictiveAutoscalePolicy"] = None,
+        predictive_autoscale_policy: Optional["_models.PredictiveAutoscalePolicy"] = None,
         name_properties_name: Optional[str] = None,
         target_resource_uri: Optional[str] = None,
         target_resource_location: Optional[str] = None,
@@ -367,7 +369,7 @@ class AutoscaleSettingResourceCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["AutoscaleSettingResource"],
+        value: List["_models.AutoscaleSettingResource"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -429,10 +431,10 @@ class AutoscaleSettingResourcePatch(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        profiles: Optional[List["AutoscaleProfile"]] = None,
-        notifications: Optional[List["AutoscaleNotification"]] = None,
+        profiles: Optional[List["_models.AutoscaleProfile"]] = None,
+        notifications: Optional[List["_models.AutoscaleNotification"]] = None,
         enabled: Optional[bool] = True,
-        predictive_autoscale_policy: Optional["PredictiveAutoscalePolicy"] = None,
+        predictive_autoscale_policy: Optional["_models.PredictiveAutoscalePolicy"] = None,
         name: Optional[str] = None,
         target_resource_uri: Optional[str] = None,
         target_resource_location: Optional[str] = None,
@@ -528,8 +530,8 @@ class DiagnosticSettingsCategoryResource(Resource):
     :vartype type: str
     :ivar system_data: The system metadata related to this resource.
     :vartype system_data: ~$(python-base-namespace).v2021_05_01_preview.models.SystemData
-    :ivar category_type: The type of the diagnostic settings category. Possible values include:
-     "Metrics", "Logs".
+    :ivar category_type: The type of the diagnostic settings category. Known values are: "Metrics",
+     "Logs".
     :vartype category_type: str or
      ~$(python-base-namespace).v2021_05_01_preview.models.CategoryType
     :ivar category_groups: the collection of what category groups are supported.
@@ -555,12 +557,12 @@ class DiagnosticSettingsCategoryResource(Resource):
     def __init__(
         self,
         *,
-        category_type: Optional[Union[str, "CategoryType"]] = None,
+        category_type: Optional[Union[str, "_models.CategoryType"]] = None,
         category_groups: Optional[List[str]] = None,
         **kwargs
     ):
         """
-        :keyword category_type: The type of the diagnostic settings category. Possible values include:
+        :keyword category_type: The type of the diagnostic settings category. Known values are:
          "Metrics", "Logs".
         :paramtype category_type: str or
          ~$(python-base-namespace).v2021_05_01_preview.models.CategoryType
@@ -588,7 +590,7 @@ class DiagnosticSettingsCategoryResourceCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["DiagnosticSettingsCategoryResource"]] = None,
+        value: Optional[List["_models.DiagnosticSettingsCategoryResource"]] = None,
         **kwargs
     ):
         """
@@ -674,8 +676,8 @@ class DiagnosticSettingsResource(Resource):
         service_bus_rule_id: Optional[str] = None,
         event_hub_authorization_rule_id: Optional[str] = None,
         event_hub_name: Optional[str] = None,
-        metrics: Optional[List["MetricSettings"]] = None,
-        logs: Optional[List["LogSettings"]] = None,
+        metrics: Optional[List["_models.MetricSettings"]] = None,
+        logs: Optional[List["_models.LogSettings"]] = None,
         workspace_id: Optional[str] = None,
         marketplace_partner_id: Optional[str] = None,
         log_analytics_destination_type: Optional[str] = None,
@@ -738,7 +740,7 @@ class DiagnosticSettingsResourceCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["DiagnosticSettingsResource"]] = None,
+        value: Optional[List["_models.DiagnosticSettingsResource"]] = None,
         **kwargs
     ):
         """
@@ -863,7 +865,7 @@ class LogSettings(msrest.serialization.Model):
         enabled: bool,
         category: Optional[str] = None,
         category_group: Optional[str] = None,
-        retention_policy: Optional["RetentionPolicy"] = None,
+        retention_policy: Optional["_models.RetentionPolicy"] = None,
         **kwargs
     ):
         """
@@ -954,7 +956,7 @@ class ManagementGroupDiagnosticSettingsResource(Resource):
         service_bus_rule_id: Optional[str] = None,
         event_hub_authorization_rule_id: Optional[str] = None,
         event_hub_name: Optional[str] = None,
-        logs: Optional[List["ManagementGroupLogSettings"]] = None,
+        logs: Optional[List["_models.ManagementGroupLogSettings"]] = None,
         workspace_id: Optional[str] = None,
         marketplace_partner_id: Optional[str] = None,
         **kwargs
@@ -1008,7 +1010,7 @@ class ManagementGroupDiagnosticSettingsResourceCollection(msrest.serialization.M
     def __init__(
         self,
         *,
-        value: Optional[List["ManagementGroupDiagnosticSettingsResource"]] = None,
+        value: Optional[List["_models.ManagementGroupDiagnosticSettingsResource"]] = None,
         **kwargs
     ):
         """
@@ -1103,7 +1105,7 @@ class MetricSettings(msrest.serialization.Model):
         enabled: bool,
         time_grain: Optional[datetime.timedelta] = None,
         category: Optional[str] = None,
-        retention_policy: Optional["RetentionPolicy"] = None,
+        retention_policy: Optional["_models.RetentionPolicy"] = None,
         **kwargs
     ):
         """
@@ -1144,7 +1146,7 @@ class MetricTrigger(msrest.serialization.Model):
      1 minute.
     :vartype time_grain: ~datetime.timedelta
     :ivar statistic: Required. the metric statistic type. How the metrics from multiple instances
-     are combined. Possible values include: "Average", "Min", "Max", "Sum", "Count".
+     are combined. Known values are: "Average", "Min", "Max", "Sum", "Count".
     :vartype statistic: str or
      ~$(python-base-namespace).v2021_05_01_preview.models.MetricStatisticType
     :ivar time_window: Required. the range of time in which instance data is collected. This value
@@ -1152,12 +1154,12 @@ class MetricTrigger(msrest.serialization.Model):
      Must be between 12 hours and 5 minutes.
     :vartype time_window: ~datetime.timedelta
     :ivar time_aggregation: Required. time aggregation type. How the data that is collected should
-     be combined over time. The default value is Average. Possible values include: "Average",
-     "Minimum", "Maximum", "Total", "Count", "Last".
+     be combined over time. The default value is Average. Known values are: "Average", "Minimum",
+     "Maximum", "Total", "Count", "Last".
     :vartype time_aggregation: str or
      ~$(python-base-namespace).v2021_05_01_preview.models.TimeAggregationType
     :ivar operator: Required. the operator that is used to compare the metric data and the
-     threshold. Possible values include: "Equals", "NotEquals", "GreaterThan", "GreaterThanOrEqual",
+     threshold. Known values are: "Equals", "NotEquals", "GreaterThan", "GreaterThanOrEqual",
      "LessThan", "LessThanOrEqual".
     :vartype operator: str or
      ~$(python-base-namespace).v2021_05_01_preview.models.ComparisonOperationType
@@ -1203,14 +1205,14 @@ class MetricTrigger(msrest.serialization.Model):
         metric_name: str,
         metric_resource_uri: str,
         time_grain: datetime.timedelta,
-        statistic: Union[str, "MetricStatisticType"],
+        statistic: Union[str, "_models.MetricStatisticType"],
         time_window: datetime.timedelta,
-        time_aggregation: Union[str, "TimeAggregationType"],
-        operator: Union[str, "ComparisonOperationType"],
+        time_aggregation: Union[str, "_models.TimeAggregationType"],
+        operator: Union[str, "_models.ComparisonOperationType"],
         threshold: float,
         metric_namespace: Optional[str] = None,
         metric_resource_location: Optional[str] = None,
-        dimensions: Optional[List["ScaleRuleMetricDimension"]] = None,
+        dimensions: Optional[List["_models.ScaleRuleMetricDimension"]] = None,
         divide_per_instance: Optional[bool] = None,
         **kwargs
     ):
@@ -1229,7 +1231,7 @@ class MetricTrigger(msrest.serialization.Model):
          1 minute.
         :paramtype time_grain: ~datetime.timedelta
         :keyword statistic: Required. the metric statistic type. How the metrics from multiple
-         instances are combined. Possible values include: "Average", "Min", "Max", "Sum", "Count".
+         instances are combined. Known values are: "Average", "Min", "Max", "Sum", "Count".
         :paramtype statistic: str or
          ~$(python-base-namespace).v2021_05_01_preview.models.MetricStatisticType
         :keyword time_window: Required. the range of time in which instance data is collected. This
@@ -1237,12 +1239,12 @@ class MetricTrigger(msrest.serialization.Model):
          resource-to-resource. Must be between 12 hours and 5 minutes.
         :paramtype time_window: ~datetime.timedelta
         :keyword time_aggregation: Required. time aggregation type. How the data that is collected
-         should be combined over time. The default value is Average. Possible values include: "Average",
+         should be combined over time. The default value is Average. Known values are: "Average",
          "Minimum", "Maximum", "Total", "Count", "Last".
         :paramtype time_aggregation: str or
          ~$(python-base-namespace).v2021_05_01_preview.models.TimeAggregationType
         :keyword operator: Required. the operator that is used to compare the metric data and the
-         threshold. Possible values include: "Equals", "NotEquals", "GreaterThan", "GreaterThanOrEqual",
+         threshold. Known values are: "Equals", "NotEquals", "GreaterThan", "GreaterThanOrEqual",
          "LessThan", "LessThanOrEqual".
         :paramtype operator: str or
          ~$(python-base-namespace).v2021_05_01_preview.models.ComparisonOperationType
@@ -1275,7 +1277,7 @@ class PredictiveAutoscalePolicy(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar scale_mode: Required. the predictive autoscale mode. Possible values include: "Disabled",
+    :ivar scale_mode: Required. the predictive autoscale mode. Known values are: "Disabled",
      "ForecastOnly", "Enabled".
     :vartype scale_mode: str or
      ~$(python-base-namespace).v2021_05_01_preview.models.PredictiveAutoscalePolicyScaleMode
@@ -1296,13 +1298,13 @@ class PredictiveAutoscalePolicy(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        scale_mode: Union[str, "PredictiveAutoscalePolicyScaleMode"],
+        scale_mode: Union[str, "_models.PredictiveAutoscalePolicyScaleMode"],
         scale_look_ahead_time: Optional[datetime.timedelta] = None,
         **kwargs
     ):
         """
-        :keyword scale_mode: Required. the predictive autoscale mode. Possible values include:
-         "Disabled", "ForecastOnly", "Enabled".
+        :keyword scale_mode: Required. the predictive autoscale mode. Known values are: "Disabled",
+         "ForecastOnly", "Enabled".
         :paramtype scale_mode: str or
          ~$(python-base-namespace).v2021_05_01_preview.models.PredictiveAutoscalePolicyScaleMode
         :keyword scale_look_ahead_time: the amount of time to specify by which instances are launched
@@ -1348,7 +1350,7 @@ class PredictiveResponse(msrest.serialization.Model):
         interval: Optional[datetime.timedelta] = None,
         metric_name: Optional[str] = None,
         target_resource_id: Optional[str] = None,
-        data: Optional[List["PredictiveValue"]] = None,
+        data: Optional[List["_models.PredictiveValue"]] = None,
         **kwargs
     ):
         """
@@ -1422,8 +1424,8 @@ class Recurrence(msrest.serialization.Model):
     :ivar frequency: Required. the recurrence frequency. How often the schedule profile should take
      effect. This value must be Week, meaning each week will have the same set of profiles. For
      example, to set a daily schedule, set **schedule** to every day of the week. The frequency
-     property specifies that the schedule is repeated weekly. Possible values include: "None",
-     "Second", "Minute", "Hour", "Day", "Week", "Month", "Year".
+     property specifies that the schedule is repeated weekly. Known values are: "None", "Second",
+     "Minute", "Hour", "Day", "Week", "Month", "Year".
     :vartype frequency: str or
      ~$(python-base-namespace).v2021_05_01_preview.models.RecurrenceFrequency
     :ivar schedule: Required. the scheduling constraints for when the profile begins.
@@ -1443,16 +1445,16 @@ class Recurrence(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        frequency: Union[str, "RecurrenceFrequency"],
-        schedule: "RecurrentSchedule",
+        frequency: Union[str, "_models.RecurrenceFrequency"],
+        schedule: "_models.RecurrentSchedule",
         **kwargs
     ):
         """
         :keyword frequency: Required. the recurrence frequency. How often the schedule profile should
          take effect. This value must be Week, meaning each week will have the same set of profiles. For
          example, to set a daily schedule, set **schedule** to every day of the week. The frequency
-         property specifies that the schedule is repeated weekly. Possible values include: "None",
-         "Second", "Minute", "Hour", "Day", "Week", "Month", "Year".
+         property specifies that the schedule is repeated weekly. Known values are: "None", "Second",
+         "Minute", "Hour", "Day", "Week", "Month", "Year".
         :paramtype frequency: str or
          ~$(python-base-namespace).v2021_05_01_preview.models.RecurrenceFrequency
         :keyword schedule: Required. the scheduling constraints for when the profile begins.
@@ -1627,10 +1629,10 @@ class ScaleAction(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar direction: Required. the scale direction. Whether the scaling action increases or
-     decreases the number of instances. Possible values include: "None", "Increase", "Decrease".
+     decreases the number of instances. Known values are: "None", "Increase", "Decrease".
     :vartype direction: str or ~$(python-base-namespace).v2021_05_01_preview.models.ScaleDirection
-    :ivar type: Required. the type of action that should occur when the scale rule fires. Possible
-     values include: "ChangeCount", "PercentChangeCount", "ExactCount", "ServiceAllowedNextValue".
+    :ivar type: Required. the type of action that should occur when the scale rule fires. Known
+     values are: "ChangeCount", "PercentChangeCount", "ExactCount", "ServiceAllowedNextValue".
     :vartype type: str or ~$(python-base-namespace).v2021_05_01_preview.models.ScaleType
     :ivar value: the number of instances that are involved in the scaling action. This value must
      be 1 or greater. The default value is 1.
@@ -1656,20 +1658,19 @@ class ScaleAction(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        direction: Union[str, "ScaleDirection"],
-        type: Union[str, "ScaleType"],
+        direction: Union[str, "_models.ScaleDirection"],
+        type: Union[str, "_models.ScaleType"],
         cooldown: datetime.timedelta,
         value: Optional[str] = "1",
         **kwargs
     ):
         """
         :keyword direction: Required. the scale direction. Whether the scaling action increases or
-         decreases the number of instances. Possible values include: "None", "Increase", "Decrease".
+         decreases the number of instances. Known values are: "None", "Increase", "Decrease".
         :paramtype direction: str or
          ~$(python-base-namespace).v2021_05_01_preview.models.ScaleDirection
-        :keyword type: Required. the type of action that should occur when the scale rule fires.
-         Possible values include: "ChangeCount", "PercentChangeCount", "ExactCount",
-         "ServiceAllowedNextValue".
+        :keyword type: Required. the type of action that should occur when the scale rule fires. Known
+         values are: "ChangeCount", "PercentChangeCount", "ExactCount", "ServiceAllowedNextValue".
         :paramtype type: str or ~$(python-base-namespace).v2021_05_01_preview.models.ScaleType
         :keyword value: the number of instances that are involved in the scaling action. This value
          must be 1 or greater. The default value is 1.
@@ -1762,8 +1763,8 @@ class ScaleRule(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        metric_trigger: "MetricTrigger",
-        scale_action: "ScaleAction",
+        metric_trigger: "_models.MetricTrigger",
+        scale_action: "_models.ScaleAction",
         **kwargs
     ):
         """
@@ -1786,7 +1787,7 @@ class ScaleRuleMetricDimension(msrest.serialization.Model):
     :vartype dimension_name: str
     :ivar operator: Required. the dimension operator. Only 'Equals' and 'NotEquals' are supported.
      'Equals' being equal to any of the values. 'NotEquals' being not equal to all of the values.
-     Possible values include: "Equals", "NotEquals".
+     Known values are: "Equals", "NotEquals".
     :vartype operator: str or
      ~$(python-base-namespace).v2021_05_01_preview.models.ScaleRuleMetricDimensionOperationType
     :ivar values: Required. list of dimension values. For example: ["App1","App2"].
@@ -1809,7 +1810,7 @@ class ScaleRuleMetricDimension(msrest.serialization.Model):
         self,
         *,
         dimension_name: str,
-        operator: Union[str, "ScaleRuleMetricDimensionOperationType"],
+        operator: Union[str, "_models.ScaleRuleMetricDimensionOperationType"],
         values: List[str],
         **kwargs
     ):
@@ -1818,7 +1819,7 @@ class ScaleRuleMetricDimension(msrest.serialization.Model):
         :paramtype dimension_name: str
         :keyword operator: Required. the dimension operator. Only 'Equals' and 'NotEquals' are
          supported. 'Equals' being equal to any of the values. 'NotEquals' being not equal to all of the
-         values. Possible values include: "Equals", "NotEquals".
+         values. Known values are: "Equals", "NotEquals".
         :paramtype operator: str or
          ~$(python-base-namespace).v2021_05_01_preview.models.ScaleRuleMetricDimensionOperationType
         :keyword values: Required. list of dimension values. For example: ["App1","App2"].
@@ -1896,7 +1897,7 @@ class SubscriptionDiagnosticSettingsResource(Resource):
         service_bus_rule_id: Optional[str] = None,
         event_hub_authorization_rule_id: Optional[str] = None,
         event_hub_name: Optional[str] = None,
-        logs: Optional[List["SubscriptionLogSettings"]] = None,
+        logs: Optional[List["_models.SubscriptionLogSettings"]] = None,
         workspace_id: Optional[str] = None,
         marketplace_partner_id: Optional[str] = None,
         **kwargs
@@ -1950,7 +1951,7 @@ class SubscriptionDiagnosticSettingsResourceCollection(msrest.serialization.Mode
     def __init__(
         self,
         *,
-        value: Optional[List["SubscriptionDiagnosticSettingsResource"]] = None,
+        value: Optional[List["_models.SubscriptionDiagnosticSettingsResource"]] = None,
         **kwargs
     ):
         """
@@ -2016,7 +2017,7 @@ class SystemData(msrest.serialization.Model):
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
      "User", "Application", "ManagedIdentity", "Key".
     :vartype created_by_type: str or
      ~$(python-base-namespace).v2021_05_01_preview.models.CreatedByType
@@ -2024,8 +2025,8 @@ class SystemData(msrest.serialization.Model):
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", "Key".
     :vartype last_modified_by_type: str or
      ~$(python-base-namespace).v2021_05_01_preview.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
@@ -2045,26 +2046,26 @@ class SystemData(msrest.serialization.Model):
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", "Key".
         :paramtype created_by_type: str or
          ~$(python-base-namespace).v2021_05_01_preview.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", "Key".
         :paramtype last_modified_by_type: str or
          ~$(python-base-namespace).v2021_05_01_preview.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).

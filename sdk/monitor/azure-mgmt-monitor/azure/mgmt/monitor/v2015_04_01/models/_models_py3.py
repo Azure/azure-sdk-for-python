@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._monitor_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class Resource(msrest.serialization.Model):
@@ -140,12 +142,12 @@ class AlertRuleResource(Resource):
         location: str,
         name_properties_name: str,
         is_enabled: bool,
-        condition: "RuleCondition",
+        condition: "_models.RuleCondition",
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
         provisioning_state: Optional[str] = None,
-        action: Optional["RuleAction"] = None,
-        actions: Optional[List["RuleAction"]] = None,
+        action: Optional["_models.RuleAction"] = None,
+        actions: Optional[List["_models.RuleAction"]] = None,
         **kwargs
     ):
         """
@@ -196,7 +198,7 @@ class AlertRuleResourceCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["AlertRuleResource"]] = None,
+        value: Optional[List["_models.AlertRuleResource"]] = None,
         **kwargs
     ):
         """
@@ -258,9 +260,9 @@ class AlertRuleResourcePatch(msrest.serialization.Model):
         description: Optional[str] = None,
         provisioning_state: Optional[str] = None,
         is_enabled: Optional[bool] = None,
-        condition: Optional["RuleCondition"] = None,
-        action: Optional["RuleAction"] = None,
-        actions: Optional[List["RuleAction"]] = None,
+        condition: Optional["_models.RuleCondition"] = None,
+        action: Optional["_models.RuleAction"] = None,
+        actions: Optional[List["_models.RuleAction"]] = None,
         **kwargs
     ):
         """
@@ -327,8 +329,8 @@ class AutoscaleNotification(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        email: Optional["EmailNotification"] = None,
-        webhooks: Optional[List["WebhookNotification"]] = None,
+        email: Optional["_models.EmailNotification"] = None,
+        webhooks: Optional[List["_models.WebhookNotification"]] = None,
         **kwargs
     ):
         """
@@ -380,10 +382,10 @@ class AutoscaleProfile(msrest.serialization.Model):
         self,
         *,
         name: str,
-        capacity: "ScaleCapacity",
-        rules: List["ScaleRule"],
-        fixed_date: Optional["TimeWindow"] = None,
-        recurrence: Optional["Recurrence"] = None,
+        capacity: "_models.ScaleCapacity",
+        rules: List["_models.ScaleRule"],
+        fixed_date: Optional["_models.TimeWindow"] = None,
+        recurrence: Optional["_models.Recurrence"] = None,
         **kwargs
     ):
         """
@@ -471,9 +473,9 @@ class AutoscaleSettingResource(Resource):
         self,
         *,
         location: str,
-        profiles: List["AutoscaleProfile"],
+        profiles: List["_models.AutoscaleProfile"],
         tags: Optional[Dict[str, str]] = None,
-        notifications: Optional[List["AutoscaleNotification"]] = None,
+        notifications: Optional[List["_models.AutoscaleNotification"]] = None,
         enabled: Optional[bool] = True,
         name_properties_name: Optional[str] = None,
         target_resource_uri: Optional[str] = None,
@@ -536,7 +538,7 @@ class AutoscaleSettingResourceCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["AutoscaleSettingResource"],
+        value: List["_models.AutoscaleSettingResource"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -593,8 +595,8 @@ class AutoscaleSettingResourcePatch(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        profiles: Optional[List["AutoscaleProfile"]] = None,
-        notifications: Optional[List["AutoscaleNotification"]] = None,
+        profiles: Optional[List["_models.AutoscaleProfile"]] = None,
+        notifications: Optional[List["_models.AutoscaleNotification"]] = None,
         enabled: Optional[bool] = True,
         name: Optional[str] = None,
         target_resource_uri: Optional[str] = None,
@@ -729,7 +731,7 @@ class EventCategoryCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["LocalizableString"],
+        value: List["_models.LocalizableString"],
         **kwargs
     ):
         """
@@ -771,7 +773,7 @@ class EventData(msrest.serialization.Model):
      'clientIpAddress' (IP address of the user who initiated the event) and 'method' (HTTP method
      e.g. PUT).
     :vartype http_request: ~$(python-base-namespace).v2015_04_01.models.HttpRequestInfo
-    :ivar level: the event level. Possible values include: "Critical", "Error", "Warning",
+    :ivar level: the event level. Known values are: "Critical", "Error", "Warning",
      "Informational", "Verbose".
     :vartype level: str or ~$(python-base-namespace).v2015_04_01.models.EventLevel
     :ivar resource_group_name: the resource group name of the impacted resource.
@@ -925,7 +927,7 @@ class EventDataCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["EventData"],
+        value: List["_models.EventData"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1058,7 +1060,7 @@ class RuleCondition(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        data_source: Optional["RuleDataSource"] = None,
+        data_source: Optional["_models.RuleDataSource"] = None,
         **kwargs
     ):
         """
@@ -1109,7 +1111,7 @@ class LocationThresholdRuleCondition(RuleCondition):
         self,
         *,
         failed_location_count: int,
-        data_source: Optional["RuleDataSource"] = None,
+        data_source: Optional["_models.RuleDataSource"] = None,
         window_size: Optional[datetime.timedelta] = None,
         **kwargs
     ):
@@ -1134,8 +1136,8 @@ class LocationThresholdRuleCondition(RuleCondition):
 class ManagementEventAggregationCondition(msrest.serialization.Model):
     """How the data that is collected should be combined over time.
 
-    :ivar operator: the condition operator. Possible values include: "GreaterThan",
-     "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
+    :ivar operator: the condition operator. Known values are: "GreaterThan", "GreaterThanOrEqual",
+     "LessThan", "LessThanOrEqual".
     :vartype operator: str or ~$(python-base-namespace).v2015_04_01.models.ConditionOperator
     :ivar threshold: The threshold value that activates the alert.
     :vartype threshold: float
@@ -1154,13 +1156,13 @@ class ManagementEventAggregationCondition(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        operator: Optional[Union[str, "ConditionOperator"]] = None,
+        operator: Optional[Union[str, "_models.ConditionOperator"]] = None,
         threshold: Optional[float] = None,
         window_size: Optional[datetime.timedelta] = None,
         **kwargs
     ):
         """
-        :keyword operator: the condition operator. Possible values include: "GreaterThan",
+        :keyword operator: the condition operator. Known values are: "GreaterThan",
          "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
         :paramtype operator: str or ~$(python-base-namespace).v2015_04_01.models.ConditionOperator
         :keyword threshold: The threshold value that activates the alert.
@@ -1209,8 +1211,8 @@ class ManagementEventRuleCondition(RuleCondition):
     def __init__(
         self,
         *,
-        data_source: Optional["RuleDataSource"] = None,
-        aggregation: Optional["ManagementEventAggregationCondition"] = None,
+        data_source: Optional["_models.RuleDataSource"] = None,
+        aggregation: Optional["_models.ManagementEventAggregationCondition"] = None,
         **kwargs
     ):
         """
@@ -1246,19 +1248,19 @@ class MetricTrigger(msrest.serialization.Model):
      1 minute.
     :vartype time_grain: ~datetime.timedelta
     :ivar statistic: Required. the metric statistic type. How the metrics from multiple instances
-     are combined. Possible values include: "Average", "Min", "Max", "Sum", "Count".
+     are combined. Known values are: "Average", "Min", "Max", "Sum", "Count".
     :vartype statistic: str or ~$(python-base-namespace).v2015_04_01.models.MetricStatisticType
     :ivar time_window: Required. the range of time in which instance data is collected. This value
      must be greater than the delay in metric collection, which can vary from resource-to-resource.
      Must be between 12 hours and 5 minutes.
     :vartype time_window: ~datetime.timedelta
     :ivar time_aggregation: Required. time aggregation type. How the data that is collected should
-     be combined over time. The default value is Average. Possible values include: "Average",
-     "Minimum", "Maximum", "Total", "Count", "Last".
+     be combined over time. The default value is Average. Known values are: "Average", "Minimum",
+     "Maximum", "Total", "Count", "Last".
     :vartype time_aggregation: str or
      ~$(python-base-namespace).v2015_04_01.models.TimeAggregationType
     :ivar operator: Required. the operator that is used to compare the metric data and the
-     threshold. Possible values include: "Equals", "NotEquals", "GreaterThan", "GreaterThanOrEqual",
+     threshold. Known values are: "Equals", "NotEquals", "GreaterThan", "GreaterThanOrEqual",
      "LessThan", "LessThanOrEqual".
     :vartype operator: str or ~$(python-base-namespace).v2015_04_01.models.ComparisonOperationType
     :ivar threshold: Required. the threshold of the metric that triggers the scale action.
@@ -1303,14 +1305,14 @@ class MetricTrigger(msrest.serialization.Model):
         metric_name: str,
         metric_resource_uri: str,
         time_grain: datetime.timedelta,
-        statistic: Union[str, "MetricStatisticType"],
+        statistic: Union[str, "_models.MetricStatisticType"],
         time_window: datetime.timedelta,
-        time_aggregation: Union[str, "TimeAggregationType"],
-        operator: Union[str, "ComparisonOperationType"],
+        time_aggregation: Union[str, "_models.TimeAggregationType"],
+        operator: Union[str, "_models.ComparisonOperationType"],
         threshold: float,
         metric_namespace: Optional[str] = None,
         metric_resource_location: Optional[str] = None,
-        dimensions: Optional[List["ScaleRuleMetricDimension"]] = None,
+        dimensions: Optional[List["_models.ScaleRuleMetricDimension"]] = None,
         divide_per_instance: Optional[bool] = None,
         **kwargs
     ):
@@ -1329,19 +1331,19 @@ class MetricTrigger(msrest.serialization.Model):
          1 minute.
         :paramtype time_grain: ~datetime.timedelta
         :keyword statistic: Required. the metric statistic type. How the metrics from multiple
-         instances are combined. Possible values include: "Average", "Min", "Max", "Sum", "Count".
+         instances are combined. Known values are: "Average", "Min", "Max", "Sum", "Count".
         :paramtype statistic: str or ~$(python-base-namespace).v2015_04_01.models.MetricStatisticType
         :keyword time_window: Required. the range of time in which instance data is collected. This
          value must be greater than the delay in metric collection, which can vary from
          resource-to-resource. Must be between 12 hours and 5 minutes.
         :paramtype time_window: ~datetime.timedelta
         :keyword time_aggregation: Required. time aggregation type. How the data that is collected
-         should be combined over time. The default value is Average. Possible values include: "Average",
+         should be combined over time. The default value is Average. Known values are: "Average",
          "Minimum", "Maximum", "Total", "Count", "Last".
         :paramtype time_aggregation: str or
          ~$(python-base-namespace).v2015_04_01.models.TimeAggregationType
         :keyword operator: Required. the operator that is used to compare the metric data and the
-         threshold. Possible values include: "Equals", "NotEquals", "GreaterThan", "GreaterThanOrEqual",
+         threshold. Known values are: "Equals", "NotEquals", "GreaterThan", "GreaterThanOrEqual",
          "LessThan", "LessThanOrEqual".
         :paramtype operator: str or
          ~$(python-base-namespace).v2015_04_01.models.ComparisonOperationType
@@ -1387,7 +1389,7 @@ class Operation(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         **kwargs
     ):
         """
@@ -1457,7 +1459,7 @@ class OperationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Operation"]] = None,
+        value: Optional[List["_models.Operation"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1480,8 +1482,8 @@ class Recurrence(msrest.serialization.Model):
     :ivar frequency: Required. the recurrence frequency. How often the schedule profile should take
      effect. This value must be Week, meaning each week will have the same set of profiles. For
      example, to set a daily schedule, set **schedule** to every day of the week. The frequency
-     property specifies that the schedule is repeated weekly. Possible values include: "None",
-     "Second", "Minute", "Hour", "Day", "Week", "Month", "Year".
+     property specifies that the schedule is repeated weekly. Known values are: "None", "Second",
+     "Minute", "Hour", "Day", "Week", "Month", "Year".
     :vartype frequency: str or ~$(python-base-namespace).v2015_04_01.models.RecurrenceFrequency
     :ivar schedule: Required. the scheduling constraints for when the profile begins.
     :vartype schedule: ~$(python-base-namespace).v2015_04_01.models.RecurrentSchedule
@@ -1500,16 +1502,16 @@ class Recurrence(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        frequency: Union[str, "RecurrenceFrequency"],
-        schedule: "RecurrentSchedule",
+        frequency: Union[str, "_models.RecurrenceFrequency"],
+        schedule: "_models.RecurrentSchedule",
         **kwargs
     ):
         """
         :keyword frequency: Required. the recurrence frequency. How often the schedule profile should
          take effect. This value must be Week, meaning each week will have the same set of profiles. For
          example, to set a daily schedule, set **schedule** to every day of the week. The frequency
-         property specifies that the schedule is repeated weekly. Possible values include: "None",
-         "Second", "Minute", "Hour", "Day", "Week", "Month", "Year".
+         property specifies that the schedule is repeated weekly. Known values are: "None", "Second",
+         "Minute", "Hour", "Day", "Week", "Month", "Year".
         :paramtype frequency: str or ~$(python-base-namespace).v2015_04_01.models.RecurrenceFrequency
         :keyword schedule: Required. the scheduling constraints for when the profile begins.
         :paramtype schedule: ~$(python-base-namespace).v2015_04_01.models.RecurrentSchedule
@@ -1888,7 +1890,7 @@ class RuleManagementEventDataSource(RuleDataSource):
         resource_provider_name: Optional[str] = None,
         status: Optional[str] = None,
         sub_status: Optional[str] = None,
-        claims: Optional["RuleManagementEventClaimsDataSource"] = None,
+        claims: Optional["_models.RuleManagementEventClaimsDataSource"] = None,
         **kwargs
     ):
         """
@@ -2054,10 +2056,10 @@ class ScaleAction(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar direction: Required. the scale direction. Whether the scaling action increases or
-     decreases the number of instances. Possible values include: "None", "Increase", "Decrease".
+     decreases the number of instances. Known values are: "None", "Increase", "Decrease".
     :vartype direction: str or ~$(python-base-namespace).v2015_04_01.models.ScaleDirection
-    :ivar type: Required. the type of action that should occur when the scale rule fires. Possible
-     values include: "ChangeCount", "PercentChangeCount", "ExactCount", "ServiceAllowedNextValue".
+    :ivar type: Required. the type of action that should occur when the scale rule fires. Known
+     values are: "ChangeCount", "PercentChangeCount", "ExactCount", "ServiceAllowedNextValue".
     :vartype type: str or ~$(python-base-namespace).v2015_04_01.models.ScaleType
     :ivar value: the number of instances that are involved in the scaling action. This value must
      be 1 or greater. The default value is 1.
@@ -2083,19 +2085,18 @@ class ScaleAction(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        direction: Union[str, "ScaleDirection"],
-        type: Union[str, "ScaleType"],
+        direction: Union[str, "_models.ScaleDirection"],
+        type: Union[str, "_models.ScaleType"],
         cooldown: datetime.timedelta,
         value: Optional[str] = "1",
         **kwargs
     ):
         """
         :keyword direction: Required. the scale direction. Whether the scaling action increases or
-         decreases the number of instances. Possible values include: "None", "Increase", "Decrease".
+         decreases the number of instances. Known values are: "None", "Increase", "Decrease".
         :paramtype direction: str or ~$(python-base-namespace).v2015_04_01.models.ScaleDirection
-        :keyword type: Required. the type of action that should occur when the scale rule fires.
-         Possible values include: "ChangeCount", "PercentChangeCount", "ExactCount",
-         "ServiceAllowedNextValue".
+        :keyword type: Required. the type of action that should occur when the scale rule fires. Known
+         values are: "ChangeCount", "PercentChangeCount", "ExactCount", "ServiceAllowedNextValue".
         :paramtype type: str or ~$(python-base-namespace).v2015_04_01.models.ScaleType
         :keyword value: the number of instances that are involved in the scaling action. This value
          must be 1 or greater. The default value is 1.
@@ -2188,8 +2189,8 @@ class ScaleRule(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        metric_trigger: "MetricTrigger",
-        scale_action: "ScaleAction",
+        metric_trigger: "_models.MetricTrigger",
+        scale_action: "_models.ScaleAction",
         **kwargs
     ):
         """
@@ -2212,7 +2213,7 @@ class ScaleRuleMetricDimension(msrest.serialization.Model):
     :vartype dimension_name: str
     :ivar operator: Required. the dimension operator. Only 'Equals' and 'NotEquals' are supported.
      'Equals' being equal to any of the values. 'NotEquals' being not equal to all of the values.
-     Possible values include: "Equals", "NotEquals".
+     Known values are: "Equals", "NotEquals".
     :vartype operator: str or
      ~$(python-base-namespace).v2015_04_01.models.ScaleRuleMetricDimensionOperationType
     :ivar values: Required. list of dimension values. For example: ["App1","App2"].
@@ -2235,7 +2236,7 @@ class ScaleRuleMetricDimension(msrest.serialization.Model):
         self,
         *,
         dimension_name: str,
-        operator: Union[str, "ScaleRuleMetricDimensionOperationType"],
+        operator: Union[str, "_models.ScaleRuleMetricDimensionOperationType"],
         values: List[str],
         **kwargs
     ):
@@ -2244,7 +2245,7 @@ class ScaleRuleMetricDimension(msrest.serialization.Model):
         :paramtype dimension_name: str
         :keyword operator: Required. the dimension operator. Only 'Equals' and 'NotEquals' are
          supported. 'Equals' being equal to any of the values. 'NotEquals' being not equal to all of the
-         values. Possible values include: "Equals", "NotEquals".
+         values. Known values are: "Equals", "NotEquals".
         :paramtype operator: str or
          ~$(python-base-namespace).v2015_04_01.models.ScaleRuleMetricDimensionOperationType
         :keyword values: Required. list of dimension values. For example: ["App1","App2"].
@@ -2308,8 +2309,8 @@ class ThresholdRuleCondition(RuleCondition):
     :ivar data_source: the resource from which the rule collects its data. For this type dataSource
      will always be of type RuleMetricDataSource.
     :vartype data_source: ~$(python-base-namespace).v2015_04_01.models.RuleDataSource
-    :ivar operator: Required. the operator used to compare the data and the threshold. Possible
-     values include: "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
+    :ivar operator: Required. the operator used to compare the data and the threshold. Known values
+     are: "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
     :vartype operator: str or ~$(python-base-namespace).v2015_04_01.models.ConditionOperator
     :ivar threshold: Required. the threshold value that activates the alert.
     :vartype threshold: float
@@ -2318,8 +2319,8 @@ class ThresholdRuleCondition(RuleCondition):
      day.
     :vartype window_size: ~datetime.timedelta
     :ivar time_aggregation: the time aggregation operator. How the data that are collected should
-     be combined over time. The default value is the PrimaryAggregationType of the Metric. Possible
-     values include: "Average", "Minimum", "Maximum", "Total", "Last".
+     be combined over time. The default value is the PrimaryAggregationType of the Metric. Known
+     values are: "Average", "Minimum", "Maximum", "Total", "Last".
     :vartype time_aggregation: str or
      ~$(python-base-namespace).v2015_04_01.models.TimeAggregationOperator
     """
@@ -2342,19 +2343,19 @@ class ThresholdRuleCondition(RuleCondition):
     def __init__(
         self,
         *,
-        operator: Union[str, "ConditionOperator"],
+        operator: Union[str, "_models.ConditionOperator"],
         threshold: float,
-        data_source: Optional["RuleDataSource"] = None,
+        data_source: Optional["_models.RuleDataSource"] = None,
         window_size: Optional[datetime.timedelta] = None,
-        time_aggregation: Optional[Union[str, "TimeAggregationOperator"]] = None,
+        time_aggregation: Optional[Union[str, "_models.TimeAggregationOperator"]] = None,
         **kwargs
     ):
         """
         :keyword data_source: the resource from which the rule collects its data. For this type
          dataSource will always be of type RuleMetricDataSource.
         :paramtype data_source: ~$(python-base-namespace).v2015_04_01.models.RuleDataSource
-        :keyword operator: Required. the operator used to compare the data and the threshold. Possible
-         values include: "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
+        :keyword operator: Required. the operator used to compare the data and the threshold. Known
+         values are: "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
         :paramtype operator: str or ~$(python-base-namespace).v2015_04_01.models.ConditionOperator
         :keyword threshold: Required. the threshold value that activates the alert.
         :paramtype threshold: float
@@ -2364,7 +2365,7 @@ class ThresholdRuleCondition(RuleCondition):
         :paramtype window_size: ~datetime.timedelta
         :keyword time_aggregation: the time aggregation operator. How the data that are collected
          should be combined over time. The default value is the PrimaryAggregationType of the Metric.
-         Possible values include: "Average", "Minimum", "Maximum", "Total", "Last".
+         Known values are: "Average", "Minimum", "Maximum", "Total", "Last".
         :paramtype time_aggregation: str or
          ~$(python-base-namespace).v2015_04_01.models.TimeAggregationOperator
         """
