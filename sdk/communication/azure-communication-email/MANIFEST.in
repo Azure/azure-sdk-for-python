@@ -1,7 +1,7 @@
+include _meta.json
+recursive-include tests *.py *.yaml
 include *.md
 include azure/__init__.py
 include azure/communication/__init__.py
 include LICENSE
-recursive-include tests *.py
-recursive-include samples *.py *.md
 include azure/communication/email/py.typed
