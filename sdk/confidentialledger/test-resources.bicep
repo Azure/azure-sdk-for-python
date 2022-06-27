@@ -26,3 +26,4 @@ resource ledgerName_resource 'Microsoft.ConfidentialLedger/ledgers@2022-05-13' =
 }
 
 output CONFIDENTIALLEDGER_ENDPOINT string = azureConfidentialLedgerUrl
+output CONFIDENTIALLEDGER_ID string = ledgerName

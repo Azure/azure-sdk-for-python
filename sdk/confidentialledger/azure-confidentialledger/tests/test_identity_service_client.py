@@ -9,18 +9,17 @@ from .testcase import ConfidentialLedgerPreparer
 
 class ConfidentialLedgerIdentityServiceClientTest(AzureTestCase):
     @ConfidentialLedgerPreparer()
-    def test_get_ledger_identity(self, confidentialledger_endpoint):
+    def test_get_ledger_identity(self, confidentialledger_id):
         client = self.create_client_from_credential(
             ConfidentialLedgerIdentityServiceClient,
             credential=None,
         )
 
-        ledger_id = confidentialledger_endpoint.replace("https://", "").split(".")[0]
         network_identity = (
             client.get_ledger_identity(
-                ledger_id=ledger_id
+                ledger_id=confidentialledger_id
             )
         )
 
-        self.assertEqual(network_identity["ledgerId"], ledger_id)
+        self.assertEqual(network_identity["ledgerId"], confidentialledger_id)
         self.assertTrue(network_identity["ledgerTlsCertificate"])

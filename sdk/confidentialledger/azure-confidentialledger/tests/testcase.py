@@ -14,6 +14,7 @@ from .constants import USER_CERTIFICATE
 ConfidentialLedgerPreparer = functools.partial(
     PowerShellPreparer,
     "confidentialledger",
+    confidentialledger_id="fake",
     confidentialledger_endpoint="https://fake.confidential-ledger.azure.com",
     confidentialledger_resource_group="fakegroup",
 )
@@ -41,16 +42,15 @@ class ConfidentialLedgerTestCase(AzureTestCase):
 
         return super().tearDown()
 
-    def set_ledger_identity(self, confidentialledger_endpoint):
+    def set_ledger_identity(self, confidentialledger_id):
         client = self.create_client_from_credential(
             ConfidentialLedgerIdentityServiceClient,
             credential=None,
         )
 
-        ledger_id = confidentialledger_endpoint.replace("https://", "").split(".")[0]
         network_identity = (
             client.get_ledger_identity(
-                ledger_id=ledger_id
+                ledger_id=confidentialledger_id
             )
         )
 

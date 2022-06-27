@@ -10,8 +10,8 @@ from .testcase import ConfidentialLedgerPreparer, ConfidentialLedgerTestCase
 
 
 class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
-    def create_confidentialledger_client(self, endpoint, is_aad):
-        self.set_ledger_identity(endpoint)
+    def create_confidentialledger_client(self, endpoint, ledger_id, is_aad):
+        self.set_ledger_identity(ledger_id)
 
         # The ACL instance should already have the potential AAD user added as an Administrator.
         credential = self.get_credential(ConfidentialLedgerClient)
@@ -42,16 +42,16 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         return client
 
     @ConfidentialLedgerPreparer()
-    def test_append_entry_flow_aad_user(self, confidentialledger_endpoint):
+    def test_append_entry_flow_aad_user(self, confidentialledger_endpoint, confidentialledger_id):
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, is_aad=True
         )
         self.append_entry_flow_actions(client)
 
     @ConfidentialLedgerPreparer()
-    def test_append_entry_flow_cert_user(self, confidentialledger_endpoint):
+    def test_append_entry_flow_cert_user(self, confidentialledger_endpoint, confidentialledger_id):
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, is_aad=False
         )
         self.append_entry_flow_actions(client)
 
@@ -116,19 +116,19 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
 
     @ConfidentialLedgerPreparer()
     def test_append_entry_flow_with_collection_id_aad_user(
-        self, confidentialledger_endpoint
+        self, confidentialledger_endpoint, confidentialledger_id
     ):
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, is_aad=True
         )
         self.append_entry_flow_with_collection_id_actions(client)
 
     @ConfidentialLedgerPreparer()
     def test_append_entry_flow_with_collection_id_cert_user(
-        self, confidentialledger_endpoint
+        self, confidentialledger_endpoint, confidentialledger_id
     ):
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, is_aad=False
         )
         self.append_entry_flow_with_collection_id_actions(client)
 
@@ -202,16 +202,16 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         self.assertIn(collection_id, collection_ids)
 
     @ConfidentialLedgerPreparer()
-    def test_range_query_aad_user(self, confidentialledger_endpoint):
+    def test_range_query_aad_user(self, confidentialledger_endpoint, confidentialledger_id):
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, is_aad=True
         )
         self.range_query_actions(client)
 
     @ConfidentialLedgerPreparer()
-    def test_range_query_cert_user(self, confidentialledger_endpoint):
+    def test_range_query_cert_user(self, confidentialledger_endpoint, confidentialledger_id):
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, is_aad=False
         )
         self.range_query_actions(client)
 
@@ -251,16 +251,16 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         self.assertGreaterEqual(num_matched, 0.9 * num_messages_sent)
 
     @ConfidentialLedgerPreparer()
-    def test_user_management_aad_user(self, confidentialledger_endpoint):
+    def test_user_management_aad_user(self, confidentialledger_endpoint, confidentialledger_id):
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, is_aad=True
         )
         self.user_management_actions(client)
 
     @ConfidentialLedgerPreparer()
-    def test_user_management_cert_user(self, confidentialledger_endpoint):
+    def test_user_management_cert_user(self, confidentialledger_endpoint, confidentialledger_id):
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, is_aad=False
         )
         self.user_management_actions(client)
 
@@ -294,16 +294,16 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             client.delete_user(user_id)
 
     @ConfidentialLedgerPreparer()
-    def test_verification_methods_aad_user(self, confidentialledger_endpoint):
+    def test_verification_methods_aad_user(self, confidentialledger_endpoint, confidentialledger_id):
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, is_aad=True
         )
         self.verification_methods_actions(client)
 
     @ConfidentialLedgerPreparer()
-    def test_verification_methods_cert_user(self, confidentialledger_endpoint):
+    def test_verification_methods_cert_user(self, confidentialledger_endpoint, confidentialledger_id):
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, is_aad=False
         )
         self.verification_methods_actions(client)
 
