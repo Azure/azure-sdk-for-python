@@ -72,27 +72,19 @@ class ConfidentialLedgerClient(GeneratedClient, OperationsMixin):
         # For ConfidentialLedgerCertificateCredential, pass the path to the certificate down to the
         # PipelineCLient.
         if isinstance(credential, ConfidentialLedgerCertificateCredential):
-            kwargs["connection_cert"] = kwargs.get(
-                "connection_cert", credential.certificate_path
-            )
+            kwargs["connection_cert"] = kwargs.get("connection_cert", credential.certificate_path)
 
         # The auto-generated client has authentication disabled so we can customize authentication.
         # If the credential is the typical TokenCredential, then construct the authentication policy
         # the normal way.
         else:
-            credential_scopes = kwargs.pop(
-                "credential_scopes", ["https://confidential-ledger.azure.com/.default"]
-            )
+            credential_scopes = kwargs.pop("credential_scopes", ["https://confidential-ledger.azure.com/.default"])
             kwargs["authentication_policy"] = kwargs.get(
                 "authentication_policy",
-                policies.BearerTokenCredentialPolicy(
-                    credential, *credential_scopes, **kwargs
-                ),
+                policies.BearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
             )
 
         # Customize the underlying client to use a self-signed TLS certificate.
-        kwargs["connection_verify"] = kwargs.get(
-            "connection_verify", ledger_certificate_path
-        )
+        kwargs["connection_verify"] = kwargs.get("connection_verify", ledger_certificate_path)
 
         super().__init__(ledger_uri, **kwargs)

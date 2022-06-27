@@ -7,21 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    IO,
-    Iterable,
-    List,
-    Optional,
-    TypeVar,
-    Union,
-    cast,
-    overload,
-)
-
-from msrest import Serializer
+from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, Union, cast, overload
+from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -37,6 +24,7 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
+from .._serialization import Serializer
 from .._vendor import _format_url_section
 
 if sys.version_info >= (3, 9):
@@ -45,9 +33,7 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -57,9 +43,7 @@ def build_confidential_ledger_get_constitution_request(**kwargs: Any) -> HttpReq
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-13")
-    )  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,20 +55,14 @@ def build_confidential_ledger_get_constitution_request(**kwargs: Any) -> HttpReq
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_confidential_ledger_get_consortium_members_request(
-    **kwargs: Any,
-) -> HttpRequest:
+def build_confidential_ledger_get_consortium_members_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-13")
-    )  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -96,18 +74,14 @@ def build_confidential_ledger_get_consortium_members_request(
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_confidential_ledger_get_enclave_quotes_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-13")
-    )  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -119,18 +93,14 @@ def build_confidential_ledger_get_enclave_quotes_request(**kwargs: Any) -> HttpR
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_confidential_ledger_list_collections_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-13")
-    )  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -142,9 +112,7 @@ def build_confidential_ledger_list_collections_request(**kwargs: Any) -> HttpReq
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_confidential_ledger_list_ledger_entries_request(
@@ -152,14 +120,12 @@ def build_confidential_ledger_list_ledger_entries_request(
     collection_id: Optional[str] = None,
     from_transaction_id: Optional[str] = None,
     to_transaction_id: Optional[str] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-13")
-    )  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -168,39 +134,25 @@ def build_confidential_ledger_list_ledger_entries_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if collection_id is not None:
-        _params["collectionId"] = _SERIALIZER.query(
-            "collection_id", collection_id, "str"
-        )
+        _params["collectionId"] = _SERIALIZER.query("collection_id", collection_id, "str")
     if from_transaction_id is not None:
-        _params["fromTransactionId"] = _SERIALIZER.query(
-            "from_transaction_id", from_transaction_id, "str"
-        )
+        _params["fromTransactionId"] = _SERIALIZER.query("from_transaction_id", from_transaction_id, "str")
     if to_transaction_id is not None:
-        _params["toTransactionId"] = _SERIALIZER.query(
-            "to_transaction_id", to_transaction_id, "str"
-        )
+        _params["toTransactionId"] = _SERIALIZER.query("to_transaction_id", to_transaction_id, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_confidential_ledger_post_ledger_entry_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-13")
-    )  # type: str
-    collection_id = kwargs.pop(
-        "collection_id", _params.pop("collectionId", None)
-    )  # type: Optional[str]
-    content_type = kwargs.pop(
-        "content_type", _headers.pop("Content-Type", None)
-    )  # type: Optional[str]
+    collection_id = kwargs.pop("collection_id", _params.pop("collectionId", None))  # type: Optional[str]
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -209,20 +161,14 @@ def build_confidential_ledger_post_ledger_entry_request(**kwargs: Any) -> HttpRe
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if collection_id is not None:
-        _params["collectionId"] = _SERIALIZER.query(
-            "collection_id", collection_id, "str"
-        )
+        _params["collectionId"] = _SERIALIZER.query("collection_id", collection_id, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header(
-            "content_type", content_type, "str"
-        )
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_confidential_ledger_get_ledger_entry_request(
@@ -231,9 +177,7 @@ def build_confidential_ledger_get_ledger_entry_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-13")
-    )  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -247,27 +191,19 @@ def build_confidential_ledger_get_ledger_entry_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if collection_id is not None:
-        _params["collectionId"] = _SERIALIZER.query(
-            "collection_id", collection_id, "str"
-        )
+        _params["collectionId"] = _SERIALIZER.query("collection_id", collection_id, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_confidential_ledger_get_receipt_request(
-    transaction_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_confidential_ledger_get_receipt_request(transaction_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-13")
-    )  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -284,20 +220,14 @@ def build_confidential_ledger_get_receipt_request(
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_confidential_ledger_get_transaction_status_request(
-    transaction_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_confidential_ledger_get_transaction_status_request(transaction_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-13")
-    )  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -314,9 +244,7 @@ def build_confidential_ledger_get_transaction_status_request(
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_confidential_ledger_get_current_ledger_entry_request(
@@ -325,9 +253,7 @@ def build_confidential_ledger_get_current_ledger_entry_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-13")
-    )  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -336,27 +262,19 @@ def build_confidential_ledger_get_current_ledger_entry_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if collection_id is not None:
-        _params["collectionId"] = _SERIALIZER.query(
-            "collection_id", collection_id, "str"
-        )
+        _params["collectionId"] = _SERIALIZER.query("collection_id", collection_id, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_confidential_ledger_delete_user_request(
-    user_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_confidential_ledger_delete_user_request(user_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-13")
-    )  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -373,20 +291,14 @@ def build_confidential_ledger_delete_user_request(
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="DELETE", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_confidential_ledger_get_user_request(
-    user_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_confidential_ledger_get_user_request(user_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-13")
-    )  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -403,23 +315,15 @@ def build_confidential_ledger_get_user_request(
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_confidential_ledger_create_or_update_user_request(
-    user_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_confidential_ledger_create_or_update_user_request(user_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-13")
-    )  # type: str
-    content_type = kwargs.pop(
-        "content_type", _headers.pop("Content-Type", None)
-    )  # type: Optional[str]
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -435,14 +339,10 @@ def build_confidential_ledger_create_or_update_user_request(
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header(
-            "content_type", content_type, "str"
-        )
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="PATCH", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 class ConfidentialLedgerOperations:
@@ -460,9 +360,7 @@ class ConfidentialLedgerOperations:
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = (
-            input_args.pop(0) if input_args else kwargs.pop("deserializer")
-        )
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def get_constitution(self, **kwargs: Any) -> JSON:
@@ -478,37 +376,27 @@ class ConfidentialLedgerOperations:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "digest": "str",  # SHA256 digest of the constitution script. Required.
                     "script": "str"  # Contents of the constitution. Required.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         request = build_confidential_ledger_get_constitution_request(
-            api_version=api_version,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
             "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri",
-                self._config.ledger_uri,
-                "str",
-                skip_quote=True,
+                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -520,9 +408,7 @@ class ConfidentialLedgerOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -549,7 +435,7 @@ class ConfidentialLedgerOperations:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "members": [
                         {
                             "certificate": "str",  # PEM-encoded certificate associated
@@ -559,32 +445,22 @@ class ConfidentialLedgerOperations:
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         request = build_confidential_ledger_get_consortium_members_request(
-            api_version=api_version,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
             "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri",
-                self._config.ledger_uri,
-                "str",
-                skip_quote=True,
+                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -596,9 +472,7 @@ class ConfidentialLedgerOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -626,7 +500,7 @@ class ConfidentialLedgerOperations:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "currentNodeId": "str",  # Id of the Confidential Ledger node responding to
                       the request. Required.
                     "enclaveQuotes": {
@@ -642,32 +516,22 @@ class ConfidentialLedgerOperations:
                     }
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         request = build_confidential_ledger_get_enclave_quotes_request(
-            api_version=api_version,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
             "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri",
-                self._config.ledger_uri,
-                "str",
-                skip_quote=True,
+                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -679,9 +543,7 @@ class ConfidentialLedgerOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -708,38 +570,28 @@ class ConfidentialLedgerOperations:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == [
+                response == [
                     {
                         "collectionId": "str"  # Required.
                     }
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[List[JSON]]
 
         request = build_confidential_ledger_list_collections_request(
-            api_version=api_version,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
             "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri",
-                self._config.ledger_uri,
-                "str",
-                skip_quote=True,
+                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -751,9 +603,7 @@ class ConfidentialLedgerOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -773,7 +623,7 @@ class ConfidentialLedgerOperations:
         collection_id: Optional[str] = None,
         from_transaction_id: Optional[str] = None,
         to_transaction_id: Optional[str] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> Iterable[JSON]:
         """Gets ledger entries from a collection corresponding to a range.
 
@@ -795,10 +645,8 @@ class ConfidentialLedgerOperations:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "collectionId": {
-                        "collectionId": "str"  # Required.
-                    },
+                response == {
+                    "collectionId": "str",  # Optional.
                     "contents": "str",  # Contents of the ledger entry. Required.
                     "transactionId": "str"  # Optional. A unique identifier for the state of the
                       ledger. If returned as part of a LedgerEntry, it indicates the state from which
@@ -806,18 +654,11 @@ class ConfidentialLedgerOperations:
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -827,45 +668,30 @@ class ConfidentialLedgerOperations:
                     collection_id=collection_id,
                     from_transaction_id=from_transaction_id,
                     to_transaction_id=to_transaction_id,
-                    api_version=api_version,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
                     "ledgerUri": self._serialize.url(
-                        "self._config.ledger_uri",
-                        self._config.ledger_uri,
-                        "str",
-                        skip_quote=True,
+                        "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
                     ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-
-                request = build_confidential_ledger_list_ledger_entries_request(
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
                     "ledgerUri": self._serialize.url(
-                        "self._config.ledger_uri",
-                        self._config.ledger_uri,
-                        "str",
-                        skip_quote=True,
+                        "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "ledgerUri": self._serialize.url(
-                        "self._config.ledger_uri",
-                        self._config.ledger_uri,
-                        "str",
-                        skip_quote=True,
-                    ),
-                }
-                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
@@ -884,11 +710,7 @@ class ConfidentialLedgerOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(
-                    status_code=response.status_code,
-                    response=response,
-                    error_map=error_map,
-                )
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -897,12 +719,7 @@ class ConfidentialLedgerOperations:
 
     @overload
     def post_ledger_entry(
-        self,
-        entry: JSON,
-        *,
-        collection_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, entry: JSON, *, collection_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
         """Writes a ledger entry.
 
@@ -924,9 +741,7 @@ class ConfidentialLedgerOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 entry = {
-                    "collectionId": {
-                        "collectionId": "str"  # Required.
-                    },
+                    "collectionId": "str",  # Optional.
                     "contents": "str",  # Contents of the ledger entry. Required.
                     "transactionId": "str"  # Optional. A unique identifier for the state of the
                       ledger. If returned as part of a LedgerEntry, it indicates the state from which
@@ -934,21 +749,14 @@ class ConfidentialLedgerOperations:
                 }
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "collectionId": {
-                        "collectionId": "str"  # Required.
-                    }
+                response == {
+                    "collectionId": "str"  # Required.
                 }
         """
 
     @overload
     def post_ledger_entry(
-        self,
-        entry: IO,
-        *,
-        collection_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, entry: IO, *, collection_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
         """Writes a ledger entry.
 
@@ -969,21 +777,13 @@ class ConfidentialLedgerOperations:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "collectionId": {
-                        "collectionId": "str"  # Required.
-                    }
+                response == {
+                    "collectionId": "str"  # Required.
                 }
         """
 
     @distributed_trace
-    def post_ledger_entry(
-        self,
-        entry: Union[JSON, IO],
-        *,
-        collection_id: Optional[str] = None,
-        **kwargs: Any,
-    ) -> JSON:
+    def post_ledger_entry(self, entry: Union[JSON, IO], *, collection_id: Optional[str] = None, **kwargs: Any) -> JSON:
         """Writes a ledger entry.
 
         A collection id may optionally be specified.
@@ -1003,28 +803,17 @@ class ConfidentialLedgerOperations:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "collectionId": {
-                        "collectionId": "str"  # Required.
-                    }
+                response == {
+                    "collectionId": "str"  # Required.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: str
-        content_type = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", None)
-        )  # type: Optional[str]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/json"
@@ -1036,9 +825,9 @@ class ConfidentialLedgerOperations:
             _json = entry
 
         request = build_confidential_ledger_post_ledger_entry_request(
-            api_version=api_version,
             collection_id=collection_id,
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
@@ -1046,10 +835,7 @@ class ConfidentialLedgerOperations:
         )
         path_format_arguments = {
             "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri",
-                self._config.ledger_uri,
-                "str",
-                skip_quote=True,
+                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1061,9 +847,7 @@ class ConfidentialLedgerOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
@@ -1082,9 +866,7 @@ class ConfidentialLedgerOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def get_ledger_entry(
-        self, transaction_id: str, *, collection_id: Optional[str] = None, **kwargs: Any
-    ) -> JSON:
+    def get_ledger_entry(self, transaction_id: str, *, collection_id: Optional[str] = None, **kwargs: Any) -> JSON:
         """Gets the ledger entry at the specified transaction id. A collection id may optionally be
         specified to indicate the collection from which to fetch the value.
 
@@ -1104,11 +886,10 @@ class ConfidentialLedgerOperations:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "entry": {
-                        "collectionId": {
-                            "collectionId": "str"  # Required.
-                        },
+                        "collectionId": "str",  # Optional. The ledger entry found as a
+                          result of the query. This is only available if the query is in Ready state.
                         "contents": "str",  # Contents of the ledger entry. Required.
                         "transactionId": "str"  # Optional. A unique identifier for the state
                           of the ledger. If returned as part of a LedgerEntry, it indicates the state
@@ -1118,34 +899,24 @@ class ConfidentialLedgerOperations:
                       "Loading" and "Ready".
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         request = build_confidential_ledger_get_ledger_entry_request(
             transaction_id=transaction_id,
             collection_id=collection_id,
-            api_version=api_version,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
             "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri",
-                self._config.ledger_uri,
-                "str",
-                skip_quote=True,
+                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1157,9 +928,7 @@ class ConfidentialLedgerOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -1188,7 +957,7 @@ class ConfidentialLedgerOperations:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "receipt": {
                         "cert": "str",  # Optional.
                         "leaf": "str",  # Optional.
@@ -1217,33 +986,23 @@ class ConfidentialLedgerOperations:
                       was read. Required.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         request = build_confidential_ledger_get_receipt_request(
             transaction_id=transaction_id,
-            api_version=api_version,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
             "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri",
-                self._config.ledger_uri,
-                "str",
-                skip_quote=True,
+                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1255,9 +1014,7 @@ class ConfidentialLedgerOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -1286,7 +1043,7 @@ class ConfidentialLedgerOperations:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "state": "str",  # Represents the state of the transaction. Required. Known
                       values are: "Committed" and "Pending".
                     "transactionId": "str"  # A unique identifier for the state of the ledger. If
@@ -1294,33 +1051,23 @@ class ConfidentialLedgerOperations:
                       was read. Required.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         request = build_confidential_ledger_get_transaction_status_request(
             transaction_id=transaction_id,
-            api_version=api_version,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
             "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri",
-                self._config.ledger_uri,
-                "str",
-                skip_quote=True,
+                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1332,9 +1079,7 @@ class ConfidentialLedgerOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -1348,9 +1093,7 @@ class ConfidentialLedgerOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def get_current_ledger_entry(
-        self, *, collection_id: Optional[str] = None, **kwargs: Any
-    ) -> JSON:
+    def get_current_ledger_entry(self, *, collection_id: Optional[str] = None, **kwargs: Any) -> JSON:
         """Gets the current value available in the ledger.
 
         A collection id may optionally be specified.
@@ -1365,43 +1108,31 @@ class ConfidentialLedgerOperations:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "collectionId": {
-                        "collectionId": "str"  # Required.
-                    },
+                response == {
+                    "collectionId": "str",  # Optional.
                     "contents": "str",  # Contents of the ledger entry. Required.
                     "transactionId": "str"  # Optional. A unique identifier for the state of the
                       ledger. If returned as part of a LedgerEntry, it indicates the state from which
                       the entry was read.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         request = build_confidential_ledger_get_current_ledger_entry_request(
             collection_id=collection_id,
-            api_version=api_version,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
             "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri",
-                self._config.ledger_uri,
-                "str",
-                skip_quote=True,
+                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1413,9 +1144,7 @@ class ConfidentialLedgerOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -1429,9 +1158,7 @@ class ConfidentialLedgerOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def delete_user(  # pylint: disable=inconsistent-return-statements
-        self, user_id: str, **kwargs: Any
-    ) -> None:
+    def delete_user(self, user_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Deletes a user from the Confidential Ledger.
 
         Deletes a user from the Confidential Ledger.
@@ -1442,33 +1169,23 @@ class ConfidentialLedgerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_confidential_ledger_delete_user_request(
             user_id=user_id,
-            api_version=api_version,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
             "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri",
-                self._config.ledger_uri,
-                "str",
-                skip_quote=True,
+                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1480,9 +1197,7 @@ class ConfidentialLedgerOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:
@@ -1504,40 +1219,30 @@ class ConfidentialLedgerOperations:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "assignedRole": "str",  # Represents an assignable role. Required. Known
                       values are: "Administrator", "Contributor", and "Reader".
                     "userId": "str"  # Optional. Identifier for the user. This must either be an
                       AAD object id or a certificate fingerprint.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         request = build_confidential_ledger_get_user_request(
             user_id=user_id,
-            api_version=api_version,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
             "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri",
-                self._config.ledger_uri,
-                "str",
-                skip_quote=True,
+                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1549,9 +1254,7 @@ class ConfidentialLedgerOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -1566,12 +1269,7 @@ class ConfidentialLedgerOperations:
 
     @overload
     def create_or_update_user(
-        self,
-        user_id: str,
-        user_details: JSON,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any,
+        self, user_id: str, user_details: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Adds a user or updates a user's fields.
 
@@ -1600,7 +1298,7 @@ class ConfidentialLedgerOperations:
                 }
 
                 # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "assignedRole": "str",  # Represents an assignable role. Required. Known
                       values are: "Administrator", "Contributor", and "Reader".
                     "userId": "str"  # Optional. Identifier for the user. This must either be an
@@ -1610,12 +1308,7 @@ class ConfidentialLedgerOperations:
 
     @overload
     def create_or_update_user(
-        self,
-        user_id: str,
-        user_details: IO,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any,
+        self, user_id: str, user_details: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Adds a user or updates a user's fields.
 
@@ -1636,7 +1329,7 @@ class ConfidentialLedgerOperations:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "assignedRole": "str",  # Represents an assignable role. Required. Known
                       values are: "Administrator", "Contributor", and "Reader".
                     "userId": "str"  # Optional. Identifier for the user. This must either be an
@@ -1645,9 +1338,7 @@ class ConfidentialLedgerOperations:
         """
 
     @distributed_trace
-    def create_or_update_user(
-        self, user_id: str, user_details: Union[JSON, IO], **kwargs: Any
-    ) -> JSON:
+    def create_or_update_user(self, user_id: str, user_details: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Adds a user or updates a user's fields.
 
         A JSON merge patch is applied for existing users.
@@ -1668,29 +1359,20 @@ class ConfidentialLedgerOperations:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "assignedRole": "str",  # Represents an assignable role. Required. Known
                       values are: "Administrator", "Contributor", and "Reader".
                     "userId": "str"  # Optional. Identifier for the user. This must either be an
                       AAD object id or a certificate fingerprint.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: str
-        content_type = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", None)
-        )  # type: Optional[str]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/merge-patch+json"
@@ -1703,8 +1385,8 @@ class ConfidentialLedgerOperations:
 
         request = build_confidential_ledger_create_or_update_user_request(
             user_id=user_id,
-            api_version=api_version,
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
@@ -1712,10 +1394,7 @@ class ConfidentialLedgerOperations:
         )
         path_format_arguments = {
             "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri",
-                self._config.ledger_uri,
-                "str",
-                skip_quote=True,
+                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1727,9 +1406,7 @@ class ConfidentialLedgerOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if response.content:

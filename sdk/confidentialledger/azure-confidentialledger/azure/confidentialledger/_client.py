@@ -9,12 +9,11 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import ConfidentialLedgerClientConfiguration
+from ._serialization import Deserializer, Serializer
 from .operations import ConfidentialLedgerOperations
 
 if TYPE_CHECKING:
@@ -38,9 +37,7 @@ class ConfidentialLedgerClient:  # pylint: disable=client-accepts-api-version-ke
 
     def __init__(self, ledger_uri: str, **kwargs: Any) -> None:
         _endpoint = "{ledgerUri}"
-        self._config = ConfidentialLedgerClientConfiguration(
-            ledger_uri=ledger_uri, **kwargs
-        )
+        self._config = ConfidentialLedgerClientConfiguration(ledger_uri=ledger_uri, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -59,7 +56,7 @@ class ConfidentialLedgerClient:  # pylint: disable=client-accepts-api-version-ke
         >>> response = client.send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -71,16 +68,11 @@ class ConfidentialLedgerClient:  # pylint: disable=client-accepts-api-version-ke
         request_copy = deepcopy(request)
         path_format_arguments = {
             "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri",
-                self._config.ledger_uri,
-                "str",
-                skip_quote=True,
+                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
             ),
         }
 
-        request_copy.url = self._client.format_url(
-            request_copy.url, **path_format_arguments
-        )
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
     def close(self):

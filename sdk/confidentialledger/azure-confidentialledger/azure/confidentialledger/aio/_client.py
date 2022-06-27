@@ -9,11 +9,10 @@
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
+from .._serialization import Deserializer, Serializer
 from ._configuration import ConfidentialLedgerClientConfiguration
 from .operations import ConfidentialLedgerOperations
 
@@ -39,12 +38,8 @@ class ConfidentialLedgerClient:  # pylint: disable=client-accepts-api-version-ke
 
     def __init__(self, ledger_uri: str, **kwargs: Any) -> None:
         _endpoint = "{ledgerUri}"
-        self._config = ConfidentialLedgerClientConfiguration(
-            ledger_uri=ledger_uri, **kwargs
-        )
-        self._client = AsyncPipelineClient(
-            base_url=_endpoint, config=self._config, **kwargs
-        )
+        self._config = ConfidentialLedgerClientConfiguration(ledger_uri=ledger_uri, **kwargs)
+        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -53,9 +48,7 @@ class ConfidentialLedgerClient:  # pylint: disable=client-accepts-api-version-ke
             self._client, self._config, self._serialize, self._deserialize
         )
 
-    def send_request(
-        self, request: HttpRequest, **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -64,7 +57,7 @@ class ConfidentialLedgerClient:  # pylint: disable=client-accepts-api-version-ke
         >>> response = await client.send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -76,16 +69,11 @@ class ConfidentialLedgerClient:  # pylint: disable=client-accepts-api-version-ke
         request_copy = deepcopy(request)
         path_format_arguments = {
             "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri",
-                self._config.ledger_uri,
-                "str",
-                skip_quote=True,
+                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
             ),
         }
 
-        request_copy.url = self._client.format_url(
-            request_copy.url, **path_format_arguments
-        )
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
     async def close(self) -> None:

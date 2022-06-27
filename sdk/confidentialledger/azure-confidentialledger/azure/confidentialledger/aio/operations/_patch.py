@@ -51,9 +51,7 @@ class StatePollingMethod(AsyncPollingMethod):
         self._deserialization_callback = deserialization_callback
 
     def _evaluate_response(self, response: JSON) -> None:
-        self._status = (
-            "finished" if response["state"] == self._desired_state else "polling"
-        )
+        self._status = "finished" if response["state"] == self._desired_state else "polling"
         self._latest_response = response
 
     async def run(self) -> None:
@@ -96,9 +94,7 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         initial_response = await operation()
 
         if polling is True:
-            polling_method = cast(
-                AsyncPollingMethod, StatePollingMethod(operation, "Ready", lro_delay)
-            )
+            polling_method = cast(AsyncPollingMethod, StatePollingMethod(operation, "Ready", lro_delay))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -106,23 +102,17 @@ class ConfidentialLedgerOperations(GeneratedOperations):
 
         return AsyncLROPoller(self._client, initial_response, None, polling_method)
 
-    async def begin_get_receipt(
-        self, transaction_id: str, **kwargs: Any
-    ) -> AsyncLROPoller[JSON]:
+    async def begin_get_receipt(self, transaction_id: str, **kwargs: Any) -> AsyncLROPoller[JSON]:
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
         async def operation() -> JSON:
-            return await super(ConfidentialLedgerOperations, self).get_receipt(
-                transaction_id=transaction_id, **kwargs
-            )
+            return await super(ConfidentialLedgerOperations, self).get_receipt(transaction_id=transaction_id, **kwargs)
 
         initial_response = await operation()
 
         if polling is True:
-            polling_method = cast(
-                AsyncPollingMethod, StatePollingMethod(operation, "Ready", lro_delay)
-            )
+            polling_method = cast(AsyncPollingMethod, StatePollingMethod(operation, "Ready", lro_delay))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -146,9 +136,7 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
-        post_result = await self.post_ledger_entry(
-            entry, collection_id=collection_id, **kwargs
-        )
+        post_result = await self.post_ledger_entry(entry, collection_id=collection_id, **kwargs)
         transaction_id = post_result["transactionId"]
 
         kwargs["polling"] = polling
@@ -174,9 +162,9 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         deserialization_callback = lambda x: x if post_result is None else post_result
 
         async def operation() -> JSON:
-            return await super(
-                ConfidentialLedgerOperations, self
-            ).get_transaction_status(transaction_id=transaction_id, **kwargs)
+            return await super(ConfidentialLedgerOperations, self).get_transaction_status(
+                transaction_id=transaction_id, **kwargs
+            )
 
         initial_response = await operation()
 
@@ -190,9 +178,7 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         else:
             polling_method = polling
 
-        return AsyncLROPoller(
-            self._client, initial_response, deserialization_callback, polling_method
-        )
+        return AsyncLROPoller(self._client, initial_response, deserialization_callback, polling_method)
 
     async def post_ledger_entry(
         self,
@@ -238,6 +224,4 @@ class ConfidentialLedgerOperations(GeneratedOperations):
                 "transactionId": headers["x-ms-ccf-transaction-id"],
             },
         )
-        return await super().post_ledger_entry(
-            entry, collection_id=collection_id, **kwargs
-        )
+        return await super().post_ledger_entry(entry, collection_id=collection_id, **kwargs)

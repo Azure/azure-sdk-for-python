@@ -51,9 +51,7 @@ class StatePollingMethod(PollingMethod):
         self._deserialization_callback = deserialization_callback
 
     def _evaluate_response(self, response: JSON) -> None:
-        self._status = (
-            "finished" if response["state"] == self._desired_state else "polling"
-        )
+        self._status = "finished" if response["state"] == self._desired_state else "polling"
         self._latest_response = response
 
     def run(self) -> None:
@@ -96,9 +94,7 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         initial_response = operation()
 
         if polling is True:
-            polling_method = cast(
-                PollingMethod, StatePollingMethod(operation, "Ready", lro_delay)
-            )
+            polling_method = cast(PollingMethod, StatePollingMethod(operation, "Ready", lro_delay))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -111,16 +107,12 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
         def operation() -> JSON:
-            return super(ConfidentialLedgerOperations, self).get_receipt(
-                transaction_id=transaction_id, **kwargs
-            )
+            return super(ConfidentialLedgerOperations, self).get_receipt(transaction_id=transaction_id, **kwargs)
 
         initial_response = operation()
 
         if polling is True:
-            polling_method = cast(
-                PollingMethod, StatePollingMethod(operation, "Ready", lro_delay)
-            )
+            polling_method = cast(PollingMethod, StatePollingMethod(operation, "Ready", lro_delay))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -144,9 +136,7 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
-        post_result = self.post_ledger_entry(
-            entry, collection_id=collection_id, **kwargs
-        )
+        post_result = self.post_ledger_entry(entry, collection_id=collection_id, **kwargs)
         transaction_id = post_result["transactionId"]
 
         kwargs["polling"] = polling
@@ -179,17 +169,13 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         initial_response = operation()
 
         if polling is True:
-            polling_method = cast(
-                PollingMethod, StatePollingMethod(operation, "Committed", lro_delay)
-            )
+            polling_method = cast(PollingMethod, StatePollingMethod(operation, "Committed", lro_delay))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
             polling_method = polling
 
-        return LROPoller(
-            self._client, initial_response, deserialization_callback, polling_method
-        )
+        return LROPoller(self._client, initial_response, deserialization_callback, polling_method)
 
     def post_ledger_entry(
         self,
