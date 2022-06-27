@@ -35,7 +35,7 @@ from azure.confidentialledger_identity_service.aio import (
     ConfidentialLedgerIdentityServiceClient,
 )
 from azure.confidentialledger.aio import ConfidentialLedgerClient
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -66,11 +66,10 @@ async def main():
     ledger_id = ledger_endpoint.replace("https://", "").split(".")[0]
 
     identity_service_client = ConfidentialLedgerIdentityServiceClient()
-    ledger_certificate = (
-        await identity_service_client.get_ledger_identity(
+    async with identity_service_client:
+        ledger_certificate = await identity_service_client.get_ledger_identity(
             ledger_id
         )
-    )
 
     # The Confidential Ledger's TLS certificate must be written to a file to be used by the
     # ConfidentialLedgerClient. Here, we write it to a temporary file so that is is cleaned up
@@ -80,35 +79,42 @@ async def main():
         ledger_certificate_file.flush()
 
         # Build a client through AAD
+        credential = DefaultAzureCredential()
         ledger_client = ConfidentialLedgerClient(
             ledger_endpoint,
-            credential=DefaultAzureCredential(),
+            credential=credential,
             ledger_certificate_path=ledger_certificate_file.name,
         )
 
-        try:
-            role = "Reader"
-            await ledger_client.create_or_update_user(aad_object_id, {"assignedRole": role})
-            print(f"User {aad_object_id} has been added as a {role}")
+        async with credential:
+            async with ledger_client:
+                try:
+                    role = "Reader"
+                    await ledger_client.create_or_update_user(
+                        aad_object_id, {"assignedRole": role}
+                    )
+                    print(f"User {aad_object_id} has been added as a {role}")
 
-            role = "Contributor"
-            await ledger_client.create_or_update_user(cert_thumbprint, {"assignedRole": role})
-            print(f"User {cert_thumbprint} has been added as a {role}")
+                    role = "Contributor"
+                    await ledger_client.create_or_update_user(
+                        cert_thumbprint, {"assignedRole": role}
+                    )
+                    print(f"User {cert_thumbprint} has been added as a {role}")
 
-            aad_user_details = await ledger_client.get_user(aad_object_id)
-            print(f"Details about user {aad_object_id}: {aad_user_details}")
+                    aad_user_details = await ledger_client.get_user(aad_object_id)
+                    print(f"Details about user {aad_object_id}: {aad_user_details}")
 
-            cert_user_details = await ledger_client.get_user(cert_thumbprint)
-            print(f"Details about user {cert_thumbprint}: {cert_user_details}")
+                    cert_user_details = await ledger_client.get_user(cert_thumbprint)
+                    print(f"Details about user {cert_thumbprint}: {cert_user_details}")
 
-        # Always delete the user in case an exception is raised.
-        finally:
-            try:
-                await ledger_client.delete_user(aad_object_id)
-                print(f"User {aad_object_id} deleted")
-            finally:
-                await ledger_client.delete_user(cert_thumbprint)
-                print(f"User {cert_thumbprint} deleted")
+                # Always delete the user in case an exception is raised.
+                finally:
+                    try:
+                        await ledger_client.delete_user(aad_object_id)
+                        print(f"User {aad_object_id} deleted")
+                    finally:
+                        await ledger_client.delete_user(cert_thumbprint)
+                        print(f"User {cert_thumbprint} deleted")
 
 
 if __name__ == "__main__":

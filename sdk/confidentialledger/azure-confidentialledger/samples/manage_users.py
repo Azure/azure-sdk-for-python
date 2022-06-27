@@ -63,11 +63,7 @@ except KeyError:
 ledger_id = ledger_endpoint.replace("https://", "").split(".")[0]
 
 identity_service_client = ConfidentialLedgerIdentityServiceClient()
-ledger_certificate = (
-    identity_service_client.get_ledger_identity(
-        ledger_id
-    )
-)
+ledger_certificate = identity_service_client.get_ledger_identity(ledger_id)
 
 # The Confidential Ledger's TLS certificate must be written to a file to be used by the
 # ConfidentialLedgerClient. Here, we write it to a temporary file so that is is cleaned up

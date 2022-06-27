@@ -35,7 +35,7 @@ from azure.confidentialledger_identity_service.aio import (
     ConfidentialLedgerIdentityServiceClient,
 )
 from azure.confidentialledger.aio import ConfidentialLedgerClient
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -60,9 +60,10 @@ async def main():
     ledger_id = ledger_endpoint.replace("https://", "").split(".")[0]
 
     identity_service_client = ConfidentialLedgerIdentityServiceClient()
-    ledger_certificate = await identity_service_client.get_ledger_identity(
-        ledger_id
-    )
+    async with identity_service_client:
+        ledger_certificate = await identity_service_client.get_ledger_identity(
+            ledger_id
+        )
 
     # The Confidential Ledger's TLS certificate must be written to a file to be used by the
     # ConfidentialLedgerClient. Here, we write it to a temporary file so that is is cleaned up
@@ -72,31 +73,34 @@ async def main():
         ledger_certificate_file.flush()
 
         # Build a client through AAD
+        credential = DefaultAzureCredential()
         ledger_client = ConfidentialLedgerClient(
             ledger_endpoint,
-            credential=DefaultAzureCredential(),
+            credential=credential,
             ledger_certificate_path=ledger_certificate_file.name,
         )
 
-        post_poller = await ledger_client.begin_post_ledger_entry(
-            {"contents": "First message"}
-        )
-        first_transaction_id = await post_poller.result()["transactionId"]
+        async with credential:
+            async with ledger_client:
+                post_poller = await ledger_client.begin_post_ledger_entry(
+                    {"contents": "First message"}
+                )
+                first_transaction_id = await post_poller.result()["transactionId"]
 
-        for i in range(10):
-            await ledger_client.post_ledger_entry({"contents": f"Message {i}"})
+                for i in range(10):
+                    await ledger_client.post_ledger_entry({"contents": f"Message {i}"})
 
-        post_poller = await ledger_client.begin_post_ledger_entry(
-            {"contents": "Last message"}
-        )
-        last_transaction_id = await post_poller.result()["transactionId"]
+                post_poller = await ledger_client.begin_post_ledger_entry(
+                    {"contents": "Last message"}
+                )
+                last_transaction_id = await post_poller.result()["transactionId"]
 
-        ranged_result = ledger_client.list_ledger_entries(
-            from_transaction_id=first_transaction_id,
-            to_transaction_id=last_transaction_id,
-        )
-        async for entry in ranged_result:
-            print(f'Contents at {entry["transactionId"]}: {entry["contents"]}')
+                ranged_result = ledger_client.list_ledger_entries(
+                    from_transaction_id=first_transaction_id,
+                    to_transaction_id=last_transaction_id,
+                )
+                async for entry in ranged_result:
+                    print(f'Contents at {entry["transactionId"]}: {entry["contents"]}')
 
 
 if __name__ == "__main__":
