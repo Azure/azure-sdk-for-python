@@ -1,0 +1,559 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 14 Jun 2022 23:46:11 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer6ef71a96?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 14 Jun 2022 23:46:10 GMT
+      etag: '"0x8DA4E600FDDDCD1"'
+      last-modified: Tue, 14 Jun 2022 23:46:11 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-08-06'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainer6ef71a96?restype=container
+- request:
+    body: !!binary |
+      AAAAAAAAAAAAAAAAQRMrf7gHRc1hQvi+aSaQWj2+2OkGHdx7f8L62ApjId4coCJN+sCzVhwLC2fp
+      Pa5ANHJZvu7K3XBxhs+2MUA3DOpqeryTGOo5aFt7oOQR4HVL37ZkPxF/0rACGGnsAbsX9QLGFlAc
+      QLQvuYNwLNEzT398rIZVwGYD+N9AATwvVwEpuljVxEpkJ5GwBfC9tG+TLL3fr7U5ooYKpChnRWf7
+      sHWQPNyohsG+BqKke2/eVBV1B+CM/IjR23Q1vN/KRIkhAEm1ribPb21y5GvKX1YQhshj4JguvjDb
+      WuATuktth30sdkKA0b0nqK9eYYtZEsXjHzUwegrA7k3eFHww8cP6s0Yu1lGz89bPJ+OGTk+1B41Y
+      tpPH//gp73wkgFwZObzrtNngwxIgGQtmiLa45hN4Fm03SsGRS2lrXesC1GXiEkT4gXCzxwu9mR0I
+      rCjsBR6a7qVpAvE9e8XP1CQGw57k7rVJMCJAUWVQ91k44fY+axtfqCh+prGs8EoQkuOo+2kQh6kc
+      wMdO6CFbAufo1UStm1tL2zv0ydPwHczyOtYVLxGaMV993WfHNAvnSMu+NJSW3EwZmB7YJy+pIj/S
+      yZbmUH5yA7s9jm5dxUsB5UrhzTbWxeUWxEJMVRjOXsl9NbuGAj19tvjbrd8lfRWoazzYs0stNqI6
+      WyjI1pBH0JGN9t1uF++MgojvaCnhAfjdUjfJn6IrbpuFVuVwSBeC/5IRaGa14a2iu6iYM8+mRSWi
+      Oz7JBrVtAJMP+jTsIA+yZmV9NUDjPsVDzmjzswumey1kPccYLuOhWzYJK1K2N+oBkTVHbHsaDmnU
+      NP2s9yt8HmFWviA3SF2Jti2/29PVdwoRWVIvW5rdyFaibtVz+4wtzQA243g+7o8Mtx00I4ltZZ0v
+      MiyL8pW1mB2zhoeZPmpMBDK1olnDIVLULXf0edq3Ne5ioUgY9/appKE6x5oPCUNk1WdxsPt5NER5
+      kI7ZOOaOcBAKXO/RHnGiuRIzcXixzAuxtAR+nskV//k75E2ec3LjLyNBM7Tkf6lkZDXtYWCBPUm0
+      HLMUrBQNJ6FWMRdMbov5C2Bwx0NYyM7kebhHE9pL90cM5BPY56hH1Dw3h3Lp4Jgmn4gLfYzS2b4c
+      QRFqEId7wLdMChCQatoqp6yBrL8RRiP9TLnzHtHrqgjziAY8yxPiWgWvXvOnqSyVoNNCbgVYhCpa
+      kF1bhsFxnCkg6kzwhFCLIcDNGbQZ55SNd/q9ykgOna2PhT7kTSNNI15ZrpQbG+Cy5a4ARWnCJO99
+      JaFzaorJdgFfEQtSa+Rgxibg99nOIsuaQwLQbdk+KN59HZUwrUsT1J4+0sNNMuS4saqe065dUA==
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 14 Jun 2022 23:46:11 GMT
+      x-ms-meta-encryptiondata:
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "Co5SpZa+BPacWQzclJdDtCnk+kNARLYET2aryBa/A6R8VXRRA6/NhQmySCk7hdli",
+        "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm":
+        "AES_GCM_256"}, "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength":
+        12}, "KeyWrappingMetadata": {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode":
+        "FullBlob"}'
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer6ef71a96/encryptionv2_blob6ef71a96?comp=block&blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQSUzRA%3D%3D
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 14 Jun 2022 23:46:11 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: Htux+uAyOlo=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-08-06'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainer6ef71a96/encryptionv2_blob6ef71a96?comp=block&blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQSUzRA%3D%3D
+- request:
+    body: !!binary |
+      HtxnRqebhfimtnwEU14Re1oV27Duk2GB+PXyzOVgb2GlJaTpm9lKEnEPfDaxmVB85ToD53OxoaNE
+      +AwP7VHTdKOSzuaiFyQmpTQUW/ASYAQDHcrMgTyh/vUGB6VwfQAAiiZ+0lwYM3rL297SQO3dqeyo
+      NsML4vKi5kku9/dqisfvthwUYgayzSr+8xo++bRcoyupplaPuvs6Opr7zD3DekchMoktWl2AaS4I
+      YwqmoWhMqY01t5h4Sho2WEe+2Y64XzS7hDK65B6iNs1CV0eFephvHtJOGiD6woaYq/bqZ1qd/SrW
+      vMa9uRKAKoFf6ri9rbFqv6hnETrrbxBcJLgyVyhr4UN+r5rcBps/82RiiTqHGGaWymEC4gnIKRW6
+      l7jEsl+KgtA180r4FJXTAKYnqEJ5FsOtmyqsw7+cvEgsbrxCe1S6+no/ch6BuJRKOBdH4txArNml
+      wImxYbKnTCT8y8T3fCfdkgdJZxItITyRlVzRMbrgoyPOe7lrSej1/9lSoyPizb7hLQLEqmWNzsXR
+      jinE5hyuBZDsW3ei+cb6OuaBX0Ev/IipDyLTrm+XQdnjGcpABAv15vkzIkg2Jcf+IA3wbpMuVVvw
+      j6bl6fXhZJg6Fz69FdhELG3LCKS8gk2Tu4LG7n8xFKyxCYpwbEZC/sYxTxtQkrgw5X3DZDQoA+MU
+      e+/NWhVNlLvbA93T7L773Pt/TFEFRv6cmn5jLrBavWKdU16Fus63wUQ9Vxv6YCSPXvwLdDXr3gVd
+      fGw/hPX4xcqlYwkeDCS++8qls5HpWQGhAVAsg60GfUWJVt3NQ+Sl4ut8mYUsAQwkE6g1ZKImp93r
+      ZvLmmVXDPazylsmGrh9BIDUfg3Y0CgA+vq3o7rOSa5uT5Y+fWF3O+0QPNEw4ErZ3slvDulOeaUNX
+      8lmsQOiENS3XilAAAliWQJtDsHtQMvNwE8ednxiVmIdt2DWgVhwmgw+fPh0fER5fSgsh1v4FsNKp
+      xwwFcglXlUG/dnHQYdKlVB1faes/9yEFCwl4vAXTRmelQ6JX8A/F5bX6vX9IuXre/+MrzJkf+wJz
+      MP3l7EdoDV3VBBRJxZfAYjZbh4dwMBBgUl3a7UpW544676DERGsx5I88FuAJ/bXtjpA+E4pHr/QS
+      j7ll48CD1hN/huYSkrd2U0co/Bth/JMlXT0VA6frd49pEwRapGQj83vasWm+8V3xHyFLu4NdvVCF
+      LfcHlizqf+PbernBGMGLrdAAEstipOktzQS28QrUbxK/kikSBZyFMy0+Ggrqoa1f8zyE4shUpspg
+      43ymU9CrbfU91O0InIWIUFk/5tvZstGl6tZb19LChJw/Q7vNfK1xO6DOVKtdpS4TePDM5Ro59g==
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 14 Jun 2022 23:46:11 GMT
+      x-ms-meta-encryptiondata:
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "Co5SpZa+BPacWQzclJdDtCnk+kNARLYET2aryBa/A6R8VXRRA6/NhQmySCk7hdli",
+        "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm":
+        "AES_GCM_256"}, "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength":
+        12}, "KeyWrappingMetadata": {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode":
+        "FullBlob"}'
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer6ef71a96/encryptionv2_blob6ef71a96?comp=block&blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURFd01qUSUzRA%3D%3D
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 14 Jun 2022 23:46:11 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: 8h4hWEFPdrI=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-08-06'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainer6ef71a96/encryptionv2_blob6ef71a96?comp=block&blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURFd01qUSUzRA%3D%3D
+- request:
+    body: !!binary |
+      bKjmjtJRTxpkFXadZOBoedZfbZkU+BtBCaYvWjN5wqDkqfybUngYyABd5wgBQIZac9CvNsXrjwfg
+      1YmN8ZCDZKvAgGEXj8OVOoWM7FHc4WBfd8iGx/kqCiSHT1x96Fr2clbKYhXGzxSqHHcUEcMmywUZ
+      JRqW+OqTPRn9X2iNBYpieEmkXi+7oHXhc+4r2KlO3afMC5d4RlzH+4bOx33WLwNTGyrveEqaDp7u
+      YAGmWzJdQUX85f7RWVXyy77q46OCUmd4yLLS1rYvvBmQrk+nhJ7Qi0WD8nfHuupjOlxfdIeKKZX+
+      9mBmxUfeaewhuo6mr7FE7HIHYwRIyBIO3V8G4SurRCrN8f/KPmwXVbmpDNTOxlTKYUe9nFEkKkuH
+      6yD+A+3tu2WN8vCIhe8qvZpvmX0USsp1hoHGDvDWLP72nW1W/CuuEWlO3zmaz4HML+bgKiDNW7Jo
+      XIc+HIs7LzjY8zfujCp76XWf6wFXAuE9lwje2IPRiI6p1A4H9QDln1qZ4tssE+q2gGVvJNAFzn95
+      yCqE8PkwRnbQ+PRidVLRn8VOzILL0JVTbJ3kxzDRrSZQGBunzxdvjcoZ59X5dAx1tZndh6/0d5C7
+      bFijLZlBAD8+rBkREGqaKdHDdndKUyAq1d8D2TzFSu+obZX1eMiAjOjswVw1BIcEqjBswL93oebt
+      mE8df8zjTQpJBU1oPFCVf57/g4Hh54ZV1i3mdBOpDtxC075so8ISIPtu8MfMuOZVW7qQPZwqGb3P
+      /ss9wKTMmH/0/tUpl13GE3J8zB043kg0ihkElYfp08akxH2Efo8hPb7xXiDyA1od5Ws7jKTiPbyL
+      TIGVs6nMNGBuUAtIG65ZiTSD1dgAAhhhs1X45mmdSEjjqWZPEZRsizji3HuE3wqYcO5VMobKx1es
+      OBW4FHL1O8WKPotMAenW0n3ePIlIoj8Gd9YZbiKZ39gcAXnV+apUfn8jhDZPe/9KGXjIsBL/fYDe
+      VRiGTZa64axJJsdK2h+uvXp7z70FVs/tP47bB3PD/ukCNRqS8WidfriPtd5cyO/b/X4C9ekswgYK
+      NqxIxqAugt5ntnieREampHhK6ZpUR/mpRGsqBrrbGYgoSRev6IGr/XLSxO7kGR6aXVEJyayZAtLm
+      eF4zZBZmXnYwe75uqIXYc3Z6EGToUyOuZmyD3xShrBAhcLdgT9L59odl0xkT86d94UiwZ6kw5jkw
+      qejY4hrU4045wM3mnsNAiEQMN4V1LMF3dykn3CqjW2ACPM8xQCYk50ON1r78lZPYhqPKosH6yvrb
+      q5dvJvHSBsV+824XngD3+ue1J4EZXUM0XiWlyjmA66Jgy3eBrrUrnfkcCnfJ1w0Pd4jb3MI/Bw==
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 14 Jun 2022 23:46:11 GMT
+      x-ms-meta-encryptiondata:
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "Co5SpZa+BPacWQzclJdDtCnk+kNARLYET2aryBa/A6R8VXRRA6/NhQmySCk7hdli",
+        "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm":
+        "AES_GCM_256"}, "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength":
+        12}, "KeyWrappingMetadata": {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode":
+        "FullBlob"}'
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer6ef71a96/encryptionv2_blob6ef71a96?comp=block&blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURJd05EZyUzRA%3D%3D
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 14 Jun 2022 23:46:11 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: JHPDE/f6FAI=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-08-06'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainer6ef71a96/encryptionv2_blob6ef71a96?comp=block&blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURJd05EZyUzRA%3D%3D
+- request:
+    body: !!binary |
+      ipisIkAjeU99s5/c1IbJCjg97wPKUBoCg6Jjt+5965bKNes2q5ei4RraXVVnUT/1a5HtCimfMTj1
+      Ktnem+algn0FRyVPj55jqtyh1/7WNWM1lYWDJQVxgbJiuRqAUJ652wmJGgcVxjHPyiN8/JnNGXfW
+      ZUvQATZmr3rzanZJ9sNdaP6crqrV0WxB2OWrnYH3iRjzrPgM89mHgwQPFPIB5b90YaLStuWoZhdQ
+      PUhE42hVN1nI9xJ+20HUyp9UCQxWijOK8uN/Na4NC+XUgs0UirfS7g0Y7dhl0gXtadU795UUcObk
+      28t7VvC2Z6ybjPkbvM4COKBHVIwe2utue016s4TMLPAOelpbdcFNkzVyJSrhSa7ksg2YOnosmV55
+      uqtEYzDV2IJrG+suZaVBcW/iH1P9EDfj+nlmlwvjbsCnaGw1PozTVKBwFfq6Y+Z9QZmWn+6WBkUO
+      MIp2WHgUv8kys6BftfjUETKgGIEEhTopB2qM0EvZub6sayi+0eypZHcOFeDl73NNRjPy7eaKxklN
+      t0cZr+Dxlupx2nQP7wtAIlrDa2xKv9B9Yir93dHb9O2/w3mbtGN5bLJJKkqjWr/h7nHDtpAK1Z1/
+      C34ziE2sYbG575cDbJr46qG0VwaXLicSkGs0xQRrYwuTHDebdZpmD++Goz1bN75hvliO4hTpAfKm
+      LfA4HFL7BhE+U9Vpib21TRyX+DV0/ZsWiBHIP/fN89qYlMSGkPaSlxnpnkmUotSF/VsPuLJGjhMB
+      VIRuzsoztMysSoK72ttxlKtcuGPgbeP7iW7jLruH/DoOsknfhAtKlJ++Tf3eHhgilYA5tOw/YKJ8
+      jteR7dxorrSvUIoVI8HQ2z1m17n2Ve9lfrrTKFEJEdw1XR4G8JGq1M14kw/Diy2xVY48dXbh8156
+      iWk/NBpu38OwXqiPI4/Yt2mef7Jt5nBTwiWyQb5CKej4uAI4yB+APmStd/Kfpn24rqGDVD4mzPPu
+      GlT8QN8tqmNeCr68rOqBX6wP4E7EaXcMCtj3FRBWgVQIMOPyHBfZX444oKAKy2BEUWeWGhVHYBxy
+      I47YVgx12P/HNM14bSWZjlI9VTDeqRGquynvvBLyBERzhguBN1yiLla5fsAysPeQY4qWiHzObZEu
+      TQNhOzMx/CT+1L7MxxK/Kefpg9U5kw/APWANGqI5sZ16dXIAlBO32MjID+QBsP/oPHZLluUdRQ6+
+      YBWWTrCFXFVsnOHqqerWWwA9wEH/K5XX5sAgYfzLVCk5ug4s94wb9ilWa32xrZITE+L7tseg41qA
+      0BADsK+XPCHNOPF+qNqOsMCR41hNMp2x7qxBYKJ+PuZpxeHI5fe7XxW3D4BGYALqFmaG0xOdYQ==
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 14 Jun 2022 23:46:11 GMT
+      x-ms-meta-encryptiondata:
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "Co5SpZa+BPacWQzclJdDtCnk+kNARLYET2aryBa/A6R8VXRRA6/NhQmySCk7hdli",
+        "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm":
+        "AES_GCM_256"}, "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength":
+        12}, "KeyWrappingMetadata": {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode":
+        "FullBlob"}'
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer6ef71a96/encryptionv2_blob6ef71a96?comp=block&blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURNd056SSUzRA%3D%3D
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 14 Jun 2022 23:46:11 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: /+j/r31VMy0=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-08-06'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainer6ef71a96/encryptionv2_blob6ef71a96?comp=block&blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURNd056SSUzRA%3D%3D
+- request:
+    body: !!binary |
+      WLiERVjsYioAZDxNBXvYWs/FpafHro/NysNERslMdh2OFE3cVYAoV11GC+dd6EllEUkcoK9y3nn1
+      afMuJrlZrCbLik2mTmR84/u2sfb5vlqFmtxLGVUvhlrmJps2JPZtPTVlNsVPuR47TCmVxJpdFExm
+      trjsT/fulRPFMm5HTATj73ZF3F8TbafTmsn1s8b2RRh7Hzt+vaUMmNvbsPNRMkG6a1HYFlcSk31O
+      +7K0Y3vAysXxvEUxRzJSdYXloXsFszxpNs14XrnOUe4SAHecu/8JDQi0To9eIyF5ObiPZGH4Ci2D
+      8LIp6kVYIqbdkKcWGTOJwD8Npt0pxToRIcxpcjwnjjU+UfZAzlfET1bVbEwpGST38DBMqIAWPA8+
+      ySpoy6j77sGnrC2PXd1PmNJNQhUxTLcindXIk1tj8bXfCU+f0LXhEWqlQNZcakH7X/MgkvHtsqSz
+      r5KvyxShUGUfPdFe9605a4YXUdq9ljLmbFeXlXJPe+F4MJb+QFl2v8w0KHDy4ocEDY70OUAq5cG7
+      FWfCmEyFT5NEXq/oHDevBNJqaW6P3Y67AKAj0kRxhJWqrD/uH226gOAVAs1rdVDIsVjjkJ+Y7Vr2
+      Me3kwpdp+uvsI7E61Ql8IXErwWL3YhlXnnHMjeJQeXqSPhmiDPRDaYCvQCbj/FLnF8W0VM9jLc58
+      aqwjVO04FePK3zf8G3rct5kOFKw54GKWQzpEMOBaDerkJqkVmYkHjn/MKIUV/p1BxwDR/Gake5fn
+      fDblOLDBE7YArwbC3QNRO3711GWtzrxcbAQ+FlKL9eZ/vhHnwu/pitoNhz3Wk8qIlpPhgmjRkWxu
+      bqqkGSk36/4zAsNSbJNzCfA+vB1Nkshqd5PGUAWQoThKdistaiawr5TR7Kk5KMGxFbteKfyy3PKi
+      ThWavmrVywLml1LPqav/E86jB9EGJOPeQhILs6WkNOVEzqHSiRPA5HlZOPAcd+2nb8M0OivsdWJP
+      2FGYlfh2PUkT07AbNzV9BiVKLFZUwj2bxQPJacdJbCo+7LRE3xGZPE45e83LeHEgNE5ZVw0+i1XL
+      RAjzUiS6G5dKUN2NwavCwkdQx3pU6mj4xfb4N9mIKM6HAtokT6NiiHprYHfJlDNIjOnOEpcFI7W3
+      gx38bdL/O6MWbbYm4xcm1XY7g4aC30hXSmA9Bbd6TECB6B+hFZZbrTtN24Gx7BTlEi8UXmSWju0A
+      Mj0rCqAk44cySvu38ReZDKp3hjzPqkgGH50FgwCRmHKXgp4VNgBj3XDgYb12ouzhI2MoDDo0+p16
+      nmyRk6VSlnxJec298SQpmMwJxroRWXVy7HN+lprLrYk+WPc+2YNSj2pEuvfWfje5vU8h+cSgaw==
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 14 Jun 2022 23:46:12 GMT
+      x-ms-meta-encryptiondata:
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "Co5SpZa+BPacWQzclJdDtCnk+kNARLYET2aryBa/A6R8VXRRA6/NhQmySCk7hdli",
+        "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm":
+        "AES_GCM_256"}, "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength":
+        12}, "KeyWrappingMetadata": {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode":
+        "FullBlob"}'
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer6ef71a96/encryptionv2_blob6ef71a96?comp=block&blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURRd09UWSUzRA%3D%3D
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 14 Jun 2022 23:46:12 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: /jEUPN1rdns=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-08-06'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainer6ef71a96/encryptionv2_blob6ef71a96?comp=block&blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURRd09UWSUzRA%3D%3D
+- request:
+    body: !!binary |
+      PjFrPrMCyD+TVK2dW62LeDuEoXHAtmTxTX81mA==
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '28'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 14 Jun 2022 23:46:12 GMT
+      x-ms-meta-encryptiondata:
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "Co5SpZa+BPacWQzclJdDtCnk+kNARLYET2aryBa/A6R8VXRRA6/NhQmySCk7hdli",
+        "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm":
+        "AES_GCM_256"}, "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength":
+        12}, "KeyWrappingMetadata": {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode":
+        "FullBlob"}'
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer6ef71a96/encryptionv2_blob6ef71a96?comp=block&blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURVeE1qQSUzRA%3D%3D
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 14 Jun 2022 23:46:12 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: oUC211dCtBw=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-08-06'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainer6ef71a96/encryptionv2_blob6ef71a96?comp=block&blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURVeE1qQSUzRA%3D%3D
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <BlockList><Latest>TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQSUzRA==</Latest><Latest>TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURFd01qUSUzRA==</Latest><Latest>TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURJd05EZyUzRA==</Latest><Latest>TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURNd056SSUzRA==</Latest><Latest>TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURRd09UWSUzRA==</Latest><Latest>TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURVeE1qQSUzRA==</Latest></BlockList>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '548'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 14 Jun 2022 23:46:12 GMT
+      x-ms-meta-encryptiondata:
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "Co5SpZa+BPacWQzclJdDtCnk+kNARLYET2aryBa/A6R8VXRRA6/NhQmySCk7hdli",
+        "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm":
+        "AES_GCM_256"}, "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength":
+        12}, "KeyWrappingMetadata": {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode":
+        "FullBlob"}'
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer6ef71a96/encryptionv2_blob6ef71a96?comp=blocklist
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 14 Jun 2022 23:46:12 GMT
+      etag: '"0x8DA4E601034F07A"'
+      last-modified: Tue, 14 Jun 2022 23:46:12 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: 458m2zSGZuo=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-08-06'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainer6ef71a96/encryptionv2_blob6ef71a96?comp=blocklist
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 14 Jun 2022 23:46:12 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/utcontainer6ef71a96/encryptionv2_blob6ef71a96
+  response:
+    body:
+      string: ''
+    headers:
+      accept-ranges: bytes
+      content-length: '5148'
+      content-type: application/octet-stream
+      date: Tue, 14 Jun 2022 23:46:12 GMT
+      etag: '"0x8DA4E601034F07A"'
+      last-modified: Tue, 14 Jun 2022 23:46:12 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary: Origin
+      x-ms-access-tier: Hot
+      x-ms-access-tier-inferred: 'true'
+      x-ms-blob-type: BlockBlob
+      x-ms-creation-time: Tue, 14 Jun 2022 23:46:12 GMT
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-meta-encryptiondata: '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey":
+        "Co5SpZa+BPacWQzclJdDtCnk+kNARLYET2aryBa/A6R8VXRRA6/NhQmySCk7hdli", "Algorithm":
+        "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm": "AES_GCM_256"},
+        "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength": 12}, "KeyWrappingMetadata":
+        {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode": "FullBlob"}'
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2021-08-06'
+    status:
+      code: 200
+      message: OK
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainer6ef71a96/encryptionv2_blob6ef71a96
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 14 Jun 2022 23:46:12 GMT
+      x-ms-range:
+      - bytes=0-33554655
+      x-ms-version:
+      - '2021-08-06'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/utcontainer6ef71a96/encryptionv2_blob6ef71a96
+  response:
+    body:
+      string: !!binary |
+        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
+        rZ1brYt4O4ShccC2ZPFNfzWY
+    headers:
+      accept-ranges: bytes
+      content-length: '5148'
+      content-range: bytes 0-5147/5148
+      content-type: application/octet-stream
+      date: Tue, 14 Jun 2022 23:46:12 GMT
+      etag: '"0x8DA4E601034F07A"'
+      last-modified: Tue, 14 Jun 2022 23:46:12 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary: Origin
+      x-ms-blob-type: BlockBlob
+      x-ms-creation-time: Tue, 14 Jun 2022 23:46:12 GMT
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-meta-encryptiondata: '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey":
+        "Co5SpZa+BPacWQzclJdDtCnk+kNARLYET2aryBa/A6R8VXRRA6/NhQmySCk7hdli", "Algorithm":
+        "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm": "AES_GCM_256"},
+        "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength": 12}, "KeyWrappingMetadata":
+        {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode": "FullBlob"}'
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2021-08-06'
+    status:
+      code: 206
+      message: Partial Content
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainer6ef71a96/encryptionv2_blob6ef71a96
+version: 1

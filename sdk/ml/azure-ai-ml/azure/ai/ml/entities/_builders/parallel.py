@@ -8,6 +8,8 @@ from typing import Dict, List, Union
 from enum import Enum
 import re
 
+from marshmallow import Schema
+
 from .base_node import BaseNode
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     JobInput as RestJobInput,
@@ -45,7 +47,9 @@ from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySetti
 from azure.ai.ml.entities._job.parallel.parallel_task import ParallelTask
 from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
 from azure.ai.ml.entities._job.parallel.parameterized_parallel import ParameterizedParallel
-from .._util import validate_attribute_type, convert_ordered_dict_to_dict
+from .._util import validate_attribute_type, convert_ordered_dict_to_dict, get_rest_dict
+from ..._schema import PathAwareSchema
+from ..._utils._arm_id_utils import get_resource_name_from_arm_id_safe
 
 module_logger = logging.getLogger(__name__)
 
@@ -330,59 +334,32 @@ class Parallel(BaseNode):
                 raise Exception(f"Expecting {base_type} for {attr}, got {type(parallel_attr)} instead.")
         return convert_ordered_dict_to_dict(rest_attr)
 
-    def _to_rest_object(self, **kwargs) -> dict:
-        # Convert current parameterized inputs/outputs to JobInputs/Outputs.
-        # Note: this step must execute after self._validate(), validation errors will be thrown then when referenced
-        # component has not been resolved to arm id.
-        built_inputs = self._build_inputs()
-        built_outputs = self._build_outputs()
+    @classmethod
+    def _picked_fields_in_to_rest(cls) -> List[str]:
+        return [
+            "type",
+            "resources",
+            "error_threshold",
+            "mini_batch_error_threshold",
+            "environment_variables",
+            "max_concurrency_per_instance",
+            "task",
+            "input_data",
+        ]
 
-        # validate
-        self._validate()
+    def _node_specified_pre_to_rest_operations(self, rest_obj):
+        for key in self._picked_fields_in_to_rest():
+            if key not in rest_obj:
+                rest_obj[key] = None
 
-        # Convert io entity to rest io objects
-        input_bindings, dataset_literal_inputs = process_sdk_component_job_io(
-            built_inputs, [ComponentJobConstants.INPUT_PATTERN]
-        )
-        output_bindings, data_outputs = process_sdk_component_job_io(
-            built_outputs, [ComponentJobConstants.OUTPUT_PATTERN]
-        )
-
-        # parse input_bindings to JobInputLiteral(value=str(binding))
-        rest_inputs = {**input_bindings, **dataset_literal_inputs}
-        rest_inputs = to_rest_dataset_literal_inputs(rest_inputs)
-
-        rest_data_outputs = to_rest_data_outputs(data_outputs)
-        # parse output_bindings to {"value": binding, "type": "Literal"} since there's no model for it
-        rest_output_bindings = {
-            key: {"value": binding["value"], "type": "Literal"} for key, binding in output_bindings.items()
-        }
-
-        # convert rest io to dict
-        rest_dataset_literal_inputs = {name: val.as_dict() for name, val in rest_inputs.items()}
-        rest_data_outputs = {name: val.as_dict() for name, val in rest_data_outputs.items()}
-        rest_data_outputs.update(rest_output_bindings)
-
-        return dict(
-            type=NodeType.PARALLEL,
-            name=self.name,
-            display_name=self.display_name,
-            tags=self.tags,
-            computeId=self.compute,
-            componentId=self._get_component_id(),
-            inputs=rest_dataset_literal_inputs,
-            outputs=rest_data_outputs,
-            mini_batch_size=self.mini_batch_size,
-            task=self._parallel_attr_to_dict("task", ParallelTask),
-            input_data=self.input_data,
-            retry_settings=self._parallel_attr_to_dict("retry_settings", RetrySettings),
-            logging_level=self.logging_level,
-            resources=self.resources._to_rest_object().as_dict() if self.resources else None,
-            max_concurrency_per_instance=self.max_concurrency_per_instance,
-            error_threshold=self.error_threshold,
-            mini_batch_error_threshold=self.mini_batch_error_threshold,
-            environment_variables=self.environment_variables,
-            **self._get_attrs(),
+        rest_obj.update(
+            dict(
+                componentId=self._get_component_id(),
+                retry_settings=get_rest_dict(self.retry_settings),
+                logging_level=self.logging_level,
+                mini_batch_size=self.mini_batch_size,
+                resources=self.resources._to_rest_object().as_dict() if self.resources else None,
+            )
         )
 
     @classmethod
@@ -426,7 +403,7 @@ class Parallel(BaseNode):
         component_id = obj.pop("componentId", None)
         compute_id = obj.pop("computeId", None)
         obj["component"] = component_id
-        obj["compute"] = compute_id
+        obj["compute"] = get_resource_name_from_arm_id_safe(compute_id)
         return Parallel(**obj)
 
     def _build_inputs(self):
@@ -439,10 +416,10 @@ class Parallel(BaseNode):
         return built_inputs
 
     @classmethod
-    def _get_schema(cls):
+    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         from azure.ai.ml._schema.pipeline import ParallelSchema
 
-        return ParallelSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
+        return ParallelSchema(context=context)
 
     def __call__(self, *args, **kwargs) -> "Parallel":
         """Call Parallel as a function will return a new instance each time."""
@@ -458,6 +435,7 @@ class Parallel(BaseNode):
             for name, original_output in self.outputs.items():
                 # use setattr here to make sure owner of input won't change
                 setattr(node.outputs, name, original_output._data)
+            self._refine_optional_inputs_with_no_value(node, kwargs)
             # set default values: compute, environment_variables, outputs
             node._name = self.name
             node.compute = self.compute

@@ -101,7 +101,7 @@ def create_index(doc_folder, source_location, namespace):
         index_content = RST_EXTENSION_FOR_INDEX.format(package_rst)
 
     # write index
-    with open(content_destination, "w+") as f:
+    with open(content_destination, "w+", encoding='utf-8') as f:
         f.write(index_content)
 
 

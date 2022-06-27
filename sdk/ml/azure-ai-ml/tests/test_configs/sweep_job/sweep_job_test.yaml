@@ -1,0 +1,35 @@
+sampling_algorithm: random
+type: sweep
+experiment_name: sdk-cli-v2
+search_space:
+  lr:
+    type: uniform
+    min_value: 0.001
+    max_value: 0.1
+  conv_size:
+    type: choice
+    values: [2, 5, 7]
+  dropout_rate:
+    type: uniform
+    min_value: 0.1
+    max_value: 0.5
+objective:
+  primary_metric: accuracy
+  goal: maximize
+trial:
+  command: python ./sweep_script.py --lr {search_space.lr} --conv_size {search_space.conv_size} --dropout_rate ${{search_space.dropout_rate}}
+  code: ../python
+  environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+  environment_variables:
+    test_var1: "set"
+    AZUREML_COMPUTE_USE_COMMON_RUNTIME: "false"
+compute: azureml:testCompute
+limits:
+  max_total_trials: 1
+  max_concurrent_trials: 10
+  timeout: 5
+early_termination:
+  type: truncation_selection
+  evaluation_interval: 100
+  delay_evaluation: 200
+  truncation_percentage: 40

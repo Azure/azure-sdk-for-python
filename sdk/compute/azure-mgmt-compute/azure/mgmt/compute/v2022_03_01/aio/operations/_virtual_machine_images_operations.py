@@ -17,7 +17,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._virtual_machine_images_operations import build_get_request, build_list_offers_request, build_list_publishers_request, build_list_request, build_list_skus_request
+from ...operations._virtual_machine_images_operations import build_get_request, build_list_by_edge_zone_request, build_list_offers_request, build_list_publishers_request, build_list_request, build_list_skus_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -364,4 +364,62 @@ class VirtualMachineImagesOperations:
         return deserialized
 
     list_skus.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers/{offer}/skus"}  # type: ignore
+
+
+    @distributed_trace_async
+    async def list_by_edge_zone(
+        self,
+        location: str,
+        edge_zone: str,
+        **kwargs: Any
+    ) -> "_models.VmImagesInEdgeZoneListResult":
+        """Gets a list of all virtual machine image versions for the specified edge zone.
+
+        :param location: The name of a supported Azure region.
+        :type location: str
+        :param edge_zone: The name of the edge zone.
+        :type edge_zone: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: VmImagesInEdgeZoneListResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.compute.v2022_03_01.models.VmImagesInEdgeZoneListResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VmImagesInEdgeZoneListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
+
+        
+        request = build_list_by_edge_zone_request(
+            location=location,
+            edge_zone=edge_zone,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.list_by_edge_zone.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('VmImagesInEdgeZoneListResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    list_by_edge_zone.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/edgeZones/{edgeZone}/vmimages"}  # type: ignore
 

@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import pytest
 import os
 import six
 import logging
@@ -81,6 +82,10 @@ class FormRecognizerTest(AzureRecordedTestCase):
     multipage_vendor_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multi1.pdf"))
     selection_form_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/selection_mark_form.pdf"))
     multipage_receipt_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/multipage_receipt.pdf"))
+    invoice_docx = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/invoice.docx"))
+    w2_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/tax/sample_w2.png"))
+    html_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/simple_html.html"))
+    spreadsheet = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/spreadsheet_example.xlsx"))
 
     def get_oauth_endpoint(self):
         return os.getenv("FORMRECOGNIZER_TEST_ENDPOINT")
@@ -141,7 +146,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
                 self.assertFormLineTransformCorrect(line, expected_line)
 
             for selection_mark, expected_selection_mark in zip(page.selection_marks or [], expected_page.selection_marks or []):
-                self.assertDocumentSelectionMarkTransformCorrect(selection_mark, expected_selection_mark)
+                self.assertFormSelectionMarkHasValues(selection_mark, expected_page.page)
 
         if page_result:
             for page, expected_page in zip(form_pages, page_result):
@@ -161,6 +166,16 @@ class FormRecognizerTest(AzureRecordedTestCase):
         assert box[2].y == expected[5]
         assert box[3].x == expected[6]
         assert box[3].y == expected[7]
+
+    def assertBoundingPolygonTransformCorrect(self, polygon, expected):
+        if polygon is None and expected is None:
+            return
+
+        count = 0
+        for point in polygon:
+            assert point.x == expected[count]
+            assert point.y == expected[count+1]
+            count = count + 2
 
     def assertFormWordTransformCorrect(self, word, expected):
         assert word.text == expected.text
@@ -188,7 +203,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
             elif element_type == "line":
                 self.assertFormLineTransformCorrect(element, expected)
             elif element_type == "selectionMark":
-                self.assertDocumentSelectionMarkTransformCorrect(element, expected)
+                self.assertFormSelectionMarkHasValues(element, page_number)
 
     def assertFormFieldValueTransformCorrect(self, form_field, expected, read_results=None):
         if expected is None:
@@ -541,25 +556,10 @@ class FormRecognizerTest(AzureRecordedTestCase):
         if transformed_languages == [] and not raw_languages:
             return
         for lang, expected in zip(transformed_languages, raw_languages):
-            assert lang.language_code == expected.language_code
+            assert lang.locale == expected.locale
             for span, expected_span in zip(lang.spans or [], expected.spans or []):
                 self.assertSpanTransformCorrect(span, expected_span)
             assert lang.confidence == expected.confidence
-
-    def assertDocumentEntitiesTransformCorrect(self, transformed_entity, raw_entity, **kwargs):
-        if transformed_entity == [] and not raw_entity:
-            return
-        
-        for entity, expected in zip(transformed_entity, raw_entity):
-            assert entity.category == expected.category
-            assert entity.sub_category == expected.sub_category
-            assert entity.content == expected.content
-            assert entity.confidence == expected.confidence
-            
-            for span, expected_span in zip(entity.spans or [], expected.spans or []):
-                    self.assertSpanTransformCorrect(span, expected_span)
-                
-            self.assertBoundingRegionsTransformCorrect(entity.bounding_regions, expected.bounding_regions)
 
     def assertDocumentStylesTransformCorrect(self, transformed_styles, raw_styles, **kwargs):
         if transformed_styles == [] and not raw_styles:
@@ -597,6 +597,18 @@ class FormRecognizerTest(AzureRecordedTestCase):
             
             self.assertBoundingRegionsTransformCorrect(table.bounding_regions, expected.bounding_regions)
 
+    def assertDocumentParagraphsTransformCorrect(self, transformed_paragraphs, raw_paragraphs, **kwargs):
+        if transformed_paragraphs == [] and not raw_paragraphs:
+            return
+        for par, expected in zip(transformed_paragraphs, raw_paragraphs):
+            assert par.role == expected.role
+            assert par.content == expected.content
+
+            for span, expected_span in zip(par.spans or [], expected.spans or []):
+                self.assertSpanTransformCorrect(span, expected_span)
+            
+            self.assertBoundingRegionsTransformCorrect(par.bounding_regions, expected.bounding_regions)
+
     def assertDocumentTableCellTransformCorrect(self, transformed_cell, raw_cell, **kwargs):
         if raw_cell.kind:
             assert transformed_cell.kind == raw_cell.kind
@@ -621,8 +633,10 @@ class FormRecognizerTest(AzureRecordedTestCase):
 
     def assertDocumentPagesTransformCorrect(self, transformed_pages, raw_pages, **kwargs):
         for page, expected_page in zip(transformed_pages, raw_pages):
+            assert page.kind == expected_page.kind
             assert page.page_number == expected_page.page_number
-            assert page.angle == adjust_text_angle(expected_page.angle)
+            if page.angle:
+                assert page.angle == adjust_text_angle(expected_page.angle)
             assert page.width == expected_page.width
             assert page.height == expected_page.height
             assert page.unit == expected_page.unit
@@ -641,14 +655,14 @@ class FormRecognizerTest(AzureRecordedTestCase):
 
     def assertDocumentLineTransformCorrect(self, line, expected):
         assert line.content == expected.content
-        self.assertBoundingBoxTransformCorrect(line.bounding_box, expected.bounding_box)
+        self.assertBoundingBoxTransformCorrect(line.polygon, expected.polygon)
         for transformed_span, span in zip(line.spans or [], expected.spans or []):
             self.assertSpanTransformCorrect(transformed_span, span)
 
     def assertDocumentWordTransformCorrect(self, word, expected):
         assert word.kind == "word"
         assert word.content == expected.content
-        self.assertBoundingBoxTransformCorrect(word.bounding_box, expected.bounding_box)
+        self.assertBoundingPolygonTransformCorrect(word.polygon, expected.polygon)
         self.assertSpanTransformCorrect(word.span, expected.span)
 
     def assertSpanTransformCorrect(self, span, expected):
@@ -661,7 +675,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
         assert selection_mark.kind == "selectionMark"
         assert selection_mark.confidence == adjust_confidence(expected.confidence)
         assert selection_mark.state == expected.state
-        self.assertBoundingBoxTransformCorrect(selection_mark.bounding_box, expected.bounding_box)
+        self.assertBoundingPolygonTransformCorrect(selection_mark.polygon, expected.polygon)
 
     def assertDocumentFieldsTransformCorrect(self, document_fields, generated_fields):
         if generated_fields is None:
@@ -688,7 +702,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
             return
         for region, expected_region in zip(bounding_regions, expected):
             assert region.page_number == expected_region.page_number
-            self.assertBoundingBoxTransformCorrect(region.bounding_box, expected_region.bounding_box)
+            self.assertBoundingPolygonTransformCorrect(region.polygon, expected_region.polygon)
             
 
     def assertDocumentFieldValueTransformCorrect(self, document_field, expected):

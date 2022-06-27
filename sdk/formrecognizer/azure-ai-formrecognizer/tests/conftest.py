@@ -43,7 +43,11 @@ def add_sanitizers(test_proxy):
         value="redacted",
         regex="([0-9a-f-]{36})",
     )
-    
+    add_body_key_sanitizer(
+        json_path="targetResourceId",
+        value="/path/to/resource/id",
+        regex="^.*",
+    )
     add_body_key_sanitizer(
         json_path="copyAuthorization.accessToken",
         value="redacted",

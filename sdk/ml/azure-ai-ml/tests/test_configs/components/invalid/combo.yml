@@ -1,0 +1,10 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+name: atestcomponent
+version: 1
+code: ./non-existent/
+command: >-
+  echo ${{inputs.non_existent}} > ${{outputs.non_existent}}
+environment: azureml:name-only
+outputs:
+  output_path:
+    type: uri_folder

@@ -452,6 +452,20 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
 
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_upload_blob_with_dictionary_async(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = 'test_blob'
+        blob_data = {'hello': 'world'}
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Assert
+        with self.assertRaises(TypeError):
+            await blob.upload_blob(blob_data)
+
+    @BlobPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_with_generator_async(self, storage_account_name, storage_account_key):
         await self._setup(storage_account_name, storage_account_key)
 
@@ -1696,7 +1710,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         lease = await blob.acquire_lease(lease_duration=15)
         resp = await blob.upload_blob(b'hello 2', length=7, lease=lease)
-        self.sleep(15)
+        self.sleep(17)
 
         # Assert
         with self.assertRaises(HttpResponseError):

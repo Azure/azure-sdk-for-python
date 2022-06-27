@@ -4,14 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import pytest
-import asyncio
-
-import unittest
-from io import (
-    StringIO,
-    BytesIO,
-)
+from io import StringIO, BytesIO
 from json import loads
 from os import (
     urandom,
@@ -19,32 +12,29 @@ from os import (
     remove,
 )
 
+import pytest
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
-from multidict import CIMultiDict, CIMultiDictProxy
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from azure.storage.blob._shared.encryption import (
+from azure.storage.blob import BlobType
+from azure.storage.blob.aio import BlobServiceClient
+from azure.storage.blob._blob_client import _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
+from azure.storage.blob._encryption import (
     _dict_to_encryption_data,
     _validate_and_unwrap_cek,
     _generate_AES_CBC_cipher,
     _ERROR_OBJECT_INVALID,
 )
-from azure.storage.blob._blob_client import _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from cryptography.hazmat.primitives.padding import PKCS7
+from multidict import CIMultiDict, CIMultiDictProxy
 
-from azure.storage.blob import BlobType
-from azure.storage.blob.aio import (
-    BlobServiceClient,
-    ContainerClient,
-    BlobClient,
-)
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 from encryption_test_helper import (
     KeyWrapper,
     KeyResolver,
     RSAKeyWrapper,
 )
 from settings.testcase import BlobPreparer
-from devtools_testutils.storage.aio import AsyncStorageTestCase
+
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'encryption_container'
@@ -53,8 +43,6 @@ TEST_BLOB_PREFIXES = {'BlockBlob': 'encryption_block_blob',
                       'AppendBlob': 'foo'}
 _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = 'The require_encryption flag is set, but encryption is not supported' + \
                                            ' for this method.'
-
-
 # ------------------------------------------------------------------------------
 
 

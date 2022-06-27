@@ -6,9 +6,9 @@ sdk are tracked and telemetry is exported to application insights with the Azure
 """
 import os
 
-from opentelemetry import _metrics
-from opentelemetry.sdk._metrics import MeterProvider
-from opentelemetry.sdk._metrics.export import PeriodicExportingMetricReader
+from opentelemetry import metrics
+from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorMetricExporter
 
@@ -16,10 +16,10 @@ exporter = AzureMonitorMetricExporter.from_connection_string(
     os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
 reader = PeriodicExportingMetricReader(exporter, export_interval_millis=5000)
-_metrics.set_meter_provider(MeterProvider(metric_readers=[reader]))
+metrics.set_meter_provider(MeterProvider(metric_readers=[reader]))
 
 # Create a namespaced meter
-meter = _metrics.get_meter_provider().get_meter("sample")
+meter = metrics.get_meter_provider().get_meter("sample")
 
 # Create Counter instrument with the meter
 counter = meter.create_counter("counter")

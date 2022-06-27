@@ -60,7 +60,7 @@ class Operations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.OperationsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationsListResult"]
         error_map = {

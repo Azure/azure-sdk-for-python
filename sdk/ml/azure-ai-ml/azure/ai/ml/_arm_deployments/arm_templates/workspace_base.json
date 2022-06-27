@@ -347,7 +347,7 @@
                 "true"
             ],
             "metadata": {
-                "description": "Whether to allow an exising soft-deleted workspace to be recovered"
+                "description": "Whether to allow an existing soft-deleted workspace to be recovered"
             }
         },
         "encryption_cosmosdb_resourceid": {

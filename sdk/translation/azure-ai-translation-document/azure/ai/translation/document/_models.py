@@ -110,7 +110,7 @@ class TranslationTarget:
         for accessing target storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions)
         or a managed identity can be created and used to access documents in your storage account
         (see https://aka.ms/azsdk/documenttranslation/managed-identity).
-    :param str language_code: Required. Target Language Code. This is the language
+    :param str language: Required. Target Language Code. This is the language
         you want your documents to be translated to. See supported languages here:
         https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
     :keyword str category_id: Category / custom model ID for using custom translation.
@@ -124,7 +124,7 @@ class TranslationTarget:
         for accessing target storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions)
         or a managed identity can be created and used to access documents in your storage account
         (see https://aka.ms/azsdk/documenttranslation/managed-identity).
-    :ivar str language_code: Required. Target Language Code. This is the language
+    :ivar str language: Required. Target Language Code. This is the language
         you want your documents to be translated to. See supported languages here:
         https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
     :ivar str category_id: Category / custom model ID for using custom translation.
@@ -137,14 +137,14 @@ class TranslationTarget:
     def __init__(
         self,
         target_url: str,
-        language_code: str,
+        language: str,
         *,
         category_id: Optional[str] = None,
         glossaries: Optional[List[TranslationGlossary]] = None,
         storage_source: Optional[str] = None
     ) -> None:
         self.target_url = target_url
-        self.language_code = language_code
+        self.language = language
         self.category_id = category_id
         self.glossaries = glossaries
         self.storage_source = storage_source
@@ -153,7 +153,7 @@ class TranslationTarget:
         return _TargetInput(
             target_url=self.target_url,
             category=self.category_id,
-            language=self.language_code,
+            language=self.language,
             storage_source=self.storage_source,
             glossaries=TranslationGlossary._to_generated_list(  # pylint: disable=protected-access
                 self.glossaries
@@ -171,10 +171,10 @@ class TranslationTarget:
 
     def __repr__(self):
         return (
-            "TranslationTarget(target_url={}, language_code={}, "
+            "TranslationTarget(target_url={}, language={}, "
             "category_id={}, glossaries={}, storage_source={})".format(
                 self.target_url,
-                self.language_code,
+                self.language,
                 self.category_id,
                 self.glossaries.__repr__(),
                 self.storage_source,
@@ -196,7 +196,7 @@ class DocumentTranslationInput:
     :param targets: Required. Location of the destination for the output. This is a list of
         TranslationTargets. Note that a TranslationTarget is required for each language code specified.
     :type targets: list[~azure.ai.translation.document.TranslationTarget]
-    :keyword str source_language_code: Language code for the source documents.
+    :keyword str source_language: Language code for the source documents.
         If none is specified, the source language will be auto-detected for each document.
     :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
         translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
@@ -217,7 +217,7 @@ class DocumentTranslationInput:
     :ivar targets: Required. Location of the destination for the output. This is a list of
         TranslationTargets. Note that a TranslationTarget is required for each language code specified.
     :vartype targets: list[~azure.ai.translation.document.TranslationTarget]
-    :ivar str source_language_code: Language code for the source documents.
+    :ivar str source_language: Language code for the source documents.
         If none is specified, the source language will be auto-detected for each document.
     :ivar str prefix: A case-sensitive prefix string to filter documents in the source path for
         translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
@@ -236,7 +236,7 @@ class DocumentTranslationInput:
         source_url: str,
         targets: List[TranslationTarget],
         *,
-        source_language_code: Optional[str] = None,
+        source_language: Optional[str] = None,
         storage_type: Optional[Union[str, StorageInputType]] = None,
         storage_source: Optional[str] = None,
         prefix: Optional[str] = None,
@@ -244,7 +244,7 @@ class DocumentTranslationInput:
     ) -> None:
         self.source_url = source_url
         self.targets = targets
-        self.source_language_code = source_language_code
+        self.source_language = source_language
         self.storage_type = storage_type
         self.storage_source = storage_source
         self.prefix = prefix
@@ -255,7 +255,7 @@ class DocumentTranslationInput:
             source=_SourceInput(
                 source_url=self.source_url,
                 filter=_DocumentFilter(prefix=self.prefix, suffix=self.suffix),
-                language=self.source_language_code,
+                language=self.source_language,
                 storage_source=self.storage_source,
             ),
             targets=TranslationTarget._to_generated_list(  # pylint: disable=protected-access
@@ -274,11 +274,11 @@ class DocumentTranslationInput:
     def __repr__(self):
         return (
             "DocumentTranslationInput(source_url={}, targets={}, "
-            "source_language_code={}, storage_type={}, "
+            "source_language={}, storage_type={}, "
             "storage_source={}, prefix={}, suffix={})".format(
                 self.source_url,
                 self.targets.__repr__(),
-                self.source_language_code,
+                self.source_language,
                 self.storage_type.__repr__(),
                 self.storage_source,
                 self.prefix,
@@ -312,7 +312,7 @@ class TranslationStatus:  # pylint: disable=too-many-instance-attributes
     :ivar int documents_failed_count: Number of documents that failed translation.
     :ivar int documents_succeeded_count: Number of successful translations on documents.
     :ivar int documents_in_progress_count: Number of translations on documents in progress.
-    :ivar int documents_not_yet_started_count: Number of documents that have not yet started being translated.
+    :ivar int documents_not_started_count: Number of documents that have not started being translated.
     :ivar int documents_canceled_count: Number of documents that were canceled for translation.
     :ivar int total_characters_charged: Total characters charged across all documents within the translation operation.
     """
@@ -329,8 +329,8 @@ class TranslationStatus:  # pylint: disable=too-many-instance-attributes
         self.documents_in_progress_count = kwargs.get(
             "documents_in_progress_count", None
         )
-        self.documents_not_yet_started_count = kwargs.get(
-            "documents_not_yet_started_count", None
+        self.documents_not_started_count = kwargs.get(
+            "documents_not_started_count", None
         )
         self.documents_canceled_count = kwargs.get("documents_canceled_count", None)
         self.total_characters_charged = kwargs.get("total_characters_charged", None)
@@ -354,7 +354,7 @@ class TranslationStatus:  # pylint: disable=too-many-instance-attributes
             documents_failed_count=batch_status_details.summary.failed,
             documents_succeeded_count=batch_status_details.summary.success,
             documents_in_progress_count=batch_status_details.summary.in_progress,
-            documents_not_yet_started_count=batch_status_details.summary.not_yet_started,
+            documents_not_started_count=batch_status_details.summary.not_yet_started,
             documents_canceled_count=batch_status_details.summary.cancelled,
             total_characters_charged=batch_status_details.summary.total_character_charged,
         )
@@ -364,7 +364,7 @@ class TranslationStatus:  # pylint: disable=too-many-instance-attributes
             "TranslationStatus(id={}, created_on={}, "
             "last_updated_on={}, status={}, error={}, documents_total_count={}, "
             "documents_failed_count={}, documents_succeeded_count={}, "
-            "documents_in_progress_count={}, documents_not_yet_started_count={}, "
+            "documents_in_progress_count={}, documents_not_started_count={}, "
             "documents_canceled_count={}, total_characters_charged={})".format(
                 self.id,
                 self.created_on,
@@ -375,7 +375,7 @@ class TranslationStatus:  # pylint: disable=too-many-instance-attributes
                 self.documents_failed_count,
                 self.documents_succeeded_count,
                 self.documents_in_progress_count,
-                self.documents_not_yet_started_count,
+                self.documents_not_started_count,
                 self.documents_canceled_count,
                 self.total_characters_charged,
             )[:1024]
