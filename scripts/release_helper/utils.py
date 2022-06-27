@@ -59,13 +59,11 @@ def get_python_release_pipeline(output_folder):
     pipeline_client = PipelinesClient(base_url='https://dev.azure.com/azure-sdk',
                                       creds=BasicAuthentication(os.getenv('PIPELINE_TOKEN'), ''))
     pipelines = pipeline_client.list_pipelines(project='internal')
-    _LOG.info('**** list pipelines successfully')
     for pipeline in pipelines:
         if re.findall('^python - \w*$', pipeline.name):
             key = pipeline.name.replace('python - ', '')
             if key == output_folder:
                 pipeline_url = 'https://dev.azure.com/azure-sdk/internal/_build?definitionId={}'.format(pipeline.id)
-                _LOG.info(f'**** find pepeline.id: {pipeline.id} successfully')
                 return pipeline_url
     else:
         _LOG.info('Cannot find definitionId, Do not display pipeline_url')
@@ -102,7 +100,6 @@ def run_pipeline(issue_link, pipeline_url, spec_readme):
             }
         }
     }
-    _LOG.info(f'**** parameters: {paramaters}')
     # Fill in with your personal access token and org URL
     personal_access_token = os.getenv('PIPELINE_TOKEN')
     organization_url = 'https://dev.azure.com/azure-sdk'
