@@ -237,4 +237,3 @@ class MonitorIngestionClientOperationsMixin(MixinABC):
         if cls:
             return cls(pipeline_response, None, {})
 
-

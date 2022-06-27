@@ -9,9 +9,10 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List, Any, Optional
 from ._operations import MonitorIngestionClientOperationsMixin as GeneratedOps
 from ..._models import SendLogsStatus, SendLogsResult
+from ..._helpers import _create_gzip_requests
 
 class MonitorIngestionClientOperationsMixin(GeneratedOps):
-    async def upload(self, rule_id: str, stream: str, body: List[Any], *, max_concurrency: Optional[int] = None, **kwargs: Any) -> SendLogsResult:
+    async def upload(self, rule_id: str, stream_name: str, logs: List[Any], *, max_concurrency: Optional[int] = None, **kwargs: Any) -> SendLogsResult:
         """Ingestion API used to directly ingest data using Data Collection Rules.
 
         See error response code and error response message for more detail.
@@ -28,8 +29,15 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
         :rtype: SendLogsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        response = await super().send_logs(rule_id, stream, body, **kwargs)
-        return response
+        requests = _create_gzip_requests(logs)
+        results = []
+        status = SendLogsStatus.SUCCESS
+        for ind, request in enumerate(requests):
+            response = await super().upload(rule_id, stream=stream_name, body=request, content_encoding='gzip', **kwargs)
+            if response is not None:
+                results.append(ind)
+                status = SendLogsStatus.PARTIAL_FAILURE
+        return SendLogsResult(failed_logs_index=results, status=status)
 
 __all__: List[str] = ['MonitorIngestionClientOperationsMixin']  # Add all objects you want publicly available to users at this package level
 

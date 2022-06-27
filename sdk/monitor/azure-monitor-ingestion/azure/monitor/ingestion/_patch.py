@@ -30,7 +30,7 @@ class LogsIngestionClient(GeneratedClient):
         scope = 'https://monitor.azure.com//.default'
         super().__init__(
             endpoint, credential,
-            authentication_policy=BearerTokenCredentialPolicy(credential, scope),
+            authentication_policy=BearerTokenCredentialPolicy(credential, scope, **kwargs),
             **kwargs)
 
 __all__ = ['LogsIngestionClient']
