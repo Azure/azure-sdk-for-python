@@ -12,7 +12,7 @@ from itertools import islice
 import warnings
 from typing import AsyncIterator
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ServiceResponseError
 from .._shared.encryption import (
     adjust_blob_size_for_encryption,
     decrypt_blob,
@@ -98,6 +98,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
                 check_content_md5=self.validate_content
             )
             retry_active = True
+            retry_total = 3
             while retry_active:
                 try:
                     _, response = await self.client.download(
@@ -109,6 +110,13 @@ class _AsyncChunkDownloader(_ChunkDownloader):
                         **self.request_options
                     )
                     retry_active = False
+
+                except ServiceResponseError as error:
+                    retry_total -= 1
+                    if retry_total <= 0:
+                        raise ServiceResponseError(error, error=error)
+                    await asyncio.sleep(1)
+
                 except HttpResponseError as error:
                     process_storage_error(error)
 
@@ -316,6 +324,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             check_content_md5=self._validate_content)
 
         retry_active = True
+        retry_total = 3
         while retry_active:
             try:
                 location_mode, response = await self._clients.blob.download(
@@ -344,6 +353,12 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 else:
                     self.size = self._file_size
                 retry_active = False
+
+            except ServiceResponseError as error:
+                retry_total -= 1
+                if retry_total <= 0:
+                    raise error
+                await asyncio.sleep(1)
 
             except HttpResponseError as error:
                 if self._start_range is None and error.response.status_code == 416:
