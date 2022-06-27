@@ -79,7 +79,7 @@ from azure.confidentialledger_identity_service import ConfidentialLedgerIdentity
 from azure.identity import DefaultAzureCredential
 
 identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
-network_identity = identity_client.confidential_ledger_identity_service.get_ledger_identity(
+network_identity = identity_client.get_ledger_identity(
     ledger_id="my-ledger-id"
 )
 
@@ -278,7 +278,7 @@ from azure.confidentialledger import (
 from azure.confidentialledger_identity_service import ConfidentialLedgerIdentityServiceClient
 
 identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
-network_identity = identity_client.confidential_ledger_identity_service.get_ledger_identity(
+network_identity = identity_client.get_ledger_identity(
     ledger_id="my-ledger-id"
 )
 
@@ -342,7 +342,7 @@ from azure.confidentialledger_identity_service.aio import (
 )
 
 identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
-network_identity = identity_client.confidential_ledger_identity_service.get_ledger_identity(
+network_identity = identity_client.get_ledger_identity(
     ledger_id="my-ledger-id"
 )
 
@@ -384,7 +384,7 @@ from azure.confidentialledger_identity_service import ConfidentialLedgerIdentity
 from azure.identity import DefaultAzureCredential
 
 identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
-network_identity = identity_client.confidential_ledger_identity_service.get_ledger_identity(
+network_identity = identity_client.get_ledger_identity(
     ledger_id="my-ledger-id"
 )
 
@@ -429,7 +429,7 @@ handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
 identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
-network_identity = identity_client.confidential_ledger_identity_service.get_ledger_identity(
+network_identity = identity_client.get_ledger_identity(
     ledger_id="my-ledger-id"
 )
 

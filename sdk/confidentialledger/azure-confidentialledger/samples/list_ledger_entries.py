@@ -56,9 +56,9 @@ except KeyError:
 # i.e. https://<ledger id>.confidential-ledger.azure.com
 ledger_id = ledger_endpoint.replace("https://", "").split(".")[0]
 
-identity_service_client = ConfidentialLedgerIdentityServiceClient(ledger_endpoint)
+identity_service_client = ConfidentialLedgerIdentityServiceClient()
 ledger_certificate = (
-    identity_service_client.confidential_ledger_identity_service.get_ledger_identity(
+    identity_service_client.get_ledger_identity(
         ledger_id
     )
 )
