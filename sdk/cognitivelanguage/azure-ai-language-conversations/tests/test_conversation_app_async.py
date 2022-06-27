@@ -63,3 +63,51 @@ class ConversationAppAsyncTests(AsyncConversationTest):
             assert result["result"]["prediction"]["entities"][0]["category"] == 'Contact'
             assert result["result"]["prediction"]["entities"][0]["text"] == 'Carol'
             assert result["result"]["prediction"]["entities"][0]["confidenceScore"] > 0
+
+    @pytest.mark.live_test_only
+    @GlobalConversationAccountPreparer()
+    async def test_conversation_app_aad_auth(self, endpoint, conv_project_name, conv_deployment_name):
+        token = self.get_credential(ConversationAnalysisClient, is_async=True)
+        client = ConversationAnalysisClient(endpoint, token)
+        async with client:
+            query = "Send an email to Carol about the tomorrow's demo"
+            result = await client.analyze_conversation(
+                task={
+                    "kind": "Conversation",
+                    "analysisInput": {
+                        "conversationItem": {
+                            "participantId": "1",
+                            "id": "1",
+                            "modality": "text",
+                            "language": "en",
+                            "text": query
+                        },
+                        "isLoggingEnabled": False
+                    },
+                    "parameters": {
+                        "projectName": conv_project_name,
+                        "deploymentName": conv_deployment_name,
+                        "verbose": True
+                    }
+                }
+            )
+
+            # assert - main object
+            assert not result is None
+            assert result["kind"] == "ConversationResult"
+
+            # assert - prediction type
+            assert result["result"]["query"] == query
+            assert result["result"]["prediction"]["projectKind"] == 'Conversation'
+
+            # assert - top intent
+            assert result["result"]["prediction"]["topIntent"] == 'Setup'
+            assert len(result["result"]["prediction"]["intents"]) > 0
+            assert result["result"]["prediction"]["intents"][0]["category"] == 'Setup'
+            assert result["result"]["prediction"]["intents"][0]["confidenceScore"] > 0
+
+            # assert - entities
+            assert len(result["result"]["prediction"]["entities"]) > 0
+            assert result["result"]["prediction"]["entities"][0]["category"] == 'Contact'
+            assert result["result"]["prediction"]["entities"][0]["text"] == 'Carol'
+            assert result["result"]["prediction"]["entities"][0]["confidenceScore"] > 0

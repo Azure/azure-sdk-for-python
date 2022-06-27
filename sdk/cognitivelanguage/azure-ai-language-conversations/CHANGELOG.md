@@ -10,9 +10,10 @@
 * Client now uses python dictionaries for method parameters and results instead of classes.
 * Many input and result parameter name changes in `analyze_conversation()` method
 
-## 1.0.0 (Unreleased)
+## 1.0.0 (2022-06-27)
 
 ### Features Added
+* Added Azure Active Directory (AAD) authentication support
 * Added more resolution types for entities
 * Added support for authoring operations with `ConversationAuthoringClient` under the `azure.ai.language.conversations.authoring` namespace.
 
