@@ -58,7 +58,7 @@ from ._models import (
     AnalyzeHealthcareEntitiesAction,
 )
 
-from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller
+from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller, TextAnalyticsLROPoller
 
 __all__ = [
     "TextAnalyticsApiVersion",
@@ -114,6 +114,7 @@ __all__ = [
     "ClassifyDocumentResult",
     "ClassificationCategory",
     "AnalyzeHealthcareEntitiesAction",
+    "TextAnalyticsLROPoller",
 ]
 
 __version__ = VERSION
