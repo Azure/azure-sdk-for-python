@@ -1,7 +1,8 @@
 import os
+import asyncio
 import pytest
-from azure.monitor.ingestion import LogsIngestionClient
-from azure.identity import ClientSecretCredential
+from azure.monitor.ingestion.aio import LogsIngestionClient
+from azure.identity.aio import ClientSecretCredential
 
 def _credential():
     credential  = ClientSecretCredential(
@@ -11,9 +12,9 @@ def _credential():
     )
     return credential
 
-
 @pytest.mark.live_test_only
-def test_send_logs():
+@pytest.mark.asyncio
+async def test_send_logs():
     endpoint = os.environ['DATA_COLLECTION_ENDPOINT']
     credential = _credential()
 
@@ -33,4 +34,4 @@ def test_send_logs():
         }
         ]
 
-    response = client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
+    response = await client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)

@@ -14,4 +14,7 @@ stages:
         LOG_WORKSPACE_ID: $(azure-monitor-query-log-workspace)
         SECONDARY_WORKSPACE_ID: $(python-query-secondary-workspace-id)
         METRICS_RESOURCE_URI: $(azure-monitor-query-metrics-uri)
+        DATA_COLLECTION_ENDPOINT: $(azure-monitor-ingestion-dcr-endpoint)
+        LOGS_DCR_RULE_ID: $(azure-monitor-ingestion-dcr-ruleid)
+        LOGS_DCR_STREAM_NAME: $(azure-monitor-ingestion-dcr-stream-name)
         AZURE_TEST_RUN_LIVE: 'true'

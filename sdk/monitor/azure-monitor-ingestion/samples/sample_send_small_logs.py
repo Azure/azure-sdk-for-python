@@ -16,12 +16,12 @@ body = [
       {
         "Time": "2021-12-08T23:51:14.1104269Z",
         "Computer": "Computer1",
-        "AdditionalContext": "sabhyrav-2"
+        "AdditionalContext": "context-2"
       },
       {
         "Time": "2021-12-08T23:51:14.1104269Z",
         "Computer": "Computer2",
-        "AdditionalContext": "sabhyrav"
+        "AdditionalContext": "context"
       }
     ]
 
