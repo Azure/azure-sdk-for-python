@@ -1,0 +1,10 @@
+command: pip freeze
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+name: "test1"
+compute: "azureml:testCompute"
+distribution:
+  type: "TensorFlow"
+  process_count_per_instance: 2
+experiment_name: mfe-test1
+properties:
+   test_property: test_value

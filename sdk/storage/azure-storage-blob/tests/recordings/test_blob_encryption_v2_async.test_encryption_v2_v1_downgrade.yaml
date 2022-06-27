@@ -1,0 +1,239 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 14 Jun 2022 23:46:09 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer44d18ac?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 14 Jun 2022 23:46:08 GMT
+      etag: '"0x8DA4E600E7CFEAB"'
+      last-modified: Tue, 14 Jun 2022 23:46:09 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-08-06'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainer44d18ac?restype=container
+- request:
+    body: !!binary |
+      AAAAAAAAAAAAAAAAK4U773h1ze8JgR0UWNMBD+rM2An7ri9gDQg5n8feHmxd9wNiFgA=
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '50'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Tue, 14 Jun 2022 23:46:09 GMT
+      x-ms-meta-encryptiondata:
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "OPtkacDFh0R6jBv7GNIBCBda1mhNGEC8s07iahYa2aWR3oaWaE9qvkqwezTvAnQj",
+        "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm":
+        "AES_GCM_256"}, "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength":
+        12}, "KeyWrappingMetadata": {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode":
+        "FullBlob"}'
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer44d18ac/encryptionv2_blob44d18ac
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      content-md5: ihzpbJ6za8fSZOZ4EqFarA==
+      date: Tue, 14 Jun 2022 23:46:08 GMT
+      etag: '"0x8DA4E600E86E342"'
+      last-modified: Tue, 14 Jun 2022 23:46:09 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: m/5PA9txPAY=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-08-06'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainer44d18ac/encryptionv2_blob44d18ac
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 14 Jun 2022 23:46:09 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/utcontainer44d18ac/encryptionv2_blob44d18ac
+  response:
+    body:
+      string: ''
+    headers:
+      accept-ranges: bytes
+      content-length: '50'
+      content-md5: ihzpbJ6za8fSZOZ4EqFarA==
+      content-type: application/octet-stream
+      date: Tue, 14 Jun 2022 23:46:09 GMT
+      etag: '"0x8DA4E600E86E342"'
+      last-modified: Tue, 14 Jun 2022 23:46:09 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary: Origin
+      x-ms-access-tier: Hot
+      x-ms-access-tier-inferred: 'true'
+      x-ms-blob-type: BlockBlob
+      x-ms-creation-time: Tue, 14 Jun 2022 23:46:09 GMT
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-meta-encryptiondata: '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey":
+        "OPtkacDFh0R6jBv7GNIBCBda1mhNGEC8s07iahYa2aWR3oaWaE9qvkqwezTvAnQj", "Algorithm":
+        "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm": "AES_GCM_256"},
+        "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength": 12}, "KeyWrappingMetadata":
+        {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode": "FullBlob"}'
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2021-08-06'
+    status:
+      code: 200
+      message: OK
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainer44d18ac/encryptionv2_blob44d18ac
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 14 Jun 2022 23:46:09 GMT
+      x-ms-meta-encryptiondata:
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "OPtkacDFh0R6jBv7GNIBCBda1mhNGEC8s07iahYa2aWR3oaWaE9qvkqwezTvAnQj",
+        "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm":
+        "AES_CBC_256"}, "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength":
+        12}, "KeyWrappingMetadata": {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode":
+        "FullBlob", "ContentEncryptionIV": "SGGIgBkoIQAkRNhHp8uoVw=="}'
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer44d18ac/encryptionv2_blob44d18ac?comp=metadata
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 14 Jun 2022 23:46:09 GMT
+      etag: '"0x8DA4E600E997E27"'
+      last-modified: Tue, 14 Jun 2022 23:46:09 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-08-06'
+    status:
+      code: 200
+      message: OK
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainer44d18ac/encryptionv2_blob44d18ac?comp=metadata
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 14 Jun 2022 23:46:09 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/utcontainer44d18ac/encryptionv2_blob44d18ac
+  response:
+    body:
+      string: ''
+    headers:
+      accept-ranges: bytes
+      content-length: '50'
+      content-md5: ihzpbJ6za8fSZOZ4EqFarA==
+      content-type: application/octet-stream
+      date: Tue, 14 Jun 2022 23:46:09 GMT
+      etag: '"0x8DA4E600E997E27"'
+      last-modified: Tue, 14 Jun 2022 23:46:09 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary: Origin
+      x-ms-access-tier: Hot
+      x-ms-access-tier-inferred: 'true'
+      x-ms-blob-type: BlockBlob
+      x-ms-creation-time: Tue, 14 Jun 2022 23:46:09 GMT
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-meta-encryptiondata: '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey":
+        "OPtkacDFh0R6jBv7GNIBCBda1mhNGEC8s07iahYa2aWR3oaWaE9qvkqwezTvAnQj", "Algorithm":
+        "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm": "AES_CBC_256"},
+        "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength": 12}, "KeyWrappingMetadata":
+        {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode": "FullBlob", "ContentEncryptionIV":
+        "SGGIgBkoIQAkRNhHp8uoVw=="}'
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2021-08-06'
+    status:
+      code: 200
+      message: OK
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainer44d18ac/encryptionv2_blob44d18ac
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 14 Jun 2022 23:46:09 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2021-08-06'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/utcontainer44d18ac/encryptionv2_blob44d18ac
+  response:
+    body:
+      string: !!binary |
+        AAAAAAAAAAAAAAAAK4U773h1ze8JgR0UWNMBD+rM2An7ri9gDQg5n8feHmxd9wNiFgA=
+    headers:
+      accept-ranges: bytes
+      content-length: '50'
+      content-range: bytes 0-49/50
+      content-type: application/octet-stream
+      date: Tue, 14 Jun 2022 23:46:09 GMT
+      etag: '"0x8DA4E600E997E27"'
+      last-modified: Tue, 14 Jun 2022 23:46:09 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary: Origin
+      x-ms-blob-content-md5: ihzpbJ6za8fSZOZ4EqFarA==
+      x-ms-blob-type: BlockBlob
+      x-ms-creation-time: Tue, 14 Jun 2022 23:46:09 GMT
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-meta-encryptiondata: '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey":
+        "OPtkacDFh0R6jBv7GNIBCBda1mhNGEC8s07iahYa2aWR3oaWaE9qvkqwezTvAnQj", "Algorithm":
+        "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm": "AES_CBC_256"},
+        "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength": 12}, "KeyWrappingMetadata":
+        {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode": "FullBlob", "ContentEncryptionIV":
+        "SGGIgBkoIQAkRNhHp8uoVw=="}'
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2021-08-06'
+    status:
+      code: 206
+      message: Partial Content
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainer44d18ac/encryptionv2_blob44d18ac
+version: 1

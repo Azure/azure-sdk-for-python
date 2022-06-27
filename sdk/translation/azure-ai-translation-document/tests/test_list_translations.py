@@ -40,32 +40,6 @@ class TestListTranslations(DocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
-    def test_list_translations_with_pagination(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables", {})
-        # prepare data
-        operations_count = 5
-        docs_per_operation = 2
-        results_per_page = 2
-
-        # create some translations
-        self._begin_multiple_translations(client, operations_count, docs_per_operation=docs_per_operation, wait=False, variables=variables)
-
-        # list translations
-        submitted_translations_pages = client.list_translation_statuses(results_per_page=results_per_page).by_page()
-        assert submitted_translations_pages is not None
-
-        # iterate by page
-        for page in submitted_translations_pages:
-            page_translations = list(page)
-            assert len(page_translations) <=  results_per_page
-            for translation in page_translations:
-                self._validate_translations(translation)
-        return variables
-
-    @DocumentTranslationPreparer()
-    @DocumentTranslationClientPreparer()
-    @recorded_by_proxy
     def test_list_translations_with_skip(self, **kwargs):
         client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
@@ -234,7 +208,6 @@ class TestListTranslations(DocumentTranslationTest):
         # create some translations
         operations_count = 4
         docs_per_operation = 1
-        results_per_page = 2
         statuses = ["Succeeded"]
         skip = 1
 
@@ -253,14 +226,12 @@ class TestListTranslations(DocumentTranslationTest):
             order_by=["created_on asc"],
             # paging
             skip=skip,
-            results_per_page=results_per_page
         ).by_page()
 
         # check statuses
         current_time = datetime.min
         for page in submitted_translations:
             page_translations = list(page)
-            assert len(page_translations) <=  results_per_page # assert paging
             for translation in page_translations:
                 assert translation.id in successful_translation_ids
                 # assert ordering

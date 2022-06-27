@@ -41,8 +41,8 @@ CONTAINER_PREFIX = "eventhub.pysdk-"
 JWT_TOKEN_SCOPE = "https://eventhubs.azure.net//.default"
 MGMT_OPERATION = b"com.microsoft:eventhub"
 MGMT_PARTITION_OPERATION = b"com.microsoft:partition"
-MGMT_STATUS_CODE = b'status-code'
-MGMT_STATUS_DESC = b'status-description'
+MGMT_STATUS_CODE = b"status-code"
+MGMT_STATUS_DESC = b"status-description"
 USER_AGENT_PREFIX = "azsdk-python-eventhubs"
 
 NO_RETRY_ERRORS = (

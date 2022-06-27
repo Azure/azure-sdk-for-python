@@ -331,6 +331,8 @@ Defaults to `False`.
 Use the following keyword arguments when instantiating a client to configure encryption:
 
 * __require_encryption__ (bool): If set to True, will enforce that objects are encrypted and decrypt them.
+* __encryption_version__ (str): Specifies the version of encryption to use. Current options are `'2.0'` or `'1.0'` and
+the default value is `'1.0'`. Version 1.0 is deprecated, and it is **highly recommended** to use version 2.0.
 * __key_encryption_key__ (object): The user-provided key-encryption-key. The instance must implement the following methods:
     - `wrap_key(key)`--wraps the specified key using an algorithm of the user's choice.
     - `get_key_wrap_algorithm()`--returns the algorithm used to wrap the specified symmetric key.

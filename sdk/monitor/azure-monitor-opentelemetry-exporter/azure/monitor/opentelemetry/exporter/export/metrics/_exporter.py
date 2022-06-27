@@ -1,15 +1,19 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import logging
-from typing import Sequence, Any
 
-from opentelemetry.sdk._metrics.export import MetricExporter, MetricExportResult
-from opentelemetry.sdk._metrics.point import (
-    Gauge,
-    Histogram,
-    Metric,
-    Sum,
+from typing import Optional, Any
+
+from opentelemetry.sdk.metrics.export import (
+    DataPointT,
+    HistogramDataPoint,
+    MetricExporter,
+    MetricExportResult,
+    MetricsData as OTMetricsData,
+    NumberDataPoint,
 )
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.models import (
@@ -32,14 +36,32 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
     """Azure Monitor Metric exporter for OpenTelemetry."""
 
     def export(
-        self, metrics: Sequence[Metric], **kwargs: Any  # pylint: disable=unused-argument
+        self,
+        metrics_data: OTMetricsData,
+        timeout_millis: float = 10_000,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> MetricExportResult:
         """Exports a batch of metric data
         :param metrics: Open Telemetry Metric(s) to export.
-        :type metrics: Sequence[~opentelemetry._metrics.point.Metric]
-        :rtype: ~opentelemetry.sdk._metrics.export.MetricExportResult
+        :type metrics_data: Sequence[~opentelemetry.sdk.metrics._internal.point.MetricsData]
+        :rtype: ~opentelemetry.sdk.metrics.export.MetricExportResult
         """
-        envelopes = [self._metric_to_envelope(metric) for metric in metrics]
+        envelopes = []
+        if metrics_data is None:
+            return MetricExportResult.SUCCESS
+        for resource_metric in metrics_data.resource_metrics:
+            for scope_metric in resource_metric.scope_metrics:
+                for metric in scope_metric.metrics:
+                    for point in metric.data.data_points:
+                        if point is not None:
+                            envelopes.append(
+                                self._point_to_envelope(
+                                    point,
+                                    metric.name,
+                                    resource_metric.resource,
+                                    scope_metric.scope
+                                )
+                            )
         try:
             result = self._transmit(envelopes)
             if result == ExportResult.FAILED_RETRYABLE:
@@ -53,17 +75,25 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             _logger.exception("Exception occurred while exporting the data.")
             return _get_metric_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
-    def shutdown(self) -> None:
+    def shutdown(
+        self,
+        timeout_millis: float = 30_000,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
+    ) -> None:
         """Shuts down the exporter.
 
         Called when the SDK is shut down.
         """
         self.storage.close()
 
-    def _metric_to_envelope(self, metric: Metric) -> TelemetryItem:
-        if not metric:
-            return None
-        envelope = _convert_metric_to_envelope(metric)
+    def _point_to_envelope(
+        self,
+        point: DataPointT,
+        name: str,
+        resource: Optional[Resource] = None,
+        scope: Optional[InstrumentationScope] = None
+    ) -> TelemetryItem:
+        envelope = _convert_point_to_envelope(point, name, resource, scope)
         envelope.instrumentation_key = self._instrumentation_key
         return envelope
 
@@ -86,33 +116,39 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
 
 
 # pylint: disable=protected-access
-def _convert_metric_to_envelope(metric: Metric) -> TelemetryItem:
-    point = metric.point
+def _convert_point_to_envelope(
+    point: DataPointT,
+    name: str,
+    resource: Optional[Resource] = None,
+    scope: Optional[InstrumentationScope] = None  # pylint: disable=unused-argument
+) -> TelemetryItem:
     envelope = _utils._create_telemetry_item(point.time_unix_nano)
     envelope.name = "Microsoft.ApplicationInsights.Metric"
-    envelope.tags.update(_utils._populate_part_a_fields(metric.resource))
-    properties = metric.attributes
+    envelope.tags.update(_utils._populate_part_a_fields(resource))
     value = 0
-    # TODO
     count = 1
-    # min = None
-    # max = None
+    min_ = None
+    max_ = None
     # std_dev = None
 
-    if isinstance(point, (Gauge, Sum)):
+    if isinstance(point, NumberDataPoint):
         value = point.value
-    elif isinstance(point, Histogram):
-        value = sum(point.bucket_counts)
-        count = sum(point.bucket_counts)
+    elif isinstance(point, HistogramDataPoint):
+        value = point.sum
+        count = point.count
+        min_ = point.min
+        max_ = point.max
 
     data_point = MetricDataPoint(
-        name=metric.name,
+        name=name,
         value=value,
         data_point_type="Aggregation",
         count=count,
+        min=min_,
+        max=max_,
     )
     data = MetricsData(
-        properties=properties,
+        properties=dict(point.attributes),
         metrics=[data_point],
     )
 

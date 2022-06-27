@@ -1,0 +1,5 @@
+name: testDatasetfolder
+version: 1
+description: "this is a test dataset"
+paths:
+  - folder:  " "

@@ -1,4 +1,3 @@
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -55,10 +54,15 @@ class BodyReplacerProcessor(RecordingProcessor):
         def _replace_recursively(obj):
             if isinstance(obj, dict):
                 for key in obj:
+                    value = obj[key]
                     if key in self._keys:
                         obj[key] = self._replacement
+                    elif key == 'iceServers':
+                        _replace_recursively(value[0])
+                    elif key == 'urls':
+                        obj[key][0] = "turn.skype.com"
                     else:
-                        _replace_recursively(obj[key])
+                        _replace_recursively(value)
             elif isinstance(obj, list):
                 for i in obj:
                     _replace_recursively(i)
@@ -81,11 +85,11 @@ class CommunicationTestCase(AzureTestCase):
 
     def setUp(self):
         super(CommunicationTestCase, self).setUp()
-
         if self.is_playback():
             self.connection_str = "endpoint=https://sanitized.communication.azure.com/;accesskey=fake==="
         else:
-            self.connection_str = os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
+            self.connection_str = os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING') or \
+                                  os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
             endpoint, _ = parse_connection_str(self.connection_str)
             self._resource_name = endpoint.split(".")[0]
             self.scrubber.register_name_pair(self._resource_name, "sanitized")

@@ -1,9 +1,10 @@
 # Release History
 
-## 1.24.2
+## 1.24.2 (Unreleased)
 
 ### Bugs Fixed
 
+- Fixed the bug that azure-core could not be imported under Python 3.11.0b3  #24928
 - `ContentDecodePolicy` can now correctly deserialize more JSON bodies with different mime types #22410
 
 ## 1.24.1 (2022-06-01)

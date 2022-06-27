@@ -259,7 +259,7 @@ class StorageShareTest(StorageTestCase):
         # Assert
         with self.assertRaises(HttpResponseError):
             share_client.acquire_lease()
-        self.sleep(15)
+        self.sleep(17)
         share_client.acquire_lease()
 
     @FileSharePreparer()
