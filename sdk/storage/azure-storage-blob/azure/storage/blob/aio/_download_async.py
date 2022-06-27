@@ -5,24 +5,27 @@
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
 
-import asyncio
 import sys
+import warnings
 from io import BytesIO
 from itertools import islice
-import warnings
 from typing import AsyncIterator
 
+import asyncio
+
 from azure.core.exceptions import HttpResponseError, ServiceResponseError
-from .._shared.encryption import (
+
+from .._shared.request_handlers import validate_and_format_range_headers
+from .._shared.response_handlers import process_storage_error, parse_length_from_content_range
+from .._deserialize import deserialize_blob_properties, get_page_ranges_result
+from .._download import process_range_and_offset, _ChunkDownloader
+from .._encryption import (
     adjust_blob_size_for_encryption,
     decrypt_blob,
     is_encryption_v2,
     parse_encryption_data
 )
-from .._shared.request_handlers import validate_and_format_range_headers
-from .._shared.response_handlers import process_storage_error, parse_length_from_content_range
-from .._deserialize import deserialize_blob_properties, get_page_ranges_result
-from .._download import process_range_and_offset, _ChunkDownloader
+
 
 async def process_content(data, start_offset, end_offset, encryption):
     if data is None:

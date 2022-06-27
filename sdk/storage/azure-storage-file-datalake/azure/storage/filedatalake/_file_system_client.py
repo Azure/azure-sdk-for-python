@@ -304,9 +304,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         renamed_file_system = FileSystemClient(
                 "{}://{}".format(self.scheme, self.primary_hostname), file_system_name=new_name,
                 credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
-                _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
-                require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-                key_resolver_function=self.key_resolver_function)
+                _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts)
         return renamed_file_system
 
     def delete_file_system(self, **kwargs):
@@ -900,11 +898,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                                        credential=self._raw_credential,
                                        api_version=self.api_version,
                                        _configuration=self._config, _pipeline=_pipeline,
-                                       _hosts=self._hosts,
-                                       require_encryption=self.require_encryption,
-                                       key_encryption_key=self.key_encryption_key,
-                                       key_resolver_function=self.key_resolver_function
-                                       )
+                                       _hosts=self._hosts)
 
     def get_file_client(self, file_path  # type: Union[FileProperties, str]
                         ):
@@ -940,10 +934,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
             api_version=self.api_version,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
-            require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline)
 
     def list_deleted_paths(self, **kwargs):
         # type: (Any) -> ItemPaged[DeletedPathProperties]

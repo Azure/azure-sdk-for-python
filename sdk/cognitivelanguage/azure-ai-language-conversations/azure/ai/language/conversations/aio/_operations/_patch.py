@@ -13,6 +13,9 @@ from ._operations import ConversationAnalysisClientOperationsMixin as Conversati
 ConversationAnalysisClientOperationsMixinGenerated.analyze_conversation.__doc__ = \
     """Analyzes the input conversation utterance.
 
+    See https://docs.microsoft.com/rest/api/language/conversation-analysis-runtime/analyze-conversation
+    for more information.
+
     :param task: A single conversational task to execute. Is either a model type or a IO type.
      Required.
     :type task: JSON or IO

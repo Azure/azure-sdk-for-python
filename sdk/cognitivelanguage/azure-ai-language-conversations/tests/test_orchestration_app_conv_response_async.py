@@ -12,16 +12,15 @@ from testcase import GlobalConversationAccountPreparer
 from asynctestcase import AsyncConversationTest
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 
-
-class OrchestrationAppLuisResponseAsyncTests(AsyncConversationTest):
+class OrchestrationAppConvResponseAsyncTests(AsyncConversationTest):
 
     @GlobalConversationAccountPreparer()
-    async def test_orchestration_app_luis_response(self, endpoint, key, orch_project_name, orch_deployment_name):
+    async def test_orchestration_app_conv_response(self, endpoint, key, orch_project_name, orch_deployment_name):
 
         # analyze query
         client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
         async with client:
-            query = "Reserve a table for 2 at the Italian restaurant"
+            query = "Send an email to Carol about the tomorrow's demo"
             result = await client.analyze_conversation(
                 task={
                     "kind": "Conversation",
@@ -44,7 +43,7 @@ class OrchestrationAppLuisResponseAsyncTests(AsyncConversationTest):
             )
         
             # assert - main object
-            top_project = "RestaurantIntent"
+            top_project = "EmailIntent"
             assert not result is None
             assert result["kind"] == "ConversationResult"
             assert result["result"]["query"] == query
@@ -55,15 +54,17 @@ class OrchestrationAppLuisResponseAsyncTests(AsyncConversationTest):
             # assert - top matching project
             assert result["result"]["prediction"]["topIntent"] == top_project
             top_intent_object = result["result"]["prediction"]["intents"][top_project]
-            assert top_intent_object["targetProjectKind"] == "Luis"
+            assert top_intent_object["targetProjectKind"] == "Conversation"
             
             # assert intent and entities
-            top_intent = "Reserve"
-            luis_result = top_intent_object["result"]["prediction"]
-            assert luis_result["topIntent"] == top_intent
-            assert len(luis_result["intents"]) > 0
-            assert luis_result["intents"][top_intent]["score"] > 0
+            conversation_result = top_intent_object["result"]["prediction"]
+            assert conversation_result["topIntent"] == 'Send'
+            assert len(conversation_result["intents"]) > 0
+            assert conversation_result["intents"][0]["category"] == 'Send'
+            assert conversation_result["intents"][0]["confidenceScore"] > 0
             
             # assert - entities
-            assert len(luis_result["entities"]) > 0
-
+            assert len(conversation_result["entities"]) > 0
+            assert conversation_result["entities"][0]["category"] == 'Contact'
+            assert conversation_result["entities"][0]["text"] == 'Carol'
+            assert conversation_result["entities"][0]["confidenceScore"] > 0
