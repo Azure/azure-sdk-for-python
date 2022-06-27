@@ -312,6 +312,9 @@ class Common:
         for assignee in self.assignee_candidates:
             self.request_repo_dict[assignee] = Github(assignee_token).get_repo(REQUEST_REPO)
 
+    def log_error(self, message: str) -> None:
+        _LOG.error(message)
+
     def output(self):
         with open(self.file_out_name, 'w') as file_out:
             file_out.write('| issue | author | package | assignee | bot advice | created date of issue | target release date | date from target |\n')
@@ -322,7 +325,7 @@ class Common:
                         item_status = Common.output_md(item)
                         file_out.write(item_status)
                 except Exception as e:
-                    _LOG.error(f'Error happened during output result of handled issue {item.issue_package.issue.number}: {e}')
+                    self.log_error(f'Error happened during output result of handled issue {item.issue_package.issue.number}: {e}')
 
     @staticmethod
     def output_md(item: IssueProcess):
@@ -344,17 +347,19 @@ class Common:
             item.print_date_from_target_date()
         )
 
-    def run(self):
-        items = []
+    def get_result(self):
         for item in self.issues_package:
-            issue = self.issue_process_function(item, self.request_repo_dict, self.assignee_candidates, self.language_owner)
+            issue = self.issue_process_function(item, self.request_repo_dict, self.assignee_candidates,
+                                                self.language_owner)
             try:
                 issue.run()
                 self.result.append(issue)
             except Exception as e:
-                _LOG.error(f'Error happened during handling issue {item.issue.number}: {e}')
-        self.output()
+                self.log_error(f'Error happened during handling issue {item.issue.number}: {e}')
 
+    def run(self):
+        self.get_result()
+        self.output()
 
 def common_process(issues: List[IssuePackage]):
     instance = Common(issues,  _LANGUAGE_OWNER)

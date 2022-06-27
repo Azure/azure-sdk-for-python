@@ -1,4 +1,5 @@
 from datetime import datetime
+from collections import Counter
 import re
 from typing import Any, List, Dict, Set
 
@@ -137,6 +138,17 @@ class Python(Common):
         super(Python, self).__init__(issues, language_owner)
         self.file_out_name = 'release_python_status.md'
         self.issue_process_function = IssueProcessPython
+
+    def duplicated_policy(self):
+        count = Counter([item.package_name for item in self.result])
+        for item in self.result:
+            if count[item.package_name] > 1:
+                item.bot_advice.insert(0, 'duplicated issue  <br>')
+
+    def run(self):
+        self.get_result()
+        self.duplicated_policy()
+        self.output()
 
 
 def python_process(issues: List[Any]):
