@@ -81,7 +81,7 @@ Authentication with AAD requires some initial setup:
 
 - [Install azure-identity][install_azure_identity]
 - [Register a new AAD application][register_aad_app]
-- [Grant access][grant_role_access] to the Language service by assigning the "Cognitive Services User" role to your service principal.
+- [Grant access][grant_role_access] to the Language service by assigning the "Cognitive Services Language Reader" role to your service principal.
 
 After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
 As an example, [DefaultAzureCredential][default_azure_credential]
