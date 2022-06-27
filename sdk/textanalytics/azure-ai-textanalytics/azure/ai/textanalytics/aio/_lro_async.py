@@ -449,7 +449,7 @@ class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
 
 
 class AsyncTextAnalyticsLROPoller(AsyncLROPoller[PollingReturnType]):
-    def polling_method(self) -> AsyncAnalyzeActionsLROPollingMethod:
+    def polling_method(self) -> AsyncAnalyzeActionsLROPollingMethod:  # type: ignore
         """Return the polling method associated to this poller."""
         return self._polling_method  # type: ignore
 
@@ -485,5 +485,5 @@ class AsyncTextAnalyticsLROPoller(AsyncLROPoller[PollingReturnType]):
             client,
             initial_response,
             functools.partial(deserialization_callback, initial_response),
-            polling_method
+            polling_method  # type: ignore
         )

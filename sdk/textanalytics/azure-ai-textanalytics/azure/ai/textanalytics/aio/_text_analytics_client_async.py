@@ -813,6 +813,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         except HttpResponseError as error:
             return process_http_response_error(error)
 
+    # pylint: disable=unused-argument
     def _healthcare_result_callback(
         self, raw_response, deserialized, doc_id_order, task_id_order=None, show_stats=False, bespoke=False
     ):
@@ -1295,6 +1296,66 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         deployment_name: str,
         **kwargs: Any,
     ) -> AsyncTextAnalyticsLROPoller[AsyncItemPaged[Union[RecognizeCustomEntitiesResult, DocumentError]]]:
+        """Start a long-running custom named entity recognition operation.
+
+        For information on regional support of custom features and how to train a model to
+        recognize custom entities, see https://aka.ms/azsdk/textanalytics/customentityrecognition
+
+        :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
+        :param str project_name: Required. This field indicates the project name for the model.
+        :param str deployment_name: This field indicates the deployment name for the model.
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
+            entire batch. For example, use "en" for English; "es" for Spanish etc.
+            If not set, uses "en" for English as default. Per-document language will
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Language API.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+            logged on the service side for troubleshooting. By default, the Language service logs your
+            input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+            the service's natural language processing functions. Setting this parameter to true,
+            disables input logging and may limit our ability to remediate issues that occur. Please see
+            Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+            additional details, and Microsoft Responsible AI principles at
+            https://www.microsoft.com/ai/responsible-ai.
+        :keyword str string_index_type: Specifies the method used to interpret string offsets.
+            `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+            you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
+            see https://aka.ms/text-analytics-offsets
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token:
+            Call `continuation_token()` on the poller object to save the long-running operation (LRO)
+            state into an opaque token. Pass the value as the `continuation_token` keyword argument
+            to restart the LRO from a saved state.
+        :keyword str display_name: An optional display name to set for the requested analysis.
+        :return: An instance of an AsyncTextAnalyticsLROPoller. Call `result()` on the this
+            object to return a heterogeneous pageable of
+            :class:`~azure.ai.textanalytics.RecognizeCustomEntitiesResult` and
+            :class:`~azure.ai.textanalytics.DocumentError`.
+        :rtype:
+            ~azure.ai.textanalytics.AsyncTextAnalyticsLROPoller[~azure.core.async_paging.AsyncItemPaged[
+            ~azure.ai.textanalytics.RecognizeCustomEntitiesResult or ~azure.ai.textanalytics.DocumentError]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: 2022-05-01
+            The *begin_recognize_custom_entities* client method.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_recognize_custom_entities_async.py
+                :start-after: [START recognize_custom_entities_async]
+                :end-before: [END recognize_custom_entities_async]
+                :language: python
+                :dedent: 4
+                :caption: Recognize custom entities in a batch of documents.
+        """
 
         continuation_token = kwargs.pop("continuation_token", None)
         string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
@@ -1305,7 +1366,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             return cast(
                 AsyncTextAnalyticsLROPoller[AsyncItemPaged[Union[RecognizeCustomEntitiesResult, DocumentError]]],
                 _get_result_from_continuation_token(
-                    self._client._client,
+                    self._client._client,  # pylint: disable=protected-access
                     continuation_token,
                     AsyncTextAnalyticsLROPoller,
                     AsyncAnalyzeActionsLROPollingMethod(
