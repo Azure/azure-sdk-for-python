@@ -20,7 +20,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 27 Jun 2022 17:19:29 GMT
+      - Mon, 27 Jun 2022 18:44:55 GMT
       server:
       - Kestrel
       transfer-encoding:
@@ -30,7 +30,7 @@ interactions:
       x-ms-image-tag:
       - 1.0.01999.541-e02672ed644876c9cf10c5494e0203a0dc9da070
       x-ms-machinename:
-      - identityservice-6499ffbf45-g48zc
+      - identityservice-6499ffbf45-88b57
     status:
       code: 200
       message: OK
@@ -53,11 +53,11 @@ interactions:
     headers:
       content-length: '78'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.10828'
+      x-ms-ccf-transaction-id: '2.21530'
     status:
       code: 200
       message: OK
-    url: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
 - request:
     body: null
     headers:
@@ -73,11 +73,11 @@ interactions:
     headers:
       content-length: '78'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.10828'
+      x-ms-ccf-transaction-id: '2.21531'
     status:
       code: 200
       message: OK
-    url: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
 - request:
     body: null
     headers:
@@ -92,11 +92,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      x-ms-ccf-transaction-id: '2.10830'
+      x-ms-ccf-transaction-id: '2.21532'
     status:
       code: 204
       message: No Content
-    url: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
 - request:
     body: '{"assignedRole": "Reader"}'
     headers:
@@ -116,11 +116,11 @@ interactions:
     headers:
       content-length: '73'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.10832'
+      x-ms-ccf-transaction-id: '2.21533'
     status:
       code: 200
       message: OK
-    url: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
 - request:
     body: null
     headers:
@@ -136,11 +136,11 @@ interactions:
     headers:
       content-length: '73'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.10832'
+      x-ms-ccf-transaction-id: '2.21534'
     status:
       code: 200
       message: OK
-    url: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
 - request:
     body: null
     headers:
@@ -155,11 +155,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      x-ms-ccf-transaction-id: '2.10834'
+      x-ms-ccf-transaction-id: '2.21535'
     status:
       code: 204
       message: No Content
-    url: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
 - request:
     body: '{"assignedRole": "Contributor"}'
     headers:
@@ -179,11 +179,11 @@ interactions:
     headers:
       content-length: '137'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.10835'
+      x-ms-ccf-transaction-id: '2.21537'
     status:
       code: 200
       message: OK
-    url: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
 - request:
     body: null
     headers:
@@ -199,11 +199,11 @@ interactions:
     headers:
       content-length: '137'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.10836'
+      x-ms-ccf-transaction-id: '2.21537'
     status:
       code: 200
       message: OK
-    url: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
 - request:
     body: null
     headers:
@@ -218,11 +218,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      x-ms-ccf-transaction-id: '2.10837'
+      x-ms-ccf-transaction-id: '2.21539'
     status:
       code: 204
       message: No Content
-    url: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
 - request:
     body: '{"assignedRole": "Reader"}'
     headers:
@@ -242,11 +242,11 @@ interactions:
     headers:
       content-length: '132'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.10839'
+      x-ms-ccf-transaction-id: '2.21540'
     status:
       code: 200
       message: OK
-    url: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
 - request:
     body: null
     headers:
@@ -262,11 +262,11 @@ interactions:
     headers:
       content-length: '132'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.10839'
+      x-ms-ccf-transaction-id: '2.21541'
     status:
       code: 200
       message: OK
-    url: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
 - request:
     body: null
     headers:
@@ -281,9 +281,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      x-ms-ccf-transaction-id: '2.10841'
+      x-ms-ccf-transaction-id: '2.21542'
     status:
       code: 204
       message: No Content
-    url: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
 version: 1

@@ -20,7 +20,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 27 Jun 2022 17:19:44 GMT
+      - Mon, 27 Jun 2022 18:45:10 GMT
       server:
       - Kestrel
       transfer-encoding:
@@ -30,7 +30,7 @@ interactions:
       x-ms-image-tag:
       - 1.0.01999.541-e02672ed644876c9cf10c5494e0203a0dc9da070
       x-ms-machinename:
-      - identityservice-6499ffbf45-88b57
+      - identityservice-6499ffbf45-jh62d
     status:
       code: 200
       message: OK
@@ -50,11 +50,11 @@ interactions:
     headers:
       content-length: '856'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.10857'
+      x-ms-ccf-transaction-id: '2.21559'
     status:
       code: 200
       message: OK
-    url: https://fake.confidential-ledger.azure.com/app/governance/members?api-version=2022-05-13
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/governance/members?api-version=2022-05-13
 - request:
     body: null
     headers:
@@ -484,11 +484,11 @@ interactions:
     headers:
       content-length: '45692'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.10857'
+      x-ms-ccf-transaction-id: '2.21559'
     status:
       code: 200
       message: OK
-    url: https://fake.confidential-ledger.azure.com/app/governance/constitution?api-version=2022-05-13
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/governance/constitution?api-version=2022-05-13
 - request:
     body: null
     headers:
@@ -504,9 +504,9 @@ interactions:
     headers:
       content-length: '28962'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.10857'
+      x-ms-ccf-transaction-id: '2.21559'
     status:
       code: 200
       message: OK
-    url: https://fake.confidential-ledger.azure.com/app/enclaveQuotes?api-version=2022-05-13
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/enclaveQuotes?api-version=2022-05-13
 version: 1

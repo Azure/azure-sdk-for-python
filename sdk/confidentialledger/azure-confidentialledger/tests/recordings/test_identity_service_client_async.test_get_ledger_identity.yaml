@@ -14,14 +14,14 @@ interactions:
         CERTIFICATE-----\n","ledgerId":"fake"}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Mon, 27 Jun 2022 17:19:50 GMT
+      date: Mon, 27 Jun 2022 18:45:16 GMT
       server: Kestrel
       transfer-encoding: chunked
       x-ms-image-digest: sha256:7a76c9097c3450987501c23e71a3e16b89f727059ab6de727807ac97b808810e
       x-ms-image-tag: 1.0.01999.541-e02672ed644876c9cf10c5494e0203a0dc9da070
-      x-ms-machinename: identityservice-6499ffbf45-jh62d
+      x-ms-machinename: identityservice-6499ffbf45-88b57
     status:
       code: 200
       message: OK
-    url: https://identity.confidential-ledger.core.azure.com/ledgerIdentity/fake?api-version=2022-05-13
+    url: https://identity.confidential-ledger.core.azure.com/ledgerIdentity/lyshi-python-sdk?api-version=2022-05-13
 version: 1

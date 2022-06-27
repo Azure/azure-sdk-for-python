@@ -20,7 +20,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 27 Jun 2022 16:42:12 GMT
+      - Mon, 27 Jun 2022 18:07:25 GMT
       server:
       - Kestrel
       transfer-encoding:
@@ -30,7 +30,7 @@ interactions:
       x-ms-image-tag:
       - 1.0.01999.541-e02672ed644876c9cf10c5494e0203a0dc9da070
       x-ms-machinename:
-      - identityservice-6499ffbf45-88b57
+      - identityservice-6499ffbf45-g48zc
     status:
       code: 200
       message: OK
@@ -57,7 +57,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.4795'
+      - '2.15493'
     status:
       code: 200
       message: OK
@@ -497,7 +497,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.4795'
+      - '2.15493'
     status:
       code: 200
       message: OK
@@ -523,7 +523,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.4795'
+      - '2.15493'
     status:
       code: 200
       message: OK

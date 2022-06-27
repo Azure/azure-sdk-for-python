@@ -20,7 +20,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 27 Jun 2022 17:19:47 GMT
+      - Mon, 27 Jun 2022 18:45:13 GMT
       server:
       - Kestrel
       transfer-encoding:
@@ -30,7 +30,7 @@ interactions:
       x-ms-image-tag:
       - 1.0.01999.541-e02672ed644876c9cf10c5494e0203a0dc9da070
       x-ms-machinename:
-      - identityservice-6499ffbf45-88b57
+      - identityservice-6499ffbf45-g48zc
     status:
       code: 200
       message: OK
@@ -53,11 +53,11 @@ interactions:
     headers:
       content-length: '139'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.10858'
+      x-ms-ccf-transaction-id: '2.21560'
     status:
       code: 200
       message: OK
-    url: https://fake.confidential-ledger.azure.com/app/users/5F:23:3D:26:E2:28:88:9C:06:E0:88:21:FA:C7:B2:9A:F8:81:30:6B:F9:15:41:F2:34:05:05:44:4C:AD:5A:B5?api-version=2022-05-13
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/users/5F:23:3D:26:E2:28:88:9C:06:E0:88:21:FA:C7:B2:9A:F8:81:30:6B:F9:15:41:F2:34:05:05:44:4C:AD:5A:B5?api-version=2022-05-13
 - request:
     body: null
     headers:
@@ -74,11 +74,11 @@ interactions:
     headers:
       content-length: '856'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.10858'
+      x-ms-ccf-transaction-id: '2.21561'
     status:
       code: 200
       message: OK
-    url: https://fake.confidential-ledger.azure.com/app/governance/members?api-version=2022-05-13
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/governance/members?api-version=2022-05-13
 - request:
     body: null
     headers:
@@ -508,11 +508,11 @@ interactions:
     headers:
       content-length: '45692'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.10859'
+      x-ms-ccf-transaction-id: '2.21561'
     status:
       code: 200
       message: OK
-    url: https://fake.confidential-ledger.azure.com/app/governance/constitution?api-version=2022-05-13
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/governance/constitution?api-version=2022-05-13
 - request:
     body: null
     headers:
@@ -528,9 +528,9 @@ interactions:
     headers:
       content-length: '28962'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.10859'
+      x-ms-ccf-transaction-id: '2.21561'
     status:
       code: 200
       message: OK
-    url: https://fake.confidential-ledger.azure.com/app/enclaveQuotes?api-version=2022-05-13
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/enclaveQuotes?api-version=2022-05-13
 version: 1
