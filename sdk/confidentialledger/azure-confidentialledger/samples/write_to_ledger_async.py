@@ -81,6 +81,7 @@ async def main():
             ledger_certificate_path=ledger_certificate_file.name,
         )
 
+        # Using the async objects as a context manager ensures they are properly closed after use.
         async with credential:
             async with ledger_client:
                 # Write a ledger entry.
@@ -164,7 +165,8 @@ async def main():
                     print("Request failed: {}".format(e.response.json()))
                     raise
 
-                # Get a receipt for a  ledger entry.
+                # Get a receipt for a ledger entry.
+                # A receipt can be retrieved for any transaction id to provide cryptographic proof of the contents of the transaction.
                 try:
                     get_receipt_poller = await ledger_client.begin_get_receipt(
                         transaction_id

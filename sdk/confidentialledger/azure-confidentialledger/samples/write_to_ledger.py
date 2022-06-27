@@ -140,7 +140,8 @@ with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
         print("Request failed: {}".format(e.response.json()))
         raise
 
-    # Get a receipt for a  ledger entry.
+    # Get a receipt for a ledger entry.
+    # A receipt can be retrieved for any transaction id to provide cryptographic proof of the contents of the transaction.
     try:
         get_receipt_poller = ledger_client.begin_get_receipt(transaction_id)
         get_receipt_result = get_receipt_poller.result()

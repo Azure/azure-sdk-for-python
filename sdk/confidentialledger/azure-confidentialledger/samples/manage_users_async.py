@@ -86,6 +86,7 @@ async def main():
             ledger_certificate_path=ledger_certificate_file.name,
         )
 
+        # Using the async objects as a context manager ensures they are properly closed after use.
         async with credential:
             async with ledger_client:
                 try:
