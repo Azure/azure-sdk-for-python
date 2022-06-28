@@ -26,10 +26,10 @@ license-header: MICROSOFT_MIT_NO_VERSION
 clear-output-folder: true
 no-namespace-folders: true
 python: true
-tag: release_2022_05_01
+tag: release_2022_05_15_preview
 openapi-type: data-plane
 version-tolerant: true
-package-version: 1.0.0
+package-version: 1.1.0b2
 add-credential: true
 credential-scopes: https://cognitiveservices.azure.com/.default
 black: true
@@ -41,26 +41,26 @@ modelerfour:
 
 ```yaml
 batch:
-  - tag: release_runtime_1_0
-  - tag: release_authoring_1_0
+  - tag: release_runtime_1_1_preview
+  - tag: release_authoring_1_1_preview
 ```
 
 ## Runtime
 
-These settings apply only when `--tag=release_runtime_1_0` is specified on the command line.
+These settings apply only when `--tag=release_runtime_1_1_preview` is specified on the command line.
 
-```yaml $(tag) == 'release_runtime_1_0'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/Language/stable/2022-05-01/analyzeconversations.json
+```yaml $(tag) == 'release_runtime_1_1_preview'
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/Language/preview/2022-05-15-preview/analyzeconversations.json
 output-folder: ../azure/ai/language/conversations
 title: ConversationAnalysisClient
 ```
 
 ## Authoring
 
-These settings apply only when `--tag=release_authoring_1_0` is specified on the command line.
+These settings apply only when `--tag=release_authoring_1_1_preview` is specified on the command line.
 
-```yaml $(tag) == 'release_authoring_1_0'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/Language/stable/2022-05-01/analyzeconversations-authoring.json
+```yaml $(tag) == 'release_authoring_1_1_preview'
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/Language/preview/2022-05-15-preview/analyzeconversations-authoring.json
 output-folder: ../azure/ai/language/conversations/authoring
 title: ConversationAuthoringClient
 ```
@@ -131,7 +131,7 @@ directive:
 
 ### Runtime API Directives
 
-```yaml $(tag) == 'release_runtime_1_0'
+```yaml $(tag) == 'release_runtime_1_1_preview'
 # Rename Runtime client operation
 directive:
     - from: swagger-document
@@ -140,7 +140,34 @@ directive:
           $["operationId"] = "AnalyzeConversation";
 ```
 
-```yaml $(tag) == 'release_runtime_1_0'
+```yaml $(tag) == 'release_runtime_1_1_preview'
+# Rename Runtime client async operation
+directive:
+    - from: swagger-document
+      where: $["paths"]["/analyze-conversations/jobs"]["post"]
+      transform: >
+          $["operationId"] = "ConversationAnalysis";
+```
+
+```yaml $(tag) == 'release_runtime_1_1_preview'
+# Rename Runtime client get job status operation
+directive:
+    - from: swagger-document
+      where: $["paths"]["/analyze-conversations/jobs/{jobId}"]["get"]
+      transform: >
+          $["operationId"] = "GetConversationJobStatus";
+```
+
+```yaml $(tag) == 'release_runtime_1_1_preview'
+# Rename Runtime client cancel job operation
+directive:
+    - from: swagger-document
+      where: $["paths"]["/analyze-conversations/jobs/{jobId}:cancel"]["post"]
+      transform: >
+          $["operationId"] = "CancelConversationJob";
+```
+
+```yaml $(tag) == 'release_runtime_1_1_preview'
 # Rename analyze_conversation `body` to `tasks`
 directive:
     - from: swagger-document
@@ -149,10 +176,32 @@ directive:
         $["parameters"][1]["x-ms-client-name"] = "task";
 ```
 
+```yaml $(tag) == 'release_runtime_1_1_preview'
+# Rename begin_conversation_analysis `body` to `tasks`
+directive:
+    - from: swagger-document
+      where: $["paths"]["/analyze-conversations/jobs"]["post"]
+      transform: >
+        $["parameters"][1]["x-ms-client-name"] = "task";
+```
+
+```yaml $(tag) == 'release_runtime_1_1_preview'
+# Give analyze job LRO a return type
+directive:
+  - from: swagger-document
+    where: '$.paths["/analyze-conversations/jobs"].post'
+    transform: >
+      $["responses"]["200"] = {
+          "description": "dummy schema to get poller response when calling .result()",
+          "schema": {
+              "$ref": "#/definitions/AnalyzeConversationJobState"
+          }
+      };
+```
 
 ### Authoring API Directives
 
-```yaml $(tag) == 'release_authoring_1_0'
+```yaml $(tag) == 'release_authoring_1_1_preview'
 # Give LROs return types
 directive:
   - where-operation: ConversationalAnalysisAuthoring_CancelTrainingJob
@@ -221,7 +270,7 @@ directive:
       };
 ```
 
-```yaml $(tag) == 'release_authoring_1_0'
+```yaml $(tag) == 'release_authoring_1_1_preview'
 # Rename `body` param for operations
 directive:
   - where-operation: ConversationalAnalysisAuthoring_DeployProject
@@ -241,7 +290,7 @@ directive:
         $.parameters[1]["x-ms-client-name"] = "project";
 ```
 
-```yaml $(tag) == 'release_authoring_1_0'
+```yaml $(tag) == 'release_authoring_1_1_preview'
 # Rename Authoring client operations
 directive:
   - rename-operation:
