@@ -9,8 +9,9 @@ param ledgerName string = uniqueString(resourceGroup().id)
 @description('The client OID to grant access to test resources.')
 param testApplicationOid string
 
-@description('The location of the resource. By default, this is the same as the resource group.')
-param location string = resourceGroup().location
+@description('The location of the resource. Currently, not all regions are supported.')
+param location string = 'eastus'
+// Explicitly set a region due to regional restrictions e.g. ACL is not currently available in westus
 
 var azureConfidentialLedgerUrl = 'https://${ledgerName}.confidential-ledger.azure.com'
 
