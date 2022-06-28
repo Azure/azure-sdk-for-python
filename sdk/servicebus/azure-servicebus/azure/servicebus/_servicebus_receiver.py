@@ -126,9 +126,9 @@ class ServiceBusReceiver(
      The default value is 0, meaning messages will be received from the service and processed one at a time.
      In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
      (if provided) within its request to the service.
-     :keyword str client_identifier: a string-based identifier to uniquely identify the client instance.
+     :keyword str client_identifier: A string-based identifier to uniquely identify the client instance.
       Service Bus will associate it with some error messages for easier correlation of errors.
-      If not specified a unique id will be generated.
+      If not specified, a unique id will be generated.
     """
 
     def __init__(
