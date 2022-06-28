@@ -79,10 +79,10 @@ def test_case_insensitive_keys_present(accept_cases):
     for key in accept_cases:
         assert key in my_dict
 
-def test_case_insensitive_keys_delete(accept_case):
+def test_case_insensitive_keys_delete(accept_cases):
     my_dict = case_insensitive_dict({"accept": "application/json"})
 
-    for key in accept_case:
+    for key in accept_cases:
         del my_dict[key]
         assert key not in my_dict
         my_dict[key] = "application/json"
