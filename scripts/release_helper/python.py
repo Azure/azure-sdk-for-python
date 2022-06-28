@@ -140,13 +140,13 @@ class Python(Common):
         self.issue_process_function = IssueProcessPython
 
     def duplicated_policy(self):
-        count = Counter([item.package_name for item in self.result])
+        counter = Counter([item.package_name for item in self.result])
         for item in self.result:
-            if count[item.package_name] > 1:
+            if counter[item.package_name] > 1:
                 item.bot_advice.insert(0, 'duplicated issue  <br>')
 
     def run(self):
-        self.get_result()
+        self.proc_issue()
         self.duplicated_policy()
         self.output()
 

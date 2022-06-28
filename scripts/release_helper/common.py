@@ -295,11 +295,11 @@ class Common:
     file_out_name = ''  # file that storages issue status
     """
 
-    def __init__(self, issues_package: List[IssuePackage], language_owner: Set[str], assignee_token=_ASSIGNEE_TOKEN):
+    def __init__(self, issues_package: List[IssuePackage], language_owner: Set[str],
+                 skipped_assignees: Set[str]={_BOT_NAME}, assignee_token=_ASSIGNEE_TOKEN):
         self.issues_package = issues_package
-        self.language_owner = language_owner.copy()
-        language_owner.discard(_BOT_NAME)
-        self.assignee_candidates = language_owner
+        self.language_owner = language_owner
+        self.assignee_candidates = language_owner - skipped_assignees
         # arguments add to language.md
         self.file_out_name = 'common.md'
         self.target_release_date = ''
@@ -347,7 +347,7 @@ class Common:
             item.print_date_from_target_date()
         )
 
-    def get_result(self):
+    def proc_issue(self):
         for item in self.issues_package:
             issue = self.issue_process_function(item, self.request_repo_dict, self.assignee_candidates,
                                                 self.language_owner)
@@ -358,7 +358,7 @@ class Common:
                 self.log_error(f'Error happened during handling issue {item.issue.number}: {e}')
 
     def run(self):
-        self.get_result()
+        self.proc_issue()
         self.output()
 
 def common_process(issues: List[IssuePackage]):
