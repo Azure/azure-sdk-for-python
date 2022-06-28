@@ -1,6 +1,6 @@
 # Release History
 
-## 1.24.2 (Unreleased)
+## 1.24.2 (2022-06-30)
 
 ### Bugs Fixed
 
