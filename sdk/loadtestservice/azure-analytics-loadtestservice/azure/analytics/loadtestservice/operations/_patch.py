@@ -67,9 +67,9 @@ class TestOperations(TestOperationsGenerated):
 
     def upload_test_file(
         self,
-        test_id,
-        file_id,
-        file_content,
+        test_id: str,
+        file_id: str,
+        file_content: JSON,
         **kwargs
     ) -> JSON:
         """

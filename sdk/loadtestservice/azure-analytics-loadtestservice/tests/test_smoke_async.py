@@ -13,11 +13,8 @@ class LoadtestserviceSmokeAsyncTest(LoadtestserviceAsyncTest):
     @LoadtestservicePowerShellPreparer()
     async def test_smoke_create_or_update_test(self, loadtestservice_endpoint):
         client = self.create_client(loadtestservice_endpoint)
-        test_id="000002" 
-        body_test={"resourceId":"/subscriptions/123456/resourceGroups/fake/providers/Microsoft.LoadTestService/loadtests/fake",
-                "testId":"000002","description":"","displayName":"test",
-                "loadTestConfig":{"engineSize":"m","engineInstances":1,"splitAllCSVs":False},"secrets":{},"environmentVariables":{},
-                "passFailCriteria":{"passFailMetrics":{}},"keyvaultReferenceIdentityType":"SystemAssigned","keyvaultReferenceIdentityId":None}
+        test_id="a000090b-12cd-004d-015d-1200d88800aa" 
+        body_test={"resourceId":"/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk","testId":"a000090b-12cd-004d-015d-1200d88800aa","description":"","displayName":"testoone","loadTestConfig":{"engineSize":"m","engineInstances":1,"splitAllCSVs":False},"secrets":{},"environmentVariables":{},"passFailCriteria":{"passFailMetrics":{}},"keyvaultReferenceIdentityType":"SystemAssigned","keyvaultReferenceIdentityId":None}
         result = await client.test.create_or_update_test(test_id, body_test)
         assert result is not None
 
