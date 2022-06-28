@@ -151,7 +151,7 @@ def main():
             collection_ids.append(collection["collectionId"])
 
         print(
-            "In conclusion, these are all the collections in the Confidential Ledger: " +
+            "In conclusion, these are all the collections in the Confidential Ledger:\n" +
             "\n\t".join(collection_ids)
         )
 
