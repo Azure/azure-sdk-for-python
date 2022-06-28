@@ -56,11 +56,11 @@ def sample_copy_model_to(custom_model_id):
     )
     copied_over_model = poller.result()
 
-    print("Model ID: {}".format(model.model_id))
-    print("Description: {}".format(model.description))
-    print("Model created on: {}\n".format(model.created_on))
+    print("Model ID: {}".format(copied_over_model.model_id))
+    print("Description: {}".format(copied_over_model.description))
+    print("Model created on: {}\n".format(copied_over_model.created_on))
     print("Doc types the model can recognize:")
-    for name, doc_type in model.doc_types.items():
+    for name, doc_type in copied_over_model.doc_types.items():
         print("\nDoc Type: '{}' which has the following fields:".format(name))
         for field_name, field in doc_type.field_schema.items():
             print("Field: '{}' has type '{}' and confidence score {}".format(

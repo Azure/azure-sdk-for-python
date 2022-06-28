@@ -333,28 +333,6 @@ def document_style(document_span):
     return model, model_repr
 
 @pytest.fixture
-def document_caption(bounding_region, document_span):
-    model = _models.DocumentCaption(content="my content", bounding_regions=[bounding_region[0]], spans=[document_span[0]])
-    model_repr = "DocumentCaption(content={}, bounding_regions=[{}], spans=[{}])".format(
-                "my content",
-                bounding_region[1],
-                document_span[1],
-            )
-    assert repr(model) == model_repr
-    return model, model_repr
-
-@pytest.fixture
-def document_footnote(bounding_region, document_span):
-    model = _models.DocumentFootnote(content="my content", bounding_regions=[bounding_region[0]], spans=[document_span[0]])
-    model_repr = "DocumentFootnote(content={}, bounding_regions=[{}], spans=[{}])".format(
-                "my content",
-                bounding_region[1],
-                document_span[1],
-            )
-    assert repr(model) == model_repr
-    return model, model_repr
-
-@pytest.fixture
 def document_table_cell(bounding_region, document_span):
     model = _models.DocumentTableCell(kind="rowHeader", row_index=1, column_index=2, row_span=2, column_span=3, content="header", bounding_regions=[bounding_region[0]], spans=[document_span[0]])
     model_repr = "DocumentTableCell(kind={}, row_index={}, column_index={}, row_span={}, column_span={}, content={}, bounding_regions=[{}], spans=[{}])".format(
@@ -371,14 +349,12 @@ def document_table_cell(bounding_region, document_span):
     return model, model_repr
 
 @pytest.fixture
-def document_table(bounding_region, document_span, document_table_cell, document_caption, document_footnote):
-    model = _models.DocumentTable(row_count=3, column_count=4, cells=[document_table_cell[0]], caption=document_caption[0], footnotes=[document_footnote[0]], bounding_regions=[bounding_region[0]], spans=[document_span[0]])
-    model_repr = "DocumentTable(row_count={}, column_count={}, cells=[{}], caption={}, footnotes=[{}], bounding_regions=[{}], spans=[{}])".format(
+def document_table(bounding_region, document_span, document_table_cell):
+    model = _models.DocumentTable(row_count=3, column_count=4, cells=[document_table_cell[0]], bounding_regions=[bounding_region[0]], spans=[document_span[0]])
+    model_repr = "DocumentTable(row_count={}, column_count={}, cells=[{}], bounding_regions=[{}], spans=[{}])".format(
                 3,
                 4,
                 document_table_cell[1],
-                document_caption[1],
-                document_footnote[1],
                 bounding_region[1],
                 document_span[1],
             )

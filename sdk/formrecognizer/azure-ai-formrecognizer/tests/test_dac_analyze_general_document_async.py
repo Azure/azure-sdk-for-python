@@ -20,9 +20,6 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
 
-    def teardown(self):
-        self.sleep(4)
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -168,7 +165,6 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
             result = await poller.result()
             assert len(result.pages) == 2
 
-            # FIXME: the service no longer accepts this format
-            # poller = await client.begin_analyze_document("prebuilt-document", document, pages="1-2, 3")
-            # result = await poller.result()
-            # assert len(result.pages) == 3
+            poller = await client.begin_analyze_document("prebuilt-document", document, pages="1-2, 3")
+            result = await poller.result()
+            assert len(result.pages) == 3

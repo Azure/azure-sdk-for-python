@@ -1,13 +1,21 @@
 # Release History
 
-## 3.2.0b5 (Unreleased)
+## 3.2.0b6 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 3.2.0b5 (2022-06-07)
 
 ### Features Added
 - Added `paragraphs` property on `AnalyzeResult`.
 - Added new `DocumentParagraph` model to represent document paragraphs.
 - Added new `AddressValue` model to represent address fields found in documents.
-- Added `caption` and `footnotes` properties on `DocumentTable`.
-- Added `DocumentCaption` and `DocumentFootnote` models to represent captions and footnotes found in the document.
 - Added `kind` property on `DocumentPage`.
 
 ### Breaking Changes
@@ -16,10 +24,6 @@
 - Some models that previously returned string for address related fields may now return `AddressValue`. TIP: Use `get_model()` on `DocumentModelAdministrationClient` to see updated prebuilt model schemas.
 - Removed `entities` property on `AnalyzeResult`.
 - Removed `DocumentEntity` model.
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 3.2.0b4 (2022-04-05)
 

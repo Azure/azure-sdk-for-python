@@ -1,0 +1,38 @@
+interactions:
+- request:
+    body: '{"kind": "Conversation", "analysisInput": {"conversationItem": {"participantId":
+      "1", "id": "1", "modality": "text", "language": "en", "text": "Reserve a table
+      for 2 at the Italian restaurant"}, "isLoggingEnabled": false}, "parameters":
+      {"projectName": "orch_test", "deploymentName": "dep_test", "verbose": true}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '333'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-conversations/1.0.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?api-version=2022-05-01
+  response:
+    body:
+      string: '{"kind":"ConversationResult","result":{"query":"Reserve a table for
+        2 at the Italian restaurant","prediction":{"topIntent":"None","projectKind":"Orchestration","intents":{"ChitChat-QnA":{"confidenceScore":0.6339138,"targetProjectKind":"QuestionAnswering"},"EmailIntent":{"confidenceScore":0.26476288,"targetProjectKind":"Conversation"},"None":{"confidenceScore":0.2431642,"targetProjectKind":"NonLinked"}}}}}'
+    headers:
+      apim-request-id: 104d8438-e531-4911-b5ea-98390ffba9f7
+      cache-control: no-store, proxy-revalidate, no-cache, max-age=0, private
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.Language.OrchestrationWorkflow.Prediction=1
+      date: Thu, 23 Jun 2022 20:53:02 GMT
+      pragma: no-cache
+      request-id: 104d8438-e531-4911-b5ea-98390ffba9f7
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '46'
+    status:
+      code: 200
+      message: OK
+    url: https://languagesdkresource.cognitiveservices.azure.com//language/:analyze-conversations?api-version=2022-05-01
+version: 1

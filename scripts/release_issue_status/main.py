@@ -15,10 +15,9 @@ from utils import update_issue_body, get_readme_and_output_folder, \
 _NULL = ' '
 _FILE_OUT = 'release_issue_status.csv'
 _FILE_OUT_PYTHON = 'release_python_status.md'
-_PYTHON_SDK_ADMINISTRATORS = ['msyyc', 'BigCat20196', 'azure-sdk']
-_PYTHON_SDK_ASSIGNEES = ['BigCat20196', 'msyyc']
-_ASSIGNER_DICT = {'BigCat20196': os.getenv('JF_TOKEN'),
-                  'msyyc': os.getenv('TOKEN')}
+_PYTHON_SDK_ADMINISTRATORS = ['msyyc', 'BigCat20196', 'azure-sdk', 'Wzb123456789']
+_PYTHON_SDK_ASSIGNEES = ['BigCat20196', 'Wzb123456789']
+_ASSIGNER_DICT = {'azure-sdk': os.getenv('AZURESDK_BOT_TOKEN')}
 logging.basicConfig(level=logging.INFO,
                     format='[auto-reply  log] - %(funcName)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
@@ -145,7 +144,7 @@ def _latest_comment_time(comments, delay_from_create_date):
 
 def auto_reply(item, request_repo, rest_repo, duplicated_issue, python_piplines, assigner_repoes):
     logging.info("new issue number: {}".format(item.issue_object.number))
-    assigner_repo = assigner_repoes[item.assignee]
+    assigner_repo = assigner_repoes['azure-sdk']
     if 'auto-link' not in item.labels:
         item.issue_object.add_to_labels('auto-link')
         try:
@@ -242,7 +241,7 @@ def main():
     # rule7: if delay from created date is over 15 days and owner never reply, remind owner to handle it.
     for item in issue_status:
         if item.language == 'Python':
-            assigner_repo = assigner_repoes[item.assignee]
+            assigner_repo = assigner_repoes['azure-sdk']
             item.issue_object = assigner_repo.get_issue(number=item.issue_object.number)
             issue_status_python.append(item)
         if item.status == 'release':

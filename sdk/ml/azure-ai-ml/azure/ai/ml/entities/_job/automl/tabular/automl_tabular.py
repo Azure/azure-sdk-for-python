@@ -310,7 +310,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
         :type blocked_transformers: List[str], optional
         :param column_name_and_types: A dictionary of column names and feature types used to update column purpose
         :type column_name_and_types: Dict[str, str], optional
-        :param dataset_language: hree character ISO 639-3 code for the language(s) contained in the dataset.
+        :param dataset_language: three character ISO 639-3 code for the language(s) contained in the dataset.
         Languages other than English are only supported if you use GPU-enabled compute.  The language_code
         'mul' should be used if the dataset contains multiple languages. To find ISO 639-3 codes for different
         languages, please refer to https://en.wikipedia.org/wiki/List_of_ISO_639-3_codes

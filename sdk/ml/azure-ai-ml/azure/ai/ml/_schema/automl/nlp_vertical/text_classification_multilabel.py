@@ -13,7 +13,7 @@ from azure.ai.ml._utils.utils import camel_to_snake
 from marshmallow import post_load
 
 
-class TextClassificationMultilableSchema(NlpVerticalSchema):
+class TextClassificationMultilabelSchema(NlpVerticalSchema):
     task_type = StringTransformedEnum(
         allowed_values=TaskType.TEXT_CLASSIFICATION_MULTILABEL,
         casing_transform=camel_to_snake,

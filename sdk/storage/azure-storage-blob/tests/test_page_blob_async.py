@@ -1881,11 +1881,8 @@ class StoragePageBlobAsyncTest(AsyncStorageTestCase):
         # strip off protocol
         self.assertTrue(copy_blob.copy.source.endswith(sas_blob.url[5:]))
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
     async def test_blob_tier_on_create(self, premium_storage_account_name, premium_storage_account_key):
-        # Test can only run live
-
         bsc = BlobServiceClient(self.account_url(premium_storage_account_name, "blob"), credential=premium_storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         url = self.account_url(premium_storage_account_name, "blob")

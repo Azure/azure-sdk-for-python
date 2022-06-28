@@ -4,3 +4,4 @@
 ../azure-mgmt-communication
 aiohttp>=3.0; python_version >= '3.5'
 -e ../../../tools/azure-devtools
+parameterized>=0.7.3

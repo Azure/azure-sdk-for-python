@@ -132,7 +132,6 @@ class CodegenTestPR:
 
     def __init__(self):
         self.issue_link = os.getenv('ISSUE_LINK')
-        self.usr_token = os.getenv('USR_TOKEN')
         self.pipeline_link = os.getenv('PIPELINE_LINK')
         self.bot_token = os.getenv('AZURESDK_BOT_TOKEN')
         self.spec_readme = os.getenv('SPEC_README', '')
@@ -179,6 +178,9 @@ class CodegenTestPR:
             'specFolder': self.spec_repo,
             'relatedReadmeMdFiles': [str(self.readme_local_folder())]
         }
+        # if Python tag exists
+        if os.getenv('PYTHON_TAG'):
+            input_data['python_tag'] = os.getenv('PYTHON_TAG')
 
         self.autorest_result = str(Path(os.getenv('TEMP_FOLDER')) / 'temp.json')
         with open(self.autorest_result, 'w') as file:
@@ -253,15 +255,6 @@ class CodegenTestPR:
                     content[i] = content[i].replace('MyService', self.package_name.capitalize())
 
         modify_file(sdk_readme, edit_sdk_readme)
-
-    def check_sdk_setup(self):
-        def edit_sdk_setup(content: List[str]):
-            for i in range(0, len(content)):
-                content[i] = content[i].replace('msrestazure>=0.4.32,<2.0.0', 'azure-mgmt-core>=1.3.0,<2.0.0')
-                content[i] = content[i].replace('azure-mgmt-core>=1.2.0,<2.0.0', 'azure-mgmt-core>=1.3.0,<2.0.0')
-                content[i] = content[i].replace('msrest>=0.5.0', 'msrest>=0.6.21')
-
-        modify_file(str(Path(self.sdk_code_path()) / 'setup.py'), edit_sdk_setup)
 
     # Use the template to update readme and setup by packaging_tools
     @return_origin_path
@@ -373,11 +366,28 @@ class CodegenTestPR:
         else:
             self.edit_changelog()
 
+    @staticmethod
+    def get_need_dependency():
+        template_path = Path('tools/azure-sdk-tools/packaging_tools/templates/setup.py')
+        with open(template_path, 'r') as fr:
+            content = fr.readlines()
+            for line in content:
+                if 'msrest>' in line:
+                    target_msrest = line.strip().strip(',').strip('\'')
+                    yield target_msrest
+                if 'azure-mgmt-core' in line:
+                    target_mgmt_core = line.strip().strip(',').strip('\'')
+                    yield target_mgmt_core
+
     def check_ci_file_proc(self, dependency: str):
         def edit_ci_file(content: List[str]):
             new_line = f'#override azure-mgmt-{self.package_name} {dependency}'
+            dependency_name = dependency.split('>')[0]
             for i in range(len(content)):
                 if new_line in content[i]:
+                    return
+                if f'azure-mgmt-{self.package_name} {dependency_name}' in content[i]:
+                    content[i] = new_line + '\n'
                     return
             prefix = '' if '\n' in content[-1] else '\n'
             content.append(prefix + new_line + '\n')
@@ -386,14 +396,15 @@ class CodegenTestPR:
         print_exec('git add shared_requirements.txt')
 
     def check_ci_file(self):
-        self.check_ci_file_proc('msrest>=0.6.21')
-        self.check_ci_file_proc('azure-mgmt-core>=1.3.0,<2.0.0')
+        # eg: target_msrest = 'msrest>=0.6.21', target_mgmt_core = 'azure-mgmt-core>=1.3.0,<2.0.0'
+        target_msrest, target_mgmt_core = list(self.get_need_dependency())
+        self.check_ci_file_proc(target_msrest)
+        self.check_ci_file_proc(target_mgmt_core)
 
     def check_file(self):
         self.check_file_with_packaging_tool()
         self.check_pprint_name()
         self.check_sdk_readme()
-        self.check_sdk_setup()
         self.check_version()
         self.check_changelog_file()
         self.check_ci_file()
@@ -446,7 +457,7 @@ class CodegenTestPR:
         self.run_test_proc()
 
     def create_pr_proc(self):
-        api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=self.usr_token)
+        api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=self.bot_token)
         pr_title = "[AutoRelease] {}(Do not merge)".format(self.new_branch)
         pr_head = "{}:{}".format(os.getenv('USR_NAME'), self.new_branch)
         pr_base = 'main'
