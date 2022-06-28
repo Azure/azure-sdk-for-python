@@ -37,7 +37,13 @@ class ConfidentialLedgerCertificateCredential:
     """
 
     def __init__(self, certificate_path: Union[bytes, str, os.PathLike]):
-        self.certificate_path = certificate_path
+        self._certificate_path = certificate_path
+
+    @property
+    def certificate_path(self) -> Union[bytes, str, os.PathLike]:
+        """The path to the certificate file for this credential."""
+
+        return self._certificate_path
 
 
 class ConfidentialLedgerClient(GeneratedClient):
