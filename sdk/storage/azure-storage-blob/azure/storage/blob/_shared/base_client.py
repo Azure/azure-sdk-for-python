@@ -11,7 +11,8 @@ from typing import (  # pylint: disable=unused-import
     Dict,
     Tuple,
     Union,
-    Optional
+    Optional,
+    TYPE_CHECKING
 )
 
 try:
@@ -73,7 +74,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self,
         parsed_url,  # type: Any
         service,  # type: str
-        credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]]
+        credential= None,  # type: Optional[Union[str, Dict[str, str],
+                           # AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
