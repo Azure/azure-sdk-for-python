@@ -4,7 +4,7 @@ from typing import Any, List
 import os
 
 # assignee dict which will be assigned to handle issues
-_JS_OWNER = {'qiaozha', 'lirenhe', 'MaryGao', 'azure-sdk'}
+_JS_OWNER = {'qiaozha', 'lirenhe', 'MaryGao', 'kazrael2119', 'azure-sdk'}
 _SKIPPED_ASSIGNEES = {'lirenhe', 'kazrael2119', 'azure-sdk'}
 
 
