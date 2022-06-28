@@ -1,11 +1,11 @@
-# Azure Confidential Ledger client library for Python <!-- omit in toc -->
+# Azure Confidential Ledger client library for Python
 
 Azure Confidential Ledger provides a service for logging to an immutable, tamper-proof ledger. As part of the [Azure Confidential Computing][azure_confidential_computing] portfolio, Azure Confidential Ledger runs in secure, hardware-based trusted execution environments, also known as enclaves. It is built on Microsoft Research's [Confidential Consortium Framework][ccf].
 
 [Source code][confidential_ledger_client_src] | [Package (PyPI)][pypi_package_confidential_ledger] | [API reference documentation][reference_docs] | [Product documentation][confidential_ledger_docs]
 
-## Getting started <!-- omit in toc -->
-### Install packages <!-- omit in toc -->
+## Getting started
+### Install packages
 Install [azure-confidentialledger][pypi_package_confidential_ledger] and [azure-identity][azure_identity_pypi] with [pip][pip]:
 ```Bash
 pip install azure-identity azure-confidentialledger
@@ -13,20 +13,20 @@ pip install azure-identity azure-confidentialledger
 [azure-identity][azure_identity] is used for Azure Active Directory
 authentication as demonstrated below.
 
-### Prerequisites <!-- omit in toc -->
+### Prerequisites
 * An [Azure subscription][azure_sub]
 * Python 3.6 or later
 * A running instance of Azure Confidential Ledger.
 * A registered user in the Confidential Ledger, typically assigned during [ARM][azure_resource_manager] resource creation, with `Administrator` privileges.
 
-### Authenticate the client <!-- omit in toc -->
-#### Using Azure Active Directory <!-- omit in toc -->
+### Authenticate the client
+#### Using Azure Active Directory
 This document demonstrates using [DefaultAzureCredential][default_cred_ref] to authenticate to the Confidential Ledger via Azure Active Directory. However, `ConfidentialLedgerClient` accepts any [azure-identity][azure_identity] credential. See the [azure-identity][azure_identity] documentation for more information about other credentials.
 
-#### Using a client certificate <!-- omit in toc -->
+#### Using a client certificate
 As an alternative to Azure Active Directory, clients may choose to use a client certificate to authenticate via mutual TLS. `azure.confidentialledger.ConfidentialLedgerCertificateCredential` may be used for this purpose.
 
-### Create a client <!-- omit in toc -->
+### Create a client
 `DefaultAzureCredential` will automatically handle most Azure SDK client scenarios. To get started, set environment variables for the AAD identity registered with your Confidential Ledger.
 ```bash
 export AZURE_CLIENT_ID="generated app id"
@@ -61,28 +61,28 @@ ledger_client = ConfidentialLedgerClient(
 )
 ```
 
-## Key concepts <!-- omit in toc -->
-### Ledger entries and transactions <!-- omit in toc -->
+## Key concepts
+### Ledger entries and transactions
 Every write to Azure Confidential Ledger generates an immutable ledger entry in the service. Writes, also referred to as transactions, are uniquely identified by transaction ids that increment with each write. Once written, ledger entries may be retrieved at any time.
 
-### Receipts <!-- omit in toc -->
+### Receipts
 State changes to the Confidential Ledger are saved in a data structure called a Merkle tree. To cryptographically verify that writes were correctly saved, a Merkle proof, or receipt, can be retrieved for any transaction id.
 
-### Collections <!-- omit in toc -->
+### Collections
 While most use cases involve just one collection per Confidential Ledger, we provide the collection id feature in case semantically or logically different groups of data need to be stored in the same Confidential Ledger.
 
 Ledger entries are retrieved by their `collectionId`. The Confidential Ledger will always assume a constant, service-determined `collectionId` for entries written without a `collectionId` specified.
 
-### Users <!-- omit in toc -->
+### Users
 Users are managed directly with the Confidential Ledger instead of through Azure. Users may be AAD-based, identified by their AAD object id, or certificate-based, identified by their PEM certificate fingerprint.
 
-### Confidential computing <!-- omit in toc -->
+### Confidential computing
 [Azure Confidential Computing][azure_confidential_computing] allows you to isolate and protect your data while it is being processed in the cloud. Azure Confidential Ledger runs on Azure Confidential Computing virtual machines, thus providing stronger data protection with encryption of data in use.
 
-### Confidential Consortium Framework <!-- omit in toc -->
+### Confidential Consortium Framework
 Azure Confidential Ledger is built on Microsoft Research's open-source [Confidential Consortium Framework (CCF)][ccf]. Under CCF, applications are managed by a consortium of members with the ability to submit proposals to modify and govern application operation. In Azure Confidential Ledger, Microsoft Azure owns a an operator member identity that allows it to perform governance and maintenance actions like replacing unhealthy nodes in the Confidential Ledger and upgrading the enclave code.
 
-## Examples <!-- omit in toc -->
+## Examples
 This section contains code snippets covering common tasks, including:
 - [Append entry](#append-entry)
 - [Retrieving ledger entries](#retrieving-ledger-entries)
@@ -335,13 +335,13 @@ ledger_client = ConfidentialLedgerClient(
 )
 ```
 
-### Async API <!-- omit in toc -->
+### Async API
 This library includes a complete async API supported on Python 3.5+. To use it, you must first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp). See the [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport) for more information.
 
 An async client is obtained from `azure.confidentialledger.aio`. Methods have the same names and signatures as the synchronous client. Samples may be found [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples).
 
-## Troubleshooting <!-- omit in toc -->
-### General <!-- omit in toc -->
+## Troubleshooting
+### General
 Confidential Ledger clients raise exceptions defined in [azure-core][azure_core_exceptions]. For example, if you try to get a transaction that doesn't exist, `ConfidentialLedgerClient` raises [ResourceNotFoundError](https://aka.ms/azsdk-python-core-exceptions-resource-not-found-error):
 
 ```python
@@ -374,7 +374,7 @@ except ResourceNotFoundError as e:
     print(e.message)
 ```
 
-### Logging <!-- omit in toc -->
+### Logging
 This library uses the standard
 [logging](https://docs.python.org/3.5/library/logging.html) library for logging. Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO level.
 
@@ -420,8 +420,8 @@ Similarly, `logging_enable` can enable detailed logging for a single operation, 
 ledger_client.get_current_ledger_entry(logging_enable=True)
 ```
 
-## Next steps <!-- omit in toc -->
-### More sample code <!-- omit in toc -->
+## Next steps
+### More sample code
 These code samples show common scenario operations with the Azure Confidential Ledger client library.
 
 Common scenarios
@@ -436,11 +436,11 @@ Advanced scenarios
 - Getting receipts for ledger writes: [get_receipt.py][https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/get_receipt.py] ([async version][https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/get_receipt_async.py])
 - Verifying service details: [verify_service.py][https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/verify_service.py] ([async version][https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/verify_service_async.py])
 
-###  Additional Documentation <!-- omit in toc -->
+###  Additional Documentation
 For more extensive documentation on Azure Confidential Ledger, see the
 [API reference documentation][reference_docs]. You may also read more about Microsoft Research's open-source [Confidential Consortium Framework][ccf].
 
-## Contributing <!-- omit in toc -->
+## Contributing
 This project welcomes contributions and suggestions. Most contributions require
 you to agree to a Contributor License Agreement (CLA) declaring that you have
 the right to, and actually do, grant us the rights to use your contribution.
