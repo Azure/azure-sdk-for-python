@@ -81,6 +81,7 @@ def _convert_to_isoformat(date_time):
     deserialized = deserialized.replace(tzinfo=tzinfo)
     return deserialized
 
+
 def case_insensitive_dict(*args: Any, **kwargs: Any) -> MutableMapping:
     """Return a case-insensitive mutable mapping from an inputted mapping structure.
 
@@ -88,6 +89,7 @@ def case_insensitive_dict(*args: Any, **kwargs: Any) -> MutableMapping:
     :rtype: ~collections.abc.MutableMapping
     """
     return CaseInsensitiveDict(*args, **kwargs)
+
 
 class CaseInsensitiveDict(MutableMapping):
     """
@@ -98,13 +100,13 @@ class CaseInsensitiveDict(MutableMapping):
     case_insensitive_dict['Key'] = 'some_value'
     case_insensitive_dict['key'] == 'some_value' #True
     """
-    def __init__(self, data = None, **kwargs: Any) -> None:
+
+    def __init__(self, data=None, **kwargs: Any) -> None:
         self._store = {}
         if data is None:
             data = {}
-        
-        self.update(data, **kwargs)
 
+        self.update(data, **kwargs)
 
     def copy(self) -> "CaseInsensitiveDict":
         return CaseInsensitiveDict(self._store.values())
@@ -131,7 +133,9 @@ class CaseInsensitiveDict(MutableMapping):
         return len(self._store)
 
     def lowerkey_items(self):
-        return ((lower_case_key, pair[1]) for lower_case_key, pair in self._store.items())
+        return (
+            (lower_case_key, pair[1]) for lower_case_key, pair in self._store.items()
+        )
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, Mapping):
@@ -143,23 +147,3 @@ class CaseInsensitiveDict(MutableMapping):
 
     def __repr__(self) -> str:
         return str(dict(self.items()))
-
-
-        
-
-
-        
-
-    
-
-
-
-
-
-
-    
-
-
-    
-
-
