@@ -1,7 +1,10 @@
 @description('Ledger Name')
 @minLength(3)
 @maxLength(24)
-param ledgerName string = resourceGroup().name
+param ledgerName string = uniqueString(resourceGroup().id)
+// resourceGroup().name is too long
+// uniqueString is 13 characters long
+// https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/bicep-functions-string#uniquestring
 
 @description('The client OID to grant access to test resources.')
 param testApplicationOid string
