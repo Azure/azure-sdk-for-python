@@ -126,7 +126,7 @@ class ServiceBusReceiver(
      The default value is 0, meaning messages will be received from the service and processed one at a time.
      In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
      (if provided) within its request to the service.
-     :keyword str client_identifier: a string based identifier to uniquely identify the client instance.
+     :keyword str client_identifier: a string-based identifier to uniquely identify the client instance.
       Service Bus will associate it with some error messages for easier correlation of errors.
       If not specified a unique id will be generated.
     """
@@ -365,9 +365,7 @@ class ServiceBusReceiver(
             link_properties={CONSUMER_IDENTIFIER: self._name},
         )
         if self._prefetch_count == 1:
-            self._handler._message_received = (
-                self._enhanced_message_received
-            )  # pylint: disable=protected-access
+            self._handler._message_received = (self._enhanced_message_received)  # pylint: disable=protected-access
 
     def _open(self):
         # pylint: disable=protected-access

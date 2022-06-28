@@ -151,9 +151,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
-    :keyword str client_identifier: a string based identifier to uniquely identify the client instance.
+    :keyword str client_identifier: a string-based identifier to uniquely identify the client instance.
      Service Bus will associate it with some error messages for easier correlation of errors.
-     If not specified a unique id will be generated.
+     If not specified, a unique id will be generated.
     """
 
     def __init__(
