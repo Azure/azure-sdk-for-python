@@ -26,7 +26,7 @@ from ._api_versions import DEFAULT_VERSION
 if TYPE_CHECKING:
     from typing import Any
 
-class RoomsClient(object):
+class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with the AzureCommunicationService Rooms gateway.
 
     This client provides operations to manage rooms.

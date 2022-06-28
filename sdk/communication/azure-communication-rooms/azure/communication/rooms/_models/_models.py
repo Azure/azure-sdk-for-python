@@ -130,7 +130,8 @@ class RoomParticipant(_serialization.Model):
     def from_room_participant_internal(cls, room_participant_internal: RoomParticipantInternal, **kwargs):
         return cls(
             communication_identifier=room_participant_internal.communication_identifier,
-            role=room_participant_internal.role
+            role=room_participant_internal.role,
+            **kwargs
         )
 
     def __eq__(self, other):

@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
-class RoomsClient(object):
+class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with the AzureCommunicationService Rooms gateway.
 
     This client provides operations to manage rooms.
