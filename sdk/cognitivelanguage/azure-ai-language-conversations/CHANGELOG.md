@@ -3,6 +3,9 @@
 ## 1.1.0b2 (Unreleased)
 
 ### Features Added
+* Added Azure Active Directory (AAD) authentication support
+* Added support for authoring operations with `ConversationAuthoringClient` under the `azure.ai.language.conversations.authoring` namespace.
+* Added `begin_cancel_conversation_job` and `get_conversation_job_status` client methods on `ConversationAnalysisClient`.
 
 ### Breaking Changes
 
