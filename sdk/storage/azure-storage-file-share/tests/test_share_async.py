@@ -259,7 +259,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.sleep(5)
         with self.assertRaises(HttpResponseError):
             await share_client.delete_share()
-        self.sleep(10)
+        self.sleep(12)
         await share_client.delete_share()
 
     @FileSharePreparer()
