@@ -107,7 +107,9 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
         def operation() -> JSON:
-            return super(ConfidentialLedgerClientOperationsMixin, self).get_receipt(transaction_id=transaction_id, **kwargs)
+            return super(ConfidentialLedgerClientOperationsMixin, self).get_receipt(
+                transaction_id=transaction_id, **kwargs
+            )
 
         initial_response = operation()
 
