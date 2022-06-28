@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-analytics-loadtestservice/1.0.0b1 Python/3.9.8 (Windows-10-10.0.19044)
+    method: GET
+    uri: https://fake.loadtesting.azure.com/loadtests/sortAndFilter?maxPageSize=50&api-version=2022-06-01-preview
+  response:
+    body:
+      string: '{"value":[{"testId":"000002","description":"","displayName":"test","resourceId":"/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk",
+              "loadTestConfig":{"engineInstances":1,"splitAllCSVs":false},"passFailCriteria":{"passFailMetrics":{}},
+              "createdDateTime":"2022-06-21T13:45:53.627Z","createdBy":null,"lastModifiedDateTime":"2022-06-21T13:45:53.627Z",
+              "lastModifiedBy":null,"inputArtifacts":{"configUrl":null,"testScriptUrl":null,"userPropUrl":null,
+              "inputArtifactsZipFileurl":null,"additionalUrls":[]},"secrets":null,"environmentVariables":null,"subnetId":null,
+              "keyvaultReferenceIdentityType":"SystemAssigned","keyvaultReferenceIdentityId":null}],"nextLink":null}'
+    headers:
+      api-supported-versions: 2021-07-01-preview, 2022-04-15-preview, 2022-06-01-preview
+      connection: keep-alive
+      content-length: '743'
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jun 2022 13:45:54 GMT
+      mise-correlation-id: 26cee0a5-8738-449a-a90b-f926c489c331
+      strict-transport-security: max-age=15724800; includeSubDomains
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://fake.eus.cnt-prod.loadtesting.azure.com/loadtests/sortAndFilter?maxPageSize=50&api-version=2022-06-01-preview
+version: 1
