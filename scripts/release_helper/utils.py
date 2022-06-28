@@ -109,10 +109,7 @@ def run_pipeline(issue_link, pipeline_url, spec_readme):
     run_parameters = models.RunPipelineParameters(**paramaters)
     client = PipelinesClient(base_url=organization_url, creds=credentials)
     result = client.run_pipeline(project='internal', pipeline_id=2500, run_parameters=run_parameters)
-    if result.state == 'inProgress':
-        return True
-    else:
-        return False
+    return result.state == 'inProgress':
 
 
 def record_release(package_name: str, issue_info: Any, file: str) -> None:
