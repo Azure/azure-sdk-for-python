@@ -1340,7 +1340,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             :class:`~azure.ai.textanalytics.RecognizeCustomEntitiesResult` and
             :class:`~azure.ai.textanalytics.DocumentError`.
         :rtype:
-            ~azure.ai.textanalytics.AsyncTextAnalyticsLROPoller[~azure.core.async_paging.AsyncItemPaged[
+            ~azure.ai.textanalytics.aio.AsyncTextAnalyticsLROPoller[~azure.core.async_paging.AsyncItemPaged[
             ~azure.ai.textanalytics.RecognizeCustomEntitiesResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
