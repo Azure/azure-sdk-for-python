@@ -56,7 +56,6 @@ async def main():
             ledger_id
         )
 
-
     # The Confidential Ledger's TLS certificate must be written to a file to be used by the
     # ConfidentialLedgerClient. Here, we write it to a temporary file so that is is cleaned up
     # automatically when the program exits.
@@ -144,8 +143,8 @@ async def main():
                     print("Request failed: {}".format(e.response.json()))
                     raise
 
-                # Make a query for a prior ledger entry. The service may take some time to load the result,
-                # so a poller is provided.
+                # Make a query for a prior ledger entry. The service may take some time to load the
+                # result, so a poller is provided.
                 try:
                     get_entry_poller = await ledger_client.begin_get_ledger_entry(transaction_id)
                     get_entry_result = await get_entry_poller.result()
