@@ -119,7 +119,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
      In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
      (if provided) within its request to the service.
     :keyword str client_identifier: a string based identifier to uniquely identify the client instance.
-     Service Bus will associate it with some error messages for easier correlation of errors. If not specified 
+     Service Bus will associate it with some error messages for easier correlation of errors. If not specified
      a unique id will be generated.
     """
 
