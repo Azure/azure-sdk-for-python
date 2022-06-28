@@ -444,12 +444,8 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
         sleep_time_fixed = time.time() - start_time
         assert sleep_time_fixed < backoff * (2 ** 1)
 
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    async def test_custom_client_id_queue_sender_async(self, servicebus_namespace_connection_string):
-        servicebus_connection_str = "connection_string"
+    async def test_custom_client_id_queue_sender_async(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
         queue_name = "queue_name"
         custom_id = "my_custom_id"
         servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
@@ -458,12 +454,8 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
             assert queue_sender.identifier is not None
             assert queue_sender.identifier == custom_id
 
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    async def test_default_client_id_queue_sender(self, servicebus_namespace_connection_string):
-        servicebus_connection_str = "connection_string"
+    async def test_default_client_id_queue_sender(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
         queue_name = "queue_name"
         servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
         async with servicebus_client:
@@ -471,12 +463,8 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
             assert queue_sender.identifier is not None
             assert "SBSender" in queue_sender.identifier
 
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    async def test_custom_client_id_queue_receiver(self, servicebus_namespace_connection_string):
-        servicebus_connection_str = "connection_string"
+    async def test_custom_client_id_queue_receiver(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
         queue_name = "queue_name"
         custom_id = "my_custom_id"
         servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
@@ -485,13 +473,8 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
             assert queue_receiver.identifier is not None
             assert queue_receiver.identifier == custom_id
 
-    
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    async def test_default_client_id_queue_receiver(self, servicebus_namespace_connection_string):
-        servicebus_connection_str = "connection_string"
+    async def test_default_client_id_queue_receiver(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
         queue_name = "queue_name"
         servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
         async with servicebus_client:
@@ -499,12 +482,8 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
             assert queue_receiver.identifier is not None
             assert "SBReceiver" in queue_receiver.identifier
 
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    async def test_custom_client_id_topic_sender(self, servicebus_namespace_connection_string):
-        servicebus_connection_str = "connection_string"
+    async def test_custom_client_id_topic_sender(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
         queue_name = "queue_name"
         custom_id = "my_custom_id"
         servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
@@ -513,12 +492,8 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
             assert topic_sender.identifier is not None
             assert topic_sender.identifier == custom_id
 
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    async def test_default_client_id_topic_sender(self, servicebus_namespace_connection_string):
-        servicebus_connection_str = "connection_string"
+    async def test_default_client_id_topic_sender(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
         queue_name = "queue_name"
         servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
         async with servicebus_client:
@@ -526,13 +501,8 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
             assert topic_sender.identifier is not None
             assert "SBSender" in topic_sender.identifier
 
-    
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    async def test_default_client_id_subscription_receiver(self, servicebus_namespace_connection_string):
-        servicebus_connection_str = "connection_string"
+    async def test_default_client_id_subscription_receiver(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
         queue_name = "queue_name"
         servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
         async with servicebus_client:
@@ -540,12 +510,8 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
             assert subscription_receiver.identifier is not None
             assert "SBReceiver" in subscription_receiver.identifier
 
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    async def test_custom_client_id_subscription_receiver(self, servicebus_namespace_connection_string):
-        servicebus_connection_str = "connection_string"
+    async def test_custom_client_id_subscription_receiver(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
         queue_name = "queue_name"
         custom_id = "my_custom_id"
         servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
