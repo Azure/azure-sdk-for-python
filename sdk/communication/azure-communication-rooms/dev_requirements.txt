@@ -1,7 +1,6 @@
 -e ../../../tools/azure-devtools
 -e ../../../tools/azure-sdk-tools
 -e ../azure-communication-identity
-../../core/azure-core
 ../../identity/azure-identity
 aiohttp>=3.0;
 typing_extensions>=3.7.2

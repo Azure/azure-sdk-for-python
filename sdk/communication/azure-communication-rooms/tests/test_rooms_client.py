@@ -8,10 +8,15 @@ import datetime
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
-from azure.communication.rooms import RoomsClient, RoomParticipant
+from azure.communication.rooms import (
+    RoomsClient,
+    RoomParticipant,
+    CommunicationIdentifierModel,
+    CommunicationUserIdentifierModel
+)
 from unittest_helpers import mock_response
 
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 class FakeTokenCredential(object):
     def __init__(self):
@@ -21,110 +26,121 @@ class FakeTokenCredential(object):
         return self.token
 
 class TestRoomsClient(unittest.TestCase):
+    room_id = "999126454"
+    valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
+    valid_until = datetime.datetime(2022, 4, 25, 4, 34, 0)
+    raw_id = "8:acs:abcd"
+    room_participants = [RoomParticipant(
+        communication_identifier=CommunicationIdentifierModel(
+            raw_id=raw_id,
+            communication_user=CommunicationUserIdentifierModel(id=raw_id)
+        ),
+        role='Presenter'
+    )]
+    json_participant = {
+        "communicationIdentifier": {
+            "rawId": raw_id,
+            "communicationUser": {"id": raw_id}
+        },
+        "role": "Presenter"
+    }
+
     def test_create_room(self):
-        room_id = "999126454"
-        valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
-        valid_until = datetime.datetime(2022, 4, 25, 4, 34, 0)
         raised = False
-        participantsList = [RoomParticipant(identifier="8:acs:abcd", role_name='Presenter')]
-        participants = {
-            "8:acs:abcd": { "role": "Presenter"}
-        }
 
         def mock_send(*_, **__):
             return mock_response(status_code=201, json_payload={
-                "id": room_id,
+                "id": self.room_id,
                 "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
-                "validFrom": valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                "validUntil": valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                "participants": participants
+                "validFrom": self.valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                "validUntil": self.valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                "participants": [self.json_participant]
             })
 
         rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
         response = None
         try:
-            response = rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=participantsList)
+            response = rooms_client.create_room(
+                valid_from=self.valid_from,
+                valid_until=self.valid_until,
+                participants=self.room_participants)
         except:
             raised = True
             raise
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertEqual(room_id, response.id)
-        self.assertEqual(valid_from, response.valid_from)
-        self.assertEqual(valid_until, response.valid_until)
-        self.assertListEqual(participantsList, response.participants)
+        self.assertEqual(self.room_id, response.id)
+        self.assertEqual(self.valid_from, response.valid_from)
+        self.assertEqual(self.valid_until, response.valid_until)
+        self.assertListEqual(self.room_participants, response.participants)
 
     def test_update_room(self):
-        room_id = "999126454"
-        valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
-        valid_until = datetime.datetime(2022, 4, 25, 4, 34, 0)
         raised = False
 
         def mock_send(*_, **__):
             return mock_response(status_code=200, json_payload={
-                "id": room_id,
+                "id": self.room_id,
                 "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
-                "validFrom": valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                "validUntil": valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                "participants": {}
+                "validFrom": self.valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                "validUntil": self.valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                "participants": []
             })
 
         rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
         response = None
         try:
-            response = rooms_client.update_room(room_id=room_id, valid_from=valid_from, valid_until=valid_until)
+            response = rooms_client.update_room(
+                room_id=self.room_id,
+                valid_from=self.valid_from,
+                valid_until=self.valid_until)
         except:
             raised = True
             raise
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertEqual(room_id, response.id)
-        self.assertEqual(valid_from, response.valid_from)
-        self.assertEqual(valid_until, response.valid_until)
+        self.assertEqual(self.room_id, response.id)
+        self.assertEqual(self.valid_from, response.valid_from)
+        self.assertEqual(self.valid_until, response.valid_until)
         self.assertListEqual(response.participants, [])
 
     def test_delete_room_raises_error(self):
-        room_id = "999126454"
         def mock_send(*_, **__):
             return mock_response(status_code=404, json_payload={"msg": "some error"})
         rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
 
-        self.assertRaises(HttpResponseError, rooms_client.delete_room, room_id=room_id)
+        self.assertRaises(HttpResponseError, rooms_client.delete_room, room_id=self.room_id)
 
     def test_get_room(self):
-        room_id = "999126454"
-        valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
-        valid_until = datetime.datetime(2022, 4, 25, 4, 34, 0)
         raised = False
 
         def mock_send(*_, **__):
             return mock_response(status_code=200, json_payload={
-                "id": room_id,
+                "id": self.room_id,
                 "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
-                "validFrom": valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                "validUntil": valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                "participants": {}
+                "validFrom": self.valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                "validUntil": self.valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                "participants": []
             })
 
         rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
 
         response = None
         try:
-            response = rooms_client.get_room(room_id=room_id)
+            response = rooms_client.get_room(room_id=self.room_id)
         except:
             raised = True
             raise
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertEqual(room_id, response.id)
-        self.assertEqual(valid_from, response.valid_from)
-        self.assertEqual(valid_until, response.valid_until)
+        self.assertEqual(self.room_id, response.id)
+        self.assertEqual(self.valid_from, response.valid_from)
+        self.assertEqual(self.valid_until, response.valid_until)
         self.assertListEqual(response.participants, [])
 
     def test_get_room_raises_error(self):
-        room_id = "999126454"
         def mock_send(*_, **__):
             return mock_response(status_code=404, json_payload={"msg": "some error"})
         rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
 
-        self.assertRaises(HttpResponseError, rooms_client.get_room, room_id=room_id)
+        self.assertRaises(HttpResponseError, rooms_client.get_room, room_id=self.room_id)
+

@@ -3,14 +3,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
-import msrest.serialization
 from typing import Optional
 
-from .._generated.models import (
-    RoomModel,
-    RoomParticipant,
-    CommunicationIdentifierModel,
-)
+from .._generated.models import RoomParticipant as RoomParticipantInternal
 from .._generated import _serialization
 
 class RoomModel(_serialization.Model):
@@ -36,7 +31,7 @@ class RoomModel(_serialization.Model):
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'valid_from': {'key': 'validFrom', 'type': 'iso-8601'},
         'valid_until': {'key': 'validUntil', 'type': 'iso-8601'},
-        'participants': {'key': 'participants', 'type': '{object}'},
+        'participants': {'key': 'participants', 'type': '[RoomParticipant]'},
     }
 
     def __init__(
@@ -62,7 +57,7 @@ class RoomModel(_serialization.Model):
          is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :paramtype valid_until: ~datetime
         :keyword participants: Collection of identities invited to the room.
-        :paramtype participants: dict[str, any]
+        :paramtype participants: list[~azure.communication.rooms.models.RoomParticipant]
         """
         super(RoomModel, self).__init__(**kwargs)
         self.id = id
@@ -75,25 +70,21 @@ class RoomModel(_serialization.Model):
     def from_room_response(cls, get_room_response,  # type: RoomModel
             **kwargs  # type: Any
     ):
-        # type: (...) -> CommunicationRoom
+        # type: (...) -> RoomModel
         """Create CommunicationRoom from a RoomModel.
         :param RoomModel get_room_response:
             Response from get_room API.
         :returns: Instance of CommunicationRoom.
         :rtype: ~azure.communication.CommunicationRoom
         """
-        if get_room_response.participants is None:
-            participants = None
-        else:
-            participants = [RoomParticipant(identifier=identifier, role_name=participant.role) for identifier, participant in get_room_response.participants.items()]
 
         return cls(
-        id=get_room_response.id,
-        created_date_time=get_room_response.created_date_time,
-        valid_from=get_room_response.valid_from,
-        valid_until=get_room_response.valid_until,
-        participants=participants,
-        **kwargs
+            id=get_room_response.id,
+            created_date_time=get_room_response.created_date_time,
+            valid_from=get_room_response.valid_from,
+            valid_until=get_room_response.valid_until,
+            participants=[RoomParticipant.from_room_participant_internal(p) for p in get_room_response.participants],
+            **kwargs
         )
 
 class RoomParticipant(_serialization.Model):
@@ -102,10 +93,10 @@ class RoomParticipant(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar communication_identifier: Identifies a participant in Azure Communication services. A
-     participant is, for example, an Azure communication user. This model must be interpreted as a
-     union: Apart from rawId, at most one further property may be set. Required.
+    participant is, for example, an Azure communication user. This model must be interpreted as a
+    union: Apart from rawId, at most one further property may be set. Required.
     :vartype communication_identifier:
-     ~azure.communication.rooms.models.CommunicationIdentifierModel
+    ~azure.communication.rooms.models.CommunicationIdentifierModel
     :ivar role: Role Name.
     :vartype role: str
     """
@@ -120,22 +111,27 @@ class RoomParticipant(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        communication_identifier: CommunicationIdentifierModel,
-        role: Optional[str] = None,
-        **kwargs
+        self, *, communication_identifier: "_models.CommunicationIdentifierModel", role: Optional[str] = None, **kwargs
     ):
         """
-        :keyword identifier: Participant MRI
-        :paramtype identifier: str
+        :keyword communication_identifier: Identifies a participant in Azure Communication services. A
+        participant is, for example, an Azure communication user. This model must be interpreted as a
+        union: Apart from rawId, at most one further property may be set. Required.
+        :paramtype communication_identifier:
+        ~azure.communication.rooms.models.CommunicationIdentifierModel
+        :keyword role: Role Name.
+        :paramtype role: str
         """
-        super(RoomParticipant, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.communication_identifier = communication_identifier
         self.role = role
 
-    def to_room_participant(self):
-        return RoomParticipant(
-            communication_identifier=self.communication_identifier,
-            role=self.role_name
+    @classmethod
+    def from_room_participant_internal(cls, room_participant_internal: RoomParticipantInternal, **kwargs):
+        return cls(
+            communication_identifier=room_participant_internal.communication_identifier,
+            role=room_participant_internal.role
         )
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__

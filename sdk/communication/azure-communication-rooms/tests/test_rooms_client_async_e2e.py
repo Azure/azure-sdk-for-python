@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import asyncio
 from turtle import update
 import pytest
 from datetime import datetime
@@ -13,12 +12,15 @@ from dateutil.relativedelta import relativedelta
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
 from azure.communication.identity import CommunicationIdentityClient
-from azure.communication.rooms._shared.models import CommunicationUserIdentifier
+from azure.communication.identity._shared.models import CommunicationUserIdentifier
 from azure.communication.rooms.aio import RoomsClient
-from azure.communication.rooms._models import RoomParticipant
+from azure.communication.rooms import (
+    RoomParticipant,
+    CommunicationIdentifierModel,
+    CommunicationUserIdentifierModel
+)
 from _shared.asynctestcase import AsyncCommunicationTestCase
 from _shared.testcase import (
-    BodyReplacerProcessor,
     ResponseReplacerProcessor
 )
 
@@ -43,10 +45,32 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
         # create multiple users users
         self.identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str)
+
+        user_id_1 = self.identity_client.create_user().properties["id"]
+        user_id_2 = self.identity_client.create_user().properties["id"]
+        user_id_3 = self.identity_client.create_user().properties["id"]
         self.users = {
-            "john" : RoomParticipant(identifier=self.identity_client.create_user().properties["id"], role_name='Presenter'),
-            "fred" : RoomParticipant(identifier=self.identity_client.create_user().properties["id"], role_name='Organizer'),
-            "chris" : RoomParticipant(identifier=self.identity_client.create_user().properties["id"], role_name='Attendee')
+            "john" : RoomParticipant(
+                communication_identifier=CommunicationIdentifierModel(
+                    raw_id=user_id_1,
+                    communication_user=CommunicationUserIdentifierModel(id=user_id_1)
+                ),
+                role='Presenter'
+            ),
+            "fred" : RoomParticipant(
+                communication_identifier=CommunicationIdentifierModel(
+                    raw_id=user_id_2,
+                    communication_user=CommunicationUserIdentifierModel(id=user_id_2)
+                ),
+                role='Organizer'
+            ),
+            "chris" : RoomParticipant(
+                communication_identifier=CommunicationIdentifierModel(
+                    raw_id=user_id_3,
+                    communication_user=CommunicationUserIdentifierModel(id=user_id_3)
+                ),
+                role='Attendee'
+            )
         }
         self.rooms_client = RoomsClient.from_connection_string(
             self.connection_str,
@@ -59,7 +83,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
         # delete created users and chat threads
         if not self.is_playback():
             for user in self.users.values():
-                self.identity_client.delete_user(CommunicationUserIdentifier(id=user.identifier))
+                self.identity_client.delete_user(CommunicationUserIdentifier(id=user.communication_identifier.raw_id))
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_room_no_attributes_async(self):
@@ -150,7 +174,12 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
     async def test_create_room_incorretMri_async(self):
         # room attributes
         participants = [
-            RoomParticipant(identifier="wrong_mri", role_name='Attendee'),
+            RoomParticipant(
+                communication_identifier=CommunicationIdentifierModel(
+                    raw_id="wrong_mri",
+                    communication_user=CommunicationUserIdentifierModel(id="wrong_mri")),
+                role='Attendee'
+            ),
             self.users["john"]
         ]
 
@@ -364,8 +393,8 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             self.users["john"],
             self.users["chris"]
         ]
-        self.users["john"].role_name = "Consumer"
-        self.users["chris"].role_name = "Consumer"
+        self.users["john"].role = "Consumer"
+        self.users["chris"].role = "Consumer"
 
         update_participants = [
             self.users["john"],
@@ -393,12 +422,12 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             self.users["chris"]
         ]
         remove_participants = [
-            self.users["john"]
+            self.users["john"].communication_identifier
         ]
         async with self.rooms_client:
             create_response = await self.rooms_client.create_room(participants=create_participants)
 
-            update_response = await self.rooms_client.remove_participants(room_id=create_response.id, participants=remove_participants)
+            update_response = await self.rooms_client.remove_participants(room_id=create_response.id, communication_identifiers=remove_participants)
             # delete created room
             await self.rooms_client.delete_room(room_id=create_response.id)
             participants = [self.users["chris"]]
@@ -416,7 +445,11 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             create_response = await self.rooms_client.create_room()
 
             participants = [
-                RoomParticipant(identifier="wrong_mri", role_name='Attendee'),
+                RoomParticipant(
+                    communication_identifier=CommunicationIdentifierModel(
+                        raw_id="wrong_mri",
+                        communication_user=CommunicationUserIdentifierModel(id="wrong_mri")),
+                    role='Attendee'),
                 self.users["john"]
             ]
 
@@ -434,7 +467,11 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             create_response = await self.rooms_client.create_room()
 
             participants = [
-                RoomParticipant(identifier=self.users["chris"].identifier, role_name='kafka'),
+                RoomParticipant(
+                    communication_identifier=CommunicationIdentifierModel(
+                        raw_id="chris",
+                        communication_user=CommunicationUserIdentifierModel(id="chris")),
+                    role='kafka'),
                 self.users["john"]
             ]
 

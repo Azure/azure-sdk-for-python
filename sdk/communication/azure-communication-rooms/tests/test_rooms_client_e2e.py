@@ -17,18 +17,18 @@ from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.rooms import RoomsClient
 from _shared.testcase import (
     CommunicationTestCase,
-    BodyReplacerProcessor,
     ResponseReplacerProcessor
 )
 
 from azure.communication.rooms import (
     RoomsClient,
-    RoomParticipant
+    RoomParticipant,
+    CommunicationIdentifierModel,
+    CommunicationUserIdentifierModel
 )
 
 from _shared.utils import get_http_logging_policy
-from azure.communication.rooms._shared.models import CommunicationUserIdentifier
-
+from azure.communication.identity._shared.models import CommunicationUserIdentifier
 
 class FakeTokenCredential(object):
     def __init__(self):
@@ -49,10 +49,32 @@ class RoomsClientTest(CommunicationTestCase):
         # create multiple users users
         self.identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str)
+
+        user_id_1 = self.identity_client.create_user().properties["id"]
+        user_id_2 = self.identity_client.create_user().properties["id"]
+        user_id_3 = self.identity_client.create_user().properties["id"]
         self.users = {
-            "john" : RoomParticipant(identifier=self.identity_client.create_user().properties["id"], role_name='Presenter'),
-            "fred" : RoomParticipant(identifier=self.identity_client.create_user().properties["id"], role_name='Organizer'),
-            "chris" : RoomParticipant(identifier=self.identity_client.create_user().properties["id"], role_name='Attendee')
+            "john" : RoomParticipant(
+                communication_identifier=CommunicationIdentifierModel(
+                    raw_id=user_id_1,
+                    communication_user=CommunicationUserIdentifierModel(id=user_id_1)
+                ),
+                role='Presenter'
+            ),
+            "fred" : RoomParticipant(
+                communication_identifier=CommunicationIdentifierModel(
+                    raw_id=user_id_2,
+                    communication_user=CommunicationUserIdentifierModel(id=user_id_2)
+                ),
+                role='Organizer'
+            ),
+            "chris" : RoomParticipant(
+                communication_identifier=CommunicationIdentifierModel(
+                    raw_id=user_id_3,
+                    communication_user=CommunicationUserIdentifierModel(id=user_id_3)
+                ),
+                role='Attendee'
+            )
         }
         self.rooms_client = RoomsClient.from_connection_string(
             self.connection_str,
@@ -65,7 +87,7 @@ class RoomsClientTest(CommunicationTestCase):
         # delete created users and chat threads
         if not self.is_playback():
             for user in self.users.values():
-                self.identity_client.delete_user(CommunicationUserIdentifier(id=user.identifier))
+                self.identity_client.delete_user(CommunicationUserIdentifier(id=user.communication_identifier.raw_id))
 
     def test_create_room_no_attributes(self):
         response = self.rooms_client.create_room()
@@ -141,7 +163,11 @@ class RoomsClientTest(CommunicationTestCase):
     def test_create_room_incorretMri(self):
         # room attributes
         participants = [
-            RoomParticipant(identifier="wrong_mir", role_name='Attendee'),
+            RoomParticipant(
+                communication_identifier=CommunicationIdentifierModel(
+                    raw_id="wrong_mri",
+                    communication_user=CommunicationUserIdentifierModel(id="wrong_mri")),
+                role='Attendee'),
             self.users["john"]
         ]
 
@@ -333,8 +359,8 @@ class RoomsClientTest(CommunicationTestCase):
         create_response = self.rooms_client.create_room(participants=create_participants)
 
         # participants to be updated
-        self.users["john"].role_name = "Consumer"
-        self.users["chris"].role_name = "Consumer"
+        self.users["john"].role = "Consumer"
+        self.users["chris"].role = "Consumer"
 
         update_participants = [
             self.users["john"],
@@ -363,10 +389,10 @@ class RoomsClientTest(CommunicationTestCase):
 
         # participants to be removed
         removed_participants = [
-            self.users["john"],
+            self.users["john"].communication_identifier
         ]
 
-        update_response = self.rooms_client.remove_participants(room_id=create_response.id, participants=removed_participants)
+        update_response = self.rooms_client.remove_participants(room_id=create_response.id, communication_identifiers=removed_participants)
         # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
         participants = [
@@ -385,7 +411,11 @@ class RoomsClientTest(CommunicationTestCase):
         create_response = self.rooms_client.create_room()
 
         participants = [
-            RoomParticipant(identifier="wrong_mir", role_name='Attendee'),
+            RoomParticipant(
+                communication_identifier=CommunicationIdentifierModel(
+                    raw_id="wrong_mri",
+                    communication_user=CommunicationUserIdentifierModel(id="wrong_mri")),
+                role='Attendee'),
             self.users["john"]
         ]
 
@@ -401,7 +431,11 @@ class RoomsClientTest(CommunicationTestCase):
         create_response = self.rooms_client.create_room()
 
         participants = [
-            RoomParticipant(identifier=self.users["john"].identifier, role_name='Kafka'),
+            RoomParticipant(
+                communication_identifier=CommunicationIdentifierModel(
+                    raw_id="john",
+                    communication_user=CommunicationUserIdentifierModel(id="john")),
+                role='Kafka'),
         ]
 
         # update room attributes
