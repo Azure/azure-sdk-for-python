@@ -62,6 +62,7 @@ setup(
         "Programming Language :: Python :: 3.10",
         "License :: OSI Approved :: MIT License",
     ],
+    python_requires=">=3.6",
     zip_safe=False,
     packages=find_packages(
         exclude=[
@@ -70,10 +71,15 @@ setup(
             "azure",
         ]
     ),
-    python_requires=">=3.6",
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     install_requires=[
-        "azure-common~=1.1",
-        "azure-core<2.0.0,>=1.2.2",
-        "msrest>=0.6.21",
+        "azure-core<2.0.0,>=1.24.0",
+        "isodate<1.0.0,>=0.6.1",
     ],
+    project_urls={
+        'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',
+        'Source': 'https://github.com/Azure/azure-sdk-python',
+    }
 )
