@@ -69,4 +69,6 @@ class MonitorIngestionClientConfiguration(Configuration):  # pylint: disable=too
         self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+            self.authentication_policy = policies.BearerTokenCredentialPolicy(
+                self.credential, *self.credential_scopes, **kwargs
+                )

@@ -6,8 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, TYPE_CHECKING, Any
-from enum import Enum
+from typing import TYPE_CHECKING, Any
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from ._client import MonitorIngestionClient as GeneratedClient
 
