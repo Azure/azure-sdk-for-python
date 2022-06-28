@@ -1,5 +1,11 @@
 # Release History
 
+## 1.25.0 (2022-06-30)
+
+### Features Added
+- Added `CaseInsensitiveDict` in `azure.core.utils` that is an implementation of a case insensitive dictionary.
+  It is also available via `case_insensitive_dict` for backwards compatibility
+
 ## 1.24.2 (2022-06-30)
 
 ### Bugs Fixed
