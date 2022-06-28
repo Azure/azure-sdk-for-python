@@ -2,4 +2,4 @@ PyGithub==1.55
 requests==2.28.0
 beautifulsoup4==4.11.1
 azure-devops==6.0.0b4
-msrest==0.7.0
+msrest>=0.6.21
