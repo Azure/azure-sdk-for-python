@@ -93,7 +93,8 @@ def case_insensitive_dict(*args: Any, **kwargs: Any) -> MutableMapping:
 
 class CaseInsensitiveDict(MutableMapping):
     """
-    NOTE: This implementation is heavily inspired from the case insensitive dictionary from the requests library. Thank you !!
+    NOTE: This implementation is heavily inspired from the case insensitive dictionary from the requests library.
+    Thank you !!
     Case insensitive dictionary implementation.
     The keys are expected to be strings and will be stored in lower case.
     case_insensitive_dict = CaseInsensitiveDict()
@@ -110,9 +111,6 @@ class CaseInsensitiveDict(MutableMapping):
 
     def copy(self) -> "CaseInsensitiveDict":
         return CaseInsensitiveDict(self._store.values())
-
-    def __getitem__(self, key: str) -> Any:
-        return self._store[key.lower()]
 
     def __setitem__(self, key: str, value: str) -> None:
         """
