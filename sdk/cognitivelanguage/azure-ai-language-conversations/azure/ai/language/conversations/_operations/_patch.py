@@ -39,6 +39,7 @@ ConversationAnalysisClientOperationsMixinGenerated.analyze_conversation.__doc__ 
                         "modality": "string", # Required, Enumeration of supported conversational modalities. Known values are: "text", and "transcript".
                         "language": "str", # Optional. The override language of a conversation item in BCP 47 language representation.
                         "text": "str", # Required. The text input.
+                        "role": "str"  # Optional. The role of the participant. Known values are: "agent", "customer", and "generic".
                     }
                 },
                 "parameters": {
