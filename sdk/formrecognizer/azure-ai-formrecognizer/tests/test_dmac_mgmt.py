@@ -96,7 +96,6 @@ class TestManagement(FormRecognizerTest):
                 assert field["type"]
             assert doc_type.field_confidence is None
 
-    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -106,7 +105,7 @@ class TestManagement(FormRecognizerTest):
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
         )
         
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, description="mgmt model")
+        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", description="mgmt model")
         model = poller.result()
 
         model_from_get = client.get_model(model.model_id)
