@@ -44,7 +44,7 @@ class HealthOperations:
     async def get(
         self,
         data_partition_id: str,
-        frame_of_reference: str,
+        frame_of_reference: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[str]:
         """healthMessageUsingGET.
@@ -53,7 +53,7 @@ class HealthOperations:
 
         :param data_partition_id: tenant.
         :type data_partition_id: str
-        :param frame_of_reference: reference.
+        :param frame_of_reference: reference. Default value is None.
         :type frame_of_reference: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: str, or the result of cls(response)

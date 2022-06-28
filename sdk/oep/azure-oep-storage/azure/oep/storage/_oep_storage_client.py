@@ -15,7 +15,7 @@ from azure.core import PipelineClient
 
 from . import models
 from ._configuration import OepStorageClientConfiguration
-from .operations import HealthOperations, InfoOperations, PatchOperations, PubSubOperations, QueryOperations, RecordOperations, SchemaOperations
+from .operations import HealthOperations, QueryOperations, RecordOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -24,23 +24,15 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.rest import HttpRequest, HttpResponse
 
-class OepStorageClient(object):    # pylint: disable=too-many-instance-attributes
+class OepStorageClient(object):
     """Api Documentation.
 
     :ivar health: HealthOperations operations
     :vartype health: azure.oep.storage.operations.HealthOperations
-    :ivar info: InfoOperations operations
-    :vartype info: azure.oep.storage.operations.InfoOperations
-    :ivar patch: PatchOperations operations
-    :vartype patch: azure.oep.storage.operations.PatchOperations
     :ivar record: RecordOperations operations
     :vartype record: azure.oep.storage.operations.RecordOperations
-    :ivar pub_sub: PubSubOperations operations
-    :vartype pub_sub: azure.oep.storage.operations.PubSubOperations
     :ivar query: QueryOperations operations
     :vartype query: azure.oep.storage.operations.QueryOperations
-    :ivar schema: SchemaOperations operations
-    :vartype schema: azure.oep.storage.operations.SchemaOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param base_url: Service URL. Default value is "".
@@ -64,22 +56,10 @@ class OepStorageClient(object):    # pylint: disable=too-many-instance-attribute
         self.health = HealthOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.info = InfoOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.patch = PatchOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.record = RecordOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.pub_sub = PubSubOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.query = QueryOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.schema = SchemaOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

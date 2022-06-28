@@ -17,7 +17,7 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._record_operations import build_create_or_update_record_request, build_delete_bulk_records_request, build_get_latest_record_version_by_id_request, build_get_specific_record_version_request, build_list_record_versions_by_id_request, build_purge_record_by_id_request, build_purge_record_request
+from ...operations._record_operations import build_create_or_update_record_request, build_get_latest_record_version_by_id_request, build_get_specific_record_version_request, build_list_record_versions_by_id_request, build_purge_record_by_id_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -45,7 +45,7 @@ class RecordOperations:
     async def create_or_update_record(
         self,
         data_partition_id: str,
-        frame_of_reference: str,
+        frame_of_reference: Optional[str] = None,
         skipdupes: Optional[bool] = None,
         body: Optional[List[_models.Record]] = None,
         **kwargs: Any
@@ -56,7 +56,7 @@ class RecordOperations:
 
         :param data_partition_id: tenant.
         :type data_partition_id: str
-        :param frame_of_reference: reference.
+        :param frame_of_reference: reference. Default value is None.
         :type frame_of_reference: str
         :param skipdupes: skipdupes. Default value is None.
         :type skipdupes: bool
@@ -86,8 +86,8 @@ class RecordOperations:
         request = build_create_or_update_record_request(
             content_type=content_type,
             data_partition_id=data_partition_id,
-            frame_of_reference=frame_of_reference,
             json=_json,
+            frame_of_reference=frame_of_reference,
             skipdupes=skipdupes,
             template_url=self.create_or_update_record.metadata['url'],
             headers=_headers,
@@ -120,79 +120,11 @@ class RecordOperations:
 
 
     @distributed_trace_async
-    async def delete_bulk_records(  # pylint: disable=inconsistent-return-statements
-        self,
-        data_partition_id: str,
-        frame_of_reference: str,
-        body: Optional[List[str]] = None,
-        **kwargs: Any
-    ) -> None:
-        """bulkDeleteRecordsUsingPOST.
-
-        bulkDeleteRecords.
-
-        :param data_partition_id: tenant.
-        :type data_partition_id: str
-        :param frame_of_reference: reference.
-        :type frame_of_reference: str
-        :param body:  Default value is None.
-        :type body: list[str]
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-
-        if body is not None:
-            _json = self._serialize.body(body, '[str]')
-        else:
-            _json = None
-
-        request = build_delete_bulk_records_request(
-            content_type=content_type,
-            data_partition_id=data_partition_id,
-            frame_of_reference=frame_of_reference,
-            json=_json,
-            template_url=self.delete_bulk_records.metadata['url'],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
-
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201, 401, 403, 404]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    delete_bulk_records.metadata = {'url': "/api/storage/v2/records/delete"}  # type: ignore
-
-
-    @distributed_trace_async
     async def list_record_versions_by_id(
         self,
         data_partition_id: str,
-        frame_of_reference: str,
         id: str,
+        frame_of_reference: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[_models.RecordVersions]:
         """getRecordVersionsUsingGET.
@@ -201,10 +133,10 @@ class RecordOperations:
 
         :param data_partition_id: tenant.
         :type data_partition_id: str
-        :param frame_of_reference: reference.
-        :type frame_of_reference: str
         :param id: id.
         :type id: str
+        :param frame_of_reference: reference. Default value is None.
+        :type frame_of_reference: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RecordVersions, or the result of cls(response)
         :rtype: ~azure.oep.storage.models.RecordVersions or None
@@ -259,8 +191,8 @@ class RecordOperations:
     async def get_latest_record_version_by_id(
         self,
         data_partition_id: str,
-        frame_of_reference: str,
         id: str,
+        frame_of_reference: Optional[str] = None,
         attribute: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[str]:
@@ -270,10 +202,10 @@ class RecordOperations:
 
         :param data_partition_id: tenant.
         :type data_partition_id: str
-        :param frame_of_reference: reference.
-        :type frame_of_reference: str
         :param id: id.
         :type id: str
+        :param frame_of_reference: reference. Default value is None.
+        :type frame_of_reference: str
         :param attribute: attribute. Default value is None.
         :type attribute: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -331,8 +263,8 @@ class RecordOperations:
     async def purge_record_by_id(  # pylint: disable=inconsistent-return-statements
         self,
         data_partition_id: str,
-        frame_of_reference: str,
         id: str,
+        frame_of_reference: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """purgeRecordUsingDELETE.
@@ -341,10 +273,10 @@ class RecordOperations:
 
         :param data_partition_id: tenant.
         :type data_partition_id: str
-        :param frame_of_reference: reference.
-        :type frame_of_reference: str
         :param id: id.
         :type id: str
+        :param frame_of_reference: reference. Default value is None.
+        :type frame_of_reference: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -393,9 +325,9 @@ class RecordOperations:
     async def get_specific_record_version(
         self,
         data_partition_id: str,
-        frame_of_reference: str,
         id: str,
         version: int,
+        frame_of_reference: Optional[str] = None,
         attribute: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[str]:
@@ -405,12 +337,12 @@ class RecordOperations:
 
         :param data_partition_id: tenant.
         :type data_partition_id: str
-        :param frame_of_reference: reference.
-        :type frame_of_reference: str
         :param id: id.
         :type id: str
         :param version: version.
         :type version: long
+        :param frame_of_reference: reference. Default value is None.
+        :type frame_of_reference: str
         :param attribute: attribute. Default value is None.
         :type attribute: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -463,66 +395,4 @@ class RecordOperations:
         return deserialized
 
     get_specific_record_version.metadata = {'url': "/api/storage/v2/records/{id}/{version}"}  # type: ignore
-
-
-    @distributed_trace_async
-    async def purge_record(  # pylint: disable=inconsistent-return-statements
-        self,
-        data_partition_id: str,
-        frame_of_reference: str,
-        id: str,
-        **kwargs: Any
-    ) -> None:
-        """deleteRecordUsingPOST.
-
-        deleteRecord.
-
-        :param data_partition_id: tenant.
-        :type data_partition_id: str
-        :param frame_of_reference: reference.
-        :type frame_of_reference: str
-        :param id: id.
-        :type id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-
-        
-        request = build_purge_record_request(
-            id=id,
-            data_partition_id=data_partition_id,
-            frame_of_reference=frame_of_reference,
-            template_url=self.purge_record.metadata['url'],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
-
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201, 401, 403, 404]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    purge_record.metadata = {'url': "/api/storage/v2/records/{id}:delete"}  # type: ignore
 

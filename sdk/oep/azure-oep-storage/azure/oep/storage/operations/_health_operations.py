@@ -37,7 +37,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
     data_partition_id = kwargs.pop('data_partition_id')  # type: str
-    frame_of_reference = kwargs.pop('frame_of_reference')  # type: str
+    frame_of_reference = kwargs.pop('frame_of_reference', _headers.pop('frame-of-reference', None))  # type: Optional[str]
     accept = _headers.pop('Accept', "text/plain")
 
     # Construct URL
@@ -45,7 +45,8 @@ def build_get_request(
 
     # Construct headers
     _headers['data-partition-id'] = _SERIALIZER.header("data_partition_id", data_partition_id, 'str')
-    _headers['frame-of-reference'] = _SERIALIZER.header("frame_of_reference", frame_of_reference, 'str')
+    if frame_of_reference is not None:
+        _headers['frame-of-reference'] = _SERIALIZER.header("frame_of_reference", frame_of_reference, 'str')
     _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
@@ -80,7 +81,7 @@ class HealthOperations(object):
     def get(
         self,
         data_partition_id,  # type: str
-        frame_of_reference,  # type: str
+        frame_of_reference=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Optional[str]
@@ -90,7 +91,7 @@ class HealthOperations(object):
 
         :param data_partition_id: tenant.
         :type data_partition_id: str
-        :param frame_of_reference: reference.
+        :param frame_of_reference: reference. Default value is None.
         :type frame_of_reference: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: str, or the result of cls(response)

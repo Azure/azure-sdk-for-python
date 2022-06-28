@@ -8,80 +8,36 @@
 
 try:
     from ._models_py3 import Acl
-    from ._models_py3 import BulkUpdateRecordsResponse
-    from ._models_py3 import ConnectedOuterService
-    from ._models_py3 import ConversionStatus
     from ._models_py3 import CreateUpdateRecordsResponse
     from ._models_py3 import DatastoreQueryResult
     from ._models_py3 import Legal
-    from ._models_py3 import MultiRecordIds
-    from ._models_py3 import MultiRecordInfo
-    from ._models_py3 import MultiRecordRequest
-    from ._models_py3 import MultiRecordResponse
-    from ._models_py3 import PatchOperation
     from ._models_py3 import Record
     from ._models_py3 import RecordAncestry
-    from ._models_py3 import RecordBulkUpdateParam
-    from ._models_py3 import RecordQuery
     from ._models_py3 import RecordVersions
-    from ._models_py3 import ResponseEntity
-    from ._models_py3 import Schema
-    from ._models_py3 import SchemaItem
-    from ._models_py3 import VersionInfo
 except (SyntaxError, ImportError):
     from ._models import Acl  # type: ignore
-    from ._models import BulkUpdateRecordsResponse  # type: ignore
-    from ._models import ConnectedOuterService  # type: ignore
-    from ._models import ConversionStatus  # type: ignore
     from ._models import CreateUpdateRecordsResponse  # type: ignore
     from ._models import DatastoreQueryResult  # type: ignore
     from ._models import Legal  # type: ignore
-    from ._models import MultiRecordIds  # type: ignore
-    from ._models import MultiRecordInfo  # type: ignore
-    from ._models import MultiRecordRequest  # type: ignore
-    from ._models import MultiRecordResponse  # type: ignore
-    from ._models import PatchOperation  # type: ignore
     from ._models import Record  # type: ignore
     from ._models import RecordAncestry  # type: ignore
-    from ._models import RecordBulkUpdateParam  # type: ignore
-    from ._models import RecordQuery  # type: ignore
     from ._models import RecordVersions  # type: ignore
-    from ._models import ResponseEntity  # type: ignore
-    from ._models import Schema  # type: ignore
-    from ._models import SchemaItem  # type: ignore
-    from ._models import VersionInfo  # type: ignore
 
 from ._oep_storage_client_enums import (
     Status,
-    StatusCode,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'Acl',
-    'BulkUpdateRecordsResponse',
-    'ConnectedOuterService',
-    'ConversionStatus',
     'CreateUpdateRecordsResponse',
     'DatastoreQueryResult',
     'Legal',
-    'MultiRecordIds',
-    'MultiRecordInfo',
-    'MultiRecordRequest',
-    'MultiRecordResponse',
-    'PatchOperation',
     'Record',
     'RecordAncestry',
-    'RecordBulkUpdateParam',
-    'RecordQuery',
     'RecordVersions',
-    'ResponseEntity',
-    'Schema',
-    'SchemaItem',
-    'VersionInfo',
     'Status',
-    'StatusCode',
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

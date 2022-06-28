@@ -4,9 +4,7 @@
     "version": "2021-06-01-preview",
     "title": "Api Documentation",
     "description": "Api Documentation",
-    "contact": {
-
-    }
+    "contact": {}
   },
   "securityDefinitions": {
     "Bearer": {
@@ -48,7 +46,7 @@
           {
             "name": "frame-of-reference",
             "in": "header",
-            "required": true,
+            "required": false,
             "type": "string",
             "description": "reference"
           }
@@ -60,215 +58,37 @@
               "type": "string",
               "default": ""
             },
-            "headers": {
-
-            }
+            "headers": {}
           },
           "401": {
             "description": "Unauthorized",
-            "headers": {
-
-            }
+            "headers": {}
           },
           "403": {
             "description": "Forbidden",
-            "headers": {
-
-            }
+            "headers": {}
           },
           "404": {
             "description": "Not Found",
-            "headers": {
-
-            }
+            "headers": {}
           }
         },
         "security": [
           {
-            "Bearer": [
-
-            ]
+            "Bearer": []
           }
         ],
         "x-ms-examples": {
-          "healthMessageUsingGET_MaximumSet_Gen": {
-            "$ref": "./examples/healthMessageUsingGET_MaximumSet_Gen.json"
+          "Health_Get_MaximumSet_Gen": {
+            "$ref": "./examples/Health_Get_MaximumSet_Gen.json"
           },
-          "healthMessageUsingGET_MinimumSet_Gen": {
-            "$ref": "./examples/healthMessageUsingGET_MinimumSet_Gen.json"
-          }
-        }
-      }
-    },
-    "/api/storage/v2/info": {
-      "get": {
-        "description": "info",
-        "summary": "infoUsingGET",
-        "tags": [
-          "info-api"
-        ],
-        "operationId": "Info_GetStorageDetails",
-        "deprecated": false,
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "data-partition-id",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "tenant"
-          },
-          {
-            "name": "frame-of-reference",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "reference"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/VersionInfo"
-            },
-            "headers": {
-
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "headers": {
-
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "headers": {
-
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "headers": {
-
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": [
-
-            ]
-          }
-        ],
-        "x-ms-examples": {
-          "infoUsingGET_MaximumSet_Gen": {
-            "$ref": "./examples/infoUsingGET_MaximumSet_Gen.json"
-          },
-          "infoUsingGET_MinimumSet_Gen": {
-            "$ref": "./examples/infoUsingGET_MinimumSet_Gen.json"
+          "Health_Get_MinimumSet_Gen": {
+            "$ref": "./examples/Health_Get_MinimumSet_Gen.json"
           }
         }
       }
     },
     "/api/storage/v2/records": {
-      "patch": {
-        "description": "updateRecordsMetadata",
-        "summary": "updateRecordsMetadataUsingPATCH",
-        "tags": [
-          "patch-api"
-        ],
-        "operationId": "Patch_UpdateRecordMetaData",
-        "deprecated": false,
-        "produces": [
-          "application/json"
-        ],
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "data-partition-id",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "tenant"
-          },
-          {
-            "name": "frame-of-reference",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "reference"
-          },
-          {
-            "name": "Content-Type",
-            "in": "header",
-            "required": false,
-            "enum": [
-              "application/json"
-            ],
-            "type": "string",
-            "description": ""
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": false,
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/RecordBulkUpdateParam"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/BulkUpdateRecordsResponse"
-            },
-            "headers": {
-
-            }
-          },
-          "204": {
-            "description": "No Content",
-            "headers": {
-
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "headers": {
-
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "headers": {
-
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": [
-
-            ]
-          }
-        ],
-        "x-ms-examples": {
-          "updateRecordsMetadataUsingPATCH_MaximumSet_Gen": {
-            "$ref": "./examples/updateRecordsMetadataUsingPATCH_MaximumSet_Gen.json"
-          },
-          "updateRecordsMetadataUsingPATCH_MinimumSet_Gen": {
-            "$ref": "./examples/updateRecordsMetadataUsingPATCH_MinimumSet_Gen.json"
-          }
-        }
-      },
       "put": {
         "description": "createOrUpdateRecords",
         "summary": "createOrUpdateRecordsUsingPUT",
@@ -294,7 +114,7 @@
           {
             "name": "frame-of-reference",
             "in": "header",
-            "required": true,
+            "required": false,
             "type": "string",
             "description": "reference"
           },
@@ -334,119 +154,32 @@
             "schema": {
               "$ref": "#/definitions/CreateUpdateRecordsResponse"
             },
-            "headers": {
-
-            }
+            "headers": {}
           },
           "401": {
             "description": "Unauthorized",
-            "headers": {
-
-            }
+            "headers": {}
           },
           "403": {
             "description": "Forbidden",
-            "headers": {
-
-            }
+            "headers": {}
           },
           "404": {
             "description": "Not Found",
-            "headers": {
-
-            }
+            "headers": {}
           }
         },
         "security": [
           {
-            "Bearer": [
-
-            ]
+            "Bearer": []
           }
         ],
         "x-ms-examples": {
-          "createOrUpdateRecordsUsingPUT_MaximumSet_Gen": {
-            "$ref": "./examples/createOrUpdateRecordsUsingPUT_MaximumSet_Gen.json"
-          }
-        }
-      }
-    },
-    "/api/storage/v2/push-handlers/legaltag-changed": {
-      "post": {
-        "description": "legaltagChanged",
-        "summary": "legaltagChangedUsingPOST",
-        "tags": [
-          "pubsub-endpoints"
-        ],
-        "operationId": "PubSub_ChangeLegalTag",
-        "deprecated": false,
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "data-partition-id",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "tenant"
+          "Record_CreateOrUpdateRecord_MaximumSet_Gen": {
+            "$ref": "./examples/Record_CreateOrUpdateRecord_MaximumSet_Gen.json"
           },
-          {
-            "name": "frame-of-reference",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "reference"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/ResponseEntity"
-            },
-            "headers": {
-
-            }
-          },
-          "201": {
-            "description": "Created",
-            "headers": {
-
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "headers": {
-
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "headers": {
-
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "headers": {
-
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": [
-
-            ]
-          }
-        ],
-        "x-ms-examples": {
-          "legaltagChangedUsingPOST_MaximumSet_Gen": {
-            "$ref": "./examples/legaltagChangedUsingPOST_MaximumSet_Gen.json"
-          },
-          "legaltagChangedUsingPOST_MinimumSet_Gen": {
-            "$ref": "./examples/legaltagChangedUsingPOST_MinimumSet_Gen.json"
+          "Record_CreateOrUpdateRecord_MinimumSet_Gen": {
+            "$ref": "./examples/Record_CreateOrUpdateRecord_MinimumSet_Gen.json"
           }
         }
       }
@@ -458,7 +191,7 @@
         "tags": [
           "query-api"
         ],
-        "operationId": "Query_ListByKinds",
+        "operationId": "Query_ListKinds",
         "deprecated": false,
         "produces": [
           "application/json"
@@ -481,7 +214,7 @@
           {
             "name": "frame-of-reference",
             "in": "header",
-            "required": true,
+            "required": false,
             "type": "string",
             "description": "reference"
           },
@@ -500,42 +233,32 @@
             "schema": {
               "$ref": "#/definitions/DatastoreQueryResult"
             },
-            "headers": {
-
-            }
+            "headers": {}
           },
           "401": {
             "description": "Unauthorized",
-            "headers": {
-
-            }
+            "headers": {}
           },
           "403": {
             "description": "Forbidden",
-            "headers": {
-
-            }
+            "headers": {}
           },
           "404": {
             "description": "Not Found",
-            "headers": {
-
-            }
+            "headers": {}
           }
         },
         "security": [
           {
-            "Bearer": [
-
-            ]
+            "Bearer": []
           }
         ],
         "x-ms-examples": {
-          "getKindsUsingGET_MaximumSet_Gen": {
-            "$ref": "./examples/getKindsUsingGET_MaximumSet_Gen.json"
+          "Query_ListByKinds_MaximumSet_Gen": {
+            "$ref": "./examples/Query_ListByKinds_MaximumSet_Gen.json"
           },
-          "getKindsUsingGET_MinimumSet_Gen": {
-            "$ref": "./examples/getKindsUsingGET_MinimumSet_Gen.json"
+          "Query_ListByKinds_MinimumSet_Gen": {
+            "$ref": "./examples/Query_ListByKinds_MinimumSet_Gen.json"
           }
         }
       }
@@ -570,7 +293,7 @@
           {
             "name": "frame-of-reference",
             "in": "header",
-            "required": true,
+            "required": false,
             "type": "string",
             "description": "reference"
           },
@@ -596,343 +319,32 @@
             "schema": {
               "$ref": "#/definitions/DatastoreQueryResult"
             },
-            "headers": {
-
-            }
+            "headers": {}
           },
           "401": {
             "description": "Unauthorized",
-            "headers": {
-
-            }
+            "headers": {}
           },
           "403": {
             "description": "Forbidden",
-            "headers": {
-
-            }
+            "headers": {}
           },
           "404": {
             "description": "Not Found",
-            "headers": {
-
-            }
+            "headers": {}
           }
         },
         "security": [
           {
-            "Bearer": [
-
-            ]
+            "Bearer": []
           }
         ],
         "x-ms-examples": {
-          "getAllRecordsUsingGET_MaximumSet_Gen": {
-            "$ref": "./examples/getAllRecordsUsingGET_MaximumSet_Gen.json"
+          "Query_ListRecordsByKind_MaximumSet_Gen": {
+            "$ref": "./examples/Query_ListRecordsByKind_MaximumSet_Gen.json"
           },
-          "getAllRecordsUsingGET_MinimumSet_Gen": {
-            "$ref": "./examples/getAllRecordsUsingGET_MinimumSet_Gen.json"
-          }
-        }
-      },
-      "post": {
-        "description": "getRecords",
-        "summary": "getRecordsUsingPOST",
-        "tags": [
-          "query-api"
-        ],
-        "operationId": "Query_ListRecord",
-        "deprecated": false,
-        "produces": [
-          "application/json"
-        ],
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "data-partition-id",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "tenant"
-          },
-          {
-            "name": "frame-of-reference",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "reference"
-          },
-          {
-            "name": "Content-Type",
-            "in": "header",
-            "required": false,
-            "enum": [
-              "application/json"
-            ],
-            "type": "string",
-            "description": ""
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": false,
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/MultiRecordIds"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/MultiRecordInfo"
-            },
-            "headers": {
-
-            }
-          },
-          "201": {
-            "description": "Created",
-            "headers": {
-
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "headers": {
-
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "headers": {
-
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "headers": {
-
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": [
-
-            ]
-          }
-        ],
-        "x-ms-examples": {
-          "getRecordsUsingPOST_MaximumSet_Gen": {
-            "$ref": "./examples/getRecordsUsingPOST_MaximumSet_Gen.json"
-          }
-        }
-      }
-    },
-    "/api/storage/v2/query/records:batch": {
-      "post": {
-        "description": "fetchRecords",
-        "summary": "fetchRecordsUsingPOST",
-        "tags": [
-          "query-api"
-        ],
-        "operationId": "Query_ListBatchRecords",
-        "deprecated": false,
-        "produces": [
-          "application/json"
-        ],
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "data-partition-id",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "tenant"
-          },
-          {
-            "name": "frame-of-reference",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "reference"
-          },
-          {
-            "name": "Content-Type",
-            "in": "header",
-            "required": false,
-            "enum": [
-              "application/json"
-            ],
-            "type": "string",
-            "description": ""
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": false,
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/MultiRecordRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/MultiRecordResponse"
-            },
-            "headers": {
-
-            }
-          },
-          "201": {
-            "description": "Created",
-            "headers": {
-
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "headers": {
-
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "headers": {
-
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "headers": {
-
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": [
-
-            ]
-          }
-        ],
-        "x-ms-examples": {
-          "fetchRecordsUsingPOST_MaximumSet_Gen": {
-            "$ref": "./examples/fetchRecordsUsingPOST_MaximumSet_Gen.json"
-          },
-          "fetchRecordsUsingPOST_MinimumSet_Gen": {
-            "$ref": "./examples/fetchRecordsUsingPOST_MinimumSet_Gen.json"
-          }
-        }
-      }
-    },
-    "/api/storage/v2/records/delete": {
-      "post": {
-        "description": "bulkDeleteRecords",
-        "summary": "bulkDeleteRecordsUsingPOST",
-        "tags": [
-          "record-api"
-        ],
-        "operationId": "Record_DeleteBulkRecords",
-        "deprecated": false,
-        "produces": [
-          "application/json"
-        ],
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "data-partition-id",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "tenant"
-          },
-          {
-            "name": "frame-of-reference",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "reference"
-          },
-          {
-            "name": "Content-Type",
-            "in": "header",
-            "required": false,
-            "enum": [
-              "application/json"
-            ],
-            "type": "string",
-            "description": ""
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": false,
-            "description": "",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "headers": {
-
-            }
-          },
-          "201": {
-            "description": "Created",
-            "headers": {
-
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "headers": {
-
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "headers": {
-
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "headers": {
-
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": [
-
-            ]
-          }
-        ],
-        "x-ms-examples": {
-          "bulkDeleteRecordsUsingPOST_MaximumSet_Gen": {
-            "$ref": "./examples/bulkDeleteRecordsUsingPOST_MaximumSet_Gen.json"
-          },
-          "bulkDeleteRecordsUsingPOST_MinimumSet_Gen": {
-            "$ref": "./examples/bulkDeleteRecordsUsingPOST_MinimumSet_Gen.json"
+          "Query_ListRecordsByKind_MinimumSet_Gen": {
+            "$ref": "./examples/Query_ListRecordsByKind_MinimumSet_Gen.json"
           }
         }
       }
@@ -960,7 +372,7 @@
           {
             "name": "frame-of-reference",
             "in": "header",
-            "required": true,
+            "required": false,
             "type": "string",
             "description": "reference"
           },
@@ -979,39 +391,29 @@
             "schema": {
               "$ref": "#/definitions/RecordVersions"
             },
-            "headers": {
-
-            }
+            "headers": {}
           },
           "401": {
             "description": "Unauthorized",
-            "headers": {
-
-            }
+            "headers": {}
           },
           "403": {
             "description": "Forbidden",
-            "headers": {
-
-            }
+            "headers": {}
           },
           "404": {
             "description": "Not Found",
-            "headers": {
-
-            }
+            "headers": {}
           }
         },
         "security": [
           {
-            "Bearer": [
-
-            ]
+            "Bearer": []
           }
         ],
         "x-ms-examples": {
-          "getRecordVersionsUsingGET_MaximumSet_Gen": {
-            "$ref": "./examples/getRecordVersionsUsingGET_MaximumSet_Gen.json"
+          "Record_ListRecordVersionsById_MaximumSet_Gen": {
+            "$ref": "./examples/Record_ListRecordVersionsById_MaximumSet_Gen.json"
           }
         }
       }
@@ -1039,7 +441,7 @@
           {
             "name": "frame-of-reference",
             "in": "header",
-            "required": true,
+            "required": false,
             "type": "string",
             "description": "reference"
           },
@@ -1066,39 +468,32 @@
               "type": "string",
               "default": ""
             },
-            "headers": {
-
-            }
+            "headers": {}
           },
           "401": {
             "description": "Unauthorized",
-            "headers": {
-
-            }
+            "headers": {}
           },
           "403": {
             "description": "Forbidden",
-            "headers": {
-
-            }
+            "headers": {}
           },
           "404": {
             "description": "Not Found",
-            "headers": {
-
-            }
+            "headers": {}
           }
         },
         "security": [
           {
-            "Bearer": [
-
-            ]
+            "Bearer": []
           }
         ],
         "x-ms-examples": {
-          "getLatestRecordVersionUsingGET_MaximumSet_Gen": {
-            "$ref": "./examples/getLatestRecordVersionUsingGET_MaximumSet_Gen.json"
+          "Record_GetLatestRecordVersionById_MaximumSet_Gen": {
+            "$ref": "./examples/Record_GetLatestRecordVersionById_MaximumSet_Gen.json"
+          },
+          "Record_GetLatestRecordVersionById_MinimumSet_Gen": {
+            "$ref": "./examples/Record_GetLatestRecordVersionById_MinimumSet_Gen.json"
           }
         }
       },
@@ -1124,7 +519,7 @@
           {
             "name": "frame-of-reference",
             "in": "header",
-            "required": true,
+            "required": false,
             "type": "string",
             "description": "reference"
           },
@@ -1140,42 +535,29 @@
         "responses": {
           "200": {
             "description": "OK",
-            "headers": {
-
-            }
+            "headers": {}
           },
           "204": {
             "description": "No Content",
-            "headers": {
-
-            }
+            "headers": {}
           },
           "401": {
             "description": "Unauthorized",
-            "headers": {
-
-            }
+            "headers": {}
           },
           "403": {
             "description": "Forbidden",
-            "headers": {
-
-            }
+            "headers": {}
           }
         },
         "security": [
           {
-            "Bearer": [
-
-            ]
+            "Bearer": []
           }
         ],
         "x-ms-examples": {
-          "purgeRecordUsingDELETE_MaximumSet_Gen": {
-            "$ref": "./examples/purgeRecordUsingDELETE_MaximumSet_Gen.json"
-          },
-          "purgeRecordUsingDELETE_MinimumSet_Gen": {
-            "$ref": "./examples/purgeRecordUsingDELETE_MinimumSet_Gen.json"
+          "Record_PurgeRecordById_MaximumSet_Gen": {
+            "$ref": "./examples/Record_PurgeRecordById_MaximumSet_Gen.json"
           }
         }
       }
@@ -1203,7 +585,7 @@
           {
             "name": "frame-of-reference",
             "in": "header",
-            "required": true,
+            "required": false,
             "type": "string",
             "description": "reference"
           },
@@ -1238,380 +620,32 @@
               "type": "string",
               "default": ""
             },
-            "headers": {
-
-            }
+            "headers": {}
           },
           "401": {
             "description": "Unauthorized",
-            "headers": {
-
-            }
+            "headers": {}
           },
           "403": {
             "description": "Forbidden",
-            "headers": {
-
-            }
+            "headers": {}
           },
           "404": {
             "description": "Not Found",
-            "headers": {
-
-            }
+            "headers": {}
           }
         },
         "security": [
           {
-            "Bearer": [
-
-            ]
+            "Bearer": []
           }
         ],
         "x-ms-examples": {
-          "getSpecificRecordVersionUsingGET_MaximumSet_Gen": {
-            "$ref": "./examples/getSpecificRecordVersionUsingGET_MaximumSet_Gen.json"
-          }
-        }
-      }
-    },
-    "/api/storage/v2/records/{id}:delete": {
-      "post": {
-        "description": "deleteRecord",
-        "summary": "deleteRecordUsingPOST",
-        "tags": [
-          "record-api"
-        ],
-        "operationId": "Record_PurgeRecord",
-        "deprecated": false,
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "data-partition-id",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "tenant"
+          "Record_GetSpecificRecordVersion_MaximumSet_Gen": {
+            "$ref": "./examples/Record_GetSpecificRecordVersion_MaximumSet_Gen.json"
           },
-          {
-            "name": "frame-of-reference",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "reference"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "pattern": "^[\\w\\-\\.]+:[\\w-\\.]+:[\\w\\-\\.\\:\\%]+$",
-            "description": "id"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "headers": {
-
-            }
-          },
-          "201": {
-            "description": "Created",
-            "headers": {
-
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "headers": {
-
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "headers": {
-
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "headers": {
-
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": [
-
-            ]
-          }
-        ],
-        "x-ms-examples": {
-          "deleteRecordUsingPOST_MaximumSet_Gen": {
-            "$ref": "./examples/deleteRecordUsingPOST_MaximumSet_Gen.json"
-          },
-          "deleteRecordUsingPOST_MinimumSet_Gen": {
-            "$ref": "./examples/deleteRecordUsingPOST_MinimumSet_Gen.json"
-          }
-        }
-      }
-    },
-    "/api/storage/v2/schemas": {
-      "post": {
-        "description": "createSchema",
-        "summary": "createSchemaUsingPOST",
-        "tags": [
-          "schema-api"
-        ],
-        "operationId": "Schema_CreateSchema",
-        "deprecated": true,
-        "produces": [
-          "application/json"
-        ],
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "data-partition-id",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "tenant"
-          },
-          {
-            "name": "frame-of-reference",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "reference"
-          },
-          {
-            "name": "Content-Type",
-            "in": "header",
-            "required": false,
-            "enum": [
-              "application/json"
-            ],
-            "type": "string",
-            "description": ""
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": false,
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/Schema"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "headers": {
-
-            }
-          },
-          "201": {
-            "description": "Created",
-            "headers": {
-
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "headers": {
-
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "headers": {
-
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "headers": {
-
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": [
-
-            ]
-          }
-        ],
-        "x-ms-examples": {
-          "createSchemaUsingPOST_MaximumSet_Gen": {
-            "$ref": "./examples/createSchemaUsingPOST_MaximumSet_Gen.json"
-          },
-          "createSchemaUsingPOST_MinimumSet_Gen": {
-            "$ref": "./examples/createSchemaUsingPOST_MinimumSet_Gen.json"
-          }
-        }
-      }
-    },
-    "/api/storage/v2/schemas/{kind}": {
-      "get": {
-        "description": "getSchema",
-        "summary": "getSchemaUsingGET",
-        "tags": [
-          "schema-api"
-        ],
-        "operationId": "Schema_GetSchema",
-        "deprecated": true,
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "data-partition-id",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "tenant"
-          },
-          {
-            "name": "frame-of-reference",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "reference"
-          },
-          {
-            "name": "kind",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "description": "kind"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/Schema"
-            },
-            "headers": {
-
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "headers": {
-
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "headers": {
-
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "headers": {
-
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": [
-
-            ]
-          }
-        ],
-        "x-ms-examples": {
-          "getSchemaUsingGET_MaximumSet_Gen": {
-            "$ref": "./examples/getSchemaUsingGET_MaximumSet_Gen.json"
-          },
-          "getSchemaUsingGET_MinimumSet_Gen": {
-            "$ref": "./examples/getSchemaUsingGET_MinimumSet_Gen.json"
-          }
-        }
-      },
-      "delete": {
-        "description": "deleteSchema",
-        "summary": "deleteSchemaUsingDELETE",
-        "tags": [
-          "schema-api"
-        ],
-        "operationId": "Schema_PurgeSchema",
-        "deprecated": true,
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "data-partition-id",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "tenant"
-          },
-          {
-            "name": "frame-of-reference",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "reference"
-          },
-          {
-            "name": "kind",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "description": "kind"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "headers": {
-
-            }
-          },
-          "204": {
-            "description": "No Content",
-            "headers": {
-
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "headers": {
-
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "headers": {
-
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": [
-
-            ]
-          }
-        ],
-        "x-ms-examples": {
-          "deleteSchemaUsingDELETE_MaximumSet_Gen": {
-            "$ref": "./examples/deleteSchemaUsingDELETE_MaximumSet_Gen.json"
-          },
-          "deleteSchemaUsingDELETE_MinimumSet_Gen": {
-            "$ref": "./examples/deleteSchemaUsingDELETE_MinimumSet_Gen.json"
+          "Record_GetSpecificRecordVersion_MinimumSet_Gen": {
+            "$ref": "./examples/Record_GetSpecificRecordVersion_MinimumSet_Gen.json"
           }
         }
       }
@@ -1633,70 +667,6 @@
           "items": {
             "type": "string"
           }
-        }
-      }
-    },
-    "BulkUpdateRecordsResponse": {
-      "title": "BulkUpdateRecordsResponse",
-      "type": "object",
-      "properties": {
-        "lockedRecordIds": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "notFoundRecordIds": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "recordCount": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "recordIds": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "unAuthorizedRecordIds": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "ConnectedOuterService": {
-      "title": "ConnectedOuterService",
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "version": {
-          "type": "string"
-        }
-      }
-    },
-    "ConversionStatus": {
-      "title": "ConversionStatus",
-      "type": "object",
-      "properties": {
-        "errors": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "id": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
         }
       }
     },
@@ -1766,112 +736,6 @@
         }
       }
     },
-    "MultiRecordIds": {
-      "title": "MultiRecordIds",
-      "type": "object",
-      "properties": {
-        "attributes": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "records": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "MultiRecordInfo": {
-      "title": "MultiRecordInfo",
-      "type": "object",
-      "properties": {
-        "invalidRecords": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "records": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Record"
-          }
-        },
-        "retryRecords": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "MultiRecordRequest": {
-      "title": "MultiRecordRequest",
-      "type": "object",
-      "properties": {
-        "records": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "MultiRecordResponse": {
-      "title": "MultiRecordResponse",
-      "type": "object",
-      "properties": {
-        "conversionStatuses": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ConversionStatus"
-          }
-        },
-        "notFound": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "records": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "PatchOperation": {
-      "title": "PatchOperation",
-      "type": "object",
-      "properties": {
-        "op": {
-          "description": "Bulk update record operation.",
-          "example": "replace",
-          "type": "string"
-        },
-        "path": {
-          "description": "Bulk update record path.",
-          "example": "/acl/owners",
-          "type": "string"
-        },
-        "value": {
-          "description": "Bulk update record path.",
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      },
-      "required": [
-        "op",
-        "path",
-        "value"
-      ]
-    },
     "Record": {
       "title": "Record",
       "type": "object",
@@ -1935,42 +799,6 @@
         }
       }
     },
-    "RecordBulkUpdateParam": {
-      "title": "RecordBulkUpdateParam",
-      "type": "object",
-      "properties": {
-        "ops": {
-          "description": "Record metadata operations.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/PatchOperation"
-          }
-        },
-        "query": {
-          "$ref": "#/definitions/RecordQuery"
-        }
-      },
-      "required": [
-        "ops",
-        "query"
-      ]
-    },
-    "RecordQuery": {
-      "title": "RecordQuery",
-      "type": "object",
-      "properties": {
-        "ids": {
-          "description": "List of record ids. Each record id must follow the naming convention {Data-Partition-Id}:{dataset-name}:{record-type}:{version}.",
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      },
-      "required": [
-        "ids"
-      ]
-    },
     "RecordVersions": {
       "title": "RecordVersions",
       "type": "object",
@@ -1987,99 +815,6 @@
         }
       }
     },
-    "ResponseEntity": {
-      "title": "ResponseEntity",
-      "type": "object",
-      "properties": {
-        "body": {
-          "type": "object"
-        },
-        "statusCode": {
-          "$ref": "#/definitions/StatusCode"
-        },
-        "statusCodeValue": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "Schema": {
-      "title": "Schema",
-      "type": "object",
-      "properties": {
-        "ext": {
-          "type": "object"
-        },
-        "kind": {
-          "description": "Record kind for which the schema information is applied to.",
-          "example": "common:wks:work-product-component--wellLog:1.0.0",
-          "type": "string"
-        },
-        "schema": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/SchemaItem"
-          }
-        }
-      },
-      "required": [
-        "kind"
-      ]
-    },
-    "SchemaItem": {
-      "title": "SchemaItem",
-      "type": "object",
-      "properties": {
-        "ext": {
-          "type": "object"
-        },
-        "kind": {
-          "type": "string"
-        },
-        "path": {
-          "type": "string"
-        },
-        "properties": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/SchemaItem"
-          }
-        }
-      }
-    },
-    "VersionInfo": {
-      "title": "VersionInfo",
-      "type": "object",
-      "properties": {
-        "artifactId": {
-          "type": "string"
-        },
-        "branch": {
-          "type": "string"
-        },
-        "buildTime": {
-          "type": "string"
-        },
-        "commitId": {
-          "type": "string"
-        },
-        "commitMessage": {
-          "type": "string"
-        },
-        "connectedOuterServices": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ConnectedOuterService"
-          }
-        },
-        "groupId": {
-          "type": "string"
-        },
-        "version": {
-          "type": "string"
-        }
-      }
-    },
     "Status": {
       "title": "Status",
       "example": "compliant",
@@ -2088,114 +823,7 @@
         "compliant",
         "incompliant"
       ]
-    },
-    "StatusCode": {
-      "title": "StatusCode",
-      "example": "ACCEPTED",
-      "type": "string",
-      "enum": [
-        "ACCEPTED",
-        "ALREADY_REPORTED",
-        "BAD_GATEWAY",
-        "BAD_REQUEST",
-        "BANDWIDTH_LIMIT_EXCEEDED",
-        "CHECKPOINT",
-        "CONFLICT",
-        "CONTINUE",
-        "CREATED",
-        "DESTINATION_LOCKED",
-        "EXPECTATION_FAILED",
-        "FAILED_DEPENDENCY",
-        "FORBIDDEN",
-        "FOUND",
-        "GATEWAY_TIMEOUT",
-        "GONE",
-        "HTTP_VERSION_NOT_SUPPORTED",
-        "IM_USED",
-        "INSUFFICIENT_SPACE_ON_RESOURCE",
-        "INSUFFICIENT_STORAGE",
-        "INTERNAL_SERVER_ERROR",
-        "I_AM_A_TEAPOT",
-        "LENGTH_REQUIRED",
-        "LOCKED",
-        "LOOP_DETECTED",
-        "METHOD_FAILURE",
-        "METHOD_NOT_ALLOWED",
-        "MOVED_PERMANENTLY",
-        "MOVED_TEMPORARILY",
-        "MULTIPLE_CHOICES",
-        "MULTI_STATUS",
-        "NETWORK_AUTHENTICATION_REQUIRED",
-        "NON_AUTHORITATIVE_INFORMATION",
-        "NOT_ACCEPTABLE",
-        "NOT_EXTENDED",
-        "NOT_FOUND",
-        "NOT_IMPLEMENTED",
-        "NOT_MODIFIED",
-        "NO_CONTENT",
-        "OK",
-        "PARTIAL_CONTENT",
-        "PAYLOAD_TOO_LARGE",
-        "PAYMENT_REQUIRED",
-        "PERMANENT_REDIRECT",
-        "PRECONDITION_FAILED",
-        "PRECONDITION_REQUIRED",
-        "PROCESSING",
-        "PROXY_AUTHENTICATION_REQUIRED",
-        "REQUESTED_RANGE_NOT_SATISFIABLE",
-        "REQUEST_ENTITY_TOO_LARGE",
-        "REQUEST_HEADER_FIELDS_TOO_LARGE",
-        "REQUEST_TIMEOUT",
-        "REQUEST_URI_TOO_LONG",
-        "RESET_CONTENT",
-        "SEE_OTHER",
-        "SERVICE_UNAVAILABLE",
-        "SWITCHING_PROTOCOLS",
-        "TEMPORARY_REDIRECT",
-        "TOO_EARLY",
-        "TOO_MANY_REQUESTS",
-        "UNAUTHORIZED",
-        "UNAVAILABLE_FOR_LEGAL_REASONS",
-        "UNPROCESSABLE_ENTITY",
-        "UNSUPPORTED_MEDIA_TYPE",
-        "UPGRADE_REQUIRED",
-        "URI_TOO_LONG",
-        "USE_PROXY",
-        "VARIANT_ALSO_NEGOTIATES"
-      ]
     }
   },
-  "security": [
-
-  ],
-  "tags": [
-    {
-      "name": "health-check-api",
-      "description": "Health Check Api"
-    },
-    {
-      "name": "info-api",
-      "description": "Info Api"
-    },
-    {
-      "name": "patch-api",
-      "description": "Patch Api"
-    },
-    {
-      "name": "pubsub-endpoints",
-      "description": "Pubsub Endpoints"
-    },
-    {
-      "name": "query-api",
-      "description": "Query Api"
-    },
-    {
-      "name": "record-api",
-      "description": "Record Api"
-    },
-    {
-      "name": "schema-api",
-      "description": "Schema Api"
-    }
-  ]
+  "security": []
 }

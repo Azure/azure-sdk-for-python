@@ -39,7 +39,7 @@ def build_create_or_update_record_request(
 
     content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
     data_partition_id = kwargs.pop('data_partition_id')  # type: str
-    frame_of_reference = kwargs.pop('frame_of_reference')  # type: str
+    frame_of_reference = kwargs.pop('frame_of_reference', _headers.pop('frame-of-reference', None))  # type: Optional[str]
     skipdupes = kwargs.pop('skipdupes', _params.pop('skipdupes', None))  # type: Optional[bool]
     accept = _headers.pop('Accept', "application/json")
 
@@ -52,7 +52,8 @@ def build_create_or_update_record_request(
 
     # Construct headers
     _headers['data-partition-id'] = _SERIALIZER.header("data_partition_id", data_partition_id, 'str')
-    _headers['frame-of-reference'] = _SERIALIZER.header("frame_of_reference", frame_of_reference, 'str')
+    if frame_of_reference is not None:
+        _headers['frame-of-reference'] = _SERIALIZER.header("frame_of_reference", frame_of_reference, 'str')
     if content_type is not None:
         _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
     _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
@@ -66,32 +67,6 @@ def build_create_or_update_record_request(
     )
 
 
-def build_delete_bulk_records_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    data_partition_id = kwargs.pop('data_partition_id')  # type: str
-    frame_of_reference = kwargs.pop('frame_of_reference')  # type: str
-    # Construct URL
-    _url = kwargs.pop("template_url", "/api/storage/v2/records/delete")
-
-    # Construct headers
-    _headers['data-partition-id'] = _SERIALIZER.header("data_partition_id", data_partition_id, 'str')
-    _headers['frame-of-reference'] = _SERIALIZER.header("frame_of_reference", frame_of_reference, 'str')
-    if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        headers=_headers,
-        **kwargs
-    )
-
-
 def build_list_record_versions_by_id_request(
     id,  # type: str
     **kwargs  # type: Any
@@ -100,7 +75,7 @@ def build_list_record_versions_by_id_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
     data_partition_id = kwargs.pop('data_partition_id')  # type: str
-    frame_of_reference = kwargs.pop('frame_of_reference')  # type: str
+    frame_of_reference = kwargs.pop('frame_of_reference', _headers.pop('frame-of-reference', None))  # type: Optional[str]
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -113,7 +88,8 @@ def build_list_record_versions_by_id_request(
 
     # Construct headers
     _headers['data-partition-id'] = _SERIALIZER.header("data_partition_id", data_partition_id, 'str')
-    _headers['frame-of-reference'] = _SERIALIZER.header("frame_of_reference", frame_of_reference, 'str')
+    if frame_of_reference is not None:
+        _headers['frame-of-reference'] = _SERIALIZER.header("frame_of_reference", frame_of_reference, 'str')
     _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
@@ -133,7 +109,7 @@ def build_get_latest_record_version_by_id_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     data_partition_id = kwargs.pop('data_partition_id')  # type: str
-    frame_of_reference = kwargs.pop('frame_of_reference')  # type: str
+    frame_of_reference = kwargs.pop('frame_of_reference', _headers.pop('frame-of-reference', None))  # type: Optional[str]
     attribute = kwargs.pop('attribute', _params.pop('attribute', None))  # type: Optional[str]
     accept = _headers.pop('Accept', "application/json")
 
@@ -151,7 +127,8 @@ def build_get_latest_record_version_by_id_request(
 
     # Construct headers
     _headers['data-partition-id'] = _SERIALIZER.header("data_partition_id", data_partition_id, 'str')
-    _headers['frame-of-reference'] = _SERIALIZER.header("frame_of_reference", frame_of_reference, 'str')
+    if frame_of_reference is not None:
+        _headers['frame-of-reference'] = _SERIALIZER.header("frame_of_reference", frame_of_reference, 'str')
     _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
@@ -171,7 +148,7 @@ def build_purge_record_by_id_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
     data_partition_id = kwargs.pop('data_partition_id')  # type: str
-    frame_of_reference = kwargs.pop('frame_of_reference')  # type: str
+    frame_of_reference = kwargs.pop('frame_of_reference', _headers.pop('frame-of-reference', None))  # type: Optional[str]
     # Construct URL
     _url = kwargs.pop("template_url", "/api/storage/v2/records/{id}")
     path_format_arguments = {
@@ -182,7 +159,8 @@ def build_purge_record_by_id_request(
 
     # Construct headers
     _headers['data-partition-id'] = _SERIALIZER.header("data_partition_id", data_partition_id, 'str')
-    _headers['frame-of-reference'] = _SERIALIZER.header("frame_of_reference", frame_of_reference, 'str')
+    if frame_of_reference is not None:
+        _headers['frame-of-reference'] = _SERIALIZER.header("frame_of_reference", frame_of_reference, 'str')
 
     return HttpRequest(
         method="DELETE",
@@ -202,7 +180,7 @@ def build_get_specific_record_version_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     data_partition_id = kwargs.pop('data_partition_id')  # type: str
-    frame_of_reference = kwargs.pop('frame_of_reference')  # type: str
+    frame_of_reference = kwargs.pop('frame_of_reference', _headers.pop('frame-of-reference', None))  # type: Optional[str]
     attribute = kwargs.pop('attribute', _params.pop('attribute', None))  # type: Optional[str]
     accept = _headers.pop('Accept', "application/json")
 
@@ -221,42 +199,14 @@ def build_get_specific_record_version_request(
 
     # Construct headers
     _headers['data-partition-id'] = _SERIALIZER.header("data_partition_id", data_partition_id, 'str')
-    _headers['frame-of-reference'] = _SERIALIZER.header("frame_of_reference", frame_of_reference, 'str')
+    if frame_of_reference is not None:
+        _headers['frame-of-reference'] = _SERIALIZER.header("frame_of_reference", frame_of_reference, 'str')
     _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
         url=_url,
         params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_purge_record_request(
-    id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-
-    data_partition_id = kwargs.pop('data_partition_id')  # type: str
-    frame_of_reference = kwargs.pop('frame_of_reference')  # type: str
-    # Construct URL
-    _url = kwargs.pop("template_url", "/api/storage/v2/records/{id}:delete")
-    path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, 'str', pattern=r'^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct headers
-    _headers['data-partition-id'] = _SERIALIZER.header("data_partition_id", data_partition_id, 'str')
-    _headers['frame-of-reference'] = _SERIALIZER.header("frame_of_reference", frame_of_reference, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=_url,
         headers=_headers,
         **kwargs
     )
@@ -286,7 +236,7 @@ class RecordOperations(object):
     def create_or_update_record(
         self,
         data_partition_id,  # type: str
-        frame_of_reference,  # type: str
+        frame_of_reference=None,  # type: Optional[str]
         skipdupes=None,  # type: Optional[bool]
         body=None,  # type: Optional[List[_models.Record]]
         **kwargs  # type: Any
@@ -298,7 +248,7 @@ class RecordOperations(object):
 
         :param data_partition_id: tenant.
         :type data_partition_id: str
-        :param frame_of_reference: reference.
+        :param frame_of_reference: reference. Default value is None.
         :type frame_of_reference: str
         :param skipdupes: skipdupes. Default value is None.
         :type skipdupes: bool
@@ -328,8 +278,8 @@ class RecordOperations(object):
         request = build_create_or_update_record_request(
             content_type=content_type,
             data_partition_id=data_partition_id,
-            frame_of_reference=frame_of_reference,
             json=_json,
+            frame_of_reference=frame_of_reference,
             skipdupes=skipdupes,
             template_url=self.create_or_update_record.metadata['url'],
             headers=_headers,
@@ -362,80 +312,11 @@ class RecordOperations(object):
 
 
     @distributed_trace
-    def delete_bulk_records(  # pylint: disable=inconsistent-return-statements
-        self,
-        data_partition_id,  # type: str
-        frame_of_reference,  # type: str
-        body=None,  # type: Optional[List[str]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """bulkDeleteRecordsUsingPOST.
-
-        bulkDeleteRecords.
-
-        :param data_partition_id: tenant.
-        :type data_partition_id: str
-        :param frame_of_reference: reference.
-        :type frame_of_reference: str
-        :param body:  Default value is None.
-        :type body: list[str]
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-
-        if body is not None:
-            _json = self._serialize.body(body, '[str]')
-        else:
-            _json = None
-
-        request = build_delete_bulk_records_request(
-            content_type=content_type,
-            data_partition_id=data_partition_id,
-            frame_of_reference=frame_of_reference,
-            json=_json,
-            template_url=self.delete_bulk_records.metadata['url'],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201, 401, 403, 404]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    delete_bulk_records.metadata = {'url': "/api/storage/v2/records/delete"}  # type: ignore
-
-
-    @distributed_trace
     def list_record_versions_by_id(
         self,
         data_partition_id,  # type: str
-        frame_of_reference,  # type: str
         id,  # type: str
+        frame_of_reference=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Optional[_models.RecordVersions]
@@ -445,10 +326,10 @@ class RecordOperations(object):
 
         :param data_partition_id: tenant.
         :type data_partition_id: str
-        :param frame_of_reference: reference.
-        :type frame_of_reference: str
         :param id: id.
         :type id: str
+        :param frame_of_reference: reference. Default value is None.
+        :type frame_of_reference: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RecordVersions, or the result of cls(response)
         :rtype: ~azure.oep.storage.models.RecordVersions or None
@@ -503,8 +384,8 @@ class RecordOperations(object):
     def get_latest_record_version_by_id(
         self,
         data_partition_id,  # type: str
-        frame_of_reference,  # type: str
         id,  # type: str
+        frame_of_reference=None,  # type: Optional[str]
         attribute=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
@@ -515,10 +396,10 @@ class RecordOperations(object):
 
         :param data_partition_id: tenant.
         :type data_partition_id: str
-        :param frame_of_reference: reference.
-        :type frame_of_reference: str
         :param id: id.
         :type id: str
+        :param frame_of_reference: reference. Default value is None.
+        :type frame_of_reference: str
         :param attribute: attribute. Default value is None.
         :type attribute: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -576,8 +457,8 @@ class RecordOperations(object):
     def purge_record_by_id(  # pylint: disable=inconsistent-return-statements
         self,
         data_partition_id,  # type: str
-        frame_of_reference,  # type: str
         id,  # type: str
+        frame_of_reference=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -587,10 +468,10 @@ class RecordOperations(object):
 
         :param data_partition_id: tenant.
         :type data_partition_id: str
-        :param frame_of_reference: reference.
-        :type frame_of_reference: str
         :param id: id.
         :type id: str
+        :param frame_of_reference: reference. Default value is None.
+        :type frame_of_reference: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -639,9 +520,9 @@ class RecordOperations(object):
     def get_specific_record_version(
         self,
         data_partition_id,  # type: str
-        frame_of_reference,  # type: str
         id,  # type: str
         version,  # type: int
+        frame_of_reference=None,  # type: Optional[str]
         attribute=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
@@ -652,12 +533,12 @@ class RecordOperations(object):
 
         :param data_partition_id: tenant.
         :type data_partition_id: str
-        :param frame_of_reference: reference.
-        :type frame_of_reference: str
         :param id: id.
         :type id: str
         :param version: version.
         :type version: long
+        :param frame_of_reference: reference. Default value is None.
+        :type frame_of_reference: str
         :param attribute: attribute. Default value is None.
         :type attribute: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -710,67 +591,4 @@ class RecordOperations(object):
         return deserialized
 
     get_specific_record_version.metadata = {'url': "/api/storage/v2/records/{id}/{version}"}  # type: ignore
-
-
-    @distributed_trace
-    def purge_record(  # pylint: disable=inconsistent-return-statements
-        self,
-        data_partition_id,  # type: str
-        frame_of_reference,  # type: str
-        id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """deleteRecordUsingPOST.
-
-        deleteRecord.
-
-        :param data_partition_id: tenant.
-        :type data_partition_id: str
-        :param frame_of_reference: reference.
-        :type frame_of_reference: str
-        :param id: id.
-        :type id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-
-        
-        request = build_purge_record_request(
-            id=id,
-            data_partition_id=data_partition_id,
-            frame_of_reference=frame_of_reference,
-            template_url=self.purge_record.metadata['url'],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201, 401, 403, 404]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    purge_record.metadata = {'url': "/api/storage/v2/records/{id}:delete"}  # type: ignore
 

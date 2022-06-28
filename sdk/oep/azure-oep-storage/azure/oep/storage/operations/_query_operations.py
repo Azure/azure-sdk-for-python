@@ -30,7 +30,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 # fmt: off
 
-def build_list_by_kinds_request(
+def build_list_kinds_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -38,8 +38,8 @@ def build_list_by_kinds_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     data_partition_id = kwargs.pop('data_partition_id')  # type: str
-    frame_of_reference = kwargs.pop('frame_of_reference')  # type: str
     cursor = kwargs.pop('cursor', _params.pop('cursor', None))  # type: Optional[str]
+    frame_of_reference = kwargs.pop('frame_of_reference', _headers.pop('frame-of-reference', None))  # type: Optional[str]
     limit = kwargs.pop('limit', _params.pop('limit', None))  # type: Optional[int]
     accept = _headers.pop('Accept', "application/json")
 
@@ -54,7 +54,8 @@ def build_list_by_kinds_request(
 
     # Construct headers
     _headers['data-partition-id'] = _SERIALIZER.header("data_partition_id", data_partition_id, 'str')
-    _headers['frame-of-reference'] = _SERIALIZER.header("frame_of_reference", frame_of_reference, 'str')
+    if frame_of_reference is not None:
+        _headers['frame-of-reference'] = _SERIALIZER.header("frame_of_reference", frame_of_reference, 'str')
     _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
@@ -74,9 +75,9 @@ def build_list_records_by_kind_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     data_partition_id = kwargs.pop('data_partition_id')  # type: str
-    frame_of_reference = kwargs.pop('frame_of_reference')  # type: str
     kind = kwargs.pop('kind')  # type: str
     cursor = kwargs.pop('cursor', _params.pop('cursor', None))  # type: Optional[str]
+    frame_of_reference = kwargs.pop('frame_of_reference', _headers.pop('frame-of-reference', None))  # type: Optional[str]
     limit = kwargs.pop('limit', _params.pop('limit', None))  # type: Optional[int]
     accept = _headers.pop('Accept', "application/json")
 
@@ -92,71 +93,14 @@ def build_list_records_by_kind_request(
 
     # Construct headers
     _headers['data-partition-id'] = _SERIALIZER.header("data_partition_id", data_partition_id, 'str')
-    _headers['frame-of-reference'] = _SERIALIZER.header("frame_of_reference", frame_of_reference, 'str')
+    if frame_of_reference is not None:
+        _headers['frame-of-reference'] = _SERIALIZER.header("frame_of_reference", frame_of_reference, 'str')
     _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
         url=_url,
         params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_list_record_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    data_partition_id = kwargs.pop('data_partition_id')  # type: str
-    frame_of_reference = kwargs.pop('frame_of_reference')  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "/api/storage/v2/query/records")
-
-    # Construct headers
-    _headers['data-partition-id'] = _SERIALIZER.header("data_partition_id", data_partition_id, 'str')
-    _headers['frame-of-reference'] = _SERIALIZER.header("frame_of_reference", frame_of_reference, 'str')
-    if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        headers=_headers,
-        **kwargs
-    )
-
-
-def build_list_batch_records_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    data_partition_id = kwargs.pop('data_partition_id')  # type: str
-    frame_of_reference = kwargs.pop('frame_of_reference')  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "/api/storage/v2/query/records:batch")
-
-    # Construct headers
-    _headers['data-partition-id'] = _SERIALIZER.header("data_partition_id", data_partition_id, 'str')
-    _headers['frame-of-reference'] = _SERIALIZER.header("frame_of_reference", frame_of_reference, 'str')
-    if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=_url,
         headers=_headers,
         **kwargs
     )
@@ -183,11 +127,11 @@ class QueryOperations(object):
 
 
     @distributed_trace
-    def list_by_kinds(
+    def list_kinds(
         self,
         data_partition_id,  # type: str
-        frame_of_reference,  # type: str
         cursor=None,  # type: Optional[str]
+        frame_of_reference=None,  # type: Optional[str]
         limit=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
@@ -198,10 +142,10 @@ class QueryOperations(object):
 
         :param data_partition_id: tenant.
         :type data_partition_id: str
-        :param frame_of_reference: reference.
-        :type frame_of_reference: str
         :param cursor: cursor. Default value is None.
         :type cursor: str
+        :param frame_of_reference: reference. Default value is None.
+        :type frame_of_reference: str
         :param limit: limit. Default value is None.
         :type limit: int
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -220,12 +164,12 @@ class QueryOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.DatastoreQueryResult]]
 
         
-        request = build_list_by_kinds_request(
+        request = build_list_kinds_request(
             data_partition_id=data_partition_id,
-            frame_of_reference=frame_of_reference,
             cursor=cursor,
+            frame_of_reference=frame_of_reference,
             limit=limit,
-            template_url=self.list_by_kinds.metadata['url'],
+            template_url=self.list_kinds.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -252,16 +196,16 @@ class QueryOperations(object):
 
         return deserialized
 
-    list_by_kinds.metadata = {'url': "/api/storage/v2/query/kinds"}  # type: ignore
+    list_kinds.metadata = {'url': "/api/storage/v2/query/kinds"}  # type: ignore
 
 
     @distributed_trace
     def list_records_by_kind(
         self,
         data_partition_id,  # type: str
-        frame_of_reference,  # type: str
         kind,  # type: str
         cursor=None,  # type: Optional[str]
+        frame_of_reference=None,  # type: Optional[str]
         limit=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
@@ -272,12 +216,12 @@ class QueryOperations(object):
 
         :param data_partition_id: tenant.
         :type data_partition_id: str
-        :param frame_of_reference: reference.
-        :type frame_of_reference: str
         :param kind: kind.
         :type kind: str
         :param cursor: cursor. Default value is None.
         :type cursor: str
+        :param frame_of_reference: reference. Default value is None.
+        :type frame_of_reference: str
         :param limit: limit. Default value is None.
         :type limit: int
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -298,9 +242,9 @@ class QueryOperations(object):
         
         request = build_list_records_by_kind_request(
             data_partition_id=data_partition_id,
-            frame_of_reference=frame_of_reference,
             kind=kind,
             cursor=cursor,
+            frame_of_reference=frame_of_reference,
             limit=limit,
             template_url=self.list_records_by_kind.metadata['url'],
             headers=_headers,
@@ -330,154 +274,4 @@ class QueryOperations(object):
         return deserialized
 
     list_records_by_kind.metadata = {'url': "/api/storage/v2/query/records"}  # type: ignore
-
-
-    @distributed_trace
-    def list_record(
-        self,
-        data_partition_id,  # type: str
-        frame_of_reference,  # type: str
-        body=None,  # type: Optional[_models.MultiRecordIds]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional[_models.MultiRecordInfo]
-        """getRecordsUsingPOST.
-
-        getRecords.
-
-        :param data_partition_id: tenant.
-        :type data_partition_id: str
-        :param frame_of_reference: reference.
-        :type frame_of_reference: str
-        :param body:  Default value is None.
-        :type body: ~azure.oep.storage.models.MultiRecordIds
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MultiRecordInfo, or the result of cls(response)
-        :rtype: ~azure.oep.storage.models.MultiRecordInfo or None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.MultiRecordInfo]]
-
-        if body is not None:
-            _json = self._serialize.body(body, 'MultiRecordIds')
-        else:
-            _json = None
-
-        request = build_list_record_request(
-            content_type=content_type,
-            data_partition_id=data_partition_id,
-            frame_of_reference=frame_of_reference,
-            json=_json,
-            template_url=self.list_record.metadata['url'],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201, 401, 403, 404]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('MultiRecordInfo', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    list_record.metadata = {'url': "/api/storage/v2/query/records"}  # type: ignore
-
-
-    @distributed_trace
-    def list_batch_records(
-        self,
-        data_partition_id,  # type: str
-        frame_of_reference,  # type: str
-        body=None,  # type: Optional[_models.MultiRecordRequest]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional[_models.MultiRecordResponse]
-        """fetchRecordsUsingPOST.
-
-        fetchRecords.
-
-        :param data_partition_id: tenant.
-        :type data_partition_id: str
-        :param frame_of_reference: reference.
-        :type frame_of_reference: str
-        :param body:  Default value is None.
-        :type body: ~azure.oep.storage.models.MultiRecordRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MultiRecordResponse, or the result of cls(response)
-        :rtype: ~azure.oep.storage.models.MultiRecordResponse or None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.MultiRecordResponse]]
-
-        if body is not None:
-            _json = self._serialize.body(body, 'MultiRecordRequest')
-        else:
-            _json = None
-
-        request = build_list_batch_records_request(
-            content_type=content_type,
-            data_partition_id=data_partition_id,
-            frame_of_reference=frame_of_reference,
-            json=_json,
-            template_url=self.list_batch_records.metadata['url'],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201, 401, 403, 404]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('MultiRecordResponse', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    list_batch_records.metadata = {'url': "/api/storage/v2/query/records:batch"}  # type: ignore
 
