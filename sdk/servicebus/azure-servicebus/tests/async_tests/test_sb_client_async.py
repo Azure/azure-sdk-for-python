@@ -484,38 +484,40 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
 
     async def test_custom_client_id_topic_sender(self, **kwargs):
         servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
-        queue_name = "queue_name"
         custom_id = "my_custom_id"
+        topic_name = "topic_name"
         servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
         async with servicebus_client:
-            topic_sender = servicebus_client.get_queue_receiver(queue_name=queue_name, client_identifier=custom_id)
+            topic_sender = servicebus_client.get_topic_sender(topic_name=topic_name, client_identifier=custom_id)
             assert topic_sender.identifier is not None
             assert topic_sender.identifier == custom_id
 
     async def test_default_client_id_topic_sender(self, **kwargs):
         servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
-        queue_name = "queue_name"
+        topic_name = "topic_name"
         servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
         async with servicebus_client:
-            topic_sender = servicebus_client.get_queue_receiver(queue_name=queue_name)
+            topic_sender = servicebus_client.get_topic_sender(topic_name=topic_name)
             assert topic_sender.identifier is not None
             assert "SBSender" in topic_sender.identifier
 
     async def test_default_client_id_subscription_receiver(self, **kwargs):
         servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
-        queue_name = "queue_name"
+        topic_name = "topic_name"
+        sub_name = "sub_name"
         servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
         async with servicebus_client:
-            subscription_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name)
+            subscription_receiver = servicebus_client.get_subscription_receiver(topic_name, sub_name)
             assert subscription_receiver.identifier is not None
             assert "SBReceiver" in subscription_receiver.identifier
 
     async def test_custom_client_id_subscription_receiver(self, **kwargs):
         servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
-        queue_name = "queue_name"
         custom_id = "my_custom_id"
+        topic_name = "topic_name"
+        sub_name = "sub_name"
         servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
         async with servicebus_client:
-            subscription_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name, client_identifier=custom_id)
+            subscription_receiver = servicebus_client.get_subscription_receiver(topic_name, sub_name, client_identifier=custom_id)
             assert subscription_receiver.identifier is not None
             assert subscription_receiver.identifier == custom_id
