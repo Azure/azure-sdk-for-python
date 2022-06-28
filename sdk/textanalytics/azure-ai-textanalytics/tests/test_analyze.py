@@ -35,7 +35,7 @@ from azure.ai.textanalytics import (
     RecognizePiiEntitiesResult,
     PiiEntityCategory,
     SingleCategoryClassifyAction,
-    MultiCategoryClassifyAction,
+    MultiLabelClassifyAction,
     RecognizeCustomEntitiesAction,
     ClassifyDocumentResult,
     RecognizeCustomEntitiesResult,
@@ -51,8 +51,8 @@ TextAnalyticsCustomPreparer = functools.partial(
     textanalytics_custom_text_key="fakeZmFrZV9hY29jdW50X2tleQ==",
     textanalytics_single_category_classify_project_name="single_category_classify_project_name",
     textanalytics_single_category_classify_deployment_name="single_category_classify_deployment_name",
-    textanalytics_multi_category_classify_project_name="multi_category_classify_project_name",
-    textanalytics_multi_category_classify_deployment_name="multi_category_classify_deployment_name",
+    textanalytics_multi_label_classify_project_name="multi_label_classify_project_name",
+    textanalytics_multi_label_classify_deployment_name="multi_label_classify_deployment_name",
     textanalytics_custom_entities_project_name="custom_entities_project_name",
     textanalytics_custom_entities_deployment_name="custom_entities_deployment_name",
 )
@@ -693,8 +693,8 @@ class TestAnalyze(TextAnalyticsTest):
             textanalytics_custom_text_key,
             textanalytics_single_category_classify_project_name,
             textanalytics_single_category_classify_deployment_name,
-            textanalytics_multi_category_classify_project_name,
-            textanalytics_multi_category_classify_deployment_name,
+            textanalytics_multi_label_classify_project_name,
+            textanalytics_multi_label_classify_deployment_name,
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
@@ -711,9 +711,9 @@ class TestAnalyze(TextAnalyticsTest):
                 deployment_name=textanalytics_single_category_classify_deployment_name,
                 disable_service_logs=True
             ),
-            MultiCategoryClassifyAction(
-                project_name=textanalytics_multi_category_classify_project_name,
-                deployment_name=textanalytics_multi_category_classify_deployment_name,
+            MultiLabelClassifyAction(
+                project_name=textanalytics_multi_label_classify_project_name,
+                deployment_name=textanalytics_multi_label_classify_deployment_name,
                 disable_service_logs=True
             ),
             RecognizeCustomEntitiesAction(
@@ -967,12 +967,12 @@ class TestAnalyze(TextAnalyticsTest):
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy
-    def test_multi_category_classify(
+    def test_multi_label_classify(
             self,
             textanalytics_custom_text_endpoint,
             textanalytics_custom_text_key,
-            textanalytics_multi_category_classify_project_name,
-            textanalytics_multi_category_classify_deployment_name
+            textanalytics_multi_label_classify_project_name,
+            textanalytics_multi_label_classify_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
         client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
@@ -985,9 +985,9 @@ class TestAnalyze(TextAnalyticsTest):
         response = client.begin_analyze_actions(
             docs,
             actions=[
-                MultiCategoryClassifyAction(
-                    project_name=textanalytics_multi_category_classify_project_name,
-                    deployment_name=textanalytics_multi_category_classify_deployment_name
+                MultiLabelClassifyAction(
+                    project_name=textanalytics_multi_label_classify_project_name,
+                    deployment_name=textanalytics_multi_label_classify_deployment_name
                 )
             ],
             show_stats=True,
@@ -1058,8 +1058,8 @@ class TestAnalyze(TextAnalyticsTest):
             textanalytics_custom_text_key,
             textanalytics_single_category_classify_project_name,
             textanalytics_single_category_classify_deployment_name,
-            textanalytics_multi_category_classify_project_name,
-            textanalytics_multi_category_classify_deployment_name,
+            textanalytics_multi_label_classify_project_name,
+            textanalytics_multi_label_classify_deployment_name,
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
@@ -1077,9 +1077,9 @@ class TestAnalyze(TextAnalyticsTest):
                     project_name=textanalytics_single_category_classify_project_name,
                     deployment_name=textanalytics_single_category_classify_deployment_name
                 ),
-                MultiCategoryClassifyAction(
-                    project_name=textanalytics_multi_category_classify_project_name,
-                    deployment_name=textanalytics_multi_category_classify_deployment_name
+                MultiLabelClassifyAction(
+                    project_name=textanalytics_multi_label_classify_project_name,
+                    deployment_name=textanalytics_multi_label_classify_deployment_name
                 ),
                 RecognizeCustomEntitiesAction(
                     project_name=textanalytics_custom_entities_project_name,
@@ -1615,8 +1615,8 @@ class TestAnalyze(TextAnalyticsTest):
         textanalytics_custom_text_key = kwargs.pop("textanalytics_custom_text_key")
         textanalytics_single_category_classify_project_name = kwargs.pop("textanalytics_single_category_classify_project_name")
         textanalytics_single_category_classify_deployment_name = kwargs.pop("textanalytics_single_category_classify_deployment_name")
-        textanalytics_multi_category_classify_project_name = kwargs.pop("textanalytics_multi_category_classify_project_name")
-        textanalytics_multi_category_classify_deployment_name = kwargs.pop("textanalytics_multi_category_classify_deployment_name")
+        textanalytics_multi_label_classify_project_name = kwargs.pop("textanalytics_multi_label_classify_project_name")
+        textanalytics_multi_label_classify_deployment_name = kwargs.pop("textanalytics_multi_label_classify_deployment_name")
         textanalytics_custom_entities_project_name = kwargs.pop("textanalytics_custom_entities_project_name")
         textanalytics_custom_entities_deployment_name = kwargs.pop("textanalytics_custom_entities_deployment_name")
 
@@ -1635,9 +1635,9 @@ class TestAnalyze(TextAnalyticsTest):
                         project_name=textanalytics_single_category_classify_project_name,
                         deployment_name=textanalytics_single_category_classify_deployment_name
                     ),
-                    MultiCategoryClassifyAction(
-                        project_name=textanalytics_multi_category_classify_project_name,
-                        deployment_name=textanalytics_multi_category_classify_deployment_name
+                    MultiLabelClassifyAction(
+                        project_name=textanalytics_multi_label_classify_project_name,
+                        deployment_name=textanalytics_multi_label_classify_deployment_name
                     ),
                     RecognizeCustomEntitiesAction(
                         project_name=textanalytics_custom_entities_project_name,
@@ -1649,7 +1649,7 @@ class TestAnalyze(TextAnalyticsTest):
             ).result()
         assert str(e.value) == f"'RecognizeCustomEntitiesAction' is only available for API version " \
                                f"{version_supported} and up.\n'SingleCategoryClassifyAction' is only available " \
-                               f"for API version {version_supported} and up.\n'MultiCategoryClassifyAction' is " \
+                               f"for API version {version_supported} and up.\n'MultiLabelClassifyAction' is " \
                                f"only available for API version {version_supported} and up.\n'AnalyzeHealthcareEntitiesAction' is " \
                                f"only available for API version {version_supported} and up.\n"
 

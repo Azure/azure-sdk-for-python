@@ -2261,8 +2261,8 @@ class RecognizeCustomEntitiesResult(DictMixin):
         )
 
 
-class MultiCategoryClassifyAction(DictMixin):
-    """MultiCategoryClassifyAction encapsulates the parameters for starting a long-running custom multi category
+class MultiLabelClassifyAction(DictMixin):
+    """MultiLabelClassifyAction encapsulates the parameters for starting a long-running custom multi label
     classification operation. For information on regional support of custom features and how to train a model to
     classify your documents, see https://aka.ms/azsdk/textanalytics/customfunctionalities
 
@@ -2299,7 +2299,7 @@ class MultiCategoryClassifyAction(DictMixin):
         self.disable_service_logs = kwargs.get('disable_service_logs', None)
 
     def __repr__(self):
-        return "MultiCategoryClassifyAction(project_name={}, deployment_name={}, " \
+        return "MultiLabelClassifyAction(project_name={}, deployment_name={}, " \
                "disable_service_logs={})".format(
             self.project_name,
             self.deployment_name,
