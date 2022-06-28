@@ -56,7 +56,9 @@ class ConfidentialLedgerClient(GeneratedClient):
      https://contoso.confidentialledger.azure.com.
     :type ledger_uri: str
     :param credential: A credential object for authenticating with the Confidential Ledger.
-    :type credential: Union[~azure.confidentialledger.ConfidentialLedgerCertificateCredential, ~azure.core.credentials.TokenCredential]
+    :type credential: Union[
+        ~azure.confidentialledger.ConfidentialLedgerCertificateCredential,
+        ~azure.core.credentials.TokenCredential]
     :param ledger_certificate_path: The path to the Confidential Ledger's TLS certificate.
     :type ledger_certificate_path: Union[bytes, str, os.PathLike]
     :keyword api_version: Api Version. Default value is "2022-05-13". Note that overriding this
@@ -81,7 +83,10 @@ class ConfidentialLedgerClient(GeneratedClient):
         # If the credential is the typical TokenCredential, then construct the authentication policy
         # the normal way.
         else:
-            credential_scopes = kwargs.pop("credential_scopes", ["https://confidential-ledger.azure.com/.default"])
+            credential_scopes = kwargs.pop(
+                "credential_scopes",
+                ["https://confidential-ledger.azure.com/.default"]
+            )
             kwargs["authentication_policy"] = kwargs.get(
                 "authentication_policy",
                 policies.BearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),

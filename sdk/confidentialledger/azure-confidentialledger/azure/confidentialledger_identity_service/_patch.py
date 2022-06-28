@@ -27,12 +27,15 @@ def patch_sdk():
 
 
 class ConfidentialLedgerIdentityServiceClient(GeneratedClient):
-    def __init__(self, identity_service_uri: Optional[str] = None, **kwargs: Any):
+    def __init__(self, identity_service_uri: Optional[str] = None, **kwargs: Any) -> None:
         """
         :param identity_service_uri: The Identity Service URL, for example
             https://identity.confidential-ledger.core.azure.com, defaults to None. If not provided,
             "https://identity.confidential-ledger.core.azure.com" will be used.
         :type identity_service_uri: Optional[str], optional
+        :keyword api_version: Api Version. Default value is "2022-05-13". Note that overriding this
+        default value may result in unsupported behavior.
+        :paramtype api_version: str
         """
 
         if not identity_service_uri:

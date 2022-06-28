@@ -41,7 +41,9 @@ class ConfidentialLedgerClient(GeneratedClient):
      https://contoso.confidentialledger.azure.com.
     :type ledger_uri: str
     :param credential: A credential object for authenticating with the Confidential Ledger.
-    :type credential: Union[~azure.confidentialledger.ConfidentialLedgerCertificateCredential, ~azure.core.credentials.TokenCredential]
+    :type credential: Union[
+        ~azure.confidentialledger.ConfidentialLedgerCertificateCredential,
+        ~azure.core.credentials.TokenCredential]
     :param ledger_certificate_path: The path to the Confidential Ledger's TLS certificate.
     :type ledger_certificate_path: Union[bytes, str, os.PathLike]
     :keyword api_version: Api Version. Default value is "2022-05-13". Note that overriding this
