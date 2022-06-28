@@ -31,7 +31,6 @@ from ._common.utils import (
     trace_message,
 )
 from ._common.constants import (
-    CONSUMER_IDENTIFIER,
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
     MGMT_REQUEST_SEQUENCE_NUMBERS,
@@ -243,7 +242,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             client_name=self._name,
             keep_alive_interval=self._config.keep_alive,
             encoding=self._config.encoding,
-            link_properties = {CONSUMER_IDENTIFIER:self._name}
         )
 
     def _open(self):
