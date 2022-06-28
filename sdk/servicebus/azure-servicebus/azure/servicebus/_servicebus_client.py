@@ -251,8 +251,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
         :rtype: ~azure.servicebus.ServiceBusSender
-        :keyword str client_identifier: a string based identifier to uniquely identify the sender instance. Service Bus will associate it 
-         with some error messages for easier correlation of errors. If not specified a unique id will be generated.
+        :keyword str client_identifier: A string based identifier to uniquely identify the sender instance. 
+         Service Bus will associate it with some error messages for easier correlation of errors. 
+         If not specified, a unique id will be generated.
 
         .. admonition:: Example:
 
@@ -338,8 +339,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
          (if provided) within its request to the service.
         :rtype: ~azure.servicebus.ServiceBusReceiver
-        :keyword str client_identifier: a string based identifier to uniquely identify the sender instance. Service Bus will associate it 
-         with some error messages for easier correlation of errors. If not specified a unique id will be generated.
+        :keyword str client_identifier: A string based identifier to uniquely identify the receiver instance. 
+         Service Bus will associate it with some error messages for easier correlation of errors. 
+         If not specified, a unique id will be generated.
 
         .. admonition:: Example:
 
@@ -411,8 +413,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
 
         :param str topic_name: The path of specific Service Bus Topic the client connects to.
         :rtype: ~azure.servicebus.ServiceBusSender
-        :keyword str client_identifier: a string based identifier to uniquely identify the sender instance. Service Bus will associate it 
-        with some error messages for easier correlation of errors. If not specified a unique id will be generated.
+        :keyword str client_identifier: A string based identifier to uniquely identify the sender instance. Service Bus will associate it 
+        with some error messages for easier correlation of errors. If not specified, a unique id will be generated.
 
         .. admonition:: Example:
 
@@ -500,8 +502,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
          (if provided) within its request to the service.
         :rtype: ~azure.servicebus.ServiceBusReceiver
-        :keyword str client_identifier: a string based identifier to uniquely identify the sender instance. Service Bus will associate it 
-         with some error messages for easier correlation of errors. If not specified a unique id will be generated.
+        :keyword str client_identifier: A string based identifier to uniquely identify the receiver instance. 
+         Service Bus will associate it with some error messages for easier correlation of errors. 
+         If not specified, a unique id will be generated.
 
         .. admonition:: Example:
 
