@@ -299,6 +299,7 @@ class Common:
                  sdk_assignees: Set[str], assignee_token=_ASSIGNEE_TOKEN):
         self.issues_package = issues_package
         self.language_owner = language_owner | sdk_assignees
+        print(f"*** language owner:{self.language_owner}")
         self.assignee_candidates = sdk_assignees
         # arguments add to language.md
         self.file_out_name = 'common.md'
@@ -362,5 +363,5 @@ class Common:
         self.output()
 
 def common_process(issues: List[IssuePackage]):
-    instance = Common(issues,  _LANGUAGE_OWNER)
+    instance = Common(issues,  _LANGUAGE_OWNER, _LANGUAGE_OWNER)
     instance.run()
