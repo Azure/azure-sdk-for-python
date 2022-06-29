@@ -194,6 +194,9 @@ ConversationAnalysisClientOperationsMixinGenerated.begin_conversation_analysis._
                 is requested. By default audio redaction will not be performed.
             }
 
+            # The response is polymorphic. The following are possible polymorphic responses based
+            off discriminator "kind":
+
             # response body for status code(s): 200
             response == {
                 "createdDateTime": "2020-02-20 00:00:00",  # Required.
