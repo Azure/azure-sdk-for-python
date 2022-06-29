@@ -3,10 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
 import os
 import unittest
-import pytest
-import six
 from base64 import (
     b64decode,
     b64encode,
@@ -16,15 +15,17 @@ from json import (
     dumps,
 )
 
-from cryptography.hazmat import backends
-from cryptography.hazmat.primitives.ciphers import Cipher
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-from cryptography.hazmat.primitives.ciphers.algorithms import AES
-from cryptography.hazmat.primitives.ciphers.modes import CBC
-from cryptography.hazmat.primitives.padding import PKCS7
+import pytest
+import six
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.storage.queue import (
+    VERSION,
+    QueueServiceClient,
+    BinaryBase64EncodePolicy,
+    BinaryBase64DecodePolicy,
+)
 from azure.storage.queue._shared import decode_base64_to_bytes
-from azure.storage.queue._shared.encryption import (
+from azure.storage.queue._encryption import (
     _ERROR_OBJECT_INVALID,
     _GCM_NONCE_LENGTH,
     _GCM_TAG_LENGTH,
@@ -34,20 +35,21 @@ from azure.storage.queue._shared.encryption import (
     _validate_and_unwrap_cek,
     _WrappedContentKey,
 )
+from cryptography.hazmat import backends
+from cryptography.hazmat.primitives.ciphers import Cipher
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from cryptography.hazmat.primitives.ciphers.algorithms import AES
+from cryptography.hazmat.primitives.ciphers.modes import CBC
+from cryptography.hazmat.primitives.padding import PKCS7
 
-from azure.storage.queue import (
-    VERSION,
-    QueueServiceClient,
-    BinaryBase64EncodePolicy,
-    BinaryBase64DecodePolicy,
-)
+from devtools_testutils.storage import StorageTestCase
 from encryption_test_helper import (
     KeyWrapper,
     KeyResolver,
     RSAKeyWrapper,
 )
 from settings.testcase import QueuePreparer
-from devtools_testutils.storage import StorageTestCase
+
 
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = 'encryptionqueue'
