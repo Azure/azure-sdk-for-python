@@ -213,9 +213,7 @@ class IssueProcess:
     def auto_assign(self) -> None:
         if AUTO_ASSIGN_LABEL in self.issue_package.labels_name:
             self.update_issue_instance()
-            print(f"*** {self.issue_package.issue.number} has assign label")
             return
-        print(f"*** {self.issue_package.issue.number} has  not assign label")
         # assign averagely
         assignee = self.auto_assign_policy()
 
