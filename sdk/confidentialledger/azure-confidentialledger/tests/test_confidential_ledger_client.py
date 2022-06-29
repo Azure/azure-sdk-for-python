@@ -275,7 +275,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             assert user["userId"] == user_id
             assert user["assignedRole"] == "Contributor"
 
-            time.sleep(1)  # Let the PATCH user operation be committed, just in case.
+            time.sleep(3)  # Let the PATCH user operation be committed, just in case.
 
             user = client.get_user(user_id)
             assert user["userId"] == user_id
@@ -285,7 +285,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             assert user["userId"] == user_id
             assert user["assignedRole"] == "Reader"
 
-            time.sleep(1)  # Let the PATCH user operation be committed, just in case.
+            time.sleep(3)  # Let the PATCH user operation be committed, just in case.
 
             user = client.get_user(user_id)
             assert user["userId"] == user_id

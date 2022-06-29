@@ -93,6 +93,12 @@ async def main():
                     )
                     print(f"User {cert_thumbprint} has been added as a {role}")
 
+                    print(
+                        "Sleeping 3 seconds before getting user details. Due to replication lag, "
+                        "it may not immediately be available."
+                    )
+                    await asyncio.sleep(3)
+
                     aad_user_details = await ledger_client.get_user(aad_object_id)
                     print(f"Details about user {aad_object_id}: {aad_user_details}")
 

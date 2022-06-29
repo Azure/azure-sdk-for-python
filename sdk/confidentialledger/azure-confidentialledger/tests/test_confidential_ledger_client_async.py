@@ -312,7 +312,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             assert user["userId"] == user_id
             assert user["assignedRole"] == "Contributor"
 
-            await asyncio.sleep(1)  # Let the PATCH user operation be committed, just in case.
+            await asyncio.sleep(3)  # Let the PATCH user operation be committed, just in case.
 
             user = await client.get_user(user_id)
             assert user["userId"] == user_id
@@ -324,7 +324,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             assert user["userId"] == user_id
             assert user["assignedRole"] == "Reader"
 
-            await asyncio.sleep(1)  # Let the PATCH user operation be committed, just in case.
+            await asyncio.sleep(3)  # Let the PATCH user operation be committed, just in case.
 
             user = await client.get_user(user_id)
             assert user["userId"] == user_id

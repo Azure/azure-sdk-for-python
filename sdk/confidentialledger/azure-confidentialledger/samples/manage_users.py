@@ -20,6 +20,7 @@ import logging
 import os
 import sys
 import tempfile
+import time
 
 from azure.confidentialledger_identity_service import (
     ConfidentialLedgerIdentityServiceClient,
@@ -80,6 +81,12 @@ def main():
             role = "Contributor"
             ledger_client.create_or_update_user(cert_thumbprint, {"assignedRole": role})
             print(f"User {cert_thumbprint} has been added as a {role}")
+
+            print(
+                "Sleeping 3 seconds before getting user details. Due to replication lag, "
+                "it may not immediately be available."
+            )
+            time.sleep(3)
 
             aad_user_details = ledger_client.get_user(aad_object_id)
             print(f"Details about user {aad_object_id}: {aad_user_details}")
