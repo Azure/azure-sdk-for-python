@@ -31,8 +31,8 @@ def patch_sdk():
     """
 
 
-class StatePollingMethod(PollingMethod):
-    """Polling method for methods returning responses containing a 'state' field; the polling
+class BaseStatePollingMethod:
+    """Base polling method for methods returning responses containing a 'state' field; the polling
     completes when 'state' becomes a desired value.
     """
 
@@ -46,6 +46,10 @@ class StatePollingMethod(PollingMethod):
         self._desired_state = desired_state
         self._polling_interval_s = polling_interval_s
 
+        self._deserialization_callback = None
+        self._status = "constructed"
+        self._latest_response = {}
+
     def initialize(self, client, initial_response, deserialization_callback):
         self._evaluate_response(initial_response)
         self._deserialization_callback = deserialization_callback
@@ -53,18 +57,6 @@ class StatePollingMethod(PollingMethod):
     def _evaluate_response(self, response: JSON) -> None:
         self._status = "finished" if response["state"] == self._desired_state else "polling"
         self._latest_response = response
-
-    def run(self) -> None:
-        try:
-            while not self.finished():
-                response = self._operation()
-                self._evaluate_response(response)
-
-                if not self.finished():
-                    time.sleep(self._polling_interval_s)
-        except Exception:
-            self._status = "failed"
-            raise
 
     def status(self) -> str:
         return self._status
@@ -77,6 +69,24 @@ class StatePollingMethod(PollingMethod):
             return self._deserialization_callback(self._latest_response)
 
         return self._latest_response
+
+
+class StatePollingMethod(BaseStatePollingMethod, PollingMethod):
+    """Polling method for methods returning responses containing a 'state' field; the polling
+    completes when 'state' becomes a desired value.
+    """
+
+    def run(self) -> None:
+        try:
+            while not self.finished():
+                response = self._operation()
+                self._evaluate_response(response)
+
+                if not self.finished():
+                    time.sleep(self._polling_interval_s)
+        except Exception:
+            self._status = "failed"
+            raise
 
 
 class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):

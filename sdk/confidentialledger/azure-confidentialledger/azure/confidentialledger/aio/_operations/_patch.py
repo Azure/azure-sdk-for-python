@@ -16,6 +16,7 @@ from azure.confidentialledger.aio._operations._operations import (
     ConfidentialLedgerClientOperationsMixin as GeneratedOperationsMixin,
 )
 from azure.confidentialledger.aio._operations._operations import JSON
+from azure.confidentialledger._operations._patch import BaseStatePollingMethod
 
 __all__: List[str] = [
     "ConfidentialLedgerClientOperationsMixin"
@@ -31,7 +32,7 @@ def patch_sdk():
     """
 
 
-class StatePollingMethod(AsyncPollingMethod):
+class AsyncStatePollingMethod(BaseStatePollingMethod, AsyncPollingMethod):
     """Polling method for methods returning responses containing a 'state' field; the polling
     completes when 'state' becomes a desired value.
     """
@@ -46,13 +47,9 @@ class StatePollingMethod(AsyncPollingMethod):
         self._desired_state = desired_state
         self._polling_interval_s = polling_interval_s
 
-    def initialize(self, client, initial_response, deserialization_callback):
-        self._evaluate_response(initial_response)
-        self._deserialization_callback = deserialization_callback
-
-    def _evaluate_response(self, response: JSON) -> None:
-        self._status = "finished" if response["state"] == self._desired_state else "polling"
-        self._latest_response = response
+        self._deserialization_callback = None
+        self._status = "constructed"
+        self._latest_response = {}
 
     async def run(self) -> None:
         try:
@@ -65,18 +62,6 @@ class StatePollingMethod(AsyncPollingMethod):
         except Exception:
             self._status = "failed"
             raise
-
-    def status(self) -> str:
-        return self._status
-
-    def finished(self) -> bool:
-        return self.status() in {"finished", "failed"}
-
-    def resource(self):
-        if self._deserialization_callback:
-            return self._deserialization_callback(self._latest_response)
-
-        return self._latest_response
 
 
 class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
@@ -94,7 +79,10 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         initial_response = await operation()
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, StatePollingMethod(operation, "Ready", lro_delay))
+            polling_method = cast(
+                AsyncPollingMethod,
+                AsyncStatePollingMethod(operation, "Ready", lro_delay)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -114,7 +102,10 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         initial_response = await operation()
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, StatePollingMethod(operation, "Ready", lro_delay))
+            polling_method = cast(
+                AsyncPollingMethod,
+                AsyncStatePollingMethod(operation, "Ready", lro_delay)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -135,7 +126,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         """
 
         # Pop arguments that are unexpected in the pipeline.
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
         post_result = await self.post_ledger_entry(entry, collection_id=collection_id, **kwargs)
@@ -155,7 +146,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         Committed, a state that indicates the transaction is durably stored in the Confidential
         Ledger.
         """
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
         # If this poller was called from begin_post_ledger_entry, we should return the
@@ -173,7 +164,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         if polling is True:
             polling_method = cast(
                 AsyncPollingMethod,
-                StatePollingMethod(operation, "Committed", lro_delay),
+                AsyncStatePollingMethod(operation, "Committed", lro_delay),
             )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
