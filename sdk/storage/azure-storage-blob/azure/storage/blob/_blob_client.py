@@ -310,8 +310,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             access key values. The value can be a SAS token string,
             an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
             an account shared access key, or an instance of a TokenCredentials class from azure.identity.
-            If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
-            - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+            Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :returns: A Blob client.
