@@ -374,12 +374,14 @@ class AMQPClient(object):
                 self._connection.listen(wait=False)
 
         operation_type = operation_type or b'empty'
+        _logger.debug('args to execute: %r', (operation, operation_type, timeout))
         status, description, response = mgmt_link.execute(
             message,
             operation=operation,
             operation_type=operation_type,
             timeout=timeout
         )
+        _logger.debug('status, description, response: %r', (status, description, response))
         return response
 
 

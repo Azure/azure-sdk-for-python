@@ -82,6 +82,7 @@ class CBSAuthenticator(object):
 
     def _put_token(self, token, token_type, audience, expires_on=None):
         # type: (str, str, str, datetime) -> None
+        _LOGGER.debug('In put token, token_type: %r', token_type)
         message = Message(
             value=token,
             properties=Properties(message_id=self._mgmt_link.next_message_id),
@@ -91,6 +92,11 @@ class CBSAuthenticator(object):
                 CBS_TYPE: token_type,
                 CBS_EXPIRATION: expires_on
             }
+        )
+        _LOGGER.debug(
+            'put token properties: %r \n put token app props: %r',
+            message.properties,
+            message.application_properties
         )
         self._mgmt_link.execute_operation(
             message,
@@ -151,13 +157,17 @@ class CBSAuthenticator(object):
             self.auth_state = CbsAuthState.ERROR
 
     def _update_status(self):
+        _LOGGER.debug('In update status.')
         if self.state == CbsAuthState.OK or self.state == CbsAuthState.REFRESH_REQUIRED:
+            _LOGGER.debug('In refresh required or OK.')
             is_expired, is_refresh_required = check_expiration_and_refresh_status(self._expires_on, self._refresh_window)
+            _LOGGER.debug('is expired == %r, is refresh required == %r', is_expired, is_refresh_required)
             if is_expired:
                 self.state = CbsAuthState.EXPIRED
             elif is_refresh_required:
                 self.state = CbsAuthState.REFRESH_REQUIRED
         elif self.state == CbsAuthState.IN_PROGRESS:
+            _LOGGER.debug('In update status, in progress. token put time: %r', self._token_put_time)
             put_timeout = check_put_timeout_status(self._auth_timeout, self._token_put_time)
             if put_timeout:
                 self.state = CbsAuthState.TIMEOUT
@@ -184,19 +194,26 @@ class CBSAuthenticator(object):
         self.state = CbsState.CLOSED
 
     def update_token(self):
+        _LOGGER.debug('updating token...')
+        _LOGGER.debug('auth state: %r', self.auth_state)
+        _LOGGER.debug('state: %r', self.state)
         self.auth_state = CbsAuthState.IN_PROGRESS
         access_token = self._auth.get_token()
         self._expires_on = access_token.expires_on
+        _LOGGER.debug('token expiry: %r', self._expires_on)
         expires_in = self._expires_on - int(utc_now().timestamp())
         self._refresh_window = int(float(expires_in) * 0.1)
+        _LOGGER.debug('refresh window: %r', self._refresh_window)
         try:
             self._token = access_token.token.decode()
         except AttributeError:
             self._token = access_token.token
         self._token_put_time = int(utc_now().timestamp())
         self._put_token(self._token, self._auth.token_type, self._auth.audience, utc_from_timestamp(self._expires_on))
+        _LOGGER.debug('update token, after put token')
 
     def handle_token(self):
+        _LOGGER.debug('Handling token. Auth state == %r', self.auth_state)
         if not self._cbs_link_ready():
             return False
         self._update_status()
