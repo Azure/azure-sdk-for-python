@@ -720,7 +720,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             Maximum number of parallel connections to use.
         :keyword progress_hook:
             An async callback to track the progress of a long running upload. The signature is
-            function(current: int, total: Optional[int]) where current is the number of bytes transfered
+            function(current: int, total: Optional[int]) where current is the number of bytes transferred
             so far, and total is the size of the blob or None if the size is unknown.
         :paramtype progress_hook: Callable[[int, Optional[int]], Awaitable[None]]
         :keyword int timeout:
