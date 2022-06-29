@@ -229,9 +229,13 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
     async def range_query_actions(self, client):
         num_collections = 5
 
-        # Send enough messages to test client pagination using nextLink. Currently, a page is 1000
-        # entries.
-        num_messages_sent = 1001
+        # Send 2 messages per collection. No need to test pagination over many pages because:
+        # 1. Each page is 1000 entries, so we'd have to send 1001 * num_collections messages and
+        #    and read them all; not ideal!
+        # 2. The pagination _should_ be tested often enough because the first response is typically
+        #    not ready, with a nextLink pointing at the original query and an empty list of entires,
+        #    as the historical query is just starting.
+        num_messages_sent = num_collections * 2
 
         messages = {m: [] for m in range(num_collections)}
         for i in range(num_messages_sent):
@@ -258,7 +262,9 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         num_matched = 0
         for i in range(num_collections):
             query_result = client.list_ledger_entries(
-                from_transaction_id=messages[i][0][0], **messages[i][0][2]
+                from_transaction_id=messages[i][0][0],
+                to_transaction_id=messages[i][-1][0],
+                **messages[i][0][2],
             )
             index = 0
             async for historical_entry in query_result:
