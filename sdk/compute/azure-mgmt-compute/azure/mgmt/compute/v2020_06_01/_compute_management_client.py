@@ -113,27 +113,69 @@ class ComputeManagementClient:    # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.availability_sets = AvailabilitySetsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.proximity_placement_groups = ProximityPlacementGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.dedicated_host_groups = DedicatedHostGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.dedicated_hosts = DedicatedHostsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.ssh_public_keys = SshPublicKeysOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_extension_images = VirtualMachineExtensionImagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_extensions = VirtualMachineExtensionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_images = VirtualMachineImagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.usage = UsageOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machines = VirtualMachinesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_sizes = VirtualMachineSizesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.images = ImagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_scale_sets = VirtualMachineScaleSetsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_scale_set_extensions = VirtualMachineScaleSetExtensionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_scale_set_rolling_upgrades = VirtualMachineScaleSetRollingUpgradesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_scale_set_vm_extensions = VirtualMachineScaleSetVMExtensionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_scale_set_vms = VirtualMachineScaleSetVMsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.log_analytics = LogAnalyticsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_run_commands = VirtualMachineRunCommandsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_scale_set_vm_run_commands = VirtualMachineScaleSetVMRunCommandsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.availability_sets = AvailabilitySetsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.proximity_placement_groups = ProximityPlacementGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.dedicated_host_groups = DedicatedHostGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.dedicated_hosts = DedicatedHostsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ssh_public_keys = SshPublicKeysOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_extension_images = VirtualMachineExtensionImagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_extensions = VirtualMachineExtensionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_images = VirtualMachineImagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.usage = UsageOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machines = VirtualMachinesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_sizes = VirtualMachineSizesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.images = ImagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_scale_sets = VirtualMachineScaleSetsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_scale_set_extensions = VirtualMachineScaleSetExtensionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_scale_set_rolling_upgrades = VirtualMachineScaleSetRollingUpgradesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_scale_set_vm_extensions = VirtualMachineScaleSetVMExtensionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_scale_set_vms = VirtualMachineScaleSetVMsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.log_analytics = LogAnalyticsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_run_commands = VirtualMachineRunCommandsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_scale_set_vm_run_commands = VirtualMachineScaleSetVMRunCommandsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(

@@ -15,6 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
@@ -24,35 +25,33 @@ T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class AvailabilitySetsOperations:
-    """AvailabilitySetsOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.compute.v2018_04_01.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.compute.v2018_04_01.aio.ComputeManagementClient`'s
+        :attr:`availability_sets` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def create_or_update(
         self,
         resource_group_name: str,
         availability_set_name: str,
-        parameters: "_models.AvailabilitySet",
+        parameters: _models.AvailabilitySet,
         **kwargs: Any
-    ) -> "_models.AvailabilitySet":
+    ) -> _models.AvailabilitySet:
         """Create or update an availability set.
 
         :param resource_group_name: The name of the resource group.
@@ -66,14 +65,17 @@ class AvailabilitySetsOperations:
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.AvailabilitySet
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailabilitySet"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-04-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-04-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AvailabilitySet]
 
         _json = self._serialize.body(parameters, 'AvailabilitySet')
 
@@ -85,11 +87,13 @@ class AvailabilitySetsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.create_or_update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -115,9 +119,9 @@ class AvailabilitySetsOperations:
         self,
         resource_group_name: str,
         availability_set_name: str,
-        parameters: "_models.AvailabilitySetUpdate",
+        parameters: _models.AvailabilitySetUpdate,
         **kwargs: Any
-    ) -> "_models.AvailabilitySet":
+    ) -> _models.AvailabilitySet:
         """Update an availability set.
 
         :param resource_group_name: The name of the resource group.
@@ -131,14 +135,17 @@ class AvailabilitySetsOperations:
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.AvailabilitySet
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailabilitySet"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-04-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-04-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AvailabilitySet]
 
         _json = self._serialize.body(parameters, 'AvailabilitySetUpdate')
 
@@ -150,11 +157,13 @@ class AvailabilitySetsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -193,13 +202,16 @@ class AvailabilitySetsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-04-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-04-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_delete_request(
@@ -208,11 +220,13 @@ class AvailabilitySetsOperations:
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.delete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -235,7 +249,7 @@ class AvailabilitySetsOperations:
         resource_group_name: str,
         availability_set_name: str,
         **kwargs: Any
-    ) -> "_models.AvailabilitySet":
+    ) -> _models.AvailabilitySet:
         """Retrieves information about an availability set.
 
         :param resource_group_name: The name of the resource group.
@@ -247,13 +261,16 @@ class AvailabilitySetsOperations:
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.AvailabilitySet
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailabilitySet"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-04-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-04-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AvailabilitySet]
 
         
         request = build_get_request(
@@ -262,11 +279,13 @@ class AvailabilitySetsOperations:
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -292,7 +311,7 @@ class AvailabilitySetsOperations:
         self,
         expand: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.AvailabilitySetListResult"]:
+    ) -> AsyncIterable[_models.AvailabilitySetListResult]:
         """Lists all availability sets in a subscription.
 
         :param expand: The expand expression to apply to the operation. Allowed values are
@@ -305,13 +324,16 @@ class AvailabilitySetsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.v2018_04_01.models.AvailabilitySetListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2018-04-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailabilitySetListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-04-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AvailabilitySetListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -320,9 +342,11 @@ class AvailabilitySetsOperations:
                     api_version=api_version,
                     expand=expand,
                     template_url=self.list_by_subscription.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -331,9 +355,11 @@ class AvailabilitySetsOperations:
                     api_version=api_version,
                     expand=expand,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -371,7 +397,7 @@ class AvailabilitySetsOperations:
         self,
         resource_group_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.AvailabilitySetListResult"]:
+    ) -> AsyncIterable[_models.AvailabilitySetListResult]:
         """Lists all availability sets in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -383,13 +409,16 @@ class AvailabilitySetsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.v2018_04_01.models.AvailabilitySetListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2018-04-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailabilitySetListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-04-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AvailabilitySetListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -398,9 +427,11 @@ class AvailabilitySetsOperations:
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -409,9 +440,11 @@ class AvailabilitySetsOperations:
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -450,7 +483,7 @@ class AvailabilitySetsOperations:
         resource_group_name: str,
         availability_set_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.VirtualMachineSizeListResult"]:
+    ) -> AsyncIterable[_models.VirtualMachineSizeListResult]:
         """Lists all available virtual machine sizes that can be used to create a new virtual machine in
         an existing availability set.
 
@@ -465,13 +498,16 @@ class AvailabilitySetsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.v2018_04_01.models.VirtualMachineSizeListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2018-04-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineSizeListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-04-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.VirtualMachineSizeListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -481,9 +517,11 @@ class AvailabilitySetsOperations:
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list_available_sizes.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -493,9 +531,11 @@ class AvailabilitySetsOperations:
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
