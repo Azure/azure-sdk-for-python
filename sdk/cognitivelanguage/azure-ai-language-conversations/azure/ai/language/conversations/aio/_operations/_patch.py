@@ -95,7 +95,10 @@ ConversationAnalysisClientOperationsMixinGenerated.begin_conversation_analysis._
     :return: An instance of AsyncLROPoller that returns JSON object
     :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
     :raises ~azure.core.exceptions.HttpResponseError:
-    
+
+    .. versionadded:: 2022-05-15-preview
+        The *begin_conversation_analysis* client method.
+
     Example:
         .. code-block:: python
 

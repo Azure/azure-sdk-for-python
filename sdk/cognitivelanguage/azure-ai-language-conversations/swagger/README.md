@@ -150,24 +150,6 @@ directive:
 ```
 
 ```yaml $(tag) == 'release_runtime_1_1_preview'
-# Rename Runtime client get job status operation
-directive:
-    - from: swagger-document
-      where: $["paths"]["/analyze-conversations/jobs/{jobId}"]["get"]
-      transform: >
-          $["operationId"] = "GetConversationJobStatus";
-```
-
-```yaml $(tag) == 'release_runtime_1_1_preview'
-# Rename Runtime client cancel job operation
-directive:
-    - from: swagger-document
-      where: $["paths"]["/analyze-conversations/jobs/{jobId}:cancel"]["post"]
-      transform: >
-          $["operationId"] = "CancelConversationJob";
-```
-
-```yaml $(tag) == 'release_runtime_1_1_preview'
 # Rename analyze_conversation `body` to `tasks`
 directive:
     - from: swagger-document
@@ -197,6 +179,24 @@ directive:
               "$ref": "#/definitions/AnalyzeConversationJobState"
           }
       };
+```
+
+```yaml $(tag) == 'release_runtime_1_1_preview'
+# Remove async GET operation status
+directive:
+    - from: swagger-document
+      where: $["paths"]
+      transform: >
+          delete $["/analyze-conversations/jobs/{jobId}"];
+```
+
+```yaml $(tag) == 'release_runtime_1_1_preview'
+# Remove async cancel operation
+directive:
+    - from: swagger-document
+      where: $["paths"]
+      transform: >
+          delete $["/analyze-conversations/jobs/{jobId}:cancel"];
 ```
 
 ### Authoring API Directives
