@@ -158,19 +158,19 @@ class CBSAuthenticator(object):
 
     def _update_status(self):
         _LOGGER.debug('In update status.')
-        if self.state == CbsAuthState.OK or self.state == CbsAuthState.REFRESH_REQUIRED:
+        if self.auth_state == CbsAuthState.OK or self.auth_state == CbsAuthState.REFRESH_REQUIRED:
             _LOGGER.debug('In refresh required or OK.')
             is_expired, is_refresh_required = check_expiration_and_refresh_status(self._expires_on, self._refresh_window)
             _LOGGER.debug('is expired == %r, is refresh required == %r', is_expired, is_refresh_required)
             if is_expired:
-                self.state = CbsAuthState.EXPIRED
+                self.auth_state = CbsAuthState.EXPIRED
             elif is_refresh_required:
-                self.state = CbsAuthState.REFRESH_REQUIRED
-        elif self.state == CbsAuthState.IN_PROGRESS:
+                self.auth_state = CbsAuthState.REFRESH_REQUIRED
+        elif self.auth_state == CbsAuthState.IN_PROGRESS:
             _LOGGER.debug('In update status, in progress. token put time: %r', self._token_put_time)
             put_timeout = check_put_timeout_status(self._auth_timeout, self._token_put_time)
             if put_timeout:
-                self.state = CbsAuthState.TIMEOUT
+                self.auth_state = CbsAuthState.TIMEOUT
 
     def _cbs_link_ready(self):
         if self.state == CbsState.OPEN:
