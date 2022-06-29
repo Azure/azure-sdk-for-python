@@ -266,7 +266,11 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         # type: (Union[ServiceBusMessage, ServiceBusMessageBatch], Optional[float], Exception) -> None
         self._open()
         try:
-            self._handler.send_message(message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout)
+            if isinstance(message, ServiceBusMessageBatch):
+                for batch_message in message._messages:
+                    self._handler.send_message(batch_message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout)
+            else:
+                self._handler.send_message(message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout)
         except TimeoutError:
             raise OperationTimeoutError(message="Send operation timed out")
         except MessageException:
