@@ -80,7 +80,7 @@ class IssueProcess:
         self.issue_package.issue.create_comment(message)
 
     def get_readme_from_pr_link(self, link: str) -> str:
-        pr_number = int(link.replace(f"{_SWAGGER_PULL}/", "").strip('/'))
+        pr_number = int(link.replace(f"{_SWAGGER_PULL}/", "").split('/')[0])
 
         # Get Readme link
         pr_info = self.issue_package.rest_repo.get_pull(number=pr_number)
