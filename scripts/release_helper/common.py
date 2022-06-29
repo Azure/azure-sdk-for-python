@@ -296,10 +296,10 @@ class Common:
     """
 
     def __init__(self, issues_package: List[IssuePackage], language_owner: Set[str],
-                 skipped_assignees: Set[str]={_BOT_NAME}, assignee_token=_ASSIGNEE_TOKEN):
+                 sdk_assignees: Set[str], assignee_token=_ASSIGNEE_TOKEN):
         self.issues_package = issues_package
-        self.language_owner = language_owner
-        self.assignee_candidates = language_owner - skipped_assignees
+        self.language_owner = language_owner | sdk_assignees
+        self.assignee_candidates = sdk_assignees
         # arguments add to language.md
         self.file_out_name = 'common.md'
         self.target_release_date = ''

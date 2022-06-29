@@ -9,7 +9,8 @@ from common import IssueProcess, Common, get_origin_link_and_tag, IssuePackage
 from utils import AUTO_CLOSE_LABEL, get_last_released_date, record_release, get_python_release_pipeline, run_pipeline
 
 # assignee dict which will be assigned to handle issues
-_PYTHON_OWNER = {'BigCat20196', 'msyyc', 'Wzb123456789', 'azure-sdk'}
+_PYTHON_OWNER = {'msyyc', 'azure-sdk'}
+_PYTHON_ASSIGNEE = {'BigCat20196', 'Wzb123456789'}
 # labels
 _CONFIGURED = 'Configured'
 _AUTO_ASK_FOR_CHECK = 'auto-ask-check'
@@ -134,8 +135,8 @@ class IssueProcessPython(IssueProcess):
 
 
 class Python(Common):
-    def __init__(self, issues, language_owner):
-        super(Python, self).__init__(issues, language_owner)
+    def __init__(self, issues, language_owner, sdk_assignees):
+        super(Python, self).__init__(issues, language_owner, sdk_assignees)
         self.file_out_name = 'release_python_status.md'
         self.issue_process_function = IssueProcessPython
 
@@ -152,5 +153,5 @@ class Python(Common):
 
 
 def python_process(issues: List[Any]):
-    instance = Python(issues, _PYTHON_OWNER)
+    instance = Python(issues, _PYTHON_OWNER, _PYTHON_ASSIGNEE)
     instance.run()
