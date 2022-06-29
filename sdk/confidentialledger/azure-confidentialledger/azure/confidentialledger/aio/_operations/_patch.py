@@ -43,13 +43,7 @@ class AsyncStatePollingMethod(BaseStatePollingMethod, AsyncPollingMethod):
         desired_state: str,
         polling_interval_s: float,
     ):
-        self._operation = operation
-        self._desired_state = desired_state
-        self._polling_interval_s = polling_interval_s
-
-        self._deserialization_callback = None
-        self._status = "constructed"
-        self._latest_response = {}
+        super().__init__(operation, desired_state, polling_interval_s)
 
     async def run(self) -> None:
         try:

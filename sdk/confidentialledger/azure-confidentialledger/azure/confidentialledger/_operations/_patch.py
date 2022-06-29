@@ -38,7 +38,7 @@ class BaseStatePollingMethod:
 
     def __init__(
         self,
-        operation: Callable[[], JSON],
+        operation: Callable[[], Any],
         desired_state: str,
         polling_interval_s: float,
     ):
@@ -50,7 +50,7 @@ class BaseStatePollingMethod:
         self._status = "constructed"
         self._latest_response = {}
 
-    def initialize(self, client, initial_response, deserialization_callback):
+    def initialize(self, client, initial_response, deserialization_callback):  # pylint: disable=unused-argument
         self._evaluate_response(initial_response)
         self._deserialization_callback = deserialization_callback
 
@@ -75,6 +75,14 @@ class StatePollingMethod(BaseStatePollingMethod, PollingMethod):
     """Polling method for methods returning responses containing a 'state' field; the polling
     completes when 'state' becomes a desired value.
     """
+
+    def __init__(
+        self,
+        operation: Callable[[], JSON],
+        desired_state: str,
+        polling_interval_s: float,
+    ):
+        super().__init__(operation, desired_state, polling_interval_s)
 
     def run(self) -> None:
         try:

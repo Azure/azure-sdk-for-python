@@ -27,7 +27,7 @@ def patch_sdk():
 
 
 class ConfidentialLedgerIdentityServiceClient(GeneratedClient):
-    def __init__(self, identity_service_uri: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, identity_service_uri: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=missing-client-constructor-parameter-credential
         """
         :param identity_service_uri: The Identity Service URL, for example
             https://identity.confidential-ledger.core.azure.com, defaults to None. If not provided,
