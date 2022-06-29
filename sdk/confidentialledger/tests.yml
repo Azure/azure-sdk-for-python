@@ -8,11 +8,6 @@ stages:
       MatrixReplace:
         - TestSamples=.*/true
       MaxParallel: 1
-      PostTestSteps:
-        - pwsh: |
-            Write-Host $env:CONFIDENTIALLEDGER_ENDPOINT.Substring(0, 10)
-          displayName: Check Environment
-          continueOnError: true
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
