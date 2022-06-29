@@ -1,0 +1,829 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2021-06-01-preview",
+    "title": "Api Documentation",
+    "description": "Api Documentation",
+    "contact": {}
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/storage/v2/health": {
+      "get": {
+        "description": "healthMessage",
+        "summary": "healthMessageUsingGET",
+        "tags": [
+          "health-check-api"
+        ],
+        "operationId": "Health_Get",
+        "deprecated": false,
+        "produces": [
+          "text/plain"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "frame-of-reference",
+            "in": "header",
+            "required": false,
+            "type": "string",
+            "description": "reference"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-ms-examples": {
+          "Health_Get_MaximumSet_Gen": {
+            "$ref": "./examples/Health_Get_MaximumSet_Gen.json"
+          },
+          "Health_Get_MinimumSet_Gen": {
+            "$ref": "./examples/Health_Get_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/storage/v2/records": {
+      "put": {
+        "description": "createOrUpdateRecords",
+        "summary": "createOrUpdateRecordsUsingPUT",
+        "tags": [
+          "record-api"
+        ],
+        "operationId": "Record_CreateOrUpdateRecord",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "frame-of-reference",
+            "in": "header",
+            "required": false,
+            "type": "string",
+            "description": "reference"
+          },
+          {
+            "name": "skipdupes",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "description": "skipdupes"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": false,
+            "enum": [
+              "application/json"
+            ],
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Record"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/CreateUpdateRecordsResponse"
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-ms-examples": {
+          "Record_CreateOrUpdateRecord_MaximumSet_Gen": {
+            "$ref": "./examples/Record_CreateOrUpdateRecord_MaximumSet_Gen.json"
+          },
+          "Record_CreateOrUpdateRecord_MinimumSet_Gen": {
+            "$ref": "./examples/Record_CreateOrUpdateRecord_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/storage/v2/query/kinds": {
+      "get": {
+        "description": "getKinds",
+        "summary": "getKindsUsingGET",
+        "tags": [
+          "query-api"
+        ],
+        "operationId": "Query_ListKinds",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "cursor"
+          },
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "frame-of-reference",
+            "in": "header",
+            "required": false,
+            "type": "string",
+            "description": "reference"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "description": "limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/DatastoreQueryResult"
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-ms-examples": {
+          "Query_ListByKinds_MaximumSet_Gen": {
+            "$ref": "./examples/Query_ListByKinds_MaximumSet_Gen.json"
+          },
+          "Query_ListByKinds_MinimumSet_Gen": {
+            "$ref": "./examples/Query_ListByKinds_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/storage/v2/query/records": {
+      "get": {
+        "description": "getAllRecords",
+        "summary": "getAllRecordsUsingGET",
+        "tags": [
+          "query-api"
+        ],
+        "operationId": "Query_ListRecordsByKind",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "cursor"
+          },
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "frame-of-reference",
+            "in": "header",
+            "required": false,
+            "type": "string",
+            "description": "reference"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "description": "limit"
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "description": "kind"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/DatastoreQueryResult"
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-ms-examples": {
+          "Query_ListRecordsByKind_MaximumSet_Gen": {
+            "$ref": "./examples/Query_ListRecordsByKind_MaximumSet_Gen.json"
+          },
+          "Query_ListRecordsByKind_MinimumSet_Gen": {
+            "$ref": "./examples/Query_ListRecordsByKind_MinimumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/storage/v2/records/versions/{id}": {
+      "get": {
+        "description": "getRecordVersions",
+        "summary": "getRecordVersionsUsingGET",
+        "tags": [
+          "record-api"
+        ],
+        "operationId": "Record_ListRecordVersionsById",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "frame-of-reference",
+            "in": "header",
+            "required": false,
+            "type": "string",
+            "description": "reference"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "pattern": "^[\\w\\-\\.]+:[\\w-\\.]+:[\\w\\-\\.\\:\\%]+$",
+            "description": "id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/RecordVersions"
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-ms-examples": {
+          "Record_ListRecordVersionsById_MaximumSet_Gen": {
+            "$ref": "./examples/Record_ListRecordVersionsById_MaximumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/storage/v2/records/{id}": {
+      "get": {
+        "description": "getLatestRecordVersion",
+        "summary": "getLatestRecordVersionUsingGET",
+        "tags": [
+          "record-api"
+        ],
+        "operationId": "Record_GetLatestRecordVersionById",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "frame-of-reference",
+            "in": "header",
+            "required": false,
+            "type": "string",
+            "description": "reference"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "pattern": "^[\\w\\-\\.]+:[\\w-\\.]+:[\\w\\-\\.\\:\\%]+$",
+            "description": "id"
+          },
+          {
+            "name": "attribute",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "attribute"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-ms-examples": {
+          "Record_GetLatestRecordVersionById_MaximumSet_Gen": {
+            "$ref": "./examples/Record_GetLatestRecordVersionById_MaximumSet_Gen.json"
+          },
+          "Record_GetLatestRecordVersionById_MinimumSet_Gen": {
+            "$ref": "./examples/Record_GetLatestRecordVersionById_MinimumSet_Gen.json"
+          }
+        }
+      },
+      "delete": {
+        "description": "purgeRecord",
+        "summary": "purgeRecordUsingDELETE",
+        "tags": [
+          "record-api"
+        ],
+        "operationId": "Record_PurgeRecordById",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "frame-of-reference",
+            "in": "header",
+            "required": false,
+            "type": "string",
+            "description": "reference"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "pattern": "^[\\w\\-\\.]+:[\\w-\\.]+:[\\w\\-\\.\\:\\%]+$",
+            "description": "id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {}
+          },
+          "204": {
+            "description": "No Content",
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-ms-examples": {
+          "Record_PurgeRecordById_MaximumSet_Gen": {
+            "$ref": "./examples/Record_PurgeRecordById_MaximumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/api/storage/v2/records/{id}/{version}": {
+      "get": {
+        "description": "getSpecificRecordVersion",
+        "summary": "getSpecificRecordVersionUsingGET",
+        "tags": [
+          "record-api"
+        ],
+        "operationId": "Record_GetSpecificRecordVersion",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "data-partition-id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "tenant"
+          },
+          {
+            "name": "frame-of-reference",
+            "in": "header",
+            "required": false,
+            "type": "string",
+            "description": "reference"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "pattern": "^[\\w\\-\\.]+:[\\w-\\.]+:[\\w\\-\\.\\:\\%]+$",
+            "description": "id"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "version"
+          },
+          {
+            "name": "attribute",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "attribute"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-ms-examples": {
+          "Record_GetSpecificRecordVersion_MaximumSet_Gen": {
+            "$ref": "./examples/Record_GetSpecificRecordVersion_MaximumSet_Gen.json"
+          },
+          "Record_GetSpecificRecordVersion_MinimumSet_Gen": {
+            "$ref": "./examples/Record_GetSpecificRecordVersion_MinimumSet_Gen.json"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Acl": {
+      "title": "Acl",
+      "type": "object",
+      "properties": {
+        "owners": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "viewers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "CreateUpdateRecordsResponse": {
+      "title": "CreateUpdateRecordsResponse",
+      "type": "object",
+      "properties": {
+        "recordCount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "recordIdVersions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "recordIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "skippedRecordIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "DatastoreQueryResult": {
+      "title": "DatastoreQueryResult",
+      "type": "object",
+      "properties": {
+        "cursor": {
+          "type": "string"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Legal": {
+      "title": "Legal",
+      "type": "object",
+      "properties": {
+        "legaltags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "otherRelevantDataCountries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "status": {
+          "$ref": "#/definitions/Status"
+        }
+      }
+    },
+    "Record": {
+      "title": "Record",
+      "type": "object",
+      "properties": {
+        "acl": {
+          "$ref": "#/definitions/Acl"
+        },
+        "ancestry": {
+          "$ref": "#/definitions/RecordAncestry"
+        },
+        "data": {
+          "type": "object"
+        },
+        "id": {
+          "description": "Unique identifier in whole Data Ecosystem. When not provided, Data Ecosystem will create and assign an id to the record. Must follow the naming convention: {Data-Partition-Id}:{object-type}:{uuid}.",
+          "example": "common:work-product-component--wellLog:123456",
+          "type": "string",
+          "pattern": "^[\\w\\-\\.]+:[\\w-\\.]+:[\\w\\-\\.\\:\\%]+$"
+        },
+        "kind": {
+          "description": "Record kind for which the schema information is applied to.",
+          "example": "common:wks:work-product-component--wellLog:1.0.0",
+          "type": "string"
+        },
+        "legal": {
+          "$ref": "#/definitions/Legal"
+        },
+        "meta": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "version": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "required": [
+        "acl",
+        "id",
+        "kind"
+      ]
+    },
+    "RecordAncestry": {
+      "title": "RecordAncestry",
+      "type": "object",
+      "properties": {
+        "parents": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "RecordVersions": {
+      "title": "RecordVersions",
+      "type": "object",
+      "properties": {
+        "recordId": {
+          "type": "string"
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      }
+    },
+    "Status": {
+      "title": "Status",
+      "example": "compliant",
+      "type": "string",
+      "enum": [
+        "compliant",
+        "incompliant"
+      ]
+    }
+  },
+  "security": []
+}

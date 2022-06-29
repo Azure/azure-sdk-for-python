@@ -1,0 +1,347 @@
+interactions:
+- request:
+    body: '[{"acl": {"owners": ["viewer@dpid.contoso.com"],
+      "viewers": ["viewer@dpid.contoso.com"]}, "data":
+      {"msg": "hello world from Data Lake"}, "id": "dpid:id:id",
+      "kind": "kind", "legal": {"legaltags": ["dpid-Test-Legal-Tag-6446736"],
+      "otherRelevantDataCountries": ["US"], "status": "compliant"}, "meta": [{}],
+      "version": 0}]'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '463'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-oep-storage/1.0.0b1 Python/3.10.4 (Windows-10-10.0.22000-SP0)
+      data-partition-id:
+      - dpid
+    method: PUT
+    uri: https://instance.oep.ppe.azure-int.net/api/storage/v2/records
+  response:
+    body:
+      string: '{"recordCount":1,"recordIds":["dpid:id:id"],"skippedRecordIds":[],"recordIdVersions":["dpid:id:id:version"]}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-headers:
+      - access-control-allow-origin, origin, content-type, accept, authorization,
+        data-partition-id, correlation-id, appkey
+      access-control-allow-methods:
+      - GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH
+      access-control-allow-origin:
+      - '*'
+      access-control-max-age:
+      - '3600'
+      cache-control:
+      - no-cache, no-store, must-revalidate
+      connection:
+      - keep-alive
+      content-security-policy:
+      - default-src 'self'
+      content-type:
+      - application/json
+      correlation-id:
+      - 93342fab-03e1-412c-874b-a3d8c4bf8513
+      date:
+      - Tue, 28 Jun 2022 13:22:49 GMT
+      expires:
+      - '0'
+      request-context:
+      - appId=cid-v1:5b32f2b4-ce05-44ec-8664-125ad5663561
+      server:
+      - istio-envoy
+      set-cookie:
+      - JSESSIONID=CA5E04815E8D6EA8BE9C73D2EDBE181A; Path=/api/storage/v2; Secure;
+        HttpOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '859'
+      x-frame-options:
+      - DENY
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Cookie:
+      - JSESSIONID=CA5E04815E8D6EA8BE9C73D2EDBE181A
+      User-Agent:
+      - azsdk-python-oep-storage/1.0.0b1 Python/3.10.4 (Windows-10-10.0.22000-SP0)
+      data-partition-id:
+      - dpid
+    method: GET
+    uri: https://instance.oep.ppe.azure-int.net/api/storage/v2/records/versions/dpid%3Aid%3Aid
+  response:
+    body:
+      string: '{"recordId":"dpid:id:id","versions":[version]}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-headers:
+      - access-control-allow-origin, origin, content-type, accept, authorization,
+        data-partition-id, correlation-id, appkey
+      access-control-allow-methods:
+      - GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH
+      access-control-allow-origin:
+      - '*'
+      access-control-max-age:
+      - '3600'
+      cache-control:
+      - no-cache, no-store, must-revalidate
+      connection:
+      - keep-alive
+      content-security-policy:
+      - default-src 'self'
+      content-type:
+      - application/json
+      correlation-id:
+      - eeefaba4-303b-4121-a7a7-6552f8df55c4
+      date:
+      - Tue, 28 Jun 2022 13:22:49 GMT
+      expires:
+      - '0'
+      request-context:
+      - appId=cid-v1:5b32f2b4-ce05-44ec-8664-125ad5663561
+      server:
+      - istio-envoy
+      set-cookie:
+      - JSESSIONID=B00C3688FB4CA0F53615D071808F5FA6; Path=/api/storage/v2; Secure;
+        HttpOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '34'
+      x-frame-options:
+      - DENY
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Cookie:
+      - JSESSIONID=B00C3688FB4CA0F53615D071808F5FA6
+      User-Agent:
+      - azsdk-python-oep-storage/1.0.0b1 Python/3.10.4 (Windows-10-10.0.22000-SP0)
+      data-partition-id:
+      - dpid
+    method: GET
+    uri: https://instance.oep.ppe.azure-int.net/api/storage/v2/records/dpid%3Aid%3Aid
+  response:
+    body:
+      string: '{"data":{"msg":"hello world from Data Lake"},"meta":[{}],"id":"dpid:id:id","version":version,"kind":"kind","acl":{"viewers":["viewer@dpid.contoso.com"],"owners":["viewer@dpid.contoso.com"]},"legal":{"legaltags":["dpid-Test-Legal-Tag-6446736"],"otherRelevantDataCountries":["US"],"status":"compliant"},"createUser":"2f59abbc-7b40-4d0e-91b2-22ca3084bc84","createTime":"2022-06-28T13:22:48.879Z"}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-headers:
+      - access-control-allow-origin, origin, content-type, accept, authorization,
+        data-partition-id, correlation-id, appkey
+      access-control-allow-methods:
+      - GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH
+      access-control-allow-origin:
+      - '*'
+      access-control-max-age:
+      - '3600'
+      cache-control:
+      - no-cache, no-store, must-revalidate
+      connection:
+      - keep-alive
+      content-length:
+      - '546'
+      content-security-policy:
+      - default-src 'self'
+      content-type:
+      - application/json
+      correlation-id:
+      - 139a07ac-6576-4c3a-89cc-79f3a3341440
+      date:
+      - Tue, 28 Jun 2022 13:22:50 GMT
+      expires:
+      - '0'
+      request-context:
+      - appId=cid-v1:5b32f2b4-ce05-44ec-8664-125ad5663561
+      server:
+      - istio-envoy
+      set-cookie:
+      - JSESSIONID=EC82815AD0A9D8C70B1A7686A585D568; Path=/api/storage/v2; Secure;
+        HttpOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '45'
+      x-frame-options:
+      - DENY
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Cookie:
+      - JSESSIONID=EC82815AD0A9D8C70B1A7686A585D568
+      User-Agent:
+      - azsdk-python-oep-storage/1.0.0b1 Python/3.10.4 (Windows-10-10.0.22000-SP0)
+      data-partition-id:
+      - dpid
+    method: GET
+    uri: https://instance.oep.ppe.azure-int.net/api/storage/v2/records/dpid%3Aid%3Aid/version
+  response:
+    body:
+      string: '{"data":{"msg":"hello world from Data Lake"},"meta":[{}],"id":"dpid:id:id","version":version,"kind":"kind","acl":{"viewers":["viewer@dpid.contoso.com"],"owners":["viewer@dpid.contoso.com"]},"legal":{"legaltags":["dpid-Test-Legal-Tag-6446736"],"otherRelevantDataCountries":["US"],"status":"compliant"},"createUser":"2f59abbc-7b40-4d0e-91b2-22ca3084bc84","createTime":"2022-06-28T13:22:48.879Z"}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-headers:
+      - access-control-allow-origin, origin, content-type, accept, authorization,
+        data-partition-id, correlation-id, appkey
+      access-control-allow-methods:
+      - GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH
+      access-control-allow-origin:
+      - '*'
+      access-control-max-age:
+      - '3600'
+      cache-control:
+      - no-cache, no-store, must-revalidate
+      connection:
+      - keep-alive
+      content-length:
+      - '546'
+      content-security-policy:
+      - default-src 'self'
+      content-type:
+      - application/json
+      correlation-id:
+      - cad41bb8-24fc-4dc3-8ed8-46c7664e78c3
+      date:
+      - Tue, 28 Jun 2022 13:22:50 GMT
+      expires:
+      - '0'
+      request-context:
+      - appId=cid-v1:5b32f2b4-ce05-44ec-8664-125ad5663561
+      server:
+      - istio-envoy
+      set-cookie:
+      - JSESSIONID=DB61A611725D974D87623D2BAA9452BF; Path=/api/storage/v2; Secure;
+        HttpOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '164'
+      x-frame-options:
+      - DENY
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Cookie:
+      - JSESSIONID=DB61A611725D974D87623D2BAA9452BF
+      User-Agent:
+      - azsdk-python-oep-storage/1.0.0b1 Python/3.10.4 (Windows-10-10.0.22000-SP0)
+      data-partition-id:
+      - dpid
+    method: DELETE
+    uri: https://instance.oep.ppe.azure-int.net/api/storage/v2/records/dpid%3Aid%3Aid
+  response:
+    body:
+      string: ''
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-headers:
+      - access-control-allow-origin, origin, content-type, accept, authorization,
+        data-partition-id, correlation-id, appkey
+      access-control-allow-methods:
+      - GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH
+      access-control-allow-origin:
+      - '*'
+      access-control-max-age:
+      - '3600'
+      cache-control:
+      - no-cache, no-store, must-revalidate
+      connection:
+      - keep-alive
+      content-security-policy:
+      - default-src 'self'
+      correlation-id:
+      - 65661e4f-26c1-4cbd-8d64-5c0346da85cc
+      date:
+      - Tue, 28 Jun 2022 13:22:51 GMT
+      expires:
+      - '0'
+      request-context:
+      - appId=cid-v1:5b32f2b4-ce05-44ec-8664-125ad5663561
+      server:
+      - istio-envoy
+      set-cookie:
+      - JSESSIONID=3B5D952292BE25218B9014DD60583B74; Path=/api/storage/v2; Secure;
+        HttpOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '98'
+      x-frame-options:
+      - DENY
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 204
+      message: No Content
+version: 1

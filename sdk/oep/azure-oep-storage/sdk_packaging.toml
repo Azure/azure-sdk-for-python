@@ -1,0 +1,9 @@
+[packaging]
+auto_update = false
+package_name = "azure-oep-storage"
+package_pprint_name = "Azure Oep Storage"
+is_stable = false
+is_arm = false
+
+# Package owners should uncomment and set this doc id.
+# package_doc_id = "oep-storage"
