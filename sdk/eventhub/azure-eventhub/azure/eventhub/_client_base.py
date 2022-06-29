@@ -10,7 +10,7 @@ import time
 import functools
 import collections
 from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
-from datetime import timedelta
+from datetime import timedelta, datetime
 from urllib.parse import urlparse
 import six
 
@@ -386,15 +386,27 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 mgmt_client.open()
                 while not mgmt_client.client_ready():
                     time.sleep(0.05)
+                _LOGGER.debug("type cred %r", type(self._credential))
+                _LOGGER.debug(datetime.fromtimestamp(self._credential.get_token(self._auth_uri).expires_on))
                 mgmt_msg.application_properties["security_token"] = mgmt_auth.get_token()
-                _LOGGER.debug('Logging token expiry for token type %r', type(mgmt_auth.get_token()))
-                _LOGGER.debug(mgmt_msg.application_properties["security_token"].expires_on)
+                _LOGGER.debug('mgmt_client token before update - Logging token expiry for token type %r', type(mgmt_auth.get_token()))
+                _LOGGER.debug('current time: %r', datetime.now())
+                _LOGGER.debug(
+                    'token expiry: %r',
+                    datetime.fromtimestamp(mgmt_msg.application_properties["security_token"].expires_on)
+                )
                 response = mgmt_client.mgmt_request(
                     mgmt_msg,
                     operation=READ_OPERATION.decode(),
                     operation_type=op_type.decode(),
                     status_code_field=MGMT_STATUS_CODE,
                     description_fields=MGMT_STATUS_DESC,
+                )
+                _LOGGER.debug('mgmt_client token after mgmt request - Logging token expiry for token type %r', type(mgmt_auth.get_token()))
+                _LOGGER.debug('current time: %r', datetime.now())
+                _LOGGER.debug(
+                    'token expiry: %r',
+                    datetime.fromtimestamp(mgmt_msg.application_properties["security_token"].expires_on)
                 )
                 status_code = int(response.application_properties[MGMT_STATUS_CODE])
                 description = response.application_properties.get(

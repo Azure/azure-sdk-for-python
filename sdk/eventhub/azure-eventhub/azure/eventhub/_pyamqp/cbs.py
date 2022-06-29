@@ -200,7 +200,9 @@ class CBSAuthenticator(object):
         self.auth_state = CbsAuthState.IN_PROGRESS
         access_token = self._auth.get_token()
         self._expires_on = access_token.expires_on
-        _LOGGER.debug('token expiry: %r', self._expires_on)
+        _LOGGER.debug('after token has been updated')
+        _LOGGER.debug('current time: %r', datetime.now())
+        _LOGGER.debug('token expiry: %r', datetime.fromtimestamp(self._expires_on))
         expires_in = self._expires_on - int(utc_now().timestamp())
         self._refresh_window = int(float(expires_in) * 0.1)
         _LOGGER.debug('refresh window: %r', self._refresh_window)
