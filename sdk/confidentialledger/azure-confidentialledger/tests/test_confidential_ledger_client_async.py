@@ -24,9 +24,15 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
 
         if not is_aad:
             # Add the certificate-based user.
-            await client.create_or_update_user(
-                USER_CERTIFICATE_THUMBPRINT, {"assignedRole": "Administrator"}
-            )
+            try:
+                await client.create_or_update_user(
+                    USER_CERTIFICATE_THUMBPRINT, {"assignedRole": "Administrator"}
+                )
+            finally:
+                await client.close()
+
+            # Sleep to make sure all replicas know the user is added.
+            await asyncio.sleep(3)
 
             credential = ConfidentialLedgerCertificateCredential(
                 certificate_path=self.user_certificate_path
@@ -88,10 +94,14 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         assert receipt["receipt"]
 
         latest_entry = await client.get_current_ledger_entry()
-        # The transaction ids may not be equal in the unfortunate edge case where a governance
+        # The transaction ids may not be equal in the unfortunate edge case where an internal
         # operation occurs after the ledger append (e.g. because a node was restarted). Then,
         # the latest id will be higher.
-        assert latest_entry["transactionId"] >= append_result_transaction_id
+        latest_entry_view = int(latest_entry["transactionId"].split(".")[0])
+        latest_entry_seqno = int(latest_entry["transactionId"].split(".")[-1])
+        append_result_view = int(append_result_transaction_id.split(".")[0])
+        append_result_seqno = int(append_result_transaction_id.split(".")[-1])
+        assert latest_entry_view >= append_result_view and latest_entry_seqno >= append_result_seqno
         assert latest_entry["contents"] == entry_contents
         assert latest_entry["collectionId"] == append_result_sub_ledger_id
 
@@ -171,10 +181,14 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         latest_entry = await client.get_current_ledger_entry(
             collection_id=collection_id
         )
-        # The transaction ids may not be equal in the unfortunate edge case where a governance
+        # The transaction ids may not be equal in the unfortunate edge case where an internal
         # operation occurs after the ledger append (e.g. because a node was restarted). Then,
         # the latest id will be higher.
-        assert latest_entry["transactionId"] >= append_result_transaction_id
+        latest_entry_view = int(latest_entry["transactionId"].split(".")[0])
+        latest_entry_seqno = int(latest_entry["transactionId"].split(".")[-1])
+        append_result_view = int(append_result_transaction_id.split(".")[0])
+        append_result_seqno = int(append_result_transaction_id.split(".")[-1])
+        assert latest_entry_view >= append_result_view and latest_entry_seqno >= append_result_seqno
         assert latest_entry["contents"] == entry_contents
         assert latest_entry["collectionId"] == append_result_sub_ledger_id
 
