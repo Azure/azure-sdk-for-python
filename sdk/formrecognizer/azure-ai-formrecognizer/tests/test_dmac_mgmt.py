@@ -6,7 +6,7 @@
 
 import functools
 import pytest
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.pipeline.transport import RequestsTransport
@@ -95,13 +95,12 @@ class TestManagement(FormRecognizerTest):
                 assert field["type"]
             assert doc_type.field_confidence is None
 
-    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_mgmt_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
-        
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, description="mgmt model")
+        set_bodiless_matcher()
+        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", description="mgmt model")
         model = poller.result()
 
         model_from_get = client.get_model(model.model_id)
