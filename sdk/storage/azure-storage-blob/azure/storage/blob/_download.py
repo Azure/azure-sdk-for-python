@@ -205,7 +205,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                         **self.request_options
                     )
                     retry_active = False
-                except IncompleteReadError as error:
+                except (IncompleteReadError, ServiceResponseError) as error:
                     retry_total -= 1
                     if retry_total <= 0:
                         raise ServiceResponseError(error, error=error)
@@ -435,7 +435,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                     self.size = self._file_size
                 retry_active = False
 
-            except IncompleteReadError as error:
+            except (IncompleteReadError, ServiceResponseError) as error:
                 retry_total -= 1
                 if retry_total <= 0:
                     raise ServiceResponseError(error, error=error)
@@ -455,7 +455,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                             **self._request_options
                         )
                         retry_active = False
-                    except IncompleteReadError as error:
+                    except (IncompleteReadError, ServiceResponseError) as error:
                         retry_total -= 1
                         if retry_total <= 0:
                             raise ServiceResponseError(error, error=error)
