@@ -21,5 +21,5 @@ class ConfidentialLedgerIdentityServiceClientTest(AzureTestCase):
             )
         )
 
-        self.assertEqual(network_identity["ledgerId"], confidentialledger_id)
-        self.assertTrue(network_identity["ledgerTlsCertificate"])
+        assert network_identity["ledgerId"] == confidentialledger_id
+        assert network_identity["ledgerTlsCertificate"]
