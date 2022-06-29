@@ -4,7 +4,6 @@ from pathlib import Path
 import os
 from jinja2 import Environment, FileSystemLoader
 from subprocess import check_call
-import time
 from typing import Any
 import json
 
@@ -69,7 +68,7 @@ def generate_swagger_readme(work_path: str, env: Environment, **kwargs: Any) -> 
         os.makedirs(swagger_path)
 
     # render file
-    template = env.get_template('swagger_README.md')
+    template = env.get_template('README.md')
     result = template.render(**kwargs)
     swagger_readme = swagger_path / Path('README.md')
     with open(swagger_readme, 'w') as fd:
@@ -88,16 +87,9 @@ def build_package(**kwargs) -> None:
     # prepare template render parameters
     output_folder = kwargs.get("output_folder")
     package_name = kwargs.get("package_name")
-    swagger_readme_output = '../' + package_name.replace('-', '/')
-    kwargs['swagger_readme_output'] = swagger_readme_output
     namespace = package_name.replace('-', '.')
     kwargs['namespace'] = namespace
-    kwargs['date'] = time.strftime('%Y-%m-%d', time.localtime())
-    folder_list = package_name.split('-')
-    kwargs['folder_first'] = folder_list[0]
-    kwargs['folder_second'] = folder_list[1]
-    kwargs['folder_parent'] = Path(output_folder).parts[-2]
-    kwargs['test_prefix'] = folder_list[-1]
+    kwargs['test_prefix'] = package_name.split('-')[-1]
 
     _LOGGER.info("Build start: %s", package_name)
     check_parameters(output_folder)
@@ -114,24 +106,9 @@ def build_package(**kwargs) -> None:
     _LOGGER.info(f"generate SDK code with autorest: {autorest_cmd}")
     check_call(autorest_cmd, shell=True)
 
-    # generate necessary file(setup.py, CHANGELOG.md, etc)
-    work_path = Path(output_folder)
-    for template_name in env.list_templates():
-        _LOGGER.info(f"generate necessary file: {template_name}")
-        template = env.get_template(template_name)
-        result = template.render(**kwargs)
-        # __init__.py is a weird one
-        if template_name == "__init__.py":
-            split_package_name = package_name.split("-")[:-1]
-            for i in range(len(split_package_name)):
-                init_path = work_path.joinpath(*split_package_name[: i + 1], template_name)
-                with open(init_path, "w") as fd:
-                    fd.write(result)
-        elif template_name != 'swagger_README.md':
-            with open(work_path / template_name, "w") as fd:
-                fd.write(result)
 
     # generate test framework
+    work_path = Path(output_folder)
     generate_test_sample(_TEMPLATE_TESTS, work_path / Path('tests'), **kwargs)
 
     # generate sample framework
