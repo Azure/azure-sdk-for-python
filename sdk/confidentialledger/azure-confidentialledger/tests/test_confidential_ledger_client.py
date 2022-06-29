@@ -223,7 +223,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             if i != num_messages_sent - 1:
                 append_result = client.post_ledger_entry({"contents": message}, **kwargs)
             else:
-                append_poller = client.post_ledger_entry({"contents": message}, **kwargs)
+                append_poller = client.begin_post_ledger_entry({"contents": message}, **kwargs)
                 append_result = append_poller.result()
 
             messages[i % num_collections].append(

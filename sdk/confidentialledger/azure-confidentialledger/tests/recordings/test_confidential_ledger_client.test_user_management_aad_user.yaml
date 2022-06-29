@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-acl-identity-service/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+      - azsdk-python-confidentialledger-identity-service/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
     uri: https://identity.confidential-ledger.core.azure.com/ledgerIdentity/fake?api-version=2022-05-13
   response:
@@ -20,7 +20,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 27 Jun 2022 18:07:17 GMT
+      - Wed, 29 Jun 2022 17:46:48 GMT
       server:
       - Kestrel
       transfer-encoding:
@@ -30,7 +30,7 @@ interactions:
       x-ms-image-tag:
       - 1.0.01999.541-e02672ed644876c9cf10c5494e0203a0dc9da070
       x-ms-machinename:
-      - identityservice-6499ffbf45-88b57
+      - identityservice-6499ffbf45-jh62d
     status:
       code: 200
       message: OK
@@ -60,7 +60,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.15471'
+      - '2.22421'
     status:
       code: 200
       message: OK
@@ -86,36 +86,10 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.15472'
+      - '2.22422'
     status:
       code: 200
       message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
-    method: DELETE
-    uri: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=2022-05-13
-  response:
-    body:
-      string: ''
-    headers:
-      content-length:
-      - '0'
-      x-ms-ccf-transaction-id:
-      - '2.15473'
-    status:
-      code: 204
-      message: No Content
 - request:
     body: '{"assignedRole": "Reader"}'
     headers:
@@ -142,7 +116,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.15474'
+      - '2.22423'
     status:
       code: 200
       message: OK
@@ -168,7 +142,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.15474'
+      - '2.22424'
     status:
       code: 200
       message: OK
@@ -194,7 +168,7 @@ interactions:
       content-length:
       - '0'
       x-ms-ccf-transaction-id:
-      - '2.15475'
+      - '2.22425'
     status:
       code: 204
       message: No Content
@@ -224,7 +198,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.15477'
+      - '2.22426'
     status:
       code: 200
       message: OK
@@ -250,36 +224,10 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.15477'
+      - '2.22427'
     status:
       code: 200
       message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
-    method: DELETE
-    uri: https://fake.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=2022-05-13
-  response:
-    body:
-      string: ''
-    headers:
-      content-length:
-      - '0'
-      x-ms-ccf-transaction-id:
-      - '2.15478'
-    status:
-      code: 204
-      message: No Content
 - request:
     body: '{"assignedRole": "Reader"}'
     headers:
@@ -306,7 +254,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.15479'
+      - '2.22428'
     status:
       code: 200
       message: OK
@@ -332,7 +280,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.15479'
+      - '2.22429'
     status:
       code: 200
       message: OK
@@ -358,7 +306,7 @@ interactions:
       content-length:
       - '0'
       x-ms-ccf-transaction-id:
-      - '2.15480'
+      - '2.22430'
     status:
       code: 204
       message: No Content
