@@ -32,7 +32,7 @@ class IssueProcessPython(IssueProcess):
 
     def get_delay_time(self):
         q = [comment.updated_at
-             for comment in self.issue_package.issue.get_comments() if comment.user.login not in _PYTHON_OWNER]
+             for comment in self.issue_package.issue.get_comments() if comment.user.login not in self.language_owner]
         q.sort()
         return (datetime.now() - (self.created_time if not q else q[-1])).days
 

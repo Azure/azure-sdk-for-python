@@ -213,7 +213,9 @@ class IssueProcess:
     def auto_assign(self) -> None:
         if AUTO_ASSIGN_LABEL in self.issue_package.labels_name:
             self.update_issue_instance()
+            print(f"*** {self.issue_package.issue.number} has assign label")
             return
+        print(f"*** {self.issue_package.issue.number} has  not assign label")
         # assign averagely
         assignee = self.auto_assign_policy()
 
@@ -299,7 +301,6 @@ class Common:
                  sdk_assignees: Set[str], assignee_token=_ASSIGNEE_TOKEN):
         self.issues_package = issues_package
         self.language_owner = language_owner | sdk_assignees
-        print(f"*** language owner:{self.language_owner}")
         self.assignee_candidates = sdk_assignees
         # arguments add to language.md
         self.file_out_name = 'common.md'
