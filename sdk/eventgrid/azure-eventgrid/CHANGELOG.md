@@ -1,14 +1,10 @@
 # Release History
 
-## 4.9.0b2 (Unreleased)
+## 4.9.0 (2022-07-05)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added support for publishing events to a channel.
 
 ## 4.9.0b1 (2022-04-07)
 
