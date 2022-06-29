@@ -20,7 +20,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 29 Jun 2022 17:47:33 GMT
+      - Wed, 29 Jun 2022 22:11:27 GMT
       server:
       - Kestrel
       transfer-encoding:
@@ -30,7 +30,7 @@ interactions:
       x-ms-image-tag:
       - 1.0.01999.541-e02672ed644876c9cf10c5494e0203a0dc9da070
       x-ms-machinename:
-      - identityservice-6499ffbf45-jh62d
+      - identityservice-6499ffbf45-g48zc
     status:
       code: 200
       message: OK
@@ -53,7 +53,7 @@ interactions:
     headers:
       content-length: '20'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.22466'
+      x-ms-ccf-transaction-id: '2.22653'
     status:
       code: 200
       message: OK
@@ -77,7 +77,7 @@ interactions:
     headers:
       content-length: '20'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.22468'
+      x-ms-ccf-transaction-id: '2.22654'
     status:
       code: 200
       message: OK
@@ -101,7 +101,7 @@ interactions:
     headers:
       content-length: '20'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.22470'
+      x-ms-ccf-transaction-id: '2.22656'
     status:
       code: 200
       message: OK
@@ -125,7 +125,7 @@ interactions:
     headers:
       content-length: '20'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.22471'
+      x-ms-ccf-transaction-id: '2.22658'
     status:
       code: 200
       message: OK
@@ -149,7 +149,7 @@ interactions:
     headers:
       content-length: '20'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.22473'
+      x-ms-ccf-transaction-id: '2.22660'
     status:
       code: 200
       message: OK
@@ -173,7 +173,7 @@ interactions:
     headers:
       content-length: '20'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.22474'
+      x-ms-ccf-transaction-id: '2.22661'
     status:
       code: 200
       message: OK
@@ -197,7 +197,7 @@ interactions:
     headers:
       content-length: '20'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.22476'
+      x-ms-ccf-transaction-id: '2.22665'
     status:
       code: 200
       message: OK
@@ -221,7 +221,7 @@ interactions:
     headers:
       content-length: '20'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.22478'
+      x-ms-ccf-transaction-id: '2.22666'
     status:
       code: 200
       message: OK
@@ -245,7 +245,7 @@ interactions:
     headers:
       content-length: '20'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.22480'
+      x-ms-ccf-transaction-id: '2.22668'
     status:
       code: 200
       message: OK
@@ -269,7 +269,7 @@ interactions:
     headers:
       content-length: '20'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.22481'
+      x-ms-ccf-transaction-id: '2.22669'
     status:
       code: 200
       message: OK
@@ -282,38 +282,18 @@ interactions:
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://fake.confidential-ledger.azure.com/app/transactions/2.22481/status?api-version=2022-05-13
+    uri: https://fake.confidential-ledger.azure.com/app/transactions/2.22669/status?api-version=2022-05-13
   response:
     body:
-      string: '{"state":"Pending","transactionId":"2.22481"}'
-    headers:
-      content-length: '45'
-      content-type: application/json
-      x-ms-ccf-transaction-id: '2.22482'
-    status:
-      code: 200
-      message: OK
-    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions/2.22481/status?api-version=2022-05-13
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
-    method: GET
-    uri: https://fake.confidential-ledger.azure.com/app/transactions/2.22481/status?api-version=2022-05-13
-  response:
-    body:
-      string: '{"state":"Committed","transactionId":"2.22481"}'
+      string: '{"state":"Committed","transactionId":"2.22669"}'
     headers:
       content-length: '47'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.22482'
+      x-ms-ccf-transaction-id: '2.22670'
     status:
       code: 200
       message: OK
-    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions/2.22481/status?api-version=2022-05-13
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions/2.22669/status?api-version=2022-05-13
 - request:
     body: null
     headers:
@@ -322,40 +302,40 @@ interactions:
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=0&fromTransactionId=2.22466&toTransactionId=2.22474
+    uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=0&fromTransactionId=2.22653&toTransactionId=2.22661
   response:
     body:
-      string: "{\n  \"entries\": [],\n  \"nextLink\": \"/app/transactions?api-version=2022-05-13&collectionId=0&fromTransactionId=2.22466&toTransactionId=2.22474\",\n
+      string: "{\n  \"entries\": [],\n  \"nextLink\": \"/app/transactions?api-version=2022-05-13&collectionId=0&fromTransactionId=2.22653&toTransactionId=2.22661\",\n
         \ \"state\": \"Loading\"\n}"
     headers:
       content-length: '164'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.22482'
+      x-ms-ccf-transaction-id: '2.22670'
     status:
       code: 200
       message: OK
-    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=0&fromTransactionId=2.22466&toTransactionId=2.22474
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=0&fromTransactionId=2.22653&toTransactionId=2.22661
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=0&fromTransactionId=2.22466&toTransactionId=2.22474
+    uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=0&fromTransactionId=2.22653&toTransactionId=2.22661
   response:
     body:
       string: "{\n  \"entries\": [\n    {\n      \"collectionId\": \"0\",\n      \"contents\":
-        \"message-0\",\n      \"transactionId\": \"2.22466\"\n    },\n    {\n      \"collectionId\":
-        \"0\",\n      \"contents\": \"message-5\",\n      \"transactionId\": \"2.22474\"\n
+        \"message-0\",\n      \"transactionId\": \"2.22653\"\n    },\n    {\n      \"collectionId\":
+        \"0\",\n      \"contents\": \"message-5\",\n      \"transactionId\": \"2.22661\"\n
         \   }\n  ],\n  \"state\": \"Ready\"\n}"
     headers:
       content-length: '249'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.22482'
+      x-ms-ccf-transaction-id: '2.22670'
     status:
       code: 200
       message: OK
-    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=0&fromTransactionId=2.22466&toTransactionId=2.22474
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=0&fromTransactionId=2.22653&toTransactionId=2.22661
 - request:
     body: null
     headers:
@@ -364,40 +344,40 @@ interactions:
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=1&fromTransactionId=2.22468&toTransactionId=2.22476
+    uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=1&fromTransactionId=2.22654&toTransactionId=2.22665
   response:
     body:
-      string: "{\n  \"entries\": [],\n  \"nextLink\": \"/app/transactions?api-version=2022-05-13&collectionId=1&fromTransactionId=2.22468&toTransactionId=2.22476\",\n
+      string: "{\n  \"entries\": [],\n  \"nextLink\": \"/app/transactions?api-version=2022-05-13&collectionId=1&fromTransactionId=2.22654&toTransactionId=2.22665\",\n
         \ \"state\": \"Loading\"\n}"
     headers:
       content-length: '164'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.22482'
+      x-ms-ccf-transaction-id: '2.22670'
     status:
       code: 200
       message: OK
-    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=1&fromTransactionId=2.22468&toTransactionId=2.22476
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=1&fromTransactionId=2.22654&toTransactionId=2.22665
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=1&fromTransactionId=2.22468&toTransactionId=2.22476
+    uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=1&fromTransactionId=2.22654&toTransactionId=2.22665
   response:
     body:
       string: "{\n  \"entries\": [\n    {\n      \"collectionId\": \"1\",\n      \"contents\":
-        \"message-1\",\n      \"transactionId\": \"2.22468\"\n    },\n    {\n      \"collectionId\":
-        \"1\",\n      \"contents\": \"message-6\",\n      \"transactionId\": \"2.22476\"\n
+        \"message-1\",\n      \"transactionId\": \"2.22654\"\n    },\n    {\n      \"collectionId\":
+        \"1\",\n      \"contents\": \"message-6\",\n      \"transactionId\": \"2.22665\"\n
         \   }\n  ],\n  \"state\": \"Ready\"\n}"
     headers:
       content-length: '249'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.22482'
+      x-ms-ccf-transaction-id: '2.22670'
     status:
       code: 200
       message: OK
-    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=1&fromTransactionId=2.22468&toTransactionId=2.22476
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=1&fromTransactionId=2.22654&toTransactionId=2.22665
 - request:
     body: null
     headers:
@@ -406,40 +386,40 @@ interactions:
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=2&fromTransactionId=2.22470&toTransactionId=2.22478
+    uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=2&fromTransactionId=2.22656&toTransactionId=2.22666
   response:
     body:
-      string: "{\n  \"entries\": [],\n  \"nextLink\": \"/app/transactions?api-version=2022-05-13&collectionId=2&fromTransactionId=2.22470&toTransactionId=2.22478\",\n
+      string: "{\n  \"entries\": [],\n  \"nextLink\": \"/app/transactions?api-version=2022-05-13&collectionId=2&fromTransactionId=2.22656&toTransactionId=2.22666\",\n
         \ \"state\": \"Loading\"\n}"
     headers:
       content-length: '164'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.22482'
+      x-ms-ccf-transaction-id: '2.22670'
     status:
       code: 200
       message: OK
-    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=2&fromTransactionId=2.22470&toTransactionId=2.22478
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=2&fromTransactionId=2.22656&toTransactionId=2.22666
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=2&fromTransactionId=2.22470&toTransactionId=2.22478
+    uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=2&fromTransactionId=2.22656&toTransactionId=2.22666
   response:
     body:
       string: "{\n  \"entries\": [\n    {\n      \"collectionId\": \"2\",\n      \"contents\":
-        \"message-2\",\n      \"transactionId\": \"2.22470\"\n    },\n    {\n      \"collectionId\":
-        \"2\",\n      \"contents\": \"message-7\",\n      \"transactionId\": \"2.22478\"\n
+        \"message-2\",\n      \"transactionId\": \"2.22656\"\n    },\n    {\n      \"collectionId\":
+        \"2\",\n      \"contents\": \"message-7\",\n      \"transactionId\": \"2.22666\"\n
         \   }\n  ],\n  \"state\": \"Ready\"\n}"
     headers:
       content-length: '249'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.22482'
+      x-ms-ccf-transaction-id: '2.22670'
     status:
       code: 200
       message: OK
-    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=2&fromTransactionId=2.22470&toTransactionId=2.22478
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=2&fromTransactionId=2.22656&toTransactionId=2.22666
 - request:
     body: null
     headers:
@@ -448,40 +428,40 @@ interactions:
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=3&fromTransactionId=2.22471&toTransactionId=2.22480
+    uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=3&fromTransactionId=2.22658&toTransactionId=2.22668
   response:
     body:
-      string: "{\n  \"entries\": [],\n  \"nextLink\": \"/app/transactions?api-version=2022-05-13&collectionId=3&fromTransactionId=2.22471&toTransactionId=2.22480\",\n
+      string: "{\n  \"entries\": [],\n  \"nextLink\": \"/app/transactions?api-version=2022-05-13&collectionId=3&fromTransactionId=2.22658&toTransactionId=2.22668\",\n
         \ \"state\": \"Loading\"\n}"
     headers:
       content-length: '164'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.22482'
+      x-ms-ccf-transaction-id: '2.22670'
     status:
       code: 200
       message: OK
-    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=3&fromTransactionId=2.22471&toTransactionId=2.22480
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=3&fromTransactionId=2.22658&toTransactionId=2.22668
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=3&fromTransactionId=2.22471&toTransactionId=2.22480
+    uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=3&fromTransactionId=2.22658&toTransactionId=2.22668
   response:
     body:
       string: "{\n  \"entries\": [\n    {\n      \"collectionId\": \"3\",\n      \"contents\":
-        \"message-3\",\n      \"transactionId\": \"2.22471\"\n    },\n    {\n      \"collectionId\":
-        \"3\",\n      \"contents\": \"message-8\",\n      \"transactionId\": \"2.22480\"\n
+        \"message-3\",\n      \"transactionId\": \"2.22658\"\n    },\n    {\n      \"collectionId\":
+        \"3\",\n      \"contents\": \"message-8\",\n      \"transactionId\": \"2.22668\"\n
         \   }\n  ],\n  \"state\": \"Ready\"\n}"
     headers:
       content-length: '249'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.22482'
+      x-ms-ccf-transaction-id: '2.22670'
     status:
       code: 200
       message: OK
-    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=3&fromTransactionId=2.22471&toTransactionId=2.22480
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=3&fromTransactionId=2.22658&toTransactionId=2.22668
 - request:
     body: null
     headers:
@@ -490,38 +470,38 @@ interactions:
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=4&fromTransactionId=2.22473&toTransactionId=2.22481
+    uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=4&fromTransactionId=2.22660&toTransactionId=2.22669
   response:
     body:
-      string: "{\n  \"entries\": [],\n  \"nextLink\": \"/app/transactions?api-version=2022-05-13&collectionId=4&fromTransactionId=2.22473&toTransactionId=2.22481\",\n
+      string: "{\n  \"entries\": [],\n  \"nextLink\": \"/app/transactions?api-version=2022-05-13&collectionId=4&fromTransactionId=2.22660&toTransactionId=2.22669\",\n
         \ \"state\": \"Loading\"\n}"
     headers:
       content-length: '164'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.22482'
+      x-ms-ccf-transaction-id: '2.22670'
     status:
       code: 200
       message: OK
-    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=4&fromTransactionId=2.22473&toTransactionId=2.22481
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=4&fromTransactionId=2.22660&toTransactionId=2.22669
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=4&fromTransactionId=2.22473&toTransactionId=2.22481
+    uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=4&fromTransactionId=2.22660&toTransactionId=2.22669
   response:
     body:
       string: "{\n  \"entries\": [\n    {\n      \"collectionId\": \"4\",\n      \"contents\":
-        \"message-4\",\n      \"transactionId\": \"2.22473\"\n    },\n    {\n      \"collectionId\":
-        \"4\",\n      \"contents\": \"message-9\",\n      \"transactionId\": \"2.22481\"\n
+        \"message-4\",\n      \"transactionId\": \"2.22660\"\n    },\n    {\n      \"collectionId\":
+        \"4\",\n      \"contents\": \"message-9\",\n      \"transactionId\": \"2.22669\"\n
         \   }\n  ],\n  \"state\": \"Ready\"\n}"
     headers:
       content-length: '249'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.22482'
+      x-ms-ccf-transaction-id: '2.22670'
     status:
       code: 200
       message: OK
-    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=4&fromTransactionId=2.22473&toTransactionId=2.22481
+    url: https://lyshi-python-sdk.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13&collectionId=4&fromTransactionId=2.22660&toTransactionId=2.22669
 version: 1

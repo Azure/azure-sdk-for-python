@@ -35,7 +35,9 @@ class ConfidentialLedgerClient(
     :paramtype api_version: str
     """
 
-    def __init__(self, ledger_uri: str, **kwargs: Any) -> None:  # pylint: disable=missing-client-constructor-parameter-credential
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+        self, ledger_uri: str, **kwargs: Any
+    ) -> None:
         _endpoint = "{ledgerUri}"
         self._config = ConfidentialLedgerClientConfiguration(ledger_uri=ledger_uri, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)

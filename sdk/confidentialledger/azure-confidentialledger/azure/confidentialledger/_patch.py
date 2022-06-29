@@ -83,10 +83,7 @@ class ConfidentialLedgerClient(GeneratedClient):
         # If the credential is the typical TokenCredential, then construct the authentication policy
         # the normal way.
         else:
-            credential_scopes = kwargs.pop(
-                "credential_scopes",
-                ["https://confidential-ledger.azure.com/.default"]
-            )
+            credential_scopes = kwargs.pop("credential_scopes", ["https://confidential-ledger.azure.com/.default"])
             kwargs["authentication_policy"] = kwargs.get(
                 "authentication_policy",
                 policies.BearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),

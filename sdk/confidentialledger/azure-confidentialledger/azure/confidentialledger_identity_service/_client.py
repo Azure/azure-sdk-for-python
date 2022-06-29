@@ -35,7 +35,9 @@ class ConfidentialLedgerIdentityServiceClient(
     :paramtype api_version: str
     """
 
-    def __init__(self, identity_service_uri: str, **kwargs: Any) -> None:  # pylint: disable=missing-client-constructor-parameter-credential
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+        self, identity_service_uri: str, **kwargs: Any
+    ) -> None:
         _endpoint = "{identityServiceUri}"
         self._config = ConfidentialLedgerIdentityServiceClientConfiguration(
             identity_service_uri=identity_service_uri, **kwargs

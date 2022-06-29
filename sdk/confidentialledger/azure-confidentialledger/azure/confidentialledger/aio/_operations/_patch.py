@@ -73,10 +73,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         initial_response = await operation()
 
         if polling is True:
-            polling_method = cast(
-                AsyncPollingMethod,
-                AsyncStatePollingMethod(operation, "Ready", lro_delay)
-            )
+            polling_method = cast(AsyncPollingMethod, AsyncStatePollingMethod(operation, "Ready", lro_delay))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -96,10 +93,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         initial_response = await operation()
 
         if polling is True:
-            polling_method = cast(
-                AsyncPollingMethod,
-                AsyncStatePollingMethod(operation, "Ready", lro_delay)
-            )
+            polling_method = cast(AsyncPollingMethod, AsyncStatePollingMethod(operation, "Ready", lro_delay))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:

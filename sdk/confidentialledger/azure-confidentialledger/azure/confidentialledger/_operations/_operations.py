@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, Union, cast, overload
 from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.exceptions import (
@@ -539,26 +539,24 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def list_collections(self, **kwargs: Any) -> JSON:
+    def list_collections(self, **kwargs: Any) -> List[JSON]:
         """Retrieves a list of collection ids present in the Confidential Ledger.
 
         Collection ids are user-created collections of ledger entries.
 
-        :return: JSON object
-        :rtype: JSON
+        :return: list of JSON object
+        :rtype: list[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response == {
-                    "collections": [
-                        {
-                            "collectionId": "str"  # Required.
-                        }
-                    ]
-                }
+                response == [
+                    {
+                        "collectionId": "str"  # Required.
+                    }
+                ]
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -566,7 +564,7 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[List[JSON]]
 
         request = build_list_collections_request(
             api_version=self._config.api_version,
@@ -596,9 +594,9 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(List[JSON], deserialized), {})
 
-        return cast(JSON, deserialized)
+        return cast(List[JSON], deserialized)
 
     @distributed_trace
     def list_ledger_entries(
