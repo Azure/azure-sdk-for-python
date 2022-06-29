@@ -107,7 +107,7 @@ ConversationAnalysisClientOperationsMixinGenerated.begin_conversation_analysis._
               "displayName": "str",  # Optional. Display name for the analysis job.
               "analysisInput": {
                 "conversations": [
-                    # A list of transcript_conversation or text_conversation
+                    ... # A list of text_conversation or transcript_conversation (see below)
                 ]
               },
               "tasks": [
@@ -115,44 +115,10 @@ ConversationAnalysisClientOperationsMixinGenerated.begin_conversation_analysis._
                   "taskName": "str",  # Optional. Associate a name with the task.
                   "kind": "str",  # Required. Known values are "ConversationalPIITask" and "ConversationalSummarizationTask".
                   "parameters": {
-                    # pii_task_parameters or summarization_task_parameters
+                    ... # summarization_task_parameters or pii_task_parameters (see below)
                   }
                 }
               ]
-            }
-
-            transcript_conversation = {
-                "id": "str",  # Required. Unique identifier for the conversation.
-                "language": "str",  # Required. The language of the conversation item in BCP-47 format.
-                "modality": "str",  # Required. Known values are: "transcript" and "text".
-                "domain": "str",  # Optional. Known values are "finance", "healthcare", and "generic".
-                "conversationItems": [  # Ordered list of transcript conversation items in the conversation.
-                  {
-                    "id": "str", # Required. The ID of a conversation item.
-                    "participantId": "str", # Required. The participant ID of a conversation item.
-                    "modality": "string", # Required, Enumeration of supported conversational modalities.
-                      Known values are: "text", and "transcript".
-                    "language": "str", # Optional. The override language of a conversation item in BCP 47 language
-                     representation.
-                    "role": "str"  # Optional. The role of the participant. Known values are: "agent", "customer",
-                     and "generic".
-                    "text": "str",  # Optional. The display form of the recognized text from speech to text API,
-                      with punctuation and capitalization added.
-                    "itn": "str",  # Optional. Inverse Text Normalization representation of input.
-                      The inverse-text-normalized form is the recognized text from Microsoft’s Speech to Text API,
-                      with phone numbers, numbers, abbreviations, and other transformations applied.
-                    "maskedItn": "str",  # Optional. The Inverse Text Normalized format with profanity masking applied.
-                    "lexical": "str",  # Optional. The lexical form of the recognized text from speech to text API
-                      with the actual words recognized.
-                    "audioTimings": [  # Optional. The list of word level audio timing information.
-                      {
-                        "word": "str",  # Optional. The word recognized.
-                        "offset": "int",  # Optional. Offset from start of speech audio, in ticks. 1 tick = 100 ns.
-                        "duration": "int", # Optional. Duration of word articulation, in ticks. 1 tick = 100 ns.
-                      }
-                    ] 
-                  }
-                ]
             }
 
             text_conversation = {
@@ -164,7 +130,7 @@ ConversationAnalysisClientOperationsMixinGenerated.begin_conversation_analysis._
                 {
                   "id": "str", # Required. The ID of a conversation item.
                   "participantId": "str", # Required. The participant ID of a conversation item.
-                  "modality": "string", # Required, Enumeration of supported conversational modalities.
+                  "modality": "string", # Required. Enumeration of supported conversational modalities.
                     Known values are: "text", and "transcript".
                   "language": "str", # Optional. The override language of a conversation item in BCP 47 language
                     representation.
@@ -172,6 +138,48 @@ ConversationAnalysisClientOperationsMixinGenerated.begin_conversation_analysis._
                     and "generic".
                   "text": "str"  # Required. The text input
                 }
+              ]
+            }
+
+            transcript_conversation = {
+                "id": "str",  # Required. Unique identifier for the conversation.
+                "language": "str",  # Required. The language of the conversation item in BCP-47 format.
+                "modality": "str",  # Required. Known values are: "transcript" and "text".
+                "domain": "str",  # Optional. Known values are "finance", "healthcare", and "generic".
+                "conversationItems": [  # Ordered list of transcript conversation items in the conversation.
+                    {
+                        "id": "str",  # Required. The ID of a conversation item.
+                        "participantId": "str",  # Required. The participant ID of a conversation item.
+                        "modality": "string",  # Required. Enumeration of supported conversational modalities.
+                          Known values are: "text", and "transcript".
+                        "language": "str",  # Optional. The override language of a conversation item in BCP 47 language
+                          representation.
+                        "role": "str",  # Optional. The role of the participant. Known values are: "agent", "customer",
+                          and "generic".
+                        "text": "str",  # Optional. The display form of the recognized text from speech to text API,
+                          with punctuation and capitalization added.
+                        "itn": "str",  # Optional. Inverse Text Normalization representation of input. The inverse -
+                          text - normalized form is the recognized text from Microsoft's Speech to Text API, with
+                          phone numbers, numbers, abbreviations, and other transformations applied.
+                        "maskedItn": "str",  # Optional. The Inverse Text Normalized format with profanity masking applied.
+                        "lexical": "str",  # Optional. The lexical form of the recognized text from speech to text
+                          API with the actual words recognized.
+                        "audioTimings": [  # Optional. The list of word level audio timing information.
+                            {
+                                "word": "str",  # Optional. The word recognized.
+                                "offset": "int",  # Optional. Offset from start of speech audio, in ticks. 1 tick = 100 ns.
+                                "duration": "int"  # Optional. Duration of word articulation, in ticks. 1 tick = 100 ns.
+                            }
+                        ]
+                    }
+                ]
+            }
+
+            summarization_task_parameters = {
+              "modelVersion": "str",  # Optional. The model version to use. Defaults to "latest".
+              "loggingOptOut": "bool",  # Optional. Defaults to false.
+              "summaryAspects": "array"  # Required. A list of summary aspects. Known values are
+                "issue" and "resolution".
             }
 
             pii_task_parameters = {
@@ -184,13 +192,6 @@ ConversationAnalysisClientOperationsMixinGenerated.begin_conversation_analysis._
                 "maskedItn", and "text".
               "includeAudioRedaction": "bool" # Optional. Defaults to false. Flag to indicate if audio redaction
                 is requested. By default audio redaction will not be performed.
-            }
-
-            summarization_task_parameters = {
-              "modelVersion": "str",  # Optional. The model version to use. Defaults to "latest".
-              "loggingOptOut": "bool",  # Optional. Defaults to false.
-              "summaryAspects": "array"  # Required. A list of summary aspects. Known values are
-                "issue" and "resolution".
             }
 
             # response body for status code(s): 200
@@ -255,7 +256,17 @@ ConversationAnalysisClientOperationsMixinGenerated.begin_conversation_analysis._
                     "failed": 0,  # Count of tasks that failed. Required.
                     "inProgress": 0,  # Count of tasks in progress currently. Required.
                     "items": [
-                        analyze_conversation_job_result
+                        {
+                          "kind": "str", # Required. Enumeration of supported Conversation Analysis task results.
+                            Known values are: "conversationalSummarizationResults" and "conversationalPIIResults". 
+                          "taskName": "str", # Optional. Associated name with the task.
+                          "lastUpdateDateTime": "str", # Required. The last updated time in UTC for the task.
+                          "status": "str", # Required. The status of the task at the mentioned last update time.
+                            Known values are: "notStarted", "running", "succeeded", "failed", "cancelled", "cancelling".
+                          "results": [ 
+                              ... 
+                           ]  # Optional. List of results from tasks (if available).
+                        }
                     ],
                     "total": 0  # Total count of tasks submitted as part of the job.
                       Required.
