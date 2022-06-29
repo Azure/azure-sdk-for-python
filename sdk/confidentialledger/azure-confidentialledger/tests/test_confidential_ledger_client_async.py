@@ -1,3 +1,4 @@
+import asyncio
 import hashlib
 
 from azure.confidentialledger.aio import ConfidentialLedgerClient
@@ -226,25 +227,36 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             await client.close()
 
     async def range_query_actions(self, client):
-        modulus = 5
-        num_messages_sent = 2001  # Should result in 2 pages.
+        num_collections = 5
 
-        messages = {m: [] for m in range(modulus)}
+        # Send enough messages to test client pagination using nextLink. Currently, a page is 1000
+        # entries.
+        num_messages_sent = 1001
+
+        messages = {m: [] for m in range(num_collections)}
         for i in range(num_messages_sent):
             message = "message-{0}".format(i)
             kwargs = (
-                {} if modulus == 0 else {"collection_id": "{0}".format(i % modulus)}
-            )
-            append_result = await client.post_ledger_entry(
-                {"contents": message}, **kwargs
+                {} if num_collections == 0 else {"collection_id": "{0}".format(i % num_collections)}
             )
 
-            messages[i % modulus].append(
+            if i != num_messages_sent - 1:
+                append_result = await client.post_ledger_entry(
+                    {"contents": message}, **kwargs
+                )
+            else:
+                append_poller = await client.begin_post_ledger_entry(
+                    {"contents": message},
+                    **kwargs
+                )
+                append_result = await append_poller.result()
+
+            messages[i % num_collections].append(
                 (append_result["transactionId"], message, kwargs)
             )
 
         num_matched = 0
-        for i in range(modulus):
+        for i in range(num_collections):
             query_result = client.list_ledger_entries(
                 from_transaction_id=messages[i][0][0], **messages[i][0][2]
             )
@@ -259,8 +271,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
                 index += 1
                 num_matched += 1
 
-        # Due to replication delay, it's possible not all messages are matched.
-        assert num_matched >= 0.9 * num_messages_sent
+        assert num_matched == num_messages_sent
 
     @ConfidentialLedgerPreparer()
     async def test_user_management_aad_user(self, confidentialledger_endpoint, confidentialledger_id):
@@ -295,17 +306,19 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             assert user["userId"] == user_id
             assert user["assignedRole"] == "Contributor"
 
+            await asyncio.sleep(1)  # Let the PATCH user operation be committed, just in case.
+
             user = await client.get_user(user_id)
             assert user["userId"] == user_id
             assert user["assignedRole"] == "Contributor"
-
-            await client.delete_user(user_id)
 
             user = await client.create_or_update_user(
                 user_id, {"assignedRole": "Reader"}
             )
             assert user["userId"] == user_id
             assert user["assignedRole"] == "Reader"
+
+            await asyncio.sleep(1)  # Let the PATCH user operation be committed, just in case.
 
             user = await client.get_user(user_id)
             assert user["userId"] == user_id
