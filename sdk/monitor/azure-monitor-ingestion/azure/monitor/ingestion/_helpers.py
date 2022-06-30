@@ -2,6 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# pylint: skip-file
+# skipping because of https://github.com/PyCQA/astroid/issues/713
+
 import json
 import zlib
 
