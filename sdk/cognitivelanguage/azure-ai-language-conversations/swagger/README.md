@@ -132,21 +132,32 @@ directive:
 ### Runtime API Directives
 
 ```yaml $(tag) == 'release_runtime_1_1_preview'
+# Give analyze job LRO a return type
+directive:
+  - where-operation: AnalyzeConversation_SubmitJob
+    transform: >
+      $["responses"]["200"] = {
+          "description": "dummy schema to get poller response when calling .result()",
+          "schema": {
+              "$ref": "#/definitions/AnalyzeConversationJobState"
+          }
+      };
+```
+
+```yaml $(tag) == 'release_runtime_1_1_preview'
 # Rename Runtime client operation
 directive:
-    - from: swagger-document
-      where: $["paths"]["/:analyze-conversations"]["post"]
-      transform: >
-          $["operationId"] = "AnalyzeConversation";
+  - rename-operation:
+      from: ConversationAnalysis_AnalyzeConversation
+      to: AnalyzeConversation
 ```
 
 ```yaml $(tag) == 'release_runtime_1_1_preview'
 # Rename Runtime client async operation
 directive:
-    - from: swagger-document
-      where: $["paths"]["/analyze-conversations/jobs"]["post"]
-      transform: >
-          $["operationId"] = "ConversationAnalysis";
+  - rename-operation:
+      from: AnalyzeConversation_SubmitJob
+      to: ConversationAnalysis
 ```
 
 ```yaml $(tag) == 'release_runtime_1_1_preview'
@@ -165,20 +176,6 @@ directive:
       where: $["paths"]["/analyze-conversations/jobs"]["post"]
       transform: >
         $["parameters"][1]["x-ms-client-name"] = "task";
-```
-
-```yaml $(tag) == 'release_runtime_1_1_preview'
-# Give analyze job LRO a return type
-directive:
-  - from: swagger-document
-    where: '$.paths["/analyze-conversations/jobs"].post'
-    transform: >
-      $["responses"]["200"] = {
-          "description": "dummy schema to get poller response when calling .result()",
-          "schema": {
-              "$ref": "#/definitions/AnalyzeConversationJobState"
-          }
-      };
 ```
 
 ```yaml $(tag) == 'release_runtime_1_1_preview'
