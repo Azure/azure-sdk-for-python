@@ -15,7 +15,7 @@ from azure.core.polling import PollingMethod, LROPoller, NoPolling
 from azure.confidentialledger._operations._operations import (
     ConfidentialLedgerClientOperationsMixin as GeneratedOperationsMixin,
 )
-from azure.confidentialledger._operations._operations import JSON
+from azure.confidentialledger._operations._operations import ClsType, JSON
 
 __all__: List[str] = [
     "ConfidentialLedgerClientOperationsMixin"
@@ -156,12 +156,38 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
-        post_result = self.post_ledger_entry(entry, collection_id=collection_id, **kwargs)
-        transaction_id = post_result["transactionId"]
+        # Pop the custom deserializer, if any, so we know the format of the response and can
+        # retrieve the transactionId. Serialize the response later.
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        kwargs["cls"] = lambda pipeline_response, json_response, headers: (
+            pipeline_response,
+            {
+                **json_response,
+                "transactionId": headers["x-ms-ccf-transaction-id"],
+            },
+            headers,
+        )
+
+        post_pipeline_response, post_result, post_headers = self.post_ledger_entry(
+            entry, collection_id=collection_id, **kwargs
+        )
+
+        # Delete the cls because it should only apply to the post_ledger_entry response, not the
+        # wait_for_commit call.
+        del kwargs["cls"]
+
+        transaction_id = post_result["transactionId"]  # type: ignore
 
         kwargs["polling"] = polling
         kwargs["polling_interval"] = lro_delay
-        kwargs["_post_ledger_entry_response"] = post_result
+
+        if cls:
+            kwargs["_post_ledger_entry_response"] = cls(
+                post_pipeline_response, cast(JSON, post_result), post_headers  # type: ignore
+            )
+        else:
+            kwargs["_post_ledger_entry_response"] = post_result
+
         return self.begin_wait_for_commit(transaction_id, **kwargs)
 
     def begin_wait_for_commit(

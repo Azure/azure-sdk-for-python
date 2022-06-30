@@ -35,7 +35,7 @@ export AZURE_TENANT_ID="tenant id"
 ```
 Then, `DefaultAzureCredential` will be able to authenticate the `ConfidentialLedgerClient`.
 
-Constructing the client also requires your Confidential Ledger's URL and id, which you can get from the Azure CLI or the Azure Portal. When you have retrieved those values, please replace instances of `"my-ledger-id"` and `"https://my-ledger-url.confidential-ledger.azure.com"` in the examples below. You may also need to replace `"https://identity.confidential-ledger.core.azure.com"` with the hostname from the `identityServiceUri` in the ARM description of your ledger.
+Constructing the client also requires your Confidential Ledger's URL and id, which you can get from the Azure CLI or the Azure Portal. When you have retrieved those values, please replace instances of `"my-ledger-id"` and `"https://my-ledger-id.confidential-ledger.azure.com"` in the examples below. You may also need to replace `"https://identity.confidential-ledger.core.azure.com"` with the hostname from the `identityServiceUri` in the ARM description of your ledger.
 
 Because Confidential Ledgers use self-signed certificates securely generated and stored in an enclave, the signing certificate for each Confidential Ledger must first be retrieved from the Confidential Ledger Identity Service.
 
@@ -44,7 +44,7 @@ from azure.confidentialledger import ConfidentialLedgerClient
 from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
 from azure.identity import DefaultAzureCredential
 
-identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
+identity_client = ConfidentialLedgerIdentityServiceClient()
 network_identity = identity_client.get_ledger_identity(
     ledger_id="my-ledger-id"
 )
@@ -55,7 +55,7 @@ with open(ledger_tls_cert_file_name, "w") as cert_file:
 
 credential = DefaultAzureCredential()
 ledger_client = ConfidentialLedgerClient(
-    endpoint="https://my-ledger-url.confidential-ledger.azure.com",
+    endpoint="https://my-ledger-id.confidential-ledger.azure.com",
     credential=credential,
     ledger_certificate_path=ledger_tls_cert_file_name
 )
@@ -100,7 +100,7 @@ from azure.confidentialledger import ConfidentialLedgerClient
 from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
 from azure.identity import DefaultAzureCredential
 
-identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
+identity_client = ConfidentialLedgerIdentityServiceClient()
 network_identity = identity_client.get_ledger_identity(
     ledger_id="my-ledger-id"
 )
@@ -111,7 +111,7 @@ with open(ledger_tls_cert_file_name, "w") as cert_file:
 
 credential = DefaultAzureCredential()
 ledger_client = ConfidentialLedgerClient(
-    endpoint="https://my-ledger-url.confidential-ledger.azure.com",
+    endpoint="https://my-ledger-id.confidential-ledger.azure.com",
     credential=credential,
     ledger_certificate_path=ledger_tls_cert_file_name
 )
@@ -133,7 +133,7 @@ from azure.confidentialledger import ConfidentialLedgerClient
 from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
 from azure.identity import DefaultAzureCredential
 
-identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
+identity_client = ConfidentialLedgerIdentityServiceClient()
 network_identity = identity_client.get_ledger_identity(
     ledger_id="my-ledger-id"
 )
@@ -144,7 +144,7 @@ with open(ledger_tls_cert_file_name, "w") as cert_file:
 
 credential = DefaultAzureCredential()
 ledger_client = ConfidentialLedgerClient(
-    endpoint="https://my-ledger-url.confidential-ledger.azure.com",
+    endpoint="https://my-ledger-id.confidential-ledger.azure.com",
     credential=credential,
     ledger_certificate_path=ledger_tls_cert_file_name
 )
@@ -169,7 +169,7 @@ from azure.confidentialledger import ConfidentialLedgerClient
 from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
 from azure.identity import DefaultAzureCredential
 
-identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
+identity_client = ConfidentialLedgerIdentityServiceClient()
 network_identity = identity_client.get_ledger_identity(
     ledger_id="my-ledger-id"
 )
@@ -180,7 +180,7 @@ with open(ledger_tls_cert_file_name, "w") as cert_file:
 
 credential = DefaultAzureCredential()
 ledger_client = ConfidentialLedgerClient(
-    endpoint="https://my-ledger-url.confidential-ledger.azure.com",
+    endpoint="https://my-ledger-id.confidential-ledger.azure.com",
     credential=credential,
     ledger_certificate_path=ledger_tls_cert_file_name
 )
@@ -218,7 +218,7 @@ from azure.confidentialledger import ConfidentialLedgerClient
 from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
 from azure.identity import DefaultAzureCredential
 
-identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
+identity_client = ConfidentialLedgerIdentityServiceClient()
 network_identity = identity_client.get_ledger_identity(
     ledger_id="my-ledger-id"
 )
@@ -229,7 +229,7 @@ with open(ledger_tls_cert_file_name, "w") as cert_file:
 
 credential = DefaultAzureCredential()
 ledger_client = ConfidentialLedgerClient(
-    endpoint="https://my-ledger-url.confidential-ledger.azure.com",
+    endpoint="https://my-ledger-id.confidential-ledger.azure.com",
     credential=credential,
     ledger_certificate_path=ledger_tls_cert_file_name
 )
@@ -265,7 +265,7 @@ from azure.confidentialledger import ConfidentialLedgerClient
 from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
 from azure.identity import DefaultAzureCredential
 
-identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
+identity_client = ConfidentialLedgerIdentityServiceClient()
 network_identity = identity_client.get_ledger_identity(
     ledger_id="my-ledger-id"
 )
@@ -276,7 +276,7 @@ with open(ledger_tls_cert_file_name, "w") as cert_file:
 
 credential = DefaultAzureCredential()
 ledger_client = ConfidentialLedgerClient(
-    endpoint="https://my-ledger-url.confidential-ledger.azure.com",
+    endpoint="https://my-ledger-id.confidential-ledger.azure.com",
     credential=credential,
     ledger_certificate_path=ledger_tls_cert_file_name
 )
@@ -316,7 +316,7 @@ from azure.confidentialledger import (
 )
 from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
 
-identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
+identity_client = ConfidentialLedgerIdentityServiceClient()
 network_identity = identity_client.get_ledger_identity(
     ledger_id="my-ledger-id"
 )
@@ -329,7 +329,7 @@ credential = ConfidentialLedgerCertificateCredential(
     certificate_path="Path to user certificate PEM file"
 )
 ledger_client = ConfidentialLedgerClient(
-    endpoint="https://my-ledger-url.confidential-ledger.azure.com",
+    endpoint="https://my-ledger-id.confidential-ledger.azure.com",
     credential=credential,
     ledger_certificate_path=ledger_tls_cert_file_name
 )
@@ -350,7 +350,7 @@ from azure.confidentialledger import ConfidentialLedgerClient
 from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
 from azure.identity import DefaultAzureCredential
 
-identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
+identity_client = ConfidentialLedgerIdentityServiceClient()
 network_identity = identity_client.get_ledger_identity(
     ledger_id="my-ledger-id"
 )
@@ -361,7 +361,7 @@ with open(ledger_tls_cert_file_name, "w") as cert_file:
 
 credential = DefaultAzureCredential()
 ledger_client = ConfidentialLedgerClient(
-    endpoint="https://my-ledger-url.confidential-ledger.azure.com",
+    endpoint="https://my-ledger-id.confidential-ledger.azure.com",
     credential=credential,
     ledger_certificate_path=ledger_tls_cert_file_name
 )
@@ -395,7 +395,7 @@ logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
-identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
+identity_client = ConfidentialLedgerIdentityServiceClient()
 network_identity = identity_client.get_ledger_identity(
     ledger_id="my-ledger-id"
 )
@@ -408,7 +408,7 @@ credential = DefaultAzureCredential()
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level.
 ledger_client = ConfidentialLedgerClient(
-    endpoint="https://my-ledger-url.confidential-ledger.azure.com",
+    endpoint="https://my-ledger-id.confidential-ledger.azure.com",
     credential=credential,
     ledger_certificate_path=ledger_tls_cert_file_name,
     logging_enable=True,
