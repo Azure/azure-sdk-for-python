@@ -10,7 +10,7 @@ import os
 import unittest
 from datetime import datetime, timedelta
 
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 import requests
@@ -2274,6 +2274,26 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             credential=AzureSasCredential(token))
+
+        properties = await file_client.get_file_properties()
+
+        # Assert
+        self.assertIsNotNone(properties)
+
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_azure_named_key_credential_access(self, storage_account_name, storage_account_key):
+
+        self._setup(storage_account_name, storage_account_key)
+        file_client = await self._create_file(storage_account_name, storage_account_key)
+        named_key = AzureNamedKeyCredential(storage_account_name, storage_account_key)
+
+        # Act
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_client.file_name,
+            credential=named_key)
 
         properties = await file_client.get_file_properties()
 

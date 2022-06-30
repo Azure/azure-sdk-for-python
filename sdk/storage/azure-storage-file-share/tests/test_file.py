@@ -14,7 +14,7 @@ import requests
 import pytest
 import uuid
 from azure.core import MatchConditions
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from azure.storage.blob import BlobServiceClient
@@ -2100,6 +2100,25 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             credential=AzureSasCredential(token))
+
+        properties = file_client.get_file_properties()
+
+        # Assert
+        self.assertIsNotNone(properties)
+
+    @FileSharePreparer()
+    def test_azure_named_key_credential_access(self, storage_account_name, storage_account_key):
+
+        self._setup(storage_account_name, storage_account_key)
+        file_client = self._create_file()
+        named_key = AzureNamedKeyCredential(storage_account_name, storage_account_key)
+
+        # Act
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_client.file_name,
+            credential=named_key)
 
         properties = file_client.get_file_properties()
 
