@@ -111,9 +111,6 @@ class CaseInsensitiveDict(MutableMapping):
     def copy(self) -> "CaseInsensitiveDict":
         return CaseInsensitiveDict(self._store.values())
 
-    def __getitem__(self, key: str) -> Any:
-        return self._store[key.lower()]
-
     def __setitem__(self, key: str, value: str) -> None:
         """
         Set the `key` to `value`. The original key will be stored with the value
