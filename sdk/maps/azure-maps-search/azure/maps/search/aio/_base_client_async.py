@@ -6,10 +6,10 @@
 from typing import Union, Any, TYPE_CHECKING
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
-from ._generated import SearchClient as _SearchClient
-from ._version import VERSION
+from .._generated.aio import SearchClient as _SearchClient
+from .._version import VERSION
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials import AsyncTokenCredential
 
 
 def _authentication_policy(credential):
@@ -22,10 +22,10 @@ def _authentication_policy(credential):
         )
     return authentication_policy
 
-class SearchClientBase:
+class AsyncSearchClientBase:
     def __init__(
         self,
-        credential: Union[AzureKeyCredential, "TokenCredential"],
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
         **kwargs: Any
     ) -> None:
 

@@ -8,9 +8,8 @@
 from typing import TYPE_CHECKING
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
-
-from .._api_version import MapsSearchApiVersion, validate_api_version
-from .._generated.aio._search_client import SearchClient as SearchClientGen
+from azure.core.credentials import AzureKeyCredential
+from ._base_client_async import AsyncSearchClientBase
 from .._generated.models import BatchRequest, SearchAddressBatchResult
 
 if TYPE_CHECKING:
@@ -20,7 +19,7 @@ if TYPE_CHECKING:
 
 
 # By default, use the latest supported API version
-class SearchClient(object):
+class SearchClient(AsyncSearchClientBase):
     """Azure Maps Search REST APIs.
 
     :param credential: Credential needed for the client to connect to Azure.
@@ -38,26 +37,15 @@ class SearchClient(object):
             Setting to an older version may result in reduced feature compatibility.
     :paramtype api_version: str or ~azure.ai.translation.document.MapsSearchApiVersion
     """
-
     def __init__(
         self,
-        credential,  # type: AsyncTokenCredential
+        credential, # type: Union[AzureKeyCredential, "AsyncTokenCredential"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        if not credential:
-            raise ValueError(
-                "You need to provide account shared key to authenticate.")
-        self._api_version = kwargs.pop(
-            "api_version", MapsSearchApiVersion.V1_0
+        super().__init__(
+            credential=credential, **kwargs
         )
-        validate_api_version(self._api_version)
-
-        self._search_client = SearchClientGen(
-            credential,
-            api_version=self._api_version,
-            **kwargs
-        ).search
 
     @distributed_trace_async
     def begin_fuzzy_search_batch(

@@ -11,7 +11,6 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.polling import LROPoller
 
 from ._base_client import SearchClientBase
-from ._generated._search_client import SearchClient as SearchClientGen
 from ._generated.models import (
     PointOfInterestCategory,
     ReverseSearchCrossStreetAddressResult,
