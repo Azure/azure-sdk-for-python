@@ -387,7 +387,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 while not mgmt_client.client_ready():
                     time.sleep(0.05)
                 _LOGGER.debug("type cred %r", type(self._credential))
-                _LOGGER.debug(datetime.fromtimestamp(self._credential.get_token(self._auth_uri).expires_on))
+                _LOGGER.debug(datetime.fromtimestamp(mgmt_auth.get_token().expires_on))
                 mgmt_msg.application_properties["security_token"] = mgmt_auth.get_token()
                 _LOGGER.debug('mgmt_client token before update - Logging token expiry for token type %r', type(mgmt_auth.get_token()))
                 _LOGGER.debug('current time: %r', datetime.now())
