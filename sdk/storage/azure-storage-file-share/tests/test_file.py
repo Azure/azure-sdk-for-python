@@ -13,7 +13,6 @@ import pytest
 import requests
 import uuid
 from azure.core import MatchConditions
-
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from azure.storage.blob import BlobServiceClient
