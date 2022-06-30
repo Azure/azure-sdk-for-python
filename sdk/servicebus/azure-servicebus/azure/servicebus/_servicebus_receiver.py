@@ -1006,10 +1006,13 @@ class ServiceBusReceiver(
         return message._expiry  # type: ignore
 
     @property
-    def identifier(self) -> str:
+    def client_identifier(self) -> str:
         """
-        Get the ServiceBusReceiver identifier associated with the receiver instance.
+        Get the ServiceBusReceiver client_identifier associated with the receiver instance.
 
         :rtype: str
         """
         return self._name
+
+    def __str__(self) -> str:
+        return f"ServicebusReceiver client identifier: {self.client_identifier} for entity: {self.entity_name}"

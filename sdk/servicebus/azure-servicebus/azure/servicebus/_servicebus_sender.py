@@ -492,10 +492,13 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
 
     @property
-    def identifier(self) -> str:
+    def client_identifier(self) -> str:
         """
-        Get the ServiceBusSender identifier associated with the sender instance.
+        Get the ServiceBusSender client_identifier associated with the sender instance.
 
         :rtype: str
         """
         return self._name
+
+    def __str__(self) -> str:
+        return f"ServicebusSender client identifier: {self.client_identifier} for entity: {self.entity_name}"
