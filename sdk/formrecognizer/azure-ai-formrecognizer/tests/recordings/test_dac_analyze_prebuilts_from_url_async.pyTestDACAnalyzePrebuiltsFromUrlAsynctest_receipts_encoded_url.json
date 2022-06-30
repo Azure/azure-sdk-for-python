@@ -8,20 +8,20 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "50",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
         "urlSource": "https://fakeuri.com/blank%20space"
       },
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "37f95a25-26ec-4bf4-b0f7-ba2fa38f3f9f",
+        "apim-request-id": "95eec940-6998-4fd8-945e-2a541a7195ac",
+        "Content-Length": "221",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 25 May 2022 21:43:01 GMT",
+        "Date": "Thu, 23 Jun 2022 23:52:51 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "581"
+        "x-envoy-upstream-service-time": "473"
       },
       "ResponseBody": {
         "error": {

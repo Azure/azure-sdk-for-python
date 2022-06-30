@@ -1,0 +1,9 @@
+[packaging]
+package_name = "azure-mgmt-workloads"
+package_nspkg = "azure-mgmt-nspkg"
+package_pprint_name = "Workloads Management"
+package_doc_id = ""
+is_stable = false
+is_arm = true
+need_msrestazure = false
+need_azuremgmtcore = true

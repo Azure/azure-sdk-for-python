@@ -7,24 +7,23 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AccessLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NONE = "None"
     READ = "Read"
     WRITE = "Write"
 
-class Architecture(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Architecture(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CPU architecture supported by an OS disk.
     """
 
     X64 = "x64"
     ARM64 = "Arm64"
 
-class CopyCompletionErrorReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CopyCompletionErrorReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the error code if the background copy of a resource created via the CopyStart
     operation fails.
     """
@@ -33,7 +32,7 @@ class CopyCompletionErrorReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     #: created via CopyStart operation was in progress.
     COPY_SOURCE_NOT_FOUND = "CopySourceNotFound"
 
-class DataAccessAuthMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DataAccessAuthMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Additional authentication requirements when exporting or uploading to a disk or snapshot.
     """
 
@@ -44,7 +43,7 @@ class DataAccessAuthMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: No additional authentication would be performed when accessing export/upload URL.
     NONE = "None"
 
-class DiskCreateOption(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This enumerates the possible sources of a disk's creation.
     """
 
@@ -77,7 +76,7 @@ class DiskCreateOption(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: disk and upload using write token in both disk and VM guest state.
     UPLOAD_PREPARED_SECURE = "UploadPreparedSecure"
 
-class DiskEncryptionSetIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DiskEncryptionSetIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of Managed Identity used by the DiskEncryptionSet. Only SystemAssigned is supported
     for new creations. Disk Encryption Sets can be updated with Identity type None during migration
     of subscription to a new Azure Active Directory tenant; it will cause the encrypted resources
@@ -89,7 +88,7 @@ class DiskEncryptionSetIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str,
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     NONE = "None"
 
-class DiskEncryptionSetType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DiskEncryptionSetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of key used to encrypt the data of the disk.
     """
 
@@ -102,7 +101,7 @@ class DiskEncryptionSetType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Confidential VM supported disk and VM guest state would be encrypted with customer managed key.
     CONFIDENTIAL_VM_ENCRYPTED_WITH_CUSTOMER_KEY = "ConfidentialVmEncryptedWithCustomerKey"
 
-class DiskSecurityTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DiskSecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the SecurityType of the VM. Applicable for OS disks only.
     """
 
@@ -118,7 +117,7 @@ class DiskSecurityTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: managed key.
     CONFIDENTIAL_VM_DISK_ENCRYPTED_WITH_CUSTOMER_KEY = "ConfidentialVM_DiskEncryptedWithCustomerKey"
 
-class DiskState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DiskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This enumerates the possible state of the disk.
     """
 
@@ -139,7 +138,7 @@ class DiskState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: A disk is created for upload and a write token has been issued for uploading to it.
     ACTIVE_UPLOAD = "ActiveUpload"
 
-class DiskStorageAccountTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DiskStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The sku name.
     """
 
@@ -163,7 +162,7 @@ class DiskStorageAccountTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     #: workloads that consistently require low latency and high IOPS and throughput.
     PREMIUM_V2_LRS = "PremiumV2_LRS"
 
-class EncryptionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of key used to encrypt the data of the disk.
     """
 
@@ -177,20 +176,20 @@ class EncryptionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: the other key is Platform managed.
     ENCRYPTION_AT_REST_WITH_PLATFORM_AND_CUSTOMER_KEYS = "EncryptionAtRestWithPlatformAndCustomerKeys"
 
-class ExtendedLocationTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of extendedLocation.
     """
 
     EDGE_ZONE = "EdgeZone"
 
-class HyperVGeneration(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class HyperVGeneration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The hypervisor generation of the Virtual Machine. Applicable to OS disks only.
     """
 
     V1 = "V1"
     V2 = "V2"
 
-class NetworkAccessPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class NetworkAccessPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Policy for accessing the disk via network.
     """
 
@@ -201,14 +200,14 @@ class NetworkAccessPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: The disk cannot be exported.
     DENY_ALL = "DenyAll"
 
-class OperatingSystemTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Operating System type.
     """
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
-class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current provisioning state.
     """
 
@@ -217,7 +216,7 @@ class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveE
     DELETING = "Deleting"
     FAILED = "Failed"
 
-class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The private endpoint connection status.
     """
 
@@ -225,7 +224,7 @@ class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumM
     APPROVED = "Approved"
     REJECTED = "Rejected"
 
-class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Policy for controlling export on the disk.
     """
 
@@ -238,7 +237,7 @@ class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: trusted Azure VNET when NetworkAccessPolicy is set to AllowPrivate.
     DISABLED = "Disabled"
 
-class SnapshotStorageAccountTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SnapshotStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The sku name.
     """
 

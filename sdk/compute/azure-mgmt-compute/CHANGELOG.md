@@ -1,5 +1,12 @@
 # Release History
 
+## 27.2.0 (2022-06-29)
+
+**Features**
+
+  - Model CloudService has a new parameter system_data
+  - Model CloudServiceNetworkProfile has a new parameter slot_type
+
 ## 27.1.0 (2022-06-09)
 
 **Features**
