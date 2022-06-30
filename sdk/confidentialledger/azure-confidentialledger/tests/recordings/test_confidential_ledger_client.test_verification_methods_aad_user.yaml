@@ -20,7 +20,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 29 Jun 2022 22:10:43 GMT
+      - Thu, 30 Jun 2022 22:32:31 GMT
       server:
       - Kestrel
       transfer-encoding:
@@ -57,7 +57,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.22630'
+      - '4.23036'
     status:
       code: 200
       message: OK
@@ -497,7 +497,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.22630'
+      - '4.23036'
     status:
       code: 200
       message: OK
@@ -523,7 +523,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.22630'
+      - '4.23036'
     status:
       code: 200
       message: OK
