@@ -25,7 +25,7 @@ class ComponentTranslatableMixin:
     def _find_source_input_output_type(cls, input: str, pipeline_job_dict: dict):
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
         from azure.ai.ml.entities import CommandJob, ParallelJob
-        from azure.ai.ml.entities._builders import Command, Parallel, Sweep
+        from azure.ai.ml.entities._builders import BaseNode
 
         pipeline_job_inputs = pipeline_job_dict.get("inputs", {})
         pipeline_job_outputs = pipeline_job_dict.get("outputs", {})
@@ -77,8 +77,8 @@ class ComponentTranslatableMixin:
                     )
                 _input_job_name, _io_type, _name = m.groups()
                 _input_job = jobs_dict[_input_job_name]
-                if isinstance(_input_job, (Command, Parallel, Sweep)):
-                    # If source is Command, get type from io builder
+                if isinstance(_input_job, BaseNode):
+                    # If source is base node, get type from io builder
                     _source = _input_job[_io_type][_name]
                     try:
                         return _source.type

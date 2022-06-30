@@ -63,7 +63,7 @@ from inspect import Parameter, signature
 
 from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException, MldesignerComponentDefiningError
 from azure.ai.ml.entities._component.input_output import ComponentInput, ComponentOutput
-from azure.ai.ml.constants import InputOutputModes, AssetTypes
+from azure.ai.ml.constants import InputOutputModes, AssetTypes, IO_CONSTANTS
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorTarget, ErrorCategory, ComponentException
 from azure.ai.ml.entities._mixins import DictMixin
 
@@ -95,25 +95,6 @@ class Input(DictMixin):
     :type description: str
     """
 
-    # For validation, indicates specific parameters combination for each type
-    _TYPE_COMBINATION_MAPPING = {
-        "uri_folder": ["path", "mode"],
-        "uri_file": ["path", "mode"],
-        "mltable": ["path", "mode"],
-        "mlflow_model": ["path", "mode"],
-        "custom_model": ["path", "mode"],
-        "integer": ["default", "min", "max"],
-        "number": ["default", "min", "max"],
-        "string": ["default"],
-        "boolean": ["default"],
-    }
-    _ALLOWED_TYPES = {
-        "integer": (int),
-        "string": (str),
-        "number": (float),
-        "boolean": (bool),
-    }
-    _DATA_TYPE_MAPPING = {int: "integer", str: "string", float: "number", bool: "boolean"}
     _EMPTY = Parameter.empty
 
     @overload
@@ -270,20 +251,20 @@ class Input(DictMixin):
         self.type = type
         self.description = description
 
-        self._is_parameter_type = self.type in self._ALLOWED_TYPES
+        self._is_primitive_type = self.type in IO_CONSTANTS.PRIMITIVE_STR_2_TYPE
         if path and not isinstance(path, str):
             # this logic will make dsl data binding expression working in the same way as yaml
             # it's written to handle InputOutputBase, but there will be loop import if we import InputOutputBase here
             self.path = str(path)
         else:
             self.path = path
-        self.mode = None if self._is_parameter_type else mode
+        self.mode = None if self._is_primitive_type else mode
         self.default = default
         self.optional = True if optional is True else None
         self.min = min
         self.max = max
         self.enum = enum
-        self._allowed_types = self._ALLOWED_TYPES.get(self.type)
+        self._allowed_types = IO_CONSTANTS.PRIMITIVE_STR_2_TYPE.get(self.type)
         self._validate_parameter_combinations()
 
     def _to_dict(self, remove_name=True):
@@ -327,7 +308,7 @@ class Input(DictMixin):
         :param str_val: The input string value from the command line.
         :return: The parsed value, an exception will be raised if the value is invalid.
         """
-        if self._is_parameter_type:
+        if self._is_primitive_type:
             val = self._parse(val) if isinstance(val, str) else val
             self._validate_or_throw(val)
         return val
@@ -416,8 +397,8 @@ class Input(DictMixin):
         type = parameters.pop("type")
 
         # validate parameter combination
-        if type in self._TYPE_COMBINATION_MAPPING:
-            valid_parameters = self._TYPE_COMBINATION_MAPPING[type]
+        if type in IO_CONSTANTS.INPUT_TYPE_COMBINATION:
+            valid_parameters = IO_CONSTANTS.INPUT_TYPE_COMBINATION[type]
             for key, value in parameters.items():
                 if key not in valid_parameters and value is not None:
                     msg = "Invalid parameter for '{}' Input, parameter '{}' should be None but got '{}'"
@@ -429,14 +410,14 @@ class Input(DictMixin):
                     )
 
     @classmethod
-    def _get_input_by_type(cls, t: type):
-        if t in cls._DATA_TYPE_MAPPING:
-            return cls(type=cls._DATA_TYPE_MAPPING[t])
+    def _get_input_by_type(cls, t: type, optional=None):
+        if t in IO_CONSTANTS.PRIMITIVE_TYPE_2_STR:
+            return cls(type=IO_CONSTANTS.PRIMITIVE_TYPE_2_STR[t], optional=optional)
         return None
 
     @classmethod
-    def _get_default_string_input(cls):
-        return cls(type="string")
+    def _get_default_string_input(cls, optional=None):
+        return cls(type="string", optional=optional)
 
     @classmethod
     def _get_param_with_standard_annotation(cls, func):
@@ -505,6 +486,7 @@ class Output(DictMixin):
         # The name will be updated by the annotated variable name.
         self.name = None
         self.type = type
+        self._is_primitive_type = self.type in IO_CONSTANTS.PRIMITIVE_STR_2_TYPE
         self.description = description
 
         self.path = path
@@ -636,15 +618,15 @@ def _get_annotation_by_value(val):
         # Handle enum values
         annotation = EnumInput(enum=val.__class__)
     else:
-        annotation = _get_annotation_cls_by_type(type(val), raise_error=False)
+        annotation = _get_annotation_cls_by_type(type(val), raise_error=False, optional=True)
         if not annotation:
             # Fall back to default
-            annotation = Input._get_default_string_input()
+            annotation = Input._get_default_string_input(optional=True)
     return annotation
 
 
-def _get_annotation_cls_by_type(t: type, raise_error=False):
-    cls = Input._get_input_by_type(t)
+def _get_annotation_cls_by_type(t: type, raise_error=False, optional=None):
+    cls = Input._get_input_by_type(t, optional=optional)
     if cls is None and raise_error:
         raise UserErrorException(f"Can't convert type {t} to azure.ai.ml.Input")
     return cls
@@ -708,7 +690,7 @@ def _get_param_with_standard_annotation(
             return complete_annotation
         if isinstance(complete_annotation, Input):
             # Non-parameter Input has no default attribute
-            if complete_annotation._is_parameter_type and complete_annotation.default is not None:
+            if complete_annotation._is_primitive_type and complete_annotation.default is not None:
                 # logger.warning(
                 #     f"Warning: Default value of f{complete_annotation.name!r} is set twice: "
                 #     f"{complete_annotation.default!r} and {default!r}, will use {default!r}"

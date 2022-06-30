@@ -4,7 +4,6 @@
 import copy
 import logging
 import os
-import uuid
 from enum import Enum
 from typing import Dict, List, Optional, Union
 
@@ -20,8 +19,9 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     AmlToken,
     UserIdentity,
     CommandJobLimits as RestCommandJobLimits,
+    ResourceConfiguration as RestResourceConfiguration,
 )
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, NodeType
+from azure.ai.ml.constants import NodeType
 
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities import (
@@ -33,13 +33,10 @@ from azure.ai.ml.entities import (
     CommandJob,
 )
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    ResourceConfiguration as RestResourceConfiguration,
-)
 from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from .._job.pipeline._io import PipelineInput, PipelineOutputBase
-from .._util import validate_attribute_type, get_rest_dict
+from .._util import validate_attribute_type, get_rest_dict, convert_ordered_dict_to_dict
 from azure.ai.ml.entities._job.distribution import (
     MpiDistribution,
     TensorFlowDistribution,
@@ -49,7 +46,6 @@ from azure.ai.ml.entities._job.distribution import (
 from ..._schema import PathAwareSchema
 from ..._schema.job.distribution import PyTorchDistributionSchema, TensorFlowDistributionSchema, MPIDistributionSchema
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorTarget
-from ..._utils._arm_id_utils import get_resource_name_from_arm_id_safe
 
 module_logger = logging.getLogger(__name__)
 
@@ -111,11 +107,13 @@ class Command(BaseNode):
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
 
-        self._init = True
         kwargs.pop("type", None)
-        _from_component_func = kwargs.pop("_from_component_func", False)
-        super(Command, self).__init__(type=NodeType.COMMAND, component=component, compute=compute, **kwargs)
+        BaseNode.__init__(
+            self, type=NodeType.COMMAND, inputs=inputs, outputs=outputs, component=component, compute=compute, **kwargs
+        )
 
+        # init mark for _AttrDict
+        self._init = True
         # initialize command job properties
         self.limits = limits
         self.identity = identity
@@ -128,10 +126,13 @@ class Command(BaseNode):
             self.resources = self.resources or self.component.resources
             self.distribution = self.distribution or self.component.distribution
 
-        # initialize io
-        inputs, outputs = inputs or {}, outputs or {}
+        self._swept = False
+        self._init = False
+
+    @classmethod
+    def _get_supported_inputs_types(cls):
         # when command node is constructed inside dsl.pipeline, inputs can be PipelineInput or Output of another node
-        supported_input_types = (
+        return (
             PipelineInput,
             PipelineOutputBase,
             Input,
@@ -142,33 +143,10 @@ class Command(BaseNode):
             float,
             Enum,
         )
-        self._validate_io(inputs, supported_input_types, Input)
-        supported_output_types = (str, Output)
-        self._validate_io(outputs, supported_output_types, Output)
-        # parse empty dict to None so we won't pass default mode, type to backend
-        for k, v in inputs.items():
-            if v == {}:
-                inputs[k] = None
-        # TODO: get rid of self._job_inputs, self._job_outputs once we have unified Input
-        self._job_inputs, self._job_outputs = inputs, outputs
-        if isinstance(component, Component):
-            # Build the inputs from component input definition and given inputs, unfilled inputs will be None
-            self._inputs = self._build_inputs_dict(component.inputs, inputs or {})
-            # Build the outputs from component output definition and given outputs, unfilled outputs will be None
-            self._outputs = self._build_outputs_dict(component.outputs, outputs or {})
-        else:
-            # Build inputs/outputs dict without meta when definition not available
-            self._inputs = self._build_inputs_dict_without_meta(inputs or {})
-            self._outputs = self._build_outputs_dict_without_meta(outputs or {})
 
-        # Generate an id for every component instance
-        self._instance_id = str(uuid.uuid4())
-        if _from_component_func:
-            # add current component in pipeline stack for dsl scenario
-            self._register_in_current_pipeline_component_builder()
-
-        self._swept = False
-        self._init = False
+    @classmethod
+    def _get_supported_outputs_types(cls):
+        return str, Output
 
     @property
     def distribution(self) -> Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution]:
@@ -325,34 +303,6 @@ class Command(BaseNode):
         )
         return sweep_node
 
-    def _initializing(self) -> bool:
-        # use this to indicate ongoing init process so all attributes set during init process won't be set as
-        # arbitrary attribute in _AttrDict
-        # TODO: replace this hack
-        return self._init
-
-    @classmethod
-    def _validate_io(cls, io_dict: dict, allowed_types: tuple, parse_cls):
-        for key, value in io_dict.items():
-            # output mode of last node should not affect input mode of next node
-            if isinstance(value, PipelineOutputBase):
-                # value = copy.deepcopy(value)
-                value = value._deepcopy()  # Decoupled input and output
-                io_dict[key] = value
-                value.mode = None
-            if value is None or isinstance(value, allowed_types):
-                pass
-            elif isinstance(value, dict):
-                # parse dict to allowed type
-                io_dict[key] = parse_cls(**value)
-            else:
-                msg = "Expecting {} for input/output {}, got {} instead."
-                raise ValidationException(
-                    message=msg.format(allowed_types, key, type(value)),
-                    no_personal_data_message=msg.format(allowed_types, "[key]", type(value)),
-                    target=ErrorTarget.COMMAND_JOB,
-                )
-
     @classmethod
     def _attr_type_map(cls) -> dict:
         return {
@@ -387,49 +337,45 @@ class Command(BaseNode):
         )
 
     @classmethod
-    def _picked_fields_in_to_rest(cls) -> List[str]:
+    def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
         return ["resources", "distribution", "limits", "environment_variables"]
 
-    def _node_specified_pre_to_rest_operations(self, rest_obj):
-        for key in self._picked_fields_in_to_rest():
-            if key not in rest_obj:
-                rest_obj[key] = None
-
+    def _to_rest_object(self, **kwargs) -> dict:
+        rest_obj = super()._to_rest_object(**kwargs)
         rest_obj.update(
-            dict(
-                componentId=self._get_component_id(),
-                distribution=get_rest_dict(self.distribution),
-                limits=get_rest_dict(self.limits),
-                resources=get_rest_dict(self.resources, clear_empty_value=True),
+            convert_ordered_dict_to_dict(
+                dict(
+                    componentId=self._get_component_id(),
+                    distribution=get_rest_dict(self.distribution),
+                    limits=get_rest_dict(self.limits),
+                    resources=get_rest_dict(self.resources, clear_empty_value=True),
+                )
             )
         )
+        return rest_obj
 
     @classmethod
     def _from_rest_object(cls, obj: dict) -> "Command":
-        inputs = obj.get("inputs", {})
-        outputs = obj.get("outputs", {})
+        obj = BaseNode._rest_object_to_init_params(obj)
 
-        obj["inputs"] = cls._from_rest_inputs(inputs)
-        obj["outputs"] = cls._from_rest_outputs(outputs)
-
-        # resources
+        # resources, sweep won't have resources
         if "resources" in obj and obj["resources"]:
             resources = RestResourceConfiguration.from_dict(obj["resources"])
             obj["resources"] = ResourceConfiguration._from_rest_object(resources)
 
-        # Change componentId -> component, computeId -> compute
+        # Change componentId -> component
         component_id = obj.pop("componentId", None)
-        compute_id = obj.pop("computeId", None)
         obj["component"] = component_id
-        obj["compute"] = get_resource_name_from_arm_id_safe(compute_id)
 
-        # distribution
+        # distribution, sweep won't have distribution
         if "distribution" in obj and obj["distribution"]:
             obj["distribution"] = DistributionConfiguration._from_rest_object(obj["distribution"])
+
         # handle limits
         if "limits" in obj and obj["limits"]:
             rest_limits = RestCommandJobLimits.from_dict(obj["limits"])
             obj["limits"] = CommandJobLimits()._from_rest_object(rest_limits)
+
         return Command(**obj)
 
     def _build_inputs(self):

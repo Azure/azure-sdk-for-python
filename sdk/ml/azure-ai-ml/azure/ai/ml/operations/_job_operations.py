@@ -33,6 +33,7 @@ from azure.ai.ml.constants import (
     PipelineConstants,
     SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME,
     COMMON_RUNTIME_ENV_VAR,
+    GIT_PATH_PREFIX,
 )
 
 from azure.ai.ml.entities._job.job_errors import JobParsingError, PipelineChildJobError
@@ -112,6 +113,7 @@ from ._run_operations import RunOperations
 from ._dataset_dataplane_operations import DatasetDataplaneOperations
 from ._model_dataplane_operations import ModelDataplaneOperations
 from ._compute_operations import ComputeOperations
+from azure.ai.ml._utils.utils import is_private_preview_enabled
 
 if TYPE_CHECKING:
     from azure.ai.ml.operations import DatastoreOperations
@@ -380,6 +382,19 @@ class JobOperations(_ScopeDependentOperations):
 
         if job.compute == LOCAL_COMPUTE_TARGET:
             job.environment_variables[COMMON_RUNTIME_ENV_VAR] = "true"
+
+        # If private features are enable and job has code value of type str we need to check
+        # that it is a valid git path case. Otherwise we should throw a ValidationException
+        # saying that the code value is not a valid code value
+        if (
+            hasattr(job, "code")
+            and job.code is not None
+            and isinstance(job.code, str)
+            and job.code.startswith(GIT_PATH_PREFIX)
+            and not is_private_preview_enabled()
+        ):
+            msg = f"Invalid code value: {job.code}. Git paths are not supported."
+            raise ValidationException(message=msg, no_personal_data_message=msg)
 
         self._validate(job, raise_on_failure=True)
 
@@ -987,7 +1002,7 @@ class JobOperations(_ScopeDependentOperations):
             for key, job_instance in pipeline_job.jobs.items():
                 if isinstance(job_instance, AutoMLJob):
                     self._resolve_arm_id_for_automl_job(job_instance, resolver, inside_pipeline=True)
-                elif isinstance(job_instance, (Command, Sweep, Parallel)):
+                elif isinstance(job_instance, BaseNode):
                     # Get the default for the specific job type
                     if (
                         isinstance(job_instance.component, (CommandComponent, ParallelComponent))
@@ -1027,7 +1042,6 @@ class JobOperations(_ScopeDependentOperations):
             studio_endpoint = job.services.get("Studio", None)
             studio_url = studio_endpoint.endpoint
             cloud_details = _get_cloud_details()
-            cloud_details = _get_cloud_details()
             default_scopes = resource_to_scopes(cloud_details.get(ENDPOINT_URLS.RESOURCE_MANAGER_ENDPOINT))
             module_logger.debug(f"default_scopes used: `{default_scopes}`\n")
             # Extract the tenant id from the credential using PyJWT
@@ -1043,7 +1057,7 @@ class JobOperations(_ScopeDependentOperations):
 
     def _set_defaults_to_component(self, component: Union[str, Component], settings: PipelineJobSettings):
         """Set default code&environment to component if not specified."""
-        if isinstance(component, (CommandComponent, ParallelComponent)):
+        if isinstance(component, Component):
             # TODO: do we have no place to set default code & environment?
             pass
 

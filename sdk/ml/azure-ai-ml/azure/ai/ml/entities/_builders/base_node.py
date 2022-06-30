@@ -3,28 +3,28 @@
 # ---------------------------------------------------------
 import logging
 import uuid
+from enum import Enum
 from functools import wraps
 from abc import ABC, abstractmethod
-from typing import Dict, Union, List
-import pydash
-from marshmallow import ValidationError
-from azure.ai.ml._utils.utils import map_single_brackets_and_warn
-from azure.ai.ml.constants import JobType, ComponentJobConstants, ComponentSource
+from typing import Dict, Union, List, Optional
+from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
+from azure.ai.ml.constants import JobType, ComponentSource
 from azure.ai.ml.entities._job.pipeline._attr_dict import _AttrDict
-from azure.ai.ml.entities._job.pipeline._pipeline_job_helpers import process_sdk_component_job_io
-from azure.ai.ml.entities._job.pipeline._io import InputsAttrDict, OutputsAttrDict, PipelineOutputBase, NodeIOMixin
+from azure.ai.ml.entities._job.pipeline._io import (
+    InputsAttrDict,
+    OutputsAttrDict,
+    PipelineOutputBase,
+    NodeIOMixin,
+    PipelineInput,
+)
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, YamlTranslatableMixin, TelemetryMixin
 from azure.ai.ml.entities._job._input_output_helpers import (
     build_input_output,
-    to_rest_dataset_literal_inputs,
-    to_rest_data_outputs,
-    validate_inputs_for_command,
 )
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
-from azure.ai.ml.entities import Component, Job, CommandComponent
+from azure.ai.ml.entities import Component, Job, ResourceConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorTarget, ErrorCategory
+from azure.ai.ml._ml_exceptions import ValidationException, ErrorTarget
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
 
@@ -66,9 +66,13 @@ class BaseNode(
     :type type: str
     :param component: Id or instance of the component version to be run for the step
     :type component: Union[Component, str]
-    :param name: Name of the command.
+    :param inputs: Inputs to the node.
+    :type inputs: Dict[str, Union[Input, SweepDistribution, str, bool, int, float, Enum, dict]]
+    :param outputs: Mapping of output data bindings used in the job.
+    :type outputs: Dict[str, Union[str, Output, dict]]
+    :param name: Name of the node.
     :type name: str
-    :param description: Description of the command.
+    :param description: Description of the node.
     :type description: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict[str, str]
@@ -87,6 +91,8 @@ class BaseNode(
         *,
         type: str = JobType.COMPONENT,
         component: Component,
+        inputs: Dict[str, Union[PipelineInput, PipelineOutputBase, Input, str, bool, int, float, Enum, "Input"]] = None,
+        outputs: Dict[str, Union[str, Output, "Output"]] = None,
         name: str = None,
         display_name: str = None,
         description: str = None,
@@ -96,6 +102,30 @@ class BaseNode(
         experiment_name: str = None,
         **kwargs,
     ):
+        self._init = True
+        _from_component_func = kwargs.pop("_from_component_func", False)
+
+        # initialize io
+        inputs, outputs = inputs or {}, outputs or {}
+        self._validate_io(inputs, self._get_supported_inputs_types(), Input)
+        self._validate_io(outputs, self._get_supported_outputs_types(), Output)
+        # parse empty dict to None so we won't pass default mode, type to backend
+        for k, v in inputs.items():
+            if v == {}:
+                inputs[k] = None
+
+        # TODO: get rid of self._job_inputs, self._job_outputs once we have unified Input
+        self._job_inputs, self._job_outputs = inputs, outputs
+        if isinstance(component, Component):
+            # Build the inputs from component input definition and given inputs, unfilled inputs will be None
+            self._inputs = self._build_inputs_dict(component.inputs, inputs or {})
+            # Build the outputs from component output definition and given outputs, unfilled outputs will be None
+            self._outputs = self._build_outputs_dict(component.outputs, outputs or {})
+        else:
+            # Build inputs/outputs dict without meta when definition not available
+            self._inputs = self._build_inputs_dict_without_meta(inputs or {})
+            self._outputs = self._build_outputs_dict_without_meta(outputs or {})
+
         super(BaseNode, self).__init__(**kwargs)
         self.type = type
         self._component = component
@@ -108,7 +138,52 @@ class BaseNode(
         self.experiment_name = experiment_name
         self.kwargs = kwargs
 
+        # Generate an id for every instance
+        self._instance_id = str(uuid.uuid4())
+        if _from_component_func:
+            # add current component in pipeline stack for dsl scenario
+            self._register_in_current_pipeline_component_builder()
+
         self._base_path = None  # if _base_path is not
+        self._init = False
+
+    @classmethod
+    def _get_supported_inputs_types(cls):
+        return None
+
+    @classmethod
+    def _get_supported_outputs_types(cls):
+        return None
+
+    @classmethod
+    def _validate_io(cls, io_dict: dict, allowed_types: Optional[tuple], parse_cls):
+        if allowed_types is None:
+            return
+        for key, value in io_dict.items():
+            # output mode of last node should not affect input mode of next node
+            if isinstance(value, PipelineOutputBase):
+                # value = copy.deepcopy(value)
+                value = value._deepcopy()  # Decoupled input and output
+                io_dict[key] = value
+                value.mode = None
+            if value is None or isinstance(value, allowed_types):
+                pass
+            elif isinstance(value, dict):
+                # parse dict to allowed type
+                io_dict[key] = parse_cls(**value)
+            else:
+                msg = "Expecting {} for input/output {}, got {} instead."
+                raise ValidationException(
+                    message=msg.format(allowed_types, key, type(value)),
+                    no_personal_data_message=msg.format(allowed_types, "[key]", type(value)),
+                    target=ErrorTarget.PIPELINE,
+                )
+
+    def _initializing(self) -> bool:
+        # use this to indicate ongoing init process so all attributes set during init process won't be set as
+        # arbitrary attribute in _AttrDict
+        # TODO: replace this hack
+        return self._init
 
     def _set_base_path(self, base_path):
         """
@@ -138,8 +213,7 @@ class BaseNode(
             return self._component.name
 
     def _to_dict(self) -> Dict:
-        # return dict instead of OrderedDict in case it will be further used in rest request
-        return convert_ordered_dict_to_dict(self._dump_for_validation())
+        return self._dump_for_validation()
 
     @classmethod
     def _get_validation_error_target(cls) -> ErrorTarget:
@@ -202,16 +276,30 @@ class BaseNode(
 
     @classmethod
     def _from_rest_object(cls, obj: dict) -> "BaseNode":
-        pass
+        from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
 
-    def _node_specified_pre_to_rest_operations(self, rest_obj):
-        """
-        Override this method to add custom operations on rest_obj before return it in self._to_rest_object().
-        """
-        pass
+        return pipeline_node_factory.load_from_rest_object(obj=obj)
 
     @classmethod
-    def _picked_fields_in_to_rest(cls) -> List[str]:
+    def _rest_object_to_init_params(cls, obj: dict):
+        """
+        Transfer the rest object to a dict containing items to init the node. Will be used in _from_rest_object in
+        subclasses.
+        """
+        inputs = obj.get("inputs", {})
+        outputs = obj.get("outputs", {})
+
+        obj["inputs"] = BaseNode._from_rest_inputs(inputs)
+        obj["outputs"] = BaseNode._from_rest_outputs(outputs)
+
+        # Change computeId -> compute
+        compute_id = obj.pop("computeId", None)
+        obj["compute"] = get_resource_name_from_arm_id_safe(compute_id)
+
+        return obj
+
+    @classmethod
+    def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
         """
         Override this method to add custom fields to be picked from self._to_dict() in self._to_rest_object().
         Pick nothing by default.
@@ -221,12 +309,15 @@ class BaseNode(
     def _to_rest_object(self, **kwargs) -> dict:
         """
         Convert self to a rest object for remote call.
-        It's not recommended to override this method.
-        Instead, override self._picked_fields_in_to_rest to pick serialized fields from self._to_dict();
-        and override self._node_specified_pre_to_rest_operations to add custom operations on rest_obj before return it.
         """
-        base_dict = pydash.pick(self._to_dict(), *self._picked_fields_in_to_rest())
-        base_dict.update(
+        base_dict, rest_obj = self._to_dict(), {}
+        for key in self._picked_fields_from_dict_to_rest_object():
+            if key not in base_dict:
+                rest_obj[key] = None
+            else:
+                rest_obj[key] = base_dict.get(key)
+
+        rest_obj.update(
             dict(
                 name=self.name,
                 display_name=self.display_name,
@@ -238,12 +329,8 @@ class BaseNode(
                 **self._get_attrs(),
             )
         )
-        self._node_specified_pre_to_rest_operations(base_dict)
 
-        # Convert current parameterized inputs/outputs to Inputs/Outputs.
-        # Note: this step must execute after self._validate(), validation errors will be thrown then when referenced
-        # component has not been resolved to arm id.
-        return convert_ordered_dict_to_dict(base_dict)
+        return convert_ordered_dict_to_dict(rest_obj)
 
     @property
     def inputs(self) -> InputsAttrDict:
@@ -306,7 +393,7 @@ class BaseNode(
             meta = value._data
             if (
                 isinstance(meta, Input)
-                and meta._is_parameter_type is False
+                and meta._is_primitive_type is False
                 and meta.optional is True
                 and not meta.path
                 and key not in kwargs

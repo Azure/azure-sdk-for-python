@@ -58,6 +58,7 @@ COMPUTE_UPDATE_ERROR = (
     "Only AmlCompute/KubernetesCompute cluster properties are supported, compute name {}, is {} type."
 )
 MAX_AUTOINCREMENT_ATTEMPTS = 3
+REGISTRY_DISCOVERY_BASE_URI = "https://eastus.api.azureml.ms"
 REGISTRY_URI_REGEX_FORMAT = "azureml://registries/*"
 REGISTRY_URI_FORMAT = "azureml://registries/"
 REGISTRY_VERSION_PATTERN = "^azureml://registries/([^/]+)/([^/]+)/([^/]+)/versions/([^/]+)"
@@ -95,7 +96,7 @@ CREATE_ENVIRONMENT_ERROR_MESSAGE = "It looks like you are trying to specify a co
 API_URL_KEY = "api"
 ANONYMOUS_ENV_NAME = "CliV2AnonymousEnvironment"
 SKIP_VALIDATION_MESSAGE = "To skip this validation use the --skip-validation param"
-MLTABLE_SCHEMA_URL_FALLBACK = "https://azuremlschemasprod.azureedge.net/latest/MLTable.schema.json"
+MLTABLE_METADATA_SCHEMA_URL_FALLBACK = "https://azuremlschemasprod.azureedge.net/latest/MLTable.schema.json"
 INVOCATION_ZIP_FILE = "invocation.zip"
 INVOCATION_BAT_FILE = "Invocation.bat"
 INVOCATION_BASH_FILE = "Invocation.sh"
@@ -110,6 +111,7 @@ STORAGE_ACCOUNT_URLS = {
 }
 
 ANONYMOUS_COMPONENT_NAME = "azureml_anonymous"
+GIT_PATH_PREFIX = "git+"
 
 
 class SearchSpace:
@@ -326,6 +328,7 @@ class EndpointGetLogsFields(object):
 
 class CommonYamlFields(object):
     TYPE = "type"
+    NAME = "name"
 
 
 class JobComputePropertyFields(object):
@@ -757,3 +760,21 @@ class TimeZone(str, Enum):
     TONGA__STANDARD_TIME = "Tonga Standard Time"
     SAMOA_STANDARD_TIME = "Samoa Standard Time"
     LINE_ISLANDS_STANDARD_TIME = "Line Islands Standard Time"
+
+
+class IO_CONSTANTS:
+    PRIMITIVE_STR_2_TYPE = {"integer": int, "string": str, "number": float, "boolean": bool}
+    PRIMITIVE_TYPE_2_STR = {int: "integer", str: "string", float: "number", bool: "boolean"}
+
+    # For validation, indicates specific parameters combination for each type
+    INPUT_TYPE_COMBINATION = {
+        "uri_folder": ["path", "mode"],
+        "uri_file": ["path", "mode"],
+        "mltable": ["path", "mode"],
+        "mlflow_model": ["path", "mode"],
+        "custom_model": ["path", "mode"],
+        "integer": ["default", "min", "max"],
+        "number": ["default", "min", "max"],
+        "string": ["default"],
+        "boolean": ["default"],
+    }

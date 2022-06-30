@@ -325,7 +325,7 @@ class ComponentOperations(_ScopeDependentOperations):
     def _upload_dependencies(self, component: Component) -> None:
         get_arm_id_and_fill_back = OperationOrchestrator(self._all_operations, self._operation_scope).get_asset_arm_id
 
-        if isinstance(component, (CommandComponent, ParallelComponent)):
+        if isinstance(component, Component):
             if component.code is not None:
                 if isinstance(component.code, Code) or is_registry_id_for_resource(component.code):
                     component.code = get_arm_id_and_fill_back(component.code, azureml_type=AzureMLResourceType.CODE)

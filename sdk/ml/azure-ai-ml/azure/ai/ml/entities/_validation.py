@@ -16,7 +16,7 @@ from typing import List
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml.constants import OperationStatus, BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
-
+from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 
 module_logger = logging.getLogger(__name__)
 
@@ -300,7 +300,7 @@ class SchemaValidatableMixin:
 
     def _dump_for_validation(self) -> typing.Dict:
         """Convert the resource to a dictionary."""
-        return self._schema_for_validation.dump(self)
+        return convert_ordered_dict_to_dict(self._schema_for_validation.dump(self))
 
     def _validate(self, raise_error=False) -> ValidationResult:
         """Validate the resource. If raise_error is True, raise ValidationError if validation fails and log warnings if

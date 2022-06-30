@@ -14,7 +14,7 @@ from azure.identity import ChainedTokenCredential
 from azure.core.polling import LROPoller
 from azure.ai.ml.entities._builders.base_node import BaseNode
 
-from azure.ai.ml.constants import AzureMLResourceType
+from azure.ai.ml.constants import AzureMLResourceType, REGISTRY_DISCOVERY_BASE_URI
 from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
 from azure.ai.ml.operations import (
     BatchDeploymentOperations,
@@ -168,12 +168,11 @@ class MLClient(object):
             self._rp_service_client,
             self._operation_container,
             self._credential,
-            base_url=base_url,
             **app_insights_handler_kwargs,
         )
 
         if self._registry_name:
-            base_url = _get_mfe_base_url_from_registry_discovery_service(self._workspaces, workspace_name)
+            base_url = REGISTRY_DISCOVERY_BASE_URI  # This will come back later _get_mfe_base_url_from_registry_discovery_service(self._workspaces, workspace_name)
             kwargs_registry = {**kwargs}
             kwargs_registry.pop("base_url", None)
             self._service_client_registry_discovery_client = ServiceClientRegistryDiscovery(

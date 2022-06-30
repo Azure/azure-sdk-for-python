@@ -48,7 +48,7 @@ class ComponentInput(ComponentIOItem):
 
     def __init__(self, port_dict: Dict):
         # parse value from string to it's original type. eg: "false" -> False
-        if port_dict["type"] in self.PARAM_PARSERS.keys():
+        if isinstance(port_dict["type"], str) and port_dict["type"] in self.PARAM_PARSERS.keys():
             for key in ["default", "min", "max"]:
                 if key in port_dict.keys():
                     port_dict[key] = self.PARAM_PARSERS[port_dict["type"]](port_dict[key])

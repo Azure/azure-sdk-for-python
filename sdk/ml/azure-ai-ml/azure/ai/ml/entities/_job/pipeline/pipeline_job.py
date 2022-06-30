@@ -18,9 +18,8 @@ from azure.ai.ml.entities._job.pipeline._io import (
     OutputsAttrDict,
     InputsAttrDict,
 )
-from azure.ai.ml.entities._builders import Sweep, Command, BaseNode
+from azure.ai.ml.entities._builders import Command, BaseNode
 from azure.ai.ml._utils.utils import (
-    snake_to_camel,
     camel_to_snake,
     transform_dict_keys,
     is_data_binding_expression,
@@ -28,13 +27,12 @@ from azure.ai.ml._utils.utils import (
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     JobBaseData,
-    JobOutput as RestJobOutput,
     PipelineJob as RestPipelineJob,
     ManagedIdentity,
     UserIdentity,
     AmlToken,
 )
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, ComponentSource, NodeType, AZUREML_PRIVATE_FEATURES_ENV_VAR
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, ComponentSource, AZUREML_PRIVATE_FEATURES_ENV_VAR
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from azure.ai.ml.entities._job.job import Job
@@ -151,7 +149,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             if isinstance(job_instance, BaseNode):
                 job_instance._set_base_path(self.base_path)
 
-            if isinstance(job_instance, (Command, Sweep, Parallel)):
+            if isinstance(job_instance, BaseNode):
                 job_instance._validate_inputs()
                 binding_inputs = job_instance._build_inputs()
                 if isinstance(job_instance.component, Component):
@@ -253,7 +251,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         """Validate that all provided inputs and parameters are valid for current pipeline and components in it."""
         validation_result = self._create_empty_validation_result()
         for node_name, node in self.jobs.items():
-            if isinstance(node, (Command, Sweep, Parallel)):
+            if isinstance(node, BaseNode):
                 validation_result.merge_with(node._validate(), "jobs.{}".format(node_name))
             elif isinstance(node, AutoMLJob):
                 pass
@@ -389,28 +387,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         if properties.jobs:
             sub_nodes = {}
             for node_name, node in properties.jobs.items():
-                if "type" in node and node["type"] == NodeType.SWEEP:
-                    sub_nodes[node_name] = Sweep._from_rest_object(node)
-                elif "type" in node and node["type"] == NodeType.AUTOML:
-                    # rest dict outputs -> Output objects
-                    outputs = AutoMLJob._from_rest_outputs(node.get("outputs"))
-                    # Output objects -> yaml dict outputs
-                    parsed_outputs = {}
-                    for key, val in outputs.items():
-                        if isinstance(val, Output):
-                            val = val._to_dict()
-                        parsed_outputs[key] = val
-                    node["outputs"] = parsed_outputs
-                    sub_nodes[node_name] = AutoMLJob._load_from_dict(
-                        node,
-                        context={BASE_PATH_CONTEXT_KEY: "./"},
-                        additional_message="Failed to load automl task from backend.",
-                        inside_pipeline=True,
-                    )
-                elif "type" in node and node["type"] == NodeType.PARALLEL:
-                    sub_nodes[node_name] = Parallel._from_rest_object(node)
-                else:
-                    sub_nodes[node_name] = Command._from_rest_object(node)
+                sub_nodes[node_name] = BaseNode._from_rest_object(node)
         else:
             sub_nodes = None
         # backend may still store Camel settings, eg: DefaultDatastore, translate them to snake when load back
