@@ -430,4 +430,4 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         return self._name
 
     def __str__(self) -> str:
-        return f"ServicebusSender client identifier: {self.client_identifier} for entity: {self.entity_name}"
+        return f"Sender client id: {self.client_identifier}, entity: {self.entity_name}"

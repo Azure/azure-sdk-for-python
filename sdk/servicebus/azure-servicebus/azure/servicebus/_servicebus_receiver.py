@@ -1015,4 +1015,4 @@ class ServiceBusReceiver(
         return self._name
 
     def __str__(self) -> str:
-        return f"ServicebusReceiver client identifier: {self.client_identifier} for entity: {self.entity_path}"
+        return f"Receiver client id: {self.client_identifier}, entity: {self.entity_path}"
