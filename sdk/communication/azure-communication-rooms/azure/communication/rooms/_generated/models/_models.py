@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional, TYPE_CHECKING
+from typing import List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -122,7 +122,7 @@ class CommunicationErrorResponse(_serialization.Model):
 class CommunicationIdentifierModel(_serialization.Model):
     """Identifies a participant in Azure Communication services. A participant is, for example, an Azure communication user. This model must be interpreted as a union: Apart from rawId, at most one further property may be set.
 
-    :ivar raw_id: Raw Id of the identifier. Optional in requests, required in responses.
+    :ivar raw_id: Raw id of the identifier. Optional in requests, required in responses.
     :vartype raw_id: str
     :ivar communication_user: A user that got created with an Azure Communication Services
      resource.
@@ -142,7 +142,7 @@ class CommunicationIdentifierModel(_serialization.Model):
         **kwargs
     ):
         """
-        :keyword raw_id: Raw Id of the identifier. Optional in requests, required in responses.
+        :keyword raw_id: Raw id of the identifier. Optional in requests, required in responses.
         :paramtype raw_id: str
         :keyword communication_user: A user that got created with an Azure Communication Services
          resource.
@@ -189,16 +189,17 @@ class CreateRoomRequest(_serialization.Model):
     :ivar valid_until: The timestamp from when the room can no longer be joined. The timestamp is
      in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :vartype valid_until: ~datetime.datetime
-    :ivar room_open: Flag to specify if the room is to be an open room or closed room.
-    :vartype room_open: bool
-    :ivar participants: (Optional) Collection of identities invited to the room.
+    :ivar room_join_policy: The Policy based on which Participants can join a room. Known values
+     are: "InviteOnly" and "CommunicationServiceUsers".
+    :vartype room_join_policy: str or ~azure.communication.rooms.models.RoomJoinPolicy
+    :ivar participants: (Optional) Collection of participants invited to the room.
     :vartype participants: list[~azure.communication.rooms.models.RoomParticipant]
     """
 
     _attribute_map = {
         "valid_from": {"key": "validFrom", "type": "iso-8601"},
         "valid_until": {"key": "validUntil", "type": "iso-8601"},
-        "room_open": {"key": "roomOpen", "type": "bool"},
+        "room_join_policy": {"key": "roomJoinPolicy", "type": "str"},
         "participants": {"key": "participants", "type": "[RoomParticipant]"},
     }
 
@@ -207,7 +208,7 @@ class CreateRoomRequest(_serialization.Model):
         *,
         valid_from: Optional[datetime.datetime] = None,
         valid_until: Optional[datetime.datetime] = None,
-        room_open: Optional[bool] = None,
+        room_join_policy: Optional[Union[str, "_models.RoomJoinPolicy"]] = None,
         participants: Optional[List["_models.RoomParticipant"]] = None,
         **kwargs
     ):
@@ -218,20 +219,21 @@ class CreateRoomRequest(_serialization.Model):
         :keyword valid_until: The timestamp from when the room can no longer be joined. The timestamp
          is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :paramtype valid_until: ~datetime.datetime
-        :keyword room_open: Flag to specify if the room is to be an open room or closed room.
-        :paramtype room_open: bool
-        :keyword participants: (Optional) Collection of identities invited to the room.
+        :keyword room_join_policy: The Policy based on which Participants can join a room. Known values
+         are: "InviteOnly" and "CommunicationServiceUsers".
+        :paramtype room_join_policy: str or ~azure.communication.rooms.models.RoomJoinPolicy
+        :keyword participants: (Optional) Collection of participants invited to the room.
         :paramtype participants: list[~azure.communication.rooms.models.RoomParticipant]
         """
         super().__init__(**kwargs)
         self.valid_from = valid_from
         self.valid_until = valid_until
-        self.room_open = room_open
+        self.room_join_policy = room_join_policy
         self.participants = participants
 
 
 class ParticipantsCollection(_serialization.Model):
-    """Collection of participants who belong to a room.
+    """Collection of participants in a room.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -296,9 +298,10 @@ class RoomModel(_serialization.Model):
     :ivar valid_until: The timestamp from when the room can no longer be joined. The timestamp is
      in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :vartype valid_until: ~datetime.datetime
-    :ivar room_open: Flag to specify if the room is to be an open room or closed room.
-    :vartype room_open: bool
-    :ivar participants: Collection of identities invited to the room.
+    :ivar room_join_policy: The Policy based on which Participants can join a room. Known values
+     are: "InviteOnly" and "CommunicationServiceUsers".
+    :vartype room_join_policy: str or ~azure.communication.rooms.models.RoomJoinPolicy
+    :ivar participants: Collection of room participants.
     :vartype participants: list[~azure.communication.rooms.models.RoomParticipant]
     """
 
@@ -307,7 +310,7 @@ class RoomModel(_serialization.Model):
         "created_date_time": {"key": "createdDateTime", "type": "iso-8601"},
         "valid_from": {"key": "validFrom", "type": "iso-8601"},
         "valid_until": {"key": "validUntil", "type": "iso-8601"},
-        "room_open": {"key": "roomOpen", "type": "bool"},
+        "room_join_policy": {"key": "roomJoinPolicy", "type": "str"},
         "participants": {"key": "participants", "type": "[RoomParticipant]"},
     }
 
@@ -318,7 +321,7 @@ class RoomModel(_serialization.Model):
         created_date_time: Optional[datetime.datetime] = None,
         valid_from: Optional[datetime.datetime] = None,
         valid_until: Optional[datetime.datetime] = None,
-        room_open: Optional[bool] = None,
+        room_join_policy: Optional[Union[str, "_models.RoomJoinPolicy"]] = None,
         participants: Optional[List["_models.RoomParticipant"]] = None,
         **kwargs
     ):
@@ -334,9 +337,10 @@ class RoomModel(_serialization.Model):
         :keyword valid_until: The timestamp from when the room can no longer be joined. The timestamp
          is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :paramtype valid_until: ~datetime.datetime
-        :keyword room_open: Flag to specify if the room is to be an open room or closed room.
-        :paramtype room_open: bool
-        :keyword participants: Collection of identities invited to the room.
+        :keyword room_join_policy: The Policy based on which Participants can join a room. Known values
+         are: "InviteOnly" and "CommunicationServiceUsers".
+        :paramtype room_join_policy: str or ~azure.communication.rooms.models.RoomJoinPolicy
+        :keyword participants: Collection of room participants.
         :paramtype participants: list[~azure.communication.rooms.models.RoomParticipant]
         """
         super().__init__(**kwargs)
@@ -344,7 +348,7 @@ class RoomModel(_serialization.Model):
         self.created_date_time = created_date_time
         self.valid_from = valid_from
         self.valid_until = valid_until
-        self.room_open = room_open
+        self.room_join_policy = room_join_policy
         self.participants = participants
 
 
@@ -358,8 +362,9 @@ class RoomParticipant(_serialization.Model):
      union: Apart from rawId, at most one further property may be set. Required.
     :vartype communication_identifier:
      ~azure.communication.rooms.models.CommunicationIdentifierModel
-    :ivar role: Role Name.
-    :vartype role: str
+    :ivar role: The Role of a room participant. Known values are: "Presenter", "Attendee", and
+     "Consumer".
+    :vartype role: str or ~azure.communication.rooms.models.Role
     """
 
     _validation = {
@@ -372,7 +377,11 @@ class RoomParticipant(_serialization.Model):
     }
 
     def __init__(
-        self, *, communication_identifier: "_models.CommunicationIdentifierModel", role: Optional[str] = None, **kwargs
+        self,
+        *,
+        communication_identifier: "_models.CommunicationIdentifierModel",
+        role: Optional[Union[str, "_models.Role"]] = None,
+        **kwargs
     ):
         """
         :keyword communication_identifier: Identifies a participant in Azure Communication services. A
@@ -380,8 +389,9 @@ class RoomParticipant(_serialization.Model):
          union: Apart from rawId, at most one further property may be set. Required.
         :paramtype communication_identifier:
          ~azure.communication.rooms.models.CommunicationIdentifierModel
-        :keyword role: Role Name.
-        :paramtype role: str
+        :keyword role: The Role of a room participant. Known values are: "Presenter", "Attendee", and
+         "Consumer".
+        :paramtype role: str or ~azure.communication.rooms.models.Role
         """
         super().__init__(**kwargs)
         self.communication_identifier = communication_identifier
@@ -423,8 +433,9 @@ class UpdateRoomRequest(_serialization.Model):
     :ivar valid_until: (Optional) The timestamp from when the room can no longer be joined. The
      timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :vartype valid_until: ~datetime.datetime
-    :ivar room_open: Flag to specify if the room is to be an open room or closed room.
-    :vartype room_open: bool
+    :ivar room_join_policy: The Policy based on which Participants can join a room. Known values
+     are: "InviteOnly" and "CommunicationServiceUsers".
+    :vartype room_join_policy: str or ~azure.communication.rooms.models.RoomJoinPolicy
     :ivar participants: Collection of room participants.
     :vartype participants: list[~azure.communication.rooms.models.RoomParticipant]
     """
@@ -432,7 +443,7 @@ class UpdateRoomRequest(_serialization.Model):
     _attribute_map = {
         "valid_from": {"key": "validFrom", "type": "iso-8601"},
         "valid_until": {"key": "validUntil", "type": "iso-8601"},
-        "room_open": {"key": "roomOpen", "type": "bool"},
+        "room_join_policy": {"key": "roomJoinPolicy", "type": "str"},
         "participants": {"key": "participants", "type": "[RoomParticipant]"},
     }
 
@@ -441,7 +452,7 @@ class UpdateRoomRequest(_serialization.Model):
         *,
         valid_from: Optional[datetime.datetime] = None,
         valid_until: Optional[datetime.datetime] = None,
-        room_open: Optional[bool] = None,
+        room_join_policy: Optional[Union[str, "_models.RoomJoinPolicy"]] = None,
         participants: Optional[List["_models.RoomParticipant"]] = None,
         **kwargs
     ):
@@ -452,13 +463,14 @@ class UpdateRoomRequest(_serialization.Model):
         :keyword valid_until: (Optional) The timestamp from when the room can no longer be joined. The
          timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :paramtype valid_until: ~datetime.datetime
-        :keyword room_open: Flag to specify if the room is to be an open room or closed room.
-        :paramtype room_open: bool
+        :keyword room_join_policy: The Policy based on which Participants can join a room. Known values
+         are: "InviteOnly" and "CommunicationServiceUsers".
+        :paramtype room_join_policy: str or ~azure.communication.rooms.models.RoomJoinPolicy
         :keyword participants: Collection of room participants.
         :paramtype participants: list[~azure.communication.rooms.models.RoomParticipant]
         """
         super().__init__(**kwargs)
         self.valid_from = valid_from
         self.valid_until = valid_until
-        self.room_open = room_open
+        self.room_join_policy = room_join_policy
         self.participants = participants

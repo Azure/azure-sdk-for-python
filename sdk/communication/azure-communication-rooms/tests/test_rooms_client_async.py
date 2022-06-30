@@ -9,13 +9,12 @@ import datetime
 from azure.core.credentials import AccessToken
 from azure.communication.rooms.aio import RoomsClient
 from azure.communication.rooms import (
-    RoomParticipant,
-    CommunicationIdentifierModel,
-    CommunicationUserIdentifierModel
+    RoomParticipant
 )
+from azure.communication.rooms._shared.models import CommunicationUserIdentifier, UnknownIdentifier
 from unittest_helpers import mock_response
 
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 class FakeTokenCredential(object):
     def __init__(self):
@@ -29,13 +28,12 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
     valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
     valid_until = datetime.datetime(2022, 4, 25, 4, 34, 0)
     raw_id = "8:acs:abcd"
-    room_participants = [RoomParticipant(
-        communication_identifier=CommunicationIdentifierModel(
-            raw_id=raw_id,
-            communication_user=CommunicationUserIdentifierModel(id=raw_id)
+    room_participant = RoomParticipant(
+        communication_identifier=CommunicationUserIdentifier(
+            id=raw_id
         ),
         role='Attendee'
-    )]
+    )
     json_participant = {
         "communicationIdentifier": {
             "rawId": raw_id,
@@ -60,7 +58,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
 
         response = None
         try:
-            response = await rooms_client.create_room(valid_from=self.valid_from, valid_until=self.valid_until, participants=self.room_participants)
+            response = await rooms_client.create_room(valid_from=self.valid_from, valid_until=self.valid_until, participants=[self.room_participant])
         except:
             raised = True
             raise
@@ -69,7 +67,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
         self.assertEqual(self.room_id, response.id)
         self.assertEqual(self.valid_from, response.valid_from)
         self.assertEqual(self.valid_until, response.valid_until)
-        self.assertListEqual(self.room_participants, response.participants)
+        self.assertListEqual([self.room_participant], response.participants)
 
     async def test_update_room(self):
         raised = False
@@ -149,3 +147,128 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
         except:
             raised = True
         assert raised == True
+
+    async def test_add_participants(self):
+        raised = False
+        additional_id = "8:acs:abcde"
+        additional_participant_json = {
+            "communicationIdentifier": {
+                "rawId": additional_id
+            },
+            "role": ""
+        }
+        additional_participant = RoomParticipant(
+            communication_identifier=UnknownIdentifier(additional_id),
+            role=''
+        )
+
+        async def mock_send(*_, **__):
+            return mock_response(status_code=200, json_payload={
+                "id": self.room_id,
+                "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
+                "validFrom": self.valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                "validUntil": self.valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                "participants": [self.json_participant, additional_participant_json]
+            })
+
+        response = None
+        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+        try:
+            response = await rooms_client.add_participants(room_id=self.room_id, participants=[additional_participant])
+        except:
+            raised = True
+            raise
+
+        self.assertFalse(raised, 'Expected is no excpetion raised')
+        self.assertEqual(self.room_id, response.id)
+        self.assertEqual(self.valid_from, response.valid_from)
+        self.assertEqual(self.valid_until, response.valid_until)
+        self.assertListEqual(response.participants, [self.room_participant, additional_participant])
+
+    async def test_update_participants(self):
+        raised = False
+        updated_participant_json = {
+            "communicationIdentifier": {
+                "rawId": self.raw_id,
+                "communicationUser": {"id": self.raw_id}
+            },
+            "role": ""
+        }
+        updated_participant = RoomParticipant(
+            communication_identifier=CommunicationUserIdentifier(
+                id=self.raw_id
+            ),
+            role=''
+        )
+
+        async def mock_send(*_, **__):
+            return mock_response(status_code=200, json_payload={
+                "id": self.room_id,
+                "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
+                "validFrom": self.valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                "validUntil": self.valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                "participants": [updated_participant_json]
+            })
+
+        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+
+        response = None
+        try:
+            response = await rooms_client.update_participants(room_id=self.room_id, participants=[updated_participant])
+        except:
+            raised = True
+            raise
+
+        self.assertFalse(raised, 'Expected is no excpetion raised')
+        self.assertEqual(self.room_id, response.id)
+        self.assertEqual(self.valid_from, response.valid_from)
+        self.assertEqual(self.valid_until, response.valid_until)
+        self.assertListEqual(response.participants, [updated_participant])
+
+    async def test_remove_participants(self):
+        raised = False
+        user_to_remove = CommunicationUserIdentifier(self.raw_id)
+
+        async def mock_send(*_, **__):
+            return mock_response(status_code=200, json_payload={
+                "id": self.room_id,
+                "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
+                "validFrom": self.valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                "validUntil": self.valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                "participants": []
+            })
+
+        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+
+        response = None
+        try:
+            response = await rooms_client.remove_all_participants(room_id=self.room_id, participants=[user_to_remove])
+        except:
+            raised = True
+            raise
+
+        self.assertFalse(raised, 'Expected is no excpetion raised')
+        self.assertEqual(self.room_id, response.id)
+        self.assertEqual(self.valid_from, response.valid_from)
+        self.assertEqual(self.valid_until, response.valid_until)
+        self.assertListEqual(response.participants, [])
+
+    async def test_get_participants(self):
+        raised = False
+
+        async def mock_send(*_, **__):
+            return mock_response(status_code=200, json_payload={
+                "participants": [self.json_participant]
+            })
+
+        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+
+        response = None
+        try:
+            response = await rooms_client.get_participants(room_id=self.room_id)
+        except:
+            raised = True
+            raise
+
+        self.assertFalse(raised, 'Expected is no excpetion raised')
+        self.assertListEqual(response.participants, [self.room_participant])

@@ -3,10 +3,18 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
-from typing import Optional
+from typing import Optional, List, Union
 
-from .._generated.models import RoomParticipant as RoomParticipantInternal
+from .._generated.models import (
+    RoomParticipant as RoomParticipantInternal,
+    CommunicationIdentifierModel,
+    CommunicationUserIdentifierModel,
+    Role
+)
 from .._generated import _serialization
+from .._shared.models import CommunicationUserIdentifier, UnknownIdentifier
+
+from azure.core.exceptions import DeserializationError
 
 class RoomModel(_serialization.Model):
     """The response object from rooms service.
@@ -83,7 +91,7 @@ class RoomModel(_serialization.Model):
             created_date_time=get_room_response.created_date_time,
             valid_from=get_room_response.valid_from,
             valid_until=get_room_response.valid_until,
-            participants=[RoomParticipant.from_room_participant_internal(p) for p in get_room_response.participants],
+            participants=[RoomParticipant._from_room_participant_internal(p) for p in get_room_response.participants],
             **kwargs
         )
 
@@ -106,12 +114,12 @@ class RoomParticipant(_serialization.Model):
     }
 
     _attribute_map = {
-        "communication_identifier": {"key": "communicationIdentifier", "type": "CommunicationIdentifierModel"},
+        "communication_identifier": {"key": "communicationIdentifier", "type": "any"},
         "role": {"key": "role", "type": "str"},
     }
 
     def __init__(
-        self, *, communication_identifier: "_models.CommunicationIdentifierModel", role: Optional[str] = None, **kwargs
+        self, *, communication_identifier, role: Optional[Union[str, Role]] = None, **kwargs
     ):
         """
         :keyword communication_identifier: Identifies a participant in Azure Communication services. A
@@ -127,12 +135,78 @@ class RoomParticipant(_serialization.Model):
         self.role = role
 
     @classmethod
-    def from_room_participant_internal(cls, room_participant_internal: RoomParticipantInternal, **kwargs):
+    def _from_room_participant_internal(cls, room_participant_internal: RoomParticipantInternal, **kwargs):
         return cls(
-            communication_identifier=room_participant_internal.communication_identifier,
+            communication_identifier=_CommunicationIdentifierConverter.to_communication_identifier(room_participant_internal.communication_identifier),
             role=room_participant_internal.role,
             **kwargs
         )
 
-    def __eq__(self, other):
-        return self.__dict__ == other.__dict__
+    def to_room_participant_internal(self):
+        return RoomParticipantInternal(
+            communication_identifier=_CommunicationIdentifierConverter.to_communication_identifier_model(self.communication_identifier),
+            role=self.role
+        )
+
+class _CommunicationIdentifierConverter():
+    def to_communication_identifier_model(communication_identifier):
+        if isinstance(communication_identifier, CommunicationUserIdentifier):
+            return CommunicationIdentifierModel(
+                communication_user=CommunicationUserIdentifierModel(
+                    id=communication_identifier.properties['id']
+                )
+            )
+        elif isinstance(communication_identifier, UnknownIdentifier):
+            return CommunicationIdentifierModel(
+                raw_id=communication_identifier.raw_id
+            )
+        else:
+            raise TypeError()
+
+    def to_communication_identifier(communication_identifier_model: CommunicationIdentifierModel):
+        def _assert_not_empty(val, field, type):
+            if not val:
+                raise DeserializationError('Property "{}" is required for identifier of type {}'.format(field, type))
+            return val
+
+        raw_id = _assert_not_empty(communication_identifier_model.raw_id, 'raw_id', type(communication_identifier_model).__name__)
+
+        if isinstance(communication_identifier_model.communication_user, CommunicationUserIdentifierModel):
+            return CommunicationUserIdentifier(
+                communication_identifier_model.communication_user.id
+            )
+
+        return UnknownIdentifier(raw_id)
+
+
+class ParticipantsCollection(_serialization.Model):
+    """Collection of participants in a room.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar participants: Room Participants. Required.
+    :vartype participants: list[~azure.communication.rooms.RoomParticipant]
+    """
+
+    _validation = {
+        "participants": {"required": True, "readonly": True},
+    }
+
+    _attribute_map = {
+        "participants": {"key": "participants", "type": "[RoomParticipant]"},
+    }
+
+    def __init__(self, *, participants: List[RoomParticipant], **kwargs):
+        """
+        :keyword participants: Room Participants. Required.
+        :paramtype participants: list[~azure.communication.rooms.RoomParticipant]
+        """
+        super().__init__(**kwargs)
+        self.participants = participants
+
+    def __init__(self, *, participants: List[RoomParticipantInternal], **kwargs):
+        super().__init__(**kwargs)
+        self.participants = [RoomParticipant._from_room_participant_internal(p) for p in participants]
+
+
+

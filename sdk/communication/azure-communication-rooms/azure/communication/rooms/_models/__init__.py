@@ -6,9 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models import RoomModel, RoomParticipant
+from ._models import (
+    RoomModel,
+    RoomParticipant,
+    ParticipantsCollection
+)
 
 __all__ = [
     "RoomModel",
-    "RoomParticipant"
+    "RoomParticipant",
+    "ParticipantsCollection"
 ]

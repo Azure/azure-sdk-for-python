@@ -18,6 +18,9 @@ from ._models import RoomModel
 from ._models import RoomParticipant
 from ._models import UpdateParticipantsRequest
 from ._models import UpdateRoomRequest
+
+from ._enums import Role
+from ._enums import RoomJoinPolicy
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -35,6 +38,8 @@ __all__ = [
     "RoomParticipant",
     "UpdateParticipantsRequest",
     "UpdateRoomRequest",
+    "Role",
+    "RoomJoinPolicy",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

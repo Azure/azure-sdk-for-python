@@ -15,14 +15,14 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.2.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Tue, 28 Jun 2022 16:14:08 GMT
+      - Thu, 30 Jun 2022 21:26:59 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.ppe.communication.azure.net/identities?api-version=2021-10-31-preview
   response:
     body:
-      string: '{"identity":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-4af9-1571-84f5-084822000a4e"}}'
+      string: '{"identity":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-5664-35c5-88f7-08482200c3aa"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
@@ -32,9 +32,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Jun 2022 16:14:08 GMT
+      - Thu, 30 Jun 2022 21:26:58 GMT
       ms-cv:
-      - l1dIBfB/MEiexEM3X4a0Dg.0
+      - wB9Kr3iDsEWPdZ3cTlE3HQ.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 38ms
+      - 94ms
     status:
       code: 201
       message: Created
@@ -62,14 +62,14 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.2.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Tue, 28 Jun 2022 16:14:09 GMT
+      - Thu, 30 Jun 2022 21:27:00 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.ppe.communication.azure.net/identities?api-version=2021-10-31-preview
   response:
     body:
-      string: '{"identity":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-4af9-16a2-84f5-084822000a4f"}}'
+      string: '{"identity":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-5664-365e-88f7-08482200c3ab"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
@@ -79,9 +79,56 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Jun 2022 16:14:08 GMT
+      - Thu, 30 Jun 2022 21:26:58 GMT
       ms-cv:
-      - MeNxWxpthUy15FYxowpoJA.0
+      - 3br1aUZ5vUu4JAPdrr+Xqw.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 40ms
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Thu, 30 Jun 2022 21:27:00 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.ppe.communication.azure.net/identities?api-version=2021-10-31-preview
+  response:
+    body:
+      string: '{"identity":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-5664-36f4-88f7-08482200c3ac"}}'
+    headers:
+      api-supported-versions:
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
+        2021-11-01, 2022-06-01
+      content-length:
+      - '101'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 30 Jun 2022 21:26:58 GMT
+      ms-cv:
+      - MZRJxG4dc0Oc8x11fLPUTQ.0
       request-context:
       - appId=
       strict-transport-security:
@@ -94,57 +141,10 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: '{}'
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '2'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-communication-identity/1.2.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
-      x-ms-date:
-      - Tue, 28 Jun 2022 16:14:09 GMT
-      x-ms-return-client-request-id:
-      - 'true'
-    method: POST
-    uri: https://sanitized.ppe.communication.azure.net/identities?api-version=2021-10-31-preview
-  response:
-    body:
-      string: '{"identity":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-4af9-17eb-84f5-084822000a50"}}'
-    headers:
-      api-supported-versions:
-      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
-        2021-11-01, 2022-06-01
-      content-length:
-      - '101'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 28 Jun 2022 16:14:09 GMT
-      ms-cv:
-      - uNrS6qAmO0iJuNn5IiHbiA.0
-      request-context:
-      - appId=
-      strict-transport-security:
-      - max-age=2592000
-      x-cache:
-      - CONFIG_NOCACHE
-      x-processing-time:
-      - 27ms
-    status:
-      code: 201
-      message: Created
-- request:
-    body: '{"participants": [{"communicationIdentifier": {"rawId": "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-4af9-1571-84f5-084822000a4e",
-      "communicationUser": {"id": "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-4af9-1571-84f5-084822000a4e"}},
-      "role": "Presenter"}, {"communicationIdentifier": {"rawId": "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-4af9-17eb-84f5-084822000a50",
-      "communicationUser": {"id": "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-4af9-17eb-84f5-084822000a50"}},
+    body: '{"participants": [{"communicationIdentifier": {"communicationUser": {"id":
+      "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-5664-35c5-88f7-08482200c3aa"}},
+      "role": "Presenter"}, {"communicationIdentifier": {"communicationUser": {"id":
+      "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-5664-36f4-88f7-08482200c3ac"}},
       "role": "Attendee"}]}'
     headers:
       Accept:
@@ -154,33 +154,33 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '529'
+      - '345'
       Content-Type:
       - application/json
       Repeatability-First-Sent:
-      - '2022-06-28T16:14:09.966885Z'
+      - '2022-06-30T21:27:00.366082Z'
       Repeatability-Request-ID:
-      - 57aba777-f6fd-11ec-a056-a864f132484d
+      - 6086c618-f8bb-11ec-8df3-a864f132484d
       User-Agent:
       - azsdk-python-communication-rooms/1.1.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Tue, 28 Jun 2022 16:14:09 GMT
+      - Thu, 30 Jun 2022 21:27:00 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.ppe.communication.azure.net/rooms?api-version=2022-02-01
   response:
     body:
-      string: '{"id":"99427043745920082","createdDateTime":"2022-06-28T16:14:10.345179+00:00","validFrom":"2022-06-28T16:14:10.3107469+00:00","validUntil":"2022-12-25T16:14:10.3107469+00:00","roomJoinPolicy":"InviteOnly","participants":[{"communicationIdentifier":{"rawId":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-4af9-1571-84f5-084822000a4e","communicationUser":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-4af9-1571-84f5-084822000a4e"}},"role":"Presenter"},{"communicationIdentifier":{"rawId":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-4af9-17eb-84f5-084822000a50","communicationUser":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-4af9-17eb-84f5-084822000a50"}},"role":"Attendee"}]}'
+      string: '{"id":"99448269097027485","createdDateTime":"2022-06-30T21:26:59.9729162+00:00","validFrom":"2022-06-30T21:26:59.9396607+00:00","validUntil":"2022-12-27T21:26:59.9396607+00:00","roomJoinPolicy":"InviteOnly","participants":[{"communicationIdentifier":{"rawId":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-5664-35c5-88f7-08482200c3aa","communicationUser":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-5664-35c5-88f7-08482200c3aa"}},"role":"Presenter"},{"communicationIdentifier":{"rawId":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-5664-36f4-88f7-08482200c3ac","communicationUser":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-5664-36f4-88f7-08482200c3ac"}},"role":"Attendee"}]}'
     headers:
       api-supported-versions:
       - 2021-04-07, 2022-02-01
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Jun 2022 16:14:09 GMT
+      - Thu, 30 Jun 2022 21:26:59 GMT
       ms-cv:
-      - r+gf9RAi3kG4npIrBVbntA.0
+      - 2iH1SOX1qUKXC7Mq8ZJIOA.0
       repeatability-result:
       - accepted
       transfer-encoding:
@@ -204,11 +204,11 @@ interactions:
       User-Agent:
       - azsdk-python-communication-rooms/1.1.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Tue, 28 Jun 2022 16:14:10 GMT
+      - Thu, 30 Jun 2022 21:27:00 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.ppe.communication.azure.net/rooms/99427043745920082?api-version=2022-02-01
+    uri: https://sanitized.ppe.communication.azure.net/rooms/99448269097027485?api-version=2022-02-01
   response:
     body:
       string: ''
@@ -216,9 +216,9 @@ interactions:
       api-supported-versions:
       - 2021-04-07, 2022-02-01
       date:
-      - Tue, 28 Jun 2022 16:14:09 GMT
+      - Thu, 30 Jun 2022 21:26:59 GMT
       ms-cv:
-      - MVtT67vRX022N+QubfCSOQ.0
+      - uVp588AmVkC9pw3NXkL1Ig.0
       x-cache:
       - CONFIG_NOCACHE
     status:
@@ -238,11 +238,11 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.2.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Tue, 28 Jun 2022 16:14:10 GMT
+      - Thu, 30 Jun 2022 21:27:01 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.ppe.communication.azure.net/identities/8%3Aacs%3Adb75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-4af9-1571-84f5-084822000a4e?api-version=2021-10-31-preview
+    uri: https://sanitized.ppe.communication.azure.net/identities/8%3Aacs%3Adb75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-5664-35c5-88f7-08482200c3aa?api-version=2021-10-31-preview
   response:
     body:
       string: ''
@@ -251,9 +251,9 @@ interactions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
         2021-11-01, 2022-06-01
       date:
-      - Tue, 28 Jun 2022 16:14:10 GMT
+      - Thu, 30 Jun 2022 21:26:59 GMT
       ms-cv:
-      - Gjjmw/VjhEO/4i+9eUYwwA.0
+      - K4Vcz5A3dEiilQ2b9Q+puw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -261,7 +261,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 97ms
+      - 191ms
     status:
       code: 204
       message: No Content
@@ -279,11 +279,11 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.2.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Tue, 28 Jun 2022 16:14:10 GMT
+      - Thu, 30 Jun 2022 21:27:01 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.ppe.communication.azure.net/identities/8%3Aacs%3Adb75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-4af9-16a2-84f5-084822000a4f?api-version=2021-10-31-preview
+    uri: https://sanitized.ppe.communication.azure.net/identities/8%3Aacs%3Adb75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-5664-365e-88f7-08482200c3ab?api-version=2021-10-31-preview
   response:
     body:
       string: ''
@@ -292,9 +292,9 @@ interactions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
         2021-11-01, 2022-06-01
       date:
-      - Tue, 28 Jun 2022 16:14:10 GMT
+      - Thu, 30 Jun 2022 21:27:00 GMT
       ms-cv:
-      - RxYt+n5p1UiLjIF3gp2xzA.0
+      - ke/z3O372Eu/jtaG0KTAww.0
       request-context:
       - appId=
       strict-transport-security:
@@ -302,7 +302,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 92ms
+      - 218ms
     status:
       code: 204
       message: No Content
@@ -320,11 +320,11 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.2.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Tue, 28 Jun 2022 16:14:11 GMT
+      - Thu, 30 Jun 2022 21:27:01 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.ppe.communication.azure.net/identities/8%3Aacs%3Adb75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-4af9-17eb-84f5-084822000a50?api-version=2021-10-31-preview
+    uri: https://sanitized.ppe.communication.azure.net/identities/8%3Aacs%3Adb75ed0c-e801-41a3-99a4-66a0a119a06c_00000012-5664-36f4-88f7-08482200c3ac?api-version=2021-10-31-preview
   response:
     body:
       string: ''
@@ -333,9 +333,9 @@ interactions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
         2021-11-01, 2022-06-01
       date:
-      - Tue, 28 Jun 2022 16:14:10 GMT
+      - Thu, 30 Jun 2022 21:27:00 GMT
       ms-cv:
-      - /fULa3UFfU+MFiyVC4GddQ.0
+      - 3brCYKoaNkCKt04wdPmrkQ.0
       request-context:
       - appId=
       strict-transport-security:
@@ -343,7 +343,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 110ms
+      - 159ms
     status:
       code: 204
       message: No Content

@@ -427,9 +427,9 @@ class RoomsOperations:
 
     @distributed_trace
     def get_room(self, room_id: str, **kwargs: Any) -> _models.RoomModel:
-        """Retrieves an existing room by Id.
+        """Retrieves an existing room by id.
 
-        Retrieves an existing room by Id.
+        Retrieves an existing room by id.
 
         :param room_id: The id of the room requested. Required.
         :type room_id: str
@@ -489,7 +489,7 @@ class RoomsOperations:
 
         :param room_id: The id of the room requested. Required.
         :type room_id: str
-        :param patch_room_request: The path room request. Default value is None.
+        :param patch_room_request: The patch room request. Default value is None.
         :type patch_room_request: ~azure.communication.rooms.models.UpdateRoomRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -514,7 +514,7 @@ class RoomsOperations:
 
         :param room_id: The id of the room requested. Required.
         :type room_id: str
-        :param patch_room_request: The path room request. Default value is None.
+        :param patch_room_request: The patch room request. Default value is None.
         :type patch_room_request: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'application/merge-patch+json'. Default value is
@@ -535,7 +535,7 @@ class RoomsOperations:
 
         :param room_id: The id of the room requested. Required.
         :type room_id: str
-        :param patch_room_request: The path room request. Is either a model type or a IO type. Default
+        :param patch_room_request: The patch room request. Is either a model type or a IO type. Default
          value is None.
         :type patch_room_request: ~azure.communication.rooms.models.UpdateRoomRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
@@ -704,7 +704,7 @@ class RoomsOperations:
 
         Adds participants to a room. If participants already exist, no change occurs.
 
-        :param room_id: Id of the room to add participants to. Required.
+        :param room_id: Room id to add participants to. Required.
         :type room_id: str
         :param add_participants_request: Participants to be added to the room. Required.
         :type add_participants_request: ~azure.communication.rooms.models.AddParticipantsRequest
@@ -724,7 +724,7 @@ class RoomsOperations:
 
         Adds participants to a room. If participants already exist, no change occurs.
 
-        :param room_id: Id of the room to add participants to. Required.
+        :param room_id: Room id to add participants to. Required.
         :type room_id: str
         :param add_participants_request: Participants to be added to the room. Required.
         :type add_participants_request: IO
@@ -744,7 +744,7 @@ class RoomsOperations:
 
         Adds participants to a room. If participants already exist, no change occurs.
 
-        :param room_id: Id of the room to add participants to. Required.
+        :param room_id: Room id to add participants to. Required.
         :type room_id: str
         :param add_participants_request: Participants to be added to the room. Is either a model type
          or a IO type. Required.
@@ -818,7 +818,7 @@ class RoomsOperations:
 
         Update participants in a room.
 
-        :param room_id: Id of the room. Required.
+        :param room_id: The room id. Required.
         :type room_id: str
         :param update_participants_request: Participants in a room to be updated. Required.
         :type update_participants_request: ~azure.communication.rooms.models.UpdateParticipantsRequest
@@ -838,7 +838,7 @@ class RoomsOperations:
 
         Update participants in a room.
 
-        :param room_id: Id of the room. Required.
+        :param room_id: The room id. Required.
         :type room_id: str
         :param update_participants_request: Participants in a room to be updated. Required.
         :type update_participants_request: IO
@@ -858,7 +858,7 @@ class RoomsOperations:
 
         Update participants in a room.
 
-        :param room_id: Id of the room. Required.
+        :param room_id: The room id. Required.
         :type room_id: str
         :param update_participants_request: Participants in a room to be updated. Is either a model
          type or a IO type. Required.
@@ -933,7 +933,7 @@ class RoomsOperations:
 
         Remove participants from a room.
 
-        :param room_id: room id to remove the participants from. Required.
+        :param room_id: Room id to remove the participants from. Required.
         :type room_id: str
         :param remove_participants_request: Participants in a room to be removed. Required.
         :type remove_participants_request: ~azure.communication.rooms.models.RemoveParticipantsRequest
@@ -953,7 +953,7 @@ class RoomsOperations:
 
         Remove participants from a room.
 
-        :param room_id: room id to remove the participants from. Required.
+        :param room_id: Room id to remove the participants from. Required.
         :type room_id: str
         :param remove_participants_request: Participants in a room to be removed. Required.
         :type remove_participants_request: IO
@@ -973,7 +973,7 @@ class RoomsOperations:
 
         Remove participants from a room.
 
-        :param room_id: room id to remove the participants from. Required.
+        :param room_id: Room id to remove the participants from. Required.
         :type room_id: str
         :param remove_participants_request: Participants in a room to be removed. Is either a model
          type or a IO type. Required.
