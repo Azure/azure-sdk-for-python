@@ -453,8 +453,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             '{}://{}'.format(self.scheme, self.primary_hostname), self.share_name, new_dir_path,
             credential=new_dir_sas or self.credential, api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function
+            _location_mode=self._location_mode
         )
 
         kwargs.update(get_rename_smb_properties(kwargs))
@@ -858,6 +857,11 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             file.
         :keyword int max_concurrency:
             Maximum number of parallel connections to use.
+        :keyword progress_hook:
+            A callback to track the progress of a long running upload. The signature is
+            function(current: int, total: Optional[int]) where current is the number of bytes transferred
+            so far, and total is the size of the blob or None if the size is unknown.
+        :paramtype progress_hook: Callable[[int, Optional[int]], None]
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword str encoding:

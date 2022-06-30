@@ -31,8 +31,7 @@ openapi-type: data-plane
 version-tolerant: true
 package-version: 1.0.0
 add-credential: true
-credential-default-policy-type: AzureKeyCredentialPolicy
-credential-key-header-name: Ocp-Apim-Subscription-Key
+credential-scopes: https://cognitiveservices.azure.com/.default
 black: true
 modelerfour:
   lenient-model-deduplication: true

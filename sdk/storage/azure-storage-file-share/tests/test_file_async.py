@@ -7,17 +7,18 @@
 # --------------------------------------------------------------------------
 import base64
 import os
-import unittest
 from datetime import datetime, timedelta
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
+
 import requests
 import pytest
 import uuid
-
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
+from azure.core.pipeline.transport import AioHttpTransport
 from azure.storage.blob.aio import BlobServiceClient
 from azure.storage.fileshare import (
     generate_account_sas,
@@ -31,14 +32,15 @@ from azure.storage.fileshare import (
     ResourceTypes,
     AccountSasPermissions,
     StorageErrorCode)
-from azure.storage.fileshare._parser import _datetime_to_str
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.fileshare.aio import (
     ShareFileClient,
     ShareServiceClient,
 )
-from settings.testcase import FileSharePreparer
+from multidict import CIMultiDict, CIMultiDictProxy
+
 from devtools_testutils.storage.aio import AsyncStorageTestCase
+from settings.testcase import FileSharePreparer
+from test_helpers_async import ProgressTracker
 
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = 'share'
@@ -51,9 +53,8 @@ LARGE_FILE_SIZE = 64 * 1024 + 5
 TEST_FILE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-' \
                         '1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;' \
                         'S-1-5-21-397955417-626881126-188441444-3053964)'
-
-
 # ------------------------------------------------------------------------------
+
 
 class AiohttpTestTransport(AioHttpTransport):
     """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
@@ -2153,6 +2154,52 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         await file_client.upload_file(data, validate_content=True, max_concurrency=2)
         self._teardown(file_name)
         # Assert
+
+    @FileSharePreparer()
+    async def test_create_file_progress(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key,
+            max_range_size=1024)
+
+        data = b'a' * 5 * 1024
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        await file_client.upload_file(data, progress_hook=progress.assert_progress)
+
+        # Assert
+        progress.assert_complete()
+
+    @pytest.mark.live_test_only
+    @FileSharePreparer()
+    async def test_create_file_progress_parallel(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key,
+            max_range_size=1024)
+
+        data = b'a' * 5 * 1024
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        await file_client.upload_file(data, progress_hook=progress.assert_progress, max_concurrency=3)
+
+        # Assert
+        progress.assert_complete()
 
     # --Test cases for sas & acl ------------------------------------------------
     @FileSharePreparer()

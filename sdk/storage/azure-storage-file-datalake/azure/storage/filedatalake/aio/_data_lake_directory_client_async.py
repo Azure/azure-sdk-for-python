@@ -339,10 +339,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         new_directory_client = DataLakeDirectoryClient(
             "{}://{}".format(self.scheme, self.primary_hostname), new_file_system, directory_name=new_path,
             credential=self._raw_credential or new_dir_sas,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline)
         await new_directory_client._rename_path(  # pylint: disable=protected-access
             '/{}/{}{}'.format(quote(unquote(self.file_system_name)),
                               quote(unquote(self.path_name)),
@@ -592,10 +589,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
             api_version=self.api_version,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline)
 
     def get_sub_directory_client(self, sub_directory  # type: Union[DirectoryProperties, str]
                                  ):
@@ -632,7 +626,4 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         return DataLakeDirectoryClient(
             self.url, self.file_system_name, directory_name=subdir_path, credential=self._raw_credential,
             api_version=self.api_version,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline)

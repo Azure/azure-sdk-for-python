@@ -7,53 +7,47 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple, IO, Iterator,
-    TYPE_CHECKING,
-    TypeVar)
-
-
-try:
-    from urllib.parse import urlparse, quote, unquote
-except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import quote, unquote # type: ignore
+    Any, AnyStr, Dict, List, IO, Iterable, Iterator, Optional, TypeVar, Union,
+    TYPE_CHECKING
+)
+from urllib.parse import urlparse, quote, unquote
 
 import six
-
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
-from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
-    return_headers_and_deserialized)
+    return_headers_and_deserialized
+)
 from ._generated import AzureBlobStorage
 from ._generated.models import SignedIdentifier
+from ._blob_client import BlobClient
 from ._deserialize import deserialize_container_properties
-from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
-from ._models import ( # pylint: disable=unused-import
+from ._encryption import StorageEncryptionMixin
+from ._lease import BlobLeaseClient
+from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged, FilteredBlobPaged
+from ._models import (
     ContainerProperties,
     BlobProperties,
     BlobType,
-    FilteredBlob)
-from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged, FilteredBlobPaged
-from ._lease import BlobLeaseClient
-from ._blob_client import BlobClient
+    FilteredBlob
+)
+from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 
 if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpTransport, HttpResponse  # pylint: disable=ungrouped-imports
-    from azure.core.pipeline.policies import HTTPPolicy # pylint: disable=ungrouped-imports
+    from azure.core.pipeline.transport import HttpResponse  # pylint: disable=ungrouped-imports
     from datetime import datetime
     from ._models import (  # pylint: disable=unused-import
         PublicAccess,
         AccessPolicy,
-        ContentSettings,
         StandardBlobTier,
         PremiumPageBlobTier)
 
@@ -73,7 +67,7 @@ def _get_blob_name(blob):
 ClassType = TypeVar("ClassType")
 
 
-class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-public-methods
+class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # pylint: disable=too-many-public-methods
     """A client to interact with a specific container, although that container
     may not yet exist.
 
@@ -163,6 +157,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
+        self.configure_encryption(kwargs)
 
     def _format_url(self, hostname):
         container_name = self.container_name

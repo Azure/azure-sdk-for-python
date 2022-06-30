@@ -59,6 +59,7 @@ async def _upload_file_helper(
     file_last_write_time="now",
     file_permission=None,
     file_permission_key=None,
+    progress_hook=None,
     **kwargs
 ):
     try:
@@ -85,6 +86,7 @@ async def _upload_file_helper(
             stream=stream,
             max_concurrency=max_concurrency,
             validate_content=validate_content,
+            progress_hook=progress_hook,
             timeout=timeout,
             **kwargs
         )
@@ -259,9 +261,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         content_settings = kwargs.pop('content_settings', None)
         metadata = kwargs.pop('metadata', None)
         timeout = kwargs.pop('timeout', None)
-        if self.require_encryption and not self.key_encryption_key:
-            raise ValueError("Encryption required but no key was provided.")
-
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
         file_http_headers = None
@@ -367,6 +366,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             .. versionadded:: 12.1.0
 
         :paramtype lease: ~azure.storage.fileshare.aio.ShareLeaseClient or str
+        :keyword progress_hook:
+            An async callback to track the progress of a long running upload. The signature is
+            function(current: int, total: Optional[int]) where current is the number of bytes transferred
+            so far, and total is the size of the blob or None if the size is unknown.
+        :paramtype progress_hook: Callable[[int, Optional[int]], Awaitable[None]]
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
@@ -385,10 +389,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         content_settings = kwargs.pop('content_settings', None)
         max_concurrency = kwargs.pop('max_concurrency', 1)
         validate_content = kwargs.pop('validate_content', False)
+        progress_hook = kwargs.pop('progress_hook', None)
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError("Encryption not supported.")
 
         if isinstance(data, six.text_type):
             data = data.encode(encoding)
@@ -420,6 +423,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             file_last_write_time=file_last_write_time,
             file_permission=file_permission,
             file_permission_key=permission_key,
+            progress_hook=progress_hook,
             **kwargs
         )
 
@@ -622,6 +626,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             .. versionadded:: 12.1.0
 
         :paramtype lease: ~azure.storage.fileshare.aio.ShareLeaseClient or str
+        :keyword progress_hook:
+            An async callback to track the progress of a long running download. The signature is
+            function(current: int, total: int) where current is the number of bytes transferred
+            so far, and total is the size of the blob or None if the size is unknown.
+        :paramtype progress_hook: Callable[[int, int], Awaitable[None]]
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A streaming object (StorageStreamDownloader)
@@ -636,8 +645,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 :dedent: 16
                 :caption: Download a file.
         """
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError("Encryption not supported.")
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
 
@@ -652,7 +659,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             config=self._config,
             start_range=offset,
             end_range=range_end,
-            encryption_options=None,
             name=self.file_name,
             path='/'.join(self.file_path),
             share=self.share_name,
@@ -778,8 +784,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             '{}://{}'.format(self.scheme, self.primary_hostname), self.share_name, new_file_path,
             credential=new_file_sas or self.credential, api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function
+            _location_mode=self._location_mode
         )
 
         kwargs.update(get_rename_smb_properties(kwargs))
@@ -1028,8 +1033,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
         file_last_write_mode = kwargs.pop('file_last_write_mode', None)
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError("Encryption not supported.")
         if isinstance(data, six.text_type):
             data = data.encode(encoding)
         end_range = offset + length - 1  # Reformat to an inclusive range index
@@ -1242,8 +1245,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError("Unsupported method for encryption.")
 
         if offset is None or offset % 512 != 0:
             raise ValueError("offset must be an integer that aligns with 512 bytes file size")

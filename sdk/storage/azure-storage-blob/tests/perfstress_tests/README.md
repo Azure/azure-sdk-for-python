@@ -54,6 +54,7 @@ The options are available for all Blob perf tests:
 - `--max-put-size` Maximum size of data uploading in single HTTP PUT. Default is 64\*1024\*1024.
 - `--max-block-size` Maximum size of data in a block within a blob. Defaults to 4\*1024\*1024.
 - `--buffer-threshold` Minimum block size to prevent full block buffering. Defaults to 4\*1024\*1024+1.
+- `--client-encryption` The version of client-side encryption to use. Leave out for no encryption.
 
 #### List Blobs command line options
 This option is only available to the List Blobs test (T1 and T2).
