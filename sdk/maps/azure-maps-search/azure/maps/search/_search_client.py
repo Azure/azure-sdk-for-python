@@ -48,6 +48,7 @@ class SearchClient(SearchClientBase):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+
         super().__init__(
             credential=credential, **kwargs
         )

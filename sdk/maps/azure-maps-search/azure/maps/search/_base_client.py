@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Union, Any, TYPE_CHECKING
+from typing import Union, TYPE_CHECKING
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
 from ._generated import SearchClient as _SearchClient
@@ -25,9 +25,10 @@ def _authentication_policy(credential):
 class SearchClientBase:
     def __init__(
         self,
-        credential: Union[AzureKeyCredential, "TokenCredential"],
-        **kwargs: Any
-    ) -> None:
+        credential, #type: Union[AzureKeyCredential, "TokenCredential"]
+        **kwargs #type Any
+    ):
+        # type: (...) -> None
 
         self._search_client = _SearchClient(
             credential=credential,  # type: ignore
@@ -42,4 +43,3 @@ class SearchClientBase:
 
     def __exit__(self, *args):
         self._search_client.__exit__(*args)  # pylint:disable=no-member
-

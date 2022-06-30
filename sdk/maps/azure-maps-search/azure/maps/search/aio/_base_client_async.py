@@ -3,14 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Union, Any, TYPE_CHECKING
+from typing import Union, TYPE_CHECKING
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
 from .._generated.aio import SearchClient as _SearchClient
 from .._version import VERSION
 if TYPE_CHECKING:
-    from azure.core.credentials import AsyncTokenCredential
-
+    from azure.core.credentials_async import AsyncTokenCredential
 
 def _authentication_policy(credential):
     authentication_policy = None
@@ -25,9 +24,10 @@ def _authentication_policy(credential):
 class AsyncSearchClientBase:
     def __init__(
         self,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
-        **kwargs: Any
-    ) -> None:
+        credential, #type: Union[AzureKeyCredential, "AsyncTokenCredential"]
+        **kwargs #type: Any
+    ):
+        # type: (...) -> None
 
         self._search_client = _SearchClient(
             credential=credential,  # type: ignore
@@ -42,4 +42,3 @@ class AsyncSearchClientBase:
 
     def __exit__(self, *args):
         self._search_client.__exit__(*args)  # pylint:disable=no-member
-
