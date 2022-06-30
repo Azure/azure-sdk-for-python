@@ -31,7 +31,7 @@ An **endpoint** and **credential** are necessary to instantiate the client objec
 
 ### Create the client with AzureKeyCredential
 
-To use an [API key] as the `credential` parameter,
+To use an [subscription_key] as the `credential` parameter,
 pass the key as a string into an instance of [AzureKeyCredential][azure-key-credential].
 
 ```python
@@ -39,7 +39,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.maps.search import SearchClient
 
 endpoint = "https://<resource-name>.mapsservices.azure.com/"
-credential = AzureKeyCredential("<api_key>")
+credential = AzureKeyCredential("<subscription_key>")
 search_client = SearchClient(endpoint, credential)
 ```
 
@@ -60,8 +60,8 @@ Once completed, set the values of the client ID, and client secret of the AAD ap
 from azure.identity import DefaultAzureCredential
 from azure.maps.search import SearchClient
 credential = DefaultAzureCredential()
-client_id = os.environ.get("CLIENT_ID")
-authentication_policy = AzureKeyCredential(os.environ.get("SUBSCRIPTION_KEY"))
+client_id = os.environ.get("AZURE_CLIENT_ID")
+authentication_policy = AzureKeyCredential(os.environ.get("AZURE_CLIENT_SECRET"))
 
 search_client = SearchClient(
     credential=credential,
