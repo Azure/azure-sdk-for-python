@@ -41,7 +41,7 @@ Because Confidential Ledgers use self-signed certificates securely generated and
 
 ```python
 from azure.confidentialledger import ConfidentialLedgerClient
-from azure.confidentialledger_identity_service import ConfidentialLedgerIdentityServiceClient
+from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
 from azure.identity import DefaultAzureCredential
 
 identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
@@ -97,7 +97,7 @@ Since Confidential Ledger is a distributed system, rare transient failures may c
 
 ```python
 from azure.confidentialledger import ConfidentialLedgerClient
-from azure.confidentialledger_identity_service import ConfidentialLedgerIdentityServiceClient
+from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
 from azure.identity import DefaultAzureCredential
 
 identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
@@ -130,7 +130,7 @@ Alternatively, the client may wait for commit when writing a ledger entry.
 
 ```python
 from azure.confidentialledger import ConfidentialLedgerClient
-from azure.confidentialledger_identity_service import ConfidentialLedgerIdentityServiceClient
+from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
 from azure.identity import DefaultAzureCredential
 
 identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
@@ -166,7 +166,7 @@ Ledger entries are retrieved by collection. The returned value is the value cont
 
 ```python
 from azure.confidentialledger import ConfidentialLedgerClient
-from azure.confidentialledger_identity_service import ConfidentialLedgerIdentityServiceClient
+from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
 from azure.identity import DefaultAzureCredential
 
 identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
@@ -215,7 +215,7 @@ Ledger entries may be retrieved over a range of transaction ids. Entries will on
 
 ```python
 from azure.confidentialledger import ConfidentialLedgerClient
-from azure.confidentialledger_identity_service import ConfidentialLedgerIdentityServiceClient
+from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
 from azure.identity import DefaultAzureCredential
 
 identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
@@ -262,7 +262,7 @@ Users with `Administrator` privileges can manage users of the Confidential Ledge
 
 ```python
 from azure.confidentialledger import ConfidentialLedgerClient
-from azure.confidentialledger_identity_service import ConfidentialLedgerIdentityServiceClient
+from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
 from azure.identity import DefaultAzureCredential
 
 identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
@@ -314,7 +314,7 @@ from azure.confidentialledger import (
     ConfidentialLedgerCertificateCredential,
     ConfidentialLedgerClient,
 )
-from azure.confidentialledger_identity_service import ConfidentialLedgerIdentityServiceClient
+from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
 
 identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")
 network_identity = identity_client.get_ledger_identity(
@@ -347,7 +347,7 @@ Confidential Ledger clients raise exceptions defined in [azure-core][azure_core_
 ```python
 from azure.core.exceptions import ResourceNotFoundError
 from azure.confidentialledger import ConfidentialLedgerClient
-from azure.confidentialledger_identity_service import ConfidentialLedgerIdentityServiceClient
+from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
 from azure.identity import DefaultAzureCredential
 
 identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.confidential-ledger.core.azure.com")

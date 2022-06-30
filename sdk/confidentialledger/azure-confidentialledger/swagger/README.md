@@ -24,8 +24,8 @@ python: true
 These settings apply only when `--tag=identity-service` is specified on the command line.
 ```yaml $(tag) == 'identity-service'
 input-file: https://github.com/Azure/azure-rest-api-specs/blob/main/specification/confidentialledger/data-plane/Microsoft.ConfidentialLedger/stable/2022-05-13/identityservice.json
-output-folder: ../azure/confidentialledger_identity_service
-namespace: azure.confidentialledger_identity_service
+output-folder: ../azure/confidentialledger/identity_service
+namespace: azure.confidentialledger.identity_service
 package-name: azure-confidentialledger-identity-service
 license-header: MICROSOFT_MIT_NO_VERSION
 clear-output-folder: true
@@ -34,4 +34,11 @@ title: ConfidentialLedgerIdentityServiceClient
 version-tolerant: true
 package-version: 1.0.0
 python: true
+```
+
+#### Batch execution
+```yaml
+batch:
+  - tag: confidential-ledger
+  - tag: identity-service
 ```

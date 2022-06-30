@@ -4,7 +4,7 @@ import tempfile
 
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 
-from azure.confidentialledger_identity_service import (
+from azure.confidentialledger.identity_service import (
     ConfidentialLedgerIdentityServiceClient,
 )
 

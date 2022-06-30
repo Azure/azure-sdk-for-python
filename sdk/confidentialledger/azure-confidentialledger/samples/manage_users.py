@@ -22,10 +22,10 @@ import sys
 import tempfile
 import time
 
-from azure.confidentialledger_identity_service import (
+from azure.confidentialledger import ConfidentialLedgerClient
+from azure.confidentialledger.identity_service import (
     ConfidentialLedgerIdentityServiceClient,
 )
-from azure.confidentialledger import ConfidentialLedgerClient
 from azure.identity import DefaultAzureCredential
 
 

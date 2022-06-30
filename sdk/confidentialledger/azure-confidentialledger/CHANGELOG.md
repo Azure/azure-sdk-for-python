@@ -10,7 +10,6 @@ GA Data Plane Python SDK for Confidential Ledger.
 ### Breaking Changes
 - Removed all models. Methods now return JSON directly.
 - `sub_ledger_id` fields are now named `collection_id`.
-- Renamed `azure.confidentialledger.identity_service` to `azure.confidentialledger_identity_service`.
 
 ### Other Changes
 - Python 2.7 is no longer supported. Please use Python version 3.6 or later.

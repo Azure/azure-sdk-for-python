@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import Any, List, Optional
 
-from azure.confidentialledger_identity_service._client import (
+from azure.confidentialledger.identity_service._client import (
     ConfidentialLedgerIdentityServiceClient as GeneratedClient,
 )
 

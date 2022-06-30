@@ -21,10 +21,10 @@ import os
 import sys
 import tempfile
 
-from azure.confidentialledger_identity_service.aio import (
+from azure.confidentialledger.aio import ConfidentialLedgerClient
+from azure.confidentialledger.identity_service.aio import (
     ConfidentialLedgerIdentityServiceClient,
 )
-from azure.confidentialledger.aio import ConfidentialLedgerClient
 from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import DefaultAzureCredential
 

@@ -1,6 +1,6 @@
 from devtools_testutils import AzureTestCase
 
-from azure.confidentialledger_identity_service import (
+from azure.confidentialledger.identity_service import (
     ConfidentialLedgerIdentityServiceClient,
 )
 
