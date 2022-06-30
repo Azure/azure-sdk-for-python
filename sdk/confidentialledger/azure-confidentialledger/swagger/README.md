@@ -37,6 +37,7 @@ python: true
 ```
 
 #### Batch execution
+Batch execution allows nested generation without the parent module overwriting the child.
 ```yaml
 batch:
   - tag: confidential-ledger
