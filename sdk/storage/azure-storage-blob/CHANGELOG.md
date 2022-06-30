@@ -3,8 +3,8 @@
 ## 12.13.0 (Unreleased)
 
 ### Features Added
-
-### Bugs Fixed
+- Stable release of features from 12.13.0b1.
+- Added support for deleting versions in `delete_blobs` by supplying `version_id`.
 
 ## 12.13.0b1 (2022-06-15)
 

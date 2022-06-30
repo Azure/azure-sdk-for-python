@@ -3,8 +3,7 @@
 ## 12.9.0 (Unreleased)
 
 ### Features Added
-
-### Bugs Fixed
+- Stable release of features from 12.9.0b1.
 
 ## 12.9.0b1 (2022-06-15)
 
