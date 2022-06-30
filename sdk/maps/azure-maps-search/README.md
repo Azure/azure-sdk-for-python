@@ -89,12 +89,9 @@ You can translate coordinates into human readable street addresses. This process
 This is often used for applications that consume GPS feeds and want to discover addresses at specific coordinate points.
 
 ```python
-coordinates: LatLon = {
-  latitude: 47.59118,
-  longitude: -122.3327,
-};
+coordinates=LatLon(47.60323, -122.33028)
 
-reverse_search_result = client.reverse_search_address(coordinates);
+reverse_search_result = client.reverse_search_address(coordinates=coordinates);
 ```
 
 ### Translate coordinate location into a human understandable cross street
@@ -102,12 +99,9 @@ reverse_search_result = client.reverse_search_address(coordinates);
 Translate coordinate location into a human understandable cross street by using Search Address Reverse Cross Street API. Most often, this is needed in tracking applications that receive a GPS feed from a device or asset, and wish to know where the coordinate is located.
 
 ```python
-coordinates: LatLon = {
-  latitude: 47.59118,
-  longitude: -122.3327,
-};
+coordinates=LatLon(47.60323, -122.33028)
 
-const reverse_search_result = client.reverse_search_cross_street_address(coordinates);
+reverse_search_result = client.reverse_search_cross_street_address(coordinates=coordinates);
 ```
 
 ### Sample Code
