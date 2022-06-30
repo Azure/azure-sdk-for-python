@@ -43,7 +43,7 @@ _environments = {
         ENDPOINT_URLS.RESOURCE_MANAGER_ENDPOINT: "https://management.chinacloudapi.cn/",
         ENDPOINT_URLS.ACTIVE_DIRECTORY_ENDPOINT: "https://login.chinacloudapi.cn/",
         ENDPOINT_URLS.AML_RESOURCE_ID: "https://ml.azure.cn/",
-        ENDPOINT_URLS.STORAGE_ENDPOINT: ".core.chinacloudapi.cn",
+        ENDPOINT_URLS.STORAGE_ENDPOINT: "core.chinacloudapi.cn",
     },
     AZURE_ENVIRONMENTS.ENV_US_GOVERNMENT: {
         ENDPOINT_URLS.AZURE_PORTAL_ENDPOINT: "https://portal.azure.us/",

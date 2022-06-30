@@ -10,7 +10,6 @@ from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
-from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
@@ -20,6 +19,8 @@ from ._operations import ConversationAnalysisClientOperationsMixin
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Dict
+
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class ConversationAnalysisClient(
@@ -32,7 +33,7 @@ class ConversationAnalysisClient(
     the best candidate service to handle the request. At last, it returns a response with the
     candidate service's response as a payload.
 
-     In some cases, this API needs to forward requests and responses between the caller and an
+    In some cases, this API needs to forward requests and responses between the caller and an
     upstream service. The asynchronous APIs in this suite enable tasks like Conversation
     Summarization and Conversational PII detection.
 
@@ -40,13 +41,13 @@ class ConversationAnalysisClient(
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: Api Version. Default value is "2022-05-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         _endpoint = "{Endpoint}/language"
         self._config = ConversationAnalysisClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)

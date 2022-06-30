@@ -6,7 +6,6 @@
 
 import pytest
 import functools
-from io import BytesIO
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import ServiceRequestError, ClientAuthenticationError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
