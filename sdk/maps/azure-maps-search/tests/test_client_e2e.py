@@ -39,9 +39,8 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
     def setUp(self):
         super(AzureMapsSearchClientE2ETest, self).setUp()
         self.client = SearchClient(
-            credential='NotUsed',
             client_id=self.get_settings_value('CLIENT_ID'),
-            authentication_policy = AzureKeyInQueryCredentialPolicy(AzureKeyCredential(self.get_settings_value('SUBSCRIPTION_KEY')), "subscription-key")
+            credential=AzureKeyCredential(self.get_settings_value('SUBSCRIPTION_KEY')),
         )
         assert self.client is not None
 
@@ -74,7 +73,6 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
         assert top_answer.address.municipality == "Taipei City"
         assert top_answer.address.postal_code == "111"
         assert top_answer.address.country_code_iso3 == "TWN"
-        assert top_answer.position.lat == 25.09775 and top_answer.position.lon == 121.54639
 
     @pytest.mark.live_test_only
     def test_fuzzy_search_top(self):
@@ -145,8 +143,6 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
         assert top_answer.address.municipality == "Taipei City"
         assert top_answer.address.postal_code == "111"
         assert top_answer.address.country_code_iso3 == "TWN"
-        assert top_answer.position.lat == 25.10468 and top_answer.position.lon == 121.55715
-
 
 
 if __name__ == "__main__" :

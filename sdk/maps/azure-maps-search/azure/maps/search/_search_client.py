@@ -7,9 +7,10 @@
 # pylint: disable=unused-import,ungrouped-imports
 from typing import TYPE_CHECKING, overload, Union, Any, List, Optional
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.credentials import AzureKeyCredential
 from azure.core.polling import LROPoller
 
-from ._api_version import MapsSearchApiVersion, validate_api_version
+from ._base_client import SearchClientBase
 from ._generated._search_client import SearchClient as SearchClientGen
 from ._generated.models import (
     PointOfInterestCategory,
@@ -32,7 +33,7 @@ if TYPE_CHECKING:
 
 
 # By default, use the latest supported API version
-class SearchClient(object):
+class SearchClient(SearchClientBase):
     """Azure Maps Search REST APIs.
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
@@ -44,24 +45,13 @@ class SearchClient(object):
 
     def __init__(
         self,
-        credential,  # type: TokenCredential
+        credential, # type: Union[AzureKeyCredential, "TokenCredential"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-
-        if not credential:
-            raise ValueError(
-                "You need to provide account shared key to authenticate.")
-        self._api_version = kwargs.pop(
-            "api_version", MapsSearchApiVersion.V1_0
+        super().__init__(
+            credential=credential, **kwargs
         )
-        validate_api_version(self._api_version)
-
-        self._search_client = SearchClientGen(
-            credential,
-            api_version=self._api_version,
-            **kwargs
-        ).search
 
     @distributed_trace
     def get_geometries(

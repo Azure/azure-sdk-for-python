@@ -26,47 +26,27 @@ pip install --pre azure-maps-search
 
 ### Authenticate the client
 
-In order to interact with the Document Translation feature service, you will need to create an instance of a client.
-An **endpoint** and **credential** are necessary to instantiate the client object.
+In order to interact with the Azure Maps Search service, you will need to create an instance of a client.
+An **client_id** and **credential** are necessary to instantiate the client object.
 
 ### Create the client with AzureKeyCredential
 
-To use an [subscription_key] as the `credential` parameter,
+Once completed, set the values of the client ID, and subscription key as environment variables:
+`AZURE_CLIENT_ID`, `AZURE_SUBSCRIPTION_KEY`.
+
+To use an `AZURE_SUBSCRIPTION_KEY` as the `credential` parameter,
 pass the key as a string into an instance of [AzureKeyCredential][azure-key-credential].
 
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.maps.search import SearchClient
 
-endpoint = "https://<resource-name>.mapsservices.azure.com/"
-credential = AzureKeyCredential("<subscription_key>")
-search_client = SearchClient(endpoint, credential)
-```
-
-### Create the client with an Azure Active Directory credential
-
-`AzureKeyCredential` authentication is used in the examples in this getting started guide, but you can also
-authenticate with Azure Active Directory using the [azure-identity][azure_identity] library.
-
-To use the [DefaultAzureCredential][default_azure_credential] type shown below, or other credential types provided
-with the Azure SDK, please install the `azure-identity` package:
-
-```pip install azure-identity```
-
-Once completed, set the values of the client ID, and client secret of the AAD application as environment variables:
-`AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`.
-
-```python
-from azure.identity import DefaultAzureCredential
-from azure.maps.search import SearchClient
-credential = DefaultAzureCredential()
 client_id = os.environ.get("AZURE_CLIENT_ID")
-authentication_policy = AzureKeyCredential(os.environ.get("AZURE_CLIENT_SECRET"))
+credential = AzureKeyCredential(os.environ.get("AZURE_SUBSCRIPTION_KEY"))
 
 search_client = SearchClient(
-    credential=credential,
     client_id=client_id,
-    authentication_policy=authentication_policy
+    credential=credential,
 )
 ```
 
@@ -163,6 +143,4 @@ If you encounter any bugs or have suggestions, please file an issue in the [Issu
 
 <!-- LINKS -->
 [azure_subscription]: https://azure.microsoft.com/free/
-[azure_identity]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity
-[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
