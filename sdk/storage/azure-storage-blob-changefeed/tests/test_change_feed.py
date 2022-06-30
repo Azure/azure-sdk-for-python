@@ -334,14 +334,3 @@ class StorageChangeFeedTest(StorageTestCase):
         dict_token_with_1_shard = json.loads(token_with_1_shard)
         self.assertEqual(len(dict_token_with_1_shard['CurrentSegmentCursor']['ShardCursors']), 1)
         self.assertEqual(len(dict_token['CurrentSegmentCursor']['ShardCursors']), 3)
-
-    # @ChangeFeedPreparer()
-    # def test_azure_named_key_credential_access(self, storage_account_name, storage_account_key):
-    #     named_key = AzureNamedKeyCredential(storage_account_name, storage_account_key)
-    #     cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), named_key)
-    #
-    #     # Act
-    #     change_feed = cf_client.list_changes()
-    #
-    #     # Assert
-    #     self.assertIsNotNone(change_feed)
