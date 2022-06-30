@@ -9,7 +9,7 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
-from uamqp.constants import TransportType, DEFAULT_AMQPS_PORT, DEFAULT_AMQP_WSS_PORT
+from ._constants import TransportType, DEFAULT_AMQPS_PORT, DEFAULT_AMQP_WSS_PORT
 from azure.core.pipeline.policies import RetryMode
 
 

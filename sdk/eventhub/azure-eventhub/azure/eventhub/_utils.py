@@ -31,10 +31,10 @@ from ._constants import (
 
 # Python 3 Type Checking imports
 from ._transport._base import AmqpTransport
-from uamqp import types
 
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
+    from uamqp import types
     from azure.core.tracing import AbstractSpan
     from azure.core.credentials import AzureSasCredential
     from ._common import EventData
@@ -78,7 +78,7 @@ def utc_from_timestamp(timestamp):
 
 def create_properties(
     user_agent: Optional[str] = None, *, amqp_transport: AmqpTransport
-) -> Dict[types.AMQPSymbol, str]:
+) -> Dict["types.AMQPSymbol", str]:
     """
     Format the properties with which to instantiate the connection.
     This acts like a user agent over HTTP.
@@ -264,12 +264,12 @@ def transform_outbound_single_message(message, message_type, to_outgoing_amqp_me
     """
     try:
         # pylint: disable=protected-access
-        # EventData.message stores uamqp/pyamqp.Message during sending
+        # TODO:EventData.message stores uamqp/pyamqp.Message during sending
         message.message = to_outgoing_amqp_message(message.raw_amqp_message)
         return message  # type: ignore
     except AttributeError:
         # pylint: disable=protected-access
-        # AmqpAnnotatedMessage is converted to uamqp/pyamqp.Message during sending
+        # TODO:AmqpAnnotatedMessage is converted to uamqp/pyamqp.Message during sending
         amqp_message = to_outgoing_amqp_message(message)
         return message_type._from_message(
             message=amqp_message, raw_amqp_message=message  # type: ignore

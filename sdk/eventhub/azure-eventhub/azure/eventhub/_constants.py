@@ -4,13 +4,12 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import unicode_literals
 
-from uamqp import types
+from enum import Enum
 
 
 PROP_SEQ_NUMBER = b"x-opt-sequence-number"
 PROP_OFFSET = b"x-opt-offset"
 PROP_PARTITION_KEY = b"x-opt-partition-key"
-PROP_PARTITION_KEY_AMQP_SYMBOL = types.AMQPSymbol(PROP_PARTITION_KEY)
 PROP_TIMESTAMP = b"x-opt-enqueued-time"
 PROP_LAST_ENQUEUED_SEQUENCE_NUMBER = b"last_enqueued_sequence_number"
 PROP_LAST_ENQUEUED_OFFSET = b"last_enqueued_offset"
@@ -52,3 +51,17 @@ NO_RETRY_ERRORS = (
     b"com.microsoft:precondition-failed",
     b"com.microsoft:argument-error",
 )
+
+class TransportType(Enum):
+    """Transport type
+    The underlying transport protocol type:
+     Amqp: AMQP over the default TCP transport protocol, it uses port 5671.
+     AmqpOverWebsocket: Amqp over the Web Sockets transport protocol, it uses
+     port 443.
+    """
+    Amqp = 1
+    AmqpOverWebsocket = 2
+
+DEFAULT_AMQPS_PORT = 5671
+DEFAULT_AMQP_WSS_PORT = 443
+READ_OPERATION = b"READ"

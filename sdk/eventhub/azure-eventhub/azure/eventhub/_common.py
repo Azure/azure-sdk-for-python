@@ -33,7 +33,6 @@ from ._constants import (
     PROP_SEQ_NUMBER,
     PROP_OFFSET,
     PROP_PARTITION_KEY,
-    PROP_PARTITION_KEY_AMQP_SYMBOL,
     PROP_TIMESTAMP,
     PROP_ABSOLUTE_EXPIRY_TIME,
     PROP_CONTENT_ENCODING,
@@ -285,10 +284,8 @@ class EventData(object):
 
         :rtype: bytes
         """
-        try:
-            return self._raw_amqp_message.annotations[PROP_PARTITION_KEY_AMQP_SYMBOL]
-        except KeyError:
-            return self._raw_amqp_message.annotations.get(PROP_PARTITION_KEY, None)
+        # TODO: I think just trying this is reasonable? Haven't seen a case where symbol is used to get.
+        return self._raw_amqp_message.annotations.get(PROP_PARTITION_KEY, None)
 
     @property
     def properties(self):

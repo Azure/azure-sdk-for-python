@@ -32,13 +32,11 @@ from ._constants import TIMEOUT_SYMBOL
 
 if TYPE_CHECKING:
     from uamqp import constants, SendClient
+    from uamqp.authentication import JWTTokenAuth  # pylint: disable=ungrouped-imports
     from ._transport._base import AmqpTransport
+    from ._producer_client import EventHubProducerClient
 
 _LOGGER = logging.getLogger(__name__)
-
-if TYPE_CHECKING:
-    from uamqp.authentication import JWTTokenAuth  # pylint: disable=ungrouped-imports
-    from ._producer_client import EventHubProducerClient
 
 
 def _set_partition_key(event_datas, partition_key, amqp_transport):

@@ -5,9 +5,9 @@
 
 from typing import TYPE_CHECKING
 
-from uamqp import Connection
 
 if TYPE_CHECKING:
+    from uamqp import Connection
     from uamqp.authentication import JWTTokenAuth
 
     try:
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
     class ConnectionManager(Protocol):
         def get_connection(self, host, auth):
-            # type: (str, 'JWTTokenAuth') -> Connection
+            # type: (str, 'JWTTokenAuth') -> "Connection"
             pass
 
         def close_connection(self):

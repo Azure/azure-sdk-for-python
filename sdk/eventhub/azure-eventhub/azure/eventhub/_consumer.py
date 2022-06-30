@@ -151,7 +151,7 @@ class EventHubConsumer(
         self._do_retryable_operation(self._open, operation_need_param=False)
 
     def _message_received(self, message):
-        # type: (uamqp.Message) -> None
+        # type: (Message) -> None
         # pylint:disable=protected-access
         self._message_buffer.append(message)
 

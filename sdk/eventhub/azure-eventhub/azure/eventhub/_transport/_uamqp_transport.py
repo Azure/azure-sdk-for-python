@@ -2,11 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from lib2to3.pgen2 import token
+
 import time
+import logging
 from datetime import timedelta
 from typing import TYPE_CHECKING, Optional, Union, Any
-from urllib.parse import urlparse, quote_plus
+from urllib.parse import quote_plus
 from azure.core.credentials import AccessToken
 
 from uamqp import (
@@ -21,25 +22,37 @@ from uamqp import (
     utils,
     authentication,
     AMQPClient,
-    compat
+    compat,
+    errors,
 )
 from uamqp.message import (
     MessageHeader,
     MessageProperties,
 )
-from uamqp.errors import ErrorPolicy, ErrorAction, LinkDetach, AuthenticationException, AMQPConnectionError
 
 from ._base import AmqpTransport
 from ..amqp._constants import AmqpMessageBodyType
 from .._constants import (
     NO_RETRY_ERRORS,
-    PROP_PARTITION_KEY_AMQP_SYMBOL,
+    PROP_PARTITION_KEY,
 )
-from ..exceptions import ConnectError, OperationTimeoutError
+
+from ..exceptions import (
+    ConnectError,
+    EventDataError,
+    EventDataSendError,
+    OperationTimeoutError,
+    EventHubError,
+    AuthenticationError,
+    ConnectionLostError,
+    EventDataError,
+    EventDataSendError,
+)
 
 if TYPE_CHECKING:
-    import logging
     from azure.core.credentials import AzureNamedKeyCredential
+
+_LOGGER = logging.getLogger(__name__)
 
 def _error_handler(error):
     """
@@ -53,16 +66,16 @@ def _error_handler(error):
     :rtype: ~uamqp.errors.ErrorAction
     """
     if error.condition == b"com.microsoft:server-busy":
-        return ErrorAction(retry=True, backoff=4)
+        return errors.ErrorAction(retry=True, backoff=4)
     if error.condition == b"com.microsoft:timeout":
-        return ErrorAction(retry=True, backoff=2)
+        return errors.ErrorAction(retry=True, backoff=2)
     if error.condition == b"com.microsoft:operation-cancelled":
-        return ErrorAction(retry=True)
+        return errors.ErrorAction(retry=True)
     if error.condition == b"com.microsoft:container-close":
-        return ErrorAction(retry=True, backoff=4)
+        return errors.ErrorAction(retry=True, backoff=4)
     if error.condition in NO_RETRY_ERRORS:
-        return ErrorAction(retry=False)
-    return ErrorAction(retry=True)
+        return errors.ErrorAction(retry=False)
+    return errors.ErrorAction(retry=True)
 
 
 def _generate_sas_token(uri, policy, key, expiry=None):
@@ -131,6 +144,7 @@ class UamqpTransport(AmqpTransport):
     BATCH_MESSAGE = BatchMessage
     MAX_FRAME_SIZE_BYTES = constants.MAX_MESSAGE_LENGTH_BYTES
     IDLE_TIMEOUT_FACTOR = 1000 # pyamqp = 1
+    MESSAGE = Message
 
     # define symbols
     PRODUCT_SYMBOL = types.AMQPSymbol("product")
@@ -138,13 +152,14 @@ class UamqpTransport(AmqpTransport):
     FRAMEWORK_SYMBOL = types.AMQPSymbol("framework")
     PLATFORM_SYMBOL = types.AMQPSymbol("platform")
     USER_AGENT_SYMBOL = types.AMQPSymbol("user-agent")
+    PROP_PARTITION_KEY_AMQP_SYMBOL = types.AMQPSymbol(PROP_PARTITION_KEY)
 
     # define errors and conditions
-    AMQP_LINK_ERROR = LinkDetach
+    AMQP_LINK_ERROR = errors.LinkDetach
     LINK_STOLEN_CONDITION = constants.ErrorCodes.LinkStolen
-    AUTH_EXCEPTION = AuthenticationException
+    AUTH_EXCEPTION = errors.AuthenticationException
     CONNECTION_ERROR = ConnectError
-    AMQP_CONNECTION_ERROR = AMQPConnectionError
+    AMQP_CONNECTION_ERROR = errors.AMQPConnectionError
     TIMEOUT_EXCEPTION = compat.TimeoutException
 
     def to_outgoing_amqp_message(self, annotated_message):
@@ -217,7 +232,7 @@ class UamqpTransport(AmqpTransport):
         Creates the error retry policy.
         :param retry_total: Max number of retries.
         """
-        return ErrorPolicy(max_retries=retry_total, on_error=_error_handler)
+        return errors.ErrorPolicy(max_retries=retry_total, on_error=_error_handler)
 
     def create_link_properties(self, link_properties):
         """
@@ -262,7 +277,7 @@ class UamqpTransport(AmqpTransport):
                 error = last_exception
             else:
                 error = OperationTimeoutError("Send operation timed out")
-            logger.info("%r send operation timed out. (%r)", producer._name, error)
+            logger.info("%r send operation timed out. (%r)", producer._name, error) # pylint: disable=protected-access
             raise error
         producer._handler._msg_timeout = remaining_time * 1000  # type: ignore  # pylint: disable=protected-access
 
@@ -306,7 +321,7 @@ class UamqpTransport(AmqpTransport):
             if annotations is None:
                 annotations = {}
             annotations[
-                PROP_PARTITION_KEY_AMQP_SYMBOL
+                UamqpTransport.PROP_PARTITION_KEY_AMQP_SYMBOL
             ] = partition_key
             header = MessageHeader()
             header.durable = True
@@ -473,3 +488,78 @@ class UamqpTransport(AmqpTransport):
         :param AMQPClient handler: Client to get remote max message size on link from.
         """
         return handler.message_handler._link.peer_max_message_size  # pylint: disable=protected-access
+
+    def _create_eventhub_exception(self, exception):
+        if isinstance(exception, errors.AuthenticationException):
+            error = AuthenticationError(str(exception), exception)
+        elif isinstance(exception, errors.VendorLinkDetach):
+            error = ConnectError(str(exception), exception)
+        elif isinstance(exception, errors.LinkDetach):
+            error = ConnectionLostError(str(exception), exception)
+        elif isinstance(exception, errors.ConnectionClose):
+            error = ConnectionLostError(str(exception), exception)
+        elif isinstance(exception, errors.MessageHandlerError):
+            error = ConnectionLostError(str(exception), exception)
+        elif isinstance(exception, errors.AMQPConnectionError):
+            error_type = (
+                AuthenticationError
+                if str(exception).startswith("Unable to open authentication session")
+                else ConnectError
+            )
+            error = error_type(str(exception), exception)
+        elif isinstance(exception, compat.TimeoutException):
+            error = ConnectionLostError(str(exception), exception)
+        else:
+            error = EventHubError(str(exception), exception)
+        return error
+
+
+    def _handle_exception(
+        self, exception, closable
+    ):  # pylint:disable=too-many-branches, too-many-statements
+        try:  # closable is a producer/consumer object
+            name = closable._name  # pylint: disable=protected-access
+        except AttributeError:  # closable is an client object
+            name = closable._container_id  # pylint: disable=protected-access
+        if isinstance(exception, KeyboardInterrupt):  # pylint:disable=no-else-raise
+            _LOGGER.info("%r stops due to keyboard interrupt", name)
+            closable._close_connection()  # pylint:disable=protected-access
+            raise exception
+        elif isinstance(exception, EventHubError):
+            closable._close_handler()  # pylint:disable=protected-access
+            raise exception
+        elif isinstance(
+            exception,
+            (
+                errors.MessageAccepted,
+                errors.MessageAlreadySettled,
+                errors.MessageModified,
+                errors.MessageRejected,
+                errors.MessageReleased,
+                errors.MessageContentTooLarge,
+            ),
+        ):
+            _LOGGER.info("%r Event data error (%r)", name, exception)
+            error = EventDataError(str(exception), exception)
+            raise error
+        elif isinstance(exception, errors.MessageException):
+            _LOGGER.info("%r Event data send error (%r)", name, exception)
+            error = EventDataSendError(str(exception), exception)
+            raise error
+        else:
+            if isinstance(exception, errors.AuthenticationException):
+                if hasattr(closable, "_close_connection"):
+                    closable._close_connection()  # pylint:disable=protected-access
+            elif isinstance(exception, errors.LinkDetach):
+                if hasattr(closable, "_close_handler"):
+                    closable._close_handler()  # pylint:disable=protected-access
+            elif isinstance(exception, errors.ConnectionClose):
+                if hasattr(closable, "_close_connection"):
+                    closable._close_connection()  # pylint:disable=protected-access
+            elif isinstance(exception, errors.MessageHandlerError):
+                if hasattr(closable, "_close_handler"):
+                    closable._close_handler()  # pylint:disable=protected-access
+            else:  # errors.AMQPConnectionError, compat.TimeoutException
+                if hasattr(closable, "_close_connection"):
+                    closable._close_connection()  # pylint:disable=protected-access
+            return self._create_eventhub_exception(exception)

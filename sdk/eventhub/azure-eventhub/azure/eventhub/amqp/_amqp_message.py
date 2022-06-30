@@ -7,7 +7,7 @@
 from typing import Optional, Any, cast, Mapping, Dict
 
 from ._amqp_utils import normalized_data_body, normalized_sequence_body
-from ._constants import AMQP_MESSAGE_BODY_TYPE_MAP, AmqpMessageBodyType
+from ._constants import AmqpMessageBodyType
 from .._mixin import DictMixin
 
 

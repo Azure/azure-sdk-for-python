@@ -13,7 +13,6 @@ from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
 
 from urllib.parse import urlparse
 
-from uamqp import Message, authentication, constants, errors, compat
 import six
 from azure.core.credentials import (
     AccessToken,
@@ -24,8 +23,8 @@ from azure.core.utils import parse_connection_string as core_parse_connection_st
 from azure.core.pipeline.policies import RetryMode
 
 
-from ._transport._uamqp_transport import UamqpTransport, EventhubAzureNamedKeyTokenCredential
-from .exceptions import _handle_exception, ClientClosedError, ConnectError
+from ._transport._uamqp_transport import UamqpTransport
+from .exceptions import ClientClosedError
 from ._configuration import Configuration
 from ._utils import utc_from_timestamp, parse_sas_credential
 from ._connection_manager import get_connection_manager
@@ -36,7 +35,10 @@ from ._constants import (
     MGMT_PARTITION_OPERATION,
     MGMT_STATUS_CODE,
     MGMT_STATUS_DESC,
+    READ_OPERATION,
 )
+if TYPE_CHECKING:
+    from uamqp import Message, authentication
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -318,7 +320,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             raise last_exception
 
     def _management_request(self, mgmt_msg, op_type):
-        # type: (Message, bytes) -> Any
+        # type: ("Message", bytes) -> Any
         # pylint:disable=assignment-from-none
         retried_times = 0
         last_exception = None
@@ -335,7 +337,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 response = self._amqp_transport.mgmt_client_request(
                     mgmt_client,
                     mgmt_msg,
-                    operation=constants.READ_OPERATION,
+                    operation=READ_OPERATION,
                     operation_type=op_type,
                     status_code_field=MGMT_STATUS_CODE,
                     description_fields=MGMT_STATUS_DESC,
@@ -363,7 +365,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     f"Management request error. Status code: {status_code}, Description: {description!r}"
                 )
             except Exception as exception:  # pylint: disable=broad-except
-                last_exception = _handle_exception(exception, self)
+                last_exception = self._amqp_transport._handle_exception(exception, self)
                 self._backoff(
                     retried_times=retried_times, last_exception=last_exception
                 )
@@ -384,7 +386,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     def _get_eventhub_properties(self):
         # type:() -> Dict[str, Any]
-        mgmt_msg = Message(application_properties={"name": self.eventhub_name})
+        mgmt_msg = self._amqp_transport.MESSAGE(application_properties={"name": self.eventhub_name})
         response = self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
         output = {}
         eh_info = response.value  # type: Dict[bytes, Any]
@@ -404,7 +406,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     def _get_partition_properties(self, partition_id):
         # type:(str) -> Dict[str, Any]
-        mgmt_msg = Message(
+        mgmt_msg = self._amqp_transport.MESSAGE(
             application_properties={
                 "name": self.eventhub_name,
                 "partition": partition_id,
@@ -467,7 +469,7 @@ class ConsumerProducerMixin(object):
                 time.sleep(0.05)
             self._max_message_size_on_link = (
                 self._amqp_transport.get_link_max_message_size(self._handler)
-                or constants.MAX_MESSAGE_LENGTH_BYTES
+                or self._amqp_transport.MAX_FRAME_SIZE_BYTES
             )
             self.running = True
 
@@ -483,7 +485,7 @@ class ConsumerProducerMixin(object):
     def _handle_exception(self, exception):
         if not self.running and isinstance(exception, self._amqp_transport.TIMEOUT_EXCEPTION):
             exception = self._amqp_transport.get_error("Authorization timeout.")
-        return _handle_exception(exception, self)
+        return self._amqp_transport._handle_exception(exception, self)    # pylint: disable=protected-access
 
     def _do_retryable_operation(self, operation, timeout=None, **kwargs):
         # pylint:disable=protected-access
