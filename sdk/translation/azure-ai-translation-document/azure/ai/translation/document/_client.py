@@ -339,18 +339,18 @@ class DocumentTranslationClient:
     ) -> ItemPaged[TranslationStatus]:
         """List all the submitted translation operations under the Document Translation resource.
 
-        :keyword int top: the total number of operations to return (across all pages) from all submitted translations.
-        :keyword int skip: the number of operations to skip (from beginning of all submitted operations).
+        :keyword int top: The total number of operations to return (across all pages) from all submitted translations.
+        :keyword int skip: The number of operations to skip (from beginning of all submitted operations).
             By default, we sort by all submitted operations in descending order by start time.
-        :keyword list[str] translation_ids: translation operations ids to filter by.
-        :keyword list[str] statuses: translation operation statuses to filter by. Options include
+        :keyword list[str] translation_ids: Translation operations ids to filter by.
+        :keyword list[str] statuses: Translation operation statuses to filter by. Options include
             'NotStarted', 'Running', 'Succeeded', 'Failed', 'Canceled', 'Canceling',
             and 'ValidationFailed'.
-        :keyword created_after: get operations created after certain datetime.
+        :keyword created_after: Get operations created after a certain datetime.
         :paramtype created_after: str or ~datetime.datetime
-        :keyword created_before: get operations created before certain datetime.
+        :keyword created_before: Get operations created before a certain datetime.
         :paramtype created_before: str or ~datetime.datetime
-        :keyword list[str] order_by: the sorting query for the operations returned. Currently only
+        :keyword list[str] order_by: The sorting query for the operations returned. Currently only
             'created_on' supported.
             format: ["param1 asc/desc", "param2 asc/desc", ...]
             (ex: 'created_on asc', 'created_on desc').
@@ -419,18 +419,18 @@ class DocumentTranslationClient:
         """List all the document statuses for a given translation operation.
 
         :param str translation_id: ID of translation operation to list documents for.
-        :keyword int top: the total number of documents to return (across all pages).
-        :keyword int skip: the number of documents to skip (from beginning).
+        :keyword int top: The total number of documents to return (across all pages).
+        :keyword int skip: The number of documents to skip (from beginning).
             By default, we sort by all documents in descending order by start time.
-        :keyword list[str] document_ids: document IDs to filter by.
-        :keyword list[str] statuses: document statuses to filter by. Options include
+        :keyword list[str] document_ids: Document IDs to filter by.
+        :keyword list[str] statuses: Document statuses to filter by. Options include
             'NotStarted', 'Running', 'Succeeded', 'Failed', 'Canceled', 'Canceling',
             and 'ValidationFailed'.
-        :keyword created_after: get document created after certain datetime.
+        :keyword created_after: Get documents created after a certain datetime.
         :paramtype created_after: str or ~datetime.datetime
-        :keyword created_before: get document created before certain datetime.
+        :keyword created_before: Get documents created before a certain datetime.
         :paramtype created_before: str or ~datetime.datetime
-        :keyword list[str] order_by: the sorting query for the documents. Currently only
+        :keyword list[str] order_by: The sorting query for the documents. Currently only
             'created_on' is supported.
             format: ["param1 asc/desc", "param2 asc/desc", ...]
             (ex: 'created_on asc', 'created_on desc').

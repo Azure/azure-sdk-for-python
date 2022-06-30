@@ -4,35 +4,31 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines,no-self-use
+
 from functools import partial
 from io import BytesIO
-from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
-    TYPE_CHECKING,
-    TypeVar, Type)
+from typing import (
+    Any, AnyStr, Dict, IO, Iterable, List, Optional, Tuple, Type, TypeVar, Union,
+    TYPE_CHECKING
+)
+from urllib.parse import urlparse, quote, unquote
 import warnings
 
-try:
-    from urllib.parse import urlparse, quote, unquote
-except ImportError:
-    from urlparse import urlparse  # type: ignore
-    from urllib2 import quote, unquote  # type: ignore
 import six
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
 
 from ._shared import encode_base64
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, TransportWrapper
-from ._shared.encryption import generate_blob_encryption_data
 from ._shared.uploads import IterStreamer
 from ._shared.request_handlers import (
     add_metadata_headers, get_length, read_length,
     validate_and_format_range_headers)
 from ._shared.response_handlers import return_response_headers, process_storage_error, return_headers_and_deserialized
 from ._generated import AzureBlobStorage
-from ._generated.models import ( # pylint: disable=unused-import
+from ._generated.models import (
     DeleteSnapshotsOptionType,
     BlobHTTPHeaders,
     BlockLookupList,
@@ -49,22 +45,30 @@ from ._serialize import (
     serialize_blob_tags,
     serialize_query_format, get_access_conditions
 )
-from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream, parse_tags, \
+from ._deserialize import (
+    get_page_ranges_result,
+    deserialize_blob_properties,
+    deserialize_blob_stream,
+    parse_tags,
     deserialize_pipeline_response_into_cls
+)
+from ._download import StorageStreamDownloader
+from ._encryption import StorageEncryptionMixin
+from ._lease import BlobLeaseClient
+from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, QuickQueryDialect, \
+    DelimitedJsonDialect, DelimitedTextDialect, PageRangePaged, PageRange
 from ._quick_query_helper import BlobQueryReader
 from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
-    upload_page_blob, _any_conditions)
-from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, QuickQueryDialect, \
-    DelimitedJsonDialect, DelimitedTextDialect, PageRangePaged, PageRange
-from ._download import StorageStreamDownloader
-from ._lease import BlobLeaseClient
+    upload_page_blob,
+    _any_conditions
+)
 
 if TYPE_CHECKING:
     from datetime import datetime
     from ._generated.models import BlockList
-    from ._models import (  # pylint: disable=unused-import
+    from ._models import (
         ContentSettings,
         ImmutabilityPolicy,
         PremiumPageBlobTier,
@@ -79,7 +83,7 @@ _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
 ClassType = TypeVar("ClassType")
 
 
-class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-methods
+class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific blob, although that blob may not yet exist.
 
     For more optional configuration, please click
@@ -181,6 +185,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self.configure_encryption(kwargs)
 
     def _format_url(self, hostname):
         container_name = self.container_name
@@ -355,14 +360,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise ValueError("Encryption required but no key was provided.")
         encryption_options = {
             'required': self.require_encryption,
+            'version': self.encryption_version,
             'key': self.key_encryption_key,
             'resolver': self.key_resolver_function,
         }
-        if self.key_encryption_key is not None:
-            cek, iv, encryption_data = generate_blob_encryption_data(self.key_encryption_key)
-            encryption_options['cek'] = cek
-            encryption_options['vector'] = iv
-            encryption_options['data'] = encryption_data
 
         encoding = kwargs.pop('encoding', 'UTF-8')
         if isinstance(data, six.text_type):
@@ -376,7 +377,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             stream = BytesIO(data)
         elif hasattr(data, 'read'):
             stream = data
-        elif hasattr(data, '__iter__'):
+        elif hasattr(data, '__iter__') and not isinstance(data, (list, tuple, set, dict)):
             stream = IterStreamer(data, encoding=encoding)
         else:
             raise TypeError("Unsupported data type: {}".format(type(data)))
@@ -422,6 +423,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             kwargs['client'] = self._client.block_blob
             kwargs['data'] = data
         elif blob_type == BlobType.PageBlob:
+            if self.encryption_version == '2.0' and (self.require_encryption or self.key_encryption_key is not None):
+                raise ValueError("Encryption version 2.0 does not currently support page blobs.")
             kwargs['client'] = self._client.page_blob
         elif blob_type == BlobType.AppendBlob:
             if self.require_encryption or (self.key_encryption_key is not None):
@@ -4126,5 +4129,5 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             "{}://{}".format(self.scheme, self.primary_hostname), container_name=self.container_name,
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
-            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            require_encryption=self.require_encryption, encryption_version=self.encryption_version,
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)

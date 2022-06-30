@@ -147,6 +147,7 @@
     "contoso",
     "contosodataset",
     "centralus",
+    "centraluseuap",
     "creds",
     "ctoring",
     "ctypes",
@@ -156,6 +157,7 @@
     "delenv",
     "dependened",
     "deserialization",
+    "disablecov",
     "docfx",
     "dotenv",
     "dpkg",
@@ -392,13 +394,21 @@
         "FNNHHJT",
         "Zwiz",
         "nypg",
-        "PBOF"
+        "PBOF",
+        "tzutc",
+        "gettz"
       ]
     },
     {
       "filename": "sdk/containerregistry/azure-containerregistry/**",
       "words": [
         "udpated"
+      ]
+    },
+    {
+      "filename": "sdk/eventhub/test-resources.json",
+      "words": [
+        "mmspecial"
       ]
     },
     {

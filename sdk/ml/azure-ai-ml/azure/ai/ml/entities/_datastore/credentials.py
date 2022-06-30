@@ -161,13 +161,13 @@ class CertificateCredentials(BaseTenantCredentials):
     def __init__(
         self,
         certificate: str = None,
-        thumprint: str = None,
+        thumbprint: str = None,
         **kwargs,
     ):
         super().__init__(**kwargs)
         self.type = CredentialsType.CERTIFICATE
         self.certificate = certificate
-        self.thumbprint = thumprint
+        self.thumbprint = thumbprint
 
     def _to_rest_object(self) -> CertificateDatastoreCredentials:
         secrets = CertificateDatastoreSecrets(certificate=self.certificate)

@@ -1,5 +1,5 @@
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml._operations.data_operations import DataOperations, DatastoreOperations
+from azure.ai.ml.operations._data_operations import DataOperations, DatastoreOperations
 from azure.ai.ml.constants import OrderString
 from azure.core.paging import ItemPaged
 from azure.ai.ml.entities._assets import Data
@@ -16,6 +16,7 @@ from unittest.mock import Mock, patch
 from pathlib import Path
 from test_utilities.constants import Test_Resource_Group, Test_Workspace_Name
 from typing import Callable, Iterable
+from azure.ai.ml import load_data
 
 
 @pytest.fixture
@@ -84,10 +85,10 @@ class TestDataOperations:
                 container_name="containerName",
             ),
         ) as mock_thing, patch(
-            "azure.ai.ml._operations.data_operations.Data._from_rest_object",
+            "azure.ai.ml.operations._data_operations.Data._from_rest_object",
             return_value=None,
         ):
-            data = Data.load(path=data_path)
+            data = load_data(path=data_path)
             path = Path(data._base_path, data.path).resolve()
             mock_data_operations.create_or_update(data)
             mock_thing.assert_called_once_with(

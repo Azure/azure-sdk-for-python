@@ -3,4 +3,3 @@ package_name = "azure-mgmt-storagesync"
 package_pprint_name = "Storage Sync"
 package_doc_id = ""
 is_stable = false
-auto_update = false

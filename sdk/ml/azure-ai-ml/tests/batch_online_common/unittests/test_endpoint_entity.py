@@ -7,6 +7,7 @@ from azure.ai.ml.entities import (
 )
 import yaml
 import pytest
+from azure.ai.ml import load_online_endpoint, load_batch_endpoint, load_online_deployment
 
 
 @pytest.mark.unittest
@@ -18,19 +19,19 @@ class TestOnlineEndpointYAML:
     def test_specific_endpoint_load(self) -> None:
         with open(TestOnlineEndpointYAML.MINIMAL_ENDPOINT, "r") as f:
             target = yaml.safe_load(f)
-        endpoint = OnlineEndpoint.load(TestOnlineEndpointYAML.MINIMAL_ENDPOINT)
+        endpoint = load_online_endpoint(TestOnlineEndpointYAML.MINIMAL_ENDPOINT)
         assert isinstance(endpoint, OnlineEndpoint)
         assert endpoint.name == target["name"]
 
     def test_default_endpoint_load_to_online(self) -> None:
         with open(TestOnlineEndpointYAML.MINIMAL_ENDPOINT, "r") as f:
             target = yaml.safe_load(f)
-        endpoint = OnlineEndpoint.load(TestOnlineEndpointYAML.MINIMAL_ENDPOINT)
+        endpoint = load_online_endpoint(TestOnlineEndpointYAML.MINIMAL_ENDPOINT)
         assert isinstance(endpoint, OnlineEndpoint)
         assert endpoint.name == target["name"]
 
     def test_online_endpoint_to_rest_object_with_no_issue(self) -> None:
-        deployment = ManagedOnlineDeployment.load(TestOnlineEndpointYAML.MINIMAL_DEPLOYMENT)
+        deployment = load_online_deployment(TestOnlineEndpointYAML.MINIMAL_DEPLOYMENT)
         deployment._to_rest_object("westus2")
 
 
@@ -41,7 +42,7 @@ class TestBatchEndpointYAML:
     def test_generic_endpoint_load_2(self) -> None:
         with open(TestBatchEndpointYAML.BATCH_ENDPOINT_WITH_BLUE, "r") as f:
             target = yaml.safe_load(f)
-        endpoint = BatchEndpoint.load(TestBatchEndpointYAML.BATCH_ENDPOINT_WITH_BLUE)
+        endpoint = load_batch_endpoint(TestBatchEndpointYAML.BATCH_ENDPOINT_WITH_BLUE)
         assert isinstance(endpoint, BatchEndpoint)
         assert endpoint.name == target["name"].lower()
         assert endpoint.description == target["description"]
@@ -50,7 +51,7 @@ class TestBatchEndpointYAML:
     def test_to_rest_batch_endpoint(self) -> None:
         with open(TestBatchEndpointYAML.BATCH_ENDPOINT_WITH_BLUE, "r") as f:
             target = yaml.safe_load(f)
-        endpoint = BatchEndpoint.load(TestBatchEndpointYAML.BATCH_ENDPOINT_WITH_BLUE)
+        endpoint = load_batch_endpoint(TestBatchEndpointYAML.BATCH_ENDPOINT_WITH_BLUE)
         rest_batch_endpoint = endpoint._to_rest_batch_endpoint("master")
 
         assert rest_batch_endpoint.tags

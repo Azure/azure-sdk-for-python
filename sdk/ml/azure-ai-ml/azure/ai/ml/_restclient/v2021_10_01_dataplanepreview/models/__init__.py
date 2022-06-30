@@ -9,6 +9,7 @@
 try:
     from ._models_py3 import AccountKeyDatastoreCredentials
     from ._models_py3 import AccountKeyDatastoreSecrets
+    from ._models_py3 import AcrDetails
     from ._models_py3 import AmlToken
     from ._models_py3 import AssetBase
     from ._models_py3 import AssetContainer
@@ -54,6 +55,7 @@ try:
     from ._models_py3 import ErrorResponse
     from ._models_py3 import FlavorData
     from ._models_py3 import IdentityConfiguration
+    from ._models_py3 import ImageReferenceForConsumptionDto
     from ._models_py3 import InferenceContainerProperties
     from ._models_py3 import Job
     from ._models_py3 import JobBase
@@ -99,6 +101,7 @@ try:
 except (SyntaxError, ImportError):
     from ._models import AccountKeyDatastoreCredentials  # type: ignore
     from ._models import AccountKeyDatastoreSecrets  # type: ignore
+    from ._models import AcrDetails  # type: ignore
     from ._models import AmlToken  # type: ignore
     from ._models import AssetBase  # type: ignore
     from ._models import AssetContainer  # type: ignore
@@ -144,6 +147,7 @@ except (SyntaxError, ImportError):
     from ._models import ErrorResponse  # type: ignore
     from ._models import FlavorData  # type: ignore
     from ._models import IdentityConfiguration  # type: ignore
+    from ._models import ImageReferenceForConsumptionDto  # type: ignore
     from ._models import InferenceContainerProperties  # type: ignore
     from ._models import Job  # type: ignore
     from ._models import JobBase  # type: ignore
@@ -204,7 +208,6 @@ from ._azure_machine_learning_workspaces_enums import (
     JobStatus,
     JobType,
     ListViewType,
-    ModelFormat,
     OperatingSystemType,
     OutputDataDeliveryMode,
     SamplingAlgorithm,
@@ -215,6 +218,7 @@ from ._azure_machine_learning_workspaces_enums import (
 __all__ = [
     'AccountKeyDatastoreCredentials',
     'AccountKeyDatastoreSecrets',
+    'AcrDetails',
     'AmlToken',
     'AssetBase',
     'AssetContainer',
@@ -260,6 +264,7 @@ __all__ = [
     'ErrorResponse',
     'FlavorData',
     'IdentityConfiguration',
+    'ImageReferenceForConsumptionDto',
     'InferenceContainerProperties',
     'Job',
     'JobBase',
@@ -318,7 +323,6 @@ __all__ = [
     'JobStatus',
     'JobType',
     'ListViewType',
-    'ModelFormat',
     'OperatingSystemType',
     'OutputDataDeliveryMode',
     'SamplingAlgorithm',

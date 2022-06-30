@@ -79,7 +79,66 @@ class StringTransformedEnum(Field):
         raise ValidationError(f"Value {value} passed is not in set {self.allowed_values}")
 
 
-class DataBindingStr(Field):
+class LocalPathField(fields.Str):
+    """
+    A field that validates that the input is a local path. Can only be used as fields of PathAwareSchema.
+    """
+
+    def __init__(self, allow_dir=True, allow_file=True):
+        self._allow_dir = allow_dir
+        self._allow_file = allow_file
+        super().__init__()
+
+    def _jsonschema_type_mapping(self):
+        schema = {"type": "string"}
+        if self.name is not None:
+            schema["title"] = self.name
+        if self.dump_only:
+            schema["readonly"] = True
+        return schema
+
+    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[str]:
+        if value is None:
+            return None
+        self._validate(value)
+        return super(LocalPathField, self)._serialize(value, attr, obj, **kwargs)
+
+    def _validate(self, value):
+        try:
+            path = Path(value)
+            base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
+            if not path.is_absolute():
+                path = base_path / path
+                path.resolve()
+            if (self._allow_dir and path.is_dir()) or (self._allow_file and path.is_file()):
+                return super(LocalPathField, self)._validate(value)
+        except OSError:
+            pass
+        if self._allow_dir and self._allow_file:
+            raise ValidationError(f"{value} is not a valid path")
+        elif self._allow_dir:
+            raise ValidationError(f"{value} is not a valid directory")
+        else:
+            raise ValidationError(f"{value} is not a valid file")
+
+
+class SerializeValidatedUrl(fields.Url):
+    """
+    This field will validate if value is an url during serialization,
+    so that only valid urls can be serialized as this schema.
+    Use this schema instead of fields.Url when unioned with ArmStr or its subclasses like ArmVersionedStr,
+    so that the field can be serialized correctly after deserialization. azureml:xxx => xxx => azureml:xxx e.g.
+    The field will still always be serializable as any string can be serialized as an ArmStr.
+    """
+
+    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[str]:
+        if value is None:
+            return None
+        self._validate(value)
+        return super(SerializeValidatedUrl, self)._serialize(value, attr, obj, **kwargs)
+
+
+class DataBindingStr(fields.Str):
     def _jsonschema_type_mapping(self):
         schema = {"type": "string", "pattern": r"\$\{\{\s*(\S*)\s*\}\}"}
         if self.name is not None:
@@ -89,23 +148,22 @@ class DataBindingStr(Field):
         return schema
 
     def _serialize(self, value, attr, obj, **kwargs):
+        # None value handling logic is inside _serialize but outside _validate/_deserialize
+        if value is None:
+            return None
+
         from azure.ai.ml.entities._job.pipeline._io import InputOutputBase
 
         if isinstance(value, InputOutputBase):
             value = str(value)
-        elif not isinstance(value, str):
-            raise ValidationError(f"Value {value} passed is neither a string nor an InputOutputBase")
 
-        if is_data_binding_expression(value, is_singular=False):
-            return value
-        else:
-            raise ValidationError(f"Value passed is not a data binding string: {value}")
+        self._validate(value)
+        return super(DataBindingStr, self)._serialize(value, attr, obj, **kwargs)
 
-    def _deserialize(self, value, attr, data, **kwargs):
+    def _validate(self, value):
         if is_data_binding_expression(value, is_singular=False):
-            return value
-        else:
-            raise ValidationError(f"Value passed is not a data binding string: {type(value)}: {value}")
+            return super(DataBindingStr, self)._validate(value)
+        raise ValidationError(f"Value passed is not a data binding string: {value}")
 
 
 class ArmStr(Field):
@@ -136,9 +194,9 @@ class ArmStr(Field):
             return name
         else:
             raise ValidationError(
-                f"In order to specify an existing {self.azureml_type}, please provide either of the following prefixed with 'azureml:':\n"
+                f"In order to specify an existing {self.azureml_type if self.azureml_type is not None else 'asset'}, please provide either of the following prefixed with 'azureml:':\n"
                 "1. The full ARM ID for the resource, e.g."
-                f"azureml:{RESOURCE_ID_FORMAT.format('<subscription_id>', '<resource_group>', AZUREML_RESOURCE_PROVIDER, '<workspace_name>/') + self.azureml_type +'/<resource_name>/<version-if applicable>)'}\n"
+                f"azureml:{RESOURCE_ID_FORMAT.format('<subscription_id>', '<resource_group>', AZUREML_RESOURCE_PROVIDER, '<workspace_name>/') + self.azureml_type if self.azureml_type is not None else '<asset_type>' +'/<resource_name>/<version-if applicable>)'}\n"
                 "2. The short-hand name of the resource registered in the workspace, eg: azureml:<short-hand-name>:<version-if applicable>. For example, version 1 of the environment registered as 'my-env' in the workspace can be referenced as 'azureml:my-env:1'"
             )
 
@@ -435,7 +493,7 @@ class RegistryStr(Field):
         else:
             raise ValidationError(f"Non-string passed to RegistryStr for {attr}")
 
-    def _deserialize(self, value, attr, data, **kwargse):
+    def _deserialize(self, value, attr, data, **kwargs):
         if isinstance(value, str) and value.startswith(REGISTRY_URI_FORMAT):
             name = value
             return name

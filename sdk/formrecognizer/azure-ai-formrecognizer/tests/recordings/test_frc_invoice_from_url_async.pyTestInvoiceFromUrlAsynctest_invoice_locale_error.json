@@ -1,34 +1,33 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/prebuilt/invoice/analyze?includeTextDetails=false\u0026locale=not a locale",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/prebuilt/invoice/analyze?includeTextDetails=false\u0026locale=not%20a%20locale",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "33",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "cf06312a-5ef3-11ec-86fe-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
         "source": "https://blob_sas_url"
       },
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "197016bc-f5c7-44e6-a4e5-ddc7c21dedd7",
+        "apim-request-id": "6489cda5-acb2-45b7-ab5d-e8c2d6aab4b1",
         "Content-Length": "169",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Dec 2021 04:42:58 GMT",
+        "Date": "Fri, 24 Jun 2022 00:51:46 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "237"
+        "x-envoy-upstream-service-time": "175"
       },
       "ResponseBody": {
         "error": {
           "code": "UnsupportedLocale",
           "innerError": {
-            "requestId": "197016bc-f5c7-44e6-a4e5-ddc7c21dedd7"
+            "requestId": "6489cda5-acb2-45b7-ab5d-e8c2d6aab4b1"
           },
           "message": "Locale unsupported. Supported locale includes en-US."
         }
