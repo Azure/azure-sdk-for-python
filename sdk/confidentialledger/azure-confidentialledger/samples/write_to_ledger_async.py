@@ -149,7 +149,7 @@ async def main():
                     get_entry_poller = await ledger_client.begin_get_ledger_entry(transaction_id)
                     get_entry_result = await get_entry_poller.result()
                     print(
-                        f'At transaction id {get_entry_result["entry"]["transactionId"]}, the'
+                        f'At transaction id {get_entry_result["entry"]["transactionId"]}, the '
                         f'ledger entry contains \'{get_entry_result["entry"]["contents"]}\''
                     )
                 except HttpResponseError as e:
