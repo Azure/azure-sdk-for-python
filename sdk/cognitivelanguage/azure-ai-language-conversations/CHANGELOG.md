@@ -1,12 +1,10 @@
 # Release History
 
-## 1.1.0b2 (Unreleased)
+## 1.1.0b2 (2022-07-01)
 
 ### Features Added
 * Added Azure Active Directory (AAD) authentication support
 * Added support for authoring operations with `ConversationAuthoringClient` under the `azure.ai.language.conversations.authoring` namespace.
-
-### Breaking Changes
 
 ## 1.1.0b1 (2022-05-26)
 
