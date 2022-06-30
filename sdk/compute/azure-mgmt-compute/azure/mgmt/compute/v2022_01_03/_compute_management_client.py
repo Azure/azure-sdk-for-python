@@ -86,18 +86,42 @@ class ComputeManagementClient:    # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.galleries = GalleriesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_images = GalleryImagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_image_versions = GalleryImageVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_applications = GalleryApplicationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_application_versions = GalleryApplicationVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_sharing_profile = GallerySharingProfileOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.shared_galleries = SharedGalleriesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.shared_gallery_images = SharedGalleryImagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.shared_gallery_image_versions = SharedGalleryImageVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.community_galleries = CommunityGalleriesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.community_gallery_images = CommunityGalleryImagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.community_gallery_image_versions = CommunityGalleryImageVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.galleries = GalleriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.gallery_images = GalleryImagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.gallery_image_versions = GalleryImageVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.gallery_applications = GalleryApplicationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.gallery_application_versions = GalleryApplicationVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.gallery_sharing_profile = GallerySharingProfileOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.shared_galleries = SharedGalleriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.shared_gallery_images = SharedGalleryImagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.shared_gallery_image_versions = SharedGalleryImageVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.community_galleries = CommunityGalleriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.community_gallery_images = CommunityGalleryImagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.community_gallery_image_versions = CommunityGalleryImageVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(

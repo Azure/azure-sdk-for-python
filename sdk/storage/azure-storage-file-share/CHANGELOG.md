@@ -4,6 +4,7 @@
 
 ### Features Added
 - Stable release of features from 12.9.0b1.
+- Added support for progress tracking to `upload_file()` and `download_file()` via a new optional callback, `progress_hook`.
 
 ## 12.9.0b1 (2022-06-15)
 

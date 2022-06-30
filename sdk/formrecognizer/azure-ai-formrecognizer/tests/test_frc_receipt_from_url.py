@@ -7,7 +7,7 @@
 import pytest
 import functools
 from datetime import date, time
-from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
+from devtools_testutils import recorded_by_proxy
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
 from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiVersion
@@ -23,10 +23,6 @@ class TestReceiptFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_receipt_url_transform_png(self, client):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         
         responses = []
 
@@ -64,10 +60,6 @@ class TestReceiptFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_receipt_url_include_field_elements(self, client):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         
         poller = client.begin_recognize_receipts_from_url(
             self.receipt_url_jpg,

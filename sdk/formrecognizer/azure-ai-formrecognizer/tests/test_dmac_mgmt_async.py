@@ -7,7 +7,7 @@
 import pytest
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import set_custom_default_matcher
+from devtools_testutils import set_bodiless_matcher, set_custom_default_matcher
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
@@ -103,15 +103,11 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                     assert field["type"]
                 assert doc_type.field_confidence is None
 
-    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_mgmt_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )  
+        set_bodiless_matcher()
         
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template", description="mgmt model")

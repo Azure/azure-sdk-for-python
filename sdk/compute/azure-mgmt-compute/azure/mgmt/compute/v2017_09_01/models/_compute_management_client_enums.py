@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ResourceSkuCapacityScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceSkuCapacityScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The scale type applicable to the sku.
     """
 
@@ -19,14 +18,14 @@ class ResourceSkuCapacityScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, 
     MANUAL = "Manual"
     NONE = "None"
 
-class ResourceSkuRestrictionsReasonCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceSkuRestrictionsReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reason for restriction.
     """
 
     QUOTA_ID = "QuotaId"
     NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
 
-class ResourceSkuRestrictionsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceSkuRestrictionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of restrictions.
     """
 

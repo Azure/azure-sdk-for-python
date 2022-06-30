@@ -100,7 +100,7 @@ async def sample_train_model():
 async def sample_deploy_model():
     import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.language.conversations.authoring import ConversationAuthoringClient
+    from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 
     clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
@@ -112,7 +112,7 @@ async def sample_deploy_model():
         clu_endpoint, AzureKeyCredential(clu_key)
     )
 
-    poller = client.begin_deploy_project(
+    poller = await client.begin_deploy_project(
         project_name=project_name,
         deployment_name=deployment_name,
         deployment={"trainedModelLabel": "sample"},
