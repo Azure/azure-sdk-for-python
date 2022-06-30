@@ -973,4 +973,4 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         return self._name
 
     def __str__(self) -> str:
-        return f"ServicebusReceiver client identifier: {self.client_identifier} for entity: {self.entity_name}"
+        return f"ServicebusReceiver client identifier: {self.client_identifier} for entity: {self.entity_path}"
