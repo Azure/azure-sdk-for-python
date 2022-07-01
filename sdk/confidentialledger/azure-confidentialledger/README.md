@@ -61,6 +61,24 @@ ledger_client = ConfidentialLedgerClient(
 )
 ```
 
+Conveniently, the `ConfidentialLedgerClient` constructor will fetch the ledger TLS certificate (and write it to the specified file) if it is provided with a non-existent file. The user is responsible for removing the created file as needed.
+
+```python
+from azure.confidentialledger import ConfidentialLedgerClient
+from azure.identity import DefaultAzureCredential
+
+credential = DefaultAzureCredential()
+ledger_client = ConfidentialLedgerClient(
+    endpoint="https://my-ledger-id.confidential-ledger.azure.com",
+    credential=credential,
+    ledger_certificate_path="ledger_certificate.pem"
+)
+
+# The ledger TLS certificate is written to `ledger_certificate.pem`.
+```
+
+To make it clear that a file is being used for the ledger TLS certificate, subsequent examples will explicitly write the ledger TLS certificate to a file.
+
 ## Key concepts
 ### Ledger entries and transactions
 Every write to Azure Confidential Ledger generates an immutable ledger entry in the service. Writes, also referred to as transactions, are uniquely identified by transaction ids that increment with each write. Once written, ledger entries may be retrieved at any time.

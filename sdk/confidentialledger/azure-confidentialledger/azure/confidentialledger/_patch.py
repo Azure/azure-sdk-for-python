@@ -77,6 +77,17 @@ class ConfidentialLedgerClient(GeneratedClient):
         ledger_certificate_path: Union[bytes, str, os.PathLike],
         **kwargs: Any,
     ) -> None:
+        if os.path.isfile(ledger_certificate_path) is False:
+            # We'll need to fetch the TLS certificate.
+            identity_service_client = ConfidentialLedgerIdentityServiceClient(**kwargs)
+
+            # Ledger URIs are of the form https://<ledger id>.confidential-ledger.azure.com.
+            ledger_id = ledger_uri.replace("https://", "").split(".")[0]
+            ledger_cert = identity_service_client.get_ledger_identity(ledger_id)
+
+            with open(ledger_certificate_path, "w", encoding="utf-8") as outfile:
+                outfile.write(ledger_cert["ledgerTlsCertificate"])
+
         # For ConfidentialLedgerCertificateCredential, pass the path to the certificate down to the
         # PipelineCLient.
         if isinstance(credential, ConfidentialLedgerCertificateCredential):
@@ -91,25 +102,6 @@ class ConfidentialLedgerClient(GeneratedClient):
                 "authentication_policy",
                 policies.BearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
             )
-
-        if os.path.isfile(ledger_certificate_path) is False:
-            # We'll need to fetch the TLS certificate.
-            identity_service_uri = kwargs.pop("identity_service_uri", None)
-            identity_client_kwargs = (
-                {}
-                if identity_service_uri is None
-                else {
-                    "identity_service_uri": identity_service_uri,
-                }
-            )
-            identity_service_client = ConfidentialLedgerIdentityServiceClient(**identity_client_kwargs)
-
-            # Ledger URIs are of the form https://<ledger id>.confidential-ledger.azure.com.
-            ledger_id = ledger_uri.replace("https://", "").split(".")[0]
-            ledger_cert = identity_service_client.get_ledger_identity(ledger_id)
-
-            with open(ledger_certificate_path, "w", encoding="utf-8") as outfile:
-                outfile.write(ledger_cert["ledgerTlsCertificate"])
 
         # Customize the underlying client to use a self-signed TLS certificate.
         kwargs["connection_verify"] = kwargs.get("connection_verify", ledger_certificate_path)

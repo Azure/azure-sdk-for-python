@@ -27,7 +27,10 @@ class ConfidentialLedgerTestCase(AzureTestCase):
     def setUp(self):
         super().setUp()
 
-        self.network_certificate_path = None
+        with tempfile.NamedTemporaryFile(
+            "w", suffix=".pem", delete=False
+        ) as tls_cert_file:
+            self.network_certificate_path = tls_cert_file.name
 
         with tempfile.NamedTemporaryFile(
             "w", suffix=".pem", delete=False
@@ -54,8 +57,5 @@ class ConfidentialLedgerTestCase(AzureTestCase):
             )
         )
 
-        with tempfile.NamedTemporaryFile(
-            "w", suffix=".pem", delete=False
-        ) as tls_cert_file:
-            tls_cert_file.write(network_identity["ledgerTlsCertificate"])
-            self.network_certificate_path = tls_cert_file.name
+        with open(self.network_certificate_path, "w", encoding="utf-8") as outfile:
+            outfile.write(network_identity["ledgerTlsCertificate"])

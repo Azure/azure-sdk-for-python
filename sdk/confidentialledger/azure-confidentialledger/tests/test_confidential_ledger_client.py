@@ -1,4 +1,5 @@
 import hashlib
+import os
 import time
 
 from azure.confidentialledger import (
@@ -11,8 +12,12 @@ from .testcase import ConfidentialLedgerPreparer, ConfidentialLedgerTestCase
 
 
 class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
-    def create_confidentialledger_client(self, endpoint, ledger_id, is_aad):
-        self.set_ledger_identity(ledger_id)
+    def create_confidentialledger_client(self, endpoint, ledger_id, is_aad, fetch_tls_cert=True):
+        if fetch_tls_cert:  # If True, explicitly fetch the ledger TLS certificate.
+            self.set_ledger_identity(ledger_id)
+        else:
+            # Remove the file so the client sees it doesn't exist and creates it.
+            os.remove(self.network_certificate_path)
 
         # The ACL instance should already have the potential AAD user added as an Administrator.
         credential = self.get_credential(ConfidentialLedgerClient)
@@ -342,3 +347,22 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             assert quote["mrenclave"]
             assert quote["raw"]
             assert quote["quoteVersion"]
+
+    @ConfidentialLedgerPreparer()
+    def test_tls_cert_convenience_aad_user(self, confidentialledger_endpoint, confidentialledger_id):
+        client = self.create_confidentialledger_client(
+            confidentialledger_endpoint, confidentialledger_id, is_aad=True, fetch_tls_cert=False,
+        )
+        self.tls_cert_convenience_actions(client)
+
+    @ConfidentialLedgerPreparer()
+    def test_tls_cert_convenience_cert_user(self, confidentialledger_endpoint, confidentialledger_id):
+        client = self.create_confidentialledger_client(
+            confidentialledger_endpoint, confidentialledger_id, is_aad=False, fetch_tls_cert=False,
+        )
+        self.tls_cert_convenience_actions(client)
+
+    def tls_cert_convenience_actions(self, client):
+        # It's sufficient to use any arbitrary endpoint to test the TLS connection.
+        constitution = client.get_constitution()
+        assert constitution["script"]
