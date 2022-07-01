@@ -4,8 +4,7 @@ languages:
   - python
 products:
   - azure
-  - cognitive-services
-  - language-service
+  - azure-cognitive-services
 urlFragment: textanalytics-samples
 ---
 
