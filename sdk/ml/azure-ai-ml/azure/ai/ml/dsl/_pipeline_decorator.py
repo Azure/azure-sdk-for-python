@@ -39,8 +39,6 @@ def pipeline(
     display_name: str = None,
     description: str = None,
     experiment_name: str = None,
-    default_compute: str = None,
-    default_datastore: str = None,
     tags: Dict[str, str] = None,
     continue_on_step_failure: bool = None,
     **kwargs,
@@ -84,10 +82,6 @@ def pipeline(
     :type description: str
     :param experiment_name: Name of the experiment the job will be created under, if None is provided, experiment will be set to current directory.
     :type experiment_name: str
-    :param default_compute: The compute target of the built pipeline.
-    :type default_compute: str
-    :param default_datastore: The default datastore of pipeline.
-    :type default_datastore: str
     :param tags: The tags of pipeline component.
     :type tags: dict[str, str]
     :param continue_on_step_failure: Flag when set, continue pipeline execution if a step fails.
@@ -97,10 +91,13 @@ def pipeline(
     """
 
     def pipeline_decorator(func: _TFunc) -> _TFunc:
-        # Support both compute and default_compute target, but compute will have higher priority
+        # compute variable names changed from default_compute_targe -> compute -> default_compute -> none
+        # to support legacy usage, we support them with priority.
         compute = kwargs.get("compute", None)
         default_compute_target = kwargs.get("default_compute_target", None)
-        actual_compute = default_compute or compute or default_compute_target
+        actual_compute = kwargs.get("default_compute", None) or compute or default_compute_target
+
+        default_datastore = kwargs.get("default_datastore", None)
         force_rerun = kwargs.get("force_rerun", None)
 
         @wraps(func)
@@ -115,7 +112,7 @@ def pipeline(
                 func=func,
                 name=name,
                 version=version,
-                display_name=display_name if display_name else func.__name__,
+                display_name=display_name,
                 description=description,
                 compute=actual_compute,
                 default_datastore=default_datastore,

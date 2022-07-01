@@ -41,6 +41,8 @@ from azure.ai.ml.automl import (
     ImageClassificationSearchSpace,
     ImageObjectDetectionSearchSpace,
 )
+from azure.ai.ml import load_job
+
 
 
 @pytest.fixture(autouse=True)
@@ -263,7 +265,7 @@ def _get_rest_automl_job(automl_task, name, compute_id):
 @pytest.fixture
 def loaded_image_classification_job(mock_machinelearning_client: OperationScope) -> AutoMLJob:
     test_schema_path = Path("./tests/test_configs/automl_job/automl_image_classification_job_mock.yaml")
-    job = Job.load(test_schema_path)
+    job = load_job(test_schema_path)
     mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
     return job
 
@@ -271,7 +273,7 @@ def loaded_image_classification_job(mock_machinelearning_client: OperationScope)
 @pytest.fixture
 def loaded_image_classification_multilabel_job(mock_machinelearning_client: OperationScope) -> AutoMLJob:
     test_schema_path = Path("./tests/test_configs/automl_job/automl_image_classification_multilabel_job_mock.yaml")
-    job = Job.load(test_schema_path)
+    job = load_job(test_schema_path)
     mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
     return job
 
@@ -279,7 +281,7 @@ def loaded_image_classification_multilabel_job(mock_machinelearning_client: Oper
 @pytest.fixture
 def loaded_image_object_detection_job(mock_machinelearning_client: OperationScope) -> AutoMLJob:
     test_schema_path = Path("./tests/test_configs/automl_job/automl_image_object_detection_job_mock.yaml")
-    job = Job.load(test_schema_path)
+    job = load_job(test_schema_path)
     mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
     return job
 
@@ -287,7 +289,7 @@ def loaded_image_object_detection_job(mock_machinelearning_client: OperationScop
 @pytest.fixture
 def loaded_image_instance_segmentation_job(mock_machinelearning_client: OperationScope) -> AutoMLJob:
     test_schema_path = Path("./tests/test_configs/automl_job/automl_image_instance_segmentation_job_mock.yaml")
-    job = Job.load(test_schema_path)
+    job = load_job(test_schema_path)
     mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
     return job
 

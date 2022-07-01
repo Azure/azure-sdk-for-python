@@ -22,7 +22,7 @@ outputs:
 
 task:
   type: function
-  code: ./src
+  code: ../python
   entry_script: score.py
   args: >- # optional
     --label ${{inputs.label}}

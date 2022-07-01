@@ -4,7 +4,7 @@ from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities import CommandJob
 from azure.ai.ml.entities._inputs_outputs import Input
 from pathlib import Path
-from azure.ai.ml.entities import Job
+from azure.ai.ml import load_job
 from marshmallow.exceptions import ValidationError
 import yaml
 import pytest
@@ -94,7 +94,7 @@ class TestCommandJob:
         code = cfg["code"]
         input_path = cfg["inputs"]["test1"]["path"]
 
-        internal_representation: CommandJob = Job.load(path=test_path)
+        internal_representation: CommandJob = load_job(path=test_path)
 
         # anonymous environments are created with name CliV2AnonymousEnvironment and a guid as the version
         assert internal_representation.environment.name != envName

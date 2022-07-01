@@ -7,6 +7,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import AzureMachineLea
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml.constants import REGISTRY_ASSET_ID
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import TemporaryDataReferenceRequestDto
+from azure.core.exceptions import HttpResponseError
 
 module_logger = logging.getLogger(__name__)
 
@@ -16,12 +17,12 @@ MFE_PATH_PREFIX = "mferp/managementfrontend"
 def _get_registry_discovery_uri(
     service_client_registry_discovery_client: ServiceClientRegistryDiscovery, registry_name: str
 ) -> str:
-    reponse = (
+    response = (
         service_client_registry_discovery_client.registry_management_non_workspace.registry_management_non_workspace(
             registry_name
         )
     )
-    return f"{reponse.primary_region_resource_provider_uri}{MFE_PATH_PREFIX}"
+    return f"{response.primary_region_resource_provider_uri}{MFE_PATH_PREFIX}"
 
 
 def get_registry_service_client(
@@ -42,16 +43,20 @@ def get_registry_service_client(
 
 
 def get_sas_uri_for_registry_asset(service_client, name, version, resource_group, registry, body) -> str:
-    res = service_client.temporary_data_references.create_or_get_temporary_data_reference(
-        name=name,
-        version=version,
-        resource_group_name=resource_group,
-        registry_name=registry,
-        body=body,
-    )
-    sas_uri = res.blob_reference_for_consumption.credential["sasUri"]
-    blob_uri = res.blob_reference_for_consumption.blob_uri
-    return sas_uri, blob_uri
+    sas_uri = None
+    try:
+        res = service_client.temporary_data_references.create_or_get_temporary_data_reference(
+            name=name,
+            version=version,
+            resource_group_name=resource_group,
+            registry_name=registry,
+            body=body,
+        )
+        sas_uri = res.blob_reference_for_consumption.credential["sasUri"]
+    except HttpResponseError as e:
+        if e.status_code == 400:
+            module_logger.debug("Skipping file upload, reason:  %s", str(e.reason))
+    return sas_uri
 
 
 def get_asset_body_for_registry_storage(

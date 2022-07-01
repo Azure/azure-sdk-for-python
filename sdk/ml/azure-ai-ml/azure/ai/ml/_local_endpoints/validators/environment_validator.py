@@ -12,8 +12,8 @@ from azure.ai.ml.entities._assets.environment import BuildContext, Environment
 from azure.ai.ml._local_endpoints.errors import RequiredLocalArtifactsNotFoundError
 from azure.core.exceptions import AzureError
 
-from azure.ai.ml._operations.environment_operations import EnvironmentOperations
-from azure.ai.ml._artifacts._artifact_utilities import download_artifact_from_blob_url
+from azure.ai.ml.operations._environment_operations import EnvironmentOperations
+from azure.ai.ml._artifacts._artifact_utilities import download_artifact_from_storage_url
 
 from azure.ai.ml._utils._arm_id_utils import parse_name_version
 from azure.ai.ml._utils.utils import convert_ordered_dict_to_yaml_str, is_url
@@ -77,7 +77,7 @@ class EnvironmentValidator:
         :type return: Iterable[str]
         """
         if environment_asset.build and environment_asset.build.path and is_url(environment_asset.build.path):
-            environment_build_directory = download_artifact_from_blob_url(
+            environment_build_directory = download_artifact_from_storage_url(
                 blob_url=environment_asset.build.path,
                 destination=download_path,
                 datastore_operation=environment_operations._datastore_operation,

@@ -140,29 +140,6 @@ class Compute(Resource, RestTranslatableMixin):
         return ComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod
-    def load(
-        cls,
-        path: Union[PathLike, str],
-        params_override: list = None,
-        **kwargs,
-    ) -> "Compute":
-        """Construct a compute object from a yaml file.
-
-        :param path: Path to a local file as the source.
-        :type path: str
-        :param params_override: Fields to overwrite on top of the yaml file. Format is [{"field1": "value1"}, {"field2": "value2"}]
-        :type params_override: list
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
-
-        :return: Loaded compute object.
-        :rtype: Compute
-        """
-
-        data = load_yaml(path)
-        return cls._load(data, path, params_override, **kwargs)
-
-    @classmethod
     def _load(
         cls,
         data: Dict = None,

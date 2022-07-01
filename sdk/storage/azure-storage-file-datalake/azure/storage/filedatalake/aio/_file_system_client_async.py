@@ -20,7 +20,7 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import ContainerClient
 from .._serialize import get_api_version
-from .._deserialize import _decode_error, process_storage_error, is_file_path
+from .._deserialize import process_storage_error, is_file_path
 from .._generated.models import ListBlobsIncludeItem
 
 from ._data_lake_file_client_async import DataLakeFileClient
@@ -246,9 +246,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         renamed_file_system = FileSystemClient(
                 "{}://{}".format(self.scheme, self.primary_hostname), file_system_name=new_name,
                 credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
-                _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
-                require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-                key_resolver_function=self.key_resolver_function)
+                _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts)
         return renamed_file_system
 
     @distributed_trace_async
@@ -765,62 +763,6 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         return file_client
 
     @distributed_trace_async
-    async def delete_files(
-        self,
-        *files: str,
-        **kwargs) -> List[Optional[HttpResponseError]]:
-        """Marks the specified files or empty directories for deletion.
-
-        The files/empty directories are later deleted during garbage collection.
-
-        If a delete retention policy is enabled for the service, then this operation soft deletes the
-        files/empty directories and retains the files or snapshots for specified number of days.
-        After specified number of days, files' data is removed from the service during garbage collection.
-        Soft deleted files/empty directories are accessible through :func:`list_deleted_paths()`.
-
-        :param str files:
-            The files/empty directories to delete. This can be a single file/empty directory, or multiple values can
-            be supplied, where each value is the name of the file/directory (str).
-
-        :keyword ~datetime.datetime if_modified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only
-            if the resource has been modified since the specified time.
-        :keyword ~datetime.datetime if_unmodified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only if
-            the resource has not been modified since the specified date/time.
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
-        :return: A list containing None for successful operations and
-        HttpResponseError objects for unsuccessful operations.
-        :rtype: List[Optional[HttpResponseError]]
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/datalake_samples_file_system_async.py
-                :start-after: [START batch_delete_files_or_empty_directories]
-                :end-before: [END batch_delete_files_or_empty_directories]
-                :language: python
-                :dedent: 4
-                :caption: Deleting multiple files or empty directories.
-        """
-        response = await self._container_client.delete_blobs(raise_on_any_failure=False, *files, **kwargs)
-
-        errors = []
-        async for result in response:
-            if not 200 <= result.status_code < 300:
-                errors.append(_decode_error(result, result.reason))
-            else:
-                errors.append(None)
-
-        return errors
-
-    @distributed_trace_async
     async def _undelete_path(self, deleted_path_name, deletion_id, **kwargs):
         # type: (str, str, **Any) -> Union[DataLakeDirectoryClient, DataLakeFileClient]
         """Restores soft-deleted path.
@@ -901,11 +843,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                                        api_version=self.api_version,
                                        _configuration=self._config, _pipeline=_pipeline,
                                        _hosts=self._hosts,
-                                       require_encryption=self.require_encryption,
-                                       key_encryption_key=self.key_encryption_key,
-                                       key_resolver_function=self.key_resolver_function,
-                                       loop=self._loop
-                                       )
+                                       loop=self._loop)
 
     def get_file_client(self, file_path  # type: Union[FileProperties, str]
                         ):
@@ -941,10 +879,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
             api_version=self.api_version,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
-            require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function, loop=self._loop)
+            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline, loop=self._loop)
 
     @distributed_trace
     def list_deleted_paths(self, **kwargs):

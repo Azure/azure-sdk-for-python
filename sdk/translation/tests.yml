@@ -9,6 +9,7 @@ stages:
       CloudConfig:
         Public:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+          Location: 'westus3'
           MatrixReplace:
             - TestSamples=.*/true
         Int:

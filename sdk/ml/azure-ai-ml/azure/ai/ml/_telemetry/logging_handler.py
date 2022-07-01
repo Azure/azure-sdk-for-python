@@ -157,7 +157,7 @@ class AppInsightsLoggingHandler(logging.Handler):
             instrumentation_key, self._create_asynchronous_channel(telemetry_context)
         )
 
-        #  Configuring a synchronous client and should be only used in critial scenarios
+        #  Configuring a synchronous client and should be only used in critical scenarios
         self._synchronous_client = TelemetryClient(
             instrumentation_key, self._create_synchronous_channel(telemetry_context)
         )

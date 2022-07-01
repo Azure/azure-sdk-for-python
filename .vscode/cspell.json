@@ -157,6 +157,7 @@
     "delenv",
     "dependened",
     "deserialization",
+    "disablecov",
     "docfx",
     "dotenv",
     "dpkg",
@@ -393,7 +394,9 @@
         "FNNHHJT",
         "Zwiz",
         "nypg",
-        "PBOF"
+        "PBOF",
+        "tzutc",
+        "gettz"
       ]
     },
     {

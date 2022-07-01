@@ -8,19 +8,20 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "37",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "4a13ade5-5eb2-11ec-a7dc-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
-      "RequestBody": "{\u0022source\u0022: \u0022b\u0027\\\\xff\\\\xd8\\\\xff\\\\xe0\u0027\u0022}",
+      "RequestBody": {
+        "source": "b\u0027\\xff\\xd8\\xff\\xe0\u0027"
+      },
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "31ae6eb1-29b5-400c-9c0f-d485a85acb1f",
+        "apim-request-id": "fdb8dc32-bcd9-413d-a832-1e45a2823554",
         "Content-Length": "95",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 20:53:56 GMT",
+        "Date": "Fri, 24 Jun 2022 00:08:45 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "14"
+        "x-envoy-upstream-service-time": "4"
       },
       "ResponseBody": {
         "error": {

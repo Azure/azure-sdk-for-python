@@ -14,7 +14,7 @@ from azure.ai.ml.entities._job.pipeline._io import PipelineOutputBase, PipelineO
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities._component._pipeline_component import _PipelineComponent
 from azure.ai.ml.entities._builders import BaseNode
-from azure.ai.ml._utils.utils import is_valid_node_name
+from azure.ai.ml._utils.utils import is_valid_node_name, parse_args_description_from_docstring
 
 # Currently we only support single layer pipeline, we may increase this when we supports multiple layer pipeline(
 # nested pipeline, aka sub graph).
@@ -124,6 +124,10 @@ class PipelineComponentBuilder:
         tags=None,
     ):
         self.func = func
+        name = name if name else func.__name__
+        display_name = display_name if display_name else name
+        description = description if description else func.__doc__
+        self._args_description = parse_args_description_from_docstring(func.__doc__)
         if name is None:
             name = func.__name__
         if version is None:
@@ -142,6 +146,9 @@ class PipelineComponentBuilder:
                     "type": self.DEFAULT_DATA_TYPE_MAPPING.get(default_type, default_type),
                     "default": p.default,
                 }
+            # add arg description
+            if p.name in self._args_description:
+                self.inputs[p.name]["description"] = self._args_description[p.name]
         # A dict of outputs name to OutputDefinition.
         self.outputs = {}
         self.pipeline_component = _PipelineComponent(
@@ -167,8 +174,8 @@ class PipelineComponentBuilder:
     def add_node(self, node: Union[BaseNode, AutoMLJob]):
         """Add node to pipeline builder.
 
-        :param node: dsl component object.
-        :type node: azure.ai.ml.dsl.Component
+        :param node: A pipeline node.
+        :type node: Union[BaseNode, AutoMLJob]
         """
         self.nodes.append(node)
 
@@ -196,11 +203,11 @@ class PipelineComponentBuilder:
         """Validate if dsl.pipeline returns valid outputs and set output binding.
 
         :param outputs: Outputs of pipeline
-        :type outputs: Mapping[str, azure.ai.ml.dsl._component.Output]
+        :type outputs: Mapping[str, azure.ai.ml.Output]
         """
         error_msg = (
             "The return type of dsl.pipeline decorated function should be a mapping from output name to "
-            "azure.ai.ml.dsl.component.Output with owner."
+            "azure.ai.ml.Output with owner."
         )
 
         if not isinstance(outputs, dict):
@@ -210,7 +217,9 @@ class PipelineComponentBuilder:
             if not isinstance(key, str) or not isinstance(value, PipelineOutputBase) or value._owner is None:
                 raise UserErrorException(message=error_msg, no_personal_data_message=error_msg)
 
-            pipeline_output = PipelineOutput(name=key, data=None, meta=None, owner="pipeline")
+            pipeline_output = PipelineOutput(
+                name=key, data=None, meta=None, owner="pipeline", description=self._args_description.get(key, None)
+            )
             # set bound component's output to data binding
             value._owner.outputs[value._name]._data = pipeline_output
             output_dict[key] = pipeline_output
@@ -244,7 +253,7 @@ class PipelineComponentBuilder:
 
         def _get_name_or_component_name(node: Union[BaseNode, AutoMLJob]):
             if isinstance(node, AutoMLJob):
-                return node.name
+                return node.name or _sanitize_python_variable_name(node.__class__.__name__)
             else:
                 return node.name or node._get_component_name()
 
