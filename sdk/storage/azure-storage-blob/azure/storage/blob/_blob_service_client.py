@@ -7,34 +7,33 @@
 import functools
 import warnings
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List,
-    TYPE_CHECKING,
-    TypeVar)
+    Any, Dict, List, Optional, TypeVar, Union,
+    TYPE_CHECKING
+)
+from urllib.parse import urlparse
 
-
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse # type: ignore
-
-from azure.core.paging import ItemPaged
 from azure.core.exceptions import HttpResponseError
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 
-from ._shared.models import LocationMode
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
+from ._shared.models import LocationMode
 from ._shared.parser import _to_utc_datetime
-from ._shared.response_handlers import return_response_headers, process_storage_error, \
+from ._shared.response_handlers import (
+    return_response_headers,
+    process_storage_error,
     parse_to_internal_user_delegation_key
+)
 from ._generated import AzureBlobStorage
 from ._generated.models import StorageServiceProperties, KeyInfo
 from ._container_client import ContainerClient
 from ._blob_client import BlobClient
-from ._models import ContainerPropertiesPaged
-from ._list_blobs_helper import FilteredBlobPaged
-from ._serialize import get_api_version
 from ._deserialize import service_stats_deserialize, service_properties_deserialize
+from ._encryption import StorageEncryptionMixin
+from ._list_blobs_helper import FilteredBlobPaged
+from ._models import ContainerPropertiesPaged
+from ._serialize import get_api_version
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -55,7 +54,7 @@ if TYPE_CHECKING:
 ClassType = TypeVar("ClassType")
 
 
-class BlobServiceClient(StorageAccountHostsMixin):
+class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     """A client to interact with the Blob Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -137,6 +136,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self.configure_encryption(kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
