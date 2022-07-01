@@ -54,7 +54,6 @@ To use an [Azure Active Directory (AAD) token credential][maps_authentication_aa
 provide an instance of the desired credential type obtained from the
 [azure-identity][azure_identity_credentials] library.
 
-
 Authentication with AAD requires some initial setup:
 
 - [Install azure-identity][install_azure_identity]
@@ -167,6 +166,6 @@ If you encounter any bugs or have suggestions, please file an issue in the [Issu
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
-[register_aad_app]: https://docs.microsoft.com/en-us/powershell/module/Az.Resources/New-AzADApplication?view=azps-8.0.0
-[maps_authentication_aad]: https://docs.microsoft.com/en-us/azure/azure-maps/how-to-manage-authentication
+[register_aad_app]: https://docs.microsoft.com/powershell/module/Az.Resources/New-AzADApplication?view=azps-8.0.0
+[maps_authentication_aad]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication
 [create_new_application_registration]: https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/applicationsListBlade/quickStartType/AspNetWebAppQuickstartPage/sourceType/docs

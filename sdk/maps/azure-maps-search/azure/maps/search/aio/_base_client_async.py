@@ -19,12 +19,17 @@ def _authentication_policy(credential):
         authentication_policy = AzureKeyCredentialPolicy(
             name="subscription-key", credential=credential
         )
+    elif credential is not None and not hasattr(credential, "get_token"):
+        raise TypeError(
+            "Unsupported credential: {}. Use an instance of AzureKeyCredential "
+            "or a token credential from azure.identity".format(type(credential))
+        )
     return authentication_policy
 
 class AsyncSearchClientBase:
     def __init__(
         self,
-        credential, #type: Union[AzureKeyCredential, "AsyncTokenCredential"]
+        credential, #type: Union[AzureKeyCredential, AsyncTokenCredential]
         **kwargs #type: Any
     ):
         # type: (...) -> None
