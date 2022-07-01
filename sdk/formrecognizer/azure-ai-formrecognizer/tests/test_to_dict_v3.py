@@ -1929,7 +1929,7 @@ class TestToDict(FormRecognizerTest):
         assert d == final
 
     def test_document_model_info_to_dict(self):
-        model = _models.DocumentModelInfo(
+        model = _models.DocumentModelSummary(
             description="my description",
             created_on="1994-11-05T13:15:30Z",
             model_id="prebuilt-invoice",

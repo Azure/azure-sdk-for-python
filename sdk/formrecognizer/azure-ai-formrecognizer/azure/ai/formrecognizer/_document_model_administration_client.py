@@ -29,7 +29,7 @@ from ._document_analysis_client import DocumentAnalysisClient
 from ._models import (
     DocumentBuildMode,
     DocumentModel,
-    DocumentModelInfo,
+    DocumentModelSummary,
     ModelOperation,
     ModelOperationInfo,
     ResourceInfo,
@@ -399,12 +399,12 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
     @distributed_trace
     def list_models(self, **kwargs):
-        # type: (Any) -> ItemPaged[DocumentModelInfo]
+        # type: (Any) -> ItemPaged[DocumentModelSummary]
         """List information for each model, including its model ID,
         description, and when it was created.
 
-        :return: Pageable of DocumentModelInfo.
-        :rtype: ~azure.core.paging.ItemPaged[DocumentModelInfo]
+        :return: Pageable of DocumentModelSummary.
+        :rtype: ~azure.core.paging.ItemPaged[DocumentModelSummary]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -420,7 +420,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         return self._client.get_models(  # type: ignore
             cls=kwargs.pop(
                 "cls",
-                lambda objs: [DocumentModelInfo._from_generated(x) for x in objs],
+                lambda objs: [DocumentModelSummary._from_generated(x) for x in objs],
             ),
             **kwargs
         )

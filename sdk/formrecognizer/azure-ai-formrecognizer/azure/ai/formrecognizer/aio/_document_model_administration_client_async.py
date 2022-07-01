@@ -28,7 +28,7 @@ from .._polling import DocumentModelAdministrationPolling
 from .._models import (
     DocumentBuildMode,
     DocumentModel,
-    DocumentModelInfo,
+    DocumentModelSummary,
     ModelOperation,
     ModelOperationInfo,
     ResourceInfo,
@@ -397,12 +397,12 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         return await self._client.delete_model(model_id=model_id, **kwargs)
 
     @distributed_trace
-    def list_models(self, **kwargs: Any) -> AsyncItemPaged[DocumentModelInfo]:
+    def list_models(self, **kwargs: Any) -> AsyncItemPaged[DocumentModelSummary]:
         """List information for each model, including its model ID,
         description, and when it was created.
 
-        :return: Pageable of DocumentModelInfo.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[DocumentModelInfo]
+        :return: Pageable of DocumentModelSummary.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[DocumentModelSummary]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -418,7 +418,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         return self._client.get_models(  # type: ignore
             cls=kwargs.pop(
                 "cls",
-                lambda objs: [DocumentModelInfo._from_generated(x) for x in objs],
+                lambda objs: [DocumentModelSummary._from_generated(x) for x in objs],
             ),
             **kwargs
         )

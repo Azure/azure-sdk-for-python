@@ -3957,7 +3957,7 @@ class AnalyzeResult(object):  # pylint: disable=too-many-instance-attributes
         )
 
 
-class DocumentModelInfo(object):
+class DocumentModelSummary(object):
     """Document model information including the model ID,
     its description, and when the model was created.
 
@@ -3986,7 +3986,7 @@ class DocumentModelInfo(object):
 
     def __repr__(self):
         return (
-            "DocumentModelInfo(model_id={}, description={}, created_on={}, api_version={}, tags={})".format(
+            "DocumentModelSummary(model_id={}, description={}, created_on={}, api_version={}, tags={})".format(
                 self.model_id,
                 self.description,
                 self.created_on,
@@ -4007,7 +4007,7 @@ class DocumentModelInfo(object):
 
     def to_dict(self):
         # type: () -> dict
-        """Returns a dict representation of DocumentModelInfo.
+        """Returns a dict representation of DocumentModelSummary.
 
         :return: dict
         :rtype: dict
@@ -4022,12 +4022,12 @@ class DocumentModelInfo(object):
 
     @classmethod
     def from_dict(cls, data):
-        # type: (dict) -> DocumentModelInfo
-        """Converts a dict in the shape of a DocumentModelInfo to the model itself.
+        # type: (dict) -> DocumentModelSummary
+        """Converts a dict in the shape of a DocumentModelSummary to the model itself.
 
-        :param dict data: A dictionary in the shape of DocumentModelInfo.
-        :return: DocumentModelInfo
-        :rtype: DocumentModelInfo
+        :param dict data: A dictionary in the shape of DocumentModelSummary.
+        :return: DocumentModelSummary
+        :rtype: DocumentModelSummary
         """
         return cls(
             model_id=data.get("model_id", None),
@@ -4038,7 +4038,7 @@ class DocumentModelInfo(object):
         )
 
 
-class DocumentModel(DocumentModelInfo):
+class DocumentModel(DocumentModelSummary):
     """Document model information. Includes the doc types that the model can analyze.
 
     :ivar str model_id: Unique model id.
