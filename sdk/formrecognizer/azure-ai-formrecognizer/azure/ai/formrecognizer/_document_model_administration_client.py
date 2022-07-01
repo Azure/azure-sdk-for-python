@@ -426,7 +426,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def get_account_info(self, **kwargs):
+    def get_resource_info(self, **kwargs):
         # type: (Any) -> AccountInfo
         """Get information about the models under the Form Recognizer resource.
 
@@ -437,8 +437,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/sample_manage_models.py
-                :start-after: [START get_account_info]
-                :end-before: [END get_account_info]
+                :start-after: [START get_resource_info]
+                :end-before: [END get_resource_info]
                 :language: python
                 :dedent: 4
                 :caption: Get model counts and limits under the Form Recognizer resource.

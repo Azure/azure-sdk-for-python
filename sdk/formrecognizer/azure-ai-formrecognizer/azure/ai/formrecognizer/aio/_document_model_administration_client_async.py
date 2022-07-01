@@ -424,7 +424,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         )
 
     @distributed_trace_async
-    async def get_account_info(self, **kwargs: Any) -> AccountInfo:
+    async def get_resource_info(self, **kwargs: Any) -> AccountInfo:
         """Get information about the models under the Form Recognizer resource.
 
         :return: Summary of models under the resource - model count and limit.
@@ -434,8 +434,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_manage_models_async.py
-                :start-after: [START get_account_info_async]
-                :end-before: [END get_account_info_async]
+                :start-after: [START get_resource_info_async]
+                :end-before: [END get_resource_info_async]
                 :language: python
                 :dedent: 4
                 :caption: Get model counts and limits under the Form Recognizer resource.
