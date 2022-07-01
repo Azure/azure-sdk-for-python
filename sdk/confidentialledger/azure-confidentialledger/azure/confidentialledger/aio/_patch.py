@@ -70,7 +70,7 @@ class ConfidentialLedgerClient(GeneratedClient):
 
             # Ledger URIs are of the form https://<ledger id>.confidential-ledger.azure.com.
             ledger_id = ledger_uri.replace("https://", "").split(".")[0]
-            ledger_cert = identity_service_client.get_ledger_identity(ledger_id)
+            ledger_cert = identity_service_client.get_ledger_identity(ledger_id, **kwargs)
 
             with open(ledger_certificate_path, "w", encoding="utf-8") as outfile:
                 outfile.write(ledger_cert["ledgerTlsCertificate"])
