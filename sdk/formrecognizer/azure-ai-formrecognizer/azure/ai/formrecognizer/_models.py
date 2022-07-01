@@ -3958,7 +3958,7 @@ class AnalyzeResult(object):  # pylint: disable=too-many-instance-attributes
 
 
 class DocumentModelSummary(object):
-    """Document model information including the model ID,
+    """A summary of document model information including the model ID,
     its description, and when the model was created.
 
     :ivar str model_id: Unique model id.
