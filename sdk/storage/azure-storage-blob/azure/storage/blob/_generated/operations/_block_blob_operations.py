@@ -7,15 +7,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union
+from typing import TYPE_CHECKING
 
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    map_error,
-)
+from msrest import Serializer
+
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -23,624 +19,595 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._serialization import Serializer
 from .._vendor import _convert_request, _format_url_section
 
-T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union
+    T = TypeVar('T')
+    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-
+# fmt: off
 
 def build_upload_request(
-    url: str,
-    *,
-    content_length: int,
-    content: IO,
-    timeout: Optional[int] = None,
-    transactional_content_md5: Optional[bytes] = None,
-    blob_content_type: Optional[str] = None,
-    blob_content_encoding: Optional[str] = None,
-    blob_content_language: Optional[str] = None,
-    blob_content_md5: Optional[bytes] = None,
-    blob_cache_control: Optional[str] = None,
-    metadata: Optional[Dict[str, str]] = None,
-    lease_id: Optional[str] = None,
-    blob_content_disposition: Optional[str] = None,
-    encryption_key: Optional[str] = None,
-    encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
-    encryption_scope: Optional[str] = None,
-    tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
-    if_modified_since: Optional[datetime.datetime] = None,
-    if_unmodified_since: Optional[datetime.datetime] = None,
-    if_match: Optional[str] = None,
-    if_none_match: Optional[str] = None,
-    if_tags: Optional[str] = None,
-    request_id_parameter: Optional[str] = None,
-    blob_tags_string: Optional[str] = None,
-    immutability_policy_expiry: Optional[datetime.datetime] = None,
-    immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
-    legal_hold: Optional[bool] = None,
-    **kwargs: Any
-) -> HttpRequest:
+    url,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    blob_type = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
-    accept = _headers.pop("Accept", "application/xml")
+    blob_type = kwargs.pop('blob_type', _headers.pop('x-ms-blob-type', "BlockBlob"))  # type: str
+    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+    content_length = kwargs.pop('content_length')  # type: int
+    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
+    transactional_content_md5 = kwargs.pop('transactional_content_md5', _headers.pop('Content-MD5', None))  # type: Optional[bytearray]
+    blob_content_type = kwargs.pop('blob_content_type', _headers.pop('x-ms-blob-content-type', None))  # type: Optional[str]
+    blob_content_encoding = kwargs.pop('blob_content_encoding', _headers.pop('x-ms-blob-content-encoding', None))  # type: Optional[str]
+    blob_content_language = kwargs.pop('blob_content_language', _headers.pop('x-ms-blob-content-language', None))  # type: Optional[str]
+    blob_content_md5 = kwargs.pop('blob_content_md5', _headers.pop('x-ms-blob-content-md5', None))  # type: Optional[bytearray]
+    blob_cache_control = kwargs.pop('blob_cache_control', _headers.pop('x-ms-blob-cache-control', None))  # type: Optional[str]
+    metadata = kwargs.pop('metadata', _headers.pop('x-ms-meta', None))  # type: Optional[Dict[str, str]]
+    lease_id = kwargs.pop('lease_id', _headers.pop('x-ms-lease-id', None))  # type: Optional[str]
+    blob_content_disposition = kwargs.pop('blob_content_disposition', _headers.pop('x-ms-blob-content-disposition', None))  # type: Optional[str]
+    encryption_key = kwargs.pop('encryption_key', _headers.pop('x-ms-encryption-key', None))  # type: Optional[str]
+    encryption_key_sha256 = kwargs.pop('encryption_key_sha256', _headers.pop('x-ms-encryption-key-sha256', None))  # type: Optional[str]
+    encryption_algorithm = kwargs.pop('encryption_algorithm', _headers.pop('x-ms-encryption-algorithm', None))  # type: Optional[Union[str, "_models.EncryptionAlgorithmType"]]
+    encryption_scope = kwargs.pop('encryption_scope', _headers.pop('x-ms-encryption-scope', None))  # type: Optional[str]
+    tier = kwargs.pop('tier', _headers.pop('x-ms-access-tier', None))  # type: Optional[Union[str, "_models.AccessTierOptional"]]
+    if_modified_since = kwargs.pop('if_modified_since', _headers.pop('If-Modified-Since', None))  # type: Optional[datetime.datetime]
+    if_unmodified_since = kwargs.pop('if_unmodified_since', _headers.pop('If-Unmodified-Since', None))  # type: Optional[datetime.datetime]
+    if_match = kwargs.pop('if_match', _headers.pop('If-Match', None))  # type: Optional[str]
+    if_none_match = kwargs.pop('if_none_match', _headers.pop('If-None-Match', None))  # type: Optional[str]
+    if_tags = kwargs.pop('if_tags', _headers.pop('x-ms-if-tags', None))  # type: Optional[str]
+    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
+    blob_tags_string = kwargs.pop('blob_tags_string', _headers.pop('x-ms-tags', None))  # type: Optional[str]
+    immutability_policy_expiry = kwargs.pop('immutability_policy_expiry', _headers.pop('x-ms-immutability-policy-until-date', None))  # type: Optional[datetime.datetime]
+    immutability_policy_mode = kwargs.pop('immutability_policy_mode', _headers.pop('x-ms-immutability-policy-mode', None))  # type: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]]
+    legal_hold = kwargs.pop('legal_hold', _headers.pop('x-ms-legal-hold', None))  # type: Optional[bool]
+    accept = _headers.pop('Accept', "application/xml")
 
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    _headers["x-ms-blob-type"] = _SERIALIZER.header("blob_type", blob_type, "str")
+    _headers['x-ms-blob-type'] = _SERIALIZER.header("blob_type", blob_type, 'str')
     if transactional_content_md5 is not None:
-        _headers["Content-MD5"] = _SERIALIZER.header(
-            "transactional_content_md5", transactional_content_md5, "bytearray"
-        )
-    _headers["Content-Length"] = _SERIALIZER.header("content_length", content_length, "int")
+        _headers['Content-MD5'] = _SERIALIZER.header("transactional_content_md5", transactional_content_md5, 'bytearray')
+    _headers['Content-Length'] = _SERIALIZER.header("content_length", content_length, 'long')
     if blob_content_type is not None:
-        _headers["x-ms-blob-content-type"] = _SERIALIZER.header("blob_content_type", blob_content_type, "str")
+        _headers['x-ms-blob-content-type'] = _SERIALIZER.header("blob_content_type", blob_content_type, 'str')
     if blob_content_encoding is not None:
-        _headers["x-ms-blob-content-encoding"] = _SERIALIZER.header(
-            "blob_content_encoding", blob_content_encoding, "str"
-        )
+        _headers['x-ms-blob-content-encoding'] = _SERIALIZER.header("blob_content_encoding", blob_content_encoding, 'str')
     if blob_content_language is not None:
-        _headers["x-ms-blob-content-language"] = _SERIALIZER.header(
-            "blob_content_language", blob_content_language, "str"
-        )
+        _headers['x-ms-blob-content-language'] = _SERIALIZER.header("blob_content_language", blob_content_language, 'str')
     if blob_content_md5 is not None:
-        _headers["x-ms-blob-content-md5"] = _SERIALIZER.header("blob_content_md5", blob_content_md5, "bytearray")
+        _headers['x-ms-blob-content-md5'] = _SERIALIZER.header("blob_content_md5", blob_content_md5, 'bytearray')
     if blob_cache_control is not None:
-        _headers["x-ms-blob-cache-control"] = _SERIALIZER.header("blob_cache_control", blob_cache_control, "str")
+        _headers['x-ms-blob-cache-control'] = _SERIALIZER.header("blob_cache_control", blob_cache_control, 'str')
     if metadata is not None:
-        _headers["x-ms-meta"] = _SERIALIZER.header("metadata", metadata, "{str}")
+        _headers['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
     if lease_id is not None:
-        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+        _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if blob_content_disposition is not None:
-        _headers["x-ms-blob-content-disposition"] = _SERIALIZER.header(
-            "blob_content_disposition", blob_content_disposition, "str"
-        )
+        _headers['x-ms-blob-content-disposition'] = _SERIALIZER.header("blob_content_disposition", blob_content_disposition, 'str')
     if encryption_key is not None:
-        _headers["x-ms-encryption-key"] = _SERIALIZER.header("encryption_key", encryption_key, "str")
+        _headers['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
     if encryption_key_sha256 is not None:
-        _headers["x-ms-encryption-key-sha256"] = _SERIALIZER.header(
-            "encryption_key_sha256", encryption_key_sha256, "str"
-        )
+        _headers['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
     if encryption_algorithm is not None:
-        _headers["x-ms-encryption-algorithm"] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, "str")
+        _headers['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
     if encryption_scope is not None:
-        _headers["x-ms-encryption-scope"] = _SERIALIZER.header("encryption_scope", encryption_scope, "str")
+        _headers['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
     if tier is not None:
-        _headers["x-ms-access-tier"] = _SERIALIZER.header("tier", tier, "str")
+        _headers['x-ms-access-tier'] = _SERIALIZER.header("tier", tier, 'str')
     if if_modified_since is not None:
-        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        _headers["x-ms-if-tags"] = _SERIALIZER.header("if_tags", if_tags, "str")
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+        _headers['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
     if blob_tags_string is not None:
-        _headers["x-ms-tags"] = _SERIALIZER.header("blob_tags_string", blob_tags_string, "str")
+        _headers['x-ms-tags'] = _SERIALIZER.header("blob_tags_string", blob_tags_string, 'str')
     if immutability_policy_expiry is not None:
-        _headers["x-ms-immutability-policy-until-date"] = _SERIALIZER.header(
-            "immutability_policy_expiry", immutability_policy_expiry, "rfc-1123"
-        )
+        _headers['x-ms-immutability-policy-until-date'] = _SERIALIZER.header("immutability_policy_expiry", immutability_policy_expiry, 'rfc-1123')
     if immutability_policy_mode is not None:
-        _headers["x-ms-immutability-policy-mode"] = _SERIALIZER.header(
-            "immutability_policy_mode", immutability_policy_mode, "str"
-        )
+        _headers['x-ms-immutability-policy-mode'] = _SERIALIZER.header("immutability_policy_mode", immutability_policy_mode, 'str')
     if legal_hold is not None:
-        _headers["x-ms-legal-hold"] = _SERIALIZER.header("legal_hold", legal_hold, "bool")
+        _headers['x-ms-legal-hold'] = _SERIALIZER.header("legal_hold", legal_hold, 'bool')
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
+    return HttpRequest(
+        method="PUT",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_put_blob_from_url_request(
-    url: str,
-    *,
-    content_length: int,
-    copy_source: str,
-    timeout: Optional[int] = None,
-    transactional_content_md5: Optional[bytes] = None,
-    blob_content_type: Optional[str] = None,
-    blob_content_encoding: Optional[str] = None,
-    blob_content_language: Optional[str] = None,
-    blob_content_md5: Optional[bytes] = None,
-    blob_cache_control: Optional[str] = None,
-    metadata: Optional[Dict[str, str]] = None,
-    lease_id: Optional[str] = None,
-    blob_content_disposition: Optional[str] = None,
-    encryption_key: Optional[str] = None,
-    encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
-    encryption_scope: Optional[str] = None,
-    tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
-    if_modified_since: Optional[datetime.datetime] = None,
-    if_unmodified_since: Optional[datetime.datetime] = None,
-    if_match: Optional[str] = None,
-    if_none_match: Optional[str] = None,
-    if_tags: Optional[str] = None,
-    source_if_modified_since: Optional[datetime.datetime] = None,
-    source_if_unmodified_since: Optional[datetime.datetime] = None,
-    source_if_match: Optional[str] = None,
-    source_if_none_match: Optional[str] = None,
-    source_if_tags: Optional[str] = None,
-    request_id_parameter: Optional[str] = None,
-    source_content_md5: Optional[bytes] = None,
-    blob_tags_string: Optional[str] = None,
-    copy_source_blob_properties: Optional[bool] = None,
-    copy_source_authorization: Optional[str] = None,
-    copy_source_tags: Optional[Union[str, "_models.BlobCopySourceTags"]] = None,
-    **kwargs: Any
-) -> HttpRequest:
+    url,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    blob_type = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
-    accept = _headers.pop("Accept", "application/xml")
+    blob_type = kwargs.pop('blob_type', _headers.pop('x-ms-blob-type', "BlockBlob"))  # type: str
+    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    content_length = kwargs.pop('content_length')  # type: int
+    copy_source = kwargs.pop('copy_source')  # type: str
+    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
+    transactional_content_md5 = kwargs.pop('transactional_content_md5', _headers.pop('Content-MD5', None))  # type: Optional[bytearray]
+    blob_content_type = kwargs.pop('blob_content_type', _headers.pop('x-ms-blob-content-type', None))  # type: Optional[str]
+    blob_content_encoding = kwargs.pop('blob_content_encoding', _headers.pop('x-ms-blob-content-encoding', None))  # type: Optional[str]
+    blob_content_language = kwargs.pop('blob_content_language', _headers.pop('x-ms-blob-content-language', None))  # type: Optional[str]
+    blob_content_md5 = kwargs.pop('blob_content_md5', _headers.pop('x-ms-blob-content-md5', None))  # type: Optional[bytearray]
+    blob_cache_control = kwargs.pop('blob_cache_control', _headers.pop('x-ms-blob-cache-control', None))  # type: Optional[str]
+    metadata = kwargs.pop('metadata', _headers.pop('x-ms-meta', None))  # type: Optional[Dict[str, str]]
+    lease_id = kwargs.pop('lease_id', _headers.pop('x-ms-lease-id', None))  # type: Optional[str]
+    blob_content_disposition = kwargs.pop('blob_content_disposition', _headers.pop('x-ms-blob-content-disposition', None))  # type: Optional[str]
+    encryption_key = kwargs.pop('encryption_key', _headers.pop('x-ms-encryption-key', None))  # type: Optional[str]
+    encryption_key_sha256 = kwargs.pop('encryption_key_sha256', _headers.pop('x-ms-encryption-key-sha256', None))  # type: Optional[str]
+    encryption_algorithm = kwargs.pop('encryption_algorithm', _headers.pop('x-ms-encryption-algorithm', None))  # type: Optional[Union[str, "_models.EncryptionAlgorithmType"]]
+    encryption_scope = kwargs.pop('encryption_scope', _headers.pop('x-ms-encryption-scope', None))  # type: Optional[str]
+    tier = kwargs.pop('tier', _headers.pop('x-ms-access-tier', None))  # type: Optional[Union[str, "_models.AccessTierOptional"]]
+    if_modified_since = kwargs.pop('if_modified_since', _headers.pop('If-Modified-Since', None))  # type: Optional[datetime.datetime]
+    if_unmodified_since = kwargs.pop('if_unmodified_since', _headers.pop('If-Unmodified-Since', None))  # type: Optional[datetime.datetime]
+    if_match = kwargs.pop('if_match', _headers.pop('If-Match', None))  # type: Optional[str]
+    if_none_match = kwargs.pop('if_none_match', _headers.pop('If-None-Match', None))  # type: Optional[str]
+    if_tags = kwargs.pop('if_tags', _headers.pop('x-ms-if-tags', None))  # type: Optional[str]
+    source_if_modified_since = kwargs.pop('source_if_modified_since', _headers.pop('x-ms-source-if-modified-since', None))  # type: Optional[datetime.datetime]
+    source_if_unmodified_since = kwargs.pop('source_if_unmodified_since', _headers.pop('x-ms-source-if-unmodified-since', None))  # type: Optional[datetime.datetime]
+    source_if_match = kwargs.pop('source_if_match', _headers.pop('x-ms-source-if-match', None))  # type: Optional[str]
+    source_if_none_match = kwargs.pop('source_if_none_match', _headers.pop('x-ms-source-if-none-match', None))  # type: Optional[str]
+    source_if_tags = kwargs.pop('source_if_tags', _headers.pop('x-ms-source-if-tags', None))  # type: Optional[str]
+    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
+    source_content_md5 = kwargs.pop('source_content_md5', _headers.pop('x-ms-source-content-md5', None))  # type: Optional[bytearray]
+    blob_tags_string = kwargs.pop('blob_tags_string', _headers.pop('x-ms-tags', None))  # type: Optional[str]
+    copy_source_blob_properties = kwargs.pop('copy_source_blob_properties', _headers.pop('x-ms-copy-source-blob-properties', None))  # type: Optional[bool]
+    copy_source_authorization = kwargs.pop('copy_source_authorization', _headers.pop('x-ms-copy-source-authorization', None))  # type: Optional[str]
+    copy_source_tags = kwargs.pop('copy_source_tags', _headers.pop('x-ms-copy-source-tag-option', None))  # type: Optional[Union[str, "_models.BlobCopySourceTags"]]
+    accept = _headers.pop('Accept', "application/xml")
 
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    _headers["x-ms-blob-type"] = _SERIALIZER.header("blob_type", blob_type, "str")
+    _headers['x-ms-blob-type'] = _SERIALIZER.header("blob_type", blob_type, 'str')
     if transactional_content_md5 is not None:
-        _headers["Content-MD5"] = _SERIALIZER.header(
-            "transactional_content_md5", transactional_content_md5, "bytearray"
-        )
-    _headers["Content-Length"] = _SERIALIZER.header("content_length", content_length, "int")
+        _headers['Content-MD5'] = _SERIALIZER.header("transactional_content_md5", transactional_content_md5, 'bytearray')
+    _headers['Content-Length'] = _SERIALIZER.header("content_length", content_length, 'long')
     if blob_content_type is not None:
-        _headers["x-ms-blob-content-type"] = _SERIALIZER.header("blob_content_type", blob_content_type, "str")
+        _headers['x-ms-blob-content-type'] = _SERIALIZER.header("blob_content_type", blob_content_type, 'str')
     if blob_content_encoding is not None:
-        _headers["x-ms-blob-content-encoding"] = _SERIALIZER.header(
-            "blob_content_encoding", blob_content_encoding, "str"
-        )
+        _headers['x-ms-blob-content-encoding'] = _SERIALIZER.header("blob_content_encoding", blob_content_encoding, 'str')
     if blob_content_language is not None:
-        _headers["x-ms-blob-content-language"] = _SERIALIZER.header(
-            "blob_content_language", blob_content_language, "str"
-        )
+        _headers['x-ms-blob-content-language'] = _SERIALIZER.header("blob_content_language", blob_content_language, 'str')
     if blob_content_md5 is not None:
-        _headers["x-ms-blob-content-md5"] = _SERIALIZER.header("blob_content_md5", blob_content_md5, "bytearray")
+        _headers['x-ms-blob-content-md5'] = _SERIALIZER.header("blob_content_md5", blob_content_md5, 'bytearray')
     if blob_cache_control is not None:
-        _headers["x-ms-blob-cache-control"] = _SERIALIZER.header("blob_cache_control", blob_cache_control, "str")
+        _headers['x-ms-blob-cache-control'] = _SERIALIZER.header("blob_cache_control", blob_cache_control, 'str')
     if metadata is not None:
-        _headers["x-ms-meta"] = _SERIALIZER.header("metadata", metadata, "{str}")
+        _headers['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
     if lease_id is not None:
-        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+        _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if blob_content_disposition is not None:
-        _headers["x-ms-blob-content-disposition"] = _SERIALIZER.header(
-            "blob_content_disposition", blob_content_disposition, "str"
-        )
+        _headers['x-ms-blob-content-disposition'] = _SERIALIZER.header("blob_content_disposition", blob_content_disposition, 'str')
     if encryption_key is not None:
-        _headers["x-ms-encryption-key"] = _SERIALIZER.header("encryption_key", encryption_key, "str")
+        _headers['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
     if encryption_key_sha256 is not None:
-        _headers["x-ms-encryption-key-sha256"] = _SERIALIZER.header(
-            "encryption_key_sha256", encryption_key_sha256, "str"
-        )
+        _headers['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
     if encryption_algorithm is not None:
-        _headers["x-ms-encryption-algorithm"] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, "str")
+        _headers['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
     if encryption_scope is not None:
-        _headers["x-ms-encryption-scope"] = _SERIALIZER.header("encryption_scope", encryption_scope, "str")
+        _headers['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
     if tier is not None:
-        _headers["x-ms-access-tier"] = _SERIALIZER.header("tier", tier, "str")
+        _headers['x-ms-access-tier'] = _SERIALIZER.header("tier", tier, 'str')
     if if_modified_since is not None:
-        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        _headers["x-ms-if-tags"] = _SERIALIZER.header("if_tags", if_tags, "str")
+        _headers['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
     if source_if_modified_since is not None:
-        _headers["x-ms-source-if-modified-since"] = _SERIALIZER.header(
-            "source_if_modified_since", source_if_modified_since, "rfc-1123"
-        )
+        _headers['x-ms-source-if-modified-since'] = _SERIALIZER.header("source_if_modified_since", source_if_modified_since, 'rfc-1123')
     if source_if_unmodified_since is not None:
-        _headers["x-ms-source-if-unmodified-since"] = _SERIALIZER.header(
-            "source_if_unmodified_since", source_if_unmodified_since, "rfc-1123"
-        )
+        _headers['x-ms-source-if-unmodified-since'] = _SERIALIZER.header("source_if_unmodified_since", source_if_unmodified_since, 'rfc-1123')
     if source_if_match is not None:
-        _headers["x-ms-source-if-match"] = _SERIALIZER.header("source_if_match", source_if_match, "str")
+        _headers['x-ms-source-if-match'] = _SERIALIZER.header("source_if_match", source_if_match, 'str')
     if source_if_none_match is not None:
-        _headers["x-ms-source-if-none-match"] = _SERIALIZER.header("source_if_none_match", source_if_none_match, "str")
+        _headers['x-ms-source-if-none-match'] = _SERIALIZER.header("source_if_none_match", source_if_none_match, 'str')
     if source_if_tags is not None:
-        _headers["x-ms-source-if-tags"] = _SERIALIZER.header("source_if_tags", source_if_tags, "str")
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+        _headers['x-ms-source-if-tags'] = _SERIALIZER.header("source_if_tags", source_if_tags, 'str')
+    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
     if source_content_md5 is not None:
-        _headers["x-ms-source-content-md5"] = _SERIALIZER.header("source_content_md5", source_content_md5, "bytearray")
+        _headers['x-ms-source-content-md5'] = _SERIALIZER.header("source_content_md5", source_content_md5, 'bytearray')
     if blob_tags_string is not None:
-        _headers["x-ms-tags"] = _SERIALIZER.header("blob_tags_string", blob_tags_string, "str")
-    _headers["x-ms-copy-source"] = _SERIALIZER.header("copy_source", copy_source, "str")
+        _headers['x-ms-tags'] = _SERIALIZER.header("blob_tags_string", blob_tags_string, 'str')
+    _headers['x-ms-copy-source'] = _SERIALIZER.header("copy_source", copy_source, 'str')
     if copy_source_blob_properties is not None:
-        _headers["x-ms-copy-source-blob-properties"] = _SERIALIZER.header(
-            "copy_source_blob_properties", copy_source_blob_properties, "bool"
-        )
+        _headers['x-ms-copy-source-blob-properties'] = _SERIALIZER.header("copy_source_blob_properties", copy_source_blob_properties, 'bool')
     if copy_source_authorization is not None:
-        _headers["x-ms-copy-source-authorization"] = _SERIALIZER.header(
-            "copy_source_authorization", copy_source_authorization, "str"
-        )
+        _headers['x-ms-copy-source-authorization'] = _SERIALIZER.header("copy_source_authorization", copy_source_authorization, 'str')
     if copy_source_tags is not None:
-        _headers["x-ms-copy-source-tag-option"] = _SERIALIZER.header("copy_source_tags", copy_source_tags, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['x-ms-copy-source-tag-option'] = _SERIALIZER.header("copy_source_tags", copy_source_tags, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PUT",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_stage_block_request(
-    url: str,
-    *,
-    block_id: str,
-    content_length: int,
-    content: IO,
-    transactional_content_md5: Optional[bytes] = None,
-    transactional_content_crc64: Optional[bytes] = None,
-    timeout: Optional[int] = None,
-    lease_id: Optional[str] = None,
-    encryption_key: Optional[str] = None,
-    encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
-    encryption_scope: Optional[str] = None,
-    request_id_parameter: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
+    url,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp = kwargs.pop("comp", _params.pop("comp", "block"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
-    accept = _headers.pop("Accept", "application/xml")
+    comp = kwargs.pop('comp', _params.pop('comp', "block"))  # type: str
+    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+    block_id = kwargs.pop('block_id')  # type: str
+    content_length = kwargs.pop('content_length')  # type: int
+    transactional_content_md5 = kwargs.pop('transactional_content_md5', _headers.pop('Content-MD5', None))  # type: Optional[bytearray]
+    transactional_content_crc64 = kwargs.pop('transactional_content_crc64', _headers.pop('x-ms-content-crc64', None))  # type: Optional[bytearray]
+    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
+    lease_id = kwargs.pop('lease_id', _headers.pop('x-ms-lease-id', None))  # type: Optional[str]
+    encryption_key = kwargs.pop('encryption_key', _headers.pop('x-ms-encryption-key', None))  # type: Optional[str]
+    encryption_key_sha256 = kwargs.pop('encryption_key_sha256', _headers.pop('x-ms-encryption-key-sha256', None))  # type: Optional[str]
+    encryption_algorithm = kwargs.pop('encryption_algorithm', _headers.pop('x-ms-encryption-algorithm', None))  # type: Optional[Union[str, "_models.EncryptionAlgorithmType"]]
+    encryption_scope = kwargs.pop('encryption_scope', _headers.pop('x-ms-encryption-scope', None))  # type: Optional[str]
+    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
+    accept = _headers.pop('Accept', "application/xml")
 
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
-    _params["blockid"] = _SERIALIZER.query("block_id", block_id, "str")
+    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _params['blockid'] = _SERIALIZER.query("block_id", block_id, 'str')
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    _headers["Content-Length"] = _SERIALIZER.header("content_length", content_length, "int")
+    _headers['Content-Length'] = _SERIALIZER.header("content_length", content_length, 'long')
     if transactional_content_md5 is not None:
-        _headers["Content-MD5"] = _SERIALIZER.header(
-            "transactional_content_md5", transactional_content_md5, "bytearray"
-        )
+        _headers['Content-MD5'] = _SERIALIZER.header("transactional_content_md5", transactional_content_md5, 'bytearray')
     if transactional_content_crc64 is not None:
-        _headers["x-ms-content-crc64"] = _SERIALIZER.header(
-            "transactional_content_crc64", transactional_content_crc64, "bytearray"
-        )
+        _headers['x-ms-content-crc64'] = _SERIALIZER.header("transactional_content_crc64", transactional_content_crc64, 'bytearray')
     if lease_id is not None:
-        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+        _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if encryption_key is not None:
-        _headers["x-ms-encryption-key"] = _SERIALIZER.header("encryption_key", encryption_key, "str")
+        _headers['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
     if encryption_key_sha256 is not None:
-        _headers["x-ms-encryption-key-sha256"] = _SERIALIZER.header(
-            "encryption_key_sha256", encryption_key_sha256, "str"
-        )
+        _headers['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
     if encryption_algorithm is not None:
-        _headers["x-ms-encryption-algorithm"] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, "str")
+        _headers['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
     if encryption_scope is not None:
-        _headers["x-ms-encryption-scope"] = _SERIALIZER.header("encryption_scope", encryption_scope, "str")
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+        _headers['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
+    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
+    return HttpRequest(
+        method="PUT",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_stage_block_from_url_request(
-    url: str,
-    *,
-    block_id: str,
-    content_length: int,
-    source_url: str,
-    source_range: Optional[str] = None,
-    source_content_md5: Optional[bytes] = None,
-    source_contentcrc64: Optional[bytes] = None,
-    timeout: Optional[int] = None,
-    encryption_key: Optional[str] = None,
-    encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
-    encryption_scope: Optional[str] = None,
-    lease_id: Optional[str] = None,
-    source_if_modified_since: Optional[datetime.datetime] = None,
-    source_if_unmodified_since: Optional[datetime.datetime] = None,
-    source_if_match: Optional[str] = None,
-    source_if_none_match: Optional[str] = None,
-    request_id_parameter: Optional[str] = None,
-    copy_source_authorization: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
+    url,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp = kwargs.pop("comp", _params.pop("comp", "block"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
-    accept = _headers.pop("Accept", "application/xml")
+    comp = kwargs.pop('comp', _params.pop('comp', "block"))  # type: str
+    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    block_id = kwargs.pop('block_id')  # type: str
+    content_length = kwargs.pop('content_length')  # type: int
+    source_url = kwargs.pop('source_url')  # type: str
+    source_range = kwargs.pop('source_range', _headers.pop('x-ms-source-range', None))  # type: Optional[str]
+    source_content_md5 = kwargs.pop('source_content_md5', _headers.pop('x-ms-source-content-md5', None))  # type: Optional[bytearray]
+    source_contentcrc64 = kwargs.pop('source_contentcrc64', _headers.pop('x-ms-source-content-crc64', None))  # type: Optional[bytearray]
+    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
+    encryption_key = kwargs.pop('encryption_key', _headers.pop('x-ms-encryption-key', None))  # type: Optional[str]
+    encryption_key_sha256 = kwargs.pop('encryption_key_sha256', _headers.pop('x-ms-encryption-key-sha256', None))  # type: Optional[str]
+    encryption_algorithm = kwargs.pop('encryption_algorithm', _headers.pop('x-ms-encryption-algorithm', None))  # type: Optional[Union[str, "_models.EncryptionAlgorithmType"]]
+    encryption_scope = kwargs.pop('encryption_scope', _headers.pop('x-ms-encryption-scope', None))  # type: Optional[str]
+    lease_id = kwargs.pop('lease_id', _headers.pop('x-ms-lease-id', None))  # type: Optional[str]
+    source_if_modified_since = kwargs.pop('source_if_modified_since', _headers.pop('x-ms-source-if-modified-since', None))  # type: Optional[datetime.datetime]
+    source_if_unmodified_since = kwargs.pop('source_if_unmodified_since', _headers.pop('x-ms-source-if-unmodified-since', None))  # type: Optional[datetime.datetime]
+    source_if_match = kwargs.pop('source_if_match', _headers.pop('x-ms-source-if-match', None))  # type: Optional[str]
+    source_if_none_match = kwargs.pop('source_if_none_match', _headers.pop('x-ms-source-if-none-match', None))  # type: Optional[str]
+    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
+    copy_source_authorization = kwargs.pop('copy_source_authorization', _headers.pop('x-ms-copy-source-authorization', None))  # type: Optional[str]
+    accept = _headers.pop('Accept', "application/xml")
 
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
-    _params["blockid"] = _SERIALIZER.query("block_id", block_id, "str")
+    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _params['blockid'] = _SERIALIZER.query("block_id", block_id, 'str')
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    _headers["Content-Length"] = _SERIALIZER.header("content_length", content_length, "int")
-    _headers["x-ms-copy-source"] = _SERIALIZER.header("source_url", source_url, "str")
+    _headers['Content-Length'] = _SERIALIZER.header("content_length", content_length, 'long')
+    _headers['x-ms-copy-source'] = _SERIALIZER.header("source_url", source_url, 'str')
     if source_range is not None:
-        _headers["x-ms-source-range"] = _SERIALIZER.header("source_range", source_range, "str")
+        _headers['x-ms-source-range'] = _SERIALIZER.header("source_range", source_range, 'str')
     if source_content_md5 is not None:
-        _headers["x-ms-source-content-md5"] = _SERIALIZER.header("source_content_md5", source_content_md5, "bytearray")
+        _headers['x-ms-source-content-md5'] = _SERIALIZER.header("source_content_md5", source_content_md5, 'bytearray')
     if source_contentcrc64 is not None:
-        _headers["x-ms-source-content-crc64"] = _SERIALIZER.header(
-            "source_contentcrc64", source_contentcrc64, "bytearray"
-        )
+        _headers['x-ms-source-content-crc64'] = _SERIALIZER.header("source_contentcrc64", source_contentcrc64, 'bytearray')
     if encryption_key is not None:
-        _headers["x-ms-encryption-key"] = _SERIALIZER.header("encryption_key", encryption_key, "str")
+        _headers['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
     if encryption_key_sha256 is not None:
-        _headers["x-ms-encryption-key-sha256"] = _SERIALIZER.header(
-            "encryption_key_sha256", encryption_key_sha256, "str"
-        )
+        _headers['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
     if encryption_algorithm is not None:
-        _headers["x-ms-encryption-algorithm"] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, "str")
+        _headers['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
     if encryption_scope is not None:
-        _headers["x-ms-encryption-scope"] = _SERIALIZER.header("encryption_scope", encryption_scope, "str")
+        _headers['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
     if lease_id is not None:
-        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+        _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if source_if_modified_since is not None:
-        _headers["x-ms-source-if-modified-since"] = _SERIALIZER.header(
-            "source_if_modified_since", source_if_modified_since, "rfc-1123"
-        )
+        _headers['x-ms-source-if-modified-since'] = _SERIALIZER.header("source_if_modified_since", source_if_modified_since, 'rfc-1123')
     if source_if_unmodified_since is not None:
-        _headers["x-ms-source-if-unmodified-since"] = _SERIALIZER.header(
-            "source_if_unmodified_since", source_if_unmodified_since, "rfc-1123"
-        )
+        _headers['x-ms-source-if-unmodified-since'] = _SERIALIZER.header("source_if_unmodified_since", source_if_unmodified_since, 'rfc-1123')
     if source_if_match is not None:
-        _headers["x-ms-source-if-match"] = _SERIALIZER.header("source_if_match", source_if_match, "str")
+        _headers['x-ms-source-if-match'] = _SERIALIZER.header("source_if_match", source_if_match, 'str')
     if source_if_none_match is not None:
-        _headers["x-ms-source-if-none-match"] = _SERIALIZER.header("source_if_none_match", source_if_none_match, "str")
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+        _headers['x-ms-source-if-none-match'] = _SERIALIZER.header("source_if_none_match", source_if_none_match, 'str')
+    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
     if copy_source_authorization is not None:
-        _headers["x-ms-copy-source-authorization"] = _SERIALIZER.header(
-            "copy_source_authorization", copy_source_authorization, "str"
-        )
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['x-ms-copy-source-authorization'] = _SERIALIZER.header("copy_source_authorization", copy_source_authorization, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PUT",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_commit_block_list_request(
-    url: str,
-    *,
-    content: Any,
-    timeout: Optional[int] = None,
-    blob_cache_control: Optional[str] = None,
-    blob_content_type: Optional[str] = None,
-    blob_content_encoding: Optional[str] = None,
-    blob_content_language: Optional[str] = None,
-    blob_content_md5: Optional[bytes] = None,
-    transactional_content_md5: Optional[bytes] = None,
-    transactional_content_crc64: Optional[bytes] = None,
-    metadata: Optional[Dict[str, str]] = None,
-    lease_id: Optional[str] = None,
-    blob_content_disposition: Optional[str] = None,
-    encryption_key: Optional[str] = None,
-    encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
-    encryption_scope: Optional[str] = None,
-    tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
-    if_modified_since: Optional[datetime.datetime] = None,
-    if_unmodified_since: Optional[datetime.datetime] = None,
-    if_match: Optional[str] = None,
-    if_none_match: Optional[str] = None,
-    if_tags: Optional[str] = None,
-    request_id_parameter: Optional[str] = None,
-    blob_tags_string: Optional[str] = None,
-    immutability_policy_expiry: Optional[datetime.datetime] = None,
-    immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
-    legal_hold: Optional[bool] = None,
-    **kwargs: Any
-) -> HttpRequest:
+    url,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp = kwargs.pop("comp", _params.pop("comp", "blocklist"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
-    accept = _headers.pop("Accept", "application/xml")
+    comp = kwargs.pop('comp', _params.pop('comp', "blocklist"))  # type: str
+    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
+    blob_cache_control = kwargs.pop('blob_cache_control', _headers.pop('x-ms-blob-cache-control', None))  # type: Optional[str]
+    blob_content_type = kwargs.pop('blob_content_type', _headers.pop('x-ms-blob-content-type', None))  # type: Optional[str]
+    blob_content_encoding = kwargs.pop('blob_content_encoding', _headers.pop('x-ms-blob-content-encoding', None))  # type: Optional[str]
+    blob_content_language = kwargs.pop('blob_content_language', _headers.pop('x-ms-blob-content-language', None))  # type: Optional[str]
+    blob_content_md5 = kwargs.pop('blob_content_md5', _headers.pop('x-ms-blob-content-md5', None))  # type: Optional[bytearray]
+    transactional_content_md5 = kwargs.pop('transactional_content_md5', _headers.pop('Content-MD5', None))  # type: Optional[bytearray]
+    transactional_content_crc64 = kwargs.pop('transactional_content_crc64', _headers.pop('x-ms-content-crc64', None))  # type: Optional[bytearray]
+    metadata = kwargs.pop('metadata', _headers.pop('x-ms-meta', None))  # type: Optional[Dict[str, str]]
+    lease_id = kwargs.pop('lease_id', _headers.pop('x-ms-lease-id', None))  # type: Optional[str]
+    blob_content_disposition = kwargs.pop('blob_content_disposition', _headers.pop('x-ms-blob-content-disposition', None))  # type: Optional[str]
+    encryption_key = kwargs.pop('encryption_key', _headers.pop('x-ms-encryption-key', None))  # type: Optional[str]
+    encryption_key_sha256 = kwargs.pop('encryption_key_sha256', _headers.pop('x-ms-encryption-key-sha256', None))  # type: Optional[str]
+    encryption_algorithm = kwargs.pop('encryption_algorithm', _headers.pop('x-ms-encryption-algorithm', None))  # type: Optional[Union[str, "_models.EncryptionAlgorithmType"]]
+    encryption_scope = kwargs.pop('encryption_scope', _headers.pop('x-ms-encryption-scope', None))  # type: Optional[str]
+    tier = kwargs.pop('tier', _headers.pop('x-ms-access-tier', None))  # type: Optional[Union[str, "_models.AccessTierOptional"]]
+    if_modified_since = kwargs.pop('if_modified_since', _headers.pop('If-Modified-Since', None))  # type: Optional[datetime.datetime]
+    if_unmodified_since = kwargs.pop('if_unmodified_since', _headers.pop('If-Unmodified-Since', None))  # type: Optional[datetime.datetime]
+    if_match = kwargs.pop('if_match', _headers.pop('If-Match', None))  # type: Optional[str]
+    if_none_match = kwargs.pop('if_none_match', _headers.pop('If-None-Match', None))  # type: Optional[str]
+    if_tags = kwargs.pop('if_tags', _headers.pop('x-ms-if-tags', None))  # type: Optional[str]
+    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
+    blob_tags_string = kwargs.pop('blob_tags_string', _headers.pop('x-ms-tags', None))  # type: Optional[str]
+    immutability_policy_expiry = kwargs.pop('immutability_policy_expiry', _headers.pop('x-ms-immutability-policy-until-date', None))  # type: Optional[datetime.datetime]
+    immutability_policy_mode = kwargs.pop('immutability_policy_mode', _headers.pop('x-ms-immutability-policy-mode', None))  # type: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]]
+    legal_hold = kwargs.pop('legal_hold', _headers.pop('x-ms-legal-hold', None))  # type: Optional[bool]
+    accept = _headers.pop('Accept', "application/xml")
 
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
+    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
     if blob_cache_control is not None:
-        _headers["x-ms-blob-cache-control"] = _SERIALIZER.header("blob_cache_control", blob_cache_control, "str")
+        _headers['x-ms-blob-cache-control'] = _SERIALIZER.header("blob_cache_control", blob_cache_control, 'str')
     if blob_content_type is not None:
-        _headers["x-ms-blob-content-type"] = _SERIALIZER.header("blob_content_type", blob_content_type, "str")
+        _headers['x-ms-blob-content-type'] = _SERIALIZER.header("blob_content_type", blob_content_type, 'str')
     if blob_content_encoding is not None:
-        _headers["x-ms-blob-content-encoding"] = _SERIALIZER.header(
-            "blob_content_encoding", blob_content_encoding, "str"
-        )
+        _headers['x-ms-blob-content-encoding'] = _SERIALIZER.header("blob_content_encoding", blob_content_encoding, 'str')
     if blob_content_language is not None:
-        _headers["x-ms-blob-content-language"] = _SERIALIZER.header(
-            "blob_content_language", blob_content_language, "str"
-        )
+        _headers['x-ms-blob-content-language'] = _SERIALIZER.header("blob_content_language", blob_content_language, 'str')
     if blob_content_md5 is not None:
-        _headers["x-ms-blob-content-md5"] = _SERIALIZER.header("blob_content_md5", blob_content_md5, "bytearray")
+        _headers['x-ms-blob-content-md5'] = _SERIALIZER.header("blob_content_md5", blob_content_md5, 'bytearray')
     if transactional_content_md5 is not None:
-        _headers["Content-MD5"] = _SERIALIZER.header(
-            "transactional_content_md5", transactional_content_md5, "bytearray"
-        )
+        _headers['Content-MD5'] = _SERIALIZER.header("transactional_content_md5", transactional_content_md5, 'bytearray')
     if transactional_content_crc64 is not None:
-        _headers["x-ms-content-crc64"] = _SERIALIZER.header(
-            "transactional_content_crc64", transactional_content_crc64, "bytearray"
-        )
+        _headers['x-ms-content-crc64'] = _SERIALIZER.header("transactional_content_crc64", transactional_content_crc64, 'bytearray')
     if metadata is not None:
-        _headers["x-ms-meta"] = _SERIALIZER.header("metadata", metadata, "{str}")
+        _headers['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
     if lease_id is not None:
-        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+        _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if blob_content_disposition is not None:
-        _headers["x-ms-blob-content-disposition"] = _SERIALIZER.header(
-            "blob_content_disposition", blob_content_disposition, "str"
-        )
+        _headers['x-ms-blob-content-disposition'] = _SERIALIZER.header("blob_content_disposition", blob_content_disposition, 'str')
     if encryption_key is not None:
-        _headers["x-ms-encryption-key"] = _SERIALIZER.header("encryption_key", encryption_key, "str")
+        _headers['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
     if encryption_key_sha256 is not None:
-        _headers["x-ms-encryption-key-sha256"] = _SERIALIZER.header(
-            "encryption_key_sha256", encryption_key_sha256, "str"
-        )
+        _headers['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
     if encryption_algorithm is not None:
-        _headers["x-ms-encryption-algorithm"] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, "str")
+        _headers['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
     if encryption_scope is not None:
-        _headers["x-ms-encryption-scope"] = _SERIALIZER.header("encryption_scope", encryption_scope, "str")
+        _headers['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
     if tier is not None:
-        _headers["x-ms-access-tier"] = _SERIALIZER.header("tier", tier, "str")
+        _headers['x-ms-access-tier'] = _SERIALIZER.header("tier", tier, 'str')
     if if_modified_since is not None:
-        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        _headers["x-ms-if-tags"] = _SERIALIZER.header("if_tags", if_tags, "str")
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+        _headers['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
     if blob_tags_string is not None:
-        _headers["x-ms-tags"] = _SERIALIZER.header("blob_tags_string", blob_tags_string, "str")
+        _headers['x-ms-tags'] = _SERIALIZER.header("blob_tags_string", blob_tags_string, 'str')
     if immutability_policy_expiry is not None:
-        _headers["x-ms-immutability-policy-until-date"] = _SERIALIZER.header(
-            "immutability_policy_expiry", immutability_policy_expiry, "rfc-1123"
-        )
+        _headers['x-ms-immutability-policy-until-date'] = _SERIALIZER.header("immutability_policy_expiry", immutability_policy_expiry, 'rfc-1123')
     if immutability_policy_mode is not None:
-        _headers["x-ms-immutability-policy-mode"] = _SERIALIZER.header(
-            "immutability_policy_mode", immutability_policy_mode, "str"
-        )
+        _headers['x-ms-immutability-policy-mode'] = _SERIALIZER.header("immutability_policy_mode", immutability_policy_mode, 'str')
     if legal_hold is not None:
-        _headers["x-ms-legal-hold"] = _SERIALIZER.header("legal_hold", legal_hold, "bool")
+        _headers['x-ms-legal-hold'] = _SERIALIZER.header("legal_hold", legal_hold, 'bool')
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
+    return HttpRequest(
+        method="PUT",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_get_block_list_request(
-    url: str,
-    *,
-    snapshot: Optional[str] = None,
-    list_type: Union[str, "_models.BlockListType"] = "committed",
-    timeout: Optional[int] = None,
-    lease_id: Optional[str] = None,
-    if_tags: Optional[str] = None,
-    request_id_parameter: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
+    url,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp = kwargs.pop("comp", _params.pop("comp", "blocklist"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
-    accept = _headers.pop("Accept", "application/xml")
+    comp = kwargs.pop('comp', _params.pop('comp', "blocklist"))  # type: str
+    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    snapshot = kwargs.pop('snapshot', _params.pop('snapshot', None))  # type: Optional[str]
+    list_type = kwargs.pop('list_type', _params.pop('blocklisttype', "committed"))  # type: Union[str, "_models.BlockListType"]
+    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
+    lease_id = kwargs.pop('lease_id', _headers.pop('x-ms-lease-id', None))  # type: Optional[str]
+    if_tags = kwargs.pop('if_tags', _headers.pop('x-ms-if-tags', None))  # type: Optional[str]
+    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
+    accept = _headers.pop('Accept', "application/xml")
 
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
+    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if snapshot is not None:
-        _params["snapshot"] = _SERIALIZER.query("snapshot", snapshot, "str")
-    _params["blocklisttype"] = _SERIALIZER.query("list_type", list_type, "str")
+        _params['snapshot'] = _SERIALIZER.query("snapshot", snapshot, 'str')
+    _params['blocklisttype'] = _SERIALIZER.query("list_type", list_type, 'str')
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
     if lease_id is not None:
-        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+        _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if if_tags is not None:
-        _headers["x-ms-if-tags"] = _SERIALIZER.header("if_tags", if_tags, "str")
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+        _headers['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
-
-class BlockBlobOperations:
+# fmt: on
+class BlockBlobOperations(object):
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -659,36 +626,38 @@ class BlockBlobOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
+
     @distributed_trace
     def upload(  # pylint: disable=inconsistent-return-statements
         self,
-        content_length: int,
-        body: IO,
-        timeout: Optional[int] = None,
-        transactional_content_md5: Optional[bytes] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
-        request_id_parameter: Optional[str] = None,
-        blob_tags_string: Optional[str] = None,
-        immutability_policy_expiry: Optional[datetime.datetime] = None,
-        immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
-        legal_hold: Optional[bool] = None,
-        blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
-        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
-        cpk_info: Optional[_models.CpkInfo] = None,
-        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
-        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
-        **kwargs: Any
-    ) -> None:
+        content_length,  # type: int
+        body,  # type: IO
+        timeout=None,  # type: Optional[int]
+        transactional_content_md5=None,  # type: Optional[bytearray]
+        metadata=None,  # type: Optional[Dict[str, str]]
+        tier=None,  # type: Optional[Union[str, "_models.AccessTierOptional"]]
+        request_id_parameter=None,  # type: Optional[str]
+        blob_tags_string=None,  # type: Optional[str]
+        immutability_policy_expiry=None,  # type: Optional[datetime.datetime]
+        immutability_policy_mode=None,  # type: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]]
+        legal_hold=None,  # type: Optional[bool]
+        blob_http_headers=None,  # type: Optional[_models.BlobHTTPHeaders]
+        lease_access_conditions=None,  # type: Optional[_models.LeaseAccessConditions]
+        cpk_info=None,  # type: Optional[_models.CpkInfo]
+        cpk_scope_info=None,  # type: Optional[_models.CpkScopeInfo]
+        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """The Upload Block Blob operation updates the content of an existing block blob. Updating an
         existing block blob overwrites any existing metadata on the blob. Partial updates are not
         supported with Put Blob; the content of the existing blob is overwritten with the content of
         the new blob. To perform a partial update of the content of a block blob, use the Put Block
         List operation.
 
-        :param content_length: The length of the request. Required.
-        :type content_length: int
-        :param body: Initial data. Required.
+        :param content_length: The length of the request.
+        :type content_length: long
+        :param body: Initial data.
         :type body: IO
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
@@ -697,7 +666,7 @@ class BlockBlobOperations:
         :type timeout: int
         :param transactional_content_md5: Specify the transactional md5 for the body, to be validated
          by the service. Default value is None.
-        :type transactional_content_md5: bytes
+        :type transactional_content_md5: bytearray
         :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
          If no name-value pairs are specified, the operation will copy the metadata from the source blob
          or file to the destination blob. If one or more name-value pairs are specified, the destination
@@ -706,9 +675,7 @@ class BlockBlobOperations:
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information. Default value is None.
         :type metadata: dict[str, str]
-        :param tier: Optional. Indicates the tier to be set on the blob. Known values are: "P4", "P6",
-         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", and "Archive".
-         Default value is None.
+        :param tier: Optional. Indicates the tier to be set on the blob. Default value is None.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -721,7 +688,7 @@ class BlockBlobOperations:
          is set to expire. Default value is None.
         :type immutability_policy_expiry: ~datetime.datetime
         :param immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
-         Known values are: "Mutable", "Unlocked", and "Locked". Default value is None.
+         Default value is None.
         :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
         :param legal_hold: Specified if a legal hold should be set on the blob. Default value is None.
         :type legal_hold: bool
@@ -740,19 +707,21 @@ class BlockBlobOperations:
          unsupported behavior.
         :paramtype blob_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        blob_type = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        blob_type = kwargs.pop('blob_type', _headers.pop('x-ms-blob-type', "BlockBlob"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/octet-stream"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _blob_content_type = None
         _blob_content_encoding = None
@@ -771,30 +740,35 @@ class BlockBlobOperations:
         _if_none_match = None
         _if_tags = None
         if blob_http_headers is not None:
-            _blob_cache_control = blob_http_headers.blob_cache_control
-            _blob_content_disposition = blob_http_headers.blob_content_disposition
+            _blob_content_type = blob_http_headers.blob_content_type
             _blob_content_encoding = blob_http_headers.blob_content_encoding
             _blob_content_language = blob_http_headers.blob_content_language
             _blob_content_md5 = blob_http_headers.blob_content_md5
-            _blob_content_type = blob_http_headers.blob_content_type
+            _blob_cache_control = blob_http_headers.blob_cache_control
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
+        if blob_http_headers is not None:
+            _blob_content_disposition = blob_http_headers.blob_content_disposition
         if cpk_info is not None:
-            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if modified_access_conditions is not None:
-            _if_match = modified_access_conditions.if_match
             _if_modified_since = modified_access_conditions.if_modified_since
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
+            _if_match = modified_access_conditions.if_match
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
         _content = body
 
         request = build_upload_request(
             url=self._config.url,
+            blob_type=blob_type,
+            version=self._config.version,
+            content_type=content_type,
+            content=_content,
             content_length=content_length,
             timeout=timeout,
             transactional_content_md5=transactional_content_md5,
@@ -821,11 +795,7 @@ class BlockBlobOperations:
             immutability_policy_expiry=immutability_policy_expiry,
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
-            blob_type=blob_type,
-            content_type=content_type,
-            version=self._config.version,
-            content=_content,
-            template_url=self.upload.metadata["url"],
+            template_url=self.upload.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -833,9 +803,10 @@ class BlockBlobOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -844,66 +815,61 @@ class BlockBlobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-request-server-encrypted")
-        )
-        response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-key-sha256")
-        )
-        response_headers["x-ms-encryption-scope"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-scope")
-        )
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['x-ms-version-id']=self._deserialize('str', response.headers.get('x-ms-version-id'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+        response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
+        response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+    upload.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
+
 
     @distributed_trace
     def put_blob_from_url(  # pylint: disable=inconsistent-return-statements
         self,
-        content_length: int,
-        copy_source: str,
-        timeout: Optional[int] = None,
-        transactional_content_md5: Optional[bytes] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
-        request_id_parameter: Optional[str] = None,
-        source_content_md5: Optional[bytes] = None,
-        blob_tags_string: Optional[str] = None,
-        copy_source_blob_properties: Optional[bool] = None,
-        copy_source_authorization: Optional[str] = None,
-        copy_source_tags: Optional[Union[str, "_models.BlobCopySourceTags"]] = None,
-        blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
-        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
-        cpk_info: Optional[_models.CpkInfo] = None,
-        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
-        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
-        source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
-        **kwargs: Any
-    ) -> None:
+        content_length,  # type: int
+        copy_source,  # type: str
+        timeout=None,  # type: Optional[int]
+        transactional_content_md5=None,  # type: Optional[bytearray]
+        metadata=None,  # type: Optional[Dict[str, str]]
+        tier=None,  # type: Optional[Union[str, "_models.AccessTierOptional"]]
+        request_id_parameter=None,  # type: Optional[str]
+        source_content_md5=None,  # type: Optional[bytearray]
+        blob_tags_string=None,  # type: Optional[str]
+        copy_source_blob_properties=None,  # type: Optional[bool]
+        copy_source_authorization=None,  # type: Optional[str]
+        copy_source_tags=None,  # type: Optional[Union[str, "_models.BlobCopySourceTags"]]
+        blob_http_headers=None,  # type: Optional[_models.BlobHTTPHeaders]
+        lease_access_conditions=None,  # type: Optional[_models.LeaseAccessConditions]
+        cpk_info=None,  # type: Optional[_models.CpkInfo]
+        cpk_scope_info=None,  # type: Optional[_models.CpkScopeInfo]
+        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
+        source_modified_access_conditions=None,  # type: Optional[_models.SourceModifiedAccessConditions]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """The Put Blob from URL operation creates a new Block Blob where the contents of the blob are
         read from a given URL.  This API is supported beginning with the 2020-04-08 version. Partial
         updates are not supported with Put Blob from URL; the content of an existing blob is
         overwritten with the content of the new blob.  To perform partial updates to a block blob’s
         contents using a source URL, use the Put Block from URL API in conjunction with Put Block List.
 
-        :param content_length: The length of the request. Required.
-        :type content_length: int
+        :param content_length: The length of the request.
+        :type content_length: long
         :param copy_source: Specifies the name of the source page blob snapshot. This value is a URL of
          up to 2 KB in length that specifies a page blob snapshot. The value should be URL-encoded as it
          would appear in a request URI. The source blob must either be public or must be authenticated
-         via a shared access signature. Required.
+         via a shared access signature.
         :type copy_source: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
@@ -912,7 +878,7 @@ class BlockBlobOperations:
         :type timeout: int
         :param transactional_content_md5: Specify the transactional md5 for the body, to be validated
          by the service. Default value is None.
-        :type transactional_content_md5: bytes
+        :type transactional_content_md5: bytearray
         :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
          If no name-value pairs are specified, the operation will copy the metadata from the source blob
          or file to the destination blob. If one or more name-value pairs are specified, the destination
@@ -921,9 +887,7 @@ class BlockBlobOperations:
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information. Default value is None.
         :type metadata: dict[str, str]
-        :param tier: Optional. Indicates the tier to be set on the blob. Known values are: "P4", "P6",
-         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", and "Archive".
-         Default value is None.
+        :param tier: Optional. Indicates the tier to be set on the blob. Default value is None.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -931,19 +895,18 @@ class BlockBlobOperations:
         :type request_id_parameter: str
         :param source_content_md5: Specify the md5 calculated for the range of bytes that must be read
          from the copy source. Default value is None.
-        :type source_content_md5: bytes
+        :type source_content_md5: bytearray
         :param blob_tags_string: Optional.  Used to set blob tags in various blob operations. Default
          value is None.
         :type blob_tags_string: str
         :param copy_source_blob_properties: Optional, default is true.  Indicates if properties from
-         the source blob should be copied. Default value is None.
+         the source blob should be copied.
         :type copy_source_blob_properties: bool
         :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
          OAuth access token to copy source. Default value is None.
         :type copy_source_authorization: str
         :param copy_source_tags: Optional, default 'replace'.  Indicates if source tags should be
-         copied or replaced with the tags specified by x-ms-tags. Known values are: "REPLACE" and
-         "COPY". Default value is None.
+         copied or replaced with the tags specified by x-ms-tags. Default value is None.
         :type copy_source_tags: str or ~azure.storage.blob.models.BlobCopySourceTags
         :param blob_http_headers: Parameter group. Default value is None.
         :type blob_http_headers: ~azure.storage.blob.models.BlobHTTPHeaders
@@ -963,18 +926,20 @@ class BlockBlobOperations:
          unsupported behavior.
         :paramtype blob_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        blob_type = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        blob_type = kwargs.pop('blob_type', _headers.pop('x-ms-blob-type', "BlockBlob"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _blob_content_type = None
         _blob_content_encoding = None
@@ -998,35 +963,38 @@ class BlockBlobOperations:
         _source_if_none_match = None
         _source_if_tags = None
         if blob_http_headers is not None:
-            _blob_cache_control = blob_http_headers.blob_cache_control
-            _blob_content_disposition = blob_http_headers.blob_content_disposition
+            _blob_content_type = blob_http_headers.blob_content_type
             _blob_content_encoding = blob_http_headers.blob_content_encoding
             _blob_content_language = blob_http_headers.blob_content_language
             _blob_content_md5 = blob_http_headers.blob_content_md5
-            _blob_content_type = blob_http_headers.blob_content_type
+            _blob_cache_control = blob_http_headers.blob_cache_control
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
+        if blob_http_headers is not None:
+            _blob_content_disposition = blob_http_headers.blob_content_disposition
         if cpk_info is not None:
-            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if modified_access_conditions is not None:
-            _if_match = modified_access_conditions.if_match
             _if_modified_since = modified_access_conditions.if_modified_since
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
+            _if_match = modified_access_conditions.if_match
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
         if source_modified_access_conditions is not None:
-            _source_if_match = source_modified_access_conditions.source_if_match
             _source_if_modified_since = source_modified_access_conditions.source_if_modified_since
+            _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
+            _source_if_match = source_modified_access_conditions.source_if_match
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
             _source_if_tags = source_modified_access_conditions.source_if_tags
-            _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
 
         request = build_put_blob_from_url_request(
             url=self._config.url,
+            blob_type=blob_type,
+            version=self._config.version,
             content_length=content_length,
             copy_source=copy_source,
             timeout=timeout,
@@ -1060,9 +1028,7 @@ class BlockBlobOperations:
             copy_source_blob_properties=copy_source_blob_properties,
             copy_source_authorization=copy_source_authorization,
             copy_source_tags=copy_source_tags,
-            blob_type=blob_type,
-            version=self._config.version,
-            template_url=self.put_blob_from_url.metadata["url"],
+            template_url=self.put_blob_from_url.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -1070,9 +1036,10 @@ class BlockBlobOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -1081,62 +1048,57 @@ class BlockBlobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-request-server-encrypted")
-        )
-        response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-key-sha256")
-        )
-        response_headers["x-ms-encryption-scope"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-scope")
-        )
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['x-ms-version-id']=self._deserialize('str', response.headers.get('x-ms-version-id'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+        response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
+        response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    put_blob_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+    put_blob_from_url.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
+
 
     @distributed_trace
     def stage_block(  # pylint: disable=inconsistent-return-statements
         self,
-        block_id: str,
-        content_length: int,
-        body: IO,
-        transactional_content_md5: Optional[bytes] = None,
-        transactional_content_crc64: Optional[bytes] = None,
-        timeout: Optional[int] = None,
-        request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
-        cpk_info: Optional[_models.CpkInfo] = None,
-        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
-        **kwargs: Any
-    ) -> None:
+        block_id,  # type: str
+        content_length,  # type: int
+        body,  # type: IO
+        transactional_content_md5=None,  # type: Optional[bytearray]
+        transactional_content_crc64=None,  # type: Optional[bytearray]
+        timeout=None,  # type: Optional[int]
+        request_id_parameter=None,  # type: Optional[str]
+        lease_access_conditions=None,  # type: Optional[_models.LeaseAccessConditions]
+        cpk_info=None,  # type: Optional[_models.CpkInfo]
+        cpk_scope_info=None,  # type: Optional[_models.CpkScopeInfo]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """The Stage Block operation creates a new block to be committed as part of a blob.
 
         :param block_id: A valid Base64 string value that identifies the block. Prior to encoding, the
          string must be less than or equal to 64 bytes in size. For a given blob, the length of the
-         value specified for the blockid parameter must be the same size for each block. Required.
+         value specified for the blockid parameter must be the same size for each block.
         :type block_id: str
-        :param content_length: The length of the request. Required.
-        :type content_length: int
-        :param body: Initial data. Required.
+        :param content_length: The length of the request.
+        :type content_length: long
+        :param body: Initial data.
         :type body: IO
         :param transactional_content_md5: Specify the transactional md5 for the body, to be validated
          by the service. Default value is None.
-        :type transactional_content_md5: bytes
+        :type transactional_content_md5: bytearray
         :param transactional_content_crc64: Specify the transactional crc64 for the body, to be
          validated by the service. Default value is None.
-        :type transactional_content_crc64: bytes
+        :type transactional_content_crc64: bytearray
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1156,19 +1118,21 @@ class BlockBlobOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "block"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', _params.pop('comp', "block"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/octet-stream"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _lease_id = None
         _encryption_key = None
@@ -1178,15 +1142,19 @@ class BlockBlobOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if cpk_info is not None:
-            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         _content = body
 
         request = build_stage_block_request(
             url=self._config.url,
+            comp=comp,
+            version=self._config.version,
+            content_type=content_type,
+            content=_content,
             block_id=block_id,
             content_length=content_length,
             transactional_content_md5=transactional_content_md5,
@@ -1198,11 +1166,7 @@ class BlockBlobOperations:
             encryption_algorithm=_encryption_algorithm,
             encryption_scope=_encryption_scope,
             request_id_parameter=request_id_parameter,
-            comp=comp,
-            content_type=content_type,
-            version=self._config.version,
-            content=_content,
-            template_url=self.stage_block.metadata["url"],
+            template_url=self.stage_block.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -1210,9 +1174,10 @@ class BlockBlobOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -1221,68 +1186,61 @@ class BlockBlobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-content-crc64"] = self._deserialize(
-            "bytearray", response.headers.get("x-ms-content-crc64")
-        )
-        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-request-server-encrypted")
-        )
-        response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-key-sha256")
-        )
-        response_headers["x-ms-encryption-scope"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-scope")
-        )
+        response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-content-crc64']=self._deserialize('bytearray', response.headers.get('x-ms-content-crc64'))
+        response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+        response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
+        response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    stage_block.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+    stage_block.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
+
 
     @distributed_trace
     def stage_block_from_url(  # pylint: disable=inconsistent-return-statements
         self,
-        block_id: str,
-        content_length: int,
-        source_url: str,
-        source_range: Optional[str] = None,
-        source_content_md5: Optional[bytes] = None,
-        source_contentcrc64: Optional[bytes] = None,
-        timeout: Optional[int] = None,
-        request_id_parameter: Optional[str] = None,
-        copy_source_authorization: Optional[str] = None,
-        cpk_info: Optional[_models.CpkInfo] = None,
-        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
-        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
-        source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
-        **kwargs: Any
-    ) -> None:
+        block_id,  # type: str
+        content_length,  # type: int
+        source_url,  # type: str
+        source_range=None,  # type: Optional[str]
+        source_content_md5=None,  # type: Optional[bytearray]
+        source_contentcrc64=None,  # type: Optional[bytearray]
+        timeout=None,  # type: Optional[int]
+        request_id_parameter=None,  # type: Optional[str]
+        copy_source_authorization=None,  # type: Optional[str]
+        cpk_info=None,  # type: Optional[_models.CpkInfo]
+        cpk_scope_info=None,  # type: Optional[_models.CpkScopeInfo]
+        lease_access_conditions=None,  # type: Optional[_models.LeaseAccessConditions]
+        source_modified_access_conditions=None,  # type: Optional[_models.SourceModifiedAccessConditions]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """The Stage Block operation creates a new block to be committed as part of a blob where the
         contents are read from a URL.
 
         :param block_id: A valid Base64 string value that identifies the block. Prior to encoding, the
          string must be less than or equal to 64 bytes in size. For a given blob, the length of the
-         value specified for the blockid parameter must be the same size for each block. Required.
+         value specified for the blockid parameter must be the same size for each block.
         :type block_id: str
-        :param content_length: The length of the request. Required.
-        :type content_length: int
-        :param source_url: Specify a URL to the copy source. Required.
+        :param content_length: The length of the request.
+        :type content_length: long
+        :param source_url: Specify a URL to the copy source.
         :type source_url: str
         :param source_range: Bytes of source data in the specified range. Default value is None.
         :type source_range: str
         :param source_content_md5: Specify the md5 calculated for the range of bytes that must be read
          from the copy source. Default value is None.
-        :type source_content_md5: bytes
+        :type source_content_md5: bytearray
         :param source_contentcrc64: Specify the crc64 calculated for the range of bytes that must be
          read from the copy source. Default value is None.
-        :type source_contentcrc64: bytes
+        :type source_contentcrc64: bytearray
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1308,18 +1266,20 @@ class BlockBlobOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "block"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', _params.pop('comp', "block"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _encryption_key = None
         _encryption_key_sha256 = None
@@ -1331,21 +1291,23 @@ class BlockBlobOperations:
         _source_if_match = None
         _source_if_none_match = None
         if cpk_info is not None:
-            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if source_modified_access_conditions is not None:
-            _source_if_match = source_modified_access_conditions.source_if_match
             _source_if_modified_since = source_modified_access_conditions.source_if_modified_since
-            _source_if_none_match = source_modified_access_conditions.source_if_none_match
             _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
+            _source_if_match = source_modified_access_conditions.source_if_match
+            _source_if_none_match = source_modified_access_conditions.source_if_none_match
 
         request = build_stage_block_from_url_request(
             url=self._config.url,
+            comp=comp,
+            version=self._config.version,
             block_id=block_id,
             content_length=content_length,
             source_url=source_url,
@@ -1364,9 +1326,7 @@ class BlockBlobOperations:
             source_if_none_match=_source_if_none_match,
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
-            comp=comp,
-            version=self._config.version,
-            template_url=self.stage_block_from_url.metadata["url"],
+            template_url=self.stage_block_from_url.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -1374,9 +1334,10 @@ class BlockBlobOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -1385,52 +1346,45 @@ class BlockBlobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
-        response_headers["x-ms-content-crc64"] = self._deserialize(
-            "bytearray", response.headers.get("x-ms-content-crc64")
-        )
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-request-server-encrypted")
-        )
-        response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-key-sha256")
-        )
-        response_headers["x-ms-encryption-scope"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-scope")
-        )
+        response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
+        response_headers['x-ms-content-crc64']=self._deserialize('bytearray', response.headers.get('x-ms-content-crc64'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+        response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
+        response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    stage_block_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+    stage_block_from_url.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
+
 
     @distributed_trace
     def commit_block_list(  # pylint: disable=inconsistent-return-statements
         self,
-        blocks: _models.BlockLookupList,
-        timeout: Optional[int] = None,
-        transactional_content_md5: Optional[bytes] = None,
-        transactional_content_crc64: Optional[bytes] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
-        request_id_parameter: Optional[str] = None,
-        blob_tags_string: Optional[str] = None,
-        immutability_policy_expiry: Optional[datetime.datetime] = None,
-        immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
-        legal_hold: Optional[bool] = None,
-        blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
-        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
-        cpk_info: Optional[_models.CpkInfo] = None,
-        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
-        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
-        **kwargs: Any
-    ) -> None:
+        blocks,  # type: _models.BlockLookupList
+        timeout=None,  # type: Optional[int]
+        transactional_content_md5=None,  # type: Optional[bytearray]
+        transactional_content_crc64=None,  # type: Optional[bytearray]
+        metadata=None,  # type: Optional[Dict[str, str]]
+        tier=None,  # type: Optional[Union[str, "_models.AccessTierOptional"]]
+        request_id_parameter=None,  # type: Optional[str]
+        blob_tags_string=None,  # type: Optional[str]
+        immutability_policy_expiry=None,  # type: Optional[datetime.datetime]
+        immutability_policy_mode=None,  # type: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]]
+        legal_hold=None,  # type: Optional[bool]
+        blob_http_headers=None,  # type: Optional[_models.BlobHTTPHeaders]
+        lease_access_conditions=None,  # type: Optional[_models.LeaseAccessConditions]
+        cpk_info=None,  # type: Optional[_models.CpkInfo]
+        cpk_scope_info=None,  # type: Optional[_models.CpkScopeInfo]
+        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """The Commit Block List operation writes a blob by specifying the list of block IDs that make up
         the blob. In order to be written as part of a blob, a block must have been successfully written
         to the server in a prior Put Block operation. You can call Put Block List to update a blob by
@@ -1439,7 +1393,7 @@ class BlockBlobOperations:
         or from the uncommitted block list, or to commit the most recently uploaded version of the
         block, whichever list it may belong to.
 
-        :param blocks: Blob Blocks. Required.
+        :param blocks: Blob Blocks.
         :type blocks: ~azure.storage.blob.models.BlockLookupList
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
@@ -1448,10 +1402,10 @@ class BlockBlobOperations:
         :type timeout: int
         :param transactional_content_md5: Specify the transactional md5 for the body, to be validated
          by the service. Default value is None.
-        :type transactional_content_md5: bytes
+        :type transactional_content_md5: bytearray
         :param transactional_content_crc64: Specify the transactional crc64 for the body, to be
          validated by the service. Default value is None.
-        :type transactional_content_crc64: bytes
+        :type transactional_content_crc64: bytearray
         :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
          If no name-value pairs are specified, the operation will copy the metadata from the source blob
          or file to the destination blob. If one or more name-value pairs are specified, the destination
@@ -1460,9 +1414,7 @@ class BlockBlobOperations:
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information. Default value is None.
         :type metadata: dict[str, str]
-        :param tier: Optional. Indicates the tier to be set on the blob. Known values are: "P4", "P6",
-         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", and "Archive".
-         Default value is None.
+        :param tier: Optional. Indicates the tier to be set on the blob. Default value is None.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -1475,7 +1427,7 @@ class BlockBlobOperations:
          is set to expire. Default value is None.
         :type immutability_policy_expiry: ~datetime.datetime
         :param immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
-         Known values are: "Mutable", "Unlocked", and "Locked". Default value is None.
+         Default value is None.
         :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
         :param legal_hold: Specified if a legal hold should be set on the blob. Default value is None.
         :type legal_hold: bool
@@ -1493,19 +1445,21 @@ class BlockBlobOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "blocklist"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', _params.pop('comp', "blocklist"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/xml"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _blob_cache_control = None
         _blob_content_type = None
@@ -1525,29 +1479,34 @@ class BlockBlobOperations:
         _if_tags = None
         if blob_http_headers is not None:
             _blob_cache_control = blob_http_headers.blob_cache_control
-            _blob_content_disposition = blob_http_headers.blob_content_disposition
+            _blob_content_type = blob_http_headers.blob_content_type
             _blob_content_encoding = blob_http_headers.blob_content_encoding
             _blob_content_language = blob_http_headers.blob_content_language
             _blob_content_md5 = blob_http_headers.blob_content_md5
-            _blob_content_type = blob_http_headers.blob_content_type
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
+        if blob_http_headers is not None:
+            _blob_content_disposition = blob_http_headers.blob_content_disposition
         if cpk_info is not None:
-            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if modified_access_conditions is not None:
-            _if_match = modified_access_conditions.if_match
             _if_modified_since = modified_access_conditions.if_modified_since
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
+            _if_match = modified_access_conditions.if_match
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
-        _content = self._serialize.body(blocks, "BlockLookupList", is_xml=True)
+        _content = self._serialize.body(blocks, 'BlockLookupList', is_xml=True)
 
         request = build_commit_block_list_request(
             url=self._config.url,
+            comp=comp,
+            version=self._config.version,
+            content_type=content_type,
+            content=_content,
             timeout=timeout,
             blob_cache_control=_blob_cache_control,
             blob_content_type=_blob_content_type,
@@ -1574,11 +1533,7 @@ class BlockBlobOperations:
             immutability_policy_expiry=immutability_policy_expiry,
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
-            comp=comp,
-            content_type=content_type,
-            version=self._config.version,
-            content=_content,
-            template_url=self.commit_block_list.metadata["url"],
+            template_url=self.commit_block_list.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -1586,9 +1541,10 @@ class BlockBlobOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -1597,45 +1553,38 @@ class BlockBlobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
-        response_headers["x-ms-content-crc64"] = self._deserialize(
-            "bytearray", response.headers.get("x-ms-content-crc64")
-        )
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-request-server-encrypted")
-        )
-        response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-key-sha256")
-        )
-        response_headers["x-ms-encryption-scope"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-scope")
-        )
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
+        response_headers['x-ms-content-crc64']=self._deserialize('bytearray', response.headers.get('x-ms-content-crc64'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['x-ms-version-id']=self._deserialize('str', response.headers.get('x-ms-version-id'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+        response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
+        response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    commit_block_list.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+    commit_block_list.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
+
 
     @distributed_trace
     def get_block_list(
         self,
-        snapshot: Optional[str] = None,
-        list_type: Union[str, "_models.BlockListType"] = "committed",
-        timeout: Optional[int] = None,
-        request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
-        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
-        **kwargs: Any
-    ) -> _models.BlockList:
+        snapshot=None,  # type: Optional[str]
+        list_type="committed",  # type: Union[str, "_models.BlockListType"]
+        timeout=None,  # type: Optional[int]
+        request_id_parameter=None,  # type: Optional[str]
+        lease_access_conditions=None,  # type: Optional[_models.LeaseAccessConditions]
+        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> _models.BlockList
         """The Get Block List operation retrieves the list of blocks that have been uploaded as part of a
         block blob.
 
@@ -1646,8 +1595,7 @@ class BlockBlobOperations:
          a Snapshot of a Blob.</a>`. Default value is None.
         :type snapshot: str
         :param list_type: Specifies whether to return the list of committed blocks, the list of
-         uncommitted blocks, or both lists together. Known values are: "committed", "uncommitted", and
-         "all". Default value is "committed".
+         uncommitted blocks, or both lists together. Default value is "committed".
         :type list_type: str or ~azure.storage.blob.models.BlockListType
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
@@ -1666,18 +1614,20 @@ class BlockBlobOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BlockList or the result of cls(response)
+        :return: BlockList, or the result of cls(response)
         :rtype: ~azure.storage.blob.models.BlockList
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "blocklist"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BlockList]
+        comp = kwargs.pop('comp', _params.pop('comp', "blocklist"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.BlockList]
 
         _lease_id = None
         _if_tags = None
@@ -1688,15 +1638,15 @@ class BlockBlobOperations:
 
         request = build_get_block_list_request(
             url=self._config.url,
+            comp=comp,
+            version=self._config.version,
             snapshot=snapshot,
             list_type=list_type,
             timeout=timeout,
             lease_id=_lease_id,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            comp=comp,
-            version=self._config.version,
-            template_url=self.get_block_list.metadata["url"],
+            template_url=self.get_block_list.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -1704,9 +1654,10 @@ class BlockBlobOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1715,24 +1666,21 @@ class BlockBlobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-        response_headers["x-ms-blob-content-length"] = self._deserialize(
-            "int", response.headers.get("x-ms-blob-content-length")
-        )
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
+        response_headers['x-ms-blob-content-length']=self._deserialize('long', response.headers.get('x-ms-blob-content-length'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
 
-        deserialized = self._deserialize("BlockList", pipeline_response)
+        deserialized = self._deserialize('BlockList', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    get_block_list.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+    get_block_list.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
+

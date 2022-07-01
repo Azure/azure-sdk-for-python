@@ -7,25 +7,23 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any
+from typing import TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core import PipelineClient
-from azure.core.rest import HttpRequest, HttpResponse
 
 from . import models
 from ._configuration import AzureBlobStorageConfiguration
-from ._serialization import Deserializer, Serializer
-from .operations import (
-    AppendBlobOperations,
-    BlobOperations,
-    BlockBlobOperations,
-    ContainerOperations,
-    PageBlobOperations,
-    ServiceOperations,
-)
+from .operations import AppendBlobOperations, BlobOperations, BlockBlobOperations, ContainerOperations, PageBlobOperations, ServiceOperations
 
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any
 
-class AzureBlobStorage:  # pylint: disable=client-accepts-api-version-keyword
+    from azure.core.rest import HttpRequest, HttpResponse
+
+class AzureBlobStorage(object):
     """AzureBlobStorage.
 
     :ivar service: ServiceOperations operations
@@ -41,18 +39,22 @@ class AzureBlobStorage:  # pylint: disable=client-accepts-api-version-keyword
     :ivar block_blob: BlockBlobOperations operations
     :vartype block_blob: azure.storage.blob.operations.BlockBlobOperations
     :param url: The URL of the service account, container, or blob that is the target of the
-     desired operation. Required.
+     desired operation.
     :type url: str
-    :param base_url: Service URL. Required. Default value is "".
+    :param base_url: Service URL. Default value is "".
     :type base_url: str
     :keyword version: Specifies the version of the operation to use for this request. Default value
      is "2021-08-06". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     """
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, url: str, base_url: str = "", **kwargs: Any
-    ) -> None:
+    def __init__(
+        self,
+        url,  # type: str
+        base_url="",  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         self._config = AzureBlobStorageConfiguration(url=url, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
@@ -60,14 +62,32 @@ class AzureBlobStorage:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.container = ContainerOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.blob = BlobOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.page_blob = PageBlobOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.append_blob = AppendBlobOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.block_blob = BlockBlobOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.service = ServiceOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.container = ContainerOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.blob = BlobOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.page_blob = PageBlobOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.append_blob = AppendBlobOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.block_blob = BlockBlobOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+
+    def _send_request(
+        self,
+        request,  # type: HttpRequest
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> HttpResponse
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -76,7 +96,7 @@ class AzureBlobStorage:  # pylint: disable=client-accepts-api-version-keyword
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest

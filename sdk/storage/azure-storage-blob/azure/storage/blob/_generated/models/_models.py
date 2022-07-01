@@ -22,12 +22,15 @@ class AccessPolicy(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "start": {"key": "Start", "type": "str"},
-        "expiry": {"key": "Expiry", "type": "str"},
-        "permission": {"key": "Permission", "type": "str"},
+        'start': {'key': 'Start', 'type': 'str'},
+        'expiry': {'key': 'Expiry', 'type': 'str'},
+        'permission': {'key': 'Permission', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword start: the date-time the policy is active.
         :paramtype start: str
@@ -37,9 +40,9 @@ class AccessPolicy(msrest.serialization.Model):
         :paramtype permission: str
         """
         super(AccessPolicy, self).__init__(**kwargs)
-        self.start = kwargs.get("start", None)
-        self.expiry = kwargs.get("expiry", None)
-        self.permission = kwargs.get("permission", None)
+        self.start = kwargs.get('start', None)
+        self.expiry = kwargs.get('expiry', None)
+        self.permission = kwargs.get('permission', None)
 
 
 class AppendPositionAccessConditions(msrest.serialization.Model):
@@ -58,11 +61,14 @@ class AppendPositionAccessConditions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "max_size": {"key": "maxSize", "type": "long"},
-        "append_position": {"key": "appendPosition", "type": "long"},
+        'max_size': {'key': 'maxSize', 'type': 'long'},
+        'append_position': {'key': 'appendPosition', 'type': 'long'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword max_size: Optional conditional header. The max length in bytes permitted for the
          append blob. If the Append Block operation would cause the blob to exceed that limit or if the
@@ -76,8 +82,8 @@ class AppendPositionAccessConditions(msrest.serialization.Model):
         :paramtype append_position: long
         """
         super(AppendPositionAccessConditions, self).__init__(**kwargs)
-        self.max_size = kwargs.get("max_size", None)
-        self.append_position = kwargs.get("append_position", None)
+        self.max_size = kwargs.get('max_size', None)
+        self.append_position = kwargs.get('append_position', None)
 
 
 class ArrowConfiguration(msrest.serialization.Model):
@@ -90,25 +96,26 @@ class ArrowConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        "schema": {"required": True},
+        'schema': {'required': True},
     }
 
     _attribute_map = {
-        "schema": {
-            "key": "Schema",
-            "type": "[ArrowField]",
-            "xml": {"name": "Schema", "wrapped": True, "itemsName": "Field"},
-        },
+        'schema': {'key': 'Schema', 'type': '[ArrowField]', 'xml': {'name': 'Schema', 'wrapped': True, 'itemsName': 'Field'}},
     }
-    _xml_map = {"name": "ArrowConfiguration"}
+    _xml_map = {
+        'name': 'ArrowConfiguration'
+    }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword schema: Required.
         :paramtype schema: list[~azure.storage.blob.models.ArrowField]
         """
         super(ArrowConfiguration, self).__init__(**kwargs)
-        self.schema = kwargs["schema"]
+        self.schema = kwargs['schema']
 
 
 class ArrowField(msrest.serialization.Model):
@@ -127,18 +134,23 @@ class ArrowField(msrest.serialization.Model):
     """
 
     _validation = {
-        "type": {"required": True},
+        'type': {'required': True},
     }
 
     _attribute_map = {
-        "type": {"key": "Type", "type": "str"},
-        "name": {"key": "Name", "type": "str"},
-        "precision": {"key": "Precision", "type": "int"},
-        "scale": {"key": "Scale", "type": "int"},
+        'type': {'key': 'Type', 'type': 'str'},
+        'name': {'key': 'Name', 'type': 'str'},
+        'precision': {'key': 'Precision', 'type': 'int'},
+        'scale': {'key': 'Scale', 'type': 'int'},
     }
-    _xml_map = {"name": "Field"}
+    _xml_map = {
+        'name': 'Field'
+    }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword type: Required.
         :paramtype type: str
@@ -150,10 +162,10 @@ class ArrowField(msrest.serialization.Model):
         :paramtype scale: int
         """
         super(ArrowField, self).__init__(**kwargs)
-        self.type = kwargs["type"]
-        self.name = kwargs.get("name", None)
-        self.precision = kwargs.get("precision", None)
-        self.scale = kwargs.get("scale", None)
+        self.type = kwargs['type']
+        self.name = kwargs.get('name', None)
+        self.precision = kwargs.get('precision', None)
+        self.scale = kwargs.get('scale', None)
 
 
 class BlobFlatListSegment(msrest.serialization.Model):
@@ -166,21 +178,26 @@ class BlobFlatListSegment(msrest.serialization.Model):
     """
 
     _validation = {
-        "blob_items": {"required": True},
+        'blob_items': {'required': True},
     }
 
     _attribute_map = {
-        "blob_items": {"key": "BlobItems", "type": "[BlobItemInternal]"},
+        'blob_items': {'key': 'BlobItems', 'type': '[BlobItemInternal]'},
     }
-    _xml_map = {"name": "Blobs"}
+    _xml_map = {
+        'name': 'Blobs'
+    }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword blob_items: Required.
         :paramtype blob_items: list[~azure.storage.blob.models.BlobItemInternal]
         """
         super(BlobFlatListSegment, self).__init__(**kwargs)
-        self.blob_items = kwargs["blob_items"]
+        self.blob_items = kwargs['blob_items']
 
 
 class BlobHierarchyListSegment(msrest.serialization.Model):
@@ -195,16 +212,21 @@ class BlobHierarchyListSegment(msrest.serialization.Model):
     """
 
     _validation = {
-        "blob_items": {"required": True},
+        'blob_items': {'required': True},
     }
 
     _attribute_map = {
-        "blob_prefixes": {"key": "BlobPrefixes", "type": "[BlobPrefix]", "xml": {"name": "BlobPrefix"}},
-        "blob_items": {"key": "BlobItems", "type": "[BlobItemInternal]", "xml": {"name": "Blob", "itemsName": "Blob"}},
+        'blob_prefixes': {'key': 'BlobPrefixes', 'type': '[BlobPrefix]', 'xml': {'name': 'BlobPrefix'}},
+        'blob_items': {'key': 'BlobItems', 'type': '[BlobItemInternal]', 'xml': {'name': 'Blob', 'itemsName': 'Blob'}},
     }
-    _xml_map = {"name": "Blobs"}
+    _xml_map = {
+        'name': 'Blobs'
+    }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword blob_prefixes:
         :paramtype blob_prefixes: list[~azure.storage.blob.models.BlobPrefix]
@@ -212,8 +234,8 @@ class BlobHierarchyListSegment(msrest.serialization.Model):
         :paramtype blob_items: list[~azure.storage.blob.models.BlobItemInternal]
         """
         super(BlobHierarchyListSegment, self).__init__(**kwargs)
-        self.blob_prefixes = kwargs.get("blob_prefixes", None)
-        self.blob_items = kwargs["blob_items"]
+        self.blob_prefixes = kwargs.get('blob_prefixes', None)
+        self.blob_items = kwargs['blob_items']
 
 
 class BlobHTTPHeaders(msrest.serialization.Model):
@@ -239,15 +261,18 @@ class BlobHTTPHeaders(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "blob_cache_control": {"key": "blobCacheControl", "type": "str"},
-        "blob_content_type": {"key": "blobContentType", "type": "str"},
-        "blob_content_md5": {"key": "blobContentMD5", "type": "bytearray"},
-        "blob_content_encoding": {"key": "blobContentEncoding", "type": "str"},
-        "blob_content_language": {"key": "blobContentLanguage", "type": "str"},
-        "blob_content_disposition": {"key": "blobContentDisposition", "type": "str"},
+        'blob_cache_control': {'key': 'blobCacheControl', 'type': 'str'},
+        'blob_content_type': {'key': 'blobContentType', 'type': 'str'},
+        'blob_content_md5': {'key': 'blobContentMD5', 'type': 'bytearray'},
+        'blob_content_encoding': {'key': 'blobContentEncoding', 'type': 'str'},
+        'blob_content_language': {'key': 'blobContentLanguage', 'type': 'str'},
+        'blob_content_disposition': {'key': 'blobContentDisposition', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword blob_cache_control: Optional. Sets the blob's cache control. If specified, this
          property is stored with the blob and returned with a read request.
@@ -268,12 +293,12 @@ class BlobHTTPHeaders(msrest.serialization.Model):
         :paramtype blob_content_disposition: str
         """
         super(BlobHTTPHeaders, self).__init__(**kwargs)
-        self.blob_cache_control = kwargs.get("blob_cache_control", None)
-        self.blob_content_type = kwargs.get("blob_content_type", None)
-        self.blob_content_md5 = kwargs.get("blob_content_md5", None)
-        self.blob_content_encoding = kwargs.get("blob_content_encoding", None)
-        self.blob_content_language = kwargs.get("blob_content_language", None)
-        self.blob_content_disposition = kwargs.get("blob_content_disposition", None)
+        self.blob_cache_control = kwargs.get('blob_cache_control', None)
+        self.blob_content_type = kwargs.get('blob_content_type', None)
+        self.blob_content_md5 = kwargs.get('blob_content_md5', None)
+        self.blob_content_encoding = kwargs.get('blob_content_encoding', None)
+        self.blob_content_language = kwargs.get('blob_content_language', None)
+        self.blob_content_disposition = kwargs.get('blob_content_disposition', None)
 
 
 class BlobItemInternal(msrest.serialization.Model):
@@ -304,27 +329,32 @@ class BlobItemInternal(msrest.serialization.Model):
     """
 
     _validation = {
-        "name": {"required": True},
-        "deleted": {"required": True},
-        "snapshot": {"required": True},
-        "properties": {"required": True},
+        'name': {'required': True},
+        'deleted': {'required': True},
+        'snapshot': {'required': True},
+        'properties': {'required': True},
     }
 
     _attribute_map = {
-        "name": {"key": "Name", "type": "BlobName"},
-        "deleted": {"key": "Deleted", "type": "bool"},
-        "snapshot": {"key": "Snapshot", "type": "str"},
-        "version_id": {"key": "VersionId", "type": "str"},
-        "is_current_version": {"key": "IsCurrentVersion", "type": "bool"},
-        "properties": {"key": "Properties", "type": "BlobPropertiesInternal"},
-        "metadata": {"key": "Metadata", "type": "BlobMetadata"},
-        "blob_tags": {"key": "BlobTags", "type": "BlobTags"},
-        "has_versions_only": {"key": "HasVersionsOnly", "type": "bool"},
-        "object_replication_metadata": {"key": "OrMetadata", "type": "{str}"},
+        'name': {'key': 'Name', 'type': 'BlobName'},
+        'deleted': {'key': 'Deleted', 'type': 'bool'},
+        'snapshot': {'key': 'Snapshot', 'type': 'str'},
+        'version_id': {'key': 'VersionId', 'type': 'str'},
+        'is_current_version': {'key': 'IsCurrentVersion', 'type': 'bool'},
+        'properties': {'key': 'Properties', 'type': 'BlobPropertiesInternal'},
+        'metadata': {'key': 'Metadata', 'type': 'BlobMetadata'},
+        'blob_tags': {'key': 'BlobTags', 'type': 'BlobTags'},
+        'has_versions_only': {'key': 'HasVersionsOnly', 'type': 'bool'},
+        'object_replication_metadata': {'key': 'OrMetadata', 'type': '{str}'},
     }
-    _xml_map = {"name": "Blob"}
+    _xml_map = {
+        'name': 'Blob'
+    }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword name: Required.
         :paramtype name: ~azure.storage.blob.models.BlobName
@@ -348,16 +378,16 @@ class BlobItemInternal(msrest.serialization.Model):
         :paramtype object_replication_metadata: dict[str, str]
         """
         super(BlobItemInternal, self).__init__(**kwargs)
-        self.name = kwargs["name"]
-        self.deleted = kwargs["deleted"]
-        self.snapshot = kwargs["snapshot"]
-        self.version_id = kwargs.get("version_id", None)
-        self.is_current_version = kwargs.get("is_current_version", None)
-        self.properties = kwargs["properties"]
-        self.metadata = kwargs.get("metadata", None)
-        self.blob_tags = kwargs.get("blob_tags", None)
-        self.has_versions_only = kwargs.get("has_versions_only", None)
-        self.object_replication_metadata = kwargs.get("object_replication_metadata", None)
+        self.name = kwargs['name']
+        self.deleted = kwargs['deleted']
+        self.snapshot = kwargs['snapshot']
+        self.version_id = kwargs.get('version_id', None)
+        self.is_current_version = kwargs.get('is_current_version', None)
+        self.properties = kwargs['properties']
+        self.metadata = kwargs.get('metadata', None)
+        self.blob_tags = kwargs.get('blob_tags', None)
+        self.has_versions_only = kwargs.get('has_versions_only', None)
+        self.object_replication_metadata = kwargs.get('object_replication_metadata', None)
 
 
 class BlobMetadata(msrest.serialization.Model):
@@ -371,12 +401,17 @@ class BlobMetadata(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "additional_properties": {"key": "", "type": "{str}"},
-        "encrypted": {"key": "Encrypted", "type": "str", "xml": {"attr": True}},
+        'additional_properties': {'key': '', 'type': '{str}'},
+        'encrypted': {'key': 'Encrypted', 'type': 'str', 'xml': {'attr': True}},
     }
-    _xml_map = {"name": "Metadata"}
+    _xml_map = {
+        'name': 'Metadata'
+    }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -385,8 +420,8 @@ class BlobMetadata(msrest.serialization.Model):
         :paramtype encrypted: str
         """
         super(BlobMetadata, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get("additional_properties", None)
-        self.encrypted = kwargs.get("encrypted", None)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.encrypted = kwargs.get('encrypted', None)
 
 
 class BlobName(msrest.serialization.Model):
@@ -399,11 +434,14 @@ class BlobName(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "encoded": {"key": "Encoded", "type": "bool", "xml": {"name": "Encoded", "attr": True}},
-        "content": {"key": "content", "type": "str", "xml": {"text": True}},
+        'encoded': {'key': 'Encoded', 'type': 'bool', 'xml': {'name': 'Encoded', 'attr': True}},
+        'content': {'key': 'content', 'type': 'str', 'xml': {'text': True}},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword encoded: Indicates if the blob name is encoded.
         :paramtype encoded: bool
@@ -411,8 +449,8 @@ class BlobName(msrest.serialization.Model):
         :paramtype content: str
         """
         super(BlobName, self).__init__(**kwargs)
-        self.encoded = kwargs.get("encoded", None)
-        self.content = kwargs.get("content", None)
+        self.encoded = kwargs.get('encoded', None)
+        self.content = kwargs.get('content', None)
 
 
 class BlobPrefix(msrest.serialization.Model):
@@ -425,20 +463,23 @@ class BlobPrefix(msrest.serialization.Model):
     """
 
     _validation = {
-        "name": {"required": True},
+        'name': {'required': True},
     }
 
     _attribute_map = {
-        "name": {"key": "Name", "type": "BlobName"},
+        'name': {'key': 'Name', 'type': 'BlobName'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword name: Required.
         :paramtype name: ~azure.storage.blob.models.BlobName
         """
         super(BlobPrefix, self).__init__(**kwargs)
-        self.name = kwargs["name"]
+        self.name = kwargs['name']
 
 
 class BlobPropertiesInternal(msrest.serialization.Model):
@@ -533,55 +574,60 @@ class BlobPropertiesInternal(msrest.serialization.Model):
     """
 
     _validation = {
-        "last_modified": {"required": True},
-        "etag": {"required": True},
+        'last_modified': {'required': True},
+        'etag': {'required': True},
     }
 
     _attribute_map = {
-        "creation_time": {"key": "Creation-Time", "type": "rfc-1123"},
-        "last_modified": {"key": "Last-Modified", "type": "rfc-1123"},
-        "etag": {"key": "Etag", "type": "str"},
-        "content_length": {"key": "Content-Length", "type": "long"},
-        "content_type": {"key": "Content-Type", "type": "str"},
-        "content_encoding": {"key": "Content-Encoding", "type": "str"},
-        "content_language": {"key": "Content-Language", "type": "str"},
-        "content_md5": {"key": "Content-MD5", "type": "bytearray"},
-        "content_disposition": {"key": "Content-Disposition", "type": "str"},
-        "cache_control": {"key": "Cache-Control", "type": "str"},
-        "blob_sequence_number": {"key": "x-ms-blob-sequence-number", "type": "long"},
-        "blob_type": {"key": "BlobType", "type": "str"},
-        "lease_status": {"key": "LeaseStatus", "type": "str"},
-        "lease_state": {"key": "LeaseState", "type": "str"},
-        "lease_duration": {"key": "LeaseDuration", "type": "str"},
-        "copy_id": {"key": "CopyId", "type": "str"},
-        "copy_status": {"key": "CopyStatus", "type": "str"},
-        "copy_source": {"key": "CopySource", "type": "str"},
-        "copy_progress": {"key": "CopyProgress", "type": "str"},
-        "copy_completion_time": {"key": "CopyCompletionTime", "type": "rfc-1123"},
-        "copy_status_description": {"key": "CopyStatusDescription", "type": "str"},
-        "server_encrypted": {"key": "ServerEncrypted", "type": "bool"},
-        "incremental_copy": {"key": "IncrementalCopy", "type": "bool"},
-        "destination_snapshot": {"key": "DestinationSnapshot", "type": "str"},
-        "deleted_time": {"key": "DeletedTime", "type": "rfc-1123"},
-        "remaining_retention_days": {"key": "RemainingRetentionDays", "type": "int"},
-        "access_tier": {"key": "AccessTier", "type": "str"},
-        "access_tier_inferred": {"key": "AccessTierInferred", "type": "bool"},
-        "archive_status": {"key": "ArchiveStatus", "type": "str"},
-        "customer_provided_key_sha256": {"key": "CustomerProvidedKeySha256", "type": "str"},
-        "encryption_scope": {"key": "EncryptionScope", "type": "str"},
-        "access_tier_change_time": {"key": "AccessTierChangeTime", "type": "rfc-1123"},
-        "tag_count": {"key": "TagCount", "type": "int"},
-        "expires_on": {"key": "Expiry-Time", "type": "rfc-1123"},
-        "is_sealed": {"key": "Sealed", "type": "bool"},
-        "rehydrate_priority": {"key": "RehydratePriority", "type": "str"},
-        "last_accessed_on": {"key": "LastAccessTime", "type": "rfc-1123"},
-        "immutability_policy_expires_on": {"key": "ImmutabilityPolicyUntilDate", "type": "rfc-1123"},
-        "immutability_policy_mode": {"key": "ImmutabilityPolicyMode", "type": "str"},
-        "legal_hold": {"key": "LegalHold", "type": "bool"},
+        'creation_time': {'key': 'Creation-Time', 'type': 'rfc-1123'},
+        'last_modified': {'key': 'Last-Modified', 'type': 'rfc-1123'},
+        'etag': {'key': 'Etag', 'type': 'str'},
+        'content_length': {'key': 'Content-Length', 'type': 'long'},
+        'content_type': {'key': 'Content-Type', 'type': 'str'},
+        'content_encoding': {'key': 'Content-Encoding', 'type': 'str'},
+        'content_language': {'key': 'Content-Language', 'type': 'str'},
+        'content_md5': {'key': 'Content-MD5', 'type': 'bytearray'},
+        'content_disposition': {'key': 'Content-Disposition', 'type': 'str'},
+        'cache_control': {'key': 'Cache-Control', 'type': 'str'},
+        'blob_sequence_number': {'key': 'x-ms-blob-sequence-number', 'type': 'long'},
+        'blob_type': {'key': 'BlobType', 'type': 'str'},
+        'lease_status': {'key': 'LeaseStatus', 'type': 'str'},
+        'lease_state': {'key': 'LeaseState', 'type': 'str'},
+        'lease_duration': {'key': 'LeaseDuration', 'type': 'str'},
+        'copy_id': {'key': 'CopyId', 'type': 'str'},
+        'copy_status': {'key': 'CopyStatus', 'type': 'str'},
+        'copy_source': {'key': 'CopySource', 'type': 'str'},
+        'copy_progress': {'key': 'CopyProgress', 'type': 'str'},
+        'copy_completion_time': {'key': 'CopyCompletionTime', 'type': 'rfc-1123'},
+        'copy_status_description': {'key': 'CopyStatusDescription', 'type': 'str'},
+        'server_encrypted': {'key': 'ServerEncrypted', 'type': 'bool'},
+        'incremental_copy': {'key': 'IncrementalCopy', 'type': 'bool'},
+        'destination_snapshot': {'key': 'DestinationSnapshot', 'type': 'str'},
+        'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123'},
+        'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int'},
+        'access_tier': {'key': 'AccessTier', 'type': 'str'},
+        'access_tier_inferred': {'key': 'AccessTierInferred', 'type': 'bool'},
+        'archive_status': {'key': 'ArchiveStatus', 'type': 'str'},
+        'customer_provided_key_sha256': {'key': 'CustomerProvidedKeySha256', 'type': 'str'},
+        'encryption_scope': {'key': 'EncryptionScope', 'type': 'str'},
+        'access_tier_change_time': {'key': 'AccessTierChangeTime', 'type': 'rfc-1123'},
+        'tag_count': {'key': 'TagCount', 'type': 'int'},
+        'expires_on': {'key': 'Expiry-Time', 'type': 'rfc-1123'},
+        'is_sealed': {'key': 'Sealed', 'type': 'bool'},
+        'rehydrate_priority': {'key': 'RehydratePriority', 'type': 'str'},
+        'last_accessed_on': {'key': 'LastAccessTime', 'type': 'rfc-1123'},
+        'immutability_policy_expires_on': {'key': 'ImmutabilityPolicyUntilDate', 'type': 'rfc-1123'},
+        'immutability_policy_mode': {'key': 'ImmutabilityPolicyMode', 'type': 'str'},
+        'legal_hold': {'key': 'LegalHold', 'type': 'bool'},
     }
-    _xml_map = {"name": "Properties"}
+    _xml_map = {
+        'name': 'Properties'
+    }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword creation_time:
         :paramtype creation_time: ~datetime.datetime
@@ -670,46 +716,46 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         :paramtype legal_hold: bool
         """
         super(BlobPropertiesInternal, self).__init__(**kwargs)
-        self.creation_time = kwargs.get("creation_time", None)
-        self.last_modified = kwargs["last_modified"]
-        self.etag = kwargs["etag"]
-        self.content_length = kwargs.get("content_length", None)
-        self.content_type = kwargs.get("content_type", None)
-        self.content_encoding = kwargs.get("content_encoding", None)
-        self.content_language = kwargs.get("content_language", None)
-        self.content_md5 = kwargs.get("content_md5", None)
-        self.content_disposition = kwargs.get("content_disposition", None)
-        self.cache_control = kwargs.get("cache_control", None)
-        self.blob_sequence_number = kwargs.get("blob_sequence_number", None)
-        self.blob_type = kwargs.get("blob_type", None)
-        self.lease_status = kwargs.get("lease_status", None)
-        self.lease_state = kwargs.get("lease_state", None)
-        self.lease_duration = kwargs.get("lease_duration", None)
-        self.copy_id = kwargs.get("copy_id", None)
-        self.copy_status = kwargs.get("copy_status", None)
-        self.copy_source = kwargs.get("copy_source", None)
-        self.copy_progress = kwargs.get("copy_progress", None)
-        self.copy_completion_time = kwargs.get("copy_completion_time", None)
-        self.copy_status_description = kwargs.get("copy_status_description", None)
-        self.server_encrypted = kwargs.get("server_encrypted", None)
-        self.incremental_copy = kwargs.get("incremental_copy", None)
-        self.destination_snapshot = kwargs.get("destination_snapshot", None)
-        self.deleted_time = kwargs.get("deleted_time", None)
-        self.remaining_retention_days = kwargs.get("remaining_retention_days", None)
-        self.access_tier = kwargs.get("access_tier", None)
-        self.access_tier_inferred = kwargs.get("access_tier_inferred", None)
-        self.archive_status = kwargs.get("archive_status", None)
-        self.customer_provided_key_sha256 = kwargs.get("customer_provided_key_sha256", None)
-        self.encryption_scope = kwargs.get("encryption_scope", None)
-        self.access_tier_change_time = kwargs.get("access_tier_change_time", None)
-        self.tag_count = kwargs.get("tag_count", None)
-        self.expires_on = kwargs.get("expires_on", None)
-        self.is_sealed = kwargs.get("is_sealed", None)
-        self.rehydrate_priority = kwargs.get("rehydrate_priority", None)
-        self.last_accessed_on = kwargs.get("last_accessed_on", None)
-        self.immutability_policy_expires_on = kwargs.get("immutability_policy_expires_on", None)
-        self.immutability_policy_mode = kwargs.get("immutability_policy_mode", None)
-        self.legal_hold = kwargs.get("legal_hold", None)
+        self.creation_time = kwargs.get('creation_time', None)
+        self.last_modified = kwargs['last_modified']
+        self.etag = kwargs['etag']
+        self.content_length = kwargs.get('content_length', None)
+        self.content_type = kwargs.get('content_type', None)
+        self.content_encoding = kwargs.get('content_encoding', None)
+        self.content_language = kwargs.get('content_language', None)
+        self.content_md5 = kwargs.get('content_md5', None)
+        self.content_disposition = kwargs.get('content_disposition', None)
+        self.cache_control = kwargs.get('cache_control', None)
+        self.blob_sequence_number = kwargs.get('blob_sequence_number', None)
+        self.blob_type = kwargs.get('blob_type', None)
+        self.lease_status = kwargs.get('lease_status', None)
+        self.lease_state = kwargs.get('lease_state', None)
+        self.lease_duration = kwargs.get('lease_duration', None)
+        self.copy_id = kwargs.get('copy_id', None)
+        self.copy_status = kwargs.get('copy_status', None)
+        self.copy_source = kwargs.get('copy_source', None)
+        self.copy_progress = kwargs.get('copy_progress', None)
+        self.copy_completion_time = kwargs.get('copy_completion_time', None)
+        self.copy_status_description = kwargs.get('copy_status_description', None)
+        self.server_encrypted = kwargs.get('server_encrypted', None)
+        self.incremental_copy = kwargs.get('incremental_copy', None)
+        self.destination_snapshot = kwargs.get('destination_snapshot', None)
+        self.deleted_time = kwargs.get('deleted_time', None)
+        self.remaining_retention_days = kwargs.get('remaining_retention_days', None)
+        self.access_tier = kwargs.get('access_tier', None)
+        self.access_tier_inferred = kwargs.get('access_tier_inferred', None)
+        self.archive_status = kwargs.get('archive_status', None)
+        self.customer_provided_key_sha256 = kwargs.get('customer_provided_key_sha256', None)
+        self.encryption_scope = kwargs.get('encryption_scope', None)
+        self.access_tier_change_time = kwargs.get('access_tier_change_time', None)
+        self.tag_count = kwargs.get('tag_count', None)
+        self.expires_on = kwargs.get('expires_on', None)
+        self.is_sealed = kwargs.get('is_sealed', None)
+        self.rehydrate_priority = kwargs.get('rehydrate_priority', None)
+        self.last_accessed_on = kwargs.get('last_accessed_on', None)
+        self.immutability_policy_expires_on = kwargs.get('immutability_policy_expires_on', None)
+        self.immutability_policy_mode = kwargs.get('immutability_policy_mode', None)
+        self.legal_hold = kwargs.get('legal_hold', None)
 
 
 class BlobTag(msrest.serialization.Model):
@@ -724,17 +770,22 @@ class BlobTag(msrest.serialization.Model):
     """
 
     _validation = {
-        "key": {"required": True},
-        "value": {"required": True},
+        'key': {'required': True},
+        'value': {'required': True},
     }
 
     _attribute_map = {
-        "key": {"key": "Key", "type": "str"},
-        "value": {"key": "Value", "type": "str"},
+        'key': {'key': 'Key', 'type': 'str'},
+        'value': {'key': 'Value', 'type': 'str'},
     }
-    _xml_map = {"name": "Tag"}
+    _xml_map = {
+        'name': 'Tag'
+    }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword key: Required.
         :paramtype key: str
@@ -742,8 +793,8 @@ class BlobTag(msrest.serialization.Model):
         :paramtype value: str
         """
         super(BlobTag, self).__init__(**kwargs)
-        self.key = kwargs["key"]
-        self.value = kwargs["value"]
+        self.key = kwargs['key']
+        self.value = kwargs['value']
 
 
 class BlobTags(msrest.serialization.Model):
@@ -756,25 +807,26 @@ class BlobTags(msrest.serialization.Model):
     """
 
     _validation = {
-        "blob_tag_set": {"required": True},
+        'blob_tag_set': {'required': True},
     }
 
     _attribute_map = {
-        "blob_tag_set": {
-            "key": "BlobTagSet",
-            "type": "[BlobTag]",
-            "xml": {"name": "TagSet", "wrapped": True, "itemsName": "Tag"},
-        },
+        'blob_tag_set': {'key': 'BlobTagSet', 'type': '[BlobTag]', 'xml': {'name': 'TagSet', 'wrapped': True, 'itemsName': 'Tag'}},
     }
-    _xml_map = {"name": "Tags"}
+    _xml_map = {
+        'name': 'Tags'
+    }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword blob_tag_set: Required.
         :paramtype blob_tag_set: list[~azure.storage.blob.models.BlobTag]
         """
         super(BlobTags, self).__init__(**kwargs)
-        self.blob_tag_set = kwargs["blob_tag_set"]
+        self.blob_tag_set = kwargs['blob_tag_set']
 
 
 class Block(msrest.serialization.Model):
@@ -789,16 +841,19 @@ class Block(msrest.serialization.Model):
     """
 
     _validation = {
-        "name": {"required": True},
-        "size": {"required": True},
+        'name': {'required': True},
+        'size': {'required': True},
     }
 
     _attribute_map = {
-        "name": {"key": "Name", "type": "str"},
-        "size": {"key": "Size", "type": "long"},
+        'name': {'key': 'Name', 'type': 'str'},
+        'size': {'key': 'Size', 'type': 'long'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword name: Required. The base64 encoded block ID.
         :paramtype name: str
@@ -806,8 +861,8 @@ class Block(msrest.serialization.Model):
         :paramtype size: long
         """
         super(Block, self).__init__(**kwargs)
-        self.name = kwargs["name"]
-        self.size = kwargs["size"]
+        self.name = kwargs['name']
+        self.size = kwargs['size']
 
 
 class BlockList(msrest.serialization.Model):
@@ -820,11 +875,14 @@ class BlockList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "committed_blocks": {"key": "CommittedBlocks", "type": "[Block]", "xml": {"wrapped": True}},
-        "uncommitted_blocks": {"key": "UncommittedBlocks", "type": "[Block]", "xml": {"wrapped": True}},
+        'committed_blocks': {'key': 'CommittedBlocks', 'type': '[Block]', 'xml': {'wrapped': True}},
+        'uncommitted_blocks': {'key': 'UncommittedBlocks', 'type': '[Block]', 'xml': {'wrapped': True}},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword committed_blocks:
         :paramtype committed_blocks: list[~azure.storage.blob.models.Block]
@@ -832,8 +890,8 @@ class BlockList(msrest.serialization.Model):
         :paramtype uncommitted_blocks: list[~azure.storage.blob.models.Block]
         """
         super(BlockList, self).__init__(**kwargs)
-        self.committed_blocks = kwargs.get("committed_blocks", None)
-        self.uncommitted_blocks = kwargs.get("uncommitted_blocks", None)
+        self.committed_blocks = kwargs.get('committed_blocks', None)
+        self.uncommitted_blocks = kwargs.get('uncommitted_blocks', None)
 
 
 class BlockLookupList(msrest.serialization.Model):
@@ -848,13 +906,18 @@ class BlockLookupList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "committed": {"key": "Committed", "type": "[str]", "xml": {"itemsName": "Committed"}},
-        "uncommitted": {"key": "Uncommitted", "type": "[str]", "xml": {"itemsName": "Uncommitted"}},
-        "latest": {"key": "Latest", "type": "[str]", "xml": {"itemsName": "Latest"}},
+        'committed': {'key': 'Committed', 'type': '[str]', 'xml': {'itemsName': 'Committed'}},
+        'uncommitted': {'key': 'Uncommitted', 'type': '[str]', 'xml': {'itemsName': 'Uncommitted'}},
+        'latest': {'key': 'Latest', 'type': '[str]', 'xml': {'itemsName': 'Latest'}},
     }
-    _xml_map = {"name": "BlockList"}
+    _xml_map = {
+        'name': 'BlockList'
+    }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword committed:
         :paramtype committed: list[str]
@@ -864,9 +927,9 @@ class BlockLookupList(msrest.serialization.Model):
         :paramtype latest: list[str]
         """
         super(BlockLookupList, self).__init__(**kwargs)
-        self.committed = kwargs.get("committed", None)
-        self.uncommitted = kwargs.get("uncommitted", None)
-        self.latest = kwargs.get("latest", None)
+        self.committed = kwargs.get('committed', None)
+        self.uncommitted = kwargs.get('uncommitted', None)
+        self.latest = kwargs.get('latest', None)
 
 
 class ClearRange(msrest.serialization.Model):
@@ -881,17 +944,22 @@ class ClearRange(msrest.serialization.Model):
     """
 
     _validation = {
-        "start": {"required": True},
-        "end": {"required": True},
+        'start': {'required': True},
+        'end': {'required': True},
     }
 
     _attribute_map = {
-        "start": {"key": "Start", "type": "long", "xml": {"name": "Start"}},
-        "end": {"key": "End", "type": "long", "xml": {"name": "End"}},
+        'start': {'key': 'Start', 'type': 'long', 'xml': {'name': 'Start'}},
+        'end': {'key': 'End', 'type': 'long', 'xml': {'name': 'End'}},
     }
-    _xml_map = {"name": "ClearRange"}
+    _xml_map = {
+        'name': 'ClearRange'
+    }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword start: Required.
         :paramtype start: long
@@ -899,8 +967,8 @@ class ClearRange(msrest.serialization.Model):
         :paramtype end: long
         """
         super(ClearRange, self).__init__(**kwargs)
-        self.start = kwargs["start"]
-        self.end = kwargs["end"]
+        self.start = kwargs['start']
+        self.end = kwargs['end']
 
 
 class ContainerCpkScopeInfo(msrest.serialization.Model):
@@ -916,11 +984,14 @@ class ContainerCpkScopeInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "default_encryption_scope": {"key": "DefaultEncryptionScope", "type": "str"},
-        "prevent_encryption_scope_override": {"key": "PreventEncryptionScopeOverride", "type": "bool"},
+        'default_encryption_scope': {'key': 'DefaultEncryptionScope', 'type': 'str'},
+        'prevent_encryption_scope_override': {'key': 'PreventEncryptionScopeOverride', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword default_encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the
          default encryption scope to set on the container and use for all future writes.
@@ -931,8 +1002,8 @@ class ContainerCpkScopeInfo(msrest.serialization.Model):
         :paramtype prevent_encryption_scope_override: bool
         """
         super(ContainerCpkScopeInfo, self).__init__(**kwargs)
-        self.default_encryption_scope = kwargs.get("default_encryption_scope", None)
-        self.prevent_encryption_scope_override = kwargs.get("prevent_encryption_scope_override", None)
+        self.default_encryption_scope = kwargs.get('default_encryption_scope', None)
+        self.prevent_encryption_scope_override = kwargs.get('prevent_encryption_scope_override', None)
 
 
 class ContainerItem(msrest.serialization.Model):
@@ -953,20 +1024,25 @@ class ContainerItem(msrest.serialization.Model):
     """
 
     _validation = {
-        "name": {"required": True},
-        "properties": {"required": True},
+        'name': {'required': True},
+        'properties': {'required': True},
     }
 
     _attribute_map = {
-        "name": {"key": "Name", "type": "str"},
-        "deleted": {"key": "Deleted", "type": "bool"},
-        "version": {"key": "Version", "type": "str"},
-        "properties": {"key": "Properties", "type": "ContainerProperties"},
-        "metadata": {"key": "Metadata", "type": "{str}"},
+        'name': {'key': 'Name', 'type': 'str'},
+        'deleted': {'key': 'Deleted', 'type': 'bool'},
+        'version': {'key': 'Version', 'type': 'str'},
+        'properties': {'key': 'Properties', 'type': 'ContainerProperties'},
+        'metadata': {'key': 'Metadata', 'type': '{str}'},
     }
-    _xml_map = {"name": "Container"}
+    _xml_map = {
+        'name': 'Container'
+    }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword name: Required.
         :paramtype name: str
@@ -980,11 +1056,11 @@ class ContainerItem(msrest.serialization.Model):
         :paramtype metadata: dict[str, str]
         """
         super(ContainerItem, self).__init__(**kwargs)
-        self.name = kwargs["name"]
-        self.deleted = kwargs.get("deleted", None)
-        self.version = kwargs.get("version", None)
-        self.properties = kwargs["properties"]
-        self.metadata = kwargs.get("metadata", None)
+        self.name = kwargs['name']
+        self.deleted = kwargs.get('deleted', None)
+        self.version = kwargs.get('version', None)
+        self.properties = kwargs['properties']
+        self.metadata = kwargs.get('metadata', None)
 
 
 class ContainerProperties(msrest.serialization.Model):
@@ -1022,30 +1098,30 @@ class ContainerProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        "last_modified": {"required": True},
-        "etag": {"required": True},
+        'last_modified': {'required': True},
+        'etag': {'required': True},
     }
 
     _attribute_map = {
-        "last_modified": {"key": "Last-Modified", "type": "rfc-1123"},
-        "etag": {"key": "Etag", "type": "str"},
-        "lease_status": {"key": "LeaseStatus", "type": "str"},
-        "lease_state": {"key": "LeaseState", "type": "str"},
-        "lease_duration": {"key": "LeaseDuration", "type": "str"},
-        "public_access": {"key": "PublicAccess", "type": "str"},
-        "has_immutability_policy": {"key": "HasImmutabilityPolicy", "type": "bool"},
-        "has_legal_hold": {"key": "HasLegalHold", "type": "bool"},
-        "default_encryption_scope": {"key": "DefaultEncryptionScope", "type": "str"},
-        "prevent_encryption_scope_override": {"key": "DenyEncryptionScopeOverride", "type": "bool"},
-        "deleted_time": {"key": "DeletedTime", "type": "rfc-1123"},
-        "remaining_retention_days": {"key": "RemainingRetentionDays", "type": "int"},
-        "is_immutable_storage_with_versioning_enabled": {
-            "key": "ImmutableStorageWithVersioningEnabled",
-            "type": "bool",
-        },
+        'last_modified': {'key': 'Last-Modified', 'type': 'rfc-1123'},
+        'etag': {'key': 'Etag', 'type': 'str'},
+        'lease_status': {'key': 'LeaseStatus', 'type': 'str'},
+        'lease_state': {'key': 'LeaseState', 'type': 'str'},
+        'lease_duration': {'key': 'LeaseDuration', 'type': 'str'},
+        'public_access': {'key': 'PublicAccess', 'type': 'str'},
+        'has_immutability_policy': {'key': 'HasImmutabilityPolicy', 'type': 'bool'},
+        'has_legal_hold': {'key': 'HasLegalHold', 'type': 'bool'},
+        'default_encryption_scope': {'key': 'DefaultEncryptionScope', 'type': 'str'},
+        'prevent_encryption_scope_override': {'key': 'DenyEncryptionScopeOverride', 'type': 'bool'},
+        'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123'},
+        'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int'},
+        'is_immutable_storage_with_versioning_enabled': {'key': 'ImmutableStorageWithVersioningEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword last_modified: Required.
         :paramtype last_modified: ~datetime.datetime
@@ -1076,21 +1152,19 @@ class ContainerProperties(msrest.serialization.Model):
         :paramtype is_immutable_storage_with_versioning_enabled: bool
         """
         super(ContainerProperties, self).__init__(**kwargs)
-        self.last_modified = kwargs["last_modified"]
-        self.etag = kwargs["etag"]
-        self.lease_status = kwargs.get("lease_status", None)
-        self.lease_state = kwargs.get("lease_state", None)
-        self.lease_duration = kwargs.get("lease_duration", None)
-        self.public_access = kwargs.get("public_access", None)
-        self.has_immutability_policy = kwargs.get("has_immutability_policy", None)
-        self.has_legal_hold = kwargs.get("has_legal_hold", None)
-        self.default_encryption_scope = kwargs.get("default_encryption_scope", None)
-        self.prevent_encryption_scope_override = kwargs.get("prevent_encryption_scope_override", None)
-        self.deleted_time = kwargs.get("deleted_time", None)
-        self.remaining_retention_days = kwargs.get("remaining_retention_days", None)
-        self.is_immutable_storage_with_versioning_enabled = kwargs.get(
-            "is_immutable_storage_with_versioning_enabled", None
-        )
+        self.last_modified = kwargs['last_modified']
+        self.etag = kwargs['etag']
+        self.lease_status = kwargs.get('lease_status', None)
+        self.lease_state = kwargs.get('lease_state', None)
+        self.lease_duration = kwargs.get('lease_duration', None)
+        self.public_access = kwargs.get('public_access', None)
+        self.has_immutability_policy = kwargs.get('has_immutability_policy', None)
+        self.has_legal_hold = kwargs.get('has_legal_hold', None)
+        self.default_encryption_scope = kwargs.get('default_encryption_scope', None)
+        self.prevent_encryption_scope_override = kwargs.get('prevent_encryption_scope_override', None)
+        self.deleted_time = kwargs.get('deleted_time', None)
+        self.remaining_retention_days = kwargs.get('remaining_retention_days', None)
+        self.is_immutable_storage_with_versioning_enabled = kwargs.get('is_immutable_storage_with_versioning_enabled', None)
 
 
 class CorsRule(msrest.serialization.Model):
@@ -1119,22 +1193,25 @@ class CorsRule(msrest.serialization.Model):
     """
 
     _validation = {
-        "allowed_origins": {"required": True},
-        "allowed_methods": {"required": True},
-        "allowed_headers": {"required": True},
-        "exposed_headers": {"required": True},
-        "max_age_in_seconds": {"required": True, "minimum": 0},
+        'allowed_origins': {'required': True},
+        'allowed_methods': {'required': True},
+        'allowed_headers': {'required': True},
+        'exposed_headers': {'required': True},
+        'max_age_in_seconds': {'required': True, 'minimum': 0},
     }
 
     _attribute_map = {
-        "allowed_origins": {"key": "AllowedOrigins", "type": "str"},
-        "allowed_methods": {"key": "AllowedMethods", "type": "str"},
-        "allowed_headers": {"key": "AllowedHeaders", "type": "str"},
-        "exposed_headers": {"key": "ExposedHeaders", "type": "str"},
-        "max_age_in_seconds": {"key": "MaxAgeInSeconds", "type": "int"},
+        'allowed_origins': {'key': 'AllowedOrigins', 'type': 'str'},
+        'allowed_methods': {'key': 'AllowedMethods', 'type': 'str'},
+        'allowed_headers': {'key': 'AllowedHeaders', 'type': 'str'},
+        'exposed_headers': {'key': 'ExposedHeaders', 'type': 'str'},
+        'max_age_in_seconds': {'key': 'MaxAgeInSeconds', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword allowed_origins: Required. The origin domains that are permitted to make a request
          against the storage service via CORS. The origin domain is the domain from which the request
@@ -1156,11 +1233,11 @@ class CorsRule(msrest.serialization.Model):
         :paramtype max_age_in_seconds: int
         """
         super(CorsRule, self).__init__(**kwargs)
-        self.allowed_origins = kwargs["allowed_origins"]
-        self.allowed_methods = kwargs["allowed_methods"]
-        self.allowed_headers = kwargs["allowed_headers"]
-        self.exposed_headers = kwargs["exposed_headers"]
-        self.max_age_in_seconds = kwargs["max_age_in_seconds"]
+        self.allowed_origins = kwargs['allowed_origins']
+        self.allowed_methods = kwargs['allowed_methods']
+        self.allowed_headers = kwargs['allowed_headers']
+        self.exposed_headers = kwargs['exposed_headers']
+        self.max_age_in_seconds = kwargs['max_age_in_seconds']
 
 
 class CpkInfo(msrest.serialization.Model):
@@ -1180,12 +1257,15 @@ class CpkInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "encryption_key": {"key": "encryptionKey", "type": "str"},
-        "encryption_key_sha256": {"key": "encryptionKeySha256", "type": "str"},
-        "encryption_algorithm": {"key": "encryptionAlgorithm", "type": "str"},
+        'encryption_key': {'key': 'encryptionKey', 'type': 'str'},
+        'encryption_key_sha256': {'key': 'encryptionKeySha256', 'type': 'str'},
+        'encryption_algorithm': {'key': 'encryptionAlgorithm', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword encryption_key: Optional. Specifies the encryption key to use to encrypt the data
          provided in the request. If not specified, encryption is performed with the root account
@@ -1200,9 +1280,9 @@ class CpkInfo(msrest.serialization.Model):
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         """
         super(CpkInfo, self).__init__(**kwargs)
-        self.encryption_key = kwargs.get("encryption_key", None)
-        self.encryption_key_sha256 = kwargs.get("encryption_key_sha256", None)
-        self.encryption_algorithm = kwargs.get("encryption_algorithm", None)
+        self.encryption_key = kwargs.get('encryption_key', None)
+        self.encryption_key_sha256 = kwargs.get('encryption_key_sha256', None)
+        self.encryption_algorithm = kwargs.get('encryption_algorithm', None)
 
 
 class CpkScopeInfo(msrest.serialization.Model):
@@ -1216,10 +1296,13 @@ class CpkScopeInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "encryption_scope": {"key": "encryptionScope", "type": "str"},
+        'encryption_scope': {'key': 'encryptionScope', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword encryption_scope: Optional. Version 2019-07-07 and later.  Specifies the name of the
          encryption scope to use to encrypt the data provided in the request. If not specified,
@@ -1228,7 +1311,7 @@ class CpkScopeInfo(msrest.serialization.Model):
         :paramtype encryption_scope: str
         """
         super(CpkScopeInfo, self).__init__(**kwargs)
-        self.encryption_scope = kwargs.get("encryption_scope", None)
+        self.encryption_scope = kwargs.get('encryption_scope', None)
 
 
 class DelimitedTextConfiguration(msrest.serialization.Model):
@@ -1247,15 +1330,20 @@ class DelimitedTextConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "column_separator": {"key": "ColumnSeparator", "type": "str", "xml": {"name": "ColumnSeparator"}},
-        "field_quote": {"key": "FieldQuote", "type": "str", "xml": {"name": "FieldQuote"}},
-        "record_separator": {"key": "RecordSeparator", "type": "str", "xml": {"name": "RecordSeparator"}},
-        "escape_char": {"key": "EscapeChar", "type": "str", "xml": {"name": "EscapeChar"}},
-        "headers_present": {"key": "HeadersPresent", "type": "bool", "xml": {"name": "HasHeaders"}},
+        'column_separator': {'key': 'ColumnSeparator', 'type': 'str', 'xml': {'name': 'ColumnSeparator'}},
+        'field_quote': {'key': 'FieldQuote', 'type': 'str', 'xml': {'name': 'FieldQuote'}},
+        'record_separator': {'key': 'RecordSeparator', 'type': 'str', 'xml': {'name': 'RecordSeparator'}},
+        'escape_char': {'key': 'EscapeChar', 'type': 'str', 'xml': {'name': 'EscapeChar'}},
+        'headers_present': {'key': 'HeadersPresent', 'type': 'bool', 'xml': {'name': 'HasHeaders'}},
     }
-    _xml_map = {"name": "DelimitedTextConfiguration"}
+    _xml_map = {
+        'name': 'DelimitedTextConfiguration'
+    }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword column_separator: The string used to separate columns.
         :paramtype column_separator: str
@@ -1269,11 +1357,11 @@ class DelimitedTextConfiguration(msrest.serialization.Model):
         :paramtype headers_present: bool
         """
         super(DelimitedTextConfiguration, self).__init__(**kwargs)
-        self.column_separator = kwargs.get("column_separator", None)
-        self.field_quote = kwargs.get("field_quote", None)
-        self.record_separator = kwargs.get("record_separator", None)
-        self.escape_char = kwargs.get("escape_char", None)
-        self.headers_present = kwargs.get("headers_present", None)
+        self.column_separator = kwargs.get('column_separator', None)
+        self.field_quote = kwargs.get('field_quote', None)
+        self.record_separator = kwargs.get('record_separator', None)
+        self.escape_char = kwargs.get('escape_char', None)
+        self.headers_present = kwargs.get('headers_present', None)
 
 
 class FilterBlobItem(msrest.serialization.Model):
@@ -1294,20 +1382,25 @@ class FilterBlobItem(msrest.serialization.Model):
     """
 
     _validation = {
-        "name": {"required": True},
-        "container_name": {"required": True},
+        'name': {'required': True},
+        'container_name': {'required': True},
     }
 
     _attribute_map = {
-        "name": {"key": "Name", "type": "str"},
-        "container_name": {"key": "ContainerName", "type": "str"},
-        "tags": {"key": "Tags", "type": "BlobTags"},
-        "version_id": {"key": "VersionId", "type": "str"},
-        "is_current_version": {"key": "IsCurrentVersion", "type": "bool"},
+        'name': {'key': 'Name', 'type': 'str'},
+        'container_name': {'key': 'ContainerName', 'type': 'str'},
+        'tags': {'key': 'Tags', 'type': 'BlobTags'},
+        'version_id': {'key': 'VersionId', 'type': 'str'},
+        'is_current_version': {'key': 'IsCurrentVersion', 'type': 'bool'},
     }
-    _xml_map = {"name": "Blob"}
+    _xml_map = {
+        'name': 'Blob'
+    }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword name: Required.
         :paramtype name: str
@@ -1321,11 +1414,11 @@ class FilterBlobItem(msrest.serialization.Model):
         :paramtype is_current_version: bool
         """
         super(FilterBlobItem, self).__init__(**kwargs)
-        self.name = kwargs["name"]
-        self.container_name = kwargs["container_name"]
-        self.tags = kwargs.get("tags", None)
-        self.version_id = kwargs.get("version_id", None)
-        self.is_current_version = kwargs.get("is_current_version", None)
+        self.name = kwargs['name']
+        self.container_name = kwargs['container_name']
+        self.tags = kwargs.get('tags', None)
+        self.version_id = kwargs.get('version_id', None)
+        self.is_current_version = kwargs.get('is_current_version', None)
 
 
 class FilterBlobSegment(msrest.serialization.Model):
@@ -1344,24 +1437,25 @@ class FilterBlobSegment(msrest.serialization.Model):
     """
 
     _validation = {
-        "service_endpoint": {"required": True},
-        "where": {"required": True},
-        "blobs": {"required": True},
+        'service_endpoint': {'required': True},
+        'where': {'required': True},
+        'blobs': {'required': True},
     }
 
     _attribute_map = {
-        "service_endpoint": {"key": "ServiceEndpoint", "type": "str", "xml": {"attr": True}},
-        "where": {"key": "Where", "type": "str"},
-        "blobs": {
-            "key": "Blobs",
-            "type": "[FilterBlobItem]",
-            "xml": {"name": "Blobs", "wrapped": True, "itemsName": "Blob"},
-        },
-        "next_marker": {"key": "NextMarker", "type": "str"},
+        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'attr': True}},
+        'where': {'key': 'Where', 'type': 'str'},
+        'blobs': {'key': 'Blobs', 'type': '[FilterBlobItem]', 'xml': {'name': 'Blobs', 'wrapped': True, 'itemsName': 'Blob'}},
+        'next_marker': {'key': 'NextMarker', 'type': 'str'},
     }
-    _xml_map = {"name": "EnumerationResults"}
+    _xml_map = {
+        'name': 'EnumerationResults'
+    }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword service_endpoint: Required.
         :paramtype service_endpoint: str
@@ -1373,10 +1467,10 @@ class FilterBlobSegment(msrest.serialization.Model):
         :paramtype next_marker: str
         """
         super(FilterBlobSegment, self).__init__(**kwargs)
-        self.service_endpoint = kwargs["service_endpoint"]
-        self.where = kwargs["where"]
-        self.blobs = kwargs["blobs"]
-        self.next_marker = kwargs.get("next_marker", None)
+        self.service_endpoint = kwargs['service_endpoint']
+        self.where = kwargs['where']
+        self.blobs = kwargs['blobs']
+        self.next_marker = kwargs.get('next_marker', None)
 
 
 class GeoReplication(msrest.serialization.Model):
@@ -1394,16 +1488,19 @@ class GeoReplication(msrest.serialization.Model):
     """
 
     _validation = {
-        "status": {"required": True},
-        "last_sync_time": {"required": True},
+        'status': {'required': True},
+        'last_sync_time': {'required': True},
     }
 
     _attribute_map = {
-        "status": {"key": "Status", "type": "str"},
-        "last_sync_time": {"key": "LastSyncTime", "type": "rfc-1123"},
+        'status': {'key': 'Status', 'type': 'str'},
+        'last_sync_time': {'key': 'LastSyncTime', 'type': 'rfc-1123'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword status: Required. The status of the secondary location. Known values are: "live",
          "bootstrap", "unavailable".
@@ -1414,8 +1511,8 @@ class GeoReplication(msrest.serialization.Model):
         :paramtype last_sync_time: ~datetime.datetime
         """
         super(GeoReplication, self).__init__(**kwargs)
-        self.status = kwargs["status"]
-        self.last_sync_time = kwargs["last_sync_time"]
+        self.status = kwargs['status']
+        self.last_sync_time = kwargs['last_sync_time']
 
 
 class JsonTextConfiguration(msrest.serialization.Model):
@@ -1426,17 +1523,22 @@ class JsonTextConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "record_separator": {"key": "RecordSeparator", "type": "str", "xml": {"name": "RecordSeparator"}},
+        'record_separator': {'key': 'RecordSeparator', 'type': 'str', 'xml': {'name': 'RecordSeparator'}},
     }
-    _xml_map = {"name": "JsonTextConfiguration"}
+    _xml_map = {
+        'name': 'JsonTextConfiguration'
+    }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword record_separator: The string used to separate records.
         :paramtype record_separator: str
         """
         super(JsonTextConfiguration, self).__init__(**kwargs)
-        self.record_separator = kwargs.get("record_separator", None)
+        self.record_separator = kwargs.get('record_separator', None)
 
 
 class KeyInfo(msrest.serialization.Model):
@@ -1451,16 +1553,19 @@ class KeyInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        "start": {"required": True},
-        "expiry": {"required": True},
+        'start': {'required': True},
+        'expiry': {'required': True},
     }
 
     _attribute_map = {
-        "start": {"key": "Start", "type": "str"},
-        "expiry": {"key": "Expiry", "type": "str"},
+        'start': {'key': 'Start', 'type': 'str'},
+        'expiry': {'key': 'Expiry', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword start: Required. The date-time the key is active in ISO 8601 UTC time.
         :paramtype start: str
@@ -1468,8 +1573,8 @@ class KeyInfo(msrest.serialization.Model):
         :paramtype expiry: str
         """
         super(KeyInfo, self).__init__(**kwargs)
-        self.start = kwargs["start"]
-        self.expiry = kwargs["expiry"]
+        self.start = kwargs['start']
+        self.expiry = kwargs['expiry']
 
 
 class LeaseAccessConditions(msrest.serialization.Model):
@@ -1481,17 +1586,20 @@ class LeaseAccessConditions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "lease_id": {"key": "leaseId", "type": "str"},
+        'lease_id': {'key': 'leaseId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID.
         :paramtype lease_id: str
         """
         super(LeaseAccessConditions, self).__init__(**kwargs)
-        self.lease_id = kwargs.get("lease_id", None)
+        self.lease_id = kwargs.get('lease_id', None)
 
 
 class ListBlobsFlatSegmentResponse(msrest.serialization.Model):
@@ -1516,23 +1624,28 @@ class ListBlobsFlatSegmentResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        "service_endpoint": {"required": True},
-        "container_name": {"required": True},
-        "segment": {"required": True},
+        'service_endpoint': {'required': True},
+        'container_name': {'required': True},
+        'segment': {'required': True},
     }
 
     _attribute_map = {
-        "service_endpoint": {"key": "ServiceEndpoint", "type": "str", "xml": {"attr": True}},
-        "container_name": {"key": "ContainerName", "type": "str", "xml": {"attr": True}},
-        "prefix": {"key": "Prefix", "type": "str"},
-        "marker": {"key": "Marker", "type": "str"},
-        "max_results": {"key": "MaxResults", "type": "int"},
-        "segment": {"key": "Segment", "type": "BlobFlatListSegment"},
-        "next_marker": {"key": "NextMarker", "type": "str"},
+        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'attr': True}},
+        'container_name': {'key': 'ContainerName', 'type': 'str', 'xml': {'attr': True}},
+        'prefix': {'key': 'Prefix', 'type': 'str'},
+        'marker': {'key': 'Marker', 'type': 'str'},
+        'max_results': {'key': 'MaxResults', 'type': 'int'},
+        'segment': {'key': 'Segment', 'type': 'BlobFlatListSegment'},
+        'next_marker': {'key': 'NextMarker', 'type': 'str'},
     }
-    _xml_map = {"name": "EnumerationResults"}
+    _xml_map = {
+        'name': 'EnumerationResults'
+    }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword service_endpoint: Required.
         :paramtype service_endpoint: str
@@ -1550,13 +1663,13 @@ class ListBlobsFlatSegmentResponse(msrest.serialization.Model):
         :paramtype next_marker: str
         """
         super(ListBlobsFlatSegmentResponse, self).__init__(**kwargs)
-        self.service_endpoint = kwargs["service_endpoint"]
-        self.container_name = kwargs["container_name"]
-        self.prefix = kwargs.get("prefix", None)
-        self.marker = kwargs.get("marker", None)
-        self.max_results = kwargs.get("max_results", None)
-        self.segment = kwargs["segment"]
-        self.next_marker = kwargs.get("next_marker", None)
+        self.service_endpoint = kwargs['service_endpoint']
+        self.container_name = kwargs['container_name']
+        self.prefix = kwargs.get('prefix', None)
+        self.marker = kwargs.get('marker', None)
+        self.max_results = kwargs.get('max_results', None)
+        self.segment = kwargs['segment']
+        self.next_marker = kwargs.get('next_marker', None)
 
 
 class ListBlobsHierarchySegmentResponse(msrest.serialization.Model):
@@ -1583,24 +1696,29 @@ class ListBlobsHierarchySegmentResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        "service_endpoint": {"required": True},
-        "container_name": {"required": True},
-        "segment": {"required": True},
+        'service_endpoint': {'required': True},
+        'container_name': {'required': True},
+        'segment': {'required': True},
     }
 
     _attribute_map = {
-        "service_endpoint": {"key": "ServiceEndpoint", "type": "str", "xml": {"attr": True}},
-        "container_name": {"key": "ContainerName", "type": "str", "xml": {"attr": True}},
-        "prefix": {"key": "Prefix", "type": "str"},
-        "marker": {"key": "Marker", "type": "str"},
-        "max_results": {"key": "MaxResults", "type": "int"},
-        "delimiter": {"key": "Delimiter", "type": "str"},
-        "segment": {"key": "Segment", "type": "BlobHierarchyListSegment"},
-        "next_marker": {"key": "NextMarker", "type": "str"},
+        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'attr': True}},
+        'container_name': {'key': 'ContainerName', 'type': 'str', 'xml': {'attr': True}},
+        'prefix': {'key': 'Prefix', 'type': 'str'},
+        'marker': {'key': 'Marker', 'type': 'str'},
+        'max_results': {'key': 'MaxResults', 'type': 'int'},
+        'delimiter': {'key': 'Delimiter', 'type': 'str'},
+        'segment': {'key': 'Segment', 'type': 'BlobHierarchyListSegment'},
+        'next_marker': {'key': 'NextMarker', 'type': 'str'},
     }
-    _xml_map = {"name": "EnumerationResults"}
+    _xml_map = {
+        'name': 'EnumerationResults'
+    }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword service_endpoint: Required.
         :paramtype service_endpoint: str
@@ -1620,14 +1738,14 @@ class ListBlobsHierarchySegmentResponse(msrest.serialization.Model):
         :paramtype next_marker: str
         """
         super(ListBlobsHierarchySegmentResponse, self).__init__(**kwargs)
-        self.service_endpoint = kwargs["service_endpoint"]
-        self.container_name = kwargs["container_name"]
-        self.prefix = kwargs.get("prefix", None)
-        self.marker = kwargs.get("marker", None)
-        self.max_results = kwargs.get("max_results", None)
-        self.delimiter = kwargs.get("delimiter", None)
-        self.segment = kwargs["segment"]
-        self.next_marker = kwargs.get("next_marker", None)
+        self.service_endpoint = kwargs['service_endpoint']
+        self.container_name = kwargs['container_name']
+        self.prefix = kwargs.get('prefix', None)
+        self.marker = kwargs.get('marker', None)
+        self.max_results = kwargs.get('max_results', None)
+        self.delimiter = kwargs.get('delimiter', None)
+        self.segment = kwargs['segment']
+        self.next_marker = kwargs.get('next_marker', None)
 
 
 class ListContainersSegmentResponse(msrest.serialization.Model):
@@ -1650,25 +1768,26 @@ class ListContainersSegmentResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        "service_endpoint": {"required": True},
-        "container_items": {"required": True},
+        'service_endpoint': {'required': True},
+        'container_items': {'required': True},
     }
 
     _attribute_map = {
-        "service_endpoint": {"key": "ServiceEndpoint", "type": "str", "xml": {"attr": True}},
-        "prefix": {"key": "Prefix", "type": "str"},
-        "marker": {"key": "Marker", "type": "str"},
-        "max_results": {"key": "MaxResults", "type": "int"},
-        "container_items": {
-            "key": "ContainerItems",
-            "type": "[ContainerItem]",
-            "xml": {"name": "Containers", "wrapped": True, "itemsName": "Container"},
-        },
-        "next_marker": {"key": "NextMarker", "type": "str"},
+        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'attr': True}},
+        'prefix': {'key': 'Prefix', 'type': 'str'},
+        'marker': {'key': 'Marker', 'type': 'str'},
+        'max_results': {'key': 'MaxResults', 'type': 'int'},
+        'container_items': {'key': 'ContainerItems', 'type': '[ContainerItem]', 'xml': {'name': 'Containers', 'wrapped': True, 'itemsName': 'Container'}},
+        'next_marker': {'key': 'NextMarker', 'type': 'str'},
     }
-    _xml_map = {"name": "EnumerationResults"}
+    _xml_map = {
+        'name': 'EnumerationResults'
+    }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword service_endpoint: Required.
         :paramtype service_endpoint: str
@@ -1684,12 +1803,12 @@ class ListContainersSegmentResponse(msrest.serialization.Model):
         :paramtype next_marker: str
         """
         super(ListContainersSegmentResponse, self).__init__(**kwargs)
-        self.service_endpoint = kwargs["service_endpoint"]
-        self.prefix = kwargs.get("prefix", None)
-        self.marker = kwargs.get("marker", None)
-        self.max_results = kwargs.get("max_results", None)
-        self.container_items = kwargs["container_items"]
-        self.next_marker = kwargs.get("next_marker", None)
+        self.service_endpoint = kwargs['service_endpoint']
+        self.prefix = kwargs.get('prefix', None)
+        self.marker = kwargs.get('marker', None)
+        self.max_results = kwargs.get('max_results', None)
+        self.container_items = kwargs['container_items']
+        self.next_marker = kwargs.get('next_marker', None)
 
 
 class Logging(msrest.serialization.Model):
@@ -1711,22 +1830,25 @@ class Logging(msrest.serialization.Model):
     """
 
     _validation = {
-        "version": {"required": True},
-        "delete": {"required": True},
-        "read": {"required": True},
-        "write": {"required": True},
-        "retention_policy": {"required": True},
+        'version': {'required': True},
+        'delete': {'required': True},
+        'read': {'required': True},
+        'write': {'required': True},
+        'retention_policy': {'required': True},
     }
 
     _attribute_map = {
-        "version": {"key": "Version", "type": "str"},
-        "delete": {"key": "Delete", "type": "bool"},
-        "read": {"key": "Read", "type": "bool"},
-        "write": {"key": "Write", "type": "bool"},
-        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
+        'version': {'key': 'Version', 'type': 'str'},
+        'delete': {'key': 'Delete', 'type': 'bool'},
+        'read': {'key': 'Read', 'type': 'bool'},
+        'write': {'key': 'Write', 'type': 'bool'},
+        'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword version: Required. The version of Storage Analytics to configure.
         :paramtype version: str
@@ -1741,11 +1863,11 @@ class Logging(msrest.serialization.Model):
         :paramtype retention_policy: ~azure.storage.blob.models.RetentionPolicy
         """
         super(Logging, self).__init__(**kwargs)
-        self.version = kwargs["version"]
-        self.delete = kwargs["delete"]
-        self.read = kwargs["read"]
-        self.write = kwargs["write"]
-        self.retention_policy = kwargs["retention_policy"]
+        self.version = kwargs['version']
+        self.delete = kwargs['delete']
+        self.read = kwargs['read']
+        self.write = kwargs['write']
+        self.retention_policy = kwargs['retention_policy']
 
 
 class Metrics(msrest.serialization.Model):
@@ -1766,17 +1888,20 @@ class Metrics(msrest.serialization.Model):
     """
 
     _validation = {
-        "enabled": {"required": True},
+        'enabled': {'required': True},
     }
 
     _attribute_map = {
-        "version": {"key": "Version", "type": "str"},
-        "enabled": {"key": "Enabled", "type": "bool"},
-        "include_apis": {"key": "IncludeAPIs", "type": "bool"},
-        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
+        'version': {'key': 'Version', 'type': 'str'},
+        'enabled': {'key': 'Enabled', 'type': 'bool'},
+        'include_apis': {'key': 'IncludeAPIs', 'type': 'bool'},
+        'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword version: The version of Storage Analytics to configure.
         :paramtype version: str
@@ -1790,10 +1915,10 @@ class Metrics(msrest.serialization.Model):
         :paramtype retention_policy: ~azure.storage.blob.models.RetentionPolicy
         """
         super(Metrics, self).__init__(**kwargs)
-        self.version = kwargs.get("version", None)
-        self.enabled = kwargs["enabled"]
-        self.include_apis = kwargs.get("include_apis", None)
-        self.retention_policy = kwargs.get("retention_policy", None)
+        self.version = kwargs.get('version', None)
+        self.enabled = kwargs['enabled']
+        self.include_apis = kwargs.get('include_apis', None)
+        self.retention_policy = kwargs.get('retention_policy', None)
 
 
 class ModifiedAccessConditions(msrest.serialization.Model):
@@ -1815,14 +1940,17 @@ class ModifiedAccessConditions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "if_modified_since": {"key": "ifModifiedSince", "type": "rfc-1123"},
-        "if_unmodified_since": {"key": "ifUnmodifiedSince", "type": "rfc-1123"},
-        "if_match": {"key": "ifMatch", "type": "str"},
-        "if_none_match": {"key": "ifNoneMatch", "type": "str"},
-        "if_tags": {"key": "ifTags", "type": "str"},
+        'if_modified_since': {'key': 'ifModifiedSince', 'type': 'rfc-1123'},
+        'if_unmodified_since': {'key': 'ifUnmodifiedSince', 'type': 'rfc-1123'},
+        'if_match': {'key': 'ifMatch', 'type': 'str'},
+        'if_none_match': {'key': 'ifNoneMatch', 'type': 'str'},
+        'if_tags': {'key': 'ifTags', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword if_modified_since: Specify this header value to operate only on a blob if it has been
          modified since the specified date/time.
@@ -1840,11 +1968,11 @@ class ModifiedAccessConditions(msrest.serialization.Model):
         :paramtype if_tags: str
         """
         super(ModifiedAccessConditions, self).__init__(**kwargs)
-        self.if_modified_since = kwargs.get("if_modified_since", None)
-        self.if_unmodified_since = kwargs.get("if_unmodified_since", None)
-        self.if_match = kwargs.get("if_match", None)
-        self.if_none_match = kwargs.get("if_none_match", None)
-        self.if_tags = kwargs.get("if_tags", None)
+        self.if_modified_since = kwargs.get('if_modified_since', None)
+        self.if_unmodified_since = kwargs.get('if_unmodified_since', None)
+        self.if_match = kwargs.get('if_match', None)
+        self.if_none_match = kwargs.get('if_none_match', None)
+        self.if_tags = kwargs.get('if_tags', None)
 
 
 class PageList(msrest.serialization.Model):
@@ -1859,12 +1987,15 @@ class PageList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "page_range": {"key": "PageRange", "type": "[PageRange]"},
-        "clear_range": {"key": "ClearRange", "type": "[ClearRange]"},
-        "next_marker": {"key": "NextMarker", "type": "str"},
+        'page_range': {'key': 'PageRange', 'type': '[PageRange]'},
+        'clear_range': {'key': 'ClearRange', 'type': '[ClearRange]'},
+        'next_marker': {'key': 'NextMarker', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword page_range:
         :paramtype page_range: list[~azure.storage.blob.models.PageRange]
@@ -1874,9 +2005,9 @@ class PageList(msrest.serialization.Model):
         :paramtype next_marker: str
         """
         super(PageList, self).__init__(**kwargs)
-        self.page_range = kwargs.get("page_range", None)
-        self.clear_range = kwargs.get("clear_range", None)
-        self.next_marker = kwargs.get("next_marker", None)
+        self.page_range = kwargs.get('page_range', None)
+        self.clear_range = kwargs.get('clear_range', None)
+        self.next_marker = kwargs.get('next_marker', None)
 
 
 class PageRange(msrest.serialization.Model):
@@ -1891,17 +2022,22 @@ class PageRange(msrest.serialization.Model):
     """
 
     _validation = {
-        "start": {"required": True},
-        "end": {"required": True},
+        'start': {'required': True},
+        'end': {'required': True},
     }
 
     _attribute_map = {
-        "start": {"key": "Start", "type": "long", "xml": {"name": "Start"}},
-        "end": {"key": "End", "type": "long", "xml": {"name": "End"}},
+        'start': {'key': 'Start', 'type': 'long', 'xml': {'name': 'Start'}},
+        'end': {'key': 'End', 'type': 'long', 'xml': {'name': 'End'}},
     }
-    _xml_map = {"name": "PageRange"}
+    _xml_map = {
+        'name': 'PageRange'
+    }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword start: Required.
         :paramtype start: long
@@ -1909,8 +2045,8 @@ class PageRange(msrest.serialization.Model):
         :paramtype end: long
         """
         super(PageRange, self).__init__(**kwargs)
-        self.start = kwargs["start"]
-        self.end = kwargs["end"]
+        self.start = kwargs['start']
+        self.end = kwargs['end']
 
 
 class QueryFormat(msrest.serialization.Model):
@@ -1934,18 +2070,21 @@ class QueryFormat(msrest.serialization.Model):
     """
 
     _validation = {
-        "type": {"required": True},
+        'type': {'required': True},
     }
 
     _attribute_map = {
-        "type": {"key": "Type", "type": "str", "xml": {"name": "Type"}},
-        "delimited_text_configuration": {"key": "DelimitedTextConfiguration", "type": "DelimitedTextConfiguration"},
-        "json_text_configuration": {"key": "JsonTextConfiguration", "type": "JsonTextConfiguration"},
-        "arrow_configuration": {"key": "ArrowConfiguration", "type": "ArrowConfiguration"},
-        "parquet_text_configuration": {"key": "ParquetTextConfiguration", "type": "object"},
+        'type': {'key': 'Type', 'type': 'str', 'xml': {'name': 'Type'}},
+        'delimited_text_configuration': {'key': 'DelimitedTextConfiguration', 'type': 'DelimitedTextConfiguration'},
+        'json_text_configuration': {'key': 'JsonTextConfiguration', 'type': 'JsonTextConfiguration'},
+        'arrow_configuration': {'key': 'ArrowConfiguration', 'type': 'ArrowConfiguration'},
+        'parquet_text_configuration': {'key': 'ParquetTextConfiguration', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword type: Required. The quick query format type. Known values are: "delimited", "json",
          "arrow", "parquet".
@@ -1962,11 +2101,11 @@ class QueryFormat(msrest.serialization.Model):
         :paramtype parquet_text_configuration: any
         """
         super(QueryFormat, self).__init__(**kwargs)
-        self.type = kwargs["type"]
-        self.delimited_text_configuration = kwargs.get("delimited_text_configuration", None)
-        self.json_text_configuration = kwargs.get("json_text_configuration", None)
-        self.arrow_configuration = kwargs.get("arrow_configuration", None)
-        self.parquet_text_configuration = kwargs.get("parquet_text_configuration", None)
+        self.type = kwargs['type']
+        self.delimited_text_configuration = kwargs.get('delimited_text_configuration', None)
+        self.json_text_configuration = kwargs.get('json_text_configuration', None)
+        self.arrow_configuration = kwargs.get('arrow_configuration', None)
+        self.parquet_text_configuration = kwargs.get('parquet_text_configuration', None)
 
 
 class QueryRequest(msrest.serialization.Model):
@@ -1989,21 +2128,26 @@ class QueryRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        "query_type": {"required": True, "constant": True},
-        "expression": {"required": True},
+        'query_type': {'required': True, 'constant': True},
+        'expression': {'required': True},
     }
 
     _attribute_map = {
-        "query_type": {"key": "QueryType", "type": "str", "xml": {"name": "QueryType"}},
-        "expression": {"key": "Expression", "type": "str", "xml": {"name": "Expression"}},
-        "input_serialization": {"key": "InputSerialization", "type": "QuerySerialization"},
-        "output_serialization": {"key": "OutputSerialization", "type": "QuerySerialization"},
+        'query_type': {'key': 'QueryType', 'type': 'str', 'xml': {'name': 'QueryType'}},
+        'expression': {'key': 'Expression', 'type': 'str', 'xml': {'name': 'Expression'}},
+        'input_serialization': {'key': 'InputSerialization', 'type': 'QuerySerialization'},
+        'output_serialization': {'key': 'OutputSerialization', 'type': 'QuerySerialization'},
     }
-    _xml_map = {"name": "QueryRequest"}
+    _xml_map = {
+        'name': 'QueryRequest'
+    }
 
     query_type = "SQL"
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword expression: Required. The query expression in SQL. The maximum size of the query
          expression is 256KiB.
@@ -2014,9 +2158,9 @@ class QueryRequest(msrest.serialization.Model):
         :paramtype output_serialization: ~azure.storage.blob.models.QuerySerialization
         """
         super(QueryRequest, self).__init__(**kwargs)
-        self.expression = kwargs["expression"]
-        self.input_serialization = kwargs.get("input_serialization", None)
-        self.output_serialization = kwargs.get("output_serialization", None)
+        self.expression = kwargs['expression']
+        self.input_serialization = kwargs.get('input_serialization', None)
+        self.output_serialization = kwargs.get('output_serialization', None)
 
 
 class QuerySerialization(msrest.serialization.Model):
@@ -2029,20 +2173,23 @@ class QuerySerialization(msrest.serialization.Model):
     """
 
     _validation = {
-        "format": {"required": True},
+        'format': {'required': True},
     }
 
     _attribute_map = {
-        "format": {"key": "Format", "type": "QueryFormat"},
+        'format': {'key': 'Format', 'type': 'QueryFormat'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword format: Required.
         :paramtype format: ~azure.storage.blob.models.QueryFormat
         """
         super(QuerySerialization, self).__init__(**kwargs)
-        self.format = kwargs["format"]
+        self.format = kwargs['format']
 
 
 class RetentionPolicy(msrest.serialization.Model):
@@ -2062,17 +2209,20 @@ class RetentionPolicy(msrest.serialization.Model):
     """
 
     _validation = {
-        "enabled": {"required": True},
-        "days": {"minimum": 1},
+        'enabled': {'required': True},
+        'days': {'minimum': 1},
     }
 
     _attribute_map = {
-        "enabled": {"key": "Enabled", "type": "bool"},
-        "days": {"key": "Days", "type": "int"},
-        "allow_permanent_delete": {"key": "AllowPermanentDelete", "type": "bool"},
+        'enabled': {'key': 'Enabled', 'type': 'bool'},
+        'days': {'key': 'Days', 'type': 'int'},
+        'allow_permanent_delete': {'key': 'AllowPermanentDelete', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword enabled: Required. Indicates whether a retention policy is enabled for the storage
          service.
@@ -2085,9 +2235,9 @@ class RetentionPolicy(msrest.serialization.Model):
         :paramtype allow_permanent_delete: bool
         """
         super(RetentionPolicy, self).__init__(**kwargs)
-        self.enabled = kwargs["enabled"]
-        self.days = kwargs.get("days", None)
-        self.allow_permanent_delete = kwargs.get("allow_permanent_delete", None)
+        self.enabled = kwargs['enabled']
+        self.days = kwargs.get('days', None)
+        self.allow_permanent_delete = kwargs.get('allow_permanent_delete', None)
 
 
 class SequenceNumberAccessConditions(msrest.serialization.Model):
@@ -2105,12 +2255,15 @@ class SequenceNumberAccessConditions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "if_sequence_number_less_than_or_equal_to": {"key": "ifSequenceNumberLessThanOrEqualTo", "type": "long"},
-        "if_sequence_number_less_than": {"key": "ifSequenceNumberLessThan", "type": "long"},
-        "if_sequence_number_equal_to": {"key": "ifSequenceNumberEqualTo", "type": "long"},
+        'if_sequence_number_less_than_or_equal_to': {'key': 'ifSequenceNumberLessThanOrEqualTo', 'type': 'long'},
+        'if_sequence_number_less_than': {'key': 'ifSequenceNumberLessThan', 'type': 'long'},
+        'if_sequence_number_equal_to': {'key': 'ifSequenceNumberEqualTo', 'type': 'long'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword if_sequence_number_less_than_or_equal_to: Specify this header value to operate only on
          a blob if it has a sequence number less than or equal to the specified.
@@ -2123,9 +2276,9 @@ class SequenceNumberAccessConditions(msrest.serialization.Model):
         :paramtype if_sequence_number_equal_to: long
         """
         super(SequenceNumberAccessConditions, self).__init__(**kwargs)
-        self.if_sequence_number_less_than_or_equal_to = kwargs.get("if_sequence_number_less_than_or_equal_to", None)
-        self.if_sequence_number_less_than = kwargs.get("if_sequence_number_less_than", None)
-        self.if_sequence_number_equal_to = kwargs.get("if_sequence_number_equal_to", None)
+        self.if_sequence_number_less_than_or_equal_to = kwargs.get('if_sequence_number_less_than_or_equal_to', None)
+        self.if_sequence_number_less_than = kwargs.get('if_sequence_number_less_than', None)
+        self.if_sequence_number_equal_to = kwargs.get('if_sequence_number_equal_to', None)
 
 
 class SignedIdentifier(msrest.serialization.Model):
@@ -2140,16 +2293,21 @@ class SignedIdentifier(msrest.serialization.Model):
     """
 
     _validation = {
-        "id": {"required": True},
+        'id': {'required': True},
     }
 
     _attribute_map = {
-        "id": {"key": "Id", "type": "str"},
-        "access_policy": {"key": "AccessPolicy", "type": "AccessPolicy"},
+        'id': {'key': 'Id', 'type': 'str'},
+        'access_policy': {'key': 'AccessPolicy', 'type': 'AccessPolicy'},
     }
-    _xml_map = {"name": "SignedIdentifier"}
+    _xml_map = {
+        'name': 'SignedIdentifier'
+    }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword id: Required. a unique id.
         :paramtype id: str
@@ -2157,8 +2315,8 @@ class SignedIdentifier(msrest.serialization.Model):
         :paramtype access_policy: ~azure.storage.blob.models.AccessPolicy
         """
         super(SignedIdentifier, self).__init__(**kwargs)
-        self.id = kwargs["id"]
-        self.access_policy = kwargs.get("access_policy", None)
+        self.id = kwargs['id']
+        self.access_policy = kwargs.get('access_policy', None)
 
 
 class SourceModifiedAccessConditions(msrest.serialization.Model):
@@ -2181,14 +2339,17 @@ class SourceModifiedAccessConditions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "source_if_modified_since": {"key": "sourceIfModifiedSince", "type": "rfc-1123"},
-        "source_if_unmodified_since": {"key": "sourceIfUnmodifiedSince", "type": "rfc-1123"},
-        "source_if_match": {"key": "sourceIfMatch", "type": "str"},
-        "source_if_none_match": {"key": "sourceIfNoneMatch", "type": "str"},
-        "source_if_tags": {"key": "sourceIfTags", "type": "str"},
+        'source_if_modified_since': {'key': 'sourceIfModifiedSince', 'type': 'rfc-1123'},
+        'source_if_unmodified_since': {'key': 'sourceIfUnmodifiedSince', 'type': 'rfc-1123'},
+        'source_if_match': {'key': 'sourceIfMatch', 'type': 'str'},
+        'source_if_none_match': {'key': 'sourceIfNoneMatch', 'type': 'str'},
+        'source_if_tags': {'key': 'sourceIfTags', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword source_if_modified_since: Specify this header value to operate only on a blob if it
          has been modified since the specified date/time.
@@ -2206,11 +2367,11 @@ class SourceModifiedAccessConditions(msrest.serialization.Model):
         :paramtype source_if_tags: str
         """
         super(SourceModifiedAccessConditions, self).__init__(**kwargs)
-        self.source_if_modified_since = kwargs.get("source_if_modified_since", None)
-        self.source_if_unmodified_since = kwargs.get("source_if_unmodified_since", None)
-        self.source_if_match = kwargs.get("source_if_match", None)
-        self.source_if_none_match = kwargs.get("source_if_none_match", None)
-        self.source_if_tags = kwargs.get("source_if_tags", None)
+        self.source_if_modified_since = kwargs.get('source_if_modified_since', None)
+        self.source_if_unmodified_since = kwargs.get('source_if_unmodified_since', None)
+        self.source_if_match = kwargs.get('source_if_match', None)
+        self.source_if_none_match = kwargs.get('source_if_none_match', None)
+        self.source_if_tags = kwargs.get('source_if_tags', None)
 
 
 class StaticWebsite(msrest.serialization.Model):
@@ -2229,17 +2390,20 @@ class StaticWebsite(msrest.serialization.Model):
     """
 
     _validation = {
-        "enabled": {"required": True},
+        'enabled': {'required': True},
     }
 
     _attribute_map = {
-        "enabled": {"key": "Enabled", "type": "bool"},
-        "index_document": {"key": "IndexDocument", "type": "str"},
-        "error_document404_path": {"key": "ErrorDocument404Path", "type": "str"},
-        "default_index_document_path": {"key": "DefaultIndexDocumentPath", "type": "str"},
+        'enabled': {'key': 'Enabled', 'type': 'bool'},
+        'index_document': {'key': 'IndexDocument', 'type': 'str'},
+        'error_document404_path': {'key': 'ErrorDocument404Path', 'type': 'str'},
+        'default_index_document_path': {'key': 'DefaultIndexDocumentPath', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword enabled: Required. Indicates whether this account is hosting a static website.
         :paramtype enabled: bool
@@ -2251,10 +2415,10 @@ class StaticWebsite(msrest.serialization.Model):
         :paramtype default_index_document_path: str
         """
         super(StaticWebsite, self).__init__(**kwargs)
-        self.enabled = kwargs["enabled"]
-        self.index_document = kwargs.get("index_document", None)
-        self.error_document404_path = kwargs.get("error_document404_path", None)
-        self.default_index_document_path = kwargs.get("default_index_document_path", None)
+        self.enabled = kwargs['enabled']
+        self.index_document = kwargs.get('index_document', None)
+        self.error_document404_path = kwargs.get('error_document404_path', None)
+        self.default_index_document_path = kwargs.get('default_index_document_path', None)
 
 
 class StorageError(msrest.serialization.Model):
@@ -2265,16 +2429,19 @@ class StorageError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "message": {"key": "Message", "type": "str"},
+        'message': {'key': 'Message', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword message:
         :paramtype message: str
         """
         super(StorageError, self).__init__(**kwargs)
-        self.message = kwargs.get("message", None)
+        self.message = kwargs.get('message', None)
 
 
 class StorageServiceProperties(msrest.serialization.Model):
@@ -2302,16 +2469,19 @@ class StorageServiceProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "logging": {"key": "Logging", "type": "Logging"},
-        "hour_metrics": {"key": "HourMetrics", "type": "Metrics"},
-        "minute_metrics": {"key": "MinuteMetrics", "type": "Metrics"},
-        "cors": {"key": "Cors", "type": "[CorsRule]", "xml": {"wrapped": True}},
-        "default_service_version": {"key": "DefaultServiceVersion", "type": "str"},
-        "delete_retention_policy": {"key": "DeleteRetentionPolicy", "type": "RetentionPolicy"},
-        "static_website": {"key": "StaticWebsite", "type": "StaticWebsite"},
+        'logging': {'key': 'Logging', 'type': 'Logging'},
+        'hour_metrics': {'key': 'HourMetrics', 'type': 'Metrics'},
+        'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics'},
+        'cors': {'key': 'Cors', 'type': '[CorsRule]', 'xml': {'wrapped': True}},
+        'default_service_version': {'key': 'DefaultServiceVersion', 'type': 'str'},
+        'delete_retention_policy': {'key': 'DeleteRetentionPolicy', 'type': 'RetentionPolicy'},
+        'static_website': {'key': 'StaticWebsite', 'type': 'StaticWebsite'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword logging: Azure Analytics Logging settings.
         :paramtype logging: ~azure.storage.blob.models.Logging
@@ -2334,13 +2504,13 @@ class StorageServiceProperties(msrest.serialization.Model):
         :paramtype static_website: ~azure.storage.blob.models.StaticWebsite
         """
         super(StorageServiceProperties, self).__init__(**kwargs)
-        self.logging = kwargs.get("logging", None)
-        self.hour_metrics = kwargs.get("hour_metrics", None)
-        self.minute_metrics = kwargs.get("minute_metrics", None)
-        self.cors = kwargs.get("cors", None)
-        self.default_service_version = kwargs.get("default_service_version", None)
-        self.delete_retention_policy = kwargs.get("delete_retention_policy", None)
-        self.static_website = kwargs.get("static_website", None)
+        self.logging = kwargs.get('logging', None)
+        self.hour_metrics = kwargs.get('hour_metrics', None)
+        self.minute_metrics = kwargs.get('minute_metrics', None)
+        self.cors = kwargs.get('cors', None)
+        self.default_service_version = kwargs.get('default_service_version', None)
+        self.delete_retention_policy = kwargs.get('delete_retention_policy', None)
+        self.static_website = kwargs.get('static_website', None)
 
 
 class StorageServiceStats(msrest.serialization.Model):
@@ -2351,16 +2521,19 @@ class StorageServiceStats(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "geo_replication": {"key": "GeoReplication", "type": "GeoReplication"},
+        'geo_replication': {'key': 'GeoReplication', 'type': 'GeoReplication'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword geo_replication: Geo-Replication information for the Secondary Storage Service.
         :paramtype geo_replication: ~azure.storage.blob.models.GeoReplication
         """
         super(StorageServiceStats, self).__init__(**kwargs)
-        self.geo_replication = kwargs.get("geo_replication", None)
+        self.geo_replication = kwargs.get('geo_replication', None)
 
 
 class UserDelegationKey(msrest.serialization.Model):
@@ -2385,26 +2558,29 @@ class UserDelegationKey(msrest.serialization.Model):
     """
 
     _validation = {
-        "signed_oid": {"required": True},
-        "signed_tid": {"required": True},
-        "signed_start": {"required": True},
-        "signed_expiry": {"required": True},
-        "signed_service": {"required": True},
-        "signed_version": {"required": True},
-        "value": {"required": True},
+        'signed_oid': {'required': True},
+        'signed_tid': {'required': True},
+        'signed_start': {'required': True},
+        'signed_expiry': {'required': True},
+        'signed_service': {'required': True},
+        'signed_version': {'required': True},
+        'value': {'required': True},
     }
 
     _attribute_map = {
-        "signed_oid": {"key": "SignedOid", "type": "str"},
-        "signed_tid": {"key": "SignedTid", "type": "str"},
-        "signed_start": {"key": "SignedStart", "type": "iso-8601"},
-        "signed_expiry": {"key": "SignedExpiry", "type": "iso-8601"},
-        "signed_service": {"key": "SignedService", "type": "str"},
-        "signed_version": {"key": "SignedVersion", "type": "str"},
-        "value": {"key": "Value", "type": "str"},
+        'signed_oid': {'key': 'SignedOid', 'type': 'str'},
+        'signed_tid': {'key': 'SignedTid', 'type': 'str'},
+        'signed_start': {'key': 'SignedStart', 'type': 'iso-8601'},
+        'signed_expiry': {'key': 'SignedExpiry', 'type': 'iso-8601'},
+        'signed_service': {'key': 'SignedService', 'type': 'str'},
+        'signed_version': {'key': 'SignedVersion', 'type': 'str'},
+        'value': {'key': 'Value', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         """
         :keyword signed_oid: Required. The Azure Active Directory object ID in GUID format.
         :paramtype signed_oid: str
@@ -2423,10 +2599,10 @@ class UserDelegationKey(msrest.serialization.Model):
         :paramtype value: str
         """
         super(UserDelegationKey, self).__init__(**kwargs)
-        self.signed_oid = kwargs["signed_oid"]
-        self.signed_tid = kwargs["signed_tid"]
-        self.signed_start = kwargs["signed_start"]
-        self.signed_expiry = kwargs["signed_expiry"]
-        self.signed_service = kwargs["signed_service"]
-        self.signed_version = kwargs["signed_version"]
-        self.value = kwargs["value"]
+        self.signed_oid = kwargs['signed_oid']
+        self.signed_tid = kwargs['signed_tid']
+        self.signed_start = kwargs['signed_start']
+        self.signed_expiry = kwargs['signed_expiry']
+        self.signed_service = kwargs['signed_service']
+        self.signed_version = kwargs['signed_version']
+        self.value = kwargs['value']

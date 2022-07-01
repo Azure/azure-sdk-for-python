@@ -9,13 +9,7 @@
 import datetime
 from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union
 
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    map_error,
-)
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -24,16 +18,9 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._append_blob_operations import (
-    build_append_block_from_url_request,
-    build_append_block_request,
-    build_create_request,
-    build_seal_request,
-)
-
-T = TypeVar("T")
+from ...operations._append_blob_operations import build_append_block_from_url_request, build_append_block_request, build_create_request, build_seal_request
+T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
-
 
 class AppendBlobOperations:
     """
@@ -53,6 +40,7 @@ class AppendBlobOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def create(  # pylint: disable=inconsistent-return-statements
@@ -74,8 +62,8 @@ class AppendBlobOperations:
     ) -> None:
         """The Create Append Blob operation creates a new append blob.
 
-        :param content_length: The length of the request. Required.
-        :type content_length: int
+        :param content_length: The length of the request.
+        :type content_length: long
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -100,7 +88,7 @@ class AppendBlobOperations:
          is set to expire. Default value is None.
         :type immutability_policy_expiry: ~datetime.datetime
         :param immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
-         Known values are: "Mutable", "Unlocked", and "Locked". Default value is None.
+         Default value is None.
         :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
         :param legal_hold: Specified if a legal hold should be set on the blob. Default value is None.
         :type legal_hold: bool
@@ -119,18 +107,20 @@ class AppendBlobOperations:
          unsupported behavior.
         :paramtype blob_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        blob_type = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "AppendBlob"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        blob_type = kwargs.pop('blob_type', _headers.pop('x-ms-blob-type', "AppendBlob"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _blob_content_type = None
         _blob_content_encoding = None
@@ -149,29 +139,32 @@ class AppendBlobOperations:
         _if_none_match = None
         _if_tags = None
         if blob_http_headers is not None:
-            _blob_cache_control = blob_http_headers.blob_cache_control
-            _blob_content_disposition = blob_http_headers.blob_content_disposition
+            _blob_content_type = blob_http_headers.blob_content_type
             _blob_content_encoding = blob_http_headers.blob_content_encoding
             _blob_content_language = blob_http_headers.blob_content_language
             _blob_content_md5 = blob_http_headers.blob_content_md5
-            _blob_content_type = blob_http_headers.blob_content_type
+            _blob_cache_control = blob_http_headers.blob_cache_control
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
+        if blob_http_headers is not None:
+            _blob_content_disposition = blob_http_headers.blob_content_disposition
         if cpk_info is not None:
-            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if modified_access_conditions is not None:
-            _if_match = modified_access_conditions.if_match
             _if_modified_since = modified_access_conditions.if_modified_since
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
+            _if_match = modified_access_conditions.if_match
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_create_request(
             url=self._config.url,
+            blob_type=blob_type,
+            version=self._config.version,
             content_length=content_length,
             timeout=timeout,
             blob_content_type=_blob_content_type,
@@ -196,9 +189,7 @@ class AppendBlobOperations:
             immutability_policy_expiry=immutability_policy_expiry,
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
-            blob_type=blob_type,
-            version=self._config.version,
-            template_url=self.create.metadata["url"],
+            template_url=self.create.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -206,9 +197,10 @@ class AppendBlobOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -217,30 +209,24 @@ class AppendBlobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-request-server-encrypted")
-        )
-        response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-key-sha256")
-        )
-        response_headers["x-ms-encryption-scope"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-scope")
-        )
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['x-ms-version-id']=self._deserialize('str', response.headers.get('x-ms-version-id'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+        response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
+        response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+    create.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
+
 
     @distributed_trace_async
     async def append_block(  # pylint: disable=inconsistent-return-statements
@@ -248,8 +234,8 @@ class AppendBlobOperations:
         content_length: int,
         body: IO,
         timeout: Optional[int] = None,
-        transactional_content_md5: Optional[bytes] = None,
-        transactional_content_crc64: Optional[bytes] = None,
+        transactional_content_md5: Optional[bytearray] = None,
+        transactional_content_crc64: Optional[bytearray] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         append_position_access_conditions: Optional[_models.AppendPositionAccessConditions] = None,
@@ -262,9 +248,9 @@ class AppendBlobOperations:
         The Append Block operation is permitted only if the blob was created with x-ms-blob-type set to
         AppendBlob. Append Block is supported only on version 2015-02-21 version or later.
 
-        :param content_length: The length of the request. Required.
-        :type content_length: int
-        :param body: Initial data. Required.
+        :param content_length: The length of the request.
+        :type content_length: long
+        :param body: Initial data.
         :type body: IO
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
@@ -273,10 +259,10 @@ class AppendBlobOperations:
         :type timeout: int
         :param transactional_content_md5: Specify the transactional md5 for the body, to be validated
          by the service. Default value is None.
-        :type transactional_content_md5: bytes
+        :type transactional_content_md5: bytearray
         :param transactional_content_crc64: Specify the transactional crc64 for the body, to be
          validated by the service. Default value is None.
-        :type transactional_content_crc64: bytes
+        :type transactional_content_crc64: bytearray
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
@@ -296,19 +282,21 @@ class AppendBlobOperations:
          may result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "appendblock"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', _params.pop('comp', "appendblock"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/octet-stream"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _lease_id = None
         _max_size = None
@@ -325,24 +313,28 @@ class AppendBlobOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if append_position_access_conditions is not None:
-            _append_position = append_position_access_conditions.append_position
             _max_size = append_position_access_conditions.max_size
+            _append_position = append_position_access_conditions.append_position
         if cpk_info is not None:
-            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if modified_access_conditions is not None:
-            _if_match = modified_access_conditions.if_match
             _if_modified_since = modified_access_conditions.if_modified_since
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
+            _if_match = modified_access_conditions.if_match
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
         _content = body
 
         request = build_append_block_request(
             url=self._config.url,
+            comp=comp,
+            version=self._config.version,
+            content_type=content_type,
+            content=_content,
             content_length=content_length,
             timeout=timeout,
             transactional_content_md5=transactional_content_md5,
@@ -360,11 +352,7 @@ class AppendBlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            comp=comp,
-            content_type=content_type,
-            version=self._config.version,
-            content=_content,
-            template_url=self.append_block.metadata["url"],
+            template_url=self.append_block.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -372,9 +360,10 @@ class AppendBlobOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -383,38 +372,26 @@ class AppendBlobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
-        response_headers["x-ms-content-crc64"] = self._deserialize(
-            "bytearray", response.headers.get("x-ms-content-crc64")
-        )
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-blob-append-offset"] = self._deserialize(
-            "str", response.headers.get("x-ms-blob-append-offset")
-        )
-        response_headers["x-ms-blob-committed-block-count"] = self._deserialize(
-            "int", response.headers.get("x-ms-blob-committed-block-count")
-        )
-        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-request-server-encrypted")
-        )
-        response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-key-sha256")
-        )
-        response_headers["x-ms-encryption-scope"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-scope")
-        )
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
+        response_headers['x-ms-content-crc64']=self._deserialize('bytearray', response.headers.get('x-ms-content-crc64'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-blob-append-offset']=self._deserialize('str', response.headers.get('x-ms-blob-append-offset'))
+        response_headers['x-ms-blob-committed-block-count']=self._deserialize('int', response.headers.get('x-ms-blob-committed-block-count'))
+        response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+        response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
+        response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    append_block.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+    append_block.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
+
 
     @distributed_trace_async
     async def append_block_from_url(  # pylint: disable=inconsistent-return-statements
@@ -422,10 +399,10 @@ class AppendBlobOperations:
         source_url: str,
         content_length: int,
         source_range: Optional[str] = None,
-        source_content_md5: Optional[bytes] = None,
-        source_contentcrc64: Optional[bytes] = None,
+        source_content_md5: Optional[bytearray] = None,
+        source_contentcrc64: Optional[bytearray] = None,
         timeout: Optional[int] = None,
-        transactional_content_md5: Optional[bytes] = None,
+        transactional_content_md5: Optional[bytearray] = None,
         request_id_parameter: Optional[str] = None,
         copy_source_authorization: Optional[str] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
@@ -441,18 +418,18 @@ class AppendBlobOperations:
         the blob was created with x-ms-blob-type set to AppendBlob. Append Block is supported only on
         version 2015-02-21 version or later.
 
-        :param source_url: Specify a URL to the copy source. Required.
+        :param source_url: Specify a URL to the copy source.
         :type source_url: str
-        :param content_length: The length of the request. Required.
-        :type content_length: int
+        :param content_length: The length of the request.
+        :type content_length: long
         :param source_range: Bytes of source data in the specified range. Default value is None.
         :type source_range: str
         :param source_content_md5: Specify the md5 calculated for the range of bytes that must be read
          from the copy source. Default value is None.
-        :type source_content_md5: bytes
+        :type source_content_md5: bytearray
         :param source_contentcrc64: Specify the crc64 calculated for the range of bytes that must be
          read from the copy source. Default value is None.
-        :type source_contentcrc64: bytes
+        :type source_contentcrc64: bytearray
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -460,7 +437,7 @@ class AppendBlobOperations:
         :type timeout: int
         :param transactional_content_md5: Specify the transactional md5 for the body, to be validated
          by the service. Default value is None.
-        :type transactional_content_md5: bytes
+        :type transactional_content_md5: bytearray
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
@@ -486,18 +463,20 @@ class AppendBlobOperations:
          may result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "appendblock"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', _params.pop('comp', "appendblock"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _encryption_key = None
         _encryption_key_sha256 = None
@@ -516,30 +495,32 @@ class AppendBlobOperations:
         _source_if_match = None
         _source_if_none_match = None
         if cpk_info is not None:
-            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if append_position_access_conditions is not None:
-            _append_position = append_position_access_conditions.append_position
             _max_size = append_position_access_conditions.max_size
+            _append_position = append_position_access_conditions.append_position
         if modified_access_conditions is not None:
-            _if_match = modified_access_conditions.if_match
             _if_modified_since = modified_access_conditions.if_modified_since
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
+            _if_match = modified_access_conditions.if_match
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
         if source_modified_access_conditions is not None:
-            _source_if_match = source_modified_access_conditions.source_if_match
             _source_if_modified_since = source_modified_access_conditions.source_if_modified_since
-            _source_if_none_match = source_modified_access_conditions.source_if_none_match
             _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
+            _source_if_match = source_modified_access_conditions.source_if_match
+            _source_if_none_match = source_modified_access_conditions.source_if_none_match
 
         request = build_append_block_from_url_request(
             url=self._config.url,
+            comp=comp,
+            version=self._config.version,
             source_url=source_url,
             content_length=content_length,
             source_range=source_range,
@@ -565,9 +546,7 @@ class AppendBlobOperations:
             source_if_none_match=_source_if_none_match,
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
-            comp=comp,
-            version=self._config.version,
-            template_url=self.append_block_from_url.metadata["url"],
+            template_url=self.append_block_from_url.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -575,9 +554,10 @@ class AppendBlobOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -586,35 +566,25 @@ class AppendBlobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
-        response_headers["x-ms-content-crc64"] = self._deserialize(
-            "bytearray", response.headers.get("x-ms-content-crc64")
-        )
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-blob-append-offset"] = self._deserialize(
-            "str", response.headers.get("x-ms-blob-append-offset")
-        )
-        response_headers["x-ms-blob-committed-block-count"] = self._deserialize(
-            "int", response.headers.get("x-ms-blob-committed-block-count")
-        )
-        response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-key-sha256")
-        )
-        response_headers["x-ms-encryption-scope"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-scope")
-        )
-        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-request-server-encrypted")
-        )
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
+        response_headers['x-ms-content-crc64']=self._deserialize('bytearray', response.headers.get('x-ms-content-crc64'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-blob-append-offset']=self._deserialize('str', response.headers.get('x-ms-blob-append-offset'))
+        response_headers['x-ms-blob-committed-block-count']=self._deserialize('int', response.headers.get('x-ms-blob-committed-block-count'))
+        response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
+        response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
+        response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    append_block_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+    append_block_from_url.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
+
 
     @distributed_trace_async
     async def seal(  # pylint: disable=inconsistent-return-statements
@@ -649,18 +619,20 @@ class AppendBlobOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "seal"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', _params.pop('comp', "seal"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _lease_id = None
         _if_modified_since = None
@@ -671,15 +643,17 @@ class AppendBlobOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if modified_access_conditions is not None:
-            _if_match = modified_access_conditions.if_match
             _if_modified_since = modified_access_conditions.if_modified_since
-            _if_none_match = modified_access_conditions.if_none_match
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
+            _if_match = modified_access_conditions.if_match
+            _if_none_match = modified_access_conditions.if_none_match
         if append_position_access_conditions is not None:
             _append_position = append_position_access_conditions.append_position
 
         request = build_seal_request(
             url=self._config.url,
+            comp=comp,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             lease_id=_lease_id,
@@ -688,9 +662,7 @@ class AppendBlobOperations:
             if_match=_if_match,
             if_none_match=_if_none_match,
             append_position=_append_position,
-            comp=comp,
-            version=self._config.version,
-            template_url=self.seal.metadata["url"],
+            template_url=self.seal.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -698,9 +670,10 @@ class AppendBlobOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -709,17 +682,17 @@ class AppendBlobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-blob-sealed"] = self._deserialize("bool", response.headers.get("x-ms-blob-sealed"))
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-blob-sealed']=self._deserialize('bool', response.headers.get('x-ms-blob-sealed'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    seal.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+    seal.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
+

@@ -6,168 +6,222 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models_py3 import AccessPolicy
-from ._models_py3 import AppendPositionAccessConditions
-from ._models_py3 import ArrowConfiguration
-from ._models_py3 import ArrowField
-from ._models_py3 import BlobFlatListSegment
-from ._models_py3 import BlobHTTPHeaders
-from ._models_py3 import BlobHierarchyListSegment
-from ._models_py3 import BlobItemInternal
-from ._models_py3 import BlobMetadata
-from ._models_py3 import BlobName
-from ._models_py3 import BlobPrefix
-from ._models_py3 import BlobPropertiesInternal
-from ._models_py3 import BlobTag
-from ._models_py3 import BlobTags
-from ._models_py3 import Block
-from ._models_py3 import BlockList
-from ._models_py3 import BlockLookupList
-from ._models_py3 import ClearRange
-from ._models_py3 import ContainerCpkScopeInfo
-from ._models_py3 import ContainerItem
-from ._models_py3 import ContainerProperties
-from ._models_py3 import CorsRule
-from ._models_py3 import CpkInfo
-from ._models_py3 import CpkScopeInfo
-from ._models_py3 import DelimitedTextConfiguration
-from ._models_py3 import FilterBlobItem
-from ._models_py3 import FilterBlobSegment
-from ._models_py3 import GeoReplication
-from ._models_py3 import JsonTextConfiguration
-from ._models_py3 import KeyInfo
-from ._models_py3 import LeaseAccessConditions
-from ._models_py3 import ListBlobsFlatSegmentResponse
-from ._models_py3 import ListBlobsHierarchySegmentResponse
-from ._models_py3 import ListContainersSegmentResponse
-from ._models_py3 import Logging
-from ._models_py3 import Metrics
-from ._models_py3 import ModifiedAccessConditions
-from ._models_py3 import PageList
-from ._models_py3 import PageRange
-from ._models_py3 import QueryFormat
-from ._models_py3 import QueryRequest
-from ._models_py3 import QuerySerialization
-from ._models_py3 import RetentionPolicy
-from ._models_py3 import SequenceNumberAccessConditions
-from ._models_py3 import SignedIdentifier
-from ._models_py3 import SourceModifiedAccessConditions
-from ._models_py3 import StaticWebsite
-from ._models_py3 import StorageError
-from ._models_py3 import StorageServiceProperties
-from ._models_py3 import StorageServiceStats
-from ._models_py3 import UserDelegationKey
+try:
+    from ._models_py3 import AccessPolicy
+    from ._models_py3 import AppendPositionAccessConditions
+    from ._models_py3 import ArrowConfiguration
+    from ._models_py3 import ArrowField
+    from ._models_py3 import BlobFlatListSegment
+    from ._models_py3 import BlobHTTPHeaders
+    from ._models_py3 import BlobHierarchyListSegment
+    from ._models_py3 import BlobItemInternal
+    from ._models_py3 import BlobMetadata
+    from ._models_py3 import BlobName
+    from ._models_py3 import BlobPrefix
+    from ._models_py3 import BlobPropertiesInternal
+    from ._models_py3 import BlobTag
+    from ._models_py3 import BlobTags
+    from ._models_py3 import Block
+    from ._models_py3 import BlockList
+    from ._models_py3 import BlockLookupList
+    from ._models_py3 import ClearRange
+    from ._models_py3 import ContainerCpkScopeInfo
+    from ._models_py3 import ContainerItem
+    from ._models_py3 import ContainerProperties
+    from ._models_py3 import CorsRule
+    from ._models_py3 import CpkInfo
+    from ._models_py3 import CpkScopeInfo
+    from ._models_py3 import DelimitedTextConfiguration
+    from ._models_py3 import FilterBlobItem
+    from ._models_py3 import FilterBlobSegment
+    from ._models_py3 import GeoReplication
+    from ._models_py3 import JsonTextConfiguration
+    from ._models_py3 import KeyInfo
+    from ._models_py3 import LeaseAccessConditions
+    from ._models_py3 import ListBlobsFlatSegmentResponse
+    from ._models_py3 import ListBlobsHierarchySegmentResponse
+    from ._models_py3 import ListContainersSegmentResponse
+    from ._models_py3 import Logging
+    from ._models_py3 import Metrics
+    from ._models_py3 import ModifiedAccessConditions
+    from ._models_py3 import PageList
+    from ._models_py3 import PageRange
+    from ._models_py3 import QueryFormat
+    from ._models_py3 import QueryRequest
+    from ._models_py3 import QuerySerialization
+    from ._models_py3 import RetentionPolicy
+    from ._models_py3 import SequenceNumberAccessConditions
+    from ._models_py3 import SignedIdentifier
+    from ._models_py3 import SourceModifiedAccessConditions
+    from ._models_py3 import StaticWebsite
+    from ._models_py3 import StorageError
+    from ._models_py3 import StorageServiceProperties
+    from ._models_py3 import StorageServiceStats
+    from ._models_py3 import UserDelegationKey
+except (SyntaxError, ImportError):
+    from ._models import AccessPolicy  # type: ignore
+    from ._models import AppendPositionAccessConditions  # type: ignore
+    from ._models import ArrowConfiguration  # type: ignore
+    from ._models import ArrowField  # type: ignore
+    from ._models import BlobFlatListSegment  # type: ignore
+    from ._models import BlobHTTPHeaders  # type: ignore
+    from ._models import BlobHierarchyListSegment  # type: ignore
+    from ._models import BlobItemInternal  # type: ignore
+    from ._models import BlobMetadata  # type: ignore
+    from ._models import BlobName  # type: ignore
+    from ._models import BlobPrefix  # type: ignore
+    from ._models import BlobPropertiesInternal  # type: ignore
+    from ._models import BlobTag  # type: ignore
+    from ._models import BlobTags  # type: ignore
+    from ._models import Block  # type: ignore
+    from ._models import BlockList  # type: ignore
+    from ._models import BlockLookupList  # type: ignore
+    from ._models import ClearRange  # type: ignore
+    from ._models import ContainerCpkScopeInfo  # type: ignore
+    from ._models import ContainerItem  # type: ignore
+    from ._models import ContainerProperties  # type: ignore
+    from ._models import CorsRule  # type: ignore
+    from ._models import CpkInfo  # type: ignore
+    from ._models import CpkScopeInfo  # type: ignore
+    from ._models import DelimitedTextConfiguration  # type: ignore
+    from ._models import FilterBlobItem  # type: ignore
+    from ._models import FilterBlobSegment  # type: ignore
+    from ._models import GeoReplication  # type: ignore
+    from ._models import JsonTextConfiguration  # type: ignore
+    from ._models import KeyInfo  # type: ignore
+    from ._models import LeaseAccessConditions  # type: ignore
+    from ._models import ListBlobsFlatSegmentResponse  # type: ignore
+    from ._models import ListBlobsHierarchySegmentResponse  # type: ignore
+    from ._models import ListContainersSegmentResponse  # type: ignore
+    from ._models import Logging  # type: ignore
+    from ._models import Metrics  # type: ignore
+    from ._models import ModifiedAccessConditions  # type: ignore
+    from ._models import PageList  # type: ignore
+    from ._models import PageRange  # type: ignore
+    from ._models import QueryFormat  # type: ignore
+    from ._models import QueryRequest  # type: ignore
+    from ._models import QuerySerialization  # type: ignore
+    from ._models import RetentionPolicy  # type: ignore
+    from ._models import SequenceNumberAccessConditions  # type: ignore
+    from ._models import SignedIdentifier  # type: ignore
+    from ._models import SourceModifiedAccessConditions  # type: ignore
+    from ._models import StaticWebsite  # type: ignore
+    from ._models import StorageError  # type: ignore
+    from ._models import StorageServiceProperties  # type: ignore
+    from ._models import StorageServiceStats  # type: ignore
+    from ._models import UserDelegationKey  # type: ignore
 
-from ._azure_blob_storage_enums import AccessTier
-from ._azure_blob_storage_enums import AccessTierOptional
-from ._azure_blob_storage_enums import AccessTierRequired
-from ._azure_blob_storage_enums import AccountKind
-from ._azure_blob_storage_enums import ArchiveStatus
-from ._azure_blob_storage_enums import BlobCopySourceTags
-from ._azure_blob_storage_enums import BlobExpiryOptions
-from ._azure_blob_storage_enums import BlobImmutabilityPolicyMode
-from ._azure_blob_storage_enums import BlobType
-from ._azure_blob_storage_enums import BlockListType
-from ._azure_blob_storage_enums import CopyStatusType
-from ._azure_blob_storage_enums import DeleteSnapshotsOptionType
-from ._azure_blob_storage_enums import EncryptionAlgorithmType
-from ._azure_blob_storage_enums import FilterBlobsIncludeItem
-from ._azure_blob_storage_enums import GeoReplicationStatusType
-from ._azure_blob_storage_enums import LeaseDurationType
-from ._azure_blob_storage_enums import LeaseStateType
-from ._azure_blob_storage_enums import LeaseStatusType
-from ._azure_blob_storage_enums import ListBlobsIncludeItem
-from ._azure_blob_storage_enums import ListContainersIncludeType
-from ._azure_blob_storage_enums import PremiumPageBlobAccessTier
-from ._azure_blob_storage_enums import PublicAccessType
-from ._azure_blob_storage_enums import QueryFormatType
-from ._azure_blob_storage_enums import RehydratePriority
-from ._azure_blob_storage_enums import SequenceNumberActionType
-from ._azure_blob_storage_enums import SkuName
-from ._azure_blob_storage_enums import StorageErrorCode
+from ._azure_blob_storage_enums import (
+    AccessTier,
+    AccessTierOptional,
+    AccessTierRequired,
+    AccountKind,
+    ArchiveStatus,
+    BlobCopySourceTags,
+    BlobExpiryOptions,
+    BlobImmutabilityPolicyMode,
+    BlobType,
+    BlockListType,
+    CopyStatusType,
+    DeleteSnapshotsOptionType,
+    EncryptionAlgorithmType,
+    FilterBlobsIncludeItem,
+    GeoReplicationStatusType,
+    LeaseDurationType,
+    LeaseStateType,
+    LeaseStatusType,
+    ListBlobsIncludeItem,
+    ListContainersIncludeType,
+    PremiumPageBlobAccessTier,
+    PublicAccessType,
+    QueryFormatType,
+    RehydratePriority,
+    SequenceNumberActionType,
+    SkuName,
+    StorageErrorCode,
+)
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
-
 __all__ = [
-    "AccessPolicy",
-    "AppendPositionAccessConditions",
-    "ArrowConfiguration",
-    "ArrowField",
-    "BlobFlatListSegment",
-    "BlobHTTPHeaders",
-    "BlobHierarchyListSegment",
-    "BlobItemInternal",
-    "BlobMetadata",
-    "BlobName",
-    "BlobPrefix",
-    "BlobPropertiesInternal",
-    "BlobTag",
-    "BlobTags",
-    "Block",
-    "BlockList",
-    "BlockLookupList",
-    "ClearRange",
-    "ContainerCpkScopeInfo",
-    "ContainerItem",
-    "ContainerProperties",
-    "CorsRule",
-    "CpkInfo",
-    "CpkScopeInfo",
-    "DelimitedTextConfiguration",
-    "FilterBlobItem",
-    "FilterBlobSegment",
-    "GeoReplication",
-    "JsonTextConfiguration",
-    "KeyInfo",
-    "LeaseAccessConditions",
-    "ListBlobsFlatSegmentResponse",
-    "ListBlobsHierarchySegmentResponse",
-    "ListContainersSegmentResponse",
-    "Logging",
-    "Metrics",
-    "ModifiedAccessConditions",
-    "PageList",
-    "PageRange",
-    "QueryFormat",
-    "QueryRequest",
-    "QuerySerialization",
-    "RetentionPolicy",
-    "SequenceNumberAccessConditions",
-    "SignedIdentifier",
-    "SourceModifiedAccessConditions",
-    "StaticWebsite",
-    "StorageError",
-    "StorageServiceProperties",
-    "StorageServiceStats",
-    "UserDelegationKey",
-    "AccessTier",
-    "AccessTierOptional",
-    "AccessTierRequired",
-    "AccountKind",
-    "ArchiveStatus",
-    "BlobCopySourceTags",
-    "BlobExpiryOptions",
-    "BlobImmutabilityPolicyMode",
-    "BlobType",
-    "BlockListType",
-    "CopyStatusType",
-    "DeleteSnapshotsOptionType",
-    "EncryptionAlgorithmType",
-    "FilterBlobsIncludeItem",
-    "GeoReplicationStatusType",
-    "LeaseDurationType",
-    "LeaseStateType",
-    "LeaseStatusType",
-    "ListBlobsIncludeItem",
-    "ListContainersIncludeType",
-    "PremiumPageBlobAccessTier",
-    "PublicAccessType",
-    "QueryFormatType",
-    "RehydratePriority",
-    "SequenceNumberActionType",
-    "SkuName",
-    "StorageErrorCode",
+    'AccessPolicy',
+    'AppendPositionAccessConditions',
+    'ArrowConfiguration',
+    'ArrowField',
+    'BlobFlatListSegment',
+    'BlobHTTPHeaders',
+    'BlobHierarchyListSegment',
+    'BlobItemInternal',
+    'BlobMetadata',
+    'BlobName',
+    'BlobPrefix',
+    'BlobPropertiesInternal',
+    'BlobTag',
+    'BlobTags',
+    'Block',
+    'BlockList',
+    'BlockLookupList',
+    'ClearRange',
+    'ContainerCpkScopeInfo',
+    'ContainerItem',
+    'ContainerProperties',
+    'CorsRule',
+    'CpkInfo',
+    'CpkScopeInfo',
+    'DelimitedTextConfiguration',
+    'FilterBlobItem',
+    'FilterBlobSegment',
+    'GeoReplication',
+    'JsonTextConfiguration',
+    'KeyInfo',
+    'LeaseAccessConditions',
+    'ListBlobsFlatSegmentResponse',
+    'ListBlobsHierarchySegmentResponse',
+    'ListContainersSegmentResponse',
+    'Logging',
+    'Metrics',
+    'ModifiedAccessConditions',
+    'PageList',
+    'PageRange',
+    'QueryFormat',
+    'QueryRequest',
+    'QuerySerialization',
+    'RetentionPolicy',
+    'SequenceNumberAccessConditions',
+    'SignedIdentifier',
+    'SourceModifiedAccessConditions',
+    'StaticWebsite',
+    'StorageError',
+    'StorageServiceProperties',
+    'StorageServiceStats',
+    'UserDelegationKey',
+    'AccessTier',
+    'AccessTierOptional',
+    'AccessTierRequired',
+    'AccountKind',
+    'ArchiveStatus',
+    'BlobCopySourceTags',
+    'BlobExpiryOptions',
+    'BlobImmutabilityPolicyMode',
+    'BlobType',
+    'BlockListType',
+    'CopyStatusType',
+    'DeleteSnapshotsOptionType',
+    'EncryptionAlgorithmType',
+    'FilterBlobsIncludeItem',
+    'GeoReplicationStatusType',
+    'LeaseDurationType',
+    'LeaseStateType',
+    'LeaseStatusType',
+    'ListBlobsIncludeItem',
+    'ListContainersIncludeType',
+    'PremiumPageBlobAccessTier',
+    'PublicAccessType',
+    'QueryFormatType',
+    'RehydratePriority',
+    'SequenceNumberActionType',
+    'SkuName',
+    'StorageErrorCode',
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
