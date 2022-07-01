@@ -4,7 +4,6 @@ languages:
     - python
 products:
     - azure
-    - azure-security-attestation
 urlFragment: attestation-samples
 ---
 
