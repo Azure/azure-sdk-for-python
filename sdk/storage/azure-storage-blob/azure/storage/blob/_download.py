@@ -11,7 +11,7 @@ import warnings
 from io import BytesIO
 from typing import Iterator, Union
 
-from azure.core.exceptions import HttpResponseError, IncompleteReadError, ServiceResponseError
+from azure.core.exceptions import HttpResponseError, ServiceResponseError, IncompleteReadError
 from azure.core.tracing.common import with_current_context
 
 from ._shared.request_handlers import validate_and_format_range_headers
@@ -204,17 +204,17 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                         download_stream_current=self.progress_total,
                         **self.request_options
                     )
+                except HttpResponseError as error:
+                    process_storage_error(error)
+
+                try:
+                    chunk_data = process_content(response, offset[0], offset[1], self.encryption_options)
                     retry_active = False
                 except (IncompleteReadError, ServiceResponseError) as error:
                     retry_total -= 1
                     if retry_total <= 0:
                         raise ServiceResponseError(error, error=error)
                     time.sleep(1)
-                except HttpResponseError as error:
-                    process_storage_error(error)
-
-                chunk_data = process_content(response, offset[0], offset[1], self.encryption_options)
-
 
             # This makes sure that if_match is set so that we can validate
             # that subsequent downloads are to an unmodified blob
@@ -433,14 +433,6 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                     self.size = self._file_size - self._start_range
                 else:
                     self.size = self._file_size
-                retry_active = False
-
-            except (IncompleteReadError, ServiceResponseError) as error:
-                retry_total -= 1
-                if retry_total <= 0:
-                    raise ServiceResponseError(error, error=error)
-                time.sleep(1)
-                continue
 
             except HttpResponseError as error:
                 if self._start_range is None and error.response.status_code == 416:
@@ -454,13 +446,6 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                             download_stream_current=0,
                             **self._request_options
                         )
-                        retry_active = False
-                    except (IncompleteReadError, ServiceResponseError) as error:
-                        retry_total -= 1
-                        if retry_total <= 0:
-                            raise ServiceResponseError(error, error=error)
-                        time.sleep(1)
-                        continue
                     except HttpResponseError as error:
                         process_storage_error(error)
 
@@ -470,15 +455,22 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 else:
                     process_storage_error(error)
 
-            if self.size == 0:
-                self._current_content = b""
-            else:
-                self._current_content = process_content(
-                    response,
-                    self._initial_offset[0],
-                    self._initial_offset[1],
-                    self._encryption_options
-                )
+            try:
+                if self.size == 0:
+                    self._current_content = b""
+                else:
+                    self._current_content = process_content(
+                        response,
+                        self._initial_offset[0],
+                        self._initial_offset[1],
+                        self._encryption_options
+                    )
+                retry_active = False
+            except (IncompleteReadError, ServiceResponseError) as error:
+                retry_total -= 1
+                if retry_total <= 0:
+                    raise ServiceResponseError(error, error=error)
+                time.sleep(1)
 
         # get page ranges to optimize downloading sparse page blob
         if response.properties.blob_type == 'PageBlob':
