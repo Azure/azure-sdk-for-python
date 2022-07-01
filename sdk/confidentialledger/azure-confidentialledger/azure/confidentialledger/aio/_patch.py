@@ -15,6 +15,9 @@ from azure.core.pipeline import policies
 from azure.confidentialledger.aio._client import (
     ConfidentialLedgerClient as GeneratedClient,
 )
+
+# Since we can't `await` in __init__, use the sync client for the Identity Service.
+from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
 from azure.confidentialledger._patch import ConfidentialLedgerCertificateCredential
 
 __all__: List[str] = [
@@ -44,14 +47,16 @@ class ConfidentialLedgerClient(GeneratedClient):
     :type credential: Union[
         ~azure.confidentialledger.ConfidentialLedgerCertificateCredential,
         ~azure.core.credentials.TokenCredential]
-    :param ledger_certificate_path: The path to the Confidential Ledger's TLS certificate.
+    :param ledger_certificate_path: The path to the Confidential Ledger's TLS certificate. If this
+        file does not exist yet, the Confidential Ledger's TLS certificate will be fetched and saved
+        to this file.
     :type ledger_certificate_path: Union[bytes, str, os.PathLike]
     :keyword api_version: Api Version. Default value is "2022-05-13". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(
+    async def __init__(
         self,
         ledger_uri: str,
         credential: Union[ConfidentialLedgerCertificateCredential, TokenCredential],
@@ -76,6 +81,25 @@ class ConfidentialLedgerClient(GeneratedClient):
                 "authentication_policy",
                 policies.AsyncBearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
             )
+
+        if os.path.isfile(ledger_certificate_path) is False:
+            # We'll need to fetch the TLS certificate.
+            identity_service_uri = kwargs.pop("identity_service_uri", None)
+            identity_client_kwargs = (
+                {}
+                if identity_service_uri is None
+                else {
+                    "identity_service_uri": identity_service_uri,
+                }
+            )
+            identity_service_client = ConfidentialLedgerIdentityServiceClient(**identity_client_kwargs)
+
+            # Ledger URIs are of the form https://<ledger id>.confidential-ledger.azure.com.
+            ledger_id = ledger_uri.replace("https://", "").split(".")[0]
+            ledger_cert = identity_service_client.get_ledger_identity(ledger_id)
+
+            with open(ledger_certificate_path, "w", encoding="utf-8") as outfile:
+                outfile.write(ledger_cert["ledgerTlsCertificate"])
 
         # Customize the underlying client to use a self-signed TLS certificate.
         kwargs["connection_verify"] = kwargs.get("connection_verify", ledger_certificate_path)
