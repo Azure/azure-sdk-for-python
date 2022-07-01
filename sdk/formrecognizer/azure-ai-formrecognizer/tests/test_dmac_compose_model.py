@@ -8,7 +8,7 @@ import pytest
 import uuid
 import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
-from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentModel
+from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentModelInfo
 from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -66,7 +66,7 @@ class TestTraining(FormRecognizerTest):
         def callback(response, _, headers):
             op_response = client._deserialize(GetOperationResponse, response)
             model_info = client._deserialize(ModelInfo, op_response.result)
-            document_model = DocumentModel._from_generated(model_info)
+            document_model = DocumentModelInfo._from_generated(model_info)
             raw_response.append(model_info)
             raw_response.append(document_model)
 
@@ -78,7 +78,7 @@ class TestTraining(FormRecognizerTest):
         self.assertModelTransformCorrect(document_model, generated)
 
         document_model_dict = document_model.to_dict()
-        document_model_from_dict = DocumentModel.from_dict(document_model_dict)
+        document_model_from_dict = DocumentModelInfo.from_dict(document_model_dict)
         self.assertModelTransformCorrect(document_model_from_dict, generated)
 
     @pytest.mark.live_test_only
