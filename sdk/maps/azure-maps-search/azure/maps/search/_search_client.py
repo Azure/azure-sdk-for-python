@@ -44,7 +44,7 @@ class SearchClient(SearchClientBase):
 
     def __init__(
         self,
-        credential, # type: Union[AzureKeyCredential, "TokenCredential"]
+        credential, # type: Union[AzureKeyCredential, TokenCredential]
         **kwargs  # type: Any
     ):
         # type: (...) -> None

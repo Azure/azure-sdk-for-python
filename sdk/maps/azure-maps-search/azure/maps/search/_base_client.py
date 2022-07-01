@@ -11,7 +11,7 @@ from ._version import VERSION
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
-
+# To check the credential is either AzureKeyCredential or TokenCredential
 def _authentication_policy(credential):
     authentication_policy = None
     if credential is None:
@@ -20,12 +20,17 @@ def _authentication_policy(credential):
         authentication_policy = AzureKeyCredentialPolicy(
             name="subscription-key", credential=credential
         )
+    elif credential is not None and not hasattr(credential, "get_token"):
+        raise TypeError(
+            "Unsupported credential: {}. Use an instance of AzureKeyCredential "
+            "or a token credential from azure.identity".format(type(credential))
+        )
     return authentication_policy
 
 class SearchClientBase:
     def __init__(
         self,
-        credential, #type: Union[AzureKeyCredential, "TokenCredential"]
+        credential, #type: Union[AzureKeyCredential, TokenCredential]
         **kwargs #type Any
     ):
         # type: (...) -> None

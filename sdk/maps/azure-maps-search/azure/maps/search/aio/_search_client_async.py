@@ -39,7 +39,7 @@ class SearchClient(AsyncSearchClientBase):
     """
     def __init__(
         self,
-        credential, # type: Union[AzureKeyCredential, "AsyncTokenCredential"]
+        credential, # type: Union[AzureKeyCredential, AsyncTokenCredential]
         **kwargs  # type: Any
     ):
         # type: (...) -> None

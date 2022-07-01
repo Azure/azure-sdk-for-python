@@ -16,7 +16,6 @@ parser = argparse.ArgumentParser(
 parser.parse_args()
 
 client = SearchClient(
-    client_id=os.environ.get("AZURE_CLIENT_ID"),
     credential=AzureKeyCredential(os.environ.get("AZURE_SUBSCRIPTION_KEY")),
 )
 
