@@ -19,14 +19,17 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
-from .._vendor import _convert_request
+from .._vendor import _convert_request, _format_url_section
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-def build_list_request(
+def build_get_request(
+    subscription_id: str,
+    location_name: str,
+    operation_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -36,7 +39,14 @@ def build_list_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/providers/Microsoft.Media/operations")
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.Media/locations/{locationName}/mediaServicesOperationResults/{operationId}")  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "locationName": _SERIALIZER.url("location_name", location_name, 'str'),
+        "operationId": _SERIALIZER.url("operation_id", operation_id, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
@@ -52,14 +62,14 @@ def build_list_request(
         **kwargs
     )
 
-class Operations:
+class MediaServicesOperationResultsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.media.AzureMediaServices`'s
-        :attr:`operations` attribute.
+        :attr:`media_services_operation_results` attribute.
     """
 
     models = _models
@@ -73,17 +83,23 @@ class Operations:
 
 
     @distributed_trace
-    def list(
+    def get(
         self,
+        location_name: str,
+        operation_id: str,
         **kwargs: Any
-    ) -> _models.OperationCollection:
-        """List Operations.
+    ) -> Optional[_models.MediaService]:
+        """Get operation result.
 
-        Lists all the Media Services operations.
+        Get media service operation result.
 
+        :param location_name: Location name.
+        :type location_name: str
+        :param operation_id: Operation Id.
+        :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: OperationCollection, or the result of cls(response)
-        :rtype: ~azure.mgmt.media.models.OperationCollection
+        :return: MediaService, or the result of cls(response)
+        :rtype: ~azure.mgmt.media.models.MediaService or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -95,12 +111,15 @@ class Operations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-11-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.OperationCollection]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.MediaService]]
 
         
-        request = build_list_request(
+        request = build_get_request(
+            subscription_id=self._config.subscription_id,
+            location_name=location_name,
+            operation_id=operation_id,
             api_version=api_version,
-            template_url=self.list.metadata['url'],
+            template_url=self.get.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -114,17 +133,26 @@ class Operations:
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('OperationCollection', pipeline_response)
+        deserialized = None
+        response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize('MediaService', pipeline_response)
+
+        if response.status_code == 202:
+            response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
+            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+            response_headers['Azure-AsyncOperation']=self._deserialize('str', response.headers.get('Azure-AsyncOperation'))
+            
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    list.metadata = {'url': "/providers/Microsoft.Media/operations"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.Media/locations/{locationName}/mediaServicesOperationResults/{operationId}"}  # type: ignore
 
