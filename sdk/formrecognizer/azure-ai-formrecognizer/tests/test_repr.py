@@ -603,10 +603,10 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_account_info(self):
-        model = _models.AccountInfo(
+        model = _models.ResourceInfo(
             document_model_limit=5000, document_model_count=10
         )
-        model_repr = "AccountInfo(document_model_count={}, document_model_limit={})".format(
+        model_repr = "ResourceInfo(document_model_count={}, document_model_limit={})".format(
             10, 5000
         )
         assert repr(model) == model_repr

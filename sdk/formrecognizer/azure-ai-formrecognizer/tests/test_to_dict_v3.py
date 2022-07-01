@@ -1950,7 +1950,7 @@ class TestToDict(FormRecognizerTest):
         assert d == final
 
     def test_account_info_to_dict(self):
-        model = _models.AccountInfo(document_model_limit=5000, document_model_count=10)
+        model = _models.ResourceInfo(document_model_limit=5000, document_model_count=10)
 
         d = model.to_dict()
 

@@ -4201,7 +4201,7 @@ class DocTypeInfo(object):
         )
 
 
-class AccountInfo(object):
+class ResourceInfo(object):
     """Info regarding models under the Form Recognizer resource.
 
     :ivar int document_model_count: Number of custom models in the current resource.
@@ -4217,7 +4217,7 @@ class AccountInfo(object):
 
     def __repr__(self):
         return (
-            "AccountInfo(document_model_count={}, document_model_limit={})".format(
+            "ResourceInfo(document_model_count={}, document_model_limit={})".format(
                 self.document_model_count,
                 self.document_model_limit,
             )
@@ -4233,7 +4233,7 @@ class AccountInfo(object):
 
     def to_dict(self):
         # type: () -> dict
-        """Returns a dict representation of AccountInfo.
+        """Returns a dict representation of ResourceInfo.
 
         :return: dict
         :rtype: dict
@@ -4245,12 +4245,12 @@ class AccountInfo(object):
 
     @classmethod
     def from_dict(cls, data):
-        # type: (dict) -> AccountInfo
-        """Converts a dict in the shape of a AccountInfo to the model itself.
+        # type: (dict) -> ResourceInfo
+        """Converts a dict in the shape of a ResourceInfo to the model itself.
 
-        :param dict data: A dictionary in the shape of AccountInfo.
-        :return: AccountInfo
-        :rtype: AccountInfo
+        :param dict data: A dictionary in the shape of ResourceInfo.
+        :return: ResourceInfo
+        :rtype: ResourceInfo
         """
         return cls(
             document_model_count=data.get("document_model_count", None),

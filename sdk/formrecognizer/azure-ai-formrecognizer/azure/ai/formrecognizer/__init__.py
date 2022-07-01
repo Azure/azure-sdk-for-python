@@ -61,7 +61,7 @@ from ._models import (
     DocumentModel,
     DocumentModelInfo,
     DocTypeInfo,
-    AccountInfo,
+    ResourceInfo,
     DocumentAnalysisError,
     DocumentAnalysisInnerError,
 )
@@ -126,7 +126,7 @@ __all__ = [
     "DocumentModel",
     "DocumentModelInfo",
     "DocTypeInfo",
-    "AccountInfo",
+    "ResourceInfo",
     "DocumentAnalysisError",
     "DocumentAnalysisInnerError",
 ]

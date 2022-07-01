@@ -31,7 +31,7 @@ from .._models import (
     DocumentModelInfo,
     ModelOperation,
     ModelOperationInfo,
-    AccountInfo,
+    ResourceInfo,
 )
 
 if TYPE_CHECKING:
@@ -424,11 +424,11 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         )
 
     @distributed_trace_async
-    async def get_resource_info(self, **kwargs: Any) -> AccountInfo:
+    async def get_resource_info(self, **kwargs: Any) -> ResourceInfo:
         """Get information about the models under the Form Recognizer resource.
 
         :return: Summary of models under the resource - model count and limit.
-        :rtype: ~azure.ai.formrecognizer.AccountInfo
+        :rtype: ~azure.ai.formrecognizer.ResourceInfo
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -442,7 +442,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         """
 
         response = await self._client.get_info(**kwargs)
-        return AccountInfo._from_generated(response.custom_document_models)
+        return ResourceInfo._from_generated(response.custom_document_models)
 
     @distributed_trace_async
     async def get_model(self, model_id: str, **kwargs: Any) -> DocumentModel:
