@@ -5,8 +5,7 @@
 ### Features Added
 
 ### Bugs Fixed
-- Removed `requests` import from `azure.storage.blob._download`.  #25017
-- Fixed retry mechanism in `azure.storage.blob._download`.  #25017
+- Removed forced `requests` import for sync calls. (25017)
 
 ## 12.13.0b1 (2022-06-15)
 
