@@ -163,7 +163,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             poller_2 = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
             model_2 = await poller_2.result()
 
-            composed_poller = await client.begin_create_composed_model([model_1.model_id, model_2.model_id])
+            composed_poller = await client.begin_compose_model([model_1.model_id, model_2.model_id])
             composed_model = await composed_poller.result()
 
             target = await client.get_copy_authorization()

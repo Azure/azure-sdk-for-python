@@ -184,7 +184,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_create_composed_model(self, component_model_ids, **kwargs):
+    def begin_compose_model(self, component_model_ids, **kwargs):
         # type: (List[str], Any) -> DocumentModelAdministrationLROPoller[DocumentModel]
         """Creates a composed model from a collection of existing models.
 
@@ -209,7 +209,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2-beta/sample_create_composed_model.py
+            .. literalinclude:: ../samples/v3.2-beta/sample_compose_model.py
                 :start-after: [START composed_model]
                 :end-before: [END composed_model]
                 :language: python

@@ -189,7 +189,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         )
 
     @distributed_trace_async
-    async def begin_create_composed_model(self, component_model_ids, **kwargs):
+    async def begin_compose_model(self, component_model_ids, **kwargs):
         # type: (List[str], Any) -> AsyncDocumentModelAdministrationLROPoller[DocumentModel]
         """Creates a composed model from a collection of existing models.
 
@@ -214,7 +214,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_create_composed_model_async.py
+            .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_compose_model_async.py
                 :start-after: [START composed_model_async]
                 :end-before: [END composed_model_async]
                 :language: python

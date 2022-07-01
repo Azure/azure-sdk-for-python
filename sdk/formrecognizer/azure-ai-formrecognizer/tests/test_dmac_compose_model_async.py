@@ -35,7 +35,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template", model_id=model_id_2, description="model2")
             model_2 = await poller.result()
 
-            poller = await client.begin_create_composed_model([model_1.model_id, model_2.model_id], model_id=composed_id, description="my composed model", tags={"testkey": "testvalue"})
+            poller = await client.begin_compose_model([model_1.model_id, model_2.model_id], model_id=composed_id, description="my composed model", tags={"testkey": "testvalue"})
 
             composed_model = await poller.result()
             if self.is_live:
@@ -73,7 +73,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template", description="model2")
             model_2 = await poller.result()
 
-            poller = await client.begin_create_composed_model([model_1.model_id, model_2.model_id], description="my composed model", cls=callback)
+            poller = await client.begin_compose_model([model_1.model_id, model_2.model_id], description="my composed model", cls=callback)
             model = await poller.result()
 
         generated = raw_response[0]
@@ -97,10 +97,10 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
             model_2 = await poller.result()
 
-            initial_poller = await client.begin_create_composed_model([model_1.model_id, model_2.model_id])
+            initial_poller = await client.begin_compose_model([model_1.model_id, model_2.model_id])
             cont_token = initial_poller.continuation_token()
 
-            poller = await client.begin_create_composed_model(None, continuation_token=cont_token)
+            poller = await client.begin_compose_model(None, continuation_token=cont_token)
             result = await poller.result()
             assert result
 
@@ -118,7 +118,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
             model_2 = await poller.result()
 
-            poller = await client.begin_create_composed_model([model_1.model_id, model_2.model_id])
+            poller = await client.begin_compose_model([model_1.model_id, model_2.model_id])
             assert poller.operation_id
             assert poller.percent_completed is not None
             await poller.result()

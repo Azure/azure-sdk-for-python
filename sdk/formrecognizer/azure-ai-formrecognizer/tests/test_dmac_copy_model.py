@@ -156,7 +156,7 @@ class TestCopyModel(FormRecognizerTest):
         poller_2 = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
         model_2 = poller_2.result()
 
-        composed_poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id])
+        composed_poller = client.begin_compose_model([model_1.model_id, model_2.model_id])
         composed_model = composed_poller.result()
 
         target = client.get_copy_authorization()

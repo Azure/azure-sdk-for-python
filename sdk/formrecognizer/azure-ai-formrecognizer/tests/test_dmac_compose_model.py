@@ -33,7 +33,7 @@ class TestTraining(FormRecognizerTest):
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", model_id=model_id_2, description="model2")
         model_2 = poller.result()
 
-        poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id], model_id=composed_id, description="my composed model", tags={"testkey": "testvalue"})
+        poller = client.begin_compose_model([model_1.model_id, model_2.model_id], model_id=composed_id, description="my composed model", tags={"testkey": "testvalue"})
 
         composed_model = poller.result()
         if self.is_live:
@@ -70,7 +70,7 @@ class TestTraining(FormRecognizerTest):
             raw_response.append(model_info)
             raw_response.append(document_model)
 
-        poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id], description="my composed model", cls=callback)
+        poller = client.begin_compose_model([model_1.model_id, model_2.model_id], description="my composed model", cls=callback)
         model = poller.result()
 
         generated = raw_response[0]
@@ -93,10 +93,10 @@ class TestTraining(FormRecognizerTest):
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
         model_2 = poller.result()
 
-        initial_poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id])
+        initial_poller = client.begin_compose_model([model_1.model_id, model_2.model_id])
         cont_token = initial_poller.continuation_token()
 
-        poller = client.begin_create_composed_model(None, continuation_token=cont_token)
+        poller = client.begin_compose_model(None, continuation_token=cont_token)
         result = poller.result()
         assert result
 
@@ -113,7 +113,7 @@ class TestTraining(FormRecognizerTest):
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
         model_2 = poller.result()
 
-        poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id])
+        poller = client.begin_compose_model([model_1.model_id, model_2.model_id])
         assert poller.operation_id
         assert poller.percent_completed is not None
         poller.result()
