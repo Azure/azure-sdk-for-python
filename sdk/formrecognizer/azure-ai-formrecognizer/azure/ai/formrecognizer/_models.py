@@ -4065,7 +4065,8 @@ class DocumentModelInfo(DocumentModelSummary):
 
     def __repr__(self):
         return (
-            "DocumentModelInfo(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={})".format(
+            "DocumentModelInfo(model_id={}, description={}, created_on={}, api_version={}, tags={}, "
+            "doc_types={})".format(
                 self.model_id,
                 self.description,
                 self.created_on,
