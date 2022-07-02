@@ -16,7 +16,7 @@ urlFragment: formrecognizer-samples
 > code from client library version 3.1.X or lower to the latest version. Additionally, see the [Changelog][changelog] for more detailed information.
 
 These code samples show common scenario operations with the Azure Form Recognizer client library.
-The async versions of the samples require Python 3.6 or later.
+The async versions of the samples require Python 3.7 or later.
 
 These sample programs show common scenarios for the Form Recognizer client's offerings.
 
@@ -73,7 +73,7 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 Please see the samples [here][v3.0.0-samples-tag].
 
 ## Prerequisites
-* Python 3.6 or later is required to use this package
+* Python 3.7 or later is required to use this package
 * You must have an [Azure subscription][azure_subscription] and an
 [Azure Form Recognizer account][azure_form_recognizer_account] to run these samples.
 
