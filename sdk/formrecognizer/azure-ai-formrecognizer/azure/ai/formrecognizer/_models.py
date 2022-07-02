@@ -393,8 +393,8 @@ class RecognizedForm:
 
     def __repr__(self):
         return (
-            f"RecognizedForm(form_type={self.form_type}, fields={repr(self.fields)}, page_range={repr(self.page_range)}, pages={repr(self.pages)}, form_type_confidence={self.form_type_confidence}, "
-            "model_id={self.model_id})"
+            f"RecognizedForm(form_type={self.form_type}, fields={repr(self.fields)}, page_range={repr(self.page_range)}, "
+            f"pages={repr(self.pages)}, form_type_confidence={self.form_type_confidence}, model_id={self.model_id})"
             )[:1024]
 
     def to_dict(self) -> dict:
@@ -500,16 +500,11 @@ class FormField:
         )
 
     def __repr__(self):
-        return "FormField(value_type={}, label_data={}, value_data={}, name={}, value={}, confidence={})".format(
-            self.value_type,
-            repr(self.label_data),
-            repr(self.value_data),
-            self.name,
-            repr(self.value),
-            self.confidence,
-        )[
-            :1024
-        ]
+        return (
+                f"FormField(value_type={self.value_type}, label_data={repr(self.label_data)}, "
+                f"value_data={repr(self.value_data)}, name={self.name}, value={repr(self.value)}, "
+                f"confidence={self.confidence})"
+            )[:1024]
 
     def to_dict(self) -> dict:
         """Returns a dict representation of FormField.
@@ -622,11 +617,10 @@ class FieldData:
         )
 
     def __repr__(self):
-        return "FieldData(page_number={}, text={}, bounding_box={}, field_elements={})".format(
-            self.page_number, self.text, self.bounding_box, repr(self.field_elements)
-        )[
-            :1024
-        ]
+        return (
+            f"FieldData(page_number={self.page_number}, text={self.text}, bounding_box={self.bounding_box}, "
+            f"field_elements={repr(self.field_elements)})"
+        )[:1024]
 
     def to_dict(self) -> dict:
         """Returns a dict representation of FieldData.
@@ -721,18 +715,10 @@ class FormPage:
 
     def __repr__(self):
         return (
-            "FormPage(page_number={}, text_angle={}, width={}, height={}, unit={}, tables={}, lines={},"
-            "selection_marks={})".format(
-                self.page_number,
-                self.text_angle,
-                self.width,
-                self.height,
-                self.unit,
-                repr(self.tables),
-                repr(self.lines),
-                repr(self.selection_marks),
-            )[:1024]
-        )
+            f"FormPage(page_number={self.page_number}, text_angle={self.text_angle}, "
+            f"width={self.width}, height={self.height}, unit={self.unit}, tables={repr(self.tables)}, "
+            f"lines={repr(self.lines)}, selection_marks={repr(self.selection_marks)})"
+        )[:1024]
 
     def to_dict(self) -> dict:
         """Returns a dict representation of FormPage.
@@ -825,16 +811,10 @@ class FormLine(FormElement):
         )
 
     def __repr__(self):
-        return "FormLine(text={}, bounding_box={}, words={}, page_number={}, kind={}, appearance={})".format(
-            self.text,
-            self.bounding_box,
-            repr(self.words),
-            self.page_number,
-            self.kind,
-            self.appearance,
-        )[
-            :1024
-        ]
+        return (
+            f"FormLine(text={self.text}, bounding_box={self.bounding_box}, words={repr(self.words)}, "
+            f"page_number={self.page_number}, kind={self.kind}, appearance={self.appearance})"
+        )[:1024]
 
     def to_dict(self) -> dict:
         """Returns a dict representation of FormLine.
@@ -909,11 +889,10 @@ class FormWord(FormElement):
         )
 
     def __repr__(self):
-        return "FormWord(text={}, bounding_box={}, confidence={}, page_number={}, kind={})".format(
-            self.text, self.bounding_box, self.confidence, self.page_number, self.kind
-        )[
-            :1024
-        ]
+        return (
+            f"FormWord(text={self.text}, bounding_box={self.bounding_box}, confidence={self.confidence}, "
+            f"page_number={self.page_number}, kind={self.kind})"
+        )[:1024]
 
     def to_dict(self) -> dict:
         """Returns a dict representation of FormWord.
@@ -985,16 +964,10 @@ class FormSelectionMark(FormElement):
         )
 
     def __repr__(self):
-        return "FormSelectionMark(text={}, bounding_box={}, confidence={}, page_number={}, state={}, kind={})".format(
-            self.text,
-            self.bounding_box,
-            self.confidence,
-            self.page_number,
-            self.state,
-            self.kind,
-        )[
-            :1024
-        ]
+        return (
+            f"FormSelectionMark(text={self.text}, bounding_box={self.bounding_box}, confidence={self.confidence}, "
+            f"page_number={self.page_number}, state={self.state}, kind={self.kind})"
+        )[:1024]
 
     def to_dict(self) -> dict:
         """Returns a dict representation of FormSelectionMark.
@@ -1061,15 +1034,10 @@ class FormTable:
         self.bounding_box = kwargs.get("bounding_box", None)
 
     def __repr__(self):
-        return "FormTable(page_number={}, cells={}, row_count={}, column_count={}, bounding_box={})".format(
-            self.page_number,
-            repr(self.cells),
-            self.row_count,
-            self.column_count,
-            self.bounding_box,
-        )[
-            :1024
-        ]
+        return (
+            f"FormTable(page_number={self.page_number}, cells={repr(self.cells)}, row_count={self.row_count}, "
+            f"column_count={self.column_count}, bounding_box={self.bounding_box})"
+        )[:1024]
 
     def to_dict(self) -> dict:
         """Returns a dict representation of FormTable.
@@ -1175,23 +1143,11 @@ class FormTableCell:  # pylint:disable=too-many-instance-attributes
 
     def __repr__(self):
         return (
-            "FormTableCell(text={}, row_index={}, column_index={}, row_span={}, column_span={}, "
-            "bounding_box={}, confidence={}, is_header={}, is_footer={}, page_number={}, field_elements={})".format(
-                self.text,
-                self.row_index,
-                self.column_index,
-                self.row_span,
-                self.column_span,
-                self.bounding_box,
-                self.confidence,
-                self.is_header,
-                self.is_footer,
-                self.page_number,
-                repr(self.field_elements),
-            )[
-                :1024
-            ]
-        )
+            f"FormTableCell(text={self.text}, row_index={self.row_index}, column_index={self.column_index}, "
+            f"row_span={self.row_span}, column_span={self.column_span}, bounding_box={self.bounding_box}, "
+            f"confidence={self.confidence}, is_header={self.is_header}, is_footer={self.is_footer}, "
+            f"page_number={self.page_number}, field_elements={repr(self.field_elements)})"
+        )[:1024]
 
     def to_dict(self) -> dict:
         """Returns a dict representation of FormTableCell.
@@ -1338,21 +1294,12 @@ class CustomFormModel:
 
     def __repr__(self):
         return (
-            "CustomFormModel(model_id={}, status={}, training_started_on={}, training_completed_on={}, "
-            "submodels={}, errors={}, training_documents={}, model_name={}, properties={})".format(
-                self.model_id,
-                self.status,
-                self.training_started_on,
-                self.training_completed_on,
-                repr(self.submodels),
-                repr(self.errors),
-                repr(self.training_documents),
-                self.model_name,
-                repr(self.properties),
-            )[
-                :1024
-            ]
-        )
+            f"CustomFormModel(model_id={self.model_id}, status={self.status}, "
+            f"training_started_on={self.training_started_on}, training_completed_on={self.training_completed_on}, "
+            f"submodels={repr(self.submodels)}, errors={repr(self.errors)}, "
+            f"training_documents={repr(self.training_documents)}, model_name={self.model_name}, "
+            f"properties={repr(self.properties)})"
+        )[:1024]
 
     def to_dict(self) -> dict:
         """Returns a dict representation of CustomFormModel.
@@ -1491,14 +1438,10 @@ class CustomFormSubmodel:
         ]
 
     def __repr__(self):
-        return "CustomFormSubmodel(accuracy={}, model_id={}, fields={}, form_type={})".format(
-            self.accuracy,
-            self.model_id,
-            repr(self.fields),
-            self.form_type,
-        )[
-            :1024
-        ]
+        return (
+            f"CustomFormSubmodel(accuracy={self.accuracy}, model_id={self.model_id}, "
+            f"fields={repr(self.fields)}, form_type={self.form_type})"
+        )[:1024]
 
     def to_dict(self) -> dict:
         """Returns a dict representation of CustomFormSubmodel.
@@ -1564,9 +1507,7 @@ class CustomFormModelField:
         }
 
     def __repr__(self):
-        return "CustomFormModelField(label={}, name={}, accuracy={})".format(
-            self.label, self.name, self.accuracy
-        )[:1024]
+        return f"CustomFormModelField(label={self.label}, name={self.name}, accuracy={self.accuracy})"[:1024]
 
     def to_dict(self) -> dict:
         """Returns a dict representation of CustomFormModelField.
@@ -1655,11 +1596,10 @@ class TrainingDocumentInfo:
         return training_document_info
 
     def __repr__(self):
-        return "TrainingDocumentInfo(name={}, status={}, page_count={}, errors={}, model_id={})".format(
-            self.name, self.status, self.page_count, repr(self.errors), self.model_id
-        )[
-            :1024
-        ]
+        return (
+            f"TrainingDocumentInfo(name={self.name}, status={self.status}, page_count={self.page_count}, "
+            f"errors={repr(self.errors)}, model_id={self.model_id})"[:1024]
+        )
 
     def to_dict(self) -> dict:
         """Returns a dict representation of TrainingDocumentInfo.
@@ -1717,9 +1657,7 @@ class FormRecognizerError:
         )
 
     def __repr__(self):
-        return "FormRecognizerError(code={}, message={})".format(
-            self.code, self.message
-        )[:1024]
+        return f"FormRecognizerError(code={self.code}, message={self.message})"[:1024]
 
     def to_dict(self) -> dict:
         """Returns a dict representation of FormRecognizerError.
@@ -1796,16 +1734,10 @@ class CustomFormModelInfo:
 
     def __repr__(self):
         return (
-            "CustomFormModelInfo(model_id={}, status={}, training_started_on={}, training_completed_on={}, "
-            "properties={}, model_name={})".format(
-                self.model_id,
-                self.status,
-                self.training_started_on,
-                self.training_completed_on,
-                repr(self.properties),
-                self.model_name,
-            )[:1024]
-        )
+            f"CustomFormModelInfo(model_id={self.model_id}, status={self.status}, "
+            f"training_started_on={self.training_started_on}, training_completed_on={self.training_completed_on}, "
+            f"properties={repr(self.properties)}, model_name={self.model_name})"
+        )[:1024]
 
     def to_dict(self) -> dict:
         """Returns a dict representation of CustomFormModelInfo.
@@ -1864,8 +1796,9 @@ class AccountProperties:
         )
 
     def __repr__(self):
-        return "AccountProperties(custom_model_count={}, custom_model_limit={})".format(
-            self.custom_model_count, self.custom_model_limit
+        return (
+            f"AccountProperties(custom_model_count={self.custom_model_count}, "
+            f"custom_model_limit={self.custom_model_limit})"
         )[:1024]
 
     def to_dict(self) -> dict:
@@ -1912,9 +1845,7 @@ class CustomFormModelProperties:
         return cls(is_composed_model=False)
 
     def __repr__(self):
-        return "CustomFormModelProperties(is_composed_model={})".format(
-            self.is_composed_model
-        )
+        return f"CustomFormModelProperties(is_composed_model={self.is_composed_model})"
 
     def to_dict(self) -> dict:
         """Returns a dict representation of CustomFormModelProperties.
@@ -2010,9 +1941,7 @@ class TextAppearance:
         )
 
     def __repr__(self):
-        return "TextAppearance(style_name={}, style_confidence={})".format(
-            self.style_name, self.style_confidence
-        )
+        return f"TextAppearance(style_name={self.style_name}, style_confidence={self.style_confidence})"
 
     def to_dict(self) -> dict:
         """Returns a dict representation of TextAppearance.
@@ -2057,9 +1986,7 @@ class BoundingRegion:
         self.polygon = kwargs.get("polygon", None)
 
     def __repr__(self):
-        return "BoundingRegion(page_number={}, polygon={})".format(
-            self.page_number, self.polygon
-        )
+        return f"BoundingRegion(page_number={self.page_number}, polygon={self.polygon})"
 
     @classmethod
     def _from_generated(cls, region):
@@ -2144,17 +2071,9 @@ class AddressValue:
 
     def __repr__(self):
         return (
-            "AddressValue(house_number={}, po_box={}, road={}, city={}, state={}, "
-            "postal_code={}, country_region={}, street_address={})".format(
-                self.house_number,
-                self.po_box,
-                self.road,
-                self.city,
-                self.state,
-                self.postal_code,
-                self.country_region,
-                self.street_address,
-            )
+            f"AddressValue(house_number={self.house_number}, po_box={self.po_box}, road={self.road}, "
+            f"city={self.city}, state={self.state}, postal_code={self.postal_code}, "
+            f"country_region={self.country_region}, street_address={self.street_address})"
         )
 
     def to_dict(self) -> dict:
@@ -2266,8 +2185,9 @@ class DocumentContentElement:
         self.kind = kwargs.get("kind", None)
 
     def __repr__(self):
-        return "DocumentContentElement(content={}, polygon={}, span={}, confidence={}, kind={})".format(
-            self.content, self.polygon, self.span, self.confidence, self.kind
+        return (
+            f"DocumentContentElement(content={self.content}, polygon={self.polygon}, span={self.span}, "
+            f"confidence={self.confidence}, kind={self.kind})"
         )
 
     def to_dict(self) -> dict:
@@ -2332,11 +2252,7 @@ class DocumentLanguage:
         )
 
     def __repr__(self):
-        return "DocumentLanguage(locale={}, spans={}, confidence={})".format(
-            self.locale,
-            repr(self.spans),
-            self.confidence,
-        )
+        return f"DocumentLanguage(locale={self.locale}, spans={repr(self.spans)}, confidence={self.confidence})"
 
     def to_dict(self) -> dict:
         """Returns a dict representation of DocumentLanguage.
@@ -2407,12 +2323,9 @@ class AnalyzedDocument:
         )
 
     def __repr__(self):
-        return "AnalyzedDocument(doc_type={}, bounding_regions={}, spans={}, fields={}, confidence={})".format(
-            self.doc_type,
-            repr(self.bounding_regions),
-            repr(self.spans),
-            repr(self.fields),
-            self.confidence,
+        return (
+            f"AnalyzedDocument(doc_type={self.doc_type}, bounding_regions={repr(self.bounding_regions)}, "
+            f"spans={repr(self.spans)}, fields={repr(self.fields)}, confidence={self.confidence})"
         )
 
     def to_dict(self) -> dict:
@@ -2521,15 +2434,9 @@ class DocumentField:
 
     def __repr__(self):
         return (
-            "DocumentField(value_type={}, value={}, content={}, bounding_regions={}, spans={}, "
-            "confidence={})".format(
-                self.value_type,
-                repr(self.value),
-                self.content,
-                repr(self.bounding_regions),
-                repr(self.spans),
-                self.confidence,
-            )
+            f"DocumentField(value_type={self.value_type}, value={repr(self.value)}, content={self.content}, "
+            f"bounding_regions={repr(self.bounding_regions)}, spans={repr(self.spans)}, "
+            f"confidence={self.confidence})"
         )
 
     def to_dict(self) -> dict:
@@ -2635,11 +2542,8 @@ class DocumentKeyValueElement:
 
     def __repr__(self):
         return (
-            "DocumentKeyValueElement(content={}, bounding_regions={}, spans={})".format(
-                self.content,
-                repr(self.bounding_regions),
-                repr(self.spans),
-            )
+            f"DocumentKeyValueElement(content={self.content}, bounding_regions={repr(self.bounding_regions)}, "
+            f"spans={repr(self.spans)})"
         )
 
     def to_dict(self) -> dict:
@@ -2706,10 +2610,9 @@ class DocumentKeyValuePair:
         )
 
     def __repr__(self):
-        return "DocumentKeyValuePair(key={}, value={}, confidence={})".format(
-            repr(self.key),
-            repr(self.value),
-            self.confidence,
+        return (
+            f"DocumentKeyValuePair(key={repr(self.key)}, value={repr(self.value)}, "
+            f"confidence={self.confidence})"
         )
 
     def to_dict(self) -> dict:
@@ -2770,11 +2673,7 @@ class DocumentLine:
         )
 
     def __repr__(self):
-        return "DocumentLine(content={}, polygon={}, spans={})".format(
-            self.content,
-            self.polygon,
-            repr(self.spans),
-        )
+        return f"DocumentLine(content={self.content}, polygon={self.polygon}, spans={repr(self.spans)})"
 
     def to_dict(self) -> dict:
         """Returns a dict representation of DocumentLine.
@@ -2859,12 +2758,8 @@ class DocumentParagraph:
 
     def __repr__(self):
         return (
-            "DocumentParagraph(role={}, content={}, bounding_regions={}, spans={})".format(
-                self.role,
-                self.content,
-                repr(self.bounding_regions),
-                repr(self.spans),
-            )
+            f"DocumentParagraph(role={self.role}, content={self.content}, "
+            f"bounding_regions={repr(self.bounding_regions)}, spans={repr(self.spans)})"
         )
 
     def to_dict(self) -> dict:
@@ -2974,19 +2869,10 @@ class DocumentPage:
 
     def __repr__(self):
         return (
-            "DocumentPage(kind={}, page_number={}, angle={}, width={}, height={}, unit={}, lines={}, "
-            "words={}, selection_marks={}, spans={})".format(
-                self.kind,
-                self.page_number,
-                self.angle,
-                self.width,
-                self.height,
-                self.unit,
-                repr(self.lines),
-                repr(self.words),
-                repr(self.selection_marks),
-                repr(self.spans),
-            )
+            f"DocumentPage(kind={self.kind}, page_number={self.page_number}, angle={self.angle}, "
+            f"width={self.width}, height={self.height}, unit={self.unit}, lines={repr(self.lines)}, "
+            f"words={repr(self.words)}, selection_marks={repr(self.selection_marks)}, "
+            f"spans={repr(self.spans)})"
         )
 
     def to_dict(self) -> dict:
@@ -3080,13 +2966,9 @@ class DocumentSelectionMark(DocumentContentElement):
         )
 
     def __repr__(self):
-        return "DocumentSelectionMark(state={}, content={}, span={}, confidence={}, polygon={}, kind={})".format(
-            self.state,
-            self.content,
-            repr(self.span),
-            self.confidence,
-            self.polygon,
-            self.kind,
+        return (
+            f"DocumentSelectionMark(state={self.state}, content={self.content}, span={repr(self.span)}, "
+            f"confidence={self.confidence}, polygon={self.polygon}, kind={self.kind})"
         )
 
     def to_dict(self) -> dict:
@@ -3153,10 +3035,9 @@ class DocumentStyle:
         )
 
     def __repr__(self):
-        return "DocumentStyle(is_handwritten={}, spans={}, confidence={})".format(
-            self.is_handwritten,
-            repr(self.spans),
-            self.confidence,
+        return (
+            f"DocumentStyle(is_handwritten={self.is_handwritten}, spans={repr(self.spans)}, "
+            f"confidence={self.confidence})"
         )
 
     def to_dict(self) -> dict:
@@ -3226,14 +3107,9 @@ class DocumentTable:
 
     def __repr__(self):
         return (
-            "DocumentTable(row_count={}, column_count={}, cells={}, bounding_regions={}, "
-            "spans={})".format(
-                self.row_count,
-                self.column_count,
-                repr(self.cells),
-                repr(self.bounding_regions),
-                repr(self.spans),
-            )
+            f"DocumentTable(row_count={self.row_count}, column_count={self.column_count}, "
+            f"cells={repr(self.cells)}, bounding_regions={repr(self.bounding_regions)}, "
+            f"spans={repr(self.spans)})"
         )
 
     def to_dict(self) -> dict:
@@ -3333,17 +3209,10 @@ class DocumentTableCell:
 
     def __repr__(self):
         return (
-            "DocumentTableCell(kind={}, row_index={}, column_index={}, row_span={}, column_span={}, "
-            "content={}, bounding_regions={}, spans={})".format(
-                self.kind,
-                self.row_index,
-                self.column_index,
-                self.row_span,
-                self.column_span,
-                self.content,
-                repr(self.bounding_regions),
-                repr(self.spans),
-            )
+            f"DocumentTableCell(kind={self.kind}, row_index={self.row_index}, "
+            f"column_index={self.column_index}, row_span={self.row_span}, "
+            f"column_span={self.column_span}, content={self.content}, "
+            f"bounding_regions={repr(self.bounding_regions)}, spans={repr(self.spans)})"
         )
 
     def to_dict(self) -> dict:
@@ -3437,18 +3306,10 @@ class ModelOperationInfo:
 
     def __repr__(self):
         return (
-            "ModelOperationInfo(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, "
-            "kind={}, resource_location={}, api_version={}, tags={})".format(
-                self.operation_id,
-                self.status,
-                self.percent_completed,
-                self.created_on,
-                self.last_updated_on,
-                self.kind,
-                self.resource_location,
-                self.api_version,
-                self.tags,
-            )
+            f"ModelOperationInfo(operation_id={self.operation_id}, status={self.status}, "
+            f"percent_completed={self.percent_completed}, created_on={self.created_on}, "
+            f"last_updated_on={self.last_updated_on}, kind={self.kind}, "
+            f"resource_location={self.resource_location}, api_version={self.api_version}, tags={self.tags})"
         )
 
     def to_dict(self) -> dict:
@@ -3550,20 +3411,11 @@ class ModelOperation(ModelOperationInfo):
 
     def __repr__(self):
         return (
-            "ModelOperation(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, "
-            "kind={}, resource_location={}, result={}, error={}, api_version={}, tags={})".format(
-                self.operation_id,
-                self.status,
-                self.percent_completed,
-                self.created_on,
-                self.last_updated_on,
-                self.kind,
-                self.resource_location,
-                repr(self.result),
-                repr(self.error),
-                self.api_version,
-                self.tags,
-            )
+            f"ModelOperation(operation_id={self.operation_id}, status={self.status}, "
+            f"percent_completed={self.percent_completed}, created_on={self.created_on}, "
+            f"last_updated_on={self.last_updated_on}, kind={self.kind}, "
+            f"resource_location={self.resource_location}, result={repr(self.result)}, "
+            f"error={repr(self.error)}, api_version={self.api_version}, tags={self.tags})"
         )
 
     def to_dict(self) -> dict:
@@ -3658,12 +3510,9 @@ class DocumentWord(DocumentContentElement):
         )
 
     def __repr__(self):
-        return "DocumentWord(content={}, polygon={}, span={}, confidence={}, kind={})".format(
-            self.content,
-            self.polygon,
-            repr(self.span),
-            self.confidence,
-            self.kind,
+        return (
+            f"DocumentWord(content={self.content}, polygon={self.polygon}, "
+            f"span={repr(self.span)}, confidence={self.confidence}, kind={self.kind})"
         )
 
     def to_dict(self) -> dict:
@@ -3780,19 +3629,11 @@ class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
 
     def __repr__(self):
         return (
-            "AnalyzeResult(api_version={}, model_id={}, content={}, languages={}, pages={}, paragraphs={}, "
-            "tables={}, key_value_pairs={}, styles={}, documents={})".format(
-                self.api_version,
-                self.model_id,
-                self.content,
-                repr(self.languages),
-                repr(self.pages),
-                repr(self.paragraphs),
-                repr(self.tables),
-                repr(self.key_value_pairs),
-                repr(self.styles),
-                repr(self.documents),
-            )
+            f"AnalyzeResult(api_version={self.api_version}, model_id={self.model_id}, "
+            f"content={self.content}, languages={repr(self.languages)}, "
+            f"pages={repr(self.pages)}, paragraphs={repr(self.paragraphs)}, tables={repr(self.tables)}, "
+            f"key_value_pairs={repr(self.key_value_pairs)}, "
+            f"styles={repr(self.styles)}, documents={repr(self.documents)})"
         )
 
     def to_dict(self) -> dict:
@@ -3893,13 +3734,8 @@ class DocumentModelInfo:
 
     def __repr__(self):
         return (
-            "DocumentModelInfo(model_id={}, description={}, created_on={}, api_version={}, tags={})".format(
-                self.model_id,
-                self.description,
-                self.created_on,
-                self.api_version,
-                self.tags,
-            )
+            f"DocumentModelInfo(model_id={self.model_id}, description={self.description}, "
+            f"created_on={self.created_on}, api_version={self.api_version}, tags={self.tags})"
         )
 
     @classmethod
@@ -3970,14 +3806,9 @@ class DocumentModel(DocumentModelInfo):
 
     def __repr__(self):
         return (
-            "DocumentModel(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={})".format(
-                self.model_id,
-                self.description,
-                self.created_on,
-                self.api_version,
-                self.tags,
-                repr(self.doc_types),
-            )
+            f"DocumentModel(model_id={self.model_id}, description={self.description}, "
+            f"created_on={self.created_on}, api_version={self.api_version}, tags={self.tags}, "
+            f"doc_types={repr(self.doc_types)})"
         )
 
     @classmethod
@@ -4055,12 +3886,8 @@ class DocTypeInfo:
 
     def __repr__(self):
         return (
-            "DocTypeInfo(description={}, build_mode={}, field_schema={}, field_confidence={})".format(
-                self.description,
-                self.build_mode,
-                self.field_schema,
-                self.field_confidence,
-            )
+            f"DocTypeInfo(description={self.description}, build_mode={self.build_mode}, "
+            f"field_schema={self.field_schema}, field_confidence={self.field_confidence})"
         )
 
     @classmethod
@@ -4118,10 +3945,8 @@ class AccountInfo:
 
     def __repr__(self):
         return (
-            "AccountInfo(document_model_count={}, document_model_limit={})".format(
-                self.document_model_count,
-                self.document_model_limit,
-            )
+            f"AccountInfo(document_model_count={self.document_model_count}, "
+            f"document_model_limit={self.document_model_limit})"
         )
 
     @classmethod
@@ -4184,13 +4009,8 @@ class DocumentAnalysisError:
 
     def __repr__(self):
         return (
-            "DocumentAnalysisError(code={}, message={}, target={}, details={}, innererror={})".format(
-                self.code,
-                self.message,
-                self.target,
-                repr(self.details),
-                repr(self.innererror)
-            )
+            f"DocumentAnalysisError(code={self.code}, message={self.message}, target={self.target}, "
+            f"details={repr(self.details)}, innererror={repr(self.innererror)})"
         )
 
     @classmethod
@@ -4257,11 +4077,8 @@ class DocumentAnalysisInnerError:
 
     def __repr__(self):
         return (
-            "DocumentAnalysisInnerError(code={}, message={}, innererror={})".format(
-                self.code,
-                self.message,
-                repr(self.innererror)
-            )
+            f"DocumentAnalysisInnerError(code={self.code}, message={self.message}, "
+            f"innererror={repr(self.innererror)})"
         )
 
     @classmethod
