@@ -1,5 +1,26 @@
 # Release History
 
+## 4.0.0b3 (2022-07-04)
+
+**Features**
+
+  - Added operation group DatabaseAdvancedThreatProtectionSettingsOperations
+  - Added operation group EndpointCertificatesOperations
+  - Added operation group ManagedServerDnsAliasesOperations
+  - Added operation group ServerAdvancedThreatProtectionSettingsOperations
+  - Model Database has a new parameter source_resource_id
+  - Model DatabaseBlobAuditingPolicy has a new parameter is_managed_identity_in_use
+  - Model ExtendedDatabaseBlobAuditingPolicy has a new parameter is_managed_identity_in_use
+  - Model ExtendedServerBlobAuditingPolicy has a new parameter is_managed_identity_in_use
+  - Model ServerBlobAuditingPolicy has a new parameter is_managed_identity_in_use
+
+**Breaking changes**
+
+  - Model Database no longer has parameter primary_delegated_identity_client_id
+  - Model DatabaseIdentity no longer has parameter delegated_resources
+  - Model DatabaseUpdate no longer has parameter primary_delegated_identity_client_id
+  - Removed operation ReplicationLinksOperations.begin_unlink
+
 ## 4.0.0b2 (2022-03-08)
 
 **Features**
