@@ -52,19 +52,19 @@ search_client = SearchClient(
 
 To use an [Azure Active Directory (AAD) token credential][maps_authentication_aad],
 provide an instance of the desired credential type obtained from the
-[azure-identity][azure_identity_credentials] library.
+[azure-identity][azure-key-credential] library.
 
 Authentication with AAD requires some initial setup:
 
-- [Install azure-identity][azure_identity]
+- [Install azure-identity][azure-key-credential]
 - [Register a new AAD application][register_aad_app]
 
-After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
+After setup, you can choose which type of [credential][azure-key-credential] from azure.identity to use.
 As an example, [DefaultAzureCredential][default_azure_credential]
 can be used to authenticate the client:
 
 Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`
 
 Use the returned token credential to authenticate the client:
 
@@ -133,7 +133,6 @@ reverse_search_result = client.reverse_search_cross_street_address(coordinates=c
 ### Sample Code
 
 These are code samples that show common scenario operations with the Azure Maps Search client library.
-The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations.
 Before run the sample code, refer to [prerequisites](#Prerequisites) to create a resource, then set some Environment Variables
 
 ```bash
