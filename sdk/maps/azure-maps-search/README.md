@@ -56,7 +56,7 @@ provide an instance of the desired credential type obtained from the
 
 Authentication with AAD requires some initial setup:
 
-- [Install azure-identity][install_azure_identity]
+- [Install azure-identity][azure_identity]
 - [Register a new AAD application][register_aad_app]
 
 After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
@@ -139,8 +139,7 @@ Before run the sample code, refer to Prerequisites
 to create a resource, then set some Environment Variables
 
 ```bash
-set AZURE_MAPS_SERVICE_ENDPOINT="https://<RESOURCE_NAME>.mapsservices.azure.com"
-set MAPS_SAMPLES_CONNECTION_STRING="<connection string of your Maps service>"
+set AZURE_SUBSCRIPTION_KEY="<RealSubscriptionKey>"
 
 pip install azure-maps-search
 
