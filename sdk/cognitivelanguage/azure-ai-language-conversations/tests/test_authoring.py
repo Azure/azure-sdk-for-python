@@ -20,7 +20,7 @@ class TestConversationAuthoring(ConversationTest):
     @GlobalConversationAccountPreparer()
     def test_authoring_aad(self, endpoint, key, conv_project_name, conv_deployment_name):
         token = self.get_credential(ConversationAuthoringClient)
-        client = ConversationAuthoringClient(endpoint, token)
+        client = ConversationAuthoringClient(endpoint, token, api_version="2022-05-01")
         entities = client.list_supported_prebuilt_entities(language="en")
         for entity in entities:
             assert entity
