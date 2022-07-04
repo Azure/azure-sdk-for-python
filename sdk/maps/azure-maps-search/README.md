@@ -133,7 +133,7 @@ reverse_search_result = client.reverse_search_cross_street_address(coordinates=c
 ### Sample Code
 
 These are code samples that show common scenario operations with the Azure Maps Search client library.
-Before run the sample code, refer to [prerequisites](#Prerequisites) to create a resource, then set some Environment Variables
+Before run the sample code, refer to [prerequisites](#prerequisites) to create a resource, then set some Environment Variables
 
 ```bash
 set AZURE_SUBSCRIPTION_KEY="<RealSubscriptionKey>"
@@ -148,6 +148,8 @@ More sample code should go [here](https://github.com/Azure/azure-sdk-for-python/
 ## Troubleshooting
 
 Running into issues? This section should contain details as to what to do there.
+
+## Next steps
 
 ## Contributing
 
