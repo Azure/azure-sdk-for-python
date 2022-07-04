@@ -91,7 +91,6 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         self,
         valid_from=None, # type: Optional[datetime]
         valid_until=None, # type: Optional[datetime]
-        room_open=None, # type Optional[bool]
         participants=None, # type: Optional[List[RoomParticipant]]
         **kwargs
     ):
@@ -113,7 +112,6 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         create_room_request = CreateRoomRequest(
             valid_from=valid_from,
             valid_until=valid_until,
-            room_open=room_open,
             participants=[p.to_room_participant_internal() for p in participants] if participants else None
         )
 
@@ -166,6 +164,8 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :param valid_until: The timestamp from when the room can no longer be joined. The timestamp
          is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :type valid_until: ~datetime
+        :param participants: (Optional) Collection of identities invited to the room.
+        :type participants: (Optional)list[RoomParticipant]
         :returns: Updated room.
         :rtype: ~azure.communication.rooms.RoomModel
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -265,7 +265,10 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :rtype: ~azure.communication.rooms.RoomModel
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
-        participants = [RoomParticipant(communication_identifier=id).to_room_participant_internal() for id in communication_identifiers]
+        participants = [
+            RoomParticipant(communication_identifier=id).to_room_participant_internal()
+            for id in communication_identifiers
+        ]
         remove_participants_request = RemoveParticipantsRequest(
             participants=participants
         )
@@ -304,6 +307,9 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         """Get participants of a room
         :param room_id: Required. Id of room to be updated
         :type room_id: str
+        :returns: ParticipantsCollection containing all participants in the room.
+        :rtype: ~azure.communication.rooms.ParticipantsCollection
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         get_participants_response = await self._rooms_service_client.rooms.get_participants(
             room_id=room_id, **kwargs)

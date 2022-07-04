@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import Optional, List, Union
 
+from azure.core.exceptions import DeserializationError
 from .._generated.models import (
     RoomParticipant as RoomParticipantInternal,
     CommunicationIdentifierModel,
@@ -12,9 +13,13 @@ from .._generated.models import (
     RoleType
 )
 from .._generated import _serialization
-from .._shared.models import CommunicationUserIdentifier, UnknownIdentifier
+from .._shared.models import (
+    CommunicationIdentifier,
+    CommunicationIdentifierKind,
+    CommunicationUserIdentifier,
+    UnknownIdentifier
+)
 
-from azure.core.exceptions import DeserializationError
 
 class RoomModel(_serialization.Model):
     """The response object from rooms service.
@@ -30,8 +35,8 @@ class RoomModel(_serialization.Model):
     :ivar valid_until: The timestamp from when the room can no longer be joined. The timestamp is
      in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :vartype valid_until: ~datetime
-    :ivar participants: Collection of identities invited to the room.
-    :vartype participants: dict[str, any]
+    :ivar participants: Collection of room participants.
+    :vartype participants: list[~azure.communication.rooms.RoomParticipant]
     """
 
     _attribute_map = {
@@ -64,8 +69,8 @@ class RoomModel(_serialization.Model):
         :keyword valid_until: The timestamp from when the room can no longer be joined. The timestamp
          is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :paramtype valid_until: ~datetime
-        :keyword participants: Collection of identities invited to the room.
-        :paramtype participants: list[~azure.communication.rooms.models.RoomParticipant]
+        :keyword participants: Collection of room participants.
+        :paramtype participants: list[~azure.communication.rooms.RoomParticipant]
         """
         super(RoomModel, self).__init__(**kwargs)
         self.id = id
@@ -91,7 +96,7 @@ class RoomModel(_serialization.Model):
             created_date_time=get_room_response.created_date_time,
             valid_from=get_room_response.valid_from,
             valid_until=get_room_response.valid_until,
-            participants=[RoomParticipant._from_room_participant_internal(p) for p in get_room_response.participants],
+            participants=[RoomParticipant.from_room_participant_internal(p) for p in get_room_response.participants],
             **kwargs
         )
 
@@ -129,48 +134,51 @@ class RoomParticipant(_serialization.Model):
          ~azure.communication.rooms.models.CommunicationIdentifierModel
         :keyword role: The Role of a room participant. Known values are: "Presenter", "Attendee", and
          "Consumer".
-        :paramtype role: str or ~azure.communication.rooms.models.RoleType
+        :paramtype role: str or ~azure.communication.rooms.RoleType
         """
         super().__init__(**kwargs)
         self.communication_identifier = communication_identifier
         self.role = role
 
     @classmethod
-    def _from_room_participant_internal(cls, room_participant_internal: RoomParticipantInternal, **kwargs):
+    def from_room_participant_internal(cls, room_participant_internal: RoomParticipantInternal, **kwargs):
         return cls(
-            communication_identifier=_CommunicationIdentifierConverter.to_communication_identifier(room_participant_internal.communication_identifier),
+            communication_identifier=_CommunicationIdentifierConverter
+                .to_communication_identifier(room_participant_internal.communication_identifier),
             role=room_participant_internal.role,
             **kwargs
         )
 
     def to_room_participant_internal(self):
         return RoomParticipantInternal(
-            communication_identifier=_CommunicationIdentifierConverter.to_communication_identifier_model(self.communication_identifier),
+            communication_identifier=_CommunicationIdentifierConverter
+                .to_communication_identifier_model(self.communication_identifier),
             role=self.role
         )
 
 class _CommunicationIdentifierConverter():
-    def to_communication_identifier_model(communication_identifier):
-        if isinstance(communication_identifier, CommunicationUserIdentifier):
+    @staticmethod
+    def to_communication_identifier_model(communication_identifier: CommunicationIdentifier):
+        if communication_identifier.kind == CommunicationIdentifierKind.COMMUNICATION_USER:
             return CommunicationIdentifierModel(
                 communication_user=CommunicationUserIdentifierModel(
                     id=communication_identifier.properties['id']
                 )
             )
-        elif isinstance(communication_identifier, UnknownIdentifier):
+        if communication_identifier.kind == CommunicationIdentifierKind.UNKNOWN:
             return CommunicationIdentifierModel(
                 raw_id=communication_identifier.raw_id
             )
-        else:
-            raise TypeError()
 
+        raise TypeError()
+
+    @staticmethod
     def to_communication_identifier(communication_identifier_model: CommunicationIdentifierModel):
-        def _assert_not_empty(val, field, type):
-            if not val:
-                raise DeserializationError('Property "{}" is required for identifier of type {}'.format(field, type))
-            return val
 
-        raw_id = _assert_not_empty(communication_identifier_model.raw_id, 'raw_id', type(communication_identifier_model).__name__)
+        raw_id = communication_identifier_model.raw_id
+        if not raw_id:
+            raise DeserializationError('Property "{}" is required for identifier of type {}'
+                .format('raw_id', type(communication_identifier_model).__name__))
 
         if isinstance(communication_identifier_model.communication_user, CommunicationUserIdentifierModel):
             return CommunicationUserIdentifier(
@@ -186,7 +194,7 @@ class ParticipantsCollection(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar participants: Room Participants. Required.
-    :vartype participants: list[~azure.communication.rooms.RoomParticipant]
+    :vartype participants: list[~azure.communication.RoomParticipant]
     """
 
     _validation = {
@@ -197,17 +205,6 @@ class ParticipantsCollection(_serialization.Model):
         "participants": {"key": "participants", "type": "List[RoomParticipant]"},
     }
 
-    def __init__(self, *, participants: List[RoomParticipant], **kwargs):
-        """
-        :keyword participants: Room Participants. Required.
-        :paramtype participants: list[~azure.communication.rooms.RoomParticipant]
-        """
-        super().__init__(**kwargs)
-        self.participants = participants
-
     def __init__(self, *, participants: List[RoomParticipantInternal], **kwargs):
         super().__init__(**kwargs)
-        self.participants = [RoomParticipant._from_room_participant_internal(p) for p in participants]
-
-
-
+        self.participants = [RoomParticipant.from_room_participant_internal(p) for p in participants]
