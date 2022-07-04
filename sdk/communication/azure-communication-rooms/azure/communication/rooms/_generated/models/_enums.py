@@ -10,7 +10,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class Role(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class RoleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Role of a room participant."""
 
     PRESENTER = "Presenter"

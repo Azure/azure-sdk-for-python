@@ -5,25 +5,24 @@
 # --------------------------------------------------------------------------
 
 import pytest
-from datetime import datetime, timezone, tzinfo
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
 from azure.communication.identity import CommunicationIdentityClient
-from azure.communication.rooms import RoomsClient
+from azure.communication.rooms import (
+    RoomsClient,
+    RoomParticipant,
+    RoleType
+)
+from azure.communication.rooms._shared.models import CommunicationUserIdentifier
+
+from _shared.utils import get_http_logging_policy
 from _shared.testcase import (
     CommunicationTestCase,
     ResponseReplacerProcessor
 )
-
-from azure.communication.rooms import (
-    RoomsClient,
-    RoomParticipant
-)
-
-from _shared.utils import get_http_logging_policy
-from azure.communication.rooms._shared.models import CommunicationUserIdentifier
 
 class FakeTokenCredential(object):
     def __init__(self):
@@ -50,19 +49,19 @@ class RoomsClientTest(CommunicationTestCase):
                 communication_identifier=CommunicationUserIdentifier(
                     self.identity_client.create_user().properties["id"]
                 ),
-                role='Presenter'
+                role=RoleType.PRESENTER
             ),
             "fred" : RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(
                     self.identity_client.create_user().properties["id"]
                 ),
-                role='Organizer'
+                role=RoleType.CONSUMER
             ),
             "chris" : RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(
                     self.identity_client.create_user().properties["id"]
                 ),
-                role='Attendee'
+                role=RoleType.ATTENDEE
             )
         }
         self.rooms_client = RoomsClient.from_connection_string(
@@ -341,8 +340,8 @@ class RoomsClientTest(CommunicationTestCase):
         create_response = self.rooms_client.create_room(participants=create_participants)
 
         # participants to be updated
-        self.users["john"].role = "Consumer"
-        self.users["chris"].role = "Consumer"
+        self.users["john"].role = RoleType.CONSUMER
+        self.users["chris"].role = RoleType.CONSUMER
 
         update_participants = [
             self.users["john"],
@@ -385,7 +384,7 @@ class RoomsClientTest(CommunicationTestCase):
         participants = [
             RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier("wrong_mri"),
-                role='Attendee'),
+                role=RoleType.ATTENDEE),
             self.users["john"]
         ]
 

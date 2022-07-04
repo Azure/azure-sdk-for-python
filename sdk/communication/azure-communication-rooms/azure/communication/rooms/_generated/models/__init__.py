@@ -19,7 +19,7 @@ from ._models import RoomParticipant
 from ._models import UpdateParticipantsRequest
 from ._models import UpdateRoomRequest
 
-from ._enums import Role
+from ._enums import RoleType
 from ._enums import RoomJoinPolicy
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
@@ -38,7 +38,7 @@ __all__ = [
     "RoomParticipant",
     "UpdateParticipantsRequest",
     "UpdateRoomRequest",
-    "Role",
+    "RoleType",
     "RoomJoinPolicy",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

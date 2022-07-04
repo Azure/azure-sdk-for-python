@@ -493,7 +493,7 @@ class RoomsOperations:
 
         Adds participants to a room. If participants already exist, no change occurs.
 
-        :param room_id: Room id to add participants to. Required.
+        :param room_id: Room id to add participants. Required.
         :type room_id: str
         :param add_participants_request: Participants to be added to the room. Required.
         :type add_participants_request: ~azure.communication.rooms.models.AddParticipantsRequest
@@ -513,7 +513,7 @@ class RoomsOperations:
 
         Adds participants to a room. If participants already exist, no change occurs.
 
-        :param room_id: Room id to add participants to. Required.
+        :param room_id: Room id to add participants. Required.
         :type room_id: str
         :param add_participants_request: Participants to be added to the room. Required.
         :type add_participants_request: IO
@@ -533,7 +533,7 @@ class RoomsOperations:
 
         Adds participants to a room. If participants already exist, no change occurs.
 
-        :param room_id: Room id to add participants to. Required.
+        :param room_id: Room id to add participants. Required.
         :type room_id: str
         :param add_participants_request: Participants to be added to the room. Is either a model type
          or a IO type. Required.

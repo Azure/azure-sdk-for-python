@@ -15,7 +15,8 @@ from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.rooms._shared.models import CommunicationUserIdentifier
 from azure.communication.rooms.aio import RoomsClient
 from azure.communication.rooms import (
-    RoomParticipant
+    RoomParticipant,
+    RoleType
 )
 from _shared.asynctestcase import AsyncCommunicationTestCase
 from _shared.testcase import (
@@ -49,19 +50,19 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
                 communication_identifier=CommunicationUserIdentifier(
                     self.identity_client.create_user().properties["id"]
                 ),
-                role='Presenter'
+                role=RoleType.PRESENTER
             ),
             "fred" : RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(
                     self.identity_client.create_user().properties["id"]
                 ),
-                role='Organizer'
+                role=RoleType.CONSUMER
             ),
             "chris" : RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(
                     self.identity_client.create_user().properties["id"]
                 ),
-                role='Attendee'
+                role=RoleType.ATTENDEE
             )
         }
         self.rooms_client = RoomsClient.from_connection_string(
@@ -168,7 +169,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
         participants = [
             RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier("wrong_mri"),
-                role='Attendee'
+                role=RoleType.ATTENDEE
             ),
             self.users["john"]
         ]
@@ -378,8 +379,8 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             self.users["john"],
             self.users["chris"]
         ]
-        self.users["john"].role = "Consumer"
-        self.users["chris"].role = "Consumer"
+        self.users["john"].role = RoleType.CONSUMER
+        self.users["chris"].role = RoleType.CONSUMER
 
         update_participants = [
             self.users["john"],
@@ -422,7 +423,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             participants = [
                 RoomParticipant(
                     communication_identifier=CommunicationUserIdentifier("wrong_mri"),
-                    role='Attendee'),
+                    role=RoleType.ATTENDEE),
                 self.users["john"]
             ]
 

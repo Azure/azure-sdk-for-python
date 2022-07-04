@@ -364,7 +364,7 @@ class RoomParticipant(_serialization.Model):
      ~azure.communication.rooms.models.CommunicationIdentifierModel
     :ivar role: The Role of a room participant. Known values are: "Presenter", "Attendee", and
      "Consumer".
-    :vartype role: str or ~azure.communication.rooms.models.Role
+    :vartype role: str or ~azure.communication.rooms.models.RoleType
     """
 
     _validation = {
@@ -380,7 +380,7 @@ class RoomParticipant(_serialization.Model):
         self,
         *,
         communication_identifier: "_models.CommunicationIdentifierModel",
-        role: Optional[Union[str, "_models.Role"]] = None,
+        role: Optional[Union[str, "_models.RoleType"]] = None,
         **kwargs
     ):
         """
@@ -391,7 +391,7 @@ class RoomParticipant(_serialization.Model):
          ~azure.communication.rooms.models.CommunicationIdentifierModel
         :keyword role: The Role of a room participant. Known values are: "Presenter", "Attendee", and
          "Consumer".
-        :paramtype role: str or ~azure.communication.rooms.models.Role
+        :paramtype role: str or ~azure.communication.rooms.models.RoleType
         """
         super().__init__(**kwargs)
         self.communication_identifier = communication_identifier

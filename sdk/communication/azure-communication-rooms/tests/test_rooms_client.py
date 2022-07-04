@@ -10,7 +10,8 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
 from azure.communication.rooms import (
     RoomsClient,
-    RoomParticipant
+    RoomParticipant,
+    RoleType
 )
 from azure.communication.rooms._shared.models import CommunicationUserIdentifier, UnknownIdentifier
 from unittest_helpers import mock_response
@@ -33,7 +34,7 @@ class TestRoomsClient(unittest.TestCase):
         communication_identifier=CommunicationUserIdentifier(
             id=raw_id
         ),
-        role='Presenter'
+        role=RoleType.PRESENTER
     )
     json_participant = {
         "communicationIdentifier": {

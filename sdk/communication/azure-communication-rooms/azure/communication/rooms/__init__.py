@@ -1,5 +1,5 @@
 from ._rooms_client import RoomsClient
-
+from ._generated.models._enums import RoleType
 from ._models import (
     RoomModel,
     RoomParticipant
@@ -8,5 +8,6 @@ from ._models import (
 __all__ = [
     'RoomModel',
     'RoomsClient',
-    'RoomParticipant'
+    'RoomParticipant',
+    'RoleType'
 ]

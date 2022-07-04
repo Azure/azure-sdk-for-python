@@ -9,7 +9,7 @@ from .._generated.models import (
     RoomParticipant as RoomParticipantInternal,
     CommunicationIdentifierModel,
     CommunicationUserIdentifierModel,
-    Role
+    RoleType
 )
 from .._generated import _serialization
 from .._shared.models import CommunicationUserIdentifier, UnknownIdentifier
@@ -119,16 +119,17 @@ class RoomParticipant(_serialization.Model):
     }
 
     def __init__(
-        self, *, communication_identifier, role: Optional[Union[str, Role]] = None, **kwargs
+        self, *, communication_identifier, role: Optional[Union[str, RoleType]] = None, **kwargs
     ):
         """
         :keyword communication_identifier: Identifies a participant in Azure Communication services. A
-        participant is, for example, an Azure communication user. This model must be interpreted as a
-        union: Apart from rawId, at most one further property may be set. Required.
+         participant is, for example, an Azure communication user. This model must be interpreted as a
+         union: Apart from rawId, at most one further property may be set. Required.
         :paramtype communication_identifier:
-        ~azure.communication.rooms.models.CommunicationIdentifierModel
-        :keyword role: Role Name.
-        :paramtype role: str
+         ~azure.communication.rooms.models.CommunicationIdentifierModel
+        :keyword role: The Role of a room participant. Known values are: "Presenter", "Attendee", and
+         "Consumer".
+        :paramtype role: str or ~azure.communication.rooms.models.RoleType
         """
         super().__init__(**kwargs)
         self.communication_identifier = communication_identifier
@@ -193,7 +194,7 @@ class ParticipantsCollection(_serialization.Model):
     }
 
     _attribute_map = {
-        "participants": {"key": "participants", "type": "[RoomParticipant]"},
+        "participants": {"key": "participants", "type": "List[RoomParticipant]"},
     }
 
     def __init__(self, *, participants: List[RoomParticipant], **kwargs):
