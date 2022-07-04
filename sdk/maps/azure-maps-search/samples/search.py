@@ -11,6 +11,32 @@ from common.common import AzureKeyInQueryCredentialPolicy
 from azure.maps.search import *
 from azure.maps.search.models import LatLon, StructuredAddress
 
+"""
+In this samples, I have used AzureCredential and Azure_Subscription_Key as the way to authenticate the SearchClient.
+
+There is another way of authentication, to use an Azure Active Directory (AAD) token credential,
+provide an instance of the desired credential type obtained from the azure-identity library.
+
+Authentication with AAD requires some initial setup:
+- Install azure-identity
+- Register a new AAD application
+
+After setup, you can choose which type of credential from azure.identity to use.
+As an example, `DefaultAzureCredential()` can be used to authenticate the client:
+
+Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
+
+set `AZURE_CLIENT_ID` = <RealClientId>
+set `AZURE_TENANT_ID` = <RealTenantId>
+set `AZURE_CLIENT_SECRET` = <RealClientSecret>
+
+from azure.maps.search import SearchClient
+from azure.identity import DefaultAzureCredential
+
+credential = DefaultAzureCredential()
+search_client = SearchClient(credential=credential)
+"""
+
 parser = argparse.ArgumentParser(
     description='Search Samples Program. Set AZURE_SUBSCRIPTION_KEY env variable.')
 parser.parse_args()
