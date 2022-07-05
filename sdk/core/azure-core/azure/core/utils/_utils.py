@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, MutableMapping
+from typing import Any, Dict, Iterable, Mapping, MutableMapping
 
 
 class _FixedOffset(datetime.tzinfo):
@@ -87,26 +87,59 @@ def case_insensitive_dict(*args: Any, **kwargs: Any) -> MutableMapping:
     :return: A case-insensitive mutable mapping object.
     :rtype: ~collections.abc.MutableMapping
     """
+    return CaseInsensitiveDict(*args, **kwargs)
 
-    # Rational is I don't want to re-implement this, but I don't want
-    # to assume "requests" or "aiohttp" are installed either.
-    # So I use the one from "requests" or the one from "aiohttp" ("multidict")
-    # If one day this library is used in an HTTP context without "requests" nor "aiohttp" installed,
-    # we can add "multidict" as a dependency or re-implement our own.
-    try:
-        from requests.structures import CaseInsensitiveDict
+class CaseInsensitiveDict(MutableMapping):
+    """
+    NOTE: This implementation is heavily inspired from the case insensitive dictionary from the requests library.
+    Thank you !!
+    Case insensitive dictionary implementation.
+    The keys are expected to be strings and will be stored in lower case.
+    case_insensitive_dict = CaseInsensitiveDict()
+    case_insensitive_dict['Key'] = 'some_value'
+    case_insensitive_dict['key'] == 'some_value' #True
+    """
 
-        return CaseInsensitiveDict(*args, **kwargs)
-    except ImportError:
-        pass
-    try:
-        # multidict is installed by aiohttp
-        from multidict import CIMultiDict
+    def __init__(self, data=None, **kwargs: Any) -> None:
+        self._store: Dict[Any, Any] = {}
+        if data is None:
+            data = {}
 
-        if len(kwargs) == 0 and len(args) == 1 and (not args[0]):
-            return CIMultiDict()    # in case of case_insensitive_dict(None), we don't want to raise exception
-        return CIMultiDict(*args, **kwargs)
-    except ImportError:
-        raise ValueError(
-            "Neither 'requests' or 'multidict' are installed and no case-insensitive dict impl have been found"
+        self.update(data, **kwargs)
+
+    def copy(self) -> "CaseInsensitiveDict":
+        return CaseInsensitiveDict(self._store.values())
+
+    def __setitem__(self, key: str, value: str) -> None:
+        """
+        Set the `key` to `value`. The original key will be stored with the value
+        """
+        self._store[key.lower()] = (key, value)
+
+    def __getitem__(self, key: str) -> Any:
+        return self._store[key.lower()][1]
+
+    def __delitem__(self, key: str) -> None:
+        del self._store[key.lower()]
+
+    def __iter__(self) -> Iterable[Any]:
+        return (key for key, _ in self._store.values())
+
+    def __len__(self) -> int:
+        return len(self._store)
+
+    def lowerkey_items(self):
+        return (
+            (lower_case_key, pair[1]) for lower_case_key, pair in self._store.items()
         )
+
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, Mapping):
+            other = CaseInsensitiveDict(other)
+        else:
+            return False
+
+        return dict(self.lowerkey_items()) == dict(other.lowerkey_items())
+
+    def __repr__(self) -> str:
+        return str(dict(self.items()))
