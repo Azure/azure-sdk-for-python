@@ -25,23 +25,20 @@ class ApiError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'details': {'key': 'details', 'type': '[ApiErrorBase]'},
-        'innererror': {'key': 'innererror', 'type': 'InnerError'},
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        "details": {"key": "details", "type": "[ApiErrorBase]"},
+        "innererror": {"key": "innererror", "type": "InnerError"},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApiError, self).__init__(**kwargs)
-        self.details = kwargs.get('details', None)
-        self.innererror = kwargs.get('innererror', None)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.target = kwargs.get('target', None)
+        self.details = kwargs.get("details", None)
+        self.innererror = kwargs.get("innererror", None)
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
+        self.target = kwargs.get("target", None)
 
 
 class ApiErrorBase(msrest.serialization.Model):
@@ -56,19 +53,16 @@ class ApiErrorBase(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApiErrorBase, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.target = kwargs.get('target', None)
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
+        self.target = kwargs.get("target", None)
 
 
 class CloudService(msrest.serialization.Model):
@@ -93,32 +87,29 @@ class CloudService(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'CloudServiceProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "CloudServiceProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CloudService, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs['location']
-        self.tags = kwargs.get('tags', None)
-        self.properties = kwargs.get('properties', None)
+        self.location = kwargs["location"]
+        self.tags = kwargs.get("tags", None)
+        self.properties = kwargs.get("properties", None)
 
 
 class CloudServiceExtensionProfile(msrest.serialization.Model):
@@ -129,15 +120,12 @@ class CloudServiceExtensionProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'extensions': {'key': 'extensions', 'type': '[Extension]'},
+        "extensions": {"key": "extensions", "type": "[Extension]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CloudServiceExtensionProfile, self).__init__(**kwargs)
-        self.extensions = kwargs.get('extensions', None)
+        self.extensions = kwargs.get("extensions", None)
 
 
 class CloudServiceExtensionProperties(msrest.serialization.Model):
@@ -187,37 +175,37 @@ class CloudServiceExtensionProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'type_handler_version': {'key': 'typeHandlerVersion', 'type': 'str'},
-        'auto_upgrade_minor_version': {'key': 'autoUpgradeMinorVersion', 'type': 'bool'},
-        'settings': {'key': 'settings', 'type': 'str'},
-        'protected_settings': {'key': 'protectedSettings', 'type': 'str'},
-        'protected_settings_from_key_vault': {'key': 'protectedSettingsFromKeyVault', 'type': 'CloudServiceVaultAndSecretReference'},
-        'force_update_tag': {'key': 'forceUpdateTag', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'roles_applied_to': {'key': 'rolesAppliedTo', 'type': '[str]'},
+        "publisher": {"key": "publisher", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "type_handler_version": {"key": "typeHandlerVersion", "type": "str"},
+        "auto_upgrade_minor_version": {"key": "autoUpgradeMinorVersion", "type": "bool"},
+        "settings": {"key": "settings", "type": "str"},
+        "protected_settings": {"key": "protectedSettings", "type": "str"},
+        "protected_settings_from_key_vault": {
+            "key": "protectedSettingsFromKeyVault",
+            "type": "CloudServiceVaultAndSecretReference",
+        },
+        "force_update_tag": {"key": "forceUpdateTag", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "roles_applied_to": {"key": "rolesAppliedTo", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CloudServiceExtensionProperties, self).__init__(**kwargs)
-        self.publisher = kwargs.get('publisher', None)
-        self.type = kwargs.get('type', None)
-        self.type_handler_version = kwargs.get('type_handler_version', None)
-        self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
-        self.settings = kwargs.get('settings', None)
-        self.protected_settings = kwargs.get('protected_settings', None)
-        self.protected_settings_from_key_vault = kwargs.get('protected_settings_from_key_vault', None)
-        self.force_update_tag = kwargs.get('force_update_tag', None)
+        self.publisher = kwargs.get("publisher", None)
+        self.type = kwargs.get("type", None)
+        self.type_handler_version = kwargs.get("type_handler_version", None)
+        self.auto_upgrade_minor_version = kwargs.get("auto_upgrade_minor_version", None)
+        self.settings = kwargs.get("settings", None)
+        self.protected_settings = kwargs.get("protected_settings", None)
+        self.protected_settings_from_key_vault = kwargs.get("protected_settings_from_key_vault", None)
+        self.force_update_tag = kwargs.get("force_update_tag", None)
         self.provisioning_state = None
-        self.roles_applied_to = kwargs.get('roles_applied_to', None)
+        self.roles_applied_to = kwargs.get("roles_applied_to", None)
 
 
 class CloudServiceInstanceView(msrest.serialization.Model):
@@ -236,22 +224,19 @@ class CloudServiceInstanceView(msrest.serialization.Model):
     """
 
     _validation = {
-        'sdk_version': {'readonly': True},
-        'statuses': {'readonly': True},
+        "sdk_version": {"readonly": True},
+        "statuses": {"readonly": True},
     }
 
     _attribute_map = {
-        'role_instance': {'key': 'roleInstance', 'type': 'InstanceViewStatusesSummary'},
-        'sdk_version': {'key': 'sdkVersion', 'type': 'str'},
-        'statuses': {'key': 'statuses', 'type': '[ResourceInstanceViewStatus]'},
+        "role_instance": {"key": "roleInstance", "type": "InstanceViewStatusesSummary"},
+        "sdk_version": {"key": "sdkVersion", "type": "str"},
+        "statuses": {"key": "statuses", "type": "[ResourceInstanceViewStatus]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CloudServiceInstanceView, self).__init__(**kwargs)
-        self.role_instance = kwargs.get('role_instance', None)
+        self.role_instance = kwargs.get("role_instance", None)
         self.sdk_version = None
         self.statuses = None
 
@@ -268,21 +253,18 @@ class CloudServiceListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CloudService]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CloudService]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CloudServiceListResult, self).__init__(**kwargs)
-        self.value = kwargs['value']
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs["value"]
+        self.next_link = kwargs.get("next_link", None)
 
 
 class CloudServiceNetworkProfile(msrest.serialization.Model):
@@ -297,17 +279,14 @@ class CloudServiceNetworkProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'load_balancer_configurations': {'key': 'loadBalancerConfigurations', 'type': '[LoadBalancerConfiguration]'},
-        'swappable_cloud_service': {'key': 'swappableCloudService', 'type': 'SubResource'},
+        "load_balancer_configurations": {"key": "loadBalancerConfigurations", "type": "[LoadBalancerConfiguration]"},
+        "swappable_cloud_service": {"key": "swappableCloudService", "type": "SubResource"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CloudServiceNetworkProfile, self).__init__(**kwargs)
-        self.load_balancer_configurations = kwargs.get('load_balancer_configurations', None)
-        self.swappable_cloud_service = kwargs.get('swappable_cloud_service', None)
+        self.load_balancer_configurations = kwargs.get("load_balancer_configurations", None)
+        self.swappable_cloud_service = kwargs.get("swappable_cloud_service", None)
 
 
 class CloudServiceOsProfile(msrest.serialization.Model):
@@ -319,15 +298,12 @@ class CloudServiceOsProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'secrets': {'key': 'secrets', 'type': '[CloudServiceVaultSecretGroup]'},
+        "secrets": {"key": "secrets", "type": "[CloudServiceVaultSecretGroup]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CloudServiceOsProfile, self).__init__(**kwargs)
-        self.secrets = kwargs.get('secrets', None)
+        self.secrets = kwargs.get("secrets", None)
 
 
 class CloudServiceProperties(msrest.serialization.Model):
@@ -380,38 +356,35 @@ class CloudServiceProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'unique_id': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "unique_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'package_url': {'key': 'packageUrl', 'type': 'str'},
-        'configuration': {'key': 'configuration', 'type': 'str'},
-        'configuration_url': {'key': 'configurationUrl', 'type': 'str'},
-        'start_cloud_service': {'key': 'startCloudService', 'type': 'bool'},
-        'upgrade_mode': {'key': 'upgradeMode', 'type': 'str'},
-        'role_profile': {'key': 'roleProfile', 'type': 'CloudServiceRoleProfile'},
-        'os_profile': {'key': 'osProfile', 'type': 'CloudServiceOsProfile'},
-        'network_profile': {'key': 'networkProfile', 'type': 'CloudServiceNetworkProfile'},
-        'extension_profile': {'key': 'extensionProfile', 'type': 'CloudServiceExtensionProfile'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'unique_id': {'key': 'uniqueId', 'type': 'str'},
+        "package_url": {"key": "packageUrl", "type": "str"},
+        "configuration": {"key": "configuration", "type": "str"},
+        "configuration_url": {"key": "configurationUrl", "type": "str"},
+        "start_cloud_service": {"key": "startCloudService", "type": "bool"},
+        "upgrade_mode": {"key": "upgradeMode", "type": "str"},
+        "role_profile": {"key": "roleProfile", "type": "CloudServiceRoleProfile"},
+        "os_profile": {"key": "osProfile", "type": "CloudServiceOsProfile"},
+        "network_profile": {"key": "networkProfile", "type": "CloudServiceNetworkProfile"},
+        "extension_profile": {"key": "extensionProfile", "type": "CloudServiceExtensionProfile"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "unique_id": {"key": "uniqueId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CloudServiceProperties, self).__init__(**kwargs)
-        self.package_url = kwargs.get('package_url', None)
-        self.configuration = kwargs.get('configuration', None)
-        self.configuration_url = kwargs.get('configuration_url', None)
-        self.start_cloud_service = kwargs.get('start_cloud_service', None)
-        self.upgrade_mode = kwargs.get('upgrade_mode', None)
-        self.role_profile = kwargs.get('role_profile', None)
-        self.os_profile = kwargs.get('os_profile', None)
-        self.network_profile = kwargs.get('network_profile', None)
-        self.extension_profile = kwargs.get('extension_profile', None)
+        self.package_url = kwargs.get("package_url", None)
+        self.configuration = kwargs.get("configuration", None)
+        self.configuration_url = kwargs.get("configuration_url", None)
+        self.start_cloud_service = kwargs.get("start_cloud_service", None)
+        self.upgrade_mode = kwargs.get("upgrade_mode", None)
+        self.role_profile = kwargs.get("role_profile", None)
+        self.os_profile = kwargs.get("os_profile", None)
+        self.network_profile = kwargs.get("network_profile", None)
+        self.extension_profile = kwargs.get("extension_profile", None)
         self.provisioning_state = None
         self.unique_id = None
 
@@ -436,32 +409,29 @@ class CloudServiceRole(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'CloudServiceRoleSku'},
-        'properties': {'key': 'properties', 'type': 'CloudServiceRoleProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "sku": {"key": "sku", "type": "CloudServiceRoleSku"},
+        "properties": {"key": "properties", "type": "CloudServiceRoleProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CloudServiceRole, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
         self.location = None
-        self.sku = kwargs.get('sku', None)
-        self.properties = kwargs.get('properties', None)
+        self.sku = kwargs.get("sku", None)
+        self.properties = kwargs.get("properties", None)
 
 
 class CloudServiceRoleListResult(msrest.serialization.Model):
@@ -476,21 +446,18 @@ class CloudServiceRoleListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CloudServiceRole]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CloudServiceRole]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CloudServiceRoleListResult, self).__init__(**kwargs)
-        self.value = kwargs['value']
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs["value"]
+        self.next_link = kwargs.get("next_link", None)
 
 
 class CloudServiceRoleProfile(msrest.serialization.Model):
@@ -502,15 +469,12 @@ class CloudServiceRoleProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'roles': {'key': 'roles', 'type': '[CloudServiceRoleProfileProperties]'},
+        "roles": {"key": "roles", "type": "[CloudServiceRoleProfileProperties]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CloudServiceRoleProfile, self).__init__(**kwargs)
-        self.roles = kwargs.get('roles', None)
+        self.roles = kwargs.get("roles", None)
 
 
 class CloudServiceRoleProfileProperties(msrest.serialization.Model):
@@ -523,17 +487,14 @@ class CloudServiceRoleProfileProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'CloudServiceRoleSku'},
+        "name": {"key": "name", "type": "str"},
+        "sku": {"key": "sku", "type": "CloudServiceRoleSku"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CloudServiceRoleProfileProperties, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.sku = kwargs.get('sku', None)
+        self.name = kwargs.get("name", None)
+        self.sku = kwargs.get("sku", None)
 
 
 class CloudServiceRoleProperties(msrest.serialization.Model):
@@ -546,17 +507,14 @@ class CloudServiceRoleProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'unique_id': {'readonly': True},
+        "unique_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'unique_id': {'key': 'uniqueId', 'type': 'str'},
+        "unique_id": {"key": "uniqueId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CloudServiceRoleProperties, self).__init__(**kwargs)
         self.unique_id = None
 
@@ -576,19 +534,16 @@ class CloudServiceRoleSku(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'long'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "capacity": {"key": "capacity", "type": "long"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CloudServiceRoleSku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.tier = kwargs.get('tier', None)
-        self.capacity = kwargs.get('capacity', None)
+        self.name = kwargs.get("name", None)
+        self.tier = kwargs.get("tier", None)
+        self.capacity = kwargs.get("capacity", None)
 
 
 class CloudServiceUpdate(msrest.serialization.Model):
@@ -599,15 +554,12 @@ class CloudServiceUpdate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CloudServiceUpdate, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
+        self.tags = kwargs.get("tags", None)
 
 
 class CloudServiceVaultAndSecretReference(msrest.serialization.Model):
@@ -620,17 +572,14 @@ class CloudServiceVaultAndSecretReference(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
-        'secret_url': {'key': 'secretUrl', 'type': 'str'},
+        "source_vault": {"key": "sourceVault", "type": "SubResource"},
+        "secret_url": {"key": "secretUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CloudServiceVaultAndSecretReference, self).__init__(**kwargs)
-        self.source_vault = kwargs.get('source_vault', None)
-        self.secret_url = kwargs.get('secret_url', None)
+        self.source_vault = kwargs.get("source_vault", None)
+        self.secret_url = kwargs.get("secret_url", None)
 
 
 class CloudServiceVaultCertificate(msrest.serialization.Model):
@@ -642,15 +591,12 @@ class CloudServiceVaultCertificate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'certificate_url': {'key': 'certificateUrl', 'type': 'str'},
+        "certificate_url": {"key": "certificateUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CloudServiceVaultCertificate, self).__init__(**kwargs)
-        self.certificate_url = kwargs.get('certificate_url', None)
+        self.certificate_url = kwargs.get("certificate_url", None)
 
 
 class CloudServiceVaultSecretGroup(msrest.serialization.Model):
@@ -666,17 +612,14 @@ class CloudServiceVaultSecretGroup(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
-        'vault_certificates': {'key': 'vaultCertificates', 'type': '[CloudServiceVaultCertificate]'},
+        "source_vault": {"key": "sourceVault", "type": "SubResource"},
+        "vault_certificates": {"key": "vaultCertificates", "type": "[CloudServiceVaultCertificate]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CloudServiceVaultSecretGroup, self).__init__(**kwargs)
-        self.source_vault = kwargs.get('source_vault', None)
-        self.vault_certificates = kwargs.get('vault_certificates', None)
+        self.source_vault = kwargs.get("source_vault", None)
+        self.vault_certificates = kwargs.get("vault_certificates", None)
 
 
 class Extension(msrest.serialization.Model):
@@ -690,17 +633,14 @@ class Extension(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'CloudServiceExtensionProperties'},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "CloudServiceExtensionProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Extension, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.properties = kwargs.get('properties', None)
+        self.name = kwargs.get("name", None)
+        self.properties = kwargs.get("properties", None)
 
 
 class InnerError(msrest.serialization.Model):
@@ -713,17 +653,14 @@ class InnerError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'exceptiontype': {'key': 'exceptiontype', 'type': 'str'},
-        'errordetail': {'key': 'errordetail', 'type': 'str'},
+        "exceptiontype": {"key": "exceptiontype", "type": "str"},
+        "errordetail": {"key": "errordetail", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(InnerError, self).__init__(**kwargs)
-        self.exceptiontype = kwargs.get('exceptiontype', None)
-        self.errordetail = kwargs.get('errordetail', None)
+        self.exceptiontype = kwargs.get("exceptiontype", None)
+        self.errordetail = kwargs.get("errordetail", None)
 
 
 class InstanceSku(msrest.serialization.Model):
@@ -738,19 +675,16 @@ class InstanceSku(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'tier': {'readonly': True},
+        "name": {"readonly": True},
+        "tier": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(InstanceSku, self).__init__(**kwargs)
         self.name = None
         self.tier = None
@@ -766,17 +700,14 @@ class InstanceViewStatusesSummary(msrest.serialization.Model):
     """
 
     _validation = {
-        'statuses_summary': {'readonly': True},
+        "statuses_summary": {"readonly": True},
     }
 
     _attribute_map = {
-        'statuses_summary': {'key': 'statusesSummary', 'type': '[StatusCodeCount]'},
+        "statuses_summary": {"key": "statusesSummary", "type": "[StatusCodeCount]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(InstanceViewStatusesSummary, self).__init__(**kwargs)
         self.statuses_summary = None
 
@@ -792,17 +723,14 @@ class LoadBalancerConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'LoadBalancerConfigurationProperties'},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "LoadBalancerConfigurationProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LoadBalancerConfiguration, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.properties = kwargs.get('properties', None)
+        self.name = kwargs.get("name", None)
+        self.properties = kwargs.get("properties", None)
 
 
 class LoadBalancerConfigurationProperties(msrest.serialization.Model):
@@ -814,15 +742,15 @@ class LoadBalancerConfigurationProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'frontend_ip_configurations': {'key': 'frontendIPConfigurations', 'type': '[LoadBalancerFrontendIPConfiguration]'},
+        "frontend_ip_configurations": {
+            "key": "frontendIPConfigurations",
+            "type": "[LoadBalancerFrontendIPConfiguration]",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LoadBalancerConfigurationProperties, self).__init__(**kwargs)
-        self.frontend_ip_configurations = kwargs.get('frontend_ip_configurations', None)
+        self.frontend_ip_configurations = kwargs.get("frontend_ip_configurations", None)
 
 
 class LoadBalancerFrontendIPConfiguration(msrest.serialization.Model):
@@ -836,17 +764,14 @@ class LoadBalancerFrontendIPConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'LoadBalancerFrontendIPConfigurationProperties'},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "LoadBalancerFrontendIPConfigurationProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LoadBalancerFrontendIPConfiguration, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.properties = kwargs.get('properties', None)
+        self.name = kwargs.get("name", None)
+        self.properties = kwargs.get("properties", None)
 
 
 class LoadBalancerFrontendIPConfigurationProperties(msrest.serialization.Model):
@@ -861,19 +786,16 @@ class LoadBalancerFrontendIPConfigurationProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'public_ip_address': {'key': 'publicIPAddress', 'type': 'SubResource'},
-        'subnet': {'key': 'subnet', 'type': 'SubResource'},
-        'private_ip_address': {'key': 'privateIPAddress', 'type': 'str'},
+        "public_ip_address": {"key": "publicIPAddress", "type": "SubResource"},
+        "subnet": {"key": "subnet", "type": "SubResource"},
+        "private_ip_address": {"key": "privateIPAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LoadBalancerFrontendIPConfigurationProperties, self).__init__(**kwargs)
-        self.public_ip_address = kwargs.get('public_ip_address', None)
-        self.subnet = kwargs.get('subnet', None)
-        self.private_ip_address = kwargs.get('private_ip_address', None)
+        self.public_ip_address = kwargs.get("public_ip_address", None)
+        self.subnet = kwargs.get("subnet", None)
+        self.private_ip_address = kwargs.get("private_ip_address", None)
 
 
 class ResourceInstanceViewStatus(msrest.serialization.Model):
@@ -894,30 +816,27 @@ class ResourceInstanceViewStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'display_status': {'readonly': True},
-        'message': {'readonly': True},
-        'time': {'readonly': True},
+        "code": {"readonly": True},
+        "display_status": {"readonly": True},
+        "message": {"readonly": True},
+        "time": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'display_status': {'key': 'displayStatus', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'iso-8601'},
-        'level': {'key': 'level', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "display_status": {"key": "displayStatus", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "time": {"key": "time", "type": "iso-8601"},
+        "level": {"key": "level", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourceInstanceViewStatus, self).__init__(**kwargs)
         self.code = None
         self.display_status = None
         self.message = None
         self.time = None
-        self.level = kwargs.get('level', None)
+        self.level = kwargs.get("level", None)
 
 
 class RoleInstance(msrest.serialization.Model):
@@ -942,35 +861,32 @@ class RoleInstance(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'tags': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
+        "tags": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'InstanceSku'},
-        'properties': {'key': 'properties', 'type': 'RoleInstanceProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "InstanceSku"},
+        "properties": {"key": "properties", "type": "RoleInstanceProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(RoleInstance, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
         self.location = None
         self.tags = None
-        self.sku = kwargs.get('sku', None)
-        self.properties = kwargs.get('properties', None)
+        self.sku = kwargs.get("sku", None)
+        self.properties = kwargs.get("properties", None)
 
 
 class RoleInstanceListResult(msrest.serialization.Model):
@@ -985,21 +901,18 @@ class RoleInstanceListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RoleInstance]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RoleInstance]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(RoleInstanceListResult, self).__init__(**kwargs)
-        self.value = kwargs['value']
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs["value"]
+        self.next_link = kwargs.get("next_link", None)
 
 
 class RoleInstanceNetworkProfile(msrest.serialization.Model):
@@ -1013,17 +926,14 @@ class RoleInstanceNetworkProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'network_interfaces': {'readonly': True},
+        "network_interfaces": {"readonly": True},
     }
 
     _attribute_map = {
-        'network_interfaces': {'key': 'networkInterfaces', 'type': '[SubResource]'},
+        "network_interfaces": {"key": "networkInterfaces", "type": "[SubResource]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(RoleInstanceNetworkProfile, self).__init__(**kwargs)
         self.network_interfaces = None
 
@@ -1039,17 +949,14 @@ class RoleInstanceProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'network_profile': {'key': 'networkProfile', 'type': 'RoleInstanceNetworkProfile'},
-        'instance_view': {'key': 'instanceView', 'type': 'RoleInstanceView'},
+        "network_profile": {"key": "networkProfile", "type": "RoleInstanceNetworkProfile"},
+        "instance_view": {"key": "instanceView", "type": "RoleInstanceView"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(RoleInstanceProperties, self).__init__(**kwargs)
-        self.network_profile = kwargs.get('network_profile', None)
-        self.instance_view = kwargs.get('instance_view', None)
+        self.network_profile = kwargs.get("network_profile", None)
+        self.instance_view = kwargs.get("instance_view", None)
 
 
 class RoleInstances(msrest.serialization.Model):
@@ -1063,19 +970,16 @@ class RoleInstances(msrest.serialization.Model):
     """
 
     _validation = {
-        'role_instances': {'required': True},
+        "role_instances": {"required": True},
     }
 
     _attribute_map = {
-        'role_instances': {'key': 'roleInstances', 'type': '[str]'},
+        "role_instances": {"key": "roleInstances", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(RoleInstances, self).__init__(**kwargs)
-        self.role_instances = kwargs['role_instances']
+        self.role_instances = kwargs["role_instances"]
 
 
 class RoleInstanceView(msrest.serialization.Model):
@@ -1097,23 +1001,20 @@ class RoleInstanceView(msrest.serialization.Model):
     """
 
     _validation = {
-        'platform_update_domain': {'readonly': True},
-        'platform_fault_domain': {'readonly': True},
-        'private_id': {'readonly': True},
-        'statuses': {'readonly': True},
+        "platform_update_domain": {"readonly": True},
+        "platform_fault_domain": {"readonly": True},
+        "private_id": {"readonly": True},
+        "statuses": {"readonly": True},
     }
 
     _attribute_map = {
-        'platform_update_domain': {'key': 'platformUpdateDomain', 'type': 'int'},
-        'platform_fault_domain': {'key': 'platformFaultDomain', 'type': 'int'},
-        'private_id': {'key': 'privateId', 'type': 'str'},
-        'statuses': {'key': 'statuses', 'type': '[ResourceInstanceViewStatus]'},
+        "platform_update_domain": {"key": "platformUpdateDomain", "type": "int"},
+        "platform_fault_domain": {"key": "platformFaultDomain", "type": "int"},
+        "private_id": {"key": "privateId", "type": "str"},
+        "statuses": {"key": "statuses", "type": "[ResourceInstanceViewStatus]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(RoleInstanceView, self).__init__(**kwargs)
         self.platform_update_domain = None
         self.platform_fault_domain = None
@@ -1133,19 +1034,16 @@ class StatusCodeCount(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'count': {'readonly': True},
+        "code": {"readonly": True},
+        "count": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'int'},
+        "code": {"key": "code", "type": "str"},
+        "count": {"key": "count", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(StatusCodeCount, self).__init__(**kwargs)
         self.code = None
         self.count = None
@@ -1159,15 +1057,12 @@ class SubResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SubResource, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        self.id = kwargs.get("id", None)
 
 
 class UpdateDomain(msrest.serialization.Model):
@@ -1182,19 +1077,16 @@ class UpdateDomain(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(UpdateDomain, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -1212,18 +1104,15 @@ class UpdateDomainListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[UpdateDomain]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[UpdateDomain]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(UpdateDomainListResult, self).__init__(**kwargs)
-        self.value = kwargs['value']
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs["value"]
+        self.next_link = kwargs.get("next_link", None)

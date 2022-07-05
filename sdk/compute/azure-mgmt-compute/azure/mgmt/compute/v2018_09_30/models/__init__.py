@@ -6,79 +6,62 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AccessUri
-    from ._models_py3 import CreationData
-    from ._models_py3 import Disk
-    from ._models_py3 import DiskList
-    from ._models_py3 import DiskSku
-    from ._models_py3 import DiskUpdate
-    from ._models_py3 import EncryptionSettingsCollection
-    from ._models_py3 import EncryptionSettingsElement
-    from ._models_py3 import GrantAccessData
-    from ._models_py3 import ImageDiskReference
-    from ._models_py3 import KeyVaultAndKeyReference
-    from ._models_py3 import KeyVaultAndSecretReference
-    from ._models_py3 import Resource
-    from ._models_py3 import Snapshot
-    from ._models_py3 import SnapshotList
-    from ._models_py3 import SnapshotSku
-    from ._models_py3 import SnapshotUpdate
-    from ._models_py3 import SourceVault
-except (SyntaxError, ImportError):
-    from ._models import AccessUri  # type: ignore
-    from ._models import CreationData  # type: ignore
-    from ._models import Disk  # type: ignore
-    from ._models import DiskList  # type: ignore
-    from ._models import DiskSku  # type: ignore
-    from ._models import DiskUpdate  # type: ignore
-    from ._models import EncryptionSettingsCollection  # type: ignore
-    from ._models import EncryptionSettingsElement  # type: ignore
-    from ._models import GrantAccessData  # type: ignore
-    from ._models import ImageDiskReference  # type: ignore
-    from ._models import KeyVaultAndKeyReference  # type: ignore
-    from ._models import KeyVaultAndSecretReference  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import Snapshot  # type: ignore
-    from ._models import SnapshotList  # type: ignore
-    from ._models import SnapshotSku  # type: ignore
-    from ._models import SnapshotUpdate  # type: ignore
-    from ._models import SourceVault  # type: ignore
+from ._models_py3 import AccessUri
+from ._models_py3 import CreationData
+from ._models_py3 import Disk
+from ._models_py3 import DiskList
+from ._models_py3 import DiskSku
+from ._models_py3 import DiskUpdate
+from ._models_py3 import EncryptionSettingsCollection
+from ._models_py3 import EncryptionSettingsElement
+from ._models_py3 import GrantAccessData
+from ._models_py3 import ImageDiskReference
+from ._models_py3 import KeyVaultAndKeyReference
+from ._models_py3 import KeyVaultAndSecretReference
+from ._models_py3 import Resource
+from ._models_py3 import Snapshot
+from ._models_py3 import SnapshotList
+from ._models_py3 import SnapshotSku
+from ._models_py3 import SnapshotUpdate
+from ._models_py3 import SourceVault
 
-from ._compute_management_client_enums import (
-    AccessLevel,
-    DiskCreateOption,
-    DiskState,
-    DiskStorageAccountTypes,
-    HyperVGeneration,
-    OperatingSystemTypes,
-    SnapshotStorageAccountTypes,
-)
+from ._compute_management_client_enums import AccessLevel
+from ._compute_management_client_enums import DiskCreateOption
+from ._compute_management_client_enums import DiskState
+from ._compute_management_client_enums import DiskStorageAccountTypes
+from ._compute_management_client_enums import HyperVGeneration
+from ._compute_management_client_enums import OperatingSystemTypes
+from ._compute_management_client_enums import SnapshotStorageAccountTypes
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'AccessUri',
-    'CreationData',
-    'Disk',
-    'DiskList',
-    'DiskSku',
-    'DiskUpdate',
-    'EncryptionSettingsCollection',
-    'EncryptionSettingsElement',
-    'GrantAccessData',
-    'ImageDiskReference',
-    'KeyVaultAndKeyReference',
-    'KeyVaultAndSecretReference',
-    'Resource',
-    'Snapshot',
-    'SnapshotList',
-    'SnapshotSku',
-    'SnapshotUpdate',
-    'SourceVault',
-    'AccessLevel',
-    'DiskCreateOption',
-    'DiskState',
-    'DiskStorageAccountTypes',
-    'HyperVGeneration',
-    'OperatingSystemTypes',
-    'SnapshotStorageAccountTypes',
+    "AccessUri",
+    "CreationData",
+    "Disk",
+    "DiskList",
+    "DiskSku",
+    "DiskUpdate",
+    "EncryptionSettingsCollection",
+    "EncryptionSettingsElement",
+    "GrantAccessData",
+    "ImageDiskReference",
+    "KeyVaultAndKeyReference",
+    "KeyVaultAndSecretReference",
+    "Resource",
+    "Snapshot",
+    "SnapshotList",
+    "SnapshotSku",
+    "SnapshotUpdate",
+    "SourceVault",
+    "AccessLevel",
+    "DiskCreateOption",
+    "DiskState",
+    "DiskStorageAccountTypes",
+    "HyperVGeneration",
+    "OperatingSystemTypes",
+    "SnapshotStorageAccountTypes",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
