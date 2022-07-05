@@ -124,7 +124,7 @@ class RoomParticipant(_serialization.Model):
     }
 
     def __init__(
-        self, *, communication_identifier, role: Optional[Union[str, RoleType]] = None, **kwargs
+        self, communication_identifier, role: Optional[Union[str, RoleType]] = None, **kwargs
     ):
         """
         :keyword communication_identifier: Identifies a participant in Azure Communication services. A
