@@ -1,5 +1,7 @@
 # Guide for monitoring CredScan checks
 
+Hi
+
 This guide describes how package owners can monitor their package's Credential Scanner (CredScan) status and correct
 any warnings.
 
@@ -7,6 +9,7 @@ General information about CredScan can be found in the overview documentation at
 Azure SDK's motivation and methodology for running CredScan is documented [here][devops_doc].
 
 ## Table of Contents
+
 - [Check CredScan status](#check-credscan-status)
 - [Correct active warnings](#correct-active-warnings)
   - [True positives](#true-positives)
@@ -25,6 +28,7 @@ CredScan is also run each night over the entire `azure-sdk-for-python` repositor
 Each warning will begin with an error code and the path to the file containing a potential credential, as well as the
 row and column where the credential string begins. For example, for a potential credential that starts in row 3 and
 column 20 of a particular file:
+
 ```
 ##[error]1. Credential Scanner Error CSCAN-GENERAL0030 - File: sdk/{service}/{package}/{file}.py:sdk/{service}/{package}/{file}.py(3,20)
 ```
@@ -52,12 +56,13 @@ Credential warnings are suppressed in [eng/CredScanSuppression.json][suppression
 the `"placeholder"` list, and suppressed files are in the `"file"` list under `"suppressions"`.
 
 If you have a fake credential flagged by CredScan, try one of the following (listed from most to least preferable):
-  - Import and use a suitable credential from our centralized fake secret store: [`devtools_testutils.fake_credentials`][fake_credentials].
-  - Import and use a suitable credential from another file that's already suppressed in [eng/CredScanSuppression.json][suppression_file].
-  - Replace the credential with a string value that's already suppressed in [eng/CredScanSuppression.json][suppression_file].
-  - Move the credential into [devtools_testutils/fake_credentials.py][fake_credentials].
-  - Move the credential into a `fake_credentials.py` file in your package, and add the file path to the list of suppressed files if necessary.
-  - Add the credential to the list of suppressed string values.
+
+- Import and use a suitable credential from our centralized fake secret store: [`devtools_testutils.fake_credentials`][fake_credentials].
+- Import and use a suitable credential from another file that's already suppressed in [eng/CredScanSuppression.json][suppression_file].
+- Replace the credential with a string value that's already suppressed in [eng/CredScanSuppression.json][suppression_file].
+- Move the credential into [devtools_testutils/fake_credentials.py][fake_credentials].
+- Move the credential into a `fake_credentials.py` file in your package, and add the file path to the list of suppressed files if necessary.
+- Add the credential to the list of suppressed string values.
 
 Ideally, fake credential files -- which contain nothing but fake secrets -- should be suppressed and their fake
 credentials shouldn't appear in any other files. Sanitizers should be used to keep fake credentials out of test
@@ -78,12 +83,11 @@ that you own in this file, please remove a few at a time from the file so that C
 the pipeline. Then, resolve them following the steps from the [Correct active warnings](#correct-active-warnings)
 section of this guide.
 
-
-[aggregate_reports]: https://dev.azure.com/azure-sdk/internal/_build?definitionId=1401&_a=summary
-[aggregate_reports_output]: https://dev.azure.com/azure-sdk/internal/_build/results?buildId=1411446&view=logs&j=9e400fad-ff47-5b38-f9dc-cae2431972da&t=8613334a-c306-55ea-63ff-80c6e8e0a0ca
-[baseline]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/python.gdnbaselines
-[ci_scan_output]: https://dev.azure.com/azure-sdk/public/_build/results?buildId=1426258&view=logs&jobId=b70e5e73-bbb6-5567-0939-8415943fadb9&j=bc67675d-56bf-581f-e0a2-208848ba68ca&t=7eee3a58-6120-518b-7fcb-7e943712aa81
-[credscan_doc]: https://aka.ms/credscan
-[devops_doc]: https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/413/Credential-Scan-Step-in-Pipeline
-[fake_credentials]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/fake_credentials.py
-[suppression_file]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/CredScanSuppression.json
+[AGGREGATE_REPORTS]: https://dev.azure.com/azure-sdk/internal/\_build?definitionId=1401&\_a=summary
+[AGGREGATE_REPORTS_OUTPUT]: https://dev.azure.com/azure-sdk/internal/\_build/results?buildId=1411446&view=logs&j=9e400fad-ff47-5b38-f9dc-cae2431972da&t=8613334a-c306-55ea-63ff-80c6e8e0a0ca
+[BASELINE]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/python.gdnbaselines
+[CI_SCAN_OUTPUT]: https://dev.azure.com/azure-sdk/public/\_build/results?buildId=1426258&view=logs&jobId=b70e5e73-bbb6-5567-0939-8415943fadb9&j=bc67675d-56bf-581f-e0a2-208848ba68ca&t=7eee3a58-6120-518b-7fcb-7e943712aa81
+[CREDSCAN_DOC]: https://aka.ms/credscan
+[DEVOPS_DOC]: https://dev.azure.com/azure-sdk/internal/\_wiki/wikis/internal.wiki/413/Credential-Scan-Step-in-Pipeline
+[FAKE_CREDENTIALS]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/fake_credentials.py
+[SUPPRESSION_FILE]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/CredScanSuppression.json
