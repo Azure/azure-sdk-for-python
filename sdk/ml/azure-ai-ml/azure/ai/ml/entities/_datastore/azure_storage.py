@@ -5,6 +5,7 @@
 from pathlib import Path
 from typing import Dict, Union
 from azure.ai.ml.entities._datastore.datastore import Datastore
+from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
 
 from azure.ai.ml._restclient.v2022_05_01.models import (
     AzureBlobDatastore as RestAzureBlobDatastore,
@@ -22,7 +23,7 @@ from azure.ai.ml.entities._datastore.credentials import (
 )
 from azure.ai.ml.entities._datastore.utils import from_rest_datastore_credentials
 
-from ._constants import DEFAULT_ENDPOINT, HTTPS
+from ._constants import HTTPS
 from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._util import load_from_dict
 
@@ -60,7 +61,7 @@ class AzureFileDatastore(Datastore):
         file_share_name: str,
         description: str = None,
         tags: Dict = None,
-        endpoint: str = DEFAULT_ENDPOINT,
+        endpoint: str = _get_storage_endpoint_from_metadata(),
         protocol: str = HTTPS,
         properties: Dict = None,
         credentials: Union[AccountKeyCredentials, SasTokenCredentials],
@@ -156,7 +157,7 @@ class AzureBlobDatastore(Datastore):
         container_name: str,
         description: str = None,
         tags: Dict = None,
-        endpoint: str = DEFAULT_ENDPOINT,
+        endpoint: str = _get_storage_endpoint_from_metadata(),
         protocol: str = HTTPS,
         properties: Dict = None,
         credentials: Union[AccountKeyCredentials, SasTokenCredentials] = None,
@@ -253,7 +254,7 @@ class AzureDataLakeGen2Datastore(Datastore):
         filesystem: str,
         description: str = None,
         tags: Dict = None,
-        endpoint: str = DEFAULT_ENDPOINT,
+        endpoint: str = _get_storage_endpoint_from_metadata(),
         protocol: str = HTTPS,
         properties: Dict = None,
         credentials: Union[ServicePrincipalCredentials, CertificateCredentials] = None,

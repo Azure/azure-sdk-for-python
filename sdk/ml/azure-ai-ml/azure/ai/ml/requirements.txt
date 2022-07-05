@@ -8,6 +8,8 @@ azure-mgmt-core<2.0.0,>=1.2.0
 marshmallow<4.0.0,>=3.5
 jsonschema<5.0.0,>=4.0.0
 tqdm<=4.63.0
+# Used for PR 825138
+strictyaml<=1.6.1
 # Used for PR 718512
 colorama<=0.4.4
 pyjwt<3.0.0

@@ -7,10 +7,7 @@ import os
 from marshmallow import INCLUDE, Schema
 from typing import Dict, Any, Union
 
-from azure.ai.ml._restclient.v2021_10_01.models import (
-    ComponentVersionData,
-    ComponentVersionDetails,
-)
+from azure.ai.ml._restclient.v2021_10_01.models import ComponentVersionData
 from azure.ai.ml._schema.component.parallel_component import ParallelComponentSchema, RestParallelComponentSchema
 from azure.ai.ml.constants import (
     BASE_PATH_CONTEXT_KEY,
@@ -18,8 +15,8 @@ from azure.ai.ml.constants import (
     NodeType,
     ComponentSource,
 )
-from azure.ai.ml.entities._component.input_output import ComponentInput, ComponentOutput
 from .component import Component
+from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
@@ -247,12 +244,10 @@ class ParallelComponent(Component, ParameterizedParallel):
     def _load_from_rest(cls, obj: ComponentVersionData) -> "ParallelComponent":
         rest_component_version = obj.properties
         inputs = {
-            k: ComponentInput._from_rest_object(v)
-            for k, v in rest_component_version.component_spec.pop("inputs", {}).items()
+            k: Input._from_rest_object(v) for k, v in rest_component_version.component_spec.pop("inputs", {}).items()
         }
         outputs = {
-            k: ComponentOutput._from_rest_object(v)
-            for k, v in rest_component_version.component_spec.pop("outputs", {}).items()
+            k: Output._from_rest_object(v) for k, v in rest_component_version.component_spec.pop("outputs", {}).items()
         }
         parallel_component = ParallelComponent(
             id=obj.id,

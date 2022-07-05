@@ -16,9 +16,14 @@ from typing import (
     Optional,
     Union,
 )
-from azure.ai.ml._azure_environments import ENDPOINT_URLS, _get_cloud_details, resource_to_scopes
+from azure.ai.ml._azure_environments import (
+    _get_base_url_from_metadata,
+    _get_aml_resource_id_from_metadata,
+    _resource_to_scopes,
+)
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
+from .._utils._experimental import experimental
 from ..entities._validation import ValidationResult, _ValidationResultBuilder
 
 try:
@@ -96,8 +101,9 @@ from azure.ai.ml.entities import (
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.sweep import SweepJob
 from azure.ai.ml.entities._job.base_job import _BaseJob
+from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
-from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._builders import Command, BaseNode, Sweep, Parallel
 from azure.ai.ml.entities._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remote_uri
@@ -151,16 +157,19 @@ class JobOperations(_ScopeDependentOperations):
             logger.addHandler(kwargs.pop("app_insights_handler"))
         self._operation_2022_02_preview = service_client_02_2022_preview.jobs
         self._all_operations = all_operations
-        self._kwargs = kwargs
         self._stream_logs_until_completion = stream_logs_until_completion
         # Dataplane service clients are lazily created as they are needed
         self._runs_operations_client = None
         self._dataset_dataplane_operations_client = None
         self._model_dataplane_operations_client = None
+        # Kwargs to propagate to dataplane service clients
+        self._service_client_kwargs = kwargs.pop("_service_client_kwargs", {})
         self._api_base_url = None
         self._container = "azureml"
         self._credential = credential
         self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope)
+
+        self._kwargs = kwargs
 
     @property
     def _compute_operations(self) -> ComputeOperations:
@@ -175,14 +184,18 @@ class JobOperations(_ScopeDependentOperations):
     @property
     def _runs_operations(self) -> RunOperations:
         if not self._runs_operations_client:
-            service_client_run_history = ServiceClientRunHistory(self._credential, base_url=self._api_url)
+            service_client_run_history = ServiceClientRunHistory(
+                self._credential, base_url=self._api_url, **self._service_client_kwargs
+            )
             self._runs_operations_client = RunOperations(self._operation_scope, service_client_run_history)
         return self._runs_operations_client
 
     @property
     def _dataset_dataplane_operations(self) -> DatasetDataplaneOperations:
         if not self._dataset_dataplane_operations_client:
-            service_client_dataset_dataplane = ServiceClientDatasetDataplane(self._credential, base_url=self._api_url)
+            service_client_dataset_dataplane = ServiceClientDatasetDataplane(
+                self._credential, base_url=self._api_url, **self._service_client_kwargs
+            )
             self._dataset_dataplane_operations_client = DatasetDataplaneOperations(
                 self._operation_scope, service_client_dataset_dataplane
             )
@@ -191,7 +204,9 @@ class JobOperations(_ScopeDependentOperations):
     @property
     def _model_dataplane_operations(self) -> ModelDataplaneOperations:
         if not self._model_dataplane_operations_client:
-            service_client_model_dataplane = ServiceClientModelDataplane(self._credential, base_url=self._api_url)
+            service_client_model_dataplane = ServiceClientModelDataplane(
+                self._credential, base_url=self._api_url, **self._service_client_kwargs
+            )
             self._model_dataplane_operations_client = ModelDataplaneOperations(
                 self._operation_scope, service_client_model_dataplane
             )
@@ -313,37 +328,63 @@ class JobOperations(_ScopeDependentOperations):
                     raise ResourceNotFoundError("Not found compute with name {}".format(compute_name))
         return None
 
-    @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.INTERNALCALL)
-    def _validate(self, job: Job, raise_on_failure: bool = False) -> ValidationResult:
-        """Validate a pipeline job.
-        if there are inline defined entities, e.g. Component, Environment & Code, they won't be created.
+    @experimental
+    @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.PUBLICAPI)
+    def validate(self, job: Job, *, raise_on_failure: bool = False, **kwargs) -> ValidationResult:
+        """Validate a job. Anonymous assets may be created if there are inline defined entities, e.g. Component,
+        Environment & Code.
+        Only pipeline job is supported for now.
 
         :param job: Job object to be validated.
         :type job: Job
+        :param raise_on_failure: Whether raise error when there are validation errors.
+        :type raise_on_failure: bool
         :return: a ValidationResult object containing all found errors.
         :rtype: ValidationResult
         """
-        # validation is open for PipelineJob only for now
-        if not isinstance(job, PipelineJob):
-            return _ValidationResultBuilder.success()
+        git_code_validation_result = _ValidationResultBuilder.success()
+        # TODO: move this check to Job._validate after validation is supported for all job types
+        # If private features are enable and job has code value of type str we need to check
+        # that it is a valid git path case. Otherwise we should throw a ValidationException
+        # saying that the code value is not a valid code value
+        if (
+            hasattr(job, "code")
+            and job.code is not None
+            and isinstance(job.code, str)
+            and job.code.startswith(GIT_PATH_PREFIX)
+            and not is_private_preview_enabled()
+        ):
+            git_code_validation_result.append_error(
+                message=f"Invalid code value: {job.code}. Git paths are not supported.",
+                yaml_path="code",
+            )
 
-        job._validate(raise_error=True)
-        try:
-            job.compute = self.try_get_compute_arm_id(job.compute)
-            for node in job.jobs.values():
-                node.compute = self.try_get_compute_arm_id(node.compute)
-            return _ValidationResultBuilder.success()
-        except Exception as e:
-            if raise_on_failure:
-                raise
-            else:
-                logger.warning(f"Validation failed: {e}")
-                return _ValidationResultBuilder.from_single_message(singular_error_message=str(e), yaml_path="compute")
+        if not isinstance(job, PipelineJob):
+            return git_code_validation_result.try_raise(error_target=ErrorTarget.JOB, raise_error=raise_on_failure)
+
+        validation_result = job._validate(raise_error=raise_on_failure)
+        validation_result.merge_with(git_code_validation_result)
+        # fast return to avoid remote call if local validation not passed
+        # TODO: use remote call to validate the entire job after MFE API is ready
+        if validation_result.passed:
+            try:
+                job.compute = self.try_get_compute_arm_id(job.compute)
+            except Exception as e:
+                validation_result.append_error(yaml_path="compute", message=str(e))
+
+            for node_name, node in job.jobs.items():
+                try:
+                    node.compute = self.try_get_compute_arm_id(node.compute)
+                except Exception as e:
+                    validation_result.append_error(yaml_path=f"jobs.{node_name}.compute", message=str(e))
+
+        validation_result.resolve_location_for_diagnostics(job._source_path)
+        return validation_result.try_raise(raise_error=raise_on_failure, error_target=ErrorTarget.PIPELINE)
 
     @monitor_with_telemetry_mixin(logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
         self,
-        job: Union[Job, BaseNode],
+        job: Job,
         *,
         description: str = None,
         compute: str = None,
@@ -353,7 +394,7 @@ class JobOperations(_ScopeDependentOperations):
     ) -> Job:
         """Create or update a job, if there're inline defined entities, e.g. Environment, Code, they'll be created together with the job.
 
-        :param Union[Job,BaseNode] job: Job definition or object which can be translate to a job.
+        :param Job job: Job definition or object which can be translate to a job.
         :param description: Description to overwrite when submitting the pipeline.
         :type description: str
         :param compute: Compute target to overwrite when submitting the pipeline.
@@ -365,10 +406,8 @@ class JobOperations(_ScopeDependentOperations):
         :return: Created or updated job.
         :rtype: Job
         """
-        if isinstance(job, BaseNode):
+        if isinstance(job, BaseNode) and not isinstance(job, Command):  # Command objects can be used directly
             job = job._to_job()
-
-        self._generate_job_defaults(job)
 
         # Set job properties before submission
         if description is not None:
@@ -383,20 +422,7 @@ class JobOperations(_ScopeDependentOperations):
         if job.compute == LOCAL_COMPUTE_TARGET:
             job.environment_variables[COMMON_RUNTIME_ENV_VAR] = "true"
 
-        # If private features are enable and job has code value of type str we need to check
-        # that it is a valid git path case. Otherwise we should throw a ValidationException
-        # saying that the code value is not a valid code value
-        if (
-            hasattr(job, "code")
-            and job.code is not None
-            and isinstance(job.code, str)
-            and job.code.startswith(GIT_PATH_PREFIX)
-            and not is_private_preview_enabled()
-        ):
-            msg = f"Invalid code value: {job.code}. Git paths are not supported."
-            raise ValidationException(message=msg, no_personal_data_message=msg)
-
-        self._validate(job, raise_on_failure=True)
+        self.validate(job, raise_on_failure=True)
 
         # Create all dependent resources
         self._resolve_arm_id_or_upload_dependencies(job)
@@ -407,7 +433,7 @@ class JobOperations(_ScopeDependentOperations):
         # MFE does not allow existing properties to be updated, only for new props to be added
         if not any(prop_name in job.properties for prop_name in git_props.keys()):
             job.properties = {**job.properties, **git_props}
-        rest_job_resource = job._to_rest_object()
+        rest_job_resource = to_rest_job_object(job)
 
         # Make a copy of self._kwargs instead of contaminate the original one
         kwargs = dict(**self._kwargs)
@@ -695,17 +721,6 @@ class JobOperations(_ScopeDependentOperations):
         all_urls = json.loads(download_text_from_url(discovery_url, create_session_with_retry()))
         return all_urls[url_key]
 
-    def _generate_job_defaults(self, job: Job) -> None:
-        # Default name to a generated user friendly name.
-        if not job.name:
-            job.name = generate_job_name()
-
-        # Default experiment to base path
-        if not job.experiment_name:
-            job.experiment_name = Path("./").resolve().stem.replace(" ", "") or "Default"
-
-        job.display_name = job.display_name or job.name
-
     def _resolve_arm_id_or_upload_dependencies(self, job: Job) -> None:
         """This method converts name or name:version to ARM id. Or it registers/uploads nested dependencies.
 
@@ -733,6 +748,13 @@ class JobOperations(_ScopeDependentOperations):
                         self._resolve_automl_job_inputs(job_instance, job._base_path, inside_pipeline=True)
         elif isinstance(job, AutoMLJob):
             self._resolve_automl_job_inputs(job, job._base_path, inside_pipeline=False)
+        elif isinstance(job, Command):
+            # TODO: switch to use inputs of Command objects, once the inputs/outputs building logic is removed from the BaseNode constructor.
+            try:
+                self._resolve_job_inputs(job._job_inputs.values(), job._base_path)
+            except AttributeError:
+                # If the job object doesn't have "inputs" attribute, we don't need to resolve. E.g. AutoML jobs
+                pass
         else:
             try:
                 self._resolve_job_inputs(job.inputs.values(), job._base_path)
@@ -908,7 +930,7 @@ class JobOperations(_ScopeDependentOperations):
 
         if isinstance(job, _BaseJob):
             job.compute = self._resolve_compute_id(resolver, job.compute)
-        elif isinstance(job, CommandJob):
+        elif isinstance(job, Command):
             job = self._resolve_arm_id_for_command_job(job, resolver)
         elif isinstance(job, ParallelJob):
             job = self._resolve_arm_id_for_parallel_job(job, resolver)
@@ -928,7 +950,7 @@ class JobOperations(_ScopeDependentOperations):
             )
         return job
 
-    def _resolve_arm_id_for_command_job(self, job: Job, resolver: Callable) -> Job:
+    def _resolve_arm_id_for_command_job(self, job: Command, resolver: Callable) -> Job:
         """Resolve arm_id for CommandJob"""
         if job.code is not None and is_registry_id_for_resource(job.code):
             msg = f"Format not supported for code asset: {job.code}"
@@ -1041,8 +1063,7 @@ class JobOperations(_ScopeDependentOperations):
         try:
             studio_endpoint = job.services.get("Studio", None)
             studio_url = studio_endpoint.endpoint
-            cloud_details = _get_cloud_details()
-            default_scopes = resource_to_scopes(cloud_details.get(ENDPOINT_URLS.RESOURCE_MANAGER_ENDPOINT))
+            default_scopes = _resource_to_scopes(_get_base_url_from_metadata())
             module_logger.debug(f"default_scopes used: `{default_scopes}`\n")
             # Extract the tenant id from the credential using PyJWT
             decode = jwt.decode(
@@ -1062,8 +1083,7 @@ class JobOperations(_ScopeDependentOperations):
             pass
 
     def _set_headers_with_user_aml_token(self, kwargs) -> Dict[str, str]:
-        cloud_details = _get_cloud_details()
-        azure_ml_scopes = resource_to_scopes(cloud_details.get(ENDPOINT_URLS.AML_RESOURCE_ID))
+        azure_ml_scopes = _resource_to_scopes(_get_aml_resource_id_from_metadata())
         module_logger.debug(f"azure_ml_scopes used: `{azure_ml_scopes}`\n")
         aml_token = self._credential.get_token(*azure_ml_scopes).token
         headers = kwargs.pop("headers", {})

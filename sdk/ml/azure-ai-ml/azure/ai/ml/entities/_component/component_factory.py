@@ -3,9 +3,8 @@
 # ---------------------------------------------------------
 from typing import Callable, Dict, Tuple, Any
 from marshmallow import INCLUDE, Schema
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorTarget, ErrorCategory, ComponentException
+from azure.ai.ml._ml_exceptions import ValidationException, ErrorTarget, ErrorCategory
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
-from azure.ai.ml._schema.component import BaseComponentSchema
 from azure.ai.ml.constants import (
     NodeType,
     ComponentSource,
@@ -14,7 +13,7 @@ from azure.ai.ml.constants import (
     ANONYMOUS_COMPONENT_NAME,
 )
 from azure.ai.ml.entities import ParallelComponent, CommandComponent, Component
-from azure.ai.ml.entities._component.input_output import ComponentInput, ComponentOutput
+from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.distribution import DistributionConfiguration
 
 
@@ -107,12 +106,10 @@ class _ComponentFactory:
 
         _type = _type.lower()
         inputs = {
-            k: ComponentInput._from_rest_object(v)
-            for k, v in rest_component_version.component_spec.pop("inputs", {}).items()
+            k: Input._from_rest_object(v) for k, v in rest_component_version.component_spec.pop("inputs", {}).items()
         }
         outputs = {
-            k: ComponentOutput._from_rest_object(v)
-            for k, v in rest_component_version.component_spec.pop("outputs", {}).items()
+            k: Output._from_rest_object(v) for k, v in rest_component_version.component_spec.pop("outputs", {}).items()
         }
 
         distribution = rest_component_version.component_spec.pop("distribution", None)

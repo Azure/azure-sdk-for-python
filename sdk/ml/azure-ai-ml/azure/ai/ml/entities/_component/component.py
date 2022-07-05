@@ -1,26 +1,30 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import typing
+from abc import abstractmethod
 from os import PathLike
 from pathlib import Path
 from typing import Dict, Union
 
+from marshmallow import Schema
+
+from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml.entities import Asset
-from azure.ai.ml.entities._component.input_output import ComponentInput, ComponentOutput
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, SystemData, ComponentVersionDetails
 from azure.ai.ml.constants import (
-    CommonYamlFields,
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
     ComponentSource,
     ANONYMOUS_COMPONENT_NAME,
+    SOURCE_PATH_CONTEXT_KEY,
 )
-from azure.ai.ml.constants import NodeType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, YamlTranslatableMixin, TelemetryMixin
-from azure.ai.ml._utils.utils import load_yaml, dump_yaml_to_file, hash_dict
+from azure.ai.ml._utils.utils import dump_yaml_to_file, hash_dict, is_private_preview_enabled
 from azure.ai.ml.entities._util import find_type_in_override
-from azure.ai.ml._ml_exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.entities._validation import ValidationResult, SchemaValidatableMixin
+from azure.ai.ml.entities._inputs_outputs import Input, Output
 
 
 class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin, SchemaValidatableMixin):
@@ -88,11 +92,12 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
             creation_context=creation_context,
             is_anonymous=kwargs.pop("is_anonymous", False),
             base_path=kwargs.pop("base_path", None),
+            source_path=kwargs.pop("source_path", None),
         )
         # update component name to ANONYMOUS_COMPONENT_NAME if it is anonymous
         if hasattr(self, "_is_anonymous"):
             self._set_is_anonymous(self._is_anonymous)
-        # TODO: check why do we dropped kwargs
+        # TODO: check why do we dropped kwargs, seems because _source is not a valid parameter for a super.__init__
 
         inputs = inputs if inputs else {}
         outputs = outputs if outputs else {}
@@ -112,9 +117,7 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
         self._func = _generate_component_function(self)
 
     @classmethod
-    def build_validate_io(cls, io_dict: Dict, is_input: bool):
-        from azure.ai.ml import Output, Input
-
+    def build_validate_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
         component_io = {}
         for name, port in io_dict.items():
             if not name.isidentifier():
@@ -126,13 +129,9 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
                 )
             else:
                 if is_input:
-                    if isinstance(port, Input):
-                        port = port._to_dict()
-                    component_io[name] = ComponentInput(port)
+                    component_io[name] = port if isinstance(port, Input) else Input(**port)
                 else:
-                    if isinstance(port, Output):
-                        port = port._to_dict()
-                    component_io[name] = ComponentOutput(port)
+                    component_io[name] = port if isinstance(port, Output) else Output(**port)
         return component_io
 
     @property
@@ -240,8 +239,30 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
         dump_yaml_to_file(path, yaml_serialized, default_flow_style=False)
 
     @classmethod
+    @abstractmethod
+    def _create_schema_for_validation(cls, context) -> typing.Union[PathAwareSchema, Schema]:
+        pass
+
+    @classmethod
     def _get_validation_error_target(cls) -> ErrorTarget:
         return ErrorTarget.COMPONENT
+
+    def _customized_validate(self) -> ValidationResult:
+        validation_result = super(Component, self)._customized_validate()
+        # If private features are enable and component has code value of type str we need to check
+        # that it is a valid git path case. Otherwise we should throw a ValidationError
+        # saying that the code value is not valid
+        if (
+            hasattr(self, "code")
+            and self.code is not None
+            and isinstance(self.code, str)
+            and self.code.startswith("git+")
+            and not is_private_preview_enabled()
+        ):
+            validation_result.append_error(
+                message="Not a valid code value: git paths are not supported.", yaml_path="code"
+            )
+        return validation_result
 
     @classmethod
     def _load(
@@ -255,6 +276,7 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
         params_override = params_override or []
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
+            SOURCE_PATH_CONTEXT_KEY: Path(yaml_path) if yaml_path else None,
             PARAMS_OVERRIDE_KEY: params_override,
         }
 
@@ -270,9 +292,6 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
         return component_factory.load_from_rest(obj=component_rest_object)
 
     def _to_rest_object(self) -> ComponentVersionData:
-        # TODO: we may need to use original dict from component YAML(only change code and environment), returning
-        # parsed dict might add default value for some field, eg: if we add property "optional" with default value
-        # to ComponentInput, it will add field "optional" to all inputs even if user doesn't specify one
         component = self._to_dict()
 
         properties = ComponentVersionDetails(

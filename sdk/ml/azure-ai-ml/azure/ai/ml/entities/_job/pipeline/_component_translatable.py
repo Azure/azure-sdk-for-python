@@ -9,7 +9,6 @@ from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml._ml_exceptions import JobException, ErrorTarget
 from azure.ai.ml.constants import ComponentJobConstants, AssetTypes
-from azure.ai.ml.entities._component.input_output import ComponentInput, ComponentOutput
 from azure.ai.ml.entities._job.sweep.search_space import Choice, Randint, SweepDistribution
 
 
@@ -122,9 +121,7 @@ class ComponentTranslatableMixin:
             raise JobException(message=msg, no_personal_data_message=msg, target=ErrorTarget.PIPELINE)
 
     @classmethod
-    def _to_component_input(
-        cls, input: Union[Input, str, bool, int, float], pipeline_job_dict=None, **kwargs
-    ) -> ComponentInput:
+    def _to_component_input(cls, input: Union[Input, str, bool, int, float], pipeline_job_dict=None, **kwargs) -> Input:
         pipeline_job_dict = pipeline_job_dict or {}
         input_variable = {}
 
@@ -155,10 +152,10 @@ class ComponentTranslatableMixin:
                 no_personal_data_message=msg,
                 target=ErrorTarget.PIPELINE,
             )
-        return ComponentInput(input_variable)
+        return Input(**input_variable)
 
     @classmethod
-    def _to_component_input_builder_function(cls, input: Union[Input, str, bool, int, float]) -> ComponentInput:
+    def _to_component_input_builder_function(cls, input: Union[Input, str, bool, int, float]) -> Input:
         input_variable = {}
 
         if isinstance(input, Input):
@@ -175,14 +172,14 @@ class ComponentTranslatableMixin:
         else:
             input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(input)]
             input_variable["default"] = input
-        return ComponentInput(input_variable)
+        return Input(**input_variable)
 
     @classmethod
     def _to_component_output(
         cls, output: Union[Output, str, bool, int, float], pipeline_job_dict=None, **kwargs
-    ) -> ComponentOutput:
+    ) -> Output:
         """
-        Translate outputs to ComponentOutputs and infer component output type from linked pipeline output, its original
+        Translate outputs to Outputs and infer component output type from linked pipeline output, its original
         type or default type
         """
         pipeline_job_dict = pipeline_job_dict or {}
@@ -193,7 +190,7 @@ class ComponentTranslatableMixin:
                 # default to url_folder if failed to get type
                 output_type = AssetTypes.URI_FOLDER
             output_variable = {"type": output_type}
-            return ComponentOutput(output_variable)
+            return Output(**output_variable)
         else:
             output_variable = {}
 
@@ -216,12 +213,12 @@ class ComponentTranslatableMixin:
                     no_personal_data_message=msg,
                     target=ErrorTarget.PIPELINE,
                 )
-            return ComponentOutput(output_variable)
+            return Output(**output_variable)
 
     def _to_component_inputs(
         self, inputs: Dict[str, Union[Input, str, bool, int, float]], **kwargs
-    ) -> Dict[str, ComponentInput]:
-        """Translate inputs to ComponentInputs.
+    ) -> Dict[str, Input]:
+        """Translate inputs to Inputs.
 
         :param inputs: mapping from input name to input object.
         :return: mapping from input name to translated component input.
@@ -232,13 +229,13 @@ class ComponentTranslatableMixin:
             translated_component_inputs[io_name] = self._to_component_input(io_value, pipeline_job_dict)
         return translated_component_inputs
 
-    def _to_component_outputs(self, outputs: Dict[str, Output], **kwargs) -> Dict[str, ComponentOutput]:
-        """Translate outputs to ComponentOutputs
+    def _to_component_outputs(self, outputs: Dict[str, Output], **kwargs) -> Dict[str, Output]:
+        """Translate outputs to Outputs
 
         :param outputs: mapping from output name to output object.
         :return: mapping from output name to translated component output.
         """
-        # Translate outputs to ComponentOutputs.
+        # Translate outputs to Outputs.
         pipeline_job_dict = kwargs.get("pipeline_job_dict", {})
         translated_component_outputs = {}
         for output_name, output_value in outputs.items():

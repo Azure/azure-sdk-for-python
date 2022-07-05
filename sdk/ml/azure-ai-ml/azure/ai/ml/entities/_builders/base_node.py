@@ -5,7 +5,7 @@ import logging
 import uuid
 from enum import Enum
 from functools import wraps
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Dict, Union, List, Optional
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
 from azure.ai.ml.constants import JobType, ComponentSource
@@ -57,9 +57,7 @@ def pipeline_node_decorator(func):
     return wrapper
 
 
-class BaseNode(
-    RestTranslatableMixin, NodeIOMixin, TelemetryMixin, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, ABC
-):
+class BaseNode(Job, NodeIOMixin, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin):
     """Base class for node in pipeline, used for component version consumption. Can't be instantiated directly.
 
     :param type: Type of pipeline node
@@ -103,7 +101,19 @@ class BaseNode(
         **kwargs,
     ):
         self._init = True
+
         _from_component_func = kwargs.pop("_from_component_func", False)
+        super(BaseNode, self).__init__(
+            type=type,
+            name=name,
+            display_name=display_name,
+            description=description,
+            tags=tags,
+            properties=properties,
+            compute=compute,
+            experiment_name=experiment_name,
+            **kwargs,
+        )
 
         # initialize io
         inputs, outputs = inputs or {}, outputs or {}
@@ -126,16 +136,7 @@ class BaseNode(
             self._inputs = self._build_inputs_dict_without_meta(inputs or {})
             self._outputs = self._build_outputs_dict_without_meta(outputs or {})
 
-        super(BaseNode, self).__init__(**kwargs)
-        self.type = type
         self._component = component
-        self.name = name
-        self.display_name = display_name
-        self.description = description
-        self.tags = dict(tags) if tags else {}
-        self.properties = dict(properties) if properties else {}
-        self.compute = compute
-        self.experiment_name = experiment_name
         self.kwargs = kwargs
 
         # Generate an id for every instance
@@ -144,7 +145,7 @@ class BaseNode(
             # add current component in pipeline stack for dsl scenario
             self._register_in_current_pipeline_component_builder()
 
-        self._base_path = None  # if _base_path is not
+        self._source_path = self._component._source_path if isinstance(self._component, Component) else None
         self._init = False
 
     @classmethod
@@ -193,6 +194,12 @@ class BaseNode(
         """
         self._base_path = base_path
 
+    def _set_source_path(self, source_path):
+        """
+        Update the source path for the node.
+        """
+        self._source_path = source_path
+
     def _get_component_id(self) -> Union[str, Component]:
         """Return component id if possible."""
         if isinstance(self._component, Component) and self._component.id:
@@ -230,7 +237,7 @@ class BaseNode(
                 # raise error when required input with no default value not set
                 if (
                     not self._is_input_set(input_name=key)  # input not provided
-                    and meta._optional is False  # and it's required
+                    and meta.optional is not True  # and it's required
                     and meta.default is None  # and it does not have default
                 ):
                     validation_result.append_error(
@@ -272,6 +279,13 @@ class BaseNode(
 
     @abstractmethod
     def _to_job(self) -> Job:
+        """
+        This private function is used by the CLI to get a plain job object so that the CLI can properly serialize the object.
+        It is needed as BaseNode._to_dict() dumps objects using pipeline child job schema instead of standalone job schema,
+        for example Command objects dump have a nested component property, which doesn't apply to stand alone command jobs.
+        BaseNode._to_dict() needs to be able to dump to both pipeline child job dict as well as stand alone job dict base on context.
+        """
+
         pass
 
     @classmethod

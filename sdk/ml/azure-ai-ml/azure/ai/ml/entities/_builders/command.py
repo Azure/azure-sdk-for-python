@@ -19,10 +19,18 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     AmlToken,
     UserIdentity,
     CommandJobLimits as RestCommandJobLimits,
+    JobBaseData,
+    CommandJob as RestCommandJob,
     ResourceConfiguration as RestResourceConfiguration,
 )
-from azure.ai.ml.constants import NodeType
 
+from azure.ai.ml.constants import (
+    LOCAL_COMPUTE_TARGET,
+    LOCAL_COMPUTE_PROPERTY,
+    ComponentSource,
+    NodeType,
+    BASE_PATH_CONTEXT_KEY,
+)
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities import (
     Component,
@@ -36,7 +44,7 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from .._job.pipeline._io import PipelineInput, PipelineOutputBase
-from .._util import validate_attribute_type, get_rest_dict, convert_ordered_dict_to_dict
+from .._util import validate_attribute_type, get_rest_dict, load_from_dict, convert_ordered_dict_to_dict
 from azure.ai.ml.entities._job.distribution import (
     MpiDistribution,
     TensorFlowDistribution,
@@ -44,8 +52,13 @@ from azure.ai.ml.entities._job.distribution import (
     DistributionConfiguration,
 )
 from ..._schema import PathAwareSchema
+from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from ..._schema.job.distribution import PyTorchDistributionSchema, TensorFlowDistributionSchema, MPIDistributionSchema
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorTarget
+from azure.ai.ml._ml_exceptions import ValidationException, ErrorTarget, ErrorCategory
+from azure.ai.ml.entities._job._input_output_helpers import (
+    from_rest_inputs_to_dataset_literal,
+    from_rest_data_outputs,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -108,6 +121,7 @@ class Command(BaseNode):
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
 
         kwargs.pop("type", None)
+        self._parameters = kwargs.pop("parameters", {})
         BaseNode.__init__(
             self, type=NodeType.COMMAND, inputs=inputs, outputs=outputs, component=component, compute=compute, **kwargs
         )
@@ -149,11 +163,20 @@ class Command(BaseNode):
         return str, Output
 
     @property
+    def parameters(self) -> Dict[str, str]:
+        """MLFlow parameters
+
+        :return: MLFlow parameters logged in job.
+        :rtype: Dict[str, str]
+        """
+        return self._parameters
+
+    @property
     def distribution(self) -> Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution]:
         return self._distribution
 
     @distribution.setter
-    def distribution(self, value):
+    def distribution(self, value: Union[Dict, PyTorchDistribution, TensorFlowDistribution, MpiDistribution]):
         if isinstance(value, dict):
             dist_schema = UnionField(
                 [
@@ -170,7 +193,7 @@ class Command(BaseNode):
         return self._resources
 
     @resources.setter
-    def resources(self, value):
+    def resources(self, value: Union[Dict, ResourceConfiguration]):
         if isinstance(value, dict):
             value = ResourceConfiguration(**value)
         self._resources = value
@@ -184,6 +207,19 @@ class Command(BaseNode):
         # the same as code
         return self.component.command if hasattr(self.component, "command") else None
 
+    @command.setter
+    def command(self, value: str) -> None:
+        if isinstance(self.component, Component):
+            self.component.command = value
+        else:
+            msg = "Can't set command property for a registered component {}"
+            raise ValidationException(
+                msg=msg.format(self.component),
+                no_personal_data_message=msg.format(self.component),
+                target=ErrorTarget.COMMAND_JOB,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
     @property
     def code(self) -> Optional[Union[str, PathLike]]:
         # BaseNode is an _AttrDict to allow dynamic attributes, so that lower version of SDK can work with attributes
@@ -194,6 +230,19 @@ class Command(BaseNode):
         # then its value will be set to _AttrDict and be deserialized as {"shape": {}} instead of None,
         # which is invalid in schema validation.
         return self.component.code if hasattr(self.component, "code") else None
+
+    @code.setter
+    def code(self, value: str) -> None:
+        if isinstance(self.component, Component):
+            self.component.code = value
+        else:
+            msg = "Can't set code property for a registered component {}"
+            raise ValidationException(
+                msg=msg.format(self.component),
+                no_personal_data_message=msg.format(self.component),
+                target=ErrorTarget.COMMAND_JOB,
+                error_category=ErrorCategory.USER_ERROR,
+            )
 
     def set_resources(
         self,
@@ -317,6 +366,7 @@ class Command(BaseNode):
     def _to_job(self) -> CommandJob:
 
         return CommandJob(
+            id=self.id,
             name=self.name,
             display_name=self.display_name,
             description=self.description,
@@ -326,6 +376,7 @@ class Command(BaseNode):
             experiment_name=self.experiment_name,
             code=self.component.code,
             compute=self.compute,
+            status=self.status,
             environment=self.environment,
             distribution=self.distribution,
             identity=self.identity,
@@ -334,6 +385,9 @@ class Command(BaseNode):
             limits=self.limits,
             inputs=self._job_inputs,
             outputs=self._job_outputs,
+            services=self.services,
+            creation_context=self.creation_context,
+            parameters=self.parameters,
         )
 
     @classmethod
@@ -353,6 +407,22 @@ class Command(BaseNode):
             )
         )
         return rest_obj
+
+    @classmethod
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Command":
+        from .command_func import command
+
+        loaded_data = load_from_dict(CommandJobSchema, data, context, additional_message, **kwargs)
+
+        # resources a limits properties are flatten in command() function, exact them and set separately
+        resources = loaded_data.pop("resources", None)
+        limits = loaded_data.pop("limits", None)
+
+        command_job = command(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
+
+        command_job.resources = resources
+        command_job.limits = limits
+        return command_job
 
     @classmethod
     def _from_rest_object(cls, obj: dict) -> "Command":
@@ -377,6 +447,48 @@ class Command(BaseNode):
             obj["limits"] = CommandJobLimits()._from_rest_object(rest_limits)
 
         return Command(**obj)
+
+    @classmethod
+    def _load_from_rest_job(cls, obj: JobBaseData) -> "Command":
+        from .command_func import command
+
+        rest_command_job: RestCommandJob = obj.properties
+
+        command_job = command(
+            name=obj.name,
+            display_name=rest_command_job.display_name,
+            description=rest_command_job.description,
+            tags=rest_command_job.tags,
+            properties=rest_command_job.properties,
+            command=rest_command_job.command,
+            experiment_name=rest_command_job.experiment_name,
+            services=rest_command_job.services,
+            status=rest_command_job.status,
+            creation_context=obj.system_data,
+            code=rest_command_job.code_id,
+            compute=rest_command_job.compute_id,
+            environment=rest_command_job.environment_id,
+            distribution=DistributionConfiguration._from_rest_object(rest_command_job.distribution),
+            parameters=rest_command_job.parameters,
+            identity=rest_command_job.identity,
+            environment_variables=rest_command_job.environment_variables,
+            inputs=from_rest_inputs_to_dataset_literal(rest_command_job.inputs),
+            outputs=from_rest_data_outputs(rest_command_job.outputs),
+        )
+        command_job._id = obj.id
+        command_job.resources = ResourceConfiguration._from_rest_object(rest_command_job.resources)
+        command_job.limits = CommandJobLimits._from_rest_object(rest_command_job.limits)
+        command_job.component._source = ComponentSource.REST  # This is used by pipeline job telemetries.
+
+        # Handle special case of local job
+        if (
+            command_job.resources is not None
+            and command_job.resources.properties is not None
+            and command_job.resources.properties.get(LOCAL_COMPUTE_PROPERTY, None)
+        ):
+            command_job.compute = LOCAL_COMPUTE_TARGET
+            command_job.resources.properties.pop(LOCAL_COMPUTE_PROPERTY)
+        return command_job
 
     def _build_inputs(self):
         inputs = super(Command, self)._build_inputs()
@@ -403,6 +515,7 @@ class Command(BaseNode):
                 if name not in kwargs.keys():
                     # use setattr here to make sure owner of input won't change
                     setattr(node.inputs, name, original_input._data)
+                    node._job_inputs[name] = original_input._data
                 # get outputs
             for name, original_output in self.outputs.items():
                 # use setattr here to make sure owner of input won't change

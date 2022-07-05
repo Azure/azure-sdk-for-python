@@ -6,13 +6,8 @@ from pathlib import Path
 from marshmallow import INCLUDE, Schema
 from typing import Dict, Union
 
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    ComponentVersionData,
-    ComponentVersionDetails,
-)
-from azure.ai.ml._schema.component.command_component import CommandComponentSchema, RestCommandComponentSchema
+from azure.ai.ml._schema.component.command_component import CommandComponentSchema
 from azure.ai.ml.entities._job.distribution import (
-    DistributionConfiguration,
     MpiDistribution,
     TensorFlowDistribution,
     PyTorchDistribution,
@@ -20,9 +15,8 @@ from azure.ai.ml.entities._job.distribution import (
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
 from azure.ai.ml.entities._assets import Environment
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, COMPONENT_TYPE, ComponentSource
+from azure.ai.ml.constants import COMPONENT_TYPE
 from azure.ai.ml.constants import NodeType
-from azure.ai.ml.entities._component.input_output import ComponentInput, ComponentOutput
 from .component import Component
 from .._util import validate_attribute_type, convert_ordered_dict_to_dict
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
@@ -168,9 +162,10 @@ class CommandComponent(Component, ParameterizedCommand):
         return CommandComponentSchema(context=context)
 
     def _customized_validate(self):
-        return self._validate_command()
+        return super(CommandComponent, self)._customized_validate().merge_with(self._validate_command())
 
     def _validate_command(self) -> ValidationResult:
+        validation_result = self._create_empty_validation_result()
         # command
         if self.command:
             invalid_expressions = []
@@ -179,9 +174,11 @@ class CommandComponent(Component, ParameterizedCommand):
                     invalid_expressions.append(data_binding_expression)
 
             if invalid_expressions:
-                error_msg = "Invalid data binding expression: {}".format(", ".join(invalid_expressions))
-                return _ValidationResultBuilder.from_single_message(error_msg, "command")
-        return _ValidationResultBuilder.success()
+                validation_result.append_error(
+                    yaml_path="command",
+                    message="Invalid data binding expression: {}".format(", ".join(invalid_expressions)),
+                )
+        return validation_result
 
     def _is_valid_data_binding_expression(self, data_binding_expression: str) -> bool:
         current_obj = self
