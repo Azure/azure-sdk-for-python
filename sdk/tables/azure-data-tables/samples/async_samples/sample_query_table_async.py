@@ -22,7 +22,6 @@ USAGE:
 import os
 import copy
 import random
-from time import sleep
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 
@@ -71,27 +70,83 @@ class SampleTablesQuery(object):
         from azure.data.tables.aio import TableClient
         from azure.core.exceptions import HttpResponseError
 
+        print("Entities with name: marker")
+        table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
+        # [START query_entities]
+        async with table_client:
+            try:
+                parameters = {u"name": u"marker"}
+                name_filter = u"Name eq @name"
+                queried_entities = table_client.query_entities(
+                    query_filter=name_filter, select=[u"Brand", u"Color"], parameters=parameters
+                )
+
+                async for entity_chosen in queried_entities:
+                    print(entity_chosen)
+
+            except HttpResponseError as e:
+                pass
+            # [END query_entities]
+
+    async def sample_query_entities_without_metadata(self):
+        from azure.data.tables.aio import TableClient
+        from azure.core.exceptions import HttpResponseError
+
+        print("Entities with name: marker")
+        table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
+        # [START query_entities]
+        async with table_client:
+            try:
+                parameters = {u"name": u"marker"}
+                name_filter = u"Name eq @name"
+                headers = {"Accept" : "application/json;odata=nometadata"}
+                queried_entities = table_client.query_entities(
+                    query_filter=name_filter, select=[u"Brand", u"Color"], parameters=parameters, headers=headers
+                )
+
+                async for entity_chosen in queried_entities:
+                    print(entity_chosen)
+
+            except HttpResponseError as e:
+                pass
+            # [END query_entities]
+
+    async def sample_query_entities_multiple_params(self):
+        from azure.data.tables.aio import TableClient
+        from azure.core.exceptions import HttpResponseError
+
+        print("Entities with name: marker and brand: Crayola")
         # [START query_entities]
         async with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
             try:
-                print("Entities with name: marker and brand: Crayola")
-                queried_entities1 = table_client.query_entities(
-                    query_filter={"name": "marker", "brand": "Crayola"},
-                    select=["Brand", "Color"],
-                    parameters="Name eq @name and Brand eq @brand",
-                    headers ={"Accept" : "application/json;odata=nometadata"}
+                parameters = {u"name": u"marker", u"brand": u"Crayola"}
+                name_filter = u"Name eq @name and Brand eq @brand"
+                queried_entities = table_client.query_entities(
+                    query_filter=name_filter, select=[u"Brand", u"Color"], parameters=parameters
                 )
-                async for entity_chosen in queried_entities1:
+
+                async for entity_chosen in queried_entities:
                     print(entity_chosen)
 
-                print("Entities with 25 < Value < 50")
-                queried_entities2 = table_client.query_entities(
-                    query_filter="Value gt @lower and Value lt @upper",
-                    select=["Value"],
-                    parameters={"lower": 25, "upper": 50},
-                    headers ={"Accept" : "application/json;odata=nometadata"}
+            except HttpResponseError as e:
+                print(e.message)
+        # [END query_entities]
+
+    async def sample_query_entities_values(self):
+        from azure.data.tables.aio import TableClient
+        from azure.core.exceptions import HttpResponseError
+
+        print("Entities with 25 < Value < 50")
+        # [START query_entities]
+        async with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
+            try:
+                parameters = {u"lower": 25, u"upper": 50}
+                name_filter = u"Value gt @lower and Value lt @upper"
+                queried_entities = table_client.query_entities(
+                    query_filter=name_filter, select=[u"Value"], parameters=parameters
                 )
-                async for entity_chosen in queried_entities2:
+
+                async for entity_chosen in queried_entities:
                     print(entity_chosen)
 
             except HttpResponseError as e:
@@ -111,6 +166,9 @@ async def main():
     try:
         await stq.insert_random_entities()
         await stq.sample_query_entities()
+        await stq.sample_query_entities_without_metadata()
+        await stq.sample_query_entities_multiple_params()
+        await stq.sample_query_entities_values()
     except Exception as e:
         print(e)
     finally:
