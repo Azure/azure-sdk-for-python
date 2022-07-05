@@ -1,0 +1,17 @@
+{
+    "type": "Microsoft.MachineLearningServices/workspaces/onlineEndpoints/deployments",
+    "apiVersion": "2021-10-01",
+    "location": "[parameters('location')]",
+    "name": "[concat(parameters('workspaceName'), '/', parameters('onlineEndpointName'), '/', parameters('online_deployment')[copyIndex()].name)]",
+    "identity": {
+        "type": "None"
+    },
+    "properties": "[parameters('online_deployment')[copyIndex()].properties]",
+    "tags": "[parameters('online_deployment')[copyIndex()].tags]",
+    "sku": "[parameters('online_deployment')[copyIndex()].sku]",
+    "copy": {
+        "name": "onlineDeploymentCopy",
+        "count": "[length(parameters('online_deployment'))]",
+        "mode": "serial"
+    }
+}

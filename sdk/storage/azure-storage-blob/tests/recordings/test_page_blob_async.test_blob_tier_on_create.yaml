@@ -2,12 +2,14 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 18:12:55 GMT
+      - Tue, 07 Jun 2022 20:51:29 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2021-08-06'
     method: PUT
     uri: https://pyacrstoragestorname.blob.core.windows.net/utcontainera4df1246?restype=container
   response:
@@ -15,31 +17,26 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 25 Oct 2019 18:12:55 GMT
-      etag: '"0x8D75976F58B8C13"'
-      last-modified: Fri, 25 Oct 2019 18:12:55 GMT
+      date: Tue, 07 Jun 2022 20:51:30 GMT
+      etag: '"0x8DA48C77F9A0BFD"'
+      last-modified: Tue, 07 Jun 2022 20:51:30 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2021-08-06'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoragemvvzd67g4hsm.blob.core.windows.net
-        - /utcontainera4df1246
-        - restype=container
-        - ''
+    url: https://jalauzonpremium.blob.core.windows.net/utcontainera4df1246?restype=container
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 18:12:56 GMT
+      - Tue, 07 Jun 2022 20:51:30 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2021-08-06'
     method: PUT
     uri: https://pyacrstoragestorname.blob.core.windows.net/utcontainersourcea4df1246?restype=container
   response:
@@ -47,31 +44,26 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 25 Oct 2019 18:12:55 GMT
-      etag: '"0x8D75976F59922E8"'
-      last-modified: Fri, 25 Oct 2019 18:12:55 GMT
+      date: Tue, 07 Jun 2022 20:51:30 GMT
+      etag: '"0x8DA48C77FA63F36"'
+      last-modified: Tue, 07 Jun 2022 20:51:30 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2021-08-06'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoragemvvzd67g4hsm.blob.core.windows.net
-        - /utcontainersourcea4df1246
-        - restype=container
-        - ''
+    url: https://jalauzonpremium.blob.core.windows.net/utcontainersourcea4df1246?restype=container
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 18:12:56 GMT
+      - Tue, 07 Jun 2022 20:51:30 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2021-08-06'
     method: PUT
     uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainera4df1246?restype=container
   response:
@@ -79,29 +71,24 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 25 Oct 2019 18:12:55 GMT
-      etag: '"0x8D75976F5B31D41"'
-      last-modified: Fri, 25 Oct 2019 18:12:55 GMT
+      date: Tue, 07 Jun 2022 20:51:29 GMT
+      etag: '"0x8DA48C77FD2912D"'
+      last-modified: Tue, 07 Jun 2022 20:51:30 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2021-08-06'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoragemvvzd67g4hsm.blob.core.windows.net
-        - /utpremiumcontainera4df1246
-        - restype=container
-        - ''
+    url: https://jalauzonpremium.blob.core.windows.net/utpremiumcontainera4df1246?restype=container
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-access-tier:
       - P4
       x-ms-blob-content-length:
@@ -109,9 +96,9 @@ interactions:
       x-ms-blob-type:
       - PageBlob
       x-ms-date:
-      - Fri, 25 Oct 2019 18:12:56 GMT
+      - Tue, 07 Jun 2022 20:51:30 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2021-08-06'
     method: PUT
     uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
   response:
@@ -119,32 +106,27 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 25 Oct 2019 18:12:55 GMT
-      etag: '"0x8D75976F5BC712B"'
-      last-modified: Fri, 25 Oct 2019 18:12:55 GMT
+      date: Tue, 07 Jun 2022 20:51:29 GMT
+      etag: '"0x8DA48C77FDEFBBA"'
+      last-modified: Tue, 07 Jun 2022 20:51:30 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2021-08-06'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoragemvvzd67g4hsm.blob.core.windows.net
-        - /utpremiumcontainera4df1246/bloba4df1246
-        - ''
-        - ''
+    url: https://jalauzonpremium.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 18:12:56 GMT
+      - Tue, 07 Jun 2022 20:51:30 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2021-08-06'
     method: HEAD
     uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
   response:
@@ -154,36 +136,31 @@ interactions:
       accept-ranges: bytes
       content-length: '1024'
       content-type: application/octet-stream
-      date: Fri, 25 Oct 2019 18:12:55 GMT
-      etag: '"0x8D75976F5BC712B"'
-      last-modified: Fri, 25 Oct 2019 18:12:55 GMT
+      date: Tue, 07 Jun 2022 20:51:29 GMT
+      etag: '"0x8DA48C77FDEFBBA"'
+      last-modified: Tue, 07 Jun 2022 20:51:30 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-access-tier: P4
       x-ms-blob-sequence-number: '0'
       x-ms-blob-type: PageBlob
-      x-ms-creation-time: Fri, 25 Oct 2019 18:12:56 GMT
+      x-ms-creation-time: Tue, 07 Jun 2022 20:51:30 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
       x-ms-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2021-08-06'
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoragemvvzd67g4hsm.blob.core.windows.net
-        - /utpremiumcontainera4df1246/bloba4df1246
-        - ''
-        - ''
+    url: https://jalauzonpremium.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-access-tier:
       - P6
       x-ms-blob-content-length:
@@ -191,9 +168,9 @@ interactions:
       x-ms-blob-type:
       - PageBlob
       x-ms-date:
-      - Fri, 25 Oct 2019 18:12:56 GMT
+      - Tue, 07 Jun 2022 20:51:30 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2021-08-06'
     method: PUT
     uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
   response:
@@ -201,42 +178,37 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 25 Oct 2019 18:12:55 GMT
-      etag: '"0x8D75976F5E3D63C"'
-      last-modified: Fri, 25 Oct 2019 18:12:56 GMT
+      date: Tue, 07 Jun 2022 20:51:29 GMT
+      etag: '"0x8DA48C77FF602C6"'
+      last-modified: Tue, 07 Jun 2022 20:51:30 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2021-08-06'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoragemvvzd67g4hsm.blob.core.windows.net
-        - /utpremiumcontainera4df1246/bloba4df1246
-        - ''
-        - ''
+    url: https://jalauzonpremium.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
 - request:
     body: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     headers:
+      Accept:
+      - application/xml
       Content-Length:
       - '1024'
       Content-Type:
       - application/octet-stream
       If-Match:
-      - '"0x8D75976F5E3D63C"'
+      - '"0x8DA48C77FF602C6"'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 18:12:56 GMT
+      - Tue, 07 Jun 2022 20:51:30 GMT
       x-ms-page-write:
       - update
       x-ms-range:
       - bytes=0-1023
       x-ms-version:
-      - '2019-02-02'
+      - '2021-08-06'
     method: PUT
     uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246?comp=page
   response:
@@ -245,33 +217,28 @@ interactions:
     headers:
       content-length: '0'
       content-md5: yaNM/IXZgmmMasifdgcavQ==
-      date: Fri, 25 Oct 2019 18:12:55 GMT
-      etag: '"0x8D75976F5EB51B9"'
-      last-modified: Fri, 25 Oct 2019 18:12:56 GMT
+      date: Tue, 07 Jun 2022 20:51:29 GMT
+      etag: '"0x8DA48C78001C0DF"'
+      last-modified: Tue, 07 Jun 2022 20:51:30 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-sequence-number: '0'
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2021-08-06'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoragemvvzd67g4hsm.blob.core.windows.net
-        - /utpremiumcontainera4df1246/bloba4df1246
-        - comp=page
-        - ''
+    url: https://jalauzonpremium.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246?comp=page
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 18:12:56 GMT
+      - Tue, 07 Jun 2022 20:51:30 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2021-08-06'
     method: HEAD
     uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
   response:
@@ -281,36 +248,31 @@ interactions:
       accept-ranges: bytes
       content-length: '1024'
       content-type: application/octet-stream
-      date: Fri, 25 Oct 2019 18:12:55 GMT
-      etag: '"0x8D75976F5EB51B9"'
-      last-modified: Fri, 25 Oct 2019 18:12:56 GMT
+      date: Tue, 07 Jun 2022 20:51:30 GMT
+      etag: '"0x8DA48C78001C0DF"'
+      last-modified: Tue, 07 Jun 2022 20:51:30 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-access-tier: P6
       x-ms-blob-sequence-number: '0'
       x-ms-blob-type: PageBlob
-      x-ms-creation-time: Fri, 25 Oct 2019 18:12:56 GMT
+      x-ms-creation-time: Tue, 07 Jun 2022 20:51:30 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
       x-ms-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2021-08-06'
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoragemvvzd67g4hsm.blob.core.windows.net
-        - /utpremiumcontainera4df1246/bloba4df1246
-        - ''
-        - ''
+    url: https://jalauzonpremium.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-access-tier:
       - P10
       x-ms-blob-content-length:
@@ -318,9 +280,9 @@ interactions:
       x-ms-blob-type:
       - PageBlob
       x-ms-date:
-      - Fri, 25 Oct 2019 18:12:56 GMT
+      - Tue, 07 Jun 2022 20:51:31 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2021-08-06'
     method: PUT
     uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
   response:
@@ -328,42 +290,37 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 25 Oct 2019 18:12:55 GMT
-      etag: '"0x8D75976F609405B"'
-      last-modified: Fri, 25 Oct 2019 18:12:56 GMT
+      date: Tue, 07 Jun 2022 20:51:30 GMT
+      etag: '"0x8DA48C780196410"'
+      last-modified: Tue, 07 Jun 2022 20:51:31 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2021-08-06'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoragemvvzd67g4hsm.blob.core.windows.net
-        - /utpremiumcontainera4df1246/bloba4df1246
-        - ''
-        - ''
+    url: https://jalauzonpremium.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
 - request:
     body: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     headers:
+      Accept:
+      - application/xml
       Content-Length:
       - '1024'
       Content-Type:
       - application/octet-stream
       If-Match:
-      - '"0x8D75976F609405B"'
+      - '"0x8DA48C780196410"'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 18:12:56 GMT
+      - Tue, 07 Jun 2022 20:51:31 GMT
       x-ms-page-write:
       - update
       x-ms-range:
       - bytes=0-1023
       x-ms-version:
-      - '2019-02-02'
+      - '2021-08-06'
     method: PUT
     uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246?comp=page
   response:
@@ -372,33 +329,28 @@ interactions:
     headers:
       content-length: '0'
       content-md5: yaNM/IXZgmmMasifdgcavQ==
-      date: Fri, 25 Oct 2019 18:12:55 GMT
-      etag: '"0x8D75976F610E232"'
-      last-modified: Fri, 25 Oct 2019 18:12:56 GMT
+      date: Tue, 07 Jun 2022 20:51:30 GMT
+      etag: '"0x8DA48C780252226"'
+      last-modified: Tue, 07 Jun 2022 20:51:31 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-sequence-number: '0'
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2021-08-06'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoragemvvzd67g4hsm.blob.core.windows.net
-        - /utpremiumcontainera4df1246/bloba4df1246
-        - comp=page
-        - ''
+    url: https://jalauzonpremium.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246?comp=page
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 18:12:56 GMT
+      - Tue, 07 Jun 2022 20:51:31 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2021-08-06'
     method: HEAD
     uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
   response:
@@ -408,38 +360,33 @@ interactions:
       accept-ranges: bytes
       content-length: '1024'
       content-type: application/octet-stream
-      date: Fri, 25 Oct 2019 18:12:55 GMT
-      etag: '"0x8D75976F610E232"'
-      last-modified: Fri, 25 Oct 2019 18:12:56 GMT
+      date: Tue, 07 Jun 2022 20:51:30 GMT
+      etag: '"0x8DA48C780252226"'
+      last-modified: Tue, 07 Jun 2022 20:51:31 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-access-tier: P10
       x-ms-blob-sequence-number: '0'
       x-ms-blob-type: PageBlob
-      x-ms-creation-time: Fri, 25 Oct 2019 18:12:56 GMT
+      x-ms-creation-time: Tue, 07 Jun 2022 20:51:31 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
       x-ms-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2021-08-06'
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoragemvvzd67g4hsm.blob.core.windows.net
-        - /utpremiumcontainera4df1246/bloba4df1246
-        - ''
-        - ''
+    url: https://jalauzonpremium.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 18:12:56 GMT
+      - Tue, 07 Jun 2022 20:51:31 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2021-08-06'
     method: DELETE
     uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainera4df1246?restype=container
   response:
@@ -447,18 +394,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 25 Oct 2019 18:12:56 GMT
+      date: Tue, 07 Jun 2022 20:51:30 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2021-08-06'
     status:
       code: 202
       message: Accepted
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoragemvvzd67g4hsm.blob.core.windows.net
-        - /utpremiumcontainera4df1246
-        - restype=container
-        - ''
+    url: https://jalauzonpremium.blob.core.windows.net/utpremiumcontainera4df1246?restype=container
 version: 1

@@ -13,7 +13,7 @@ import re
 
 
 PACKAGE_NAME = "azure-ai-ml"
-PACKAGE_PPRINT_NAME = "Azure ML"
+PACKAGE_PPRINT_NAME = "Azure Machine Learning"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
@@ -55,7 +55,9 @@ setup(
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
+    include_package_data=True,
     packages=find_packages(exclude=[
+        'samples',
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
@@ -63,10 +65,37 @@ setup(
     ]),
     python_requires=">=3.6",
     install_requires=[
-        "azure-core<2.0.0,>=1.2.2",
-        "msrest>=0.6.21",
-        'azure-common~=1.1',
+        "azure-core<2.0.0,>=1.19.1,!=1.22.0",
+        "msrest>=0.6.18",
+        "azure-common<2.0.0,>=1.1",
+        # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
+        "pyyaml<7.0.0,>=5.1.0",
+        "azure-identity",
+        "azure-mgmt-core<2.0.0,>=1.2.0",
+        "marshmallow<4.0.0,>=3.5",
+        "jsonschema<5.0.0,>=4.0.0",
+        "tqdm<=4.63.0",
+        # Used for PR 718512
+        "colorama<=0.4.4",
+        "pyjwt<=2.3.0",
+        "azure-storage-blob<13.0.0,>=12.10.0",
+        "azure-storage-file-share<13.0.0",
+	"azure-storage-file-datalake<=12.6.0",
+        "pydash<=4.9.0",
+        "pathspec==0.9.*",
+        "isodate",
+        # Used for local endpoint story.
+        "docker",
+        "typing-extensions>=4.0.1",
+        "applicationinsights<=0.11.10",
     ],
+    extras_require={
+        # user can run `pip install azure-ai-ml[designer]` to install mldesigner alone with this package
+        # so user can submit @dsl.pipeline with @mldesigner.command_component inside it.
+        "designer": [
+            "mldesigner",
+        ],
+    },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
         "Source": "https://github.com/Azure/azure-sdk-python",

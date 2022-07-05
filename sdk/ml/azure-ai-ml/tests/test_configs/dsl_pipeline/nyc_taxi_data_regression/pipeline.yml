@@ -1,0 +1,80 @@
+## IMPORTANT: this file and accompanying assets are the source for snippets in https://docs.microsoft.com/azure/machine-learning!
+## Please reach out to the Azure ML docs & samples team before editing for the first time. 
+
+type: pipeline
+
+# <inputs_and_outputs>
+inputs:
+  pipeline_job_input: #using dataset, can use datastore + datapath also
+    path: ./data
+
+outputs: 
+  pipeline_job_prepped_data:
+    path: /prepped_data
+  pipeline_job_transformed_data:
+    path: /transformed_data
+  pipeline_job_trained_model:
+    path: /trained-model
+  pipeline_job_test_data:
+    path: /test_data
+  pipeline_job_predictions:
+    path: /predictions
+  pipeline_job_score_report:
+    path: /report
+# </inputs_and_outputs>
+
+compute: azureml:cpu-cluster
+settings:
+    default_datastore: azureml:workspaceblobstore
+
+# <jobs>
+#defaults:
+#  component_job:
+#    datastore: azureml:workspaceblobstore
+#    compute:
+#      target: azureml:cpu-cluster
+
+jobs:
+  prep_job:
+    type: command
+    component: file:./prep.yml
+    inputs:
+      raw_data: ${{parent.inputs.pipeline_job_input}}
+    outputs:
+      prep_data: ${{parent.outputs.pipeline_job_prepped_data}}
+
+  transform_job:
+    type: command
+    component: file:./transform.yml
+    inputs:
+      clean_data: ${{parent.jobs.prep_job.outputs.prep_data}}
+    outputs:
+      transformed_data: ${{parent.outputs.pipeline_job_transformed_data}}
+
+  train_job:
+    type: command
+    component: file:./train.yml
+    inputs:
+      training_data: ${{parent.jobs.transform_job.outputs.transformed_data}}
+    outputs:
+      model_output: ${{parent.outputs.pipeline_job_trained_model}}
+      test_data: ${{parent.outputs.pipeline_job_test_data}}
+  
+  predict_job:
+    type: command
+    component: file:./predict.yml
+    inputs:
+      model_input: ${{parent.jobs.train_job.outputs.model_output}}
+      test_data: ${{parent.jobs.train_job.outputs.test_data}}
+    outputs:
+      predictions: ${{parent.outputs.pipeline_job_predictions}}
+
+  score_job:
+    type: command
+    component: file:./score.yml
+    inputs:
+      predictions: ${{parent.jobs.predict_job.outputs.predictions}}
+      model: ${{parent.jobs.train_job.outputs.model_output}}
+    outputs:
+      score_report: ${{parent.outputs.pipeline_job_score_report}}
+# </jobs>

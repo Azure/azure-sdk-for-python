@@ -2270,7 +2270,8 @@
               "Machine Learning"
             ],
             "mentionees": [
-              "azureml-github"
+              "azureml-github",
+              "Azure/azure-ml-sdk"
             ]
           },
           {

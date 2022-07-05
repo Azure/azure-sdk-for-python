@@ -1,0 +1,25 @@
+type: pipeline
+description: "Example of using data file from a Workspace Datastore as pipeline input"
+inputs:
+  pipeline_sample_input_data:
+    path: azureml://datastores/workspaceblobstore/paths/LocalUpload/cec6841f346975cde1ee7d5289c5559f/data/sample.csv
+    type: uri_file
+    mode: download
+  pipeline_sample_input_string: 'Hello_Pipeline_World'
+
+outputs:
+  pipeline_sample_output_data:
+    mode: upload
+
+compute: azureml:cpu-cluster
+
+jobs:
+  hello_python_world_job:
+    type: command
+    component: file:./component.yml
+    inputs:
+      sample_input_data: ${{parent.inputs.pipeline_sample_input_data}}
+      sample_input_string: ${{parent.inputs.pipeline_sample_input_string}}
+    outputs:
+      sample_output_data: ${{parent.outputs.pipeline_sample_output_data}}
+

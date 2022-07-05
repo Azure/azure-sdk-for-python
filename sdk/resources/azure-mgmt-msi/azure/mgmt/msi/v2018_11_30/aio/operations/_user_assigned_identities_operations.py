@@ -15,6 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
@@ -24,32 +25,30 @@ T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class UserAssignedIdentitiesOperations:
-    """UserAssignedIdentitiesOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.msi.v2018_11_30.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.msi.v2018_11_30.aio.ManagedServiceIdentityClient`'s
+        :attr:`user_assigned_identities` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def list_by_subscription(
         self,
         **kwargs: Any
-    ) -> AsyncIterable["_models.UserAssignedIdentitiesListResult"]:
+    ) -> AsyncIterable[_models.UserAssignedIdentitiesListResult]:
         """Lists all the userAssignedIdentities available under the specified subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -59,13 +58,16 @@ class UserAssignedIdentitiesOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.msi.v2018_11_30.models.UserAssignedIdentitiesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.UserAssignedIdentitiesListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-11-30"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.UserAssignedIdentitiesListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -73,9 +75,11 @@ class UserAssignedIdentitiesOperations:
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list_by_subscription.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -83,9 +87,11 @@ class UserAssignedIdentitiesOperations:
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -123,7 +129,7 @@ class UserAssignedIdentitiesOperations:
         self,
         resource_group_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.UserAssignedIdentitiesListResult"]:
+    ) -> AsyncIterable[_models.UserAssignedIdentitiesListResult]:
         """Lists all the userAssignedIdentities available under the specified ResourceGroup.
 
         :param resource_group_name: The name of the Resource Group to which the identity belongs.
@@ -135,13 +141,16 @@ class UserAssignedIdentitiesOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.msi.v2018_11_30.models.UserAssignedIdentitiesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.UserAssignedIdentitiesListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-11-30"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.UserAssignedIdentitiesListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -150,9 +159,11 @@ class UserAssignedIdentitiesOperations:
                     resource_group_name=resource_group_name,
                     api_version=api_version,
                     template_url=self.list_by_resource_group.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -161,9 +172,11 @@ class UserAssignedIdentitiesOperations:
                     resource_group_name=resource_group_name,
                     api_version=api_version,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -201,9 +214,9 @@ class UserAssignedIdentitiesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: "_models.Identity",
+        parameters: _models.Identity,
         **kwargs: Any
-    ) -> "_models.Identity":
+    ) -> _models.Identity:
         """Create or update an identity in the specified subscription and resource group.
 
         :param resource_group_name: The name of the Resource Group to which the identity belongs.
@@ -217,14 +230,17 @@ class UserAssignedIdentitiesOperations:
         :rtype: ~azure.mgmt.msi.v2018_11_30.models.Identity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Identity"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-11-30"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Identity]
 
         _json = self._serialize.body(parameters, 'Identity')
 
@@ -236,11 +252,13 @@ class UserAssignedIdentitiesOperations:
             content_type=content_type,
             json=_json,
             template_url=self.create_or_update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -270,9 +288,9 @@ class UserAssignedIdentitiesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: "_models.IdentityUpdate",
+        parameters: _models.IdentityUpdate,
         **kwargs: Any
-    ) -> "_models.Identity":
+    ) -> _models.Identity:
         """Update an identity in the specified subscription and resource group.
 
         :param resource_group_name: The name of the Resource Group to which the identity belongs.
@@ -286,14 +304,17 @@ class UserAssignedIdentitiesOperations:
         :rtype: ~azure.mgmt.msi.v2018_11_30.models.Identity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Identity"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-11-30"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Identity]
 
         _json = self._serialize.body(parameters, 'IdentityUpdate')
 
@@ -305,11 +326,13 @@ class UserAssignedIdentitiesOperations:
             content_type=content_type,
             json=_json,
             template_url=self.update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -336,7 +359,7 @@ class UserAssignedIdentitiesOperations:
         resource_group_name: str,
         resource_name: str,
         **kwargs: Any
-    ) -> "_models.Identity":
+    ) -> _models.Identity:
         """Gets the identity.
 
         :param resource_group_name: The name of the Resource Group to which the identity belongs.
@@ -348,13 +371,16 @@ class UserAssignedIdentitiesOperations:
         :rtype: ~azure.mgmt.msi.v2018_11_30.models.Identity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Identity"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-11-30"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Identity]
 
         
         request = build_get_request(
@@ -363,11 +389,13 @@ class UserAssignedIdentitiesOperations:
             resource_name=resource_name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -406,13 +434,16 @@ class UserAssignedIdentitiesOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-11-30"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_delete_request(
@@ -421,11 +452,13 @@ class UserAssignedIdentitiesOperations:
             resource_name=resource_name,
             api_version=api_version,
             template_url=self.delete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs

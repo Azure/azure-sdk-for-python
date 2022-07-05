@@ -6,57 +6,38 @@
 # pylint: disable=invalid-overridden-method
 
 import functools
+import warnings
 from typing import (  # pylint: disable=unused-import
-    Union,
-    Optional,
-    Any,
-    IO,
-    Iterable,
-    AnyStr,
-    Dict,
-    List,
-    Tuple,
-    TYPE_CHECKING,
-)
+    Any, Dict, List, Optional,
+    TYPE_CHECKING)
 
-try:
-    from urllib.parse import urlparse, quote, unquote  # pylint: disable=unused-import
-except ImportError:
-    from urlparse import urlparse  # type: ignore
-    from urllib2 import quote, unquote  # type: ignore
-
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from azure.core.async_paging import AsyncItemPaged
-
 from .._serialize import get_api_version
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers, serialize_iso
 from .._shared.response_handlers import (
     return_response_headers,
     process_storage_error,
     return_headers_and_deserialized,
 )
-from .._deserialize import deserialize_queue_properties, deserialize_queue_creation
 from .._generated.aio import AzureQueueStorage
-from .._generated.models import SignedIdentifier
-from .._generated.models import QueueMessage as GenQueueMessage
-
+from .._generated.models import SignedIdentifier, QueueMessage as GenQueueMessage
+from .._deserialize import deserialize_queue_properties, deserialize_queue_creation
+from .._encryption import StorageEncryptionMixin
 from .._models import QueueMessage, AccessPolicy
-from ._models import MessagesPaged
-from .._shared.policies_async import ExponentialRetry
 from .._queue_client import QueueClient as QueueClientBase
-
+from ._models import MessagesPaged
 
 if TYPE_CHECKING:
-    from datetime import datetime
-    from azure.core.pipeline.policies import HTTPPolicy
-    from .._models import QueueSasPermissions, QueueProperties
+    from .._models import QueueProperties
 
 
-class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
+class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncryptionMixin):
     """A client to interact with a specific Queue.
 
     :param str account_url:
@@ -115,6 +96,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
                                          pipeline=self._pipeline, loop=loop)  # type: ignore
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._loop = loop
+        self.configure_encryption(kwargs)
 
     @distributed_trace_async
     async def create_queue(self, **kwargs):
@@ -377,11 +359,23 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         visibility_timeout = kwargs.pop('visibility_timeout', None)
         time_to_live = kwargs.pop('time_to_live', None)
         timeout = kwargs.pop('timeout', None)
-        self._config.message_encode_policy.configure(
-            require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            resolver=self.key_resolver_function
-        )
+        try:
+            self._config.message_encode_policy.configure(
+                require_encryption=self.require_encryption,
+                key_encryption_key=self.key_encryption_key,
+                resolver=self.key_resolver_function,
+                encryption_version=self.encryption_version)
+        except TypeError:
+            warnings.warn(
+                "TypeError when calling message_encode_policy.configure. \
+                It is likely missing the encryption_version parameter. \
+                Consider updating your encryption information/implementation. \
+                Retrying without encryption_version."
+            )
+            self._config.message_encode_policy.configure(
+                require_encryption=self.require_encryption,
+                key_encryption_key=self.key_encryption_key,
+                resolver=self.key_resolver_function)
         encoded_content = self._config.message_encode_policy(content)
         new_message = GenQueueMessage(message_text=encoded_content)
 
@@ -606,9 +600,25 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         if receipt is None:
             raise ValueError("pop_receipt must be present")
         if message_text is not None:
-            self._config.message_encode_policy.configure(
-                self.require_encryption, self.key_encryption_key, self.key_resolver_function
-            )
+            try:
+                self._config.message_encode_policy.configure(
+                    self.require_encryption,
+                    self.key_encryption_key,
+                    self.key_resolver_function,
+                    encryption_version=self.encryption_version
+                )
+            except TypeError:
+                warnings.warn(
+                    "TypeError when calling message_encode_policy.configure. \
+                    It is likely missing the encryption_version parameter. \
+                    Consider updating your encryption information/implementation. \
+                    Retrying without encryption_version."
+                )
+                self._config.message_encode_policy.configure(
+                    self.require_encryption,
+                    self.key_encryption_key,
+                    self.key_resolver_function
+                )
             encoded_message_text = self._config.message_encode_policy(message_text)
             updated = GenQueueMessage(message_text=encoded_message_text)
         else:
