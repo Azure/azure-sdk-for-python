@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b3 Python/3.10.4 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b3 Python/3.10.5 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://foo.api.adu.microsoft.com/deviceUpdate/bar/updates/providers/foo/names/bar/versions/1.2?api-version=2022-07-01-preview
   response:
@@ -23,13 +23,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 13 Jun 2022 21:03:13 GMT
+      - Tue, 05 Jul 2022 22:02:13 GMT
       etag:
       - '"46deecbf-a19e-41c8-939b-1a8a9ee6fcac"'
       mise-correlation-id:
-      - cd4a16c9-9197-4611-ad9b-02671e44ddfc
+      - 3e8cf9da-e38c-4a7f-b434-8cc7bf4483cf
       traceparent:
-      - 00-8ff4a4944bdb5d47ac3e937d359e5a1f-95e0d0e6da9fef4b-00
+      - 00-9963513a4352e84fbd4c112f03df5af7-4353bccf3a268f4b-00
     status:
       code: 200
       message: OK

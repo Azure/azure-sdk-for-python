@@ -7,10 +7,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, List, Optional, TypeVar, Union, cast
+from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
@@ -20,14 +27,67 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ...operations._operations import build_device_management_create_or_update_deployment_request, build_device_management_delete_deployment_for_device_class_subgroup_request, build_device_management_delete_deployment_request, build_device_management_delete_device_class_request, build_device_management_delete_device_class_subgroup_request, build_device_management_delete_group_request, build_device_management_get_best_updates_for_device_class_subgroup_request, build_device_management_get_deployment_for_device_class_subgroup_request, build_device_management_get_deployment_request, build_device_management_get_deployment_status_request, build_device_management_get_device_class_request, build_device_management_get_device_class_subgroup_deployment_status_request, build_device_management_get_device_class_subgroup_request, build_device_management_get_device_class_subgroup_update_compliance_request, build_device_management_get_device_module_request, build_device_management_get_device_request, build_device_management_get_group_request, build_device_management_get_log_collection_detailed_status_request, build_device_management_get_log_collection_request, build_device_management_get_operation_request, build_device_management_get_update_compliance_for_group_request, build_device_management_get_update_compliance_request, build_device_management_import_devices_request_initial, build_device_management_list_best_updates_for_group_request, build_device_management_list_deployments_for_device_class_subgroup_request, build_device_management_list_deployments_for_group_request, build_device_management_list_device_class_subgroups_for_group_request, build_device_management_list_device_classes_request, build_device_management_list_device_health_request, build_device_management_list_device_states_for_device_class_subgroup_deployment_request, build_device_management_list_devices_request, build_device_management_list_groups_request, build_device_management_list_installable_updates_for_device_class_request, build_device_management_list_log_collections_request, build_device_management_list_operations_request, build_device_management_retry_deployment_request, build_device_management_start_log_collection_request, build_device_management_stop_deployment_request, build_device_management_update_device_class_request, build_device_update_delete_update_request_initial, build_device_update_get_file_request, build_device_update_get_operation_request, build_device_update_get_update_request, build_device_update_import_update_request_initial, build_device_update_list_files_request, build_device_update_list_names_request, build_device_update_list_operations_request, build_device_update_list_providers_request, build_device_update_list_updates_request, build_device_update_list_versions_request
+from ...operations._operations import (
+    build_device_management_collect_logs_request,
+    build_device_management_create_or_update_deployment_request,
+    build_device_management_delete_deployment_request,
+    build_device_management_delete_device_class_request,
+    build_device_management_delete_device_class_subgroup_deployment_request,
+    build_device_management_delete_device_class_subgroup_request,
+    build_device_management_delete_group_request,
+    build_device_management_get_deployment_for_device_class_subgroup_request,
+    build_device_management_get_deployment_request,
+    build_device_management_get_deployment_status_request,
+    build_device_management_get_device_class_request,
+    build_device_management_get_device_class_subgroup_deployment_status_request,
+    build_device_management_get_device_class_subgroup_details_request,
+    build_device_management_get_device_class_subgroup_update_compliance_request,
+    build_device_management_get_device_module_request,
+    build_device_management_get_device_request,
+    build_device_management_get_group_request,
+    build_device_management_get_group_update_compliance_request,
+    build_device_management_get_log_collection_operation_detailed_status_request,
+    build_device_management_get_log_collection_operation_request,
+    build_device_management_get_operation_request,
+    build_device_management_get_update_compliance_request,
+    build_device_management_import_devices_request,
+    build_device_management_list_best_updates_for_device_class_subgroup_request,
+    build_device_management_list_best_updates_for_group_request,
+    build_device_management_list_deployments_for_device_class_subgroup_request,
+    build_device_management_list_deployments_for_group_request,
+    build_device_management_list_device_class_subgroups_for_group_request,
+    build_device_management_list_device_classes_request,
+    build_device_management_list_device_health_request,
+    build_device_management_list_devices_for_device_class_subgroup_deployment_request,
+    build_device_management_list_devices_request,
+    build_device_management_list_groups_request,
+    build_device_management_list_installable_updates_for_device_class_request,
+    build_device_management_list_log_collection_operations_request,
+    build_device_management_list_operations_request,
+    build_device_management_retry_deployment_request,
+    build_device_management_stop_deployment_request,
+    build_device_management_update_device_class_request,
+    build_device_update_delete_update_request,
+    build_device_update_get_file_request,
+    build_device_update_get_operation_request,
+    build_device_update_get_update_request,
+    build_device_update_import_update_request,
+    build_device_update_list_files_request,
+    build_device_update_list_names_request,
+    build_device_update_list_operations_request,
+    build_device_update_list_providers_request,
+    build_device_update_list_updates_request,
+    build_device_update_list_versions_request,
+)
+
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore
-JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
-T = TypeVar('T')
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class DeviceUpdateOperations:
     """
@@ -46,14 +106,9 @@ class DeviceUpdateOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def list_updates(
-        self,
-        *,
-        search: Optional[str] = None,
-        filter: Optional[str] = None,
-        **kwargs: Any
+        self, *, search: Optional[str] = None, filter: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Get a list of all updates that have been imported to Device Update for IoT Hub.
 
@@ -63,367 +118,27 @@ class DeviceUpdateOperations:
         :paramtype filter: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "nextLink": "str",  # Optional. The link to the next page of items.
-                    "value": [
-                        {
-                            "compatibility": [
-                                {
-                                    "str": "str"  # Required. List of update
-                                      compatibility information.
-                                }
-                            ],
-                            "createdDateTime": "2020-02-20 00:00:00",  # Required. Date
-                              and time in UTC when the update was created.
-                            "description": "str",  # Optional. Update description
-                              specified by creator.
-                            "etag": "str",  # Optional. Update ETag.
-                            "friendlyName": "str",  # Optional. Friendly update name
-                              specified by importer.
-                            "importedDateTime": "2020-02-20 00:00:00",  # Required. Date
-                              and time in UTC when the update was imported.
-                            "installedCriteria": "str",  # Optional. String interpreted
-                              by Device Update client to determine if the update is installed on the
-                              device. Deprecated in latest import manifest schema.
-                            "instructions": {
-                                "steps": [
-                                    {
-                                        "description": "str",  # Optional.
-                                          Step description.
-                                        "files": [
-                                            "str"  # Optional. Collection
-                                              of file names to be passed to handler during execution.
-                                              Required if step type is inline.
-                                        ],
-                                        "handler": "str",  # Optional.
-                                          Identity of handler that will execute this step. Required if
-                                          step type is inline.
-                                        "handlerProperties": {},  # Optional.
-                                          Parameters to be passed to handler during execution.
-                                        "type": "inline",  # Optional.
-                                          Default value is "inline". Step type. Known values are:
-                                          "Inline", "Reference". Default value: "inline".
-                                        "updateId": {
-                                            "name": "str",  # Required.
-                                              Update name.
-                                            "provider": "str",  #
-                                              Required. Update provider.
-                                            "version": "str"  # Required.
-                                              Update version.
-                                        }
-                                    }
-                                ]
-                            },
-                            "isDeployable": True,  # Optional. Default value is True.
-                              Whether the update can be deployed to a device on its own.
-                            "manifestVersion": "str",  # Required. Schema version of
-                              manifest used to import the update.
-                            "referencedBy": [
-                                {
-                                    "name": "str",  # Required. Update name.
-                                    "provider": "str",  # Required. Update
-                                      provider.
-                                    "version": "str"  # Required. Update version.
-                                }
-                            ],
-                            "scanResult": "str",  # Optional. Update aggregate scan
-                              result (calculated from payload file scan results).
-                            "updateId": {
-                                "name": "str",  # Required. Update name.
-                                "provider": "str",  # Required. Update provider.
-                                "version": "str"  # Required. Update version.
-                            },
-                            "updateType": "str"  # Optional. Update type. Deprecated in
-                              latest import manifest schema.
-                        }
-                    ]
-                }
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
-
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_device_update_list_updates_request(
-                    instance_id=self._config.instance_id,
-                    api_version=api_version,
-                    search=search,
-                    filter=filter,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-            else:
-                
-                request = build_device_update_list_updates_request(
-                    instance_id=self._config.instance_id,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
-
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
-
-    async def _import_update_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        update_to_import: List[JSON],
-        **kwargs: Any
-    ) -> None:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-
-        _json = update_to_import
-
-        request = build_device_update_import_update_request_initial(
-            instance_id=self._config.instance_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)
-
-
-
-    @distributed_trace_async
-    async def begin_import_update(  # pylint: disable=inconsistent-return-statements
-        self,
-        update_to_import: List[JSON],
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Import new update version. This is a long-running-operation; use Operation-Location response
-        header value to check for operation status.
-
-        :param update_to_import: The update to be imported.
-        :type update_to_import: list[JSON]
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                update_to_import = [
-                    {
-                        "files": [
-                            {
-                                "filename": "str",  # Required. Update file name as
-                                  specified inside import manifest.
-                                "url": "str"  # Required. Azure Blob location from
-                                  which the update file can be downloaded by Device Update for IoT Hub.
-                                  This is typically a read-only SAS-protected blob URL with an
-                                  expiration set to at least 4 hours.
-                            }
-                        ],
-                        "friendlyName": "str",  # Optional. Friendly update name.
-                        "importManifest": {
-                            "hashes": {
-                                "str": "str"  # Required. A JSON object containing
-                                  the hash(es) of the file. At least SHA256 hash is required. This
-                                  object can be thought of as a set of key-value pairs where the key is
-                                  the hash algorithm, and the value is the hash of the file calculated
-                                  using that algorithm.
-                            },
-                            "sizeInBytes": 0.0,  # Required. File size in number of
-                              bytes.
-                            "url": "str"  # Required. Azure Blob location from which the
-                              import manifest can be downloaded by Device Update for IoT Hub. This is
-                              typically a read-only SAS-protected blob URL with an expiration set to at
-                              least 4 hours.
-                        }
-                    }
-                ]
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._import_update_initial(  # type: ignore
-                update_to_import=update_to_import,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x,y,z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            if cls:
-                return cls(pipeline_response, None, {})
-
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncLROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: AsyncPollingMethod
-        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else: polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-
-
-    @distributed_trace_async
-    async def get_update(
-        self,
-        provider: str,
-        name: str,
-        version: str,
-        *,
-        if_none_match: Optional[str] = None,
-        **kwargs: Any
-    ) -> Optional[JSON]:
-        """Get a specific update version.
-
-        :param provider: Update provider.
-        :type provider: str
-        :param name: Update name.
-        :type name: str
-        :param version: Update version.
-        :type version: str
-        :keyword if_none_match: Defines the If-None-Match condition. The operation will be performed
-         only if the ETag on the server does not match this value. Default value is None.
-        :paramtype if_none_match: str
-        :return: JSON object
-        :rtype: JSON or None
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "compatibility": [
                         {
-                            "str": "str"  # Required. List of update compatibility
-                              information.
+                            "str": "str"  # List of update compatibility information.
+                              Required.
                         }
                     ],
-                    "createdDateTime": "2020-02-20 00:00:00",  # Required. Date and time in UTC
-                      when the update was created.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      update was created. Required.
                     "description": "str",  # Optional. Update description specified by creator.
                     "etag": "str",  # Optional. Update ETag.
                     "friendlyName": "str",  # Optional. Friendly update name specified by
                       importer.
-                    "importedDateTime": "2020-02-20 00:00:00",  # Required. Date and time in UTC
-                      when the update was imported.
+                    "importedDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      update was imported. Required.
                     "installedCriteria": "str",  # Optional. String interpreted by Device Update
                       client to determine if the update is installed on the device. Deprecated in
                       latest import manifest schema.
@@ -441,71 +156,415 @@ class DeviceUpdateOperations:
                                 "handlerProperties": {},  # Optional. Parameters to
                                   be passed to handler during execution.
                                 "type": "inline",  # Optional. Default value is
-                                  "inline". Step type. Known values are: "Inline", "Reference". Default
-                                  value: "inline".
+                                  "inline". Step type. Known values are: "Inline" and "Reference".
                                 "updateId": {
-                                    "name": "str",  # Required. Update name.
-                                    "provider": "str",  # Required. Update
-                                      provider.
-                                    "version": "str"  # Required. Update version.
+                                    "name": "str",  # Update name. Required.
+                                    "provider": "str",  # Update provider.
+                                      Required.
+                                    "version": "str"  # Update version. Required.
                                 }
                             }
                         ]
                     },
                     "isDeployable": True,  # Optional. Default value is True. Whether the update
                       can be deployed to a device on its own.
-                    "manifestVersion": "str",  # Required. Schema version of manifest used to
-                      import the update.
+                    "manifestVersion": "str",  # Schema version of manifest used to import the
+                      update. Required.
                     "referencedBy": [
                         {
-                            "name": "str",  # Required. Update name.
-                            "provider": "str",  # Required. Update provider.
-                            "version": "str"  # Required. Update version.
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
                         }
                     ],
                     "scanResult": "str",  # Optional. Update aggregate scan result (calculated
                       from payload file scan results).
                     "updateId": {
-                        "name": "str",  # Required. Update name.
-                        "provider": "str",  # Required. Update provider.
-                        "version": "str"  # Required. Update version.
+                        "name": "str",  # Update name. Required.
+                        "provider": "str",  # Update provider. Required.
+                        "version": "str"  # Update version. Required.
                     },
                     "updateType": "str"  # Optional. Update type. Deprecated in latest import
                       manifest schema.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
-        request = build_device_update_get_update_request(
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                request = build_device_update_list_updates_request(
+                    instance_id=self._config.instance_id,
+                    search=search,
+                    filter=filter,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["value"]
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    async def _import_update_initial(  # pylint: disable=inconsistent-return-statements
+        self, update_to_import: Union[List[JSON], IO], **kwargs: Any
+    ) -> None:
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(update_to_import, (IO, bytes)):
+            _content = update_to_import
+        else:
+            _json = update_to_import
+
+        request = build_device_update_import_update_request(
             instance_id=self._config.instance_id,
-            provider=provider,
-            name=name,
-            version=version,
-            api_version=api_version,
-            if_none_match=if_none_match,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    @overload
+    async def begin_import_update(
+        self, update_to_import: List[JSON], *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Import new update version. This is a long-running-operation; use Operation-Location response
+        header value to check for operation status.
+
+        :param update_to_import: The update to be imported. Required.
+        :type update_to_import: list[JSON]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                update_to_import = [
+                    {
+                        "files": [
+                            {
+                                "filename": "str",  # Update file name as specified
+                                  inside import manifest. Required.
+                                "url": "str"  # Azure Blob location from which the
+                                  update file can be downloaded by Device Update for IoT Hub. This is
+                                  typically a read-only SAS-protected blob URL with an expiration set
+                                  to at least 4 hours. Required.
+                            }
+                        ],
+                        "friendlyName": "str",  # Optional. Friendly update name.
+                        "importManifest": {
+                            "hashes": {
+                                "str": "str"  # A JSON object containing the hash(es)
+                                  of the file. At least SHA256 hash is required. This object can be
+                                  thought of as a set of key-value pairs where the key is the hash
+                                  algorithm, and the value is the hash of the file calculated using
+                                  that algorithm. Required.
+                            },
+                            "sizeInBytes": 0,  # File size in number of bytes. Required.
+                            "url": "str"  # Azure Blob location from which the import
+                              manifest can be downloaded by Device Update for IoT Hub. This is
+                              typically a read-only SAS-protected blob URL with an expiration set to at
+                              least 4 hours. Required.
+                        }
+                    }
+                ]
+        """
+
+    @overload
+    async def begin_import_update(
+        self, update_to_import: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Import new update version. This is a long-running-operation; use Operation-Location response
+        header value to check for operation status.
+
+        :param update_to_import: The update to be imported. Required.
+        :type update_to_import: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_import_update(self, update_to_import: Union[List[JSON], IO], **kwargs: Any) -> AsyncLROPoller[None]:
+        """Import new update version. This is a long-running-operation; use Operation-Location response
+        header value to check for operation status.
+
+        :param update_to_import: The update to be imported. Is either a list type or a IO type.
+         Required.
+        :type update_to_import: list[JSON] or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._import_update_initial(  # type: ignore
+                update_to_import=update_to_import,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )  # type: AsyncPollingMethod
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    @distributed_trace_async
+    async def get_update(
+        self, provider: str, name: str, version: str, *, if_none_match: Optional[str] = None, **kwargs: Any
+    ) -> Optional[JSON]:
+        """Get a specific update version.
+
+        :param provider: Update provider. Required.
+        :type provider: str
+        :param name: Update name. Required.
+        :type name: str
+        :param version: Update version. Required.
+        :type version: str
+        :keyword if_none_match: Defines the If-None-Match condition. The operation will be performed
+         only if the ETag on the server does not match this value. Default value is None.
+        :paramtype if_none_match: str
+        :return: JSON object or None
+        :rtype: JSON or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "compatibility": [
+                        {
+                            "str": "str"  # List of update compatibility information.
+                              Required.
+                        }
+                    ],
+                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      update was created. Required.
+                    "description": "str",  # Optional. Update description specified by creator.
+                    "etag": "str",  # Optional. Update ETag.
+                    "friendlyName": "str",  # Optional. Friendly update name specified by
+                      importer.
+                    "importedDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      update was imported. Required.
+                    "installedCriteria": "str",  # Optional. String interpreted by Device Update
+                      client to determine if the update is installed on the device. Deprecated in
+                      latest import manifest schema.
+                    "instructions": {
+                        "steps": [
+                            {
+                                "description": "str",  # Optional. Step description.
+                                "files": [
+                                    "str"  # Optional. Collection of file names
+                                      to be passed to handler during execution. Required if step type
+                                      is inline.
+                                ],
+                                "handler": "str",  # Optional. Identity of handler
+                                  that will execute this step. Required if step type is inline.
+                                "handlerProperties": {},  # Optional. Parameters to
+                                  be passed to handler during execution.
+                                "type": "inline",  # Optional. Default value is
+                                  "inline". Step type. Known values are: "Inline" and "Reference".
+                                "updateId": {
+                                    "name": "str",  # Update name. Required.
+                                    "provider": "str",  # Update provider.
+                                      Required.
+                                    "version": "str"  # Update version. Required.
+                                }
+                            }
+                        ]
+                    },
+                    "isDeployable": True,  # Optional. Default value is True. Whether the update
+                      can be deployed to a device on its own.
+                    "manifestVersion": "str",  # Schema version of manifest used to import the
+                      update. Required.
+                    "referencedBy": [
+                        {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        }
+                    ],
+                    "scanResult": "str",  # Optional. Update aggregate scan result (calculated
+                      from payload file scan results).
+                    "updateId": {
+                        "name": "str",  # Update name. Required.
+                        "provider": "str",  # Update provider. Required.
+                        "version": "str"  # Update version. Required.
+                    },
+                    "updateType": "str"  # Optional. Update type. Deprecated in latest import
+                      manifest schema.
+                }
+        """
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
+
+        request = build_device_update_get_update_request(
+            provider=provider,
+            name=name,
+            version=version,
+            instance_id=self._config.instance_id,
+            if_none_match=if_none_match,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 304]:
@@ -524,46 +583,35 @@ class DeviceUpdateOperations:
 
         return deserialized
 
-
-
     async def _delete_update_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        provider: str,
-        name: str,
-        version: str,
-        **kwargs: Any
+        self, provider: str, name: str, version: str, **kwargs: Any
     ) -> None:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
-        request = build_device_update_delete_update_request_initial(
-            instance_id=self._config.instance_id,
+        request = build_device_update_delete_update_request(
             provider=provider,
             name=name,
             version=version,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -571,30 +619,21 @@ class DeviceUpdateOperations:
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-
-
     @distributed_trace_async
-    async def begin_delete_update(  # pylint: disable=inconsistent-return-statements
-        self,
-        provider: str,
-        name: str,
-        version: str,
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    async def begin_delete_update(self, provider: str, name: str, version: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Delete a specific update version. This is a long-running-operation; use Operation-Location
         response header value to check for operation status.
 
-        :param provider: Update provider.
+        :param provider: Update provider. Required.
         :type provider: str
-        :param name: Update name.
+        :param name: Update name. Required.
         :type name: str
-        :param version: Update version.
+        :param version: Update version. Required.
         :type version: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -605,123 +644,104 @@ class DeviceUpdateOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._delete_update_initial(  # type: ignore
                 provider=provider,
                 name=name,
                 version=version,
-                api_version=api_version,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncLROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: AsyncPollingMethod
-        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )  # type: AsyncPollingMethod
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-
-
     @distributed_trace
-    def list_providers(
-        self,
-        **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    def list_providers(self, **kwargs: Any) -> AsyncIterable[str]:
         """Get a list of all update providers that have been imported to Device Update for IoT Hub.
 
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of str
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "nextLink": "str",  # Optional. The link to the next page of items.
-                    "value": [
-                        "str"  # Required. The collection of pageable items.
-                    ]
-                }
+                response == "str"  # Optional.
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_device_update_list_providers_request(
                     instance_id=self._config.instance_id,
-                    api_version=api_version,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_device_update_list_providers_request(
-                    instance_id=self._config.instance_id,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
@@ -734,10 +754,8 @@ class DeviceUpdateOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -747,79 +765,62 @@ class DeviceUpdateOperations:
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_names(
-        self,
-        provider: str,
-        **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    def list_names(self, provider: str, **kwargs: Any) -> AsyncIterable[str]:
         """Get a list of all update names that match the specified provider.
 
-        :param provider: Update provider.
+        :param provider: Update provider. Required.
         :type provider: str
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of str
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "nextLink": "str",  # Optional. The link to the next page of items.
-                    "value": [
-                        "str"  # Required. The collection of pageable items.
-                    ]
-                }
+                response == "str"  # Optional.
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_device_update_list_names_request(
-                    instance_id=self._config.instance_id,
                     provider=provider,
-                    api_version=api_version,
+                    instance_id=self._config.instance_id,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_device_update_list_names_request(
-                    instance_id=self._config.instance_id,
-                    provider=provider,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
@@ -832,10 +833,8 @@ class DeviceUpdateOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -845,89 +844,70 @@ class DeviceUpdateOperations:
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
     def list_versions(
-        self,
-        provider: str,
-        name: str,
-        *,
-        filter: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+        self, provider: str, name: str, *, filter: Optional[str] = None, **kwargs: Any
+    ) -> AsyncIterable[str]:
         """Get a list of all update versions that match the specified provider and name.
 
-        :param provider: Update provider.
+        :param provider: Update provider. Required.
         :type provider: str
-        :param name: Update name.
+        :param name: Update name. Required.
         :type name: str
         :keyword filter: Filter updates by its properties. Default value is None.
         :paramtype filter: str
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of str
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "nextLink": "str",  # Optional. The link to the next page of items.
-                    "value": [
-                        "str"  # Required. The collection of pageable items.
-                    ]
-                }
+                response == "str"  # Optional.
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_device_update_list_versions_request(
-                    instance_id=self._config.instance_id,
                     provider=provider,
                     name=name,
-                    api_version=api_version,
+                    instance_id=self._config.instance_id,
                     filter=filter,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_device_update_list_versions_request(
-                    instance_id=self._config.instance_id,
-                    provider=provider,
-                    name=name,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
@@ -940,10 +920,8 @@ class DeviceUpdateOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -953,89 +931,68 @@ class DeviceUpdateOperations:
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_files(
-        self,
-        provider: str,
-        name: str,
-        version: str,
-        **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    def list_files(self, provider: str, name: str, version: str, **kwargs: Any) -> AsyncIterable[str]:
         """Get a list of all update file identifiers for the specified version.
 
-        :param provider: Update provider.
+        :param provider: Update provider. Required.
         :type provider: str
-        :param name: Update name.
+        :param name: Update name. Required.
         :type name: str
-        :param version: Update version.
+        :param version: Update version. Required.
         :type version: str
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of str
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "nextLink": "str",  # Optional. The link to the next page of items.
-                    "value": [
-                        "str"  # Required. The collection of pageable items.
-                    ]
-                }
+                response == "str"  # Optional.
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_device_update_list_files_request(
-                    instance_id=self._config.instance_id,
                     provider=provider,
                     name=name,
                     version=version,
-                    api_version=api_version,
+                    instance_id=self._config.instance_id,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_device_update_list_files_request(
-                    instance_id=self._config.instance_id,
-                    provider=provider,
-                    name=name,
-                    version=version,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
@@ -1048,10 +1005,8 @@ class DeviceUpdateOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1061,11 +1016,7 @@ class DeviceUpdateOperations:
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def get_file(
@@ -1080,36 +1031,36 @@ class DeviceUpdateOperations:
     ) -> Optional[JSON]:
         """Get a specific update file from the version.
 
-        :param provider: Update provider.
+        :param provider: Update provider. Required.
         :type provider: str
-        :param name: Update name.
+        :param name: Update name. Required.
         :type name: str
-        :param version: Update version.
+        :param version: Update version. Required.
         :type version: str
-        :param file_id: File identifier.
+        :param file_id: File identifier. Required.
         :type file_id: str
         :keyword if_none_match: Defines the If-None-Match condition. The operation will be performed
          only if the ETag on the server does not match this value. Default value is None.
         :paramtype if_none_match: str
-        :return: JSON object
+        :return: JSON object or None
         :rtype: JSON or None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "downloadHandler": {
-                        "id": "str"  # Required. Download handler identifier.
+                        "id": "str"  # Download handler identifier. Required.
                     },
                     "etag": "str",  # Optional. File ETag.
-                    "fileId": "str",  # Required. File identity, generated by server at import
-                      time.
-                    "fileName": "str",  # Required. File name.
+                    "fileId": "str",  # File identity, generated by server at import time.
+                      Required.
+                    "fileName": "str",  # File name. Required.
                     "hashes": {
-                        "str": "str"  # Required. Mapping of hashing algorithm to base64
-                          encoded hash values.
+                        "str": "str"  # Mapping of hashing algorithm to base64 encoded hash
+                          values. Required.
                     },
                     "mimeType": "str",  # Optional. File MIME type.
                     "properties": {
@@ -1118,10 +1069,10 @@ class DeviceUpdateOperations:
                     },
                     "relatedFiles": [
                         {
-                            "fileName": "str",  # Required. File name.
+                            "fileName": "str",  # File name. Required.
                             "hashes": {
-                                "str": "str"  # Required. Mapping of hashing
-                                  algorithm to base64 encoded hash values.
+                                "str": "str"  # Mapping of hashing algorithm to
+                                  base64 encoded hash values. Required.
                             },
                             "mimeType": "str",  # Optional. File MIME type.
                             "properties": {
@@ -1130,47 +1081,42 @@ class DeviceUpdateOperations:
                             },
                             "scanDetails": "str",  # Optional. Anti-malware scan details.
                             "scanResult": "str",  # Optional. Anti-malware scan result.
-                            "sizeInBytes": 0.0  # Required. File size in number of bytes.
+                            "sizeInBytes": 0  # File size in number of bytes. Required.
                         }
                     ],
                     "scanDetails": "str",  # Optional. Anti-malware scan details.
                     "scanResult": "str",  # Optional. Anti-malware scan result.
-                    "sizeInBytes": 0.0  # Required. File size in number of bytes.
+                    "sizeInBytes": 0  # File size in number of bytes. Required.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
-        
         request = build_device_update_get_file_request(
-            instance_id=self._config.instance_id,
             provider=provider,
             name=name,
             version=version,
             file_id=file_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
             if_none_match=if_none_match,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 304]:
@@ -1189,15 +1135,9 @@ class DeviceUpdateOperations:
 
         return deserialized
 
-
-
     @distributed_trace
     def list_operations(
-        self,
-        *,
-        filter: Optional[str] = None,
-        top: Optional[int] = None,
-        **kwargs: Any
+        self, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Get a list of all import update operations. Completed operations are kept for 7 days before
         auto-deleted. Delete operations are not returned by this API version.
@@ -1211,107 +1151,95 @@ class DeviceUpdateOperations:
         :paramtype top: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "nextLink": "str",  # Optional. The link to the next page of items.
-                    "value": [
-                        {
-                            "createdDateTime": "2020-02-20 00:00:00",  # Required. Date
-                              and time in UTC when the operation was created.
-                            "error": {
-                                "code": "str",  # Required. Server defined error
-                                  code.
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",  # Required. A more specific
-                                      error code than what was provided by the containing error.
-                                    "errorDetail": "str",  # Optional. The
-                                      internal error or exception message.
-                                    "innerError": ...,
-                                    "message": "str"  # Optional. A
-                                      human-readable representation of the error.
-                                },
-                                "message": "str",  # Required. A human-readable
-                                  representation of the error.
-                                "occurredDateTime": "2020-02-20 00:00:00",  #
-                                  Optional. Date and time in UTC when the error occurred.
-                                "target": "str"  # Optional. The target of the error.
-                            },
-                            "etag": "str",  # Optional. Operation ETag.
-                            "lastActionDateTime": "2020-02-20 00:00:00",  # Required.
-                              Date and time in UTC when the operation status was last updated.
-                            "operationId": "str",  # Required. Operation Id.
-                            "resourceLocation": "str",  # Optional. Location of the
-                              imported update when operation is successful.
-                            "status": "str",  # Required. Operation status. Known values
-                              are: "NotStarted", "Running", "Succeeded", "Failed".
-                            "traceId": "str",  # Optional. Operation correlation identity
-                              that can used by Microsoft Support for troubleshooting.
-                            "update": {
-                                "description": "str",  # Optional. Update
-                                  description.
-                                "friendlyName": "str",  # Optional. Friendly update
-                                  name.
-                                "updateId": {
-                                    "name": "str",  # Required. Update name.
-                                    "provider": "str",  # Required. Update
-                                      provider.
-                                    "version": "str"  # Required. Update version.
-                                }
-                            }
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      operation was created. Required.
+                    "error": {
+                        "code": "str",  # Server defined error code. Required.
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",  # A more specific error code than what was
+                              provided by the containing error. Required.
+                            "errorDetail": "str",  # Optional. The internal error or
+                              exception message.
+                            "innerError": ...,
+                            "message": "str"  # Optional. A human-readable representation
+                              of the error.
+                        },
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
+                        "occurredDateTime": "2020-02-20 00:00:00",  # Optional. Date and time
+                          in UTC when the error occurred.
+                        "target": "str"  # Optional. The target of the error.
+                    },
+                    "etag": "str",  # Optional. Operation ETag.
+                    "lastActionDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      operation status was last updated. Required.
+                    "operationId": "str",  # Operation Id. Required.
+                    "resourceLocation": "str",  # Optional. Location of the imported update when
+                      operation is successful.
+                    "status": "str",  # Operation status. Required. Known values are:
+                      "NotStarted", "Running", "Succeeded", and "Failed".
+                    "traceId": "str",  # Optional. Operation correlation identity that can used
+                      by Microsoft Support for troubleshooting.
+                    "update": {
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str",  # Optional. Friendly update name.
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
                         }
-                    ]
+                    }
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_device_update_list_operations_request(
                     instance_id=self._config.instance_id,
-                    api_version=api_version,
                     filter=filter,
                     top=top,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_device_update_list_operations_request(
-                    instance_id=self._config.instance_id,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
@@ -1324,10 +1252,8 @@ class DeviceUpdateOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1337,109 +1263,96 @@ class DeviceUpdateOperations:
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def get_operation(
-        self,
-        operation_id: str,
-        *,
-        if_none_match: Optional[str] = None,
-        **kwargs: Any
+        self, operation_id: str, *, if_none_match: Optional[str] = None, **kwargs: Any
     ) -> Optional[JSON]:
         """Retrieve operation status.
 
-        :param operation_id: Operation identifier.
+        :param operation_id: Operation identifier. Required.
         :type operation_id: str
         :keyword if_none_match: Defines the If-None-Match condition. The operation will be performed
          only if the ETag on the server does not match this value. Default value is None.
         :paramtype if_none_match: str
-        :return: JSON object
+        :return: JSON object or None
         :rtype: JSON or None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Required. Date and time in UTC
-                      when the operation was created.
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      operation was created. Required.
                     "error": {
-                        "code": "str",  # Required. Server defined error code.
+                        "code": "str",  # Server defined error code. Required.
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Required. A more specific error code than
-                              what was provided by the containing error.
+                            "code": "str",  # A more specific error code than what was
+                              provided by the containing error. Required.
                             "errorDetail": "str",  # Optional. The internal error or
                               exception message.
                             "innerError": ...,
                             "message": "str"  # Optional. A human-readable representation
                               of the error.
                         },
-                        "message": "str",  # Required. A human-readable representation of the
-                          error.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
                         "occurredDateTime": "2020-02-20 00:00:00",  # Optional. Date and time
                           in UTC when the error occurred.
                         "target": "str"  # Optional. The target of the error.
                     },
                     "etag": "str",  # Optional. Operation ETag.
-                    "lastActionDateTime": "2020-02-20 00:00:00",  # Required. Date and time in
-                      UTC when the operation status was last updated.
-                    "operationId": "str",  # Required. Operation Id.
+                    "lastActionDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      operation status was last updated. Required.
+                    "operationId": "str",  # Operation Id. Required.
                     "resourceLocation": "str",  # Optional. Location of the imported update when
                       operation is successful.
-                    "status": "str",  # Required. Operation status. Known values are:
-                      "NotStarted", "Running", "Succeeded", "Failed".
+                    "status": "str",  # Operation status. Required. Known values are:
+                      "NotStarted", "Running", "Succeeded", and "Failed".
                     "traceId": "str",  # Optional. Operation correlation identity that can used
                       by Microsoft Support for troubleshooting.
                     "update": {
                         "description": "str",  # Optional. Update description.
                         "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
-                            "name": "str",  # Required. Update name.
-                            "provider": "str",  # Required. Update provider.
-                            "version": "str"  # Required. Update version.
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
                         }
                     }
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
-        
         request = build_device_update_get_operation_request(
-            instance_id=self._config.instance_id,
             operation_id=operation_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
             if_none_match=if_none_match,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 304]:
@@ -1449,8 +1362,8 @@ class DeviceUpdateOperations:
         deserialized = None
         response_headers = {}
         if response.status_code == 200:
-            response_headers['Retry-After']=self._deserialize('str', response.headers.get('Retry-After'))
-            
+            response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
+
             if response.content:
                 deserialized = response.json()
             else:
@@ -1479,106 +1392,88 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
-    def list_device_classes(
-        self,
-        **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    def list_device_classes(self, **kwargs: Any) -> AsyncIterable[JSON]:
         """Gets a list of all device classes (unique combinations of device manufacturer and model) for
         all devices connected to Device Update for IoT Hub.
 
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "nextLink": "str",  # Optional. The link to the next page of items.
-                    "value": [
-                        {
-                            "bestCompatibleUpdate": {
-                                "description": "str",  # Optional. Update
-                                  description.
-                                "friendlyName": "str",  # Optional. Friendly update
-                                  name.
-                                "updateId": {
-                                    "name": "str",  # Required. Update name.
-                                    "provider": "str",  # Required. Update
-                                      provider.
-                                    "version": "str"  # Required. Update version.
-                                }
-                            },
-                            "deviceClassId": "str",  # Required. The device class
-                              identifier.
-                            "deviceClassProperties": {
-                                "compatProperties": {
-                                    "str": "str"  # Required. The compat
-                                      properties of the device class. This object can be thought of as
-                                      a set of key-value pairs where the key is the name of the
-                                      compatibility property and the value is the value of the
-                                      compatibility property. There will always be at least 1 compat
-                                      property.
-                                },
-                                "contractModel": {
-                                    "id": "str",  # Required. The Device Update
-                                      agent contract model Id of the device class. This is also used to
-                                      calculate the device class Id.
-                                    "name": "str"  # Required. The Device Update
-                                      agent contract model name of the device class. Intended to be a
-                                      more readable form of the contract model Id.
-                                }
-                            },
-                            "friendlyName": "str"  # Optional. The device class friendly
-                              name. This can be updated by callers after the device class has been
-                              automatically created.
+                response == {
+                    "bestCompatibleUpdate": {
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str",  # Optional. Friendly update name.
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
                         }
-                    ]
+                    },
+                    "deviceClassId": "str",  # The device class identifier. Required.
+                    "deviceClassProperties": {
+                        "compatProperties": {
+                            "str": "str"  # The compat properties of the device class.
+                              This object can be thought of as a set of key-value pairs where the key
+                              is the name of the compatibility property and the value is the value of
+                              the compatibility property. There will always be at least 1 compat
+                              property. Required.
+                        },
+                        "contractModel": {
+                            "id": "str",  # The Device Update agent contract model Id of
+                              the device class. This is also used to calculate the device class Id.
+                              Required.
+                            "name": "str"  # The Device Update agent contract model name
+                              of the device class. Intended to be a more readable form of the contract
+                              model Id. Required.
+                        }
+                    },
+                    "friendlyName": "str"  # Optional. The device class friendly name. This can
+                      be updated by callers after the device class has been automatically created.
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_device_management_list_device_classes_request(
                     instance_id=self._config.instance_id,
-                    api_version=api_version,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_device_management_list_device_classes_request(
-                    instance_id=self._config.instance_id,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
@@ -1591,10 +1486,8 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1604,91 +1497,78 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get_device_class(
-        self,
-        device_class_id: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_device_class(self, device_class_id: str, **kwargs: Any) -> JSON:
         """Gets the properties of a device class.
 
-        :param device_class_id: Device class identifier.
+        :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "bestCompatibleUpdate": {
                         "description": "str",  # Optional. Update description.
                         "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
-                            "name": "str",  # Required. Update name.
-                            "provider": "str",  # Required. Update provider.
-                            "version": "str"  # Required. Update version.
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
                         }
                     },
-                    "deviceClassId": "str",  # Required. The device class identifier.
+                    "deviceClassId": "str",  # The device class identifier. Required.
                     "deviceClassProperties": {
                         "compatProperties": {
-                            "str": "str"  # Required. The compat properties of the device
-                              class. This object can be thought of as a set of key-value pairs where
-                              the key is the name of the compatibility property and the value is the
-                              value of the compatibility property. There will always be at least 1
-                              compat property.
+                            "str": "str"  # The compat properties of the device class.
+                              This object can be thought of as a set of key-value pairs where the key
+                              is the name of the compatibility property and the value is the value of
+                              the compatibility property. There will always be at least 1 compat
+                              property. Required.
                         },
                         "contractModel": {
-                            "id": "str",  # Required. The Device Update agent contract
-                              model Id of the device class. This is also used to calculate the device
-                              class Id.
-                            "name": "str"  # Required. The Device Update agent contract
-                              model name of the device class. Intended to be a more readable form of
-                              the contract model Id.
+                            "id": "str",  # The Device Update agent contract model Id of
+                              the device class. This is also used to calculate the device class Id.
+                              Required.
+                            "name": "str"  # The Device Update agent contract model name
+                              of the device class. Intended to be a more readable form of the contract
+                              model Id. Required.
                         }
                     },
                     "friendlyName": "str"  # Optional. The device class friendly name. This can
                       be updated by callers after the device class has been automatically created.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_device_management_get_device_class_request(
-            instance_id=self._config.instance_id,
             device_class_id=device_class_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1705,100 +1585,221 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
-    @distributed_trace_async
+    @overload
     async def update_device_class(
         self,
         device_class_id: str,
         device_class_patch: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> JSON:
         """Update device class details.
 
-        :param device_class_id: Device class identifier.
+        :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
         :param device_class_patch: The device class json merge patch body. Currently only supports
-         patching friendlyName.
+         patching friendlyName. Required.
         :type device_class_patch: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
                 device_class_patch = {
-                    "friendlyName": "str"  # Required. The device class friendly name.
+                    "friendlyName": "str"  # The device class friendly name. Required.
                 }
 
                 # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "bestCompatibleUpdate": {
                         "description": "str",  # Optional. Update description.
                         "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
-                            "name": "str",  # Required. Update name.
-                            "provider": "str",  # Required. Update provider.
-                            "version": "str"  # Required. Update version.
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
                         }
                     },
-                    "deviceClassId": "str",  # Required. The device class identifier.
+                    "deviceClassId": "str",  # The device class identifier. Required.
                     "deviceClassProperties": {
                         "compatProperties": {
-                            "str": "str"  # Required. The compat properties of the device
-                              class. This object can be thought of as a set of key-value pairs where
-                              the key is the name of the compatibility property and the value is the
-                              value of the compatibility property. There will always be at least 1
-                              compat property.
+                            "str": "str"  # The compat properties of the device class.
+                              This object can be thought of as a set of key-value pairs where the key
+                              is the name of the compatibility property and the value is the value of
+                              the compatibility property. There will always be at least 1 compat
+                              property. Required.
                         },
                         "contractModel": {
-                            "id": "str",  # Required. The Device Update agent contract
-                              model Id of the device class. This is also used to calculate the device
-                              class Id.
-                            "name": "str"  # Required. The Device Update agent contract
-                              model name of the device class. Intended to be a more readable form of
-                              the contract model Id.
+                            "id": "str",  # The Device Update agent contract model Id of
+                              the device class. This is also used to calculate the device class Id.
+                              Required.
+                            "name": "str"  # The Device Update agent contract model name
+                              of the device class. Intended to be a more readable form of the contract
+                              model Id. Required.
                         }
                     },
                     "friendlyName": "str"  # Optional. The device class friendly name. This can
                       be updated by callers after the device class has been automatically created.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+
+    @overload
+    async def update_device_class(
+        self,
+        device_class_id: str,
+        device_class_patch: IO,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> JSON:
+        """Update device class details.
+
+        :param device_class_id: Device class identifier. Required.
+        :type device_class_id: str
+        :param device_class_patch: The device class json merge patch body. Currently only supports
+         patching friendlyName. Required.
+        :type device_class_patch: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "bestCompatibleUpdate": {
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str",  # Optional. Friendly update name.
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        }
+                    },
+                    "deviceClassId": "str",  # The device class identifier. Required.
+                    "deviceClassProperties": {
+                        "compatProperties": {
+                            "str": "str"  # The compat properties of the device class.
+                              This object can be thought of as a set of key-value pairs where the key
+                              is the name of the compatibility property and the value is the value of
+                              the compatibility property. There will always be at least 1 compat
+                              property. Required.
+                        },
+                        "contractModel": {
+                            "id": "str",  # The Device Update agent contract model Id of
+                              the device class. This is also used to calculate the device class Id.
+                              Required.
+                            "name": "str"  # The Device Update agent contract model name
+                              of the device class. Intended to be a more readable form of the contract
+                              model Id. Required.
+                        }
+                    },
+                    "friendlyName": "str"  # Optional. The device class friendly name. This can
+                      be updated by callers after the device class has been automatically created.
+                }
+        """
+
+    @distributed_trace_async
+    async def update_device_class(
+        self, device_class_id: str, device_class_patch: Union[JSON, IO], **kwargs: Any
+    ) -> JSON:
+        """Update device class details.
+
+        :param device_class_id: Device class identifier. Required.
+        :type device_class_id: str
+        :param device_class_patch: The device class json merge patch body. Currently only supports
+         patching friendlyName. Is either a model type or a IO type. Required.
+        :type device_class_patch: JSON or IO
+        :keyword content_type: Body Parameter content-type. Known values are:
+         'application/merge-patch+json'. Default value is None.
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "bestCompatibleUpdate": {
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str",  # Optional. Friendly update name.
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        }
+                    },
+                    "deviceClassId": "str",  # The device class identifier. Required.
+                    "deviceClassProperties": {
+                        "compatProperties": {
+                            "str": "str"  # The compat properties of the device class.
+                              This object can be thought of as a set of key-value pairs where the key
+                              is the name of the compatibility property and the value is the value of
+                              the compatibility property. There will always be at least 1 compat
+                              property. Required.
+                        },
+                        "contractModel": {
+                            "id": "str",  # The Device Update agent contract model Id of
+                              the device class. This is also used to calculate the device class Id.
+                              Required.
+                            "name": "str"  # The Device Update agent contract model name
+                              of the device class. Intended to be a more readable form of the contract
+                              model Id. Required.
+                        }
+                    },
+                    "friendlyName": "str"  # Optional. The device class friendly name. This can
+                      be updated by callers after the device class has been automatically created.
+                }
+        """
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        _json = device_class_patch
+        content_type = content_type or "application/merge-patch+json"
+        _json = None
+        _content = None
+        if isinstance(device_class_patch, (IO, bytes)):
+            _content = device_class_patch
+        else:
+            _json = device_class_patch
 
         request = build_device_management_update_device_class_request(
-            instance_id=self._config.instance_id,
             device_class_id=device_class_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
+            content=_content,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1815,56 +1816,42 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
     async def delete_device_class(  # pylint: disable=inconsistent-return-statements
-        self,
-        device_class_id: str,
-        **kwargs: Any
+        self, device_class_id: str, **kwargs: Any
     ) -> None:
-        """Deletes a device class. Device classes are created automatically when Device Update-enabled
-        devices are connected to the hub but are not automatically cleaned up since they are referenced
-        by DeviceClassSubgroups. If the user has deleted all DeviceClassSubgroups for a device class
-        they can also delete the device class to remove the records from the system and to stop
-        checking the compatibility of this device class with new updates. If a device is ever
-        reconnected for this device class it will be re-created.
+        """Deletes a device class.
 
-        :param device_class_id: Device class identifier.
+        :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_device_management_delete_device_class_request(
-            instance_id=self._config.instance_id,
             device_class_id=device_class_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -1874,83 +1861,68 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace
-    def list_installable_updates_for_device_class(
-        self,
-        device_class_id: str,
-        **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    def list_installable_updates_for_device_class(self, device_class_id: str, **kwargs: Any) -> AsyncIterable[JSON]:
         """Gets a list of installable updates for a device class.
 
-        :param device_class_id: Device class identifier.
+        :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "nextLink": "str",  # Optional. The link to the next page of items.
-                    "value": [
-                        {
-                            "description": "str",  # Optional. Update description.
-                            "friendlyName": "str",  # Optional. Friendly update name.
-                            "updateId": {
-                                "name": "str",  # Required. Update name.
-                                "provider": "str",  # Required. Update provider.
-                                "version": "str"  # Required. Update version.
-                            }
-                        }
-                    ]
+                response == {
+                    "description": "str",  # Optional. Update description.
+                    "friendlyName": "str",  # Optional. Friendly update name.
+                    "updateId": {
+                        "name": "str",  # Update name. Required.
+                        "provider": "str",  # Update provider. Required.
+                        "version": "str"  # Update version. Required.
+                    }
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_device_management_list_installable_updates_for_device_class_request(
-                    instance_id=self._config.instance_id,
                     device_class_id=device_class_id,
-                    api_version=api_version,
+                    instance_id=self._config.instance_id,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_device_management_list_installable_updates_for_device_class_request(
-                    instance_id=self._config.instance_id,
-                    device_class_id=device_class_id,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
@@ -1963,10 +1935,8 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1976,19 +1946,10 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_devices(
-        self,
-        *,
-        filter: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    def list_devices(self, *, filter: Optional[str] = None, **kwargs: Any) -> AsyncIterable[JSON]:
         """Gets a list of devices connected to Device Update for IoT Hub.
 
         :keyword filter: Restricts the set of devices returned. You can filter on GroupId,
@@ -1996,129 +1957,112 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :paramtype filter: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "nextLink": "str",  # Optional. The link to the next page of items.
-                    "value": [
-                        {
-                            "deploymentStatus": "str",  # Optional. State of the device
-                              in its last deployment. Known values are: "Succeeded", "InProgress",
-                              "Canceled", "Failed".
-                            "deviceClassId": "str",  # Required. Device class identity.
-                            "deviceId": "str",  # Required. Device identity.
-                            "groupId": "str",  # Optional. Device group identity.
-                            "installedUpdate": {
-                                "description": "str",  # Optional. Update
-                                  description.
-                                "friendlyName": "str",  # Optional. Friendly update
-                                  name.
-                                "updateId": {
-                                    "name": "str",  # Required. Update name.
-                                    "provider": "str",  # Required. Update
-                                      provider.
-                                    "version": "str"  # Required. Update version.
-                                }
-                            },
-                            "lastAttemptedUpdate": {
-                                "description": "str",  # Optional. Update
-                                  description.
-                                "friendlyName": "str",  # Optional. Friendly update
-                                  name.
-                                "updateId": {
-                                    "name": "str",  # Required. Update name.
-                                    "provider": "str",  # Required. Update
-                                      provider.
-                                    "version": "str"  # Required. Update version.
-                                }
-                            },
-                            "lastDeploymentId": "str",  # Optional. The deployment
-                              identifier for the last deployment to the device.
-                            "lastInstallResult": {
-                                "extendedResultCode": 0,  # Required. Install
-                                  extended result code.
-                                "resultCode": 0,  # Required. Install result code.
+                response == {
+                    "deploymentStatus": "str",  # Optional. State of the device in its last
+                      deployment. Known values are: "Succeeded", "InProgress", "Canceled", and
+                      "Failed".
+                    "deviceClassId": "str",  # Device class identity. Required.
+                    "deviceId": "str",  # Device identity. Required.
+                    "groupId": "str",  # Optional. Device group identity.
+                    "installedUpdate": {
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str",  # Optional. Friendly update name.
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        }
+                    },
+                    "lastAttemptedUpdate": {
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str",  # Optional. Friendly update name.
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        }
+                    },
+                    "lastDeploymentId": "str",  # Optional. The deployment identifier for the
+                      last deployment to the device.
+                    "lastInstallResult": {
+                        "extendedResultCode": 0,  # Install extended result code. Required.
+                        "resultCode": 0,  # Install result code. Required.
+                        "resultDetails": "str",  # Optional. A string containing further
+                          details about the install result.
+                        "stepResults": [
+                            {
+                                "description": "str",  # Optional. Step description.
+                                "extendedResultCode": 0,  # Install extended result
+                                  code. Required.
+                                "resultCode": 0,  # Install result code. Required.
                                 "resultDetails": "str",  # Optional. A string
                                   containing further details about the install result.
-                                "stepResults": [
-                                    {
-                                        "description": "str",  # Optional.
-                                          Step description.
-                                        "extendedResultCode": 0,  # Required.
-                                          Install extended result code.
-                                        "resultCode": 0,  # Required. Install
-                                          result code.
-                                        "resultDetails": "str",  # Optional.
-                                          A string containing further details about the install result.
-                                        "update": {
-                                            "description": "str",  #
-                                              Optional. Update description.
-                                            "friendlyName": "str",  #
-                                              Optional. Friendly update name.
-                                            "updateId": {
-                                                "name": "str",  #
-                                                  Required. Update name.
-                                                "provider": "str",  #
-                                                  Required. Update provider.
-                                                "version": "str"  #
-                                                  Required. Update version.
-                                            }
-                                        }
+                                "update": {
+                                    "description": "str",  # Optional. Update
+                                      description.
+                                    "friendlyName": "str",  # Optional. Friendly
+                                      update name.
+                                    "updateId": {
+                                        "name": "str",  # Update name.
+                                          Required.
+                                        "provider": "str",  # Update
+                                          provider. Required.
+                                        "version": "str"  # Update version.
+                                          Required.
                                     }
-                                ]
-                            },
-                            "moduleId": "str",  # Optional. Device module identity.
-                            "onLatestUpdate": bool  # Required. Boolean flag indicating
-                              whether the latest update is installed on the device.
-                        }
-                    ]
+                                }
+                            }
+                        ]
+                    },
+                    "moduleId": "str",  # Optional. Device module identity.
+                    "onLatestUpdate": bool  # Boolean flag indicating whether the latest update
+                      is installed on the device. Required.
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_device_management_list_devices_request(
                     instance_id=self._config.instance_id,
-                    api_version=api_version,
                     filter=filter,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_device_management_list_devices_request(
-                    instance_id=self._config.instance_id,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
@@ -2131,10 +2075,8 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2144,49 +2086,39 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     async def _import_devices_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        import_type: str,
-        **kwargs: Any
+        self, import_type: str, **kwargs: Any
     ) -> None:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = import_type
 
-        request = build_device_management_import_devices_request_initial(
+        request = build_device_management_import_devices_request(
             instance_id=self._config.instance_id,
-            api_version=api_version,
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -2194,25 +2126,18 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-
-
     @distributed_trace_async
-    async def begin_import_devices(  # pylint: disable=inconsistent-return-statements
-        self,
-        import_type: str,
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    async def begin_import_devices(self, import_type: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Import existing devices from IoT Hub. This is a long-running-operation; use Operation-Location
         response header value to check for operation status.
 
         :param import_type: The types of devices to import. Known values are: "Devices", "Modules", and
-         "All".
+         "All". Required.
         :type import_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -2223,117 +2148,106 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._import_devices_initial(  # type: ignore
                 import_type=import_type,
-                api_version=api_version,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncLROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: AsyncPollingMethod
-        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )  # type: AsyncPollingMethod
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-
-
     @distributed_trace_async
-    async def get_device(
-        self,
-        device_id: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_device(self, device_id: str, **kwargs: Any) -> JSON:
         """Gets the device properties and latest deployment status for a device connected to Device Update
         for IoT Hub.
 
-        :param device_id: Device identifier in Azure IoT Hub.
+        :param device_id: Device identifier in Azure IoT Hub. Required.
         :type device_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "deploymentStatus": "str",  # Optional. State of the device in its last
-                      deployment. Known values are: "Succeeded", "InProgress", "Canceled", "Failed".
-                    "deviceClassId": "str",  # Required. Device class identity.
-                    "deviceId": "str",  # Required. Device identity.
+                      deployment. Known values are: "Succeeded", "InProgress", "Canceled", and
+                      "Failed".
+                    "deviceClassId": "str",  # Device class identity. Required.
+                    "deviceId": "str",  # Device identity. Required.
                     "groupId": "str",  # Optional. Device group identity.
                     "installedUpdate": {
                         "description": "str",  # Optional. Update description.
                         "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
-                            "name": "str",  # Required. Update name.
-                            "provider": "str",  # Required. Update provider.
-                            "version": "str"  # Required. Update version.
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
                         }
                     },
                     "lastAttemptedUpdate": {
                         "description": "str",  # Optional. Update description.
                         "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
-                            "name": "str",  # Required. Update name.
-                            "provider": "str",  # Required. Update provider.
-                            "version": "str"  # Required. Update version.
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
                         }
                     },
                     "lastDeploymentId": "str",  # Optional. The deployment identifier for the
                       last deployment to the device.
                     "lastInstallResult": {
-                        "extendedResultCode": 0,  # Required. Install extended result code.
-                        "resultCode": 0,  # Required. Install result code.
+                        "extendedResultCode": 0,  # Install extended result code. Required.
+                        "resultCode": 0,  # Install result code. Required.
                         "resultDetails": "str",  # Optional. A string containing further
                           details about the install result.
                         "stepResults": [
                             {
                                 "description": "str",  # Optional. Step description.
-                                "extendedResultCode": 0,  # Required. Install
-                                  extended result code.
-                                "resultCode": 0,  # Required. Install result code.
+                                "extendedResultCode": 0,  # Install extended result
+                                  code. Required.
+                                "resultCode": 0,  # Install result code. Required.
                                 "resultDetails": "str",  # Optional. A string
                                   containing further details about the install result.
                                 "update": {
@@ -2342,51 +2256,46 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                                     "friendlyName": "str",  # Optional. Friendly
                                       update name.
                                     "updateId": {
-                                        "name": "str",  # Required. Update
-                                          name.
-                                        "provider": "str",  # Required.
-                                          Update provider.
-                                        "version": "str"  # Required. Update
-                                          version.
+                                        "name": "str",  # Update name.
+                                          Required.
+                                        "provider": "str",  # Update
+                                          provider. Required.
+                                        "version": "str"  # Update version.
+                                          Required.
                                     }
                                 }
                             }
                         ]
                     },
                     "moduleId": "str",  # Optional. Device module identity.
-                    "onLatestUpdate": bool  # Required. Boolean flag indicating whether the
-                      latest update is installed on the device.
+                    "onLatestUpdate": bool  # Boolean flag indicating whether the latest update
+                      is installed on the device. Required.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_device_management_get_device_request(
-            instance_id=self._config.instance_id,
             device_id=device_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2403,67 +2312,61 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get_device_module(
-        self,
-        device_id: str,
-        module_id: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_device_module(self, device_id: str, module_id: str, **kwargs: Any) -> JSON:
         """Gets the device module properties and latest deployment status for a device module connected to
         Device Update for IoT Hub.
 
-        :param device_id: Device identifier in Azure IoT Hub.
+        :param device_id: Device identifier in Azure IoT Hub. Required.
         :type device_id: str
-        :param module_id: Device module identifier in Azure IoT Hub.
+        :param module_id: Device module identifier in Azure IoT Hub. Required.
         :type module_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "deploymentStatus": "str",  # Optional. State of the device in its last
-                      deployment. Known values are: "Succeeded", "InProgress", "Canceled", "Failed".
-                    "deviceClassId": "str",  # Required. Device class identity.
-                    "deviceId": "str",  # Required. Device identity.
+                      deployment. Known values are: "Succeeded", "InProgress", "Canceled", and
+                      "Failed".
+                    "deviceClassId": "str",  # Device class identity. Required.
+                    "deviceId": "str",  # Device identity. Required.
                     "groupId": "str",  # Optional. Device group identity.
                     "installedUpdate": {
                         "description": "str",  # Optional. Update description.
                         "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
-                            "name": "str",  # Required. Update name.
-                            "provider": "str",  # Required. Update provider.
-                            "version": "str"  # Required. Update version.
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
                         }
                     },
                     "lastAttemptedUpdate": {
                         "description": "str",  # Optional. Update description.
                         "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
-                            "name": "str",  # Required. Update name.
-                            "provider": "str",  # Required. Update provider.
-                            "version": "str"  # Required. Update version.
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
                         }
                     },
                     "lastDeploymentId": "str",  # Optional. The deployment identifier for the
                       last deployment to the device.
                     "lastInstallResult": {
-                        "extendedResultCode": 0,  # Required. Install extended result code.
-                        "resultCode": 0,  # Required. Install result code.
+                        "extendedResultCode": 0,  # Install extended result code. Required.
+                        "resultCode": 0,  # Install result code. Required.
                         "resultDetails": "str",  # Optional. A string containing further
                           details about the install result.
                         "stepResults": [
                             {
                                 "description": "str",  # Optional. Step description.
-                                "extendedResultCode": 0,  # Required. Install
-                                  extended result code.
-                                "resultCode": 0,  # Required. Install result code.
+                                "extendedResultCode": 0,  # Install extended result
+                                  code. Required.
+                                "resultCode": 0,  # Install result code. Required.
                                 "resultDetails": "str",  # Optional. A string
                                   containing further details about the install result.
                                 "update": {
@@ -2472,52 +2375,47 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                                     "friendlyName": "str",  # Optional. Friendly
                                       update name.
                                     "updateId": {
-                                        "name": "str",  # Required. Update
-                                          name.
-                                        "provider": "str",  # Required.
-                                          Update provider.
-                                        "version": "str"  # Required. Update
-                                          version.
+                                        "name": "str",  # Update name.
+                                          Required.
+                                        "provider": "str",  # Update
+                                          provider. Required.
+                                        "version": "str"  # Update version.
+                                          Required.
                                     }
                                 }
                             }
                         ]
                     },
                     "moduleId": "str",  # Optional. Device module identity.
-                    "onLatestUpdate": bool  # Required. Boolean flag indicating whether the
-                      latest update is installed on the device.
+                    "onLatestUpdate": bool  # Boolean flag indicating whether the latest update
+                      is installed on the device. Required.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_device_management_get_device_module_request(
-            instance_id=self._config.instance_id,
             device_id=device_id,
             module_id=module_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2534,62 +2432,52 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get_update_compliance(
-        self,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_update_compliance(self, **kwargs: Any) -> JSON:
         """Gets the breakdown of how many devices are on their latest update, have new updates available,
         or are in progress receiving new updates.
 
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "newUpdatesAvailableDeviceCount": 0,  # Required. Number of devices with a
-                      newer update available.
-                    "onLatestUpdateDeviceCount": 0,  # Required. Number of devices on the latest
-                      update.
-                    "totalDeviceCount": 0,  # Required. Total number of devices.
-                    "updatesInProgressDeviceCount": 0  # Required. Number of devices with update
-                      in-progress.
+                response == {
+                    "newUpdatesAvailableDeviceCount": 0,  # Number of devices with a newer update
+                      available. Required.
+                    "onLatestUpdateDeviceCount": 0,  # Number of devices on the latest update.
+                      Required.
+                    "totalDeviceCount": 0,  # Total number of devices. Required.
+                    "updatesInProgressDeviceCount": 0  # Number of devices with update
+                      in-progress. Required.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_device_management_get_update_compliance_request(
             instance_id=self._config.instance_id,
-            api_version=api_version,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2606,154 +2494,32 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
-    def list_groups(
-        self,
-        *,
-        order_by: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    def list_groups(self, *, orderby: Optional[str] = None, **kwargs: Any) -> AsyncIterable[JSON]:
         """Gets a list of all device groups.  The $default group will always be returned first.
 
-        :keyword order_by: Orders the set of groups returned. You can order by any combination of
+        :keyword orderby: Orders the set of groups returned. You can order by any combination of
          groupId, device count, created date, subgroupsWithNewUpdatesAvailableCount,
          subgroupsWithUpdatesInProgressCount, or subgroupsOnLatestUpdateCount. Default value is None.
-        :paramtype order_by: str
+        :paramtype orderby: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "nextLink": "str",  # Optional. The link to the next page of items.
-                    "value": [
-                        {
-                            "createdDateTime": "str",  # Required. Date and time when the
-                              update was created.
-                            "deployments": [
-                                "str"  # Optional. The active deployment Ids for the
-                                  group.
-                            ],
-                            "deviceCount": 0,  # Optional. The number of devices in the
-                              group.
-                            "groupId": "str",  # Required. Group identity.
-                            "groupType": "str",  # Required. Group type. Known values
-                              are: "IoTHubTag", "DefaultNoTag".
-                            "subgroupsWithNewUpdatesAvailableCount": 0,  # Optional. The
-                              count of subgroups with new updates available.
-                            "subgroupsWithOnLatestUpdateCount": 0,  # Optional. The count
-                              of subgroups with devices on the latest update.
-                            "subgroupsWithUpdatesInProgressCount": 0  # Optional. The
-                              count of subgroups with updates in progress.
-                        }
-                    ]
-                }
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
-
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_device_management_list_groups_request(
-                    instance_id=self._config.instance_id,
-                    api_version=api_version,
-                    order_by=order_by,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-            else:
-                
-                request = build_device_management_list_groups_request(
-                    instance_id=self._config.instance_id,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
-
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
-
-    @distributed_trace_async
-    async def get_group(
-        self,
-        group_id: str,
-        **kwargs: Any
-    ) -> JSON:
-        """Gets the device group properties.
-
-        :param group_id: Group identity.
-        :type group_id: str
-        :return: JSON object
-        :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response.json() == {
-                    "createdDateTime": "str",  # Required. Date and time when the update was
-                      created.
+                response == {
+                    "createdDateTime": "str",  # Date and time when the update was created.
+                      Required.
                     "deployments": [
                         "str"  # Optional. The active deployment Ids for the group.
                     ],
                     "deviceCount": 0,  # Optional. The number of devices in the group.
-                    "groupId": "str",  # Required. Group identity.
-                    "groupType": "str",  # Required. Group type. Known values are: "IoTHubTag",
-                      "DefaultNoTag".
+                    "groupId": "str",  # Group identity. Required.
+                    "groupType": "str",  # Group type. Required. Known values are: "IoTHubTag"
+                      and "DefaultNoTag".
                     "subgroupsWithNewUpdatesAvailableCount": 0,  # Optional. The count of
                       subgroups with new updates available.
                     "subgroupsWithOnLatestUpdateCount": 0,  # Optional. The count of subgroups
@@ -2762,35 +2528,125 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                       with updates in progress.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                request = build_device_management_list_groups_request(
+                    instance_id=self._config.instance_id,
+                    orderby=orderby,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["value"]
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_group(self, group_id: str, **kwargs: Any) -> JSON:
+        """Gets the device group properties.
+
+        :param group_id: Group identity. Required.
+        :type group_id: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "str",  # Date and time when the update was created.
+                      Required.
+                    "deployments": [
+                        "str"  # Optional. The active deployment Ids for the group.
+                    ],
+                    "deviceCount": 0,  # Optional. The number of devices in the group.
+                    "groupId": "str",  # Group identity. Required.
+                    "groupType": "str",  # Group type. Required. Known values are: "IoTHubTag"
+                      and "DefaultNoTag".
+                    "subgroupsWithNewUpdatesAvailableCount": 0,  # Optional. The count of
+                      subgroups with new updates available.
+                    "subgroupsWithOnLatestUpdateCount": 0,  # Optional. The count of subgroups
+                      with devices on the latest update.
+                    "subgroupsWithUpdatesInProgressCount": 0  # Optional. The count of subgroups
+                      with updates in progress.
+                }
+        """
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_device_management_get_group_request(
-            instance_id=self._config.instance_id,
             group_id=group_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2807,56 +2663,42 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
     async def delete_group(  # pylint: disable=inconsistent-return-statements
-        self,
-        group_id: str,
-        **kwargs: Any
+        self, group_id: str, **kwargs: Any
     ) -> None:
-        """Deletes a device group. This group is automatically created when a Device Update-enabled device
-        is connected to the hub and reports its properties. Groups, subgroups, and deployments are not
-        automatically cleaned up but are retained for history purposes. Users can call this method to
-        delete a group if they do not need to retain any of the history of the group and no longer need
-        it. If a device is ever connected again for this group after the group was deleted it will be
-        automatically re-created but there will be no history.
+        """Deletes a device group.
 
-        :param group_id: Group identity.
+        :param group_id: Group identity. Required.
         :type group_id: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_device_management_delete_group_request(
-            instance_id=self._config.instance_id,
             group_id=group_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -2866,66 +2708,55 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace_async
-    async def get_update_compliance_for_group(
-        self,
-        group_id: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_group_update_compliance(self, group_id: str, **kwargs: Any) -> JSON:
         """Get device group update compliance information such as how many devices are on their latest
         update, how many need new updates, and how many are in progress on receiving a new update.
 
-        :param group_id: Group identity.
+        :param group_id: Group identity. Required.
         :type group_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "newUpdatesAvailableDeviceCount": 0,  # Required. Number of devices with a
-                      newer update available.
-                    "onLatestUpdateDeviceCount": 0,  # Required. Number of devices on the latest
-                      update.
-                    "totalDeviceCount": 0,  # Required. Total number of devices.
-                    "updatesInProgressDeviceCount": 0  # Required. Number of devices with update
-                      in-progress.
+                response == {
+                    "newUpdatesAvailableDeviceCount": 0,  # Number of devices with a newer update
+                      available. Required.
+                    "onLatestUpdateDeviceCount": 0,  # Number of devices on the latest update.
+                      Required.
+                    "totalDeviceCount": 0,  # Total number of devices. Required.
+                    "updatesInProgressDeviceCount": 0  # Number of devices with update
+                      in-progress. Required.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
-        request = build_device_management_get_update_compliance_for_group_request(
-            instance_id=self._config.instance_id,
+        request = build_device_management_get_group_update_compliance_request(
             group_id=group_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2942,101 +2773,82 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
     def list_best_updates_for_group(
-        self,
-        group_id: str,
-        *,
-        filter: Optional[str] = None,
-        **kwargs: Any
+        self, group_id: str, *, filter: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Get the best available updates for a device group and a count of how many devices need each
         update.
 
-        :param group_id: Group identity.
+        :param group_id: Group identity. Required.
         :type group_id: str
         :keyword filter: Restricts the set of bestUpdates returned. You can filter on update Provider,
-         Name and Version property. This filter is deprecated and should not be used. Default value is
-         None.
+         Name and Version property. Default value is None.
         :paramtype filter: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "nextLink": "str",  # Optional. The link to the next page of items.
-                    "value": [
-                        {
-                            "deviceClassId": "str",  # Required. The device class
-                              subgroup's device class Id.
-                            "deviceCount": 0,  # Required. Total number of devices for
-                              which the update is applicable.
-                            "groupId": "str",  # Required. The group Id.
-                            "update": {
-                                "description": "str",  # Optional. Update
-                                  description.
-                                "friendlyName": "str",  # Optional. Friendly update
-                                  name.
-                                "updateId": {
-                                    "name": "str",  # Required. Update name.
-                                    "provider": "str",  # Required. Update
-                                      provider.
-                                    "version": "str"  # Required. Update version.
-                                }
-                            }
+                response == {
+                    "deviceClassId": "str",  # The device class subgroup's device class Id.
+                      Required.
+                    "deviceCount": 0,  # Total number of devices for which the update is
+                      applicable. Required.
+                    "groupId": "str",  # The group Id. Required.
+                    "update": {
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str",  # Optional. Friendly update name.
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
                         }
-                    ]
+                    }
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_device_management_list_best_updates_for_group_request(
-                    instance_id=self._config.instance_id,
                     group_id=group_id,
-                    api_version=api_version,
+                    instance_id=self._config.instance_id,
                     filter=filter,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_device_management_list_best_updates_for_group_request(
-                    instance_id=self._config.instance_id,
-                    group_id=group_id,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
@@ -3049,10 +2861,8 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3062,202 +2872,33 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
     def list_deployments_for_group(
-        self,
-        group_id: str,
-        *,
-        order_by: Optional[str] = None,
-        **kwargs: Any
+        self, group_id: str, *, orderby: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Gets a list of deployments for a device group.
 
-        :param group_id: Group identity.
+        :param group_id: Group identity. Required.
         :type group_id: str
-        :keyword order_by: Orders the set of deployments returned. You can order by start date. Default
+        :keyword orderby: Orders the set of deployments returned. You can order by start date. Default
          value is None.
-        :paramtype order_by: str
+        :paramtype orderby: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "nextLink": "str",  # Optional. The link to the next page of items.
-                    "value": [
-                        {
-                            "deploymentId": "str",  # Required. The caller-provided
-                              deployment identifier.
-                            "deviceClassSubgroups": [
-                                "str"  # Optional. The device class subgroups the
-                                  deployment is compatible with and subgroup deployments have been
-                                  created for. This is not provided by the caller during
-                                  CreateOrUpdateDeployment but is automatically determined by Device
-                                  Update.
-                            ],
-                            "groupId": "str",  # Required. The group identity for the
-                              devices the deployment is intended to update.
-                            "isCanceled": bool,  # Optional. Boolean flag indicating
-                              whether the deployment was canceled.
-                            "isCloudInitiatedRollback": bool,  # Optional. Boolean flag
-                              indicating whether the deployment is a rollback deployment.
-                            "isRetried": bool,  # Optional. Boolean flag indicating
-                              whether the deployment has been retried.
-                            "rollbackPolicy": {
-                                "failure": {
-                                    "devicesFailedCount": 0,  # Required. Number
-                                      of devices that failed.
-                                    "devicesFailedPercentage": 0  # Required.
-                                      Percentage of devices that failed.
-                                },
-                                "update": {
-                                    "description": "str",  # Optional. Update
-                                      description.
-                                    "friendlyName": "str",  # Optional. Friendly
-                                      update name.
-                                    "updateId": {
-                                        "name": "str",  # Required. Update
-                                          name.
-                                        "provider": "str",  # Required.
-                                          Update provider.
-                                        "version": "str"  # Required. Update
-                                          version.
-                                    }
-                                }
-                            },
-                            "startDateTime": "2020-02-20 00:00:00",  # Required. The
-                              deployment start datetime.
-                            "update": {
-                                "description": "str",  # Optional. Update
-                                  description.
-                                "friendlyName": "str",  # Optional. Friendly update
-                                  name.
-                                "updateId": {
-                                    "name": "str",  # Required. Update name.
-                                    "provider": "str",  # Required. Update
-                                      provider.
-                                    "version": "str"  # Required. Update version.
-                                }
-                            }
-                        }
-                    ]
-                }
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
-
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_device_management_list_deployments_for_group_request(
-                    instance_id=self._config.instance_id,
-                    group_id=group_id,
-                    api_version=api_version,
-                    order_by=order_by,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-            else:
-                
-                request = build_device_management_list_deployments_for_group_request(
-                    instance_id=self._config.instance_id,
-                    group_id=group_id,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
-
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
-
-    @distributed_trace_async
-    async def get_deployment(
-        self,
-        group_id: str,
-        deployment_id: str,
-        **kwargs: Any
-    ) -> JSON:
-        """Gets the deployment properties.
-
-        :param group_id: Group identity.
-        :type group_id: str
-        :param deployment_id: Deployment identifier.
-        :type deployment_id: str
-        :return: JSON object
-        :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response.json() == {
-                    "deploymentId": "str",  # Required. The caller-provided deployment
-                      identifier.
+                response == {
+                    "deploymentId": "str",  # The deployment identifier. Required.
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups the deployment is
-                          compatible with and subgroup deployments have been created for. This is not
-                          provided by the caller during CreateOrUpdateDeployment but is automatically
-                          determined by Device Update.
+                        "str"  # Optional. The device class subgroups for the deployment.
                     ],
-                    "groupId": "str",  # Required. The group identity for the devices the
-                      deployment is intended to update.
+                    "groupId": "str",  # The group identity. Required.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -3266,64 +2907,181 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                       deployment has been retried.
                     "rollbackPolicy": {
                         "failure": {
-                            "devicesFailedCount": 0,  # Required. Number of devices that
-                              failed.
-                            "devicesFailedPercentage": 0  # Required. Percentage of
-                              devices that failed.
+                            "devicesFailedCount": 0,  # Number of devices that failed.
+                              Required.
+                            "devicesFailedPercentage": 0  # Percentage of devices that
+                              failed. Required.
                         },
                         "update": {
                             "description": "str",  # Optional. Update description.
                             "friendlyName": "str",  # Optional. Friendly update name.
                             "updateId": {
-                                "name": "str",  # Required. Update name.
-                                "provider": "str",  # Required. Update provider.
-                                "version": "str"  # Required. Update version.
+                                "name": "str",  # Update name. Required.
+                                "provider": "str",  # Update provider. Required.
+                                "version": "str"  # Update version. Required.
                             }
                         }
                     },
-                    "startDateTime": "2020-02-20 00:00:00",  # Required. The deployment start
-                      datetime.
+                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
+                      Required.
                     "update": {
                         "description": "str",  # Optional. Update description.
                         "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
-                            "name": "str",  # Required. Update name.
-                            "provider": "str",  # Required. Update provider.
-                            "version": "str"  # Required. Update version.
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
                         }
                     }
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                request = build_device_management_list_deployments_for_group_request(
+                    group_id=group_id,
+                    instance_id=self._config.instance_id,
+                    orderby=orderby,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["value"]
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_deployment(self, group_id: str, deployment_id: str, **kwargs: Any) -> JSON:
+        """Gets the deployment properties.
+
+        :param group_id: Group identity. Required.
+        :type group_id: str
+        :param deployment_id: Deployment identifier. Required.
+        :type deployment_id: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deploymentId": "str",  # The deployment identifier. Required.
+                    "deviceClassSubgroups": [
+                        "str"  # Optional. The device class subgroups for the deployment.
+                    ],
+                    "groupId": "str",  # The group identity. Required.
+                    "isCanceled": bool,  # Optional. Boolean flag indicating whether the
+                      deployment was canceled.
+                    "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
+                      whether the deployment is a rollback deployment.
+                    "isRetried": bool,  # Optional. Boolean flag indicating whether the
+                      deployment has been retried.
+                    "rollbackPolicy": {
+                        "failure": {
+                            "devicesFailedCount": 0,  # Number of devices that failed.
+                              Required.
+                            "devicesFailedPercentage": 0  # Percentage of devices that
+                              failed. Required.
+                        },
+                        "update": {
+                            "description": "str",  # Optional. Update description.
+                            "friendlyName": "str",  # Optional. Friendly update name.
+                            "updateId": {
+                                "name": "str",  # Update name. Required.
+                                "provider": "str",  # Update provider. Required.
+                                "version": "str"  # Update version. Required.
+                            }
+                        }
+                    },
+                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
+                      Required.
+                    "update": {
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str",  # Optional. Friendly update name.
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        }
+                    }
+                }
+        """
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_device_management_get_deployment_request(
-            instance_id=self._config.instance_id,
             group_id=group_id,
             deployment_id=deployment_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -3340,43 +3098,41 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
-    @distributed_trace_async
+    @overload
     async def create_or_update_deployment(
         self,
         group_id: str,
         deployment_id: str,
         deployment: JSON,
+        *,
+        content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
         """Creates or updates a deployment.
 
-        :param group_id: Group identity.
+        :param group_id: Group identity. Required.
         :type group_id: str
-        :param deployment_id: Deployment identifier.
+        :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
-        :param deployment: The deployment properties.
+        :param deployment: The deployment properties. Required.
         :type deployment: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
                 deployment = {
-                    "deploymentId": "str",  # Required. The caller-provided deployment
-                      identifier.
+                    "deploymentId": "str",  # The deployment identifier. Required.
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups the deployment is
-                          compatible with and subgroup deployments have been created for. This is not
-                          provided by the caller during CreateOrUpdateDeployment but is automatically
-                          determined by Device Update.
+                        "str"  # Optional. The device class subgroups for the deployment.
                     ],
-                    "groupId": "str",  # Required. The group identity for the devices the
-                      deployment is intended to update.
+                    "groupId": "str",  # The group identity. Required.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -3385,46 +3141,41 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                       deployment has been retried.
                     "rollbackPolicy": {
                         "failure": {
-                            "devicesFailedCount": 0,  # Required. Number of devices that
-                              failed.
-                            "devicesFailedPercentage": 0  # Required. Percentage of
-                              devices that failed.
+                            "devicesFailedCount": 0,  # Number of devices that failed.
+                              Required.
+                            "devicesFailedPercentage": 0  # Percentage of devices that
+                              failed. Required.
                         },
                         "update": {
                             "description": "str",  # Optional. Update description.
                             "friendlyName": "str",  # Optional. Friendly update name.
                             "updateId": {
-                                "name": "str",  # Required. Update name.
-                                "provider": "str",  # Required. Update provider.
-                                "version": "str"  # Required. Update version.
+                                "name": "str",  # Update name. Required.
+                                "provider": "str",  # Update provider. Required.
+                                "version": "str"  # Update version. Required.
                             }
                         }
                     },
-                    "startDateTime": "2020-02-20 00:00:00",  # Required. The deployment start
-                      datetime.
+                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
+                      Required.
                     "update": {
                         "description": "str",  # Optional. Update description.
                         "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
-                            "name": "str",  # Required. Update name.
-                            "provider": "str",  # Required. Update provider.
-                            "version": "str"  # Required. Update version.
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
                         }
                     }
                 }
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "deploymentId": "str",  # Required. The caller-provided deployment
-                      identifier.
+                response == {
+                    "deploymentId": "str",  # The deployment identifier. Required.
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups the deployment is
-                          compatible with and subgroup deployments have been created for. This is not
-                          provided by the caller during CreateOrUpdateDeployment but is automatically
-                          determined by Device Update.
+                        "str"  # Optional. The device class subgroups for the deployment.
                     ],
-                    "groupId": "str",  # Required. The group identity for the devices the
-                      deployment is intended to update.
+                    "groupId": "str",  # The group identity. Required.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -3433,68 +3184,209 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                       deployment has been retried.
                     "rollbackPolicy": {
                         "failure": {
-                            "devicesFailedCount": 0,  # Required. Number of devices that
-                              failed.
-                            "devicesFailedPercentage": 0  # Required. Percentage of
-                              devices that failed.
+                            "devicesFailedCount": 0,  # Number of devices that failed.
+                              Required.
+                            "devicesFailedPercentage": 0  # Percentage of devices that
+                              failed. Required.
                         },
                         "update": {
                             "description": "str",  # Optional. Update description.
                             "friendlyName": "str",  # Optional. Friendly update name.
                             "updateId": {
-                                "name": "str",  # Required. Update name.
-                                "provider": "str",  # Required. Update provider.
-                                "version": "str"  # Required. Update version.
+                                "name": "str",  # Update name. Required.
+                                "provider": "str",  # Update provider. Required.
+                                "version": "str"  # Update version. Required.
                             }
                         }
                     },
-                    "startDateTime": "2020-02-20 00:00:00",  # Required. The deployment start
-                      datetime.
+                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
+                      Required.
                     "update": {
                         "description": "str",  # Optional. Update description.
                         "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
-                            "name": "str",  # Required. Update name.
-                            "provider": "str",  # Required. Update provider.
-                            "version": "str"  # Required. Update version.
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
                         }
                     }
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+
+    @overload
+    async def create_or_update_deployment(
+        self,
+        group_id: str,
+        deployment_id: str,
+        deployment: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> JSON:
+        """Creates or updates a deployment.
+
+        :param group_id: Group identity. Required.
+        :type group_id: str
+        :param deployment_id: Deployment identifier. Required.
+        :type deployment_id: str
+        :param deployment: The deployment properties. Required.
+        :type deployment: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deploymentId": "str",  # The deployment identifier. Required.
+                    "deviceClassSubgroups": [
+                        "str"  # Optional. The device class subgroups for the deployment.
+                    ],
+                    "groupId": "str",  # The group identity. Required.
+                    "isCanceled": bool,  # Optional. Boolean flag indicating whether the
+                      deployment was canceled.
+                    "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
+                      whether the deployment is a rollback deployment.
+                    "isRetried": bool,  # Optional. Boolean flag indicating whether the
+                      deployment has been retried.
+                    "rollbackPolicy": {
+                        "failure": {
+                            "devicesFailedCount": 0,  # Number of devices that failed.
+                              Required.
+                            "devicesFailedPercentage": 0  # Percentage of devices that
+                              failed. Required.
+                        },
+                        "update": {
+                            "description": "str",  # Optional. Update description.
+                            "friendlyName": "str",  # Optional. Friendly update name.
+                            "updateId": {
+                                "name": "str",  # Update name. Required.
+                                "provider": "str",  # Update provider. Required.
+                                "version": "str"  # Update version. Required.
+                            }
+                        }
+                    },
+                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
+                      Required.
+                    "update": {
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str",  # Optional. Friendly update name.
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        }
+                    }
+                }
+        """
+
+    @distributed_trace_async
+    async def create_or_update_deployment(
+        self, group_id: str, deployment_id: str, deployment: Union[JSON, IO], **kwargs: Any
+    ) -> JSON:
+        """Creates or updates a deployment.
+
+        :param group_id: Group identity. Required.
+        :type group_id: str
+        :param deployment_id: Deployment identifier. Required.
+        :type deployment_id: str
+        :param deployment: The deployment properties. Is either a model type or a IO type. Required.
+        :type deployment: JSON or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deploymentId": "str",  # The deployment identifier. Required.
+                    "deviceClassSubgroups": [
+                        "str"  # Optional. The device class subgroups for the deployment.
+                    ],
+                    "groupId": "str",  # The group identity. Required.
+                    "isCanceled": bool,  # Optional. Boolean flag indicating whether the
+                      deployment was canceled.
+                    "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
+                      whether the deployment is a rollback deployment.
+                    "isRetried": bool,  # Optional. Boolean flag indicating whether the
+                      deployment has been retried.
+                    "rollbackPolicy": {
+                        "failure": {
+                            "devicesFailedCount": 0,  # Number of devices that failed.
+                              Required.
+                            "devicesFailedPercentage": 0  # Percentage of devices that
+                              failed. Required.
+                        },
+                        "update": {
+                            "description": "str",  # Optional. Update description.
+                            "friendlyName": "str",  # Optional. Friendly update name.
+                            "updateId": {
+                                "name": "str",  # Update name. Required.
+                                "provider": "str",  # Update provider. Required.
+                                "version": "str"  # Update version. Required.
+                            }
+                        }
+                    },
+                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
+                      Required.
+                    "update": {
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str",  # Optional. Friendly update name.
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        }
+                    }
+                }
+        """
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        _json = deployment
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(deployment, (IO, bytes)):
+            _content = deployment
+        else:
+            _json = deployment
 
         request = build_device_management_create_or_update_deployment_request(
-            instance_id=self._config.instance_id,
             group_id=group_id,
             deployment_id=deployment_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
+            content=_content,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -3511,55 +3403,45 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
     async def delete_deployment(  # pylint: disable=inconsistent-return-statements
-        self,
-        group_id: str,
-        deployment_id: str,
-        **kwargs: Any
+        self, group_id: str, deployment_id: str, **kwargs: Any
     ) -> None:
         """Deletes a deployment.
 
-        :param group_id: Group identity.
+        :param group_id: Group identity. Required.
         :type group_id: str
-        :param deployment_id: Deployment identifier.
+        :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_device_management_delete_deployment_request(
-            instance_id=self._config.instance_id,
             group_id=group_id,
             deployment_id=deployment_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -3569,62 +3451,55 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace_async
-    async def get_deployment_status(
-        self,
-        group_id: str,
-        deployment_id: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_deployment_status(self, group_id: str, deployment_id: str, **kwargs: Any) -> JSON:
         """Gets the status of a deployment including a breakdown of how many devices in the deployment are
         in progress, completed, or failed.
 
-        :param group_id: Group identity.
+        :param group_id: Group identity. Required.
         :type group_id: str
-        :param deployment_id: Deployment identifier.
+        :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "deploymentState": "str",  # Required. The state of the deployment. Known
-                      values are: "Active", "ActiveWithSubgroupFailures", "Failed", "Inactive",
+                response == {
+                    "deploymentState": "str",  # The state of the deployment. Required. Known
+                      values are: "Active", "ActiveWithSubgroupFailures", "Failed", "Inactive", and
                       "Canceled".
                     "error": {
-                        "code": "str",  # Required. Server defined error code.
+                        "code": "str",  # Server defined error code. Required.
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Required. A more specific error code than
-                              what was provided by the containing error.
+                            "code": "str",  # A more specific error code than what was
+                              provided by the containing error. Required.
                             "errorDetail": "str",  # Optional. The internal error or
                               exception message.
                             "innerError": ...,
                             "message": "str"  # Optional. A human-readable representation
                               of the error.
                         },
-                        "message": "str",  # Required. A human-readable representation of the
-                          error.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
                         "occurredDateTime": "2020-02-20 00:00:00",  # Optional. Date and time
                           in UTC when the error occurred.
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "groupId": "str",  # Required. The group identity.
+                    "groupId": "str",  # The group identity. Required.
                     "subgroupStatus": [
                         {
-                            "deploymentState": "str",  # Required. The state of the
-                              subgroup deployment. Known values are: "Active", "Failed", "Inactive",
-                              "Canceled".
-                            "deviceClassId": "str",  # Required. The device class
-                              subgroup identity.
+                            "deploymentState": "str",  # The state of the subgroup
+                              deployment. Required. Known values are: "Active", "Failed", "Inactive",
+                              and "Canceled".
+                            "deviceClassId": "str",  # The device class subgroup
+                              identity. Required.
                             "devicesCanceledCount": 0,  # Optional. The number of devices
                               which have had their deployment canceled.
                             "devicesCompletedFailedCount": 0,  # Optional. The number of
@@ -3634,63 +3509,58 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                             "devicesInProgressCount": 0,  # Optional. The number of
                               devices that are currently in deployment.
                             "error": {
-                                "code": "str",  # Required. Server defined error
-                                  code.
+                                "code": "str",  # Server defined error code.
+                                  Required.
                                 "details": [
                                     ...
                                 ],
                                 "innererror": {
-                                    "code": "str",  # Required. A more specific
-                                      error code than what was provided by the containing error.
+                                    "code": "str",  # A more specific error code
+                                      than what was provided by the containing error. Required.
                                     "errorDetail": "str",  # Optional. The
                                       internal error or exception message.
                                     "innerError": ...,
                                     "message": "str"  # Optional. A
                                       human-readable representation of the error.
                                 },
-                                "message": "str",  # Required. A human-readable
-                                  representation of the error.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
                                 "occurredDateTime": "2020-02-20 00:00:00",  #
                                   Optional. Date and time in UTC when the error occurred.
                                 "target": "str"  # Optional. The target of the error.
                             },
-                            "groupId": "str",  # Required. The group identity.
+                            "groupId": "str",  # The group identity. Required.
                             "totalDevices": 0  # Optional. The total number of devices in
                               the deployment.
                         }
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_device_management_get_deployment_status_request(
-            instance_id=self._config.instance_id,
             group_id=group_id,
             deployment_id=deployment_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -3707,184 +3577,67 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
-    @distributed_trace
-    def list_device_class_subgroups_for_group(
-        self,
-        group_id: str,
-        *,
-        filter: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    @distributed_trace_async
+    async def list_device_class_subgroups_for_group(
+        self, group_id: str, *, filter: Optional[str] = None, **kwargs: Any
+    ) -> JSON:
         """Get the device class subgroups for the group.
 
-        :param group_id: Group identity.
+        :param group_id: Group identity. Required.
         :type group_id: str
         :keyword filter: Restricts the set of device class subgroups returned. You can filter on compat
          properties by name and value. Default value is None.
         :paramtype filter: str
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "nextLink": "str",  # Optional. The link to the next page of items.
                     "value": [
                         {
-                            "createdDateTime": "str",  # Required. Date and time when the
-                              device class subgroup was created.
+                            "createdDateTime": "str",  # Date and time when the
+                              deviceclass subgroup was created. Required.
                             "deploymentId": "str",  # Optional. The active deployment Id
-                              for the device class subgroup.
-                            "deviceClassId": "str",  # Required. Device class subgroup
-                              identity.
+                              for the deviceclass subgroup.
+                            "deviceClassId": "str",  # Device class subgroup identity.
+                              Required.
                             "deviceCount": 0,  # Optional. The number of devices in the
-                              device class subgroup.
-                            "groupId": "str"  # Required. Group identity.
+                              deviceclass subgroup.
+                            "groupId": "str"  # Group identity. Required.
                         }
                     ]
                 }
         """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
-
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_device_management_list_device_class_subgroups_for_group_request(
-                    instance_id=self._config.instance_id,
-                    group_id=group_id,
-                    api_version=api_version,
-                    filter=filter,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-            else:
-                
-                request = build_device_management_list_device_class_subgroups_for_group_request(
-                    instance_id=self._config.instance_id,
-                    group_id=group_id,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
-
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
-
-    @distributed_trace_async
-    async def get_device_class_subgroup(
-        self,
-        group_id: str,
-        device_class_id: str,
-        **kwargs: Any
-    ) -> JSON:
-        """Gets device class subgroup details.
-
-        :param group_id: Group identity.
-        :type group_id: str
-        :param device_class_id: Device class identifier.
-        :type device_class_id: str
-        :return: JSON object
-        :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response.json() == {
-                    "createdDateTime": "str",  # Required. Date and time when the device class
-                      subgroup was created.
-                    "deploymentId": "str",  # Optional. The active deployment Id for the device
-                      class subgroup.
-                    "deviceClassId": "str",  # Required. Device class subgroup identity.
-                    "deviceCount": 0,  # Optional. The number of devices in the device class
-                      subgroup.
-                    "groupId": "str"  # Required. Group identity.
-                }
-        """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
-        request = build_device_management_get_device_class_subgroup_request(
-            instance_id=self._config.instance_id,
+        request = build_device_management_list_device_class_subgroups_for_group_request(
             group_id=group_id,
-            device_class_id=device_class_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
+            filter=filter,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -3901,55 +3654,113 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def delete_device_class_subgroup(  # pylint: disable=inconsistent-return-statements
-        self,
-        group_id: str,
-        device_class_id: str,
-        **kwargs: Any
-    ) -> None:
-        """Deletes a device class subgroup.
+    async def get_device_class_subgroup_details(self, group_id: str, device_class_id: str, **kwargs: Any) -> JSON:
+        """Gets device class subgroup details.
 
-        :param group_id: Group identity.
+        :param group_id: Group identity. Required.
         :type group_id: str
-        :param device_class_id: Device class identifier.
+        :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
-        :return: None
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "str",  # Date and time when the deviceclass subgroup was
+                      created. Required.
+                    "deploymentId": "str",  # Optional. The active deployment Id for the
+                      deviceclass subgroup.
+                    "deviceClassId": "str",  # Device class subgroup identity. Required.
+                    "deviceCount": 0,  # Optional. The number of devices in the deviceclass
+                      subgroup.
+                    "groupId": "str"  # Group identity. Required.
+                }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
-        request = build_device_management_delete_device_class_subgroup_request(
-            instance_id=self._config.instance_id,
+        request = build_device_management_get_device_class_subgroup_details_request(
             group_id=group_id,
             device_class_id=device_class_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), {})
+
+        return cast(JSON, deserialized)
+
+    @distributed_trace_async
+    async def delete_device_class_subgroup(  # pylint: disable=inconsistent-return-statements
+        self, group_id: str, device_class_id: str, **kwargs: Any
+    ) -> None:
+        """Deletes a device class subgroup.
+
+        :param group_id: Group identity. Required.
+        :type group_id: str
+        :param device_class_id: Device class identifier. Required.
+        :type device_class_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        request = build_device_management_delete_device_class_subgroup_request(
+            group_id=group_id,
+            device_class_id=device_class_id,
+            instance_id=self._config.instance_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -3959,71 +3770,61 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace_async
     async def get_device_class_subgroup_update_compliance(
-        self,
-        group_id: str,
-        device_class_id: str,
-        **kwargs: Any
+        self, group_id: str, device_class_id: str, **kwargs: Any
     ) -> JSON:
         """Get device class subgroup update compliance information such as how many devices are on their
         latest update, how many need new updates, and how many are in progress on receiving a new
         update.
 
-        :param group_id: Group identity.
+        :param group_id: Group identity. Required.
         :type group_id: str
-        :param device_class_id: Device class identifier.
+        :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "newUpdatesAvailableDeviceCount": 0,  # Required. Number of devices with a
-                      newer update available.
-                    "onLatestUpdateDeviceCount": 0,  # Required. Number of devices on the latest
-                      update.
-                    "totalDeviceCount": 0,  # Required. Total number of devices.
-                    "updatesInProgressDeviceCount": 0  # Required. Number of devices with update
-                      in-progress.
+                response == {
+                    "newUpdatesAvailableDeviceCount": 0,  # Number of devices with a newer update
+                      available. Required.
+                    "onLatestUpdateDeviceCount": 0,  # Number of devices on the latest update.
+                      Required.
+                    "totalDeviceCount": 0,  # Total number of devices. Required.
+                    "updatesInProgressDeviceCount": 0  # Number of devices with update
+                      in-progress. Required.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_device_management_get_device_class_subgroup_update_compliance_request(
-            instance_id=self._config.instance_id,
             group_id=group_id,
             device_class_id=device_class_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -4040,77 +3841,67 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get_best_updates_for_device_class_subgroup(
-        self,
-        group_id: str,
-        device_class_id: str,
-        **kwargs: Any
+    async def list_best_updates_for_device_class_subgroup(
+        self, group_id: str, device_class_id: str, **kwargs: Any
     ) -> JSON:
         """Get the best available update for a device class subgroup and a count of how many devices need
         this update.
 
-        :param group_id: Group identity.
+        :param group_id: Group identity. Required.
         :type group_id: str
-        :param device_class_id: Device class identifier.
+        :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "deviceClassId": "str",  # Required. The device class subgroup's device class
-                      Id.
-                    "deviceCount": 0,  # Required. Total number of devices for which the update
-                      is applicable.
-                    "groupId": "str",  # Required. The group Id.
+                response == {
+                    "deviceClassId": "str",  # The device class subgroup's device class Id.
+                      Required.
+                    "deviceCount": 0,  # Total number of devices for which the update is
+                      applicable. Required.
+                    "groupId": "str",  # The group Id. Required.
                     "update": {
                         "description": "str",  # Optional. Update description.
                         "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
-                            "name": "str",  # Required. Update name.
-                            "provider": "str",  # Required. Update provider.
-                            "version": "str"  # Required. Update version.
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
                         }
                     }
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
-        request = build_device_management_get_best_updates_for_device_class_subgroup_request(
-            instance_id=self._config.instance_id,
+        request = build_device_management_list_best_updates_for_device_class_subgroup_request(
             group_id=group_id,
             device_class_id=device_class_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -4127,140 +3918,109 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
     def list_deployments_for_device_class_subgroup(
-        self,
-        group_id: str,
-        device_class_id: str,
-        *,
-        order_by: Optional[str] = None,
-        **kwargs: Any
+        self, group_id: str, device_class_id: str, *, orderby: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Gets a list of deployments for a device class subgroup.
 
-        :param group_id: Group identity.
+        :param group_id: Group identity. Required.
         :type group_id: str
-        :param device_class_id: Device class identifier.
+        :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
-        :keyword order_by: Orders the set of deployments returned. You can order by start date. Default
+        :keyword orderby: Orders the set of deployments returned. You can order by start date. Default
          value is None.
-        :paramtype order_by: str
+        :paramtype orderby: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "nextLink": "str",  # Optional. The link to the next page of items.
-                    "value": [
-                        {
-                            "deploymentId": "str",  # Required. The caller-provided
-                              deployment identifier.
-                            "deviceClassSubgroups": [
-                                "str"  # Optional. The device class subgroups the
-                                  deployment is compatible with and subgroup deployments have been
-                                  created for. This is not provided by the caller during
-                                  CreateOrUpdateDeployment but is automatically determined by Device
-                                  Update.
-                            ],
-                            "groupId": "str",  # Required. The group identity for the
-                              devices the deployment is intended to update.
-                            "isCanceled": bool,  # Optional. Boolean flag indicating
-                              whether the deployment was canceled.
-                            "isCloudInitiatedRollback": bool,  # Optional. Boolean flag
-                              indicating whether the deployment is a rollback deployment.
-                            "isRetried": bool,  # Optional. Boolean flag indicating
-                              whether the deployment has been retried.
-                            "rollbackPolicy": {
-                                "failure": {
-                                    "devicesFailedCount": 0,  # Required. Number
-                                      of devices that failed.
-                                    "devicesFailedPercentage": 0  # Required.
-                                      Percentage of devices that failed.
-                                },
-                                "update": {
-                                    "description": "str",  # Optional. Update
-                                      description.
-                                    "friendlyName": "str",  # Optional. Friendly
-                                      update name.
-                                    "updateId": {
-                                        "name": "str",  # Required. Update
-                                          name.
-                                        "provider": "str",  # Required.
-                                          Update provider.
-                                        "version": "str"  # Required. Update
-                                          version.
-                                    }
-                                }
-                            },
-                            "startDateTime": "2020-02-20 00:00:00",  # Required. The
-                              deployment start datetime.
-                            "update": {
-                                "description": "str",  # Optional. Update
-                                  description.
-                                "friendlyName": "str",  # Optional. Friendly update
-                                  name.
-                                "updateId": {
-                                    "name": "str",  # Required. Update name.
-                                    "provider": "str",  # Required. Update
-                                      provider.
-                                    "version": "str"  # Required. Update version.
-                                }
+                response == {
+                    "deploymentId": "str",  # The deployment identifier. Required.
+                    "deviceClassSubgroups": [
+                        "str"  # Optional. The device class subgroups for the deployment.
+                    ],
+                    "groupId": "str",  # The group identity. Required.
+                    "isCanceled": bool,  # Optional. Boolean flag indicating whether the
+                      deployment was canceled.
+                    "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
+                      whether the deployment is a rollback deployment.
+                    "isRetried": bool,  # Optional. Boolean flag indicating whether the
+                      deployment has been retried.
+                    "rollbackPolicy": {
+                        "failure": {
+                            "devicesFailedCount": 0,  # Number of devices that failed.
+                              Required.
+                            "devicesFailedPercentage": 0  # Percentage of devices that
+                              failed. Required.
+                        },
+                        "update": {
+                            "description": "str",  # Optional. Update description.
+                            "friendlyName": "str",  # Optional. Friendly update name.
+                            "updateId": {
+                                "name": "str",  # Update name. Required.
+                                "provider": "str",  # Update provider. Required.
+                                "version": "str"  # Update version. Required.
                             }
                         }
-                    ]
+                    },
+                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
+                      Required.
+                    "update": {
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str",  # Optional. Friendly update name.
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        }
+                    }
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_device_management_list_deployments_for_device_class_subgroup_request(
-                    instance_id=self._config.instance_id,
                     group_id=group_id,
                     device_class_id=device_class_id,
-                    api_version=api_version,
-                    order_by=order_by,
+                    instance_id=self._config.instance_id,
+                    orderby=orderby,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_device_management_list_deployments_for_device_class_subgroup_request(
-                    instance_id=self._config.instance_id,
-                    group_id=group_id,
-                    device_class_id=device_class_id,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
@@ -4273,10 +4033,8 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -4286,47 +4044,34 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def get_deployment_for_device_class_subgroup(
-        self,
-        group_id: str,
-        device_class_id: str,
-        deployment_id: str,
-        **kwargs: Any
+        self, group_id: str, device_class_id: str, deployment_id: str, **kwargs: Any
     ) -> JSON:
         """Gets the deployment properties.
 
-        :param group_id: Group identity.
+        :param group_id: Group identity. Required.
         :type group_id: str
-        :param device_class_id: Device class identifier.
+        :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
-        :param deployment_id: Deployment identifier.
+        :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "deploymentId": "str",  # Required. The caller-provided deployment
-                      identifier.
+                response == {
+                    "deploymentId": "str",  # The deployment identifier. Required.
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups the deployment is
-                          compatible with and subgroup deployments have been created for. This is not
-                          provided by the caller during CreateOrUpdateDeployment but is automatically
-                          determined by Device Update.
+                        "str"  # Optional. The device class subgroups for the deployment.
                     ],
-                    "groupId": "str",  # Required. The group identity for the devices the
-                      deployment is intended to update.
+                    "groupId": "str",  # The group identity. Required.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -4335,65 +4080,60 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                       deployment has been retried.
                     "rollbackPolicy": {
                         "failure": {
-                            "devicesFailedCount": 0,  # Required. Number of devices that
-                              failed.
-                            "devicesFailedPercentage": 0  # Required. Percentage of
-                              devices that failed.
+                            "devicesFailedCount": 0,  # Number of devices that failed.
+                              Required.
+                            "devicesFailedPercentage": 0  # Percentage of devices that
+                              failed. Required.
                         },
                         "update": {
                             "description": "str",  # Optional. Update description.
                             "friendlyName": "str",  # Optional. Friendly update name.
                             "updateId": {
-                                "name": "str",  # Required. Update name.
-                                "provider": "str",  # Required. Update provider.
-                                "version": "str"  # Required. Update version.
+                                "name": "str",  # Update name. Required.
+                                "provider": "str",  # Update provider. Required.
+                                "version": "str"  # Update version. Required.
                             }
                         }
                     },
-                    "startDateTime": "2020-02-20 00:00:00",  # Required. The deployment start
-                      datetime.
+                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
+                      Required.
                     "update": {
                         "description": "str",  # Optional. Update description.
                         "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
-                            "name": "str",  # Required. Update name.
-                            "provider": "str",  # Required. Update provider.
-                            "version": "str"  # Required. Update version.
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
                         }
                     }
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_device_management_get_deployment_for_device_class_subgroup_request(
-            instance_id=self._config.instance_id,
             group_id=group_id,
             device_class_id=device_class_id,
             deployment_id=deployment_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -4410,59 +4150,48 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def delete_deployment_for_device_class_subgroup(  # pylint: disable=inconsistent-return-statements
-        self,
-        group_id: str,
-        device_class_id: str,
-        deployment_id: str,
-        **kwargs: Any
+    async def delete_device_class_subgroup_deployment(  # pylint: disable=inconsistent-return-statements
+        self, group_id: str, device_class_id: str, deployment_id: str, **kwargs: Any
     ) -> None:
         """Deletes a device class subgroup deployment.
 
-        :param group_id: Group identity.
+        :param group_id: Group identity. Required.
         :type group_id: str
-        :param device_class_id: Device class identifier.
+        :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
-        :param deployment_id: Deployment identifier.
+        :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
-        request = build_device_management_delete_deployment_for_device_class_subgroup_request(
-            instance_id=self._config.instance_id,
+        request = build_device_management_delete_device_class_subgroup_deployment_request(
             group_id=group_id,
             device_class_id=device_class_id,
             deployment_id=deployment_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -4472,43 +4201,30 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace_async
-    async def stop_deployment(
-        self,
-        group_id: str,
-        device_class_id: str,
-        deployment_id: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def stop_deployment(self, group_id: str, device_class_id: str, deployment_id: str, **kwargs: Any) -> JSON:
         """Stops a deployment.
 
-        :param group_id: Group identity.
+        :param group_id: Group identity. Required.
         :type group_id: str
-        :param device_class_id: Device class identifier.
+        :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
-        :param deployment_id: Deployment identifier.
+        :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "deploymentId": "str",  # Required. The caller-provided deployment
-                      identifier.
+                response == {
+                    "deploymentId": "str",  # The deployment identifier. Required.
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups the deployment is
-                          compatible with and subgroup deployments have been created for. This is not
-                          provided by the caller during CreateOrUpdateDeployment but is automatically
-                          determined by Device Update.
+                        "str"  # Optional. The device class subgroups for the deployment.
                     ],
-                    "groupId": "str",  # Required. The group identity for the devices the
-                      deployment is intended to update.
+                    "groupId": "str",  # The group identity. Required.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -4517,65 +4233,60 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                       deployment has been retried.
                     "rollbackPolicy": {
                         "failure": {
-                            "devicesFailedCount": 0,  # Required. Number of devices that
-                              failed.
-                            "devicesFailedPercentage": 0  # Required. Percentage of
-                              devices that failed.
+                            "devicesFailedCount": 0,  # Number of devices that failed.
+                              Required.
+                            "devicesFailedPercentage": 0  # Percentage of devices that
+                              failed. Required.
                         },
                         "update": {
                             "description": "str",  # Optional. Update description.
                             "friendlyName": "str",  # Optional. Friendly update name.
                             "updateId": {
-                                "name": "str",  # Required. Update name.
-                                "provider": "str",  # Required. Update provider.
-                                "version": "str"  # Required. Update version.
+                                "name": "str",  # Update name. Required.
+                                "provider": "str",  # Update provider. Required.
+                                "version": "str"  # Update version. Required.
                             }
                         }
                     },
-                    "startDateTime": "2020-02-20 00:00:00",  # Required. The deployment start
-                      datetime.
+                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
+                      Required.
                     "update": {
                         "description": "str",  # Optional. Update description.
                         "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
-                            "name": "str",  # Required. Update name.
-                            "provider": "str",  # Required. Update provider.
-                            "version": "str"  # Required. Update version.
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
                         }
                     }
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_device_management_stop_deployment_request(
-            instance_id=self._config.instance_id,
             group_id=group_id,
             device_class_id=device_class_id,
             deployment_id=deployment_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -4591,44 +4302,31 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, cast(JSON, deserialized), {})
 
         return cast(JSON, deserialized)
-
-
 
     @distributed_trace_async
-    async def retry_deployment(
-        self,
-        group_id: str,
-        device_class_id: str,
-        deployment_id: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def retry_deployment(self, group_id: str, device_class_id: str, deployment_id: str, **kwargs: Any) -> JSON:
         """Retries a deployment with failed devices.
 
-        :param group_id: Group identity.
+        :param group_id: Group identity. Required.
         :type group_id: str
-        :param device_class_id: Device class identifier.
+        :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
-        :param deployment_id: Deployment identifier.
+        :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "deploymentId": "str",  # Required. The caller-provided deployment
-                      identifier.
+                response == {
+                    "deploymentId": "str",  # The deployment identifier. Required.
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups the deployment is
-                          compatible with and subgroup deployments have been created for. This is not
-                          provided by the caller during CreateOrUpdateDeployment but is automatically
-                          determined by Device Update.
+                        "str"  # Optional. The device class subgroups for the deployment.
                     ],
-                    "groupId": "str",  # Required. The group identity for the devices the
-                      deployment is intended to update.
+                    "groupId": "str",  # The group identity. Required.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -4637,65 +4335,60 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                       deployment has been retried.
                     "rollbackPolicy": {
                         "failure": {
-                            "devicesFailedCount": 0,  # Required. Number of devices that
-                              failed.
-                            "devicesFailedPercentage": 0  # Required. Percentage of
-                              devices that failed.
+                            "devicesFailedCount": 0,  # Number of devices that failed.
+                              Required.
+                            "devicesFailedPercentage": 0  # Percentage of devices that
+                              failed. Required.
                         },
                         "update": {
                             "description": "str",  # Optional. Update description.
                             "friendlyName": "str",  # Optional. Friendly update name.
                             "updateId": {
-                                "name": "str",  # Required. Update name.
-                                "provider": "str",  # Required. Update provider.
-                                "version": "str"  # Required. Update version.
+                                "name": "str",  # Update name. Required.
+                                "provider": "str",  # Update provider. Required.
+                                "version": "str"  # Update version. Required.
                             }
                         }
                     },
-                    "startDateTime": "2020-02-20 00:00:00",  # Required. The deployment start
-                      datetime.
+                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
+                      Required.
                     "update": {
                         "description": "str",  # Optional. Update description.
                         "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
-                            "name": "str",  # Required. Update name.
-                            "provider": "str",  # Required. Update provider.
-                            "version": "str"  # Required. Update version.
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
                         }
                     }
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_device_management_retry_deployment_request(
-            instance_id=self._config.instance_id,
             group_id=group_id,
             device_class_id=device_class_id,
             deployment_id=deployment_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -4711,38 +4404,32 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, cast(JSON, deserialized), {})
 
         return cast(JSON, deserialized)
-
-
 
     @distributed_trace_async
     async def get_device_class_subgroup_deployment_status(
-        self,
-        group_id: str,
-        device_class_id: str,
-        deployment_id: str,
-        **kwargs: Any
+        self, group_id: str, device_class_id: str, deployment_id: str, **kwargs: Any
     ) -> JSON:
         """Gets the status of a deployment including a breakdown of how many devices in the deployment are
         in progress, completed, or failed.
 
-        :param group_id: Group identity.
+        :param group_id: Group identity. Required.
         :type group_id: str
-        :param device_class_id: Device class identifier.
+        :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
-        :param deployment_id: Deployment identifier.
+        :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "deploymentState": "str",  # Required. The state of the subgroup deployment.
-                      Known values are: "Active", "Failed", "Inactive", "Canceled".
-                    "deviceClassId": "str",  # Required. The device class subgroup identity.
+                response == {
+                    "deploymentState": "str",  # The state of the subgroup deployment. Required.
+                      Known values are: "Active", "Failed", "Inactive", and "Canceled".
+                    "deviceClassId": "str",  # The device class subgroup identity. Required.
                     "devicesCanceledCount": 0,  # Optional. The number of devices which have had
                       their deployment canceled.
                     "devicesCompletedFailedCount": 0,  # Optional. The number of devices that
@@ -4752,60 +4439,55 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                     "devicesInProgressCount": 0,  # Optional. The number of devices that are
                       currently in deployment.
                     "error": {
-                        "code": "str",  # Required. Server defined error code.
+                        "code": "str",  # Server defined error code. Required.
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Required. A more specific error code than
-                              what was provided by the containing error.
+                            "code": "str",  # A more specific error code than what was
+                              provided by the containing error. Required.
                             "errorDetail": "str",  # Optional. The internal error or
                               exception message.
                             "innerError": ...,
                             "message": "str"  # Optional. A human-readable representation
                               of the error.
                         },
-                        "message": "str",  # Required. A human-readable representation of the
-                          error.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
                         "occurredDateTime": "2020-02-20 00:00:00",  # Optional. Date and time
                           in UTC when the error occurred.
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "groupId": "str",  # Required. The group identity.
+                    "groupId": "str",  # The group identity. Required.
                     "totalDevices": 0  # Optional. The total number of devices in the deployment.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_device_management_get_device_class_subgroup_deployment_status_request(
-            instance_id=self._config.instance_id,
             group_id=group_id,
             device_class_id=device_class_id,
             deployment_id=deployment_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -4822,102 +4504,83 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
-    def list_device_states_for_device_class_subgroup_deployment(
-        self,
-        group_id: str,
-        device_class_id: str,
-        deployment_id: str,
-        *,
-        filter: Optional[str] = None,
-        **kwargs: Any
+    def list_devices_for_device_class_subgroup_deployment(
+        self, group_id: str, device_class_id: str, deployment_id: str, *, filter: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Gets a list of devices in a deployment along with their state. Useful for getting a list of
         failed devices.
 
-        :param group_id: Group identity.
+        :param group_id: Group identity. Required.
         :type group_id: str
-        :param device_class_id: Device class identifier.
+        :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
-        :param deployment_id: Deployment identifier.
+        :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
         :keyword filter: Restricts the set of deployment device states returned. You can filter on
          deviceId and moduleId and/or deviceState. Default value is None.
         :paramtype filter: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "nextLink": "str",  # Optional. The link to the next page of items.
-                    "value": [
-                        {
-                            "deviceId": "str",  # Required. Device identity.
-                            "deviceState": "str",  # Required. Deployment device state.
-                              Known values are: "Succeeded", "InProgress", "Canceled", "Failed".
-                            "moduleId": "str",  # Optional. Device module identity.
-                            "movedOnToNewDeployment": bool,  # Required. Boolean flag
-                              indicating whether this device is in a newer deployment and can no longer
-                              retry this deployment.
-                            "retryCount": 0  # Required. The number of times this
-                              deployment has been retried on this device.
-                        }
-                    ]
+                response == {
+                    "deviceId": "str",  # Device identity. Required.
+                    "deviceState": "str",  # Deployment device state. Required. Known values are:
+                      "Succeeded", "InProgress", "Canceled", and "Failed".
+                    "moduleId": "str",  # Optional. Device module identity.
+                    "movedOnToNewDeployment": bool,  # Boolean flag indicating whether this
+                      device is in a newer deployment and can no longer retry this deployment.
+                      Required.
+                    "retryCount": 0  # The number of times this deployment has been retried on
+                      this device. Required.
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
-                request = build_device_management_list_device_states_for_device_class_subgroup_deployment_request(
-                    instance_id=self._config.instance_id,
+
+                request = build_device_management_list_devices_for_device_class_subgroup_deployment_request(
                     group_id=group_id,
                     device_class_id=device_class_id,
                     deployment_id=deployment_id,
-                    api_version=api_version,
+                    instance_id=self._config.instance_id,
                     filter=filter,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_device_management_list_device_states_for_device_class_subgroup_deployment_request(
-                    instance_id=self._config.instance_id,
-                    group_id=group_id,
-                    device_class_id=device_class_id,
-                    deployment_id=deployment_id,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
@@ -4930,10 +4593,8 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -4943,98 +4604,85 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def get_operation(
-        self,
-        operation_id: str,
-        *,
-        if_none_match: Optional[str] = None,
-        **kwargs: Any
+        self, operation_id: str, *, if_none_match: Optional[str] = None, **kwargs: Any
     ) -> Optional[JSON]:
         """Retrieve operation status.
 
-        :param operation_id: Operation identifier.
+        :param operation_id: Operation identifier. Required.
         :type operation_id: str
         :keyword if_none_match: Defines the If-None-Match condition. The operation will be performed
          only if the ETag on the server does not match this value. Default value is None.
         :paramtype if_none_match: str
-        :return: JSON object
+        :return: JSON object or None
         :rtype: JSON or None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Required. Date and time in UTC
-                      when the operation was created.
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      operation was created. Required.
                     "error": {
-                        "code": "str",  # Required. Server defined error code.
+                        "code": "str",  # Server defined error code. Required.
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Required. A more specific error code than
-                              what was provided by the containing error.
+                            "code": "str",  # A more specific error code than what was
+                              provided by the containing error. Required.
                             "errorDetail": "str",  # Optional. The internal error or
                               exception message.
                             "innerError": ...,
                             "message": "str"  # Optional. A human-readable representation
                               of the error.
                         },
-                        "message": "str",  # Required. A human-readable representation of the
-                          error.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
                         "occurredDateTime": "2020-02-20 00:00:00",  # Optional. Date and time
                           in UTC when the error occurred.
                         "target": "str"  # Optional. The target of the error.
                     },
                     "etag": "str",  # Optional. Operation ETag.
-                    "lastActionDateTime": "2020-02-20 00:00:00",  # Required. Date and time in
-                      UTC when the operation status was last updated.
-                    "operationId": "str",  # Required. Operation Id.
-                    "status": "str",  # Required. Operation status. Known values are:
-                      "NotStarted", "Running", "Succeeded", "Failed".
+                    "lastActionDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      operation status was last updated. Required.
+                    "operationId": "str",  # Operation Id. Required.
+                    "status": "str",  # Operation status. Required. Known values are:
+                      "NotStarted", "Running", "Succeeded", and "Failed".
                     "traceId": "str"  # Optional. Operation correlation identity that can used by
                       Microsoft Support for troubleshooting.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
-        
         request = build_device_management_get_operation_request(
-            instance_id=self._config.instance_id,
             operation_id=operation_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
             if_none_match=if_none_match,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 304]:
@@ -5044,8 +4692,8 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         deserialized = None
         response_headers = {}
         if response.status_code == 200:
-            response_headers['Retry-After']=self._deserialize('str', response.headers.get('Retry-After'))
-            
+            response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
+
             if response.content:
                 deserialized = response.json()
             else:
@@ -5056,15 +4704,9 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-
-
     @distributed_trace
     def list_operations(
-        self,
-        *,
-        filter: Optional[str] = None,
-        top: Optional[int] = None,
-        **kwargs: Any
+        self, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Get a list of all device import operations. Completed operations are kept for 7 days before
         auto-deleted.
@@ -5078,93 +4720,84 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :paramtype top: int
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "nextLink": "str",  # Optional. The link to the next page of items.
-                    "value": [
-                        {
-                            "createdDateTime": "2020-02-20 00:00:00",  # Required. Date
-                              and time in UTC when the operation was created.
-                            "error": {
-                                "code": "str",  # Required. Server defined error
-                                  code.
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",  # Required. A more specific
-                                      error code than what was provided by the containing error.
-                                    "errorDetail": "str",  # Optional. The
-                                      internal error or exception message.
-                                    "innerError": ...,
-                                    "message": "str"  # Optional. A
-                                      human-readable representation of the error.
-                                },
-                                "message": "str",  # Required. A human-readable
-                                  representation of the error.
-                                "occurredDateTime": "2020-02-20 00:00:00",  #
-                                  Optional. Date and time in UTC when the error occurred.
-                                "target": "str"  # Optional. The target of the error.
-                            },
-                            "etag": "str",  # Optional. Operation ETag.
-                            "lastActionDateTime": "2020-02-20 00:00:00",  # Required.
-                              Date and time in UTC when the operation status was last updated.
-                            "operationId": "str",  # Required. Operation Id.
-                            "status": "str",  # Required. Operation status. Known values
-                              are: "NotStarted", "Running", "Succeeded", "Failed".
-                            "traceId": "str"  # Optional. Operation correlation identity
-                              that can used by Microsoft Support for troubleshooting.
-                        }
-                    ]
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      operation was created. Required.
+                    "error": {
+                        "code": "str",  # Server defined error code. Required.
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",  # A more specific error code than what was
+                              provided by the containing error. Required.
+                            "errorDetail": "str",  # Optional. The internal error or
+                              exception message.
+                            "innerError": ...,
+                            "message": "str"  # Optional. A human-readable representation
+                              of the error.
+                        },
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
+                        "occurredDateTime": "2020-02-20 00:00:00",  # Optional. Date and time
+                          in UTC when the error occurred.
+                        "target": "str"  # Optional. The target of the error.
+                    },
+                    "etag": "str",  # Optional. Operation ETag.
+                    "lastActionDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      operation status was last updated. Required.
+                    "operationId": "str",  # Operation Id. Required.
+                    "status": "str",  # Operation status. Required. Known values are:
+                      "NotStarted", "Running", "Succeeded", and "Failed".
+                    "traceId": "str"  # Optional. Operation correlation identity that can used by
+                      Microsoft Support for troubleshooting.
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_device_management_list_operations_request(
                     instance_id=self._config.instance_id,
-                    api_version=api_version,
                     filter=filter,
                     top=top,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_device_management_list_operations_request(
-                    instance_id=self._config.instance_id,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
@@ -5177,10 +4810,8 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -5190,101 +4821,177 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
-
-    @distributed_trace_async
-    async def start_log_collection(
-        self,
-        log_collection_id: str,
-        log_collection: JSON,
-        **kwargs: Any
+    @overload
+    async def collect_logs(
+        self, operation_id: str, log_collection_request: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
-        """Start the device diagnostics log collection on specified devices.
+        """Start the device diagnostics log collection operation on specified devices.
 
-        :param log_collection_id: Log collection identifier.
-        :type log_collection_id: str
-        :param log_collection: The log collection properties.
-        :type log_collection: JSON
+        :param operation_id: Operation identifier. Required.
+        :type operation_id: str
+        :param log_collection_request: The deployment properties. Required.
+        :type log_collection_request: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                log_collection = {
+                log_collection_request = {
                     "createdDateTime": "str",  # Optional. The timestamp when the operation was
                       created.
                     "description": "str",  # Optional. Description of the diagnostics operation.
                     "deviceList": [
                         {
-                            "deviceId": "str",  # Required. Device Id.
+                            "deviceId": "str",  # Device Id. Required.
                             "moduleId": "str"  # Optional. Module Id.
                         }
                     ],
                     "lastActionDateTime": "str",  # Optional. A timestamp for when the current
                       state was entered.
-                    "operationId": "str",  # Optional. The log collection id.
+                    "operationId": "str",  # Optional. The diagnostics operation id.
                     "status": "str"  # Optional. Operation status. Known values are:
-                      "NotStarted", "Running", "Succeeded", "Failed".
+                      "NotStarted", "Running", "Succeeded", and "Failed".
                 }
 
                 # response body for status code(s): 201
-                response.json() == {
+                response == {
                     "createdDateTime": "str",  # Optional. The timestamp when the operation was
                       created.
                     "description": "str",  # Optional. Description of the diagnostics operation.
                     "deviceList": [
                         {
-                            "deviceId": "str",  # Required. Device Id.
+                            "deviceId": "str",  # Device Id. Required.
                             "moduleId": "str"  # Optional. Module Id.
                         }
                     ],
                     "lastActionDateTime": "str",  # Optional. A timestamp for when the current
                       state was entered.
-                    "operationId": "str",  # Optional. The log collection id.
+                    "operationId": "str",  # Optional. The diagnostics operation id.
                     "status": "str"  # Optional. Operation status. Known values are:
-                      "NotStarted", "Running", "Succeeded", "Failed".
+                      "NotStarted", "Running", "Succeeded", and "Failed".
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+
+    @overload
+    async def collect_logs(
+        self, operation_id: str, log_collection_request: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
+        """Start the device diagnostics log collection operation on specified devices.
+
+        :param operation_id: Operation identifier. Required.
+        :type operation_id: str
+        :param log_collection_request: The deployment properties. Required.
+        :type log_collection_request: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 201
+                response == {
+                    "createdDateTime": "str",  # Optional. The timestamp when the operation was
+                      created.
+                    "description": "str",  # Optional. Description of the diagnostics operation.
+                    "deviceList": [
+                        {
+                            "deviceId": "str",  # Device Id. Required.
+                            "moduleId": "str"  # Optional. Module Id.
+                        }
+                    ],
+                    "lastActionDateTime": "str",  # Optional. A timestamp for when the current
+                      state was entered.
+                    "operationId": "str",  # Optional. The diagnostics operation id.
+                    "status": "str"  # Optional. Operation status. Known values are:
+                      "NotStarted", "Running", "Succeeded", and "Failed".
+                }
+        """
+
+    @distributed_trace_async
+    async def collect_logs(self, operation_id: str, log_collection_request: Union[JSON, IO], **kwargs: Any) -> JSON:
+        """Start the device diagnostics log collection operation on specified devices.
+
+        :param operation_id: Operation identifier. Required.
+        :type operation_id: str
+        :param log_collection_request: The deployment properties. Is either a model type or a IO type.
+         Required.
+        :type log_collection_request: JSON or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 201
+                response == {
+                    "createdDateTime": "str",  # Optional. The timestamp when the operation was
+                      created.
+                    "description": "str",  # Optional. Description of the diagnostics operation.
+                    "deviceList": [
+                        {
+                            "deviceId": "str",  # Device Id. Required.
+                            "moduleId": "str"  # Optional. Module Id.
+                        }
+                    ],
+                    "lastActionDateTime": "str",  # Optional. A timestamp for when the current
+                      state was entered.
+                    "operationId": "str",  # Optional. The diagnostics operation id.
+                    "status": "str"  # Optional. Operation status. Known values are:
+                      "NotStarted", "Running", "Succeeded", and "Failed".
+                }
+        """
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        _json = log_collection
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(log_collection_request, (IO, bytes)):
+            _content = log_collection_request
+        else:
+            _json = log_collection_request
 
-        request = build_device_management_start_log_collection_request(
+        request = build_device_management_collect_logs_request(
+            operation_id=operation_id,
             instance_id=self._config.instance_id,
-            log_collection_id=log_collection_id,
-            api_version=api_version,
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
+            content=_content,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -5301,72 +5008,61 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get_log_collection(
-        self,
-        log_collection_id: str,
-        **kwargs: Any
-    ) -> JSON:
-        """Get the device diagnostics log collection.
+    async def get_log_collection_operation(self, operation_id: str, **kwargs: Any) -> JSON:
+        """Get the device diagnostics log collection operation.
 
-        :param log_collection_id: Log collection identifier.
-        :type log_collection_id: str
+        :param operation_id: Operation identifier. Required.
+        :type operation_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "createdDateTime": "str",  # Optional. The timestamp when the operation was
                       created.
                     "description": "str",  # Optional. Description of the diagnostics operation.
                     "deviceList": [
                         {
-                            "deviceId": "str",  # Required. Device Id.
+                            "deviceId": "str",  # Device Id. Required.
                             "moduleId": "str"  # Optional. Module Id.
                         }
                     ],
                     "lastActionDateTime": "str",  # Optional. A timestamp for when the current
                       state was entered.
-                    "operationId": "str",  # Optional. The log collection id.
+                    "operationId": "str",  # Optional. The diagnostics operation id.
                     "status": "str"  # Optional. Operation status. Known values are:
-                      "NotStarted", "Running", "Succeeded", "Failed".
+                      "NotStarted", "Running", "Succeeded", and "Failed".
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
-        request = build_device_management_get_log_collection_request(
+        request = build_device_management_get_log_collection_operation_request(
+            operation_id=operation_id,
             instance_id=self._config.instance_id,
-            log_collection_id=log_collection_id,
-            api_version=api_version,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -5383,86 +5079,72 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
-    def list_log_collections(
-        self,
-        **kwargs: Any
-    ) -> AsyncIterable[JSON]:
-        """Get all device diagnostics log collections.
+    def list_log_collection_operations(self, **kwargs: Any) -> AsyncIterable[JSON]:
+        """Get all device diagnostics log collection operations.
 
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
-                    "nextLink": "str",  # Optional. The link to the next page of items.
-                    "value": [
+                response == {
+                    "createdDateTime": "str",  # Optional. The timestamp when the operation was
+                      created.
+                    "description": "str",  # Optional. Description of the diagnostics operation.
+                    "deviceList": [
                         {
-                            "createdDateTime": "str",  # Optional. The timestamp when the
-                              operation was created.
-                            "description": "str",  # Optional. Description of the
-                              diagnostics operation.
-                            "deviceList": [
-                                {
-                                    "deviceId": "str",  # Required. Device Id.
-                                    "moduleId": "str"  # Optional. Module Id.
-                                }
-                            ],
-                            "lastActionDateTime": "str",  # Optional. A timestamp for
-                              when the current state was entered.
-                            "operationId": "str",  # Optional. The log collection id.
-                            "status": "str"  # Optional. Operation status. Known values
-                              are: "NotStarted", "Running", "Succeeded", "Failed".
+                            "deviceId": "str",  # Device Id. Required.
+                            "moduleId": "str"  # Optional. Module Id.
                         }
-                    ]
+                    ],
+                    "lastActionDateTime": "str",  # Optional. A timestamp for when the current
+                      state was entered.
+                    "operationId": "str",  # Optional. The diagnostics operation id.
+                    "status": "str"  # Optional. Operation status. Known values are:
+                      "NotStarted", "Running", "Succeeded", and "Failed".
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
-                request = build_device_management_list_log_collections_request(
+
+                request = build_device_management_list_log_collection_operations_request(
                     instance_id=self._config.instance_id,
-                    api_version=api_version,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_device_management_list_log_collections_request(
-                    instance_id=self._config.instance_id,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
@@ -5475,10 +5157,8 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -5488,82 +5168,69 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get_log_collection_detailed_status(
-        self,
-        operation_id: str,
-        **kwargs: Any
-    ) -> JSON:
-        """Get log collection with detailed status.
+    async def get_log_collection_operation_detailed_status(self, operation_id: str, **kwargs: Any) -> JSON:
+        """Get device diagnostics log collection operation with detailed status.
 
-        :param operation_id: Operation identifier.
+        :param operation_id: Operation identifier. Required.
         :type operation_id: str
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "createdDateTime": "str",  # Optional. The timestamp when the operation was
                       created.
                     "description": "str",  # Optional. Device diagnostics operation description.
                     "deviceStatus": [
                         {
-                            "deviceId": "str",  # Required. Device id.
+                            "deviceId": "str",  # Device id. Required.
                             "extendedResultCode": "str",  # Optional. Log upload extended
                               result code.
                             "logLocation": "str",  # Optional. Log upload location.
                             "moduleId": "str",  # Optional. Module id.
                             "resultCode": "str",  # Optional. Log upload result code.
-                            "status": "str"  # Required. Log upload status. Known values
-                              are: "NotStarted", "Running", "Succeeded", "Failed".
+                            "status": "str"  # Log upload status. Required. Known values
+                              are: "NotStarted", "Running", "Succeeded", and "Failed".
                         }
                     ],
                     "lastActionDateTime": "str",  # Optional. A timestamp for when the current
                       state was entered.
                     "operationId": "str",  # Optional. The device diagnostics operation id.
                     "status": "str"  # Optional. Operation status. Known values are:
-                      "NotStarted", "Running", "Succeeded", "Failed".
+                      "NotStarted", "Running", "Succeeded", and "Failed".
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
-        request = build_device_management_get_log_collection_detailed_status_request(
-            instance_id=self._config.instance_id,
+        request = build_device_management_get_log_collection_operation_detailed_status_request(
             operation_id=operation_id,
-            api_version=api_version,
+            instance_id=self._config.instance_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -5580,32 +5247,25 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
-    @distributed_trace
-    def list_device_health(
-        self,
-        *,
-        filter: str,
-        **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    @distributed_trace_async
+    async def list_device_health(self, *, filter: str, **kwargs: Any) -> JSON:
         """Get list of device health.
 
-        :keyword filter: Filter list by specified properties.
+        :keyword filter: Filter list by specified properties. Required.
         :paramtype filter: str
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "nextLink": "str",  # Optional. The link to the next page of items.
                     "value": [
                         {
-                            "deviceId": "str",  # Required. Device id.
+                            "deviceId": "str",  # Device id. Required.
                             "digitalTwinModelId": "str",  # Optional. Digital twin model
                               Id.
                             "healthChecks": [
@@ -5613,84 +5273,52 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                                     "name": "str",  # Optional. Health check
                                       name.
                                     "result": "str"  # Optional. Health check
-                                      result. Known values are: "success", "userError".
+                                      result. Known values are: "success" and "userError".
                                 }
                             ],
                             "moduleId": "str",  # Optional. Module id.
-                            "state": "str"  # Required. Aggregate device health state.
-                              Known values are: "healthy", "unhealthy".
+                            "state": "str"  # Aggregate device health state. Required.
+                              Known values are: "healthy" and "unhealthy".
                         }
                     ]
                 }
         """
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        request = build_device_management_list_device_health_request(
+            instance_id=self._config.instance_id,
+            filter=filter,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_device_management_list_device_health_request(
-                    instance_id=self._config.instance_id,
-                    api_version=api_version,
-                    filter=filter,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-            else:
-                
-                request = build_device_management_list_device_health_request(
-                    instance_id=self._config.instance_id,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
-
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-
-        return AsyncItemPaged(
-            get_next, extract_data
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
         )
 
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), {})
+
+        return cast(JSON, deserialized)

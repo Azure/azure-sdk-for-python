@@ -9,12 +9,11 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import DeviceUpdateClientConfiguration
+from ._serialization import Deserializer, Serializer
 from .operations import DeviceManagementOperations, DeviceUpdateOperations
 
 if TYPE_CHECKING:
@@ -23,7 +22,8 @@ if TYPE_CHECKING:
 
     from azure.core.credentials import TokenCredential
 
-class DeviceUpdateClient:
+
+class DeviceUpdateClient:  # pylint: disable=client-accepts-api-version-keyword
     """Device Update for IoT Hub is an Azure service that enables customers to publish update for
     their IoT devices to the cloud, and then deploy that update to their devices (approve updates
     to groups of devices managed and provisioned in IoT Hub). It leverages the proven security and
@@ -35,11 +35,11 @@ class DeviceUpdateClient:
     :vartype device_update: azure.iot.deviceupdate.operations.DeviceUpdateOperations
     :ivar device_management: DeviceManagementOperations operations
     :vartype device_management: azure.iot.deviceupdate.operations.DeviceManagementOperations
-    :param endpoint: Account endpoint.
+    :param endpoint: Account endpoint. Required.
     :type endpoint: str
-    :param instance_id: Account instance identifier.
+    :param instance_id: Account instance identifier. Required.
     :type instance_id: str
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: Api Version. Default value is "2022-07-01-preview". Note that overriding
      this default value may result in unsupported behavior.
@@ -48,33 +48,22 @@ class DeviceUpdateClient:
      Retry-After header is present.
     """
 
-    def __init__(
-        self,
-        endpoint: str,
-        instance_id: str,
-        credential: "TokenCredential",
-        **kwargs: Any
-    ) -> None:
-        _endpoint = 'https://{endpoint}'
-        self._config = DeviceUpdateClientConfiguration(endpoint=endpoint, instance_id=instance_id, credential=credential, **kwargs)
+    def __init__(self, endpoint: str, instance_id: str, credential: "TokenCredential", **kwargs: Any) -> None:
+        _endpoint = "https://{endpoint}"
+        self._config = DeviceUpdateClientConfiguration(
+            endpoint=endpoint, instance_id=instance_id, credential=credential, **kwargs
+        )
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.device_update = DeviceUpdateOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.device_update = DeviceUpdateOperations(self._client, self._config, self._serialize, self._deserialize)
         self.device_management = DeviceManagementOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
-
-    def send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -83,7 +72,7 @@ class DeviceUpdateClient:
         >>> response = client.send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -94,7 +83,7 @@ class DeviceUpdateClient:
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

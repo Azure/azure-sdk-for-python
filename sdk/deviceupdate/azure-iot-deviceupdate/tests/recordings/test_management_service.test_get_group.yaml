@@ -9,25 +9,26 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b3 Python/3.10.4 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b3 Python/3.10.5 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://foo.api.adu.microsoft.com/deviceUpdate/bar/management/groups/foo?api-version=2022-07-01-preview
   response:
     body:
       string: "{\r\n  \"groupId\": \"foo\",\r\n  \"groupType\": \"IoTHubTag\",\r\n
         \ \"createdDateTime\": \"2022-06-09T00:08:48.4487+00:00\",\r\n  \"deviceCount\":
-        1,\r\n  \"deployments\": []\r\n}"
+        1,\r\n  \"subgroupsWithNewUpdatesAvailableCount\": 1,\r\n  \"subgroupsWithUpdatesInProgressCount\":
+        0,\r\n  \"subgroupsWithOnLatestUpdateCount\": 0,\r\n  \"deployments\": []\r\n}"
     headers:
       content-length:
-      - '162'
+      - '296'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 13 Jun 2022 21:03:44 GMT
+      - Tue, 05 Jul 2022 22:02:58 GMT
       mise-correlation-id:
-      - a7e4bf3d-055f-4226-b843-0f4a64ae5d2e
+      - 3bc65272-1220-4148-a205-89ab5ee3b4fa
       traceparent:
-      - 00-913c1d1dfe81794cb065af09fe14eb68-ac399a69803bc440-00
+      - 00-cc54cb499450914f9e3f25c0f05cdc60-5dcfb50ab2519246-00
     status:
       code: 200
       message: OK
