@@ -7,7 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
-* Fix the error handling bug while the `DefaultAzureCredential` failed to get a token in an incorrect environment before the actual service request sending out.([#24788](https://github.com/Azure/azure-sdk-for-python/pull/24788))
+* Fix handling of client-side exceptions that get raised during service requests (such as [#21416](https://github.com/Azure/azure-sdk-for-python/issues/21416)) ([#24788](https://github.com/Azure/azure-sdk-for-python/pull/24788))
 
 ### Other Changes
 
