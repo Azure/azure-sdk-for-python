@@ -1,5 +1,45 @@
 # Release History
 
+## 1.1.0b2 (2022-07-05)
+
+**Features**
+
+  - Added operation HybridRunbookWorkerGroupOperations.create
+  - Added operation group AutomationClientOperationsMixin
+  - Added operation group HybridRunbookWorkersOperations
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Added operation group PrivateLinkResourcesOperations
+  - Model AutomationAccount has a new parameter automation_hybrid_service_url
+  - Model AutomationAccount has a new parameter disable_local_auth
+  - Model AutomationAccount has a new parameter encryption
+  - Model AutomationAccount has a new parameter identity
+  - Model AutomationAccount has a new parameter private_endpoint_connections
+  - Model AutomationAccount has a new parameter public_network_access
+  - Model AutomationAccount has a new parameter system_data
+  - Model AutomationAccountCreateOrUpdateParameters has a new parameter disable_local_auth
+  - Model AutomationAccountCreateOrUpdateParameters has a new parameter encryption
+  - Model AutomationAccountCreateOrUpdateParameters has a new parameter identity
+  - Model AutomationAccountCreateOrUpdateParameters has a new parameter public_network_access
+  - Model AutomationAccountUpdateParameters has a new parameter disable_local_auth
+  - Model AutomationAccountUpdateParameters has a new parameter encryption
+  - Model AutomationAccountUpdateParameters has a new parameter identity
+  - Model AutomationAccountUpdateParameters has a new parameter public_network_access
+  - Model HybridRunbookWorker has a new parameter id
+  - Model HybridRunbookWorker has a new parameter registered_date_time
+  - Model HybridRunbookWorker has a new parameter system_data
+  - Model HybridRunbookWorker has a new parameter type
+  - Model HybridRunbookWorker has a new parameter vm_resource_id
+  - Model HybridRunbookWorker has a new parameter worker_name
+  - Model HybridRunbookWorker has a new parameter worker_type
+  - Model HybridRunbookWorkerGroup has a new parameter system_data
+  - Model HybridRunbookWorkerGroup has a new parameter type
+  - Operation DscConfigurationOperations.create_or_update has a new optional and keyword-only parameter content_type
+  - Operation DscConfigurationOperations.update has a new optional and keyword-only parameter content_type
+
+**Breaking changes**
+
+  - Model HybridRunbookWorker no longer has parameter registration_time
+
 ## 1.1.0b1 (2021-03-16)
 
 **Features**
