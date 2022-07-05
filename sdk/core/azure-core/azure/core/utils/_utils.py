@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Dict, Iterable, Mapping, MutableMapping, ValuesView
+from typing import Any, Dict, Iterable, Iterator, Mapping, MutableMapping, ValuesView
 
 
 class _FixedOffset(datetime.tzinfo):
@@ -122,7 +122,7 @@ class CaseInsensitiveDict(MutableMapping):
     def __delitem__(self, key: str) -> None:
         del self._store[key.lower()]
 
-    def __iter__(self) -> ValuesView[Any]:
+    def __iter__(self) -> Iterator[Any]:
         return (key for key, _ in self._store.values())
 
     def __len__(self) -> int:
