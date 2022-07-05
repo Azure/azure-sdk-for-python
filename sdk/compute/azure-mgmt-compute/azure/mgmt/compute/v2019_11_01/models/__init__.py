@@ -34,58 +34,56 @@ from ._models_py3 import SnapshotSku
 from ._models_py3 import SnapshotUpdate
 from ._models_py3 import SourceVault
 
-
-from ._compute_management_client_enums import (
-    AccessLevel,
-    DiskCreateOption,
-    DiskEncryptionSetIdentityType,
-    DiskState,
-    DiskStorageAccountTypes,
-    EncryptionType,
-    HyperVGeneration,
-    OperatingSystemTypes,
-    SnapshotStorageAccountTypes,
-)
+from ._compute_management_client_enums import AccessLevel
+from ._compute_management_client_enums import DiskCreateOption
+from ._compute_management_client_enums import DiskEncryptionSetIdentityType
+from ._compute_management_client_enums import DiskState
+from ._compute_management_client_enums import DiskStorageAccountTypes
+from ._compute_management_client_enums import EncryptionType
+from ._compute_management_client_enums import HyperVGeneration
+from ._compute_management_client_enums import OperatingSystemTypes
+from ._compute_management_client_enums import SnapshotStorageAccountTypes
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AccessUri',
-    'ApiError',
-    'ApiErrorBase',
-    'CreationData',
-    'Disk',
-    'DiskEncryptionSet',
-    'DiskEncryptionSetList',
-    'DiskEncryptionSetUpdate',
-    'DiskList',
-    'DiskSku',
-    'DiskUpdate',
-    'Encryption',
-    'EncryptionSetIdentity',
-    'EncryptionSettingsCollection',
-    'EncryptionSettingsElement',
-    'GrantAccessData',
-    'ImageDiskReference',
-    'InnerError',
-    'KeyVaultAndKeyReference',
-    'KeyVaultAndSecretReference',
-    'Resource',
-    'ShareInfoElement',
-    'Snapshot',
-    'SnapshotList',
-    'SnapshotSku',
-    'SnapshotUpdate',
-    'SourceVault',
-    'AccessLevel',
-    'DiskCreateOption',
-    'DiskEncryptionSetIdentityType',
-    'DiskState',
-    'DiskStorageAccountTypes',
-    'EncryptionType',
-    'HyperVGeneration',
-    'OperatingSystemTypes',
-    'SnapshotStorageAccountTypes',
+    "AccessUri",
+    "ApiError",
+    "ApiErrorBase",
+    "CreationData",
+    "Disk",
+    "DiskEncryptionSet",
+    "DiskEncryptionSetList",
+    "DiskEncryptionSetUpdate",
+    "DiskList",
+    "DiskSku",
+    "DiskUpdate",
+    "Encryption",
+    "EncryptionSetIdentity",
+    "EncryptionSettingsCollection",
+    "EncryptionSettingsElement",
+    "GrantAccessData",
+    "ImageDiskReference",
+    "InnerError",
+    "KeyVaultAndKeyReference",
+    "KeyVaultAndSecretReference",
+    "Resource",
+    "ShareInfoElement",
+    "Snapshot",
+    "SnapshotList",
+    "SnapshotSku",
+    "SnapshotUpdate",
+    "SourceVault",
+    "AccessLevel",
+    "DiskCreateOption",
+    "DiskEncryptionSetIdentityType",
+    "DiskState",
+    "DiskStorageAccountTypes",
+    "EncryptionType",
+    "HyperVGeneration",
+    "OperatingSystemTypes",
+    "SnapshotStorageAccountTypes",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
