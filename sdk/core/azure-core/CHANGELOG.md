@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `CaseInsensitiveDict` implementation in `azure.core.utils` removing dependency on `requests` and `aiohttp`
+
 ### Breaking Changes
 
 ### Bugs Fixed
