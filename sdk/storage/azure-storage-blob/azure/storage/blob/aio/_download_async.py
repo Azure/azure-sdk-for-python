@@ -378,10 +378,10 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                     process_storage_error(error)
 
             except ClientPayloadError as error:
-                    retry_total -= 1
-                    if retry_total <= 0:
-                        raise ServiceResponseError(error, error=error)
-                    await asyncio.sleep(1)
+                retry_total -= 1
+                if retry_total <= 0:
+                    raise ServiceResponseError(error, error=error)
+                await asyncio.sleep(1)
 
         # get page ranges to optimize downloading sparse page blob
         if response.properties.blob_type == 'PageBlob':
