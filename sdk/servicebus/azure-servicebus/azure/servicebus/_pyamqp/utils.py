@@ -86,8 +86,7 @@ def add_batch(batch, message):
     # Add a message to a batch
     output = bytearray()
     encode_payload(output, message)
-    batch.append(output)
-    # batch[5].append(output)
+    batch[5].append(output)
 
 
 def encode_str(data, encoding='utf-8'):
