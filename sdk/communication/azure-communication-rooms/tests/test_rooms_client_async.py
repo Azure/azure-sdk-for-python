@@ -165,10 +165,6 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
 
         async def mock_send(*_, **__):
             return mock_response(status_code=200, json_payload={
-                "id": self.room_id,
-                "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
-                "validFrom": self.valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                "validUntil": self.valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
                 "participants": [self.json_participant, additional_participant_json]
             })
 
@@ -181,9 +177,6 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
             raise
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertEqual(self.room_id, response.id)
-        self.assertEqual(self.valid_from, response.valid_from)
-        self.assertEqual(self.valid_until, response.valid_until)
         self.assertListEqual(response.participants, [self.room_participant, additional_participant])
 
     async def test_update_participants(self):
@@ -204,10 +197,6 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
 
         async def mock_send(*_, **__):
             return mock_response(status_code=200, json_payload={
-                "id": self.room_id,
-                "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
-                "validFrom": self.valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                "validUntil": self.valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
                 "participants": [updated_participant_json]
             })
 
@@ -221,9 +210,6 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
             raise
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertEqual(self.room_id, response.id)
-        self.assertEqual(self.valid_from, response.valid_from)
-        self.assertEqual(self.valid_until, response.valid_until)
         self.assertListEqual(response.participants, [updated_participant])
 
     async def test_remove_participants(self):
@@ -232,10 +218,6 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
 
         async def mock_send(*_, **__):
             return mock_response(status_code=200, json_payload={
-                "id": self.room_id,
-                "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
-                "validFrom": self.valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                "validUntil": self.valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
                 "participants": []
             })
 
@@ -249,9 +231,6 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
             raise
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertEqual(self.room_id, response.id)
-        self.assertEqual(self.valid_from, response.valid_from)
-        self.assertEqual(self.valid_until, response.valid_until)
         self.assertListEqual(response.participants, [])
 
     async def test_get_participants(self):

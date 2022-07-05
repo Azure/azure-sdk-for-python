@@ -699,7 +699,7 @@ class RoomsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RoomModel:
+    ) -> _models.ParticipantsCollection:
         """Adds participants to a room. If participants already exist, no change occurs.
 
         Adds participants to a room. If participants already exist, no change occurs.
@@ -711,15 +711,15 @@ class RoomsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RoomModel
-        :rtype: ~azure.communication.rooms.models.RoomModel
+        :return: ParticipantsCollection
+        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def add_participants(
         self, room_id: str, add_participants_request: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.RoomModel:
+    ) -> _models.ParticipantsCollection:
         """Adds participants to a room. If participants already exist, no change occurs.
 
         Adds participants to a room. If participants already exist, no change occurs.
@@ -731,15 +731,15 @@ class RoomsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RoomModel
-        :rtype: ~azure.communication.rooms.models.RoomModel
+        :return: ParticipantsCollection
+        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def add_participants(
         self, room_id: str, add_participants_request: Union[_models.AddParticipantsRequest, IO], **kwargs: Any
-    ) -> _models.RoomModel:
+    ) -> _models.ParticipantsCollection:
         """Adds participants to a room. If participants already exist, no change occurs.
 
         Adds participants to a room. If participants already exist, no change occurs.
@@ -752,8 +752,8 @@ class RoomsOperations:
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :return: RoomModel
-        :rtype: ~azure.communication.rooms.models.RoomModel
+        :return: ParticipantsCollection
+        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -763,7 +763,7 @@ class RoomsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RoomModel]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ParticipantsCollection]
 
         content_type = content_type or "application/json"
         _json = None
@@ -798,7 +798,7 @@ class RoomsOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("RoomModel", pipeline_response)
+        deserialized = self._deserialize("ParticipantsCollection", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -813,7 +813,7 @@ class RoomsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RoomModel:
+    ) -> _models.ParticipantsCollection:
         """Update participants in a room.
 
         Update participants in a room.
@@ -825,15 +825,15 @@ class RoomsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RoomModel
-        :rtype: ~azure.communication.rooms.models.RoomModel
+        :return: ParticipantsCollection
+        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def update_participants(
         self, room_id: str, update_participants_request: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.RoomModel:
+    ) -> _models.ParticipantsCollection:
         """Update participants in a room.
 
         Update participants in a room.
@@ -845,15 +845,15 @@ class RoomsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RoomModel
-        :rtype: ~azure.communication.rooms.models.RoomModel
+        :return: ParticipantsCollection
+        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def update_participants(
         self, room_id: str, update_participants_request: Union[_models.UpdateParticipantsRequest, IO], **kwargs: Any
-    ) -> _models.RoomModel:
+    ) -> _models.ParticipantsCollection:
         """Update participants in a room.
 
         Update participants in a room.
@@ -867,8 +867,8 @@ class RoomsOperations:
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :return: RoomModel
-        :rtype: ~azure.communication.rooms.models.RoomModel
+        :return: ParticipantsCollection
+        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -878,7 +878,7 @@ class RoomsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RoomModel]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ParticipantsCollection]
 
         content_type = content_type or "application/json"
         _json = None
@@ -913,7 +913,7 @@ class RoomsOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("RoomModel", pipeline_response)
+        deserialized = self._deserialize("ParticipantsCollection", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -928,7 +928,7 @@ class RoomsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RoomModel:
+    ) -> _models.ParticipantsCollection:
         """Remove participants from a room.
 
         Remove participants from a room.
@@ -940,15 +940,15 @@ class RoomsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RoomModel
-        :rtype: ~azure.communication.rooms.models.RoomModel
+        :return: ParticipantsCollection
+        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def remove_participants(
         self, room_id: str, remove_participants_request: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.RoomModel:
+    ) -> _models.ParticipantsCollection:
         """Remove participants from a room.
 
         Remove participants from a room.
@@ -960,15 +960,15 @@ class RoomsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RoomModel
-        :rtype: ~azure.communication.rooms.models.RoomModel
+        :return: ParticipantsCollection
+        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def remove_participants(
         self, room_id: str, remove_participants_request: Union[_models.RemoveParticipantsRequest, IO], **kwargs: Any
-    ) -> _models.RoomModel:
+    ) -> _models.ParticipantsCollection:
         """Remove participants from a room.
 
         Remove participants from a room.
@@ -982,8 +982,8 @@ class RoomsOperations:
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :return: RoomModel
-        :rtype: ~azure.communication.rooms.models.RoomModel
+        :return: ParticipantsCollection
+        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -993,7 +993,7 @@ class RoomsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RoomModel]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ParticipantsCollection]
 
         content_type = content_type or "application/json"
         _json = None
@@ -1028,7 +1028,7 @@ class RoomsOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("RoomModel", pipeline_response)
+        deserialized = self._deserialize("ParticipantsCollection", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

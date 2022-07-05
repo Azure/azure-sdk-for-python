@@ -209,14 +209,14 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         participants, # type: List[RoomParticipant]
         **kwargs
     ):
-        # type: (...) -> RoomModel
+        # type: (...) -> ParticipantsCollection
         """Add participants to a room
         :param room_id: Required. Id of room to be updated
         :type room_id: str
         :param participants: Required. Collection of identities invited to the room.
         :paramtype participants: List[RoomParticipant]
-        :returns: Updated room.
-        :rtype: ~azure.communication.rooms.RoomModel
+        :return: ParticipantsCollection
+        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
         add_participants_request = AddParticipantsRequest(
@@ -224,7 +224,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         )
         add_participants_response = self._rooms_service_client.rooms.add_participants(
             room_id=room_id, add_participants_request=add_participants_request, **kwargs)
-        return RoomModel.from_room_response(add_participants_response)
+        return ParticipantsCollection(participants=add_participants_response.participants)
 
     @distributed_trace
     def update_participants(
@@ -233,14 +233,14 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         participants, # type: List[RoomParticipant]
         **kwargs
     ):
-        # type: (...) -> RoomModel
+        # type: (...) -> ParticipantsCollection
         """Update participants to a room
         :param room_id: Required. Id of room to be updated
         :type room_id: str
         :param participants: Required. Collection of identities invited to the room.
         :paramtype participants: List[RoomParticipant]
-        :returns: Updated room.
-        :rtype: ~azure.communication.rooms.RoomModel
+        :return: ParticipantsCollection
+        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
         update_participants_request = UpdateParticipantsRequest(
@@ -248,7 +248,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         )
         update_participants_response = self._rooms_service_client.rooms.update_participants(
             room_id=room_id, update_participants_request=update_participants_request, **kwargs)
-        return RoomModel.from_room_response(update_participants_response)
+        return ParticipantsCollection(participants=update_participants_response.participants)
 
     @distributed_trace
     def remove_participants(
@@ -257,14 +257,14 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         communication_identifiers, # type: List[CommunicationIdentifier]
         **kwargs
     ):
-        # type: (...) -> RoomModel
+        # type: (...) -> ParticipantsCollection
         """Remove participants from a room
         :param room_id: Required. Id of room to be updated
         :type room_id: str
         :param communication_identifiers: Required. Collection of identities invited to the room.
         :paramtype communication_identifiers: List[CommunicationIdentifier]
-        :returns: Updated room.
-        :rtype: ~azure.communication.rooms.RoomModel
+        :return: ParticipantsCollection
+        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
         participants = [
@@ -277,7 +277,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         )
         remove_participants_response = self._rooms_service_client.rooms.remove_participants(
             room_id=room_id, remove_participants_request=remove_participants_request, **kwargs)
-        return RoomModel.from_room_response(remove_participants_response)
+        return ParticipantsCollection(participants=remove_participants_response.participants)
 
     @distributed_trace
     def remove_all_participants(

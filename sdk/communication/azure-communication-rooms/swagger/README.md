@@ -17,7 +17,7 @@ autorest SWAGGER.md
 
 ```yaml
 require:
-    - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/8f26e2055fb0504851c17829341486ee98443aef/specification/communication/data-plane/Rooms/readme.md
+    - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/e30976f6ccb058a36cd2f9d5160e1fd51f6c5d95/specification/communication/data-plane/Rooms/readme.md
 output-folder: ../azure/communication/rooms/_generated
 models-mode: msrest
 namespace: azure.communication.rooms
