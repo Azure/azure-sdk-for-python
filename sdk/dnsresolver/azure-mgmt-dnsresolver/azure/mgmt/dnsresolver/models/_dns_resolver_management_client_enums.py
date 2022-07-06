@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource.
     """
 
@@ -20,7 +19,7 @@ class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DnsResolverState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DnsResolverState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current status of the DNS resolver. This is a read-only property and any attempt to set
     this value will be ignored.
     """
@@ -28,21 +27,21 @@ class DnsResolverState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CONNECTED = "Connected"
     DISCONNECTED = "Disconnected"
 
-class ForwardingRuleState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ForwardingRuleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state of forwarding rule.
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class IpAllocationMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class IpAllocationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Private IP address allocation method.
     """
 
     STATIC = "Static"
     DYNAMIC = "Dynamic"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current provisioning state of the resource.
     """
 
