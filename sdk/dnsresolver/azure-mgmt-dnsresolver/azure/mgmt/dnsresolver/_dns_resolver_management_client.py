@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import DnsResolverManagementClientConfiguration
@@ -25,27 +26,27 @@ class DnsResolverManagementClient:
     """The DNS Resolver Management Client.
 
     :ivar dns_resolvers: DnsResolversOperations operations
-    :vartype dns_resolvers: dns_resolver_management_client.operations.DnsResolversOperations
+    :vartype dns_resolvers: azure.mgmt.dnsresolver.operations.DnsResolversOperations
     :ivar inbound_endpoints: InboundEndpointsOperations operations
-    :vartype inbound_endpoints:
-     dns_resolver_management_client.operations.InboundEndpointsOperations
+    :vartype inbound_endpoints: azure.mgmt.dnsresolver.operations.InboundEndpointsOperations
     :ivar outbound_endpoints: OutboundEndpointsOperations operations
-    :vartype outbound_endpoints:
-     dns_resolver_management_client.operations.OutboundEndpointsOperations
+    :vartype outbound_endpoints: azure.mgmt.dnsresolver.operations.OutboundEndpointsOperations
     :ivar dns_forwarding_rulesets: DnsForwardingRulesetsOperations operations
     :vartype dns_forwarding_rulesets:
-     dns_resolver_management_client.operations.DnsForwardingRulesetsOperations
+     azure.mgmt.dnsresolver.operations.DnsForwardingRulesetsOperations
     :ivar forwarding_rules: ForwardingRulesOperations operations
-    :vartype forwarding_rules: dns_resolver_management_client.operations.ForwardingRulesOperations
+    :vartype forwarding_rules: azure.mgmt.dnsresolver.operations.ForwardingRulesOperations
     :ivar virtual_network_links: VirtualNetworkLinksOperations operations
-    :vartype virtual_network_links:
-     dns_resolver_management_client.operations.VirtualNetworkLinksOperations
+    :vartype virtual_network_links: azure.mgmt.dnsresolver.operations.VirtualNetworkLinksOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2022-07-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -64,17 +65,29 @@ class DnsResolverManagementClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.dns_resolvers = DnsResolversOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.inbound_endpoints = InboundEndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.outbound_endpoints = OutboundEndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.dns_forwarding_rulesets = DnsForwardingRulesetsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.forwarding_rules = ForwardingRulesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_network_links = VirtualNetworkLinksOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.dns_resolvers = DnsResolversOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.inbound_endpoints = InboundEndpointsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.outbound_endpoints = OutboundEndpointsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.dns_forwarding_rulesets = DnsForwardingRulesetsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.forwarding_rules = ForwardingRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_network_links = VirtualNetworkLinksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(
         self,
-        request,  # type: HttpRequest
+        request: HttpRequest,
         **kwargs: Any
     ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
