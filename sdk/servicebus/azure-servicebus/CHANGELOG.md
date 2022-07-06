@@ -1,6 +1,6 @@
 # Release History
 
-## 7.8.0 (2022-07-07)
+## 7.8.0 (2022-07-06)
 
 This version will be the last version to officially support Python 3.6, future versions will require Python 3.7+.
 
