@@ -5,13 +5,13 @@
 # --------------------------------------------------------------------------
 # pylint: disable=unused-argument
 
+import sys
 from base64 import b64encode, b64decode
 
-import sys
 import six
 from azure.core.exceptions import DecodeError
 
-from ._shared.encryption import decrypt_queue_message, encrypt_queue_message, _ENCRYPTION_PROTOCOL_V1
+from ._encryption import decrypt_queue_message, encrypt_queue_message, _ENCRYPTION_PROTOCOL_V1
 
 
 class MessageEncodePolicy(object):

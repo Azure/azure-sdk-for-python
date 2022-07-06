@@ -36,6 +36,9 @@ from ._log_analytics_operations import LogAnalyticsOperations
 from ._virtual_machine_run_commands_operations import VirtualMachineRunCommandsOperations
 from ._virtual_machine_scale_set_vm_run_commands_operations import VirtualMachineScaleSetVMRunCommandsOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'CloudServiceRoleInstancesOperations',
     'CloudServiceRolesOperations',
@@ -67,3 +70,5 @@ __all__ = [
     'VirtualMachineRunCommandsOperations',
     'VirtualMachineScaleSetVMRunCommandsOperations',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

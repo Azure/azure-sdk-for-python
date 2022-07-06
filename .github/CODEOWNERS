@@ -6,7 +6,7 @@
 ################
 
 # Git Hub integration and bot rules
-/.github/                                       @jsquire
+/.github/                                       @jsquire @ronniegeraghty
 
 ###########
 # SDK
@@ -154,6 +154,9 @@
 
 # PRLabel: %Cognitive - Translator
 /sdk/translation/                                                    @kristapratico @mohamedshabanofficial
+
+# PRLabel: %Cognitive - Language
+/sdk/cognitivelanguage/                                              @kristapratico @mohamedshabanofficial
 
 # PRLabel: %Tables
 /sdk/tables/                                                         @annatisch @YalinLi0312
