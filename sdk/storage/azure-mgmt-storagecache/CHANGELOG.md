@@ -1,5 +1,20 @@
 # Release History
 
+## 1.3.0 (2022-07-06)
+
+**Features**
+
+  - Added operation CachesOperations.begin_pause_priming_job
+  - Added operation CachesOperations.begin_resume_priming_job
+  - Added operation CachesOperations.begin_space_allocation
+  - Added operation CachesOperations.begin_start_priming_job
+  - Added operation CachesOperations.begin_stop_priming_job
+  - Model ApiOperationPropertiesServiceSpecification has a new parameter log_specifications
+  - Model Cache has a new parameter priming_jobs
+  - Model Cache has a new parameter space_allocation
+  - Model Cache has a new parameter upgrade_settings
+  - Model StorageTarget has a new parameter allocation_percentage
+
 ## 1.2.0 (2022-03-22)
 
 **Features**
