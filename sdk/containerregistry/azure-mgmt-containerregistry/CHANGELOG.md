@@ -1,5 +1,16 @@
 # Release History
 
+## 10.0.0 (2022-05-26)
+
+**Features**
+
+  - Model Policies has a new parameter azure_ad_authentication_as_arm_policy
+  - Model Policies has a new parameter soft_delete_policy
+
+**Breaking changes**
+
+  - Model NetworkRuleSet no longer has parameter virtual_network_rules
+
 ## 9.1.0 (2022-03-03)
 
 **Features**

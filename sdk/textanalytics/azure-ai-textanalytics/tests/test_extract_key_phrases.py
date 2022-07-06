@@ -561,7 +561,7 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_03_01_PREVIEW})
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy
     def test_disable_service_logs_body_param(self, client):
         def callback(resp):
@@ -571,3 +571,12 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
             disable_service_logs=True,
             raw_response_hook=callback,
         )
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.0"})
+    def test_key_phrases_multiapi_validate_args_v3_0(self, **kwargs):
+        client = kwargs.pop("client")
+
+        with pytest.raises(ValueError) as e:
+            res = client.extract_key_phrases(["I'm tired"], disable_service_logs=True)
+        assert str(e.value) == "'disable_service_logs' is only available for API version v3.1 and up.\n"

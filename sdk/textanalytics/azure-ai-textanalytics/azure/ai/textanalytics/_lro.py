@@ -7,7 +7,7 @@ import base64
 import functools
 import json
 import datetime
-from typing import Generic, Any, Optional
+from typing import Any, Optional
 from urllib.parse import urlencode
 from azure.core.polling._poller import PollingReturnType
 from azure.core.exceptions import HttpResponseError
@@ -18,7 +18,7 @@ from azure.core.polling.base_polling import (
     OperationFailed,
     BadStatus,
 )
-from ._generated.v2022_03_01_preview.models import JobMetadata
+from ._generated.v2022_05_01.models import JobState
 
 _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted", "partiallysucceeded"])
 _FAILED = frozenset(["failed"])
@@ -128,7 +128,7 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
 
     @property
     def _current_body(self):
-        return JobMetadata.deserialize(self._pipeline_response)
+        return JobState.deserialize(self._pipeline_response)
 
     @property
     def created_on(self):
@@ -168,7 +168,7 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
         return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
 
 
-class AnalyzeHealthcareEntitiesLROPoller(LROPoller, Generic[PollingReturnType]):
+class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType]):
     def polling_method(self) -> AnalyzeHealthcareEntitiesLROPollingMethod:
         """Return the polling method associated to this poller."""
         return self._polling_method  # type: ignore
@@ -216,7 +216,7 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller, Generic[PollingReturnType]):
         :return: Display name of the healthcare entities job.
         :rtype: str
 
-        .. versionadded:: 2022-03-01-preview
+        .. versionadded:: 2022-04-01-preview
             *display_name* property.
         """
         return self.polling_method().display_name
@@ -265,7 +265,7 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller, Generic[PollingReturnType]):
 
         try:
             # Join the thread so we no longer have to wait for a result from it.
-            getattr(self, "_thread").join()
+            getattr(self, "_thread").join(timeout=0)
 
             # Get a final status update.
             getattr(self._polling_method, "update_status")()
@@ -296,7 +296,7 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
 
     @property
     def _current_body(self):
-        return JobMetadata.deserialize(self._pipeline_response)
+        return JobState.deserialize(self._pipeline_response)
 
     @property
     def created_on(self):
@@ -361,7 +361,7 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
         return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
 
 
-class AnalyzeActionsLROPoller(LROPoller, Generic[PollingReturnType]):
+class AnalyzeActionsLROPoller(LROPoller[PollingReturnType]):
     def polling_method(self) -> AnalyzeActionsLROPollingMethod:
         """Return the polling method associated to this poller."""
         return self._polling_method  # type: ignore

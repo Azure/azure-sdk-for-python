@@ -1,10 +1,28 @@
 # Release History
 
-## 7.6.2 (Unreleased)
+## 7.8.0 (2022-07-07)
+
+### Features Added
+
+- In `ServiceBusClient`, `get_queue_receiver`, `get_subscription_receiver`, `get_queue_sender`, and `get_topic_sender` now accept
+an optional `client_identifier` argument which allows for specifying a custom identifier for the respective sender or receiver. It can
+be useful during debugging as Service Bus associates the id with errors and helps with easier correlation.
+- `ServiceBusReceiver` and `ServiceBusSender` have an added property `identifier` which returns the `client_identifier` for the current instance.
+
+## 7.7.0 (2022-06-07)
 
 ### Bugs Fixed
 
 - Fixed bug to make AMQP exceptions retryable by default, if condition is not non-retryable, to ensure that InternalServerErrors are retried.
+
+### Features Added
+
+- The `ServiceBusClient` constructor now accepts optional `custom_endpoint_address` argument
+which allows for specifying a custom endpoint to use when communicating with the Service Bus service,
+and is useful when your network does not allow communicating to the standard Service Bus endpoint.
+- The `ServiceBusClient`constructor now accepts optional `connection_verify` argument
+which allows for specifying the path to the custom CA_BUNDLE file of the SSL certificate which is used to authenticate
+the identity of the connection endpoint.
 
 ## 7.6.1 (2022-04-11)
 

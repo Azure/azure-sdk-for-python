@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.9.0b2 Python/3.6.2 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-identity/1.10.0b2 Python/3.6.8 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,13 +17,13 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 09 Mar 2022 07:17:24 GMT",
+        "Date": "Mon, 06 Jun 2022 05:46:13 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12529.17 - WUS2 ProdSlices",
-        "x-ms-request-id": "b5248c18-fe4d-404d-948c-6d8699082900"
+        "x-ms-ests-server": "2.1.12794.7 - WUS2 ProdSlices",
+        "X-XSS-Protection": "0"
       },
       "ResponseBody": {
         "token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
@@ -101,7 +101,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.9.0b2 Python/3.6.2 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-identity/1.10.0b2 Python/3.6.8 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -111,13 +111,13 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 09 Mar 2022 07:17:24 GMT",
+        "Date": "Mon, 06 Jun 2022 05:46:14 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12559.5 - KRSLR2 ProdSlices",
-        "x-ms-request-id": "80337237-7571-4bfb-b6a2-408aeada0400"
+        "x-ms-ests-server": "2.1.12821.11 - SEASLR2 ProdSlices",
+        "X-XSS-Protection": "0"
       },
       "ResponseBody": {
         "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
@@ -172,12 +172,12 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "0b48007f-cafa-4253-bc2e-83fd00efc59d",
+        "client-request-id": "0e3cff2d-b11d-4264-9769-dc7a042d1dea",
         "Connection": "keep-alive",
         "Content-Length": "291",
         "Content-Type": "application/x-www-form-urlencoded",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.9.0b2 Python/3.6.2 (Windows-10-10.0.19041-SP0)",
+        "User-Agent": "azsdk-python-identity/1.10.0b2 Python/3.6.8 (Windows-10-10.0.19041-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
@@ -190,10 +190,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "0b48007f-cafa-4253-bc2e-83fd00efc59d",
+        "client-request-id": "0e3cff2d-b11d-4264-9769-dc7a042d1dea",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 09 Mar 2022 07:17:24 GMT",
+        "Date": "Mon, 06 Jun 2022 05:46:14 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,8 +201,8 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.12529.17 - NCUS ProdSlices",
-        "x-ms-request-id": "afc17ddd-ed2c-442a-bf2a-6e3c8d07ba00"
+        "x-ms-ests-server": "2.1.12794.7 - SCUS ProdSlices",
+        "X-XSS-Protection": "0"
       },
       "ResponseBody": {
         "token_type": "Bearer",
@@ -212,15 +212,13 @@
       }
     },
     {
-      "RequestUri": "https://centraluseuap.management.azure.com/providers/Microsoft.Batch/operations?api-version=2022-01-01",
+      "RequestUri": "https://centraluseuap.management.azure.com/providers/Microsoft.Batch/operations?api-version=2022-06-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-batch/16.1.0 Python/3.6.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "f75fa17a-9f78-11ec-b789-c0b6f9946f2d"
+        "User-Agent": "azsdk-python-mgmt-batch/16.2.0 Python/3.6.8 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -228,7 +226,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 09 Mar 2022 07:17:26 GMT",
+        "Date": "Mon, 06 Jun 2022 05:46:17 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-HTTPAPI/2.0",
@@ -236,10 +234,9 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "fbfa9b0d-0e46-4d82-a553-0bb72158f408",
+        "x-ms-correlation-request-id": "11dd09ee-77ae-4c66-b3a0-caca1f2a8c17",
         "x-ms-ratelimit-remaining-tenant-reads": "11999",
-        "x-ms-request-id": "3ae8ca21-fe94-427a-9c82-8353a0146e4b",
-        "x-ms-routing-request-id": "CENTRALUSEUAP:20220309T071727Z:fbfa9b0d-0e46-4d82-a553-0bb72158f408"
+        "x-ms-routing-request-id": "CENTRALUSEUAP:20220606T054617Z:11dd09ee-77ae-4c66-b3a0-caca1f2a8c17"
       },
       "ResponseBody": {
         "value": [
@@ -1370,6 +1367,16 @@
               "resource": "PrivateEndpointConnections",
               "operation": "Get or List Private endpoint connection",
               "description": "Gets Private endpoint connection or Lists Private endpoint connections on a Batch account"
+            },
+            "isDataAction": false
+          },
+          {
+            "name": "Microsoft.Batch/batchAccounts/privateEndpointConnections/delete",
+            "display": {
+              "provider": "Microsoft Batch",
+              "resource": "PrivateEndpointConnectionProxies",
+              "operation": "Delete Private endpoint connection",
+              "description": "Delete a Private endpoint connection on a Batch account"
             },
             "isDataAction": false
           },

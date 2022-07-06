@@ -1,14 +1,14 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "943",
+        "Content-Length": "941",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -35,48 +35,48 @@
             "taskName": "0",
             "kind": "CustomSingleLabelClassification",
             "parameters": {
-              "project-name": "single_category_classify_project_name",
-              "deployment-name": "single_category_classify_project_name"
+              "projectName": "single_category_classify_project_name",
+              "deploymentName": "single_category_classify_project_name"
             }
           }
         ]
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "260d0bad-2a1b-4df0-8716-cb036f880314",
+        "apim-request-id": "7a7e3223-bc0c-40d6-8b93-6f2d10c05b2e",
         "Content-Length": "0",
-        "Date": "Wed, 20 Apr 2022 23:54:59 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/9c3ea028-aa12-45ff-a74b-abc9fc1cd179?api-version=2022-03-01-preview",
+        "Date": "Thu, 09 Jun 2022 22:07:34 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/9ea8cc8b-a838-4276-b3e2-a974c4c90934?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "182"
+        "x-envoy-upstream-service-time": "236"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/9c3ea028-aa12-45ff-a74b-abc9fc1cd179?api-version=2022-03-01-preview\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/9ea8cc8b-a838-4276-b3e2-a974c4c90934?api-version=2022-05-01\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "8253e914-d8e1-4715-90b3-1a410dab828a",
-        "Content-Length": "1100",
+        "apim-request-id": "b1e5ac5a-1f43-488a-b4b2-e12bb5113c39",
+        "Content-Length": "1105",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Apr 2022 23:55:03 GMT",
+        "Date": "Thu, 09 Jun 2022 22:07:39 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "50"
+        "x-envoy-upstream-service-time": "54"
       },
       "ResponseBody": {
-        "jobId": "9c3ea028-aa12-45ff-a74b-abc9fc1cd179",
-        "lastUpdateDateTime": "2022-04-20T23:55:00Z",
-        "createdDateTime": "2022-04-20T23:54:59Z",
-        "expirationDateTime": "2022-04-21T23:54:59Z",
+        "jobId": "9ea8cc8b-a838-4276-b3e2-a974c4c90934",
+        "lastUpdatedDateTime": "2022-06-09T22:07:35Z",
+        "createdDateTime": "2022-06-09T22:07:34Z",
+        "expirationDateTime": "2022-06-10T22:07:34Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -88,7 +88,7 @@
             {
               "kind": "CustomSingleLabelClassificationLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-04-20T23:55:00.3130858Z",
+              "lastUpdateDateTime": "2022-06-09T22:07:35.16287Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -100,10 +100,12 @@
                 "documents": [
                   {
                     "id": "1",
-                    "class": {
-                      "category": "RateBook",
-                      "confidenceScore": 0.76
-                    },
+                    "class": [
+                      {
+                        "category": "RateBook",
+                        "confidenceScore": 0.76
+                      }
+                    ],
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
@@ -112,10 +114,12 @@
                   },
                   {
                     "id": "2",
-                    "class": {
-                      "category": "RateBook",
-                      "confidenceScore": 0.57
-                    },
+                    "class": [
+                      {
+                        "category": "RateBook",
+                        "confidenceScore": 0.57
+                      }
+                    ],
                     "statistics": {
                       "charactersCount": 158,
                       "transactionsCount": 1
@@ -124,10 +128,12 @@
                   },
                   {
                     "id": "3",
-                    "class": {
-                      "category": "BookRestaurant",
-                      "confidenceScore": 1.0
-                    },
+                    "class": [
+                      {
+                        "category": "BookRestaurant",
+                        "confidenceScore": 1.0
+                      }
+                    ],
                     "statistics": {
                       "charactersCount": 121,
                       "transactionsCount": 1

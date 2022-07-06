@@ -206,7 +206,7 @@ class TestHealth(TextAnalyticsTest):
             for task in tasks["items"]:
                 num_tasks += 1
                 task_stats = task['results']['statistics']
-                assert "2022-03-01" == task['results']['modelVersion']
+                # assert "2022-03-01" == task['results']['modelVersion']  https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14685418
                 assert task_stats['documentsCount'] == 5
                 assert task_stats['validDocumentsCount'] == 4
                 assert task_stats['erroneousDocumentsCount'] == 1
@@ -216,7 +216,7 @@ class TestHealth(TextAnalyticsTest):
         response = client.begin_analyze_healthcare_entities(
             docs,
             show_stats=True,
-            model_version="2022-03-01",
+            model_version="latest",
             polling_interval=self._interval(),
             raw_response_hook = callback,
         ).result()
@@ -297,7 +297,6 @@ class TestHealth(TextAnalyticsTest):
                 'The service was unable to process this document:\nDocument Id: 1\nError: ' \
                 'InvalidDocument - Document text is empty.\n'
 
-    @pytest.mark.skip("service expects modelVersion in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
@@ -306,8 +305,8 @@ class TestHealth(TextAnalyticsTest):
 
         with pytest.raises(HttpResponseError) as err:
             result = client.begin_analyze_healthcare_entities(docs, model_version="bad", polling_interval=self._interval()).result()
-        assert err.error.code == "ModelVersionIncorrect"
-        assert err.error.message is not None
+        assert err.value.error.code == "InvalidParameterValue"
+        assert err.value.error.message is not None
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -357,20 +356,31 @@ class TestHealth(TextAnalyticsTest):
         ).result()
         assert res == "cls result"
 
-    @pytest.mark.skip("cancel is returning 404")
+    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14303656/")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
     def test_cancellation(self, client):
-        single_doc = "hello world"
-        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
+        large_doc = "RECORD #333582770390100 | MH | 85986313 | | 054351 | 2/14/2001 12:00:00 AM | \
+            CORONARY ARTERY DISEASE | Signed | DIS | Admission Date: 5/22/2001 \
+            Report Status: Signed Discharge Date: 4/24/2001 ADMISSION DIAGNOSIS: \
+            CORONARY ARTERY DISEASE. HISTORY OF PRESENT ILLNESS: \
+            The patient is a 54-year-old gentleman with a history of progressive angina over the past several months. \
+            The patient had a cardiac catheterization in July of this year revealing total occlusion of the RCA and \
+            50% left main disease , with a strong family history of coronary artery disease with a brother dying at \
+            the age of 52 from a myocardial infarction and another brother who is status post coronary artery bypass grafting. \
+            The patient had a stress echocardiogram done on July , 2001 , which showed no wall motion abnormalities ,\
+            but this was a difficult study due to body habitus. The patient went for six minutes with minimal ST depressions \
+            in the anterior lateral leads , thought due to fatigue and wrist pain , his anginal equivalent. Due to the patient's \
+            increased symptoms and family history and history left main disease with total occasional of his RCA was referred \
+            for revascularization with open heart surgery."
+        docs = [{"id": str(idx), "text": large_doc*3} for (idx, val) in enumerate(list(itertools.repeat(large_doc, 25)))]
 
         poller = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
 
         try:
             cancellation_poller = poller.cancel()
-            cancellation_poller.wait()
-
+            cancellation_poller.result()
         except HttpResponseError:
             pass # expected if the operation was already in a terminal state.
 
@@ -549,3 +559,42 @@ class TestHealth(TextAnalyticsTest):
         assert isinstance(poller.expires_on, datetime.datetime)
         assert isinstance(poller.last_modified_on, datetime.datetime)
         assert poller.id
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.0"})
+    def test_healthcare_multiapi_validate_v3_0(self, **kwargs):
+        client = kwargs.pop("client")
+
+        with pytest.raises(ValueError) as e:
+            poller = client.begin_analyze_healthcare_entities(
+                documents=[
+                    {"id": "1",
+                     "text": "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."},
+                    {"id": "2", "text": "patients must have histologically confirmed NHL"},
+                    {"id": "3", "text": ""},
+                    {"id": "4", "text": "The patient was diagnosed with Parkinsons Disease (PD)"}
+                ],
+                show_stats=True,
+                polling_interval=self._interval(),
+            )
+        assert str(e.value) == "'begin_analyze_healthcare_entities' is only available for API version v3.1 and up."
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.1"})
+    def test_healthcare_multiapi_validate_v3_1(self, **kwargs):
+        client = kwargs.pop("client")
+
+        with pytest.raises(ValueError) as e:
+            poller = client.begin_analyze_healthcare_entities(
+                documents=[
+                    {"id": "1",
+                     "text": "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."},
+                    {"id": "2", "text": "patients must have histologically confirmed NHL"},
+                    {"id": "3", "text": ""},
+                    {"id": "4", "text": "The patient was diagnosed with Parkinsons Disease (PD)"}
+                ],
+                display_name="this won't work",
+                show_stats=True,
+                polling_interval=self._interval(),
+            )
+        assert str(e.value) == "'display_name' is only available for API version 2022-05-01 and up.\n"

@@ -1,0 +1,9 @@
+command: pip freeze
+environment: file:../environment/environment_conda.yml
+name: "test1"
+compute: "azureml:testCompute"
+experiment_name: mfe-test1
+properties:
+   test_property: test_value
+identity:
+  type: AMLToken

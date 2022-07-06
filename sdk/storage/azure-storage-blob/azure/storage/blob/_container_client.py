@@ -7,53 +7,47 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple, IO, Iterator,
-    TYPE_CHECKING,
-    TypeVar)
-
-
-try:
-    from urllib.parse import urlparse, quote, unquote
-except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import quote, unquote # type: ignore
+    Any, AnyStr, Dict, List, IO, Iterable, Iterator, Optional, TypeVar, Union,
+    TYPE_CHECKING
+)
+from urllib.parse import urlparse, quote, unquote
 
 import six
-
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
-from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
-    return_headers_and_deserialized)
+    return_headers_and_deserialized
+)
 from ._generated import AzureBlobStorage
 from ._generated.models import SignedIdentifier
+from ._blob_client import BlobClient
 from ._deserialize import deserialize_container_properties
-from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
-from ._models import ( # pylint: disable=unused-import
+from ._encryption import StorageEncryptionMixin
+from ._lease import BlobLeaseClient
+from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged, FilteredBlobPaged
+from ._models import (
     ContainerProperties,
     BlobProperties,
     BlobType,
-    FilteredBlob)
-from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged, FilteredBlobPaged
-from ._lease import BlobLeaseClient
-from ._blob_client import BlobClient
+    FilteredBlob
+)
+from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 
 if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpTransport, HttpResponse  # pylint: disable=ungrouped-imports
-    from azure.core.pipeline.policies import HTTPPolicy # pylint: disable=ungrouped-imports
+    from azure.core.pipeline.transport import HttpResponse  # pylint: disable=ungrouped-imports
     from datetime import datetime
     from ._models import (  # pylint: disable=unused-import
         PublicAccess,
         AccessPolicy,
-        ContentSettings,
         StandardBlobTier,
         PremiumPageBlobTier)
 
@@ -73,7 +67,7 @@ def _get_blob_name(blob):
 ClassType = TypeVar("ClassType")
 
 
-class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-public-methods
+class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # pylint: disable=too-many-public-methods
     """A client to interact with a specific container, although that container
     may not yet exist.
 
@@ -161,6 +155,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
+        self.configure_encryption(kwargs)
 
     def _format_url(self, hostname):
         container_name = self.container_name
@@ -257,7 +252,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
 
     @distributed_trace
     def create_container(self, metadata=None, public_access=None, **kwargs):
-        # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], **Any) -> None
+        # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], **Any) -> Dict[str, Union[str, datetime]]
         """
         Creates a new container under the specified account. If the container
         with the same name already exists, the operation fails.
@@ -277,7 +272,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         :paramtype container_encryption_scope: dict or ~azure.storage.blob.ContainerEncryptionScope
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: None
+        :returns: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 
@@ -322,7 +318,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         """
         lease = kwargs.pop('lease', None)
         try:
-            kwargs['source_lease_id'] = lease.id  # type: str
+            kwargs['source_lease_id'] = lease.id
         except AttributeError:
             kwargs['source_lease_id'] = lease
         try:
@@ -330,8 +326,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
                 "{}://{}".format(self.scheme, self.primary_hostname), container_name=new_name,
                 credential=self.credential, api_version=self.api_version, _configuration=self._config,
                 _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
-                require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-                key_resolver_function=self.key_resolver_function)
+                require_encryption=self.require_encryption, encryption_version=self.encryption_version,
+                key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
             renamed_container._client.container.rename(self.container_name, **kwargs)   # pylint: disable = protected-access
             return renamed_container
         except HttpResponseError as error:
@@ -618,8 +614,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             "{}://{}".format(self.scheme, self.primary_hostname),
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
             _location_mode=self._location_mode, _hosts=self._hosts, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function,
-            _pipeline=_pipeline)
+            encryption_version=self.encryption_version, key_encryption_key=self.key_encryption_key,
+            key_resolver_function=self.key_resolver_function, _pipeline=_pipeline)
 
     @distributed_trace
     def get_container_access_policy(self, **kwargs):
@@ -1133,6 +1129,11 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             The number of parallel connections with which to download.
         :keyword str encoding:
             Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
+        :keyword progress_hook:
+            A callback to track the progress of a long running download. The signature is
+            function(current: int, total: int) where current is the number of bytes transfered
+            so far, and total is the total size of the download.
+        :paramtype progress_hook: Callable[[int, int], None]
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -1146,6 +1147,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
 
     def _generate_delete_blobs_subrequest_options(
         self, snapshot=None,
+        version_id=None,
         delete_snapshots=None,
         lease_access_conditions=None,
         modified_access_conditions=None,
@@ -1179,6 +1181,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         query_parameters = {}
         if snapshot is not None:
             query_parameters['snapshot'] = self._client._serialize.query("snapshot", snapshot, 'str')  # pylint: disable=protected-access
+        if version_id is not None:
+            query_parameters['versionid'] = self._client._serialize.query("version_id", version_id, 'str')  # pylint: disable=protected-access
         if timeout is not None:
             query_parameters['timeout'] = self._client._serialize.query("timeout", timeout, 'int', minimum=0)  # pylint: disable=protected-access
 
@@ -1232,6 +1236,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             try:
                 options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
                     snapshot=blob.get('snapshot'),
+                    version_id=blob.get('version_id'),
                     delete_snapshots=delete_snapshots or blob.get('delete_snapshots'),
                     lease=blob.get('lease_id'),
                     if_modified_since=if_modified_since or blob.get('if_modified_since'),
@@ -1290,7 +1295,9 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
                     key: 'name', value type: str
                 snapshot you want to delete:
                     key: 'snapshot', value type: str
-                whether to delete snapthots when deleting blob:
+                version id:
+                    key: 'version_id', value type: str
+                whether to delete snapshots when deleting blob:
                     key: 'delete_snapshots', value: 'include' or 'only'
                 if the blob modified or not:
                     key: 'if_modified_since', 'if_unmodified_since', value type: datetime
@@ -1484,7 +1491,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
                 lease:
                     key: 'lease_id', value type: Union[str, LeaseClient]
                 snapshot:
-                    key: "snapshost", value type: str
+                    key: "snapshot", value type: str
                 version id:
                     key: "version_id", value type: str
                 tags match condition:
@@ -1602,5 +1609,5 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
-            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            require_encryption=self.require_encryption, encryption_version=self.encryption_version,
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)

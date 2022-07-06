@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "365",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -43,41 +43,41 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "f38c3db5-a7f8-4771-b164-15603e7b4ad3",
+        "apim-request-id": "135066d6-328e-4934-a5ca-b746480dc06d",
         "Content-Length": "0",
-        "Date": "Mon, 25 Apr 2022 23:11:42 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/b173fddc-8f73-432c-bfc1-2f72da3ef4e5?api-version=2022-03-01-preview",
+        "Date": "Thu, 09 Jun 2022 23:09:09 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/e0c3a19f-c679-4c46-8ae2-2382b70cd1a5?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "177"
+        "x-envoy-upstream-service-time": "284"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/b173fddc-8f73-432c-bfc1-2f72da3ef4e5?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/e0c3a19f-c679-4c46-8ae2-2382b70cd1a5?api-version=2022-05-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "427caf0b-a5e7-4f61-9052-92bae16f3ed1",
-        "Content-Length": "4487",
+        "apim-request-id": "9a34df12-5cd4-45d3-828f-fe196d833288",
+        "Content-Length": "4488",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 25 Apr 2022 23:11:47 GMT",
+        "Date": "Thu, 09 Jun 2022 23:09:14 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "67"
+        "x-envoy-upstream-service-time": "64"
       },
       "ResponseBody": {
-        "jobId": "b173fddc-8f73-432c-bfc1-2f72da3ef4e5",
-        "lastUpdateDateTime": "2022-04-25T23:11:44Z",
-        "createdDateTime": "2022-04-25T23:11:42Z",
-        "expirationDateTime": "2022-04-26T23:11:42Z",
+        "jobId": "e0c3a19f-c679-4c46-8ae2-2382b70cd1a5",
+        "lastUpdatedDateTime": "2022-06-09T23:09:10Z",
+        "createdDateTime": "2022-06-09T23:09:09Z",
+        "expirationDateTime": "2022-06-10T23:09:09Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -89,7 +89,7 @@
             {
               "kind": "HealthcareLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-04-25T23:11:44.0721958Z",
+              "lastUpdateDateTime": "2022-06-09T23:09:10.3316646Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -481,7 +481,7 @@
                     "id": "2",
                     "error": {
                       "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
+                      "message": "Invalid Document in request.",
                       "innererror": {
                         "code": "InvalidDocument",
                         "message": "Document text is empty."

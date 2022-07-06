@@ -1,14 +1,14 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "790",
+        "Content-Length": "761",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -28,9 +28,8 @@
         "tasks": [
           {
             "taskName": "0",
-            "kind": "ExtractiveSummarization",
+            "kind": "EntityRecognition",
             "parameters": {
-              "sentenceCount": 3,
               "stringIndexType": "UnicodeCodePoint"
             }
           },
@@ -43,9 +42,9 @@
           },
           {
             "taskName": "2",
-            "kind": "ExtractiveSummarization",
+            "kind": "EntityRecognition",
             "parameters": {
-              "sentenceCount": 5,
+              "loggingOptOut": true,
               "stringIndexType": "UnicodeCodePoint"
             }
           }
@@ -53,63 +52,129 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "0c872031-02f5-400a-8911-a852825fe709",
+        "apim-request-id": "bd325258-8a51-4c63-a3fa-00d013cf1a1c",
         "Content-Length": "0",
-        "Date": "Wed, 20 Apr 2022 23:54:35 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/075affc2-3418-4c14-ad54-5ffb307e4f2d?api-version=2022-03-01-preview",
+        "Date": "Thu, 09 Jun 2022 17:43:19 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/6f24e8d1-43fa-4e84-aa4f-da9b2f8ce9b7?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "196"
+        "x-envoy-upstream-service-time": "171"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/075affc2-3418-4c14-ad54-5ffb307e4f2d?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/6f24e8d1-43fa-4e84-aa4f-da9b2f8ce9b7?api-version=2022-05-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "ea605093-0087-4579-8391-1bc0cf53d8f6",
-        "Content-Length": "2895",
+        "apim-request-id": "b5872acc-9006-4179-bbf6-ad917b4e004a",
+        "Content-Length": "2995",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Apr 2022 23:54:41 GMT",
+        "Date": "Thu, 09 Jun 2022 17:43:24 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "129"
+        "x-envoy-upstream-service-time": "79"
       },
       "ResponseBody": {
-        "jobId": "075affc2-3418-4c14-ad54-5ffb307e4f2d",
-        "lastUpdateDateTime": "2022-04-20T23:54:39Z",
-        "createdDateTime": "2022-04-20T23:54:36Z",
-        "expirationDateTime": "2022-04-21T23:54:36Z",
-        "status": "succeeded",
+        "jobId": "6f24e8d1-43fa-4e84-aa4f-da9b2f8ce9b7",
+        "lastUpdatedDateTime": "2022-06-09T17:43:21Z",
+        "createdDateTime": "2022-06-09T17:43:19Z",
+        "expirationDateTime": "2022-06-10T17:43:19Z",
+        "status": "running",
         "errors": [],
         "tasks": {
-          "completed": 3,
+          "completed": 2,
           "failed": 0,
-          "inProgress": 0,
+          "inProgress": 1,
           "total": 3,
           "items": [
             {
-              "kind": "ExtractiveSummarizationLROResults",
+              "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-04-20T23:54:39.7022776Z",
+              "lastUpdateDateTime": "2022-06-09T17:43:20.9335387Z",
               "status": "succeeded",
               "results": {
                 "documents": [
                   {
                     "id": "5",
-                    "sentences": [
+                    "entities": [
                       {
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.",
-                        "rankScore": 1.0,
-                        "offset": 0,
-                        "length": 295
+                        "text": "cent",
+                        "category": "Quantity",
+                        "subcategory": "Percentage",
+                        "offset": 4,
+                        "length": 4,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "Government Accountability Office",
+                        "category": "Organization",
+                        "offset": 23,
+                        "length": 32,
+                        "confidenceScore": 0.99
+                      },
+                      {
+                        "text": "GAO",
+                        "category": "Organization",
+                        "offset": 57,
+                        "length": 3,
+                        "confidenceScore": 0.94
+                      },
+                      {
+                        "text": "oil",
+                        "category": "Product",
+                        "offset": 98,
+                        "length": 3,
+                        "confidenceScore": 0.67
+                      },
+                      {
+                        "text": "natural",
+                        "category": "Product",
+                        "offset": 106,
+                        "length": 7,
+                        "confidenceScore": 0.68
+                      },
+                      {
+                        "text": "gas",
+                        "category": "Skill",
+                        "offset": 114,
+                        "length": 3,
+                        "confidenceScore": 0.57
+                      },
+                      {
+                        "text": "development",
+                        "category": "Skill",
+                        "offset": 118,
+                        "length": 11,
+                        "confidenceScore": 0.48
+                      },
+                      {
+                        "text": "past six years",
+                        "category": "DateTime",
+                        "subcategory": "DateRange",
+                        "offset": 156,
+                        "length": 14,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "BLM",
+                        "category": "Organization",
+                        "offset": 202,
+                        "length": 3,
+                        "confidenceScore": 0.96
+                      },
+                      {
+                        "text": "environmental protection",
+                        "category": "Skill",
+                        "offset": 253,
+                        "length": 24,
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -120,7 +185,7 @@
                     "id": "2",
                     "error": {
                       "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
+                      "message": "Invalid Document in request.",
                       "innererror": {
                         "code": "InvalidDocument",
                         "message": "Document text is empty."
@@ -128,13 +193,253 @@
                     }
                   }
                 ],
-                "modelVersion": "2021-08-01"
+                "modelVersion": "2021-06-01"
+              }
+            },
+            {
+              "kind": "EntityRecognitionLROResults",
+              "taskName": "2",
+              "lastUpdateDateTime": "2022-06-09T17:43:21.0040349Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "5",
+                    "entities": [
+                      {
+                        "text": "cent",
+                        "category": "Quantity",
+                        "subcategory": "Percentage",
+                        "offset": 4,
+                        "length": 4,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "Government Accountability Office",
+                        "category": "Organization",
+                        "offset": 23,
+                        "length": 32,
+                        "confidenceScore": 0.99
+                      },
+                      {
+                        "text": "GAO",
+                        "category": "Organization",
+                        "offset": 57,
+                        "length": 3,
+                        "confidenceScore": 0.94
+                      },
+                      {
+                        "text": "oil",
+                        "category": "Product",
+                        "offset": 98,
+                        "length": 3,
+                        "confidenceScore": 0.67
+                      },
+                      {
+                        "text": "natural",
+                        "category": "Product",
+                        "offset": 106,
+                        "length": 7,
+                        "confidenceScore": 0.68
+                      },
+                      {
+                        "text": "gas",
+                        "category": "Skill",
+                        "offset": 114,
+                        "length": 3,
+                        "confidenceScore": 0.57
+                      },
+                      {
+                        "text": "development",
+                        "category": "Skill",
+                        "offset": 118,
+                        "length": 11,
+                        "confidenceScore": 0.48
+                      },
+                      {
+                        "text": "past six years",
+                        "category": "DateTime",
+                        "subcategory": "DateRange",
+                        "offset": 156,
+                        "length": 14,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "BLM",
+                        "category": "Organization",
+                        "offset": 202,
+                        "length": 3,
+                        "confidenceScore": 0.96
+                      },
+                      {
+                        "text": "environmental protection",
+                        "category": "Skill",
+                        "offset": 253,
+                        "length": 24,
+                        "confidenceScore": 0.79
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [
+                  {
+                    "id": "2",
+                    "error": {
+                      "code": "InvalidArgument",
+                      "message": "Invalid Document in request.",
+                      "innererror": {
+                        "code": "InvalidDocument",
+                        "message": "Document text is empty."
+                      }
+                    }
+                  }
+                ],
+                "modelVersion": "2021-06-01"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/6f24e8d1-43fa-4e84-aa4f-da9b2f8ce9b7?api-version=2022-05-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "81bd0f4a-24f3-4ce8-b7d8-ee77c274ef79",
+        "Content-Length": "4118",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 09 Jun 2022 17:43:28 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "138"
+      },
+      "ResponseBody": {
+        "jobId": "6f24e8d1-43fa-4e84-aa4f-da9b2f8ce9b7",
+        "lastUpdatedDateTime": "2022-06-09T17:43:27Z",
+        "createdDateTime": "2022-06-09T17:43:19Z",
+        "expirationDateTime": "2022-06-10T17:43:19Z",
+        "status": "succeeded",
+        "errors": [],
+        "tasks": {
+          "completed": 3,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 3,
+          "items": [
+            {
+              "kind": "EntityRecognitionLROResults",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-06-09T17:43:20.9335387Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "5",
+                    "entities": [
+                      {
+                        "text": "cent",
+                        "category": "Quantity",
+                        "subcategory": "Percentage",
+                        "offset": 4,
+                        "length": 4,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "Government Accountability Office",
+                        "category": "Organization",
+                        "offset": 23,
+                        "length": 32,
+                        "confidenceScore": 0.99
+                      },
+                      {
+                        "text": "GAO",
+                        "category": "Organization",
+                        "offset": 57,
+                        "length": 3,
+                        "confidenceScore": 0.94
+                      },
+                      {
+                        "text": "oil",
+                        "category": "Product",
+                        "offset": 98,
+                        "length": 3,
+                        "confidenceScore": 0.67
+                      },
+                      {
+                        "text": "natural",
+                        "category": "Product",
+                        "offset": 106,
+                        "length": 7,
+                        "confidenceScore": 0.68
+                      },
+                      {
+                        "text": "gas",
+                        "category": "Skill",
+                        "offset": 114,
+                        "length": 3,
+                        "confidenceScore": 0.57
+                      },
+                      {
+                        "text": "development",
+                        "category": "Skill",
+                        "offset": 118,
+                        "length": 11,
+                        "confidenceScore": 0.48
+                      },
+                      {
+                        "text": "past six years",
+                        "category": "DateTime",
+                        "subcategory": "DateRange",
+                        "offset": 156,
+                        "length": 14,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "BLM",
+                        "category": "Organization",
+                        "offset": 202,
+                        "length": 3,
+                        "confidenceScore": 0.96
+                      },
+                      {
+                        "text": "environmental protection",
+                        "category": "Skill",
+                        "offset": 253,
+                        "length": 24,
+                        "confidenceScore": 0.79
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [
+                  {
+                    "id": "2",
+                    "error": {
+                      "code": "InvalidArgument",
+                      "message": "Invalid Document in request.",
+                      "innererror": {
+                        "code": "InvalidDocument",
+                        "message": "Document text is empty."
+                      }
+                    }
+                  }
+                ],
+                "modelVersion": "2021-06-01"
               }
             },
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-04-20T23:54:38.7095557Z",
+              "lastUpdateDateTime": "2022-06-09T17:43:27.2144399Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -180,7 +485,7 @@
                     "id": "2",
                     "error": {
                       "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
+                      "message": "Invalid Document in request.",
                       "innererror": {
                         "code": "InvalidDocument",
                         "message": "Document text is empty."
@@ -192,20 +497,86 @@
               }
             },
             {
-              "kind": "ExtractiveSummarizationLROResults",
+              "kind": "EntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-04-20T23:54:38.3565038Z",
+              "lastUpdateDateTime": "2022-06-09T17:43:21.0040349Z",
               "status": "succeeded",
               "results": {
                 "documents": [
                   {
                     "id": "5",
-                    "sentences": [
+                    "entities": [
                       {
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.",
-                        "rankScore": 1.0,
-                        "offset": 0,
-                        "length": 295
+                        "text": "cent",
+                        "category": "Quantity",
+                        "subcategory": "Percentage",
+                        "offset": 4,
+                        "length": 4,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "Government Accountability Office",
+                        "category": "Organization",
+                        "offset": 23,
+                        "length": 32,
+                        "confidenceScore": 0.99
+                      },
+                      {
+                        "text": "GAO",
+                        "category": "Organization",
+                        "offset": 57,
+                        "length": 3,
+                        "confidenceScore": 0.94
+                      },
+                      {
+                        "text": "oil",
+                        "category": "Product",
+                        "offset": 98,
+                        "length": 3,
+                        "confidenceScore": 0.67
+                      },
+                      {
+                        "text": "natural",
+                        "category": "Product",
+                        "offset": 106,
+                        "length": 7,
+                        "confidenceScore": 0.68
+                      },
+                      {
+                        "text": "gas",
+                        "category": "Skill",
+                        "offset": 114,
+                        "length": 3,
+                        "confidenceScore": 0.57
+                      },
+                      {
+                        "text": "development",
+                        "category": "Skill",
+                        "offset": 118,
+                        "length": 11,
+                        "confidenceScore": 0.48
+                      },
+                      {
+                        "text": "past six years",
+                        "category": "DateTime",
+                        "subcategory": "DateRange",
+                        "offset": 156,
+                        "length": 14,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "BLM",
+                        "category": "Organization",
+                        "offset": 202,
+                        "length": 3,
+                        "confidenceScore": 0.96
+                      },
+                      {
+                        "text": "environmental protection",
+                        "category": "Skill",
+                        "offset": 253,
+                        "length": 24,
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -216,7 +587,7 @@
                     "id": "2",
                     "error": {
                       "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
+                      "message": "Invalid Document in request.",
                       "innererror": {
                         "code": "InvalidDocument",
                         "message": "Document text is empty."
@@ -224,7 +595,7 @@
                     }
                   }
                 ],
-                "modelVersion": "2021-08-01"
+                "modelVersion": "2021-06-01"
               }
             }
           ]

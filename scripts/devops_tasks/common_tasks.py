@@ -59,6 +59,7 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
 META_PACKAGES = ["azure", "azure-mgmt", "azure-keyvault"]
 REGRESSION_EXCLUDED_PACKAGES = [
     "azure-common",
+    "azure-ai-ml"
 ]
 
 MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [

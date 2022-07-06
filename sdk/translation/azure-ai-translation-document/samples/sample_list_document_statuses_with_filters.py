@@ -49,7 +49,6 @@ def sample_list_document_statuses_with_filters():
     end = datetime(2021, 4, 14)
     statuses = ["Canceled", "Failed"]
     order_by = ["created_on desc"]
-    results_per_page = 2
     skip = 3
 
     filtered_docs = client.list_document_statuses(
@@ -62,7 +61,6 @@ def sample_list_document_statuses_with_filters():
         order_by=order_by,
         # paging
         skip=skip,
-        results_per_page=results_per_page
     ).by_page()
 
     # check statuses

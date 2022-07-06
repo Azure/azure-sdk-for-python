@@ -13,7 +13,7 @@ from azure.core.polling.base_polling import OperationFailed, BadStatus
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.polling._async_poller import PollingReturnType
 from .._lro import TextAnalyticsOperationResourcePolling
-from .._generated.v2022_03_01_preview.models import JobMetadata
+from .._generated.v2022_05_01.models import JobState
 
 
 _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted", "partiallysucceeded"])
@@ -102,7 +102,7 @@ class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
 
     @property
     def _current_body(self):
-        return JobMetadata.deserialize(self._pipeline_response)
+        return JobState.deserialize(self._pipeline_response)
 
     @property
     def created_on(self):
@@ -190,7 +190,7 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
         :return: Display name of the healthcare entities job.
         :rtype: str
 
-        .. versionadded:: 2022-03-01-preview
+        .. versionadded:: 2022-04-01-preview
             *display_name* property.
         """
         return self.polling_method().display_name
@@ -243,11 +243,11 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
                 self._polling_method, "_text_analytics_client"
             )
             try:
-                return client.begin_cancel_health_job(
+                return await client.begin_cancel_health_job(
                     self.id, polling=TextAnalyticsAsyncLROPollingMethod(timeout=polling_interval)
                 )
             except ValueError:  # language API compat
-                return client.begin_analyze_text_cancel_job(
+                return await client.begin_analyze_text_cancel_job(
                     self.id, polling=TextAnalyticsAsyncLROPollingMethod(timeout=polling_interval)
                 )
         except HttpResponseError as error:
@@ -265,7 +265,7 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
 
     @property
     def _current_body(self):
-        return JobMetadata.deserialize(self._pipeline_response)
+        return JobState.deserialize(self._pipeline_response)
 
     @property
     def created_on(self):

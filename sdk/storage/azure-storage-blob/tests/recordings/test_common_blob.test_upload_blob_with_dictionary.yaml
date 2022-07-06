@@ -1,0 +1,80 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.12.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 07 Jun 2022 19:20:35 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainerf66d1427?restype=container&timeout=5
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:e6910659-b01e-0003-5ca3-7a1745000000\nTime:2022-06-07T19:20:34.5823446Z</Message></Error>"
+    headers:
+      content-length:
+      - '230'
+      content-type:
+      - application/xml
+      date:
+      - Tue, 07 Jun 2022 19:20:34 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ContainerAlreadyExists
+      x-ms-version:
+      - '2021-06-08'
+    status:
+      code: 409
+      message: The specified container already exists.
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.12.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 07 Jun 2022 19:20:35 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainersourcef66d1427?restype=container&timeout=5
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:e6910683-b01e-0003-7fa3-7a1745000000\nTime:2022-06-07T19:20:34.6763141Z</Message></Error>"
+    headers:
+      content-length:
+      - '230'
+      content-type:
+      - application/xml
+      date:
+      - Tue, 07 Jun 2022 19:20:34 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ContainerAlreadyExists
+      x-ms-version:
+      - '2021-06-08'
+    status:
+      code: 409
+      message: The specified container already exists.
+version: 1

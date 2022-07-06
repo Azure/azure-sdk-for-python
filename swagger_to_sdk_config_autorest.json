@@ -5,7 +5,6 @@
       "use": ["@autorest/python@5.16.0", "@autorest/modelerfour@4.19.3"],
       "python": "",
       "sdkrel:python-sdks-folder": "./sdk/.",
-      "multiapi": "",
       "python3-only": ""
     },
     "advanced_options": {

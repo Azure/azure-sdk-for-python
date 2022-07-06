@@ -1,3 +1,4 @@
+
 # coding: utf-8
 
 # -------------------------------------------------------------------------
@@ -28,7 +29,7 @@ from azure.storage.blob import (
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
 from azure.storage.blob._shared.policies import StorageContentValidation
 from devtools_testutils.storage.aio import AsyncStorageTestCase
-from test_helpers import ProgressTracker
+from test_helpers_async import ProgressTracker
 from settings.testcase import BlobPreparer
 
 
@@ -1835,7 +1836,7 @@ class StoragePageBlobAsyncTest(AsyncStorageTestCase):
 
         # Assert
 
-    @pytest.mark.skip(reason="Failing live test https://github.com/Azure/azure-sdk-for-python/issues/10473")
+    @pytest.mark.skip(reason="Requires further investigation. Failing for unexpected kwarg seal_blob")
     @pytest.mark.live_test_only
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1880,11 +1881,8 @@ class StoragePageBlobAsyncTest(AsyncStorageTestCase):
         # strip off protocol
         self.assertTrue(copy_blob.copy.source.endswith(sas_blob.url[5:]))
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
     async def test_blob_tier_on_create(self, premium_storage_account_name, premium_storage_account_key):
-        # Test can only run live
-
         bsc = BlobServiceClient(self.account_url(premium_storage_account_name, "blob"), credential=premium_storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         url = self.account_url(premium_storage_account_name, "blob")

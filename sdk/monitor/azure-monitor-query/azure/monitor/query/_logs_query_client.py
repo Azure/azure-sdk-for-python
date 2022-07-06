@@ -5,7 +5,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, Union, Sequence, Dict, List, cast
+from typing import TYPE_CHECKING, Any, Union, Sequence, Dict, List, cast, Tuple
+from datetime import timedelta, datetime
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
@@ -24,7 +25,6 @@ from ._exceptions import LogsQueryError
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from datetime import timedelta, datetime
 
 
 class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyword
@@ -66,8 +66,16 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         self._query_op = self._client.query
 
     @distributed_trace
-    def query_workspace(self, workspace_id, query, **kwargs):
-        # type: (str, str, Any) -> Union[LogsQueryResult, LogsQueryPartialResult]
+    def query_workspace(
+        self,
+        workspace_id: str,
+        query: str,
+        *,
+        timespan: Union[
+            timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]
+        ],
+        **kwargs: Any
+        ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
         """Execute a Kusto query.
 
         Executes a Kusto query for data.
@@ -104,11 +112,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
             :dedent: 0
             :caption: Get a response for a single Log Query
         """
-        if "timespan" not in kwargs:
-            raise TypeError(
-                "query() missing 1 required keyword-only argument: 'timespan'"
-            )
-        timespan = construct_iso8601(kwargs.pop("timespan"))
+        timespan = construct_iso8601(timespan)
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)
         server_timeout = kwargs.pop("server_timeout", None)

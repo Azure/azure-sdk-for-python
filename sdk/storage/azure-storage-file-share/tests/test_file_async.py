@@ -7,17 +7,14 @@
 # --------------------------------------------------------------------------
 import base64
 import os
-import unittest
 from datetime import datetime, timedelta
 
-from azure.core.credentials import AzureSasCredential
-from azure.core.pipeline.transport import AioHttpTransport
-from multidict import CIMultiDict, CIMultiDictProxy
 import requests
 import pytest
 import uuid
-
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
+from azure.core.pipeline.transport import AioHttpTransport
 from azure.storage.blob.aio import BlobServiceClient
 from azure.storage.fileshare import (
     generate_account_sas,
@@ -31,14 +28,15 @@ from azure.storage.fileshare import (
     ResourceTypes,
     AccountSasPermissions,
     StorageErrorCode)
-from azure.storage.fileshare._parser import _datetime_to_str
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.fileshare.aio import (
     ShareFileClient,
     ShareServiceClient,
 )
-from settings.testcase import FileSharePreparer
+from multidict import CIMultiDict, CIMultiDictProxy
+
 from devtools_testutils.storage.aio import AsyncStorageTestCase
+from settings.testcase import FileSharePreparer
+from test_helpers_async import ProgressTracker
 
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = 'share'
@@ -51,9 +49,8 @@ LARGE_FILE_SIZE = 64 * 1024 + 5
 TEST_FILE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-' \
                         '1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;' \
                         'S-1-5-21-397955417-626881126-188441444-3053964)'
-
-
 # ------------------------------------------------------------------------------
+
 
 class AiohttpTestTransport(AioHttpTransport):
     """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
@@ -849,7 +846,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Act
         data = b'abcdefghijklmnop' * 32
-        await file_client.upload_range(data, offset=0, length=512, file_last_written_mode="Now")
+        await file_client.upload_range(data, offset=0, length=512, file_last_write_mode="Now")
 
         # Assert
         new_last_write_time = (await file_client.get_file_properties()).last_write_time
@@ -864,7 +861,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Act
         data = b'abcdefghijklmnop' * 32
-        await file_client.upload_range(data, offset=0, length=512, file_last_written_mode="Preserve")
+        await file_client.upload_range(data, offset=0, length=512, file_last_write_mode="Preserve")
 
         # Assert
         new_last_write_time = (await file_client.get_file_properties()).last_write_time
@@ -1052,7 +1049,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Act
         await destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
-                                                            file_last_written_mode="Now")
+                                                            file_last_write_mode="Now")
 
         # Assert
         new_last_write_time = (await destination_file_client.get_file_properties()).last_write_time
@@ -1085,7 +1082,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Act
         await destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
-                                                            file_last_written_mode="Preserve")
+                                                            file_last_write_mode="Preserve")
 
         # Assert
         new_last_write_time = (await destination_file_client.get_file_properties()).last_write_time
@@ -1416,6 +1413,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         file_creation_time = source_props.creation_time - timedelta(hours=1)
         file_last_write_time = source_props.last_write_time - timedelta(hours=1)
+        file_change_time = source_props.change_time - timedelta(hours=1)
         file_attributes = "Temporary|NoScrubData"
 
         # Act
@@ -1426,6 +1424,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
             file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time,
         )
 
         # Assert
@@ -1433,6 +1432,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         # to make sure the attributes are the same as the set ones
         self.assertEqual(file_creation_time, dest_prop['creation_time'])
         self.assertEqual(file_last_write_time, dest_prop['last_write_time'])
+        self.assertEqual(file_change_time, dest_prop['change_time'])
         self.assertIn('Temporary', dest_prop['file_attributes'])
         self.assertIn('NoScrubData', dest_prop['file_attributes'])
 
@@ -2151,6 +2151,52 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         self._teardown(file_name)
         # Assert
 
+    @FileSharePreparer()
+    async def test_create_file_progress(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key,
+            max_range_size=1024)
+
+        data = b'a' * 5 * 1024
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        await file_client.upload_file(data, progress_hook=progress.assert_progress)
+
+        # Assert
+        progress.assert_complete()
+
+    @pytest.mark.live_test_only
+    @FileSharePreparer()
+    async def test_create_file_progress_parallel(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key,
+            max_range_size=1024)
+
+        data = b'a' * 5 * 1024
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        await file_client.upload_file(data, progress_hook=progress.assert_progress, max_concurrency=3)
+
+        # Assert
+        progress.assert_complete()
+
     # --Test cases for sas & acl ------------------------------------------------
     @FileSharePreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -2547,20 +2593,17 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
     async def test_rename_file_content_type(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         source_file = await self._create_file(storage_account_name, storage_account_key, 'file1')
-
-        content_settings = ContentSettings (
-            content_type='text/plain'
-        )
+        content_type = 'text/plain'
 
         # Act
         new_file = await source_file.rename_file(
             'file2',
-            content_settings=content_settings)
+            content_type=content_type)
 
         # Assert
         props = await new_file.get_file_properties()
         self.assertIsNotNone(props)
-        self.assertEqual(content_settings.content_type, props.content_settings.content_type)
+        self.assertEqual(content_type, props.content_settings.content_type)
 
     @FileSharePreparer()
     @AsyncStorageTestCase.await_prepared_test

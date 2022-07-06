@@ -10,19 +10,10 @@
 # --------------------------------------------------------------------------
 from msrest import Serializer, Deserializer
 from typing import TYPE_CHECKING
-import warnings
-
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
-from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.mgmt.core.exceptions import ARMErrorFormat
-from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
+    from typing import Any, Iterable, Optional
 
     from azure.core.paging import ItemPaged
     from azure.core.polling import LROPoller
@@ -84,8 +75,6 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-05-01':
-            from .v2021_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-08-01':
             from .v2021_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
@@ -159,8 +148,6 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-05-01':
-            from .v2021_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-08-01':
             from .v2021_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
@@ -226,8 +213,6 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-05-01':
-            from .v2021_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-08-01':
             from .v2021_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
@@ -296,8 +281,6 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-05-01':
-            from .v2021_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-08-01':
             from .v2021_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
@@ -395,8 +378,6 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-05-01':
-            from .v2021_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-08-01':
             from .v2021_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
@@ -458,8 +439,6 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-05-01':
-            from .v2021_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-08-01':
             from .v2021_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
@@ -521,8 +500,6 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-05-01':
-            from .v2021_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-08-01':
             from .v2021_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
@@ -598,8 +575,6 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-05-01':
-            from .v2021_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-08-01':
             from .v2021_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:

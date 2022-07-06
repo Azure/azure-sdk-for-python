@@ -1,8 +1,21 @@
 # Release History
 
-## 12.7.0 (Unreleased)
+## 12.8.0 (Unreleased)
 
 ### Features Added
+- Stable release of features from 12.8.0b1.
+
+## 12.8.0b1 (2022-06-15)
+
+### Features Added
+- Added support for service version 2021-08-06.
+- Added support for `owner`, `group`, `acl`, `lease_id`, `lease_duration` to both file and directory `create` APIs.
+- Added support for `expiry_options`, `expires_on` to file `create` APIs.
+
+## 12.7.0 (2022-05-09)
+
+### Features Added
+- Stable release of features from 12.7.0b1.
 
 ### Bugs Fixed
 - Fixed a bug, introduced in the previous beta release, that caused Authentication errors when attempting to use

@@ -4,12 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines, invalid-overridden-method
+
+import warnings
 from functools import partial
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
+    Any, AnyStr, Dict, IO, Iterable, List, Tuple, Optional, Union,
     TYPE_CHECKING
 )
-import warnings
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
@@ -17,25 +18,29 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import return_response_headers, process_storage_error
-from .._deserialize import get_page_ranges_result, parse_tags, deserialize_pipeline_response_into_cls
-from .._serialize import get_modify_conditions, get_api_version, get_access_conditions
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import CpkInfo
-from .._deserialize import deserialize_blob_properties
 from .._blob_client import BlobClient as BlobClientBase
+from .._deserialize import (
+    deserialize_blob_properties,
+    deserialize_pipeline_response_into_cls,
+    get_page_ranges_result,
+    parse_tags
+)
+from .._encryption import StorageEncryptionMixin
+from .._models import BlobType, BlobBlock, BlobProperties, PageRange
+from .._serialize import get_modify_conditions, get_api_version, get_access_conditions
+from ._download_async import StorageStreamDownloader
+from ._lease_async import BlobLeaseClient
+from ._models import PageRangePaged
 from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
-    upload_page_blob)
-from .._models import BlobType, BlobBlock, BlobProperties, PageRange
-from ._models import PageRangePaged
-from ._lease_async import BlobLeaseClient
-from ._download_async import StorageStreamDownloader
-
+    upload_page_blob
+)
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -48,7 +53,7 @@ if TYPE_CHECKING:
     )
 
 
-class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disable=too-many-public-methods
+class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptionMixin):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific blob, although that blob may not yet exist.
 
     :param str account_url:
@@ -126,6 +131,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self.configure_encryption(kwargs)
 
     @distributed_trace_async
     async def get_account_information(self, **kwargs): # type: ignore
@@ -367,10 +373,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword progress_hook:
-            A callback to track the progress of a long running upload. The signature is
+            An async callback to track the progress of a long running upload. The signature is
             function(current: int, total: Optional[int]) where current is the number of bytes transfered
             so far, and total is the size of the blob or None if the size is unknown.
-        :paramtype progress_hook: Callable[[int, Optional[int]], None]
+        :paramtype progress_hook: Callable[[int, Optional[int]], Awaitable[None]]
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -465,6 +471,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The number of parallel connections with which to download.
         :keyword str encoding:
             Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
+        :keyword progress_hook:
+            An async callback to track the progress of a long running download. The signature is
+            function(current: int, total: int) where current is the number of bytes transfered
+            so far, and total is the total size of the download.
+        :paramtype progress_hook: Callable[[int, int], Awaitable[None]]
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -2726,6 +2737,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         return ContainerClient(
             "{}://{}".format(self.scheme, self.primary_hostname), container_name=self.container_name,
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
-            _location_mode=self._location_mode, _hosts=self._hosts, require_encryption=self.require_encryption,
-            _pipeline=_pipeline, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
+            require_encryption=self.require_encryption, encryption_version=self.encryption_version,
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)

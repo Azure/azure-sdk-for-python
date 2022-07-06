@@ -35,6 +35,26 @@ async def test_send_with_invalid_hostname_async(invalid_hostname, connstr_receiv
             batch.add(EventData("test data"))
             await client.send_batch(batch)
 
+    # test setting callback
+    async def on_error(events, pid, err):
+        assert len(events) == 1
+        assert not pid
+        on_error.err = err
+
+    on_error.err = None
+    client = EventHubProducerClient.from_connection_string(invalid_hostname, on_error=on_error)
+    async with client:
+        batch = EventDataBatch()
+        batch.add(EventData("test data"))
+        await client.send_batch(batch)
+    assert isinstance(on_error.err, ConnectError)
+
+    on_error.err = None
+    client = EventHubProducerClient.from_connection_string(invalid_hostname, on_error=on_error)
+    async with client:
+        await client.send_event(EventData("test data"))
+    assert isinstance(on_error.err, ConnectError)
+
 
 @pytest.mark.parametrize("invalid_place",
                          ["hostname", "key_name", "access_key", "event_hub", "partition"])
