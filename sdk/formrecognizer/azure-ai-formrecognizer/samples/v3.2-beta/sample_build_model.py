@@ -30,7 +30,7 @@ import os
 
 def sample_build_model():
     # [START build_model]
-    from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentBuildMode
+    from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentBuildMode, AzureBlobContentSource
     from azure.core.credentials import AzureKeyCredential
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
@@ -39,7 +39,9 @@ def sample_build_model():
 
     document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
     poller = document_model_admin_client.begin_build_model(
-        container_sas_url, DocumentBuildMode.TEMPLATE, description="my model description"
+        AzureBlobContentSource(container_url=container_sas_url),
+        DocumentBuildMode.TEMPLATE,
+        description="my model description"
     )
     model = poller.result()
 

@@ -4201,6 +4201,111 @@ class DocTypeInfo(object):
         )
 
 
+class ContentSource(object):
+    """A content source containing files needed to build a new document analysis model.
+
+    :ivar str kind: The kind of content source.
+    """
+
+    def __init__(self, **kwargs):
+        self.kind = kwargs.get("kind", None)
+
+    def __repr__(self):
+        return f"ContentSource(kind={self.kind})"
+    
+    @classmethod
+    def _from_generated(cls, source):
+        return cls(
+            kind=source.kind,
+        )
+
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of ContentSource.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "kind": self.kind,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> ContentSource
+        """Converts a dict in the shape of a ContentSource to the model itself.
+
+        :param dict data: A dictionary in the shape of ContentSource.
+        :return: ContentSource
+        :rtype: ContentSource
+        """
+        return cls(
+            kind=data.get("kind", None),
+        )
+
+
+class AzureBlobContentSource(ContentSource):
+    """Azure Blob Storage content.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar str container_url: An Azure Storage blob container's SAS URI. A container URI (without SAS)
+            can be used if the container is public or has a managed identity configured. For more information on
+            setting up a training data set, see: https://aka.ms/azsdk/formrecognizer/buildtrainingset.
+    :ivar str prefix: A case-sensitive prefix string to filter documents in the source path. For example, 
+            when using an Azure storage blob URI, use the prefix to restrict sub folders.
+            `prefix` should end in '/' to avoid cases where filenames share the same prefix.
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureBlobContentSource, self).__init__(kind="azure_blob", **kwargs)
+        self.container_url = kwargs.get("container_url", None)
+        self.prefix = kwargs.get("prefix", None)
+
+    def __repr__(self):
+        return (
+            f"AzureBlobContentSource(container_url={self.container_url}, "
+            f"prefix={self.prefix}, kind={self.kind})"
+        )
+
+    @classmethod
+    def _from_generated(cls, source):
+        return cls(
+            container_url=source.container_url,
+            prefix=source.prefix,
+        )
+
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of AzureBlobContentSource.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "container_url": self.container_url,
+            "prefix": self.prefix,
+            "kind": self.kind,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> AzureBlobContentSource
+        """Converts a dict in the shape of a AzureBlobContentSource to the model itself.
+
+        :param dict data: A dictionary in the shape of AzureBlobContentSource.
+        :return: AzureBlobContentSource
+        :rtype: AzureBlobContentSource
+        """
+        return cls(
+            container_url=data.get("container_url", None),
+            prefix=data.get("prefix", None),
+        )
+
+
 class AccountInfo(object):
     """Info regarding models under the Form Recognizer resource.
 
