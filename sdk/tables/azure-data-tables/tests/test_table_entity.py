@@ -2240,7 +2240,6 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @tables_decorator
-    @recorded_by_proxy
     def test_list_tables_with_invalid_credential(self, tables_storage_account_name, tables_primary_storage_account_key):
         account_url = self.account_url(tables_storage_account_name, "table")
         credential = DefaultAzureCredential(
