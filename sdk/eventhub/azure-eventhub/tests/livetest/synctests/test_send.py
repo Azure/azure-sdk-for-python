@@ -20,6 +20,7 @@ from azure.eventhub.amqp import (
     AmqpAnnotatedMessage,
     AmqpMessageProperties,
 )
+from azure.eventhub._transport._uamqp_transport import UamqpTransport
 
 @pytest.mark.liveTest
 def test_send_with_partition_key(connstr_receivers):
@@ -363,11 +364,11 @@ def test_send_list_wrong_data(connection_str, to_send, exception_type):
             client.send_batch(to_send)
 
 
-@pytest.mark.parametrize("partition_id, partition_key", [("0", None), (None, "pk")])
-def test_send_batch_pid_pk(invalid_hostname, partition_id, partition_key):
+@pytest.mark.parametrize("partition_id, partition_key, amqp_transport", [("0", None, UamqpTransport()), (None, "pk", UamqpTransport())], )
+def test_send_batch_pid_pk(invalid_hostname, partition_id, partition_key, amqp_transport):
     # Use invalid_hostname because this is not a live test.
     client = EventHubProducerClient.from_connection_string(invalid_hostname)
-    batch = EventDataBatch(partition_id=partition_id, partition_key=partition_key)
+    batch = EventDataBatch(partition_id=partition_id, partition_key=partition_key, amqp_transport=amqp_transport)
     with client:
         with pytest.raises(TypeError):
-            client.send_batch(batch, partition_id=partition_id, partition_key=partition_key)
+            client.send_batch(batch, partition_id=partition_id, partition_key=partition_key, amqp_transport=amqp_transport)

@@ -57,6 +57,7 @@ from .amqp import (
 
 if TYPE_CHECKING:
     import datetime
+    from ._transport._base import AmqpTransport
 
 MessageContent = TypedDict("MessageContent", {"content": bytes, "content_type": str})
 PrimitiveTypes = Optional[Union[
@@ -542,12 +543,12 @@ class EventDataBatch(object):
         return self._count
 
     @classmethod
-    def _from_batch(cls, batch_data, to_outgoing_amqp_message, partition_key=None):
-        # type: (Iterable[EventData], Callable, Optional[AnyStr]) -> EventDataBatch
+    def _from_batch(cls, batch_data, amqp_transport, partition_key=None):
+        # type: (Iterable[EventData], AmqpTransport, Optional[AnyStr]) -> EventDataBatch
         outgoing_batch_data = [
-            transform_outbound_single_message(m, EventData, to_outgoing_amqp_message) for m in batch_data
+            transform_outbound_single_message(m, EventData, amqp_transport.to_outgoing_amqp_message) for m in batch_data
         ]
-        batch_data_instance = cls(partition_key=partition_key)
+        batch_data_instance = cls(partition_key=partition_key, amqp_transport=amqp_transport)
         batch_data_instance.message._body_gen = (  # pylint:disable=protected-access
             outgoing_batch_data
         )

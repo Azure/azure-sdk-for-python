@@ -19,10 +19,12 @@ from azure.eventhub.exceptions import (
 )
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub import EventHubProducerClient
+from azure.eventhub._transport._uamqp_transport import UamqpTransport
 
 
+@pytest.mark.parametrize("amqp_transport", [UamqpTransport()], )
 @pytest.mark.liveTest
-def test_send_batch_with_invalid_hostname(invalid_hostname):
+def test_send_batch_with_invalid_hostname(invalid_hostname, amqp_transport):
     if sys.platform.startswith('darwin'):
         pytest.skip("Skipping on OSX - it keeps reporting 'Unable to set external certificates' "
                     "and blocking other tests")
@@ -30,7 +32,7 @@ def test_send_batch_with_invalid_hostname(invalid_hostname):
     with client:
         with pytest.raises(ConnectError):
             batch = EventDataBatch()
-            batch.add(EventData("test data"))
+            batch.add(EventData("test data", amqp_transport=amqp_transport))
             client.send_batch(batch)
 
 
@@ -49,12 +51,13 @@ def test_receive_with_invalid_hostname_sync(invalid_hostname):
     thread.join()
 
 
+@pytest.mark.parametrize("amqp_transport", [UamqpTransport()], )
 @pytest.mark.liveTest
-def test_send_batch_with_invalid_key(invalid_key):
+def test_send_batch_with_invalid_key(invalid_key, amqp_transport):
     client = EventHubProducerClient.from_connection_string(invalid_key)
     try:
         with pytest.raises(ConnectError):
-            batch = EventDataBatch()
+            batch = EventDataBatch(amqp_transport=amqp_transport)
             batch.add(EventData("test data"))
             client.send_batch(batch)
     finally:

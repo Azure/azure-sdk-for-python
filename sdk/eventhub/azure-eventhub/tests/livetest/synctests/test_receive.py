@@ -90,11 +90,10 @@ def test_receive_with_event_position_sync(connstr_senders, position, inclusive, 
                                           "track_last_enqueued_event_properties": True})
         thread.daemon = True
         thread.start()
-        time.sleep(10)
+        time.sleep(15)
         assert on_event.event.body_as_str() == expected_result
 
     thread.join()
-
 
 @pytest.mark.liveTest
 def test_receive_owner_level(connstr_senders):

@@ -191,7 +191,7 @@ class EventHubProducer(
                     event_data = _set_partition_key(event_data, partition_key, self._amqp_transport)
                 event_data = _set_trace_message(event_data, span)
                 wrapper_event_data = EventDataBatch._from_batch(  # type: ignore  # pylint: disable=protected-access
-                    event_data, partition_key, self._amqp_transport.to_outgoing_amqp_message
+                    event_data, self._amqp_transport, partition_key=partition_key
                 )
         return wrapper_event_data
 

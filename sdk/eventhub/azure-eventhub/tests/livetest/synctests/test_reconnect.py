@@ -15,9 +15,12 @@ from azure.eventhub import (
     EventData,
     EventHubSharedKeyCredential,
     EventHubProducerClient,
-    EventHubConsumerClient
+    EventHubConsumerClient,
+    amqp
 )
 from azure.eventhub.exceptions import OperationTimeoutError
+from azure.eventhub._utils import transform_outbound_single_message
+from azure.eventhub._transport._uamqp_transport import UamqpTransport
 
 @pytest.mark.liveTest
 def test_send_with_long_interval_sync(live_eventhub, sleep):
@@ -61,8 +64,10 @@ def test_send_with_long_interval_sync(live_eventhub, sleep):
     assert list(received[0].body)[0] == b"A single event"
 
 
+@pytest.mark.parametrize("amqp_transport",
+                         [UamqpTransport()])
 @pytest.mark.liveTest
-def test_send_connection_idle_timeout_and_reconnect_sync(connstr_receivers):
+def test_send_connection_idle_timeout_and_reconnect_sync(connstr_receivers, amqp_transport):
     connection_str, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(conn_str=connection_str, idle_timeout=10)
     with client:
@@ -71,6 +76,7 @@ def test_send_connection_idle_timeout_and_reconnect_sync(connstr_receivers):
     with sender:
             sender._open_with_retry()
             time.sleep(11)
+            ed = transform_outbound_single_message(ed, EventData, amqp_transport.to_outgoing_amqp_message)
             sender._unsent_events = [ed.message]
             ed.message.on_send_complete = sender._on_outcome
             with pytest.raises((uamqp.errors.ConnectionClose,

@@ -366,7 +366,10 @@ class UamqpTransport(AmqpTransport):
 
         source = kwargs.pop("source")
         symbol_array = kwargs.pop("desired_capabilities")
-        desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array)) if symbol_array else None
+        desired_capabilities = None
+        if symbol_array:
+            symbol_array = [types.AMQPSymbol(symbol) for symbol in symbol_array]
+            desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
         retry_policy = kwargs.pop("retry_policy")
         network_trace = kwargs.pop("network_trace")
         link_credit = kwargs.pop("link_credit")
@@ -467,8 +470,10 @@ class UamqpTransport(AmqpTransport):
         :keyword description_fields: mgmt status desc.
         """
         operation_type = kwargs.pop("operation_type")
+        operation = kwargs.pop("operation")
         return mgmt_client.mgmt_request(
             mgmt_msg,
+            operation,
             op_type=operation_type,
             **kwargs
         )
