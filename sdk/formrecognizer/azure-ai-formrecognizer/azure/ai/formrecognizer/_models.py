@@ -393,8 +393,9 @@ class RecognizedForm:
 
     def __repr__(self):
         return (
-            f"RecognizedForm(form_type={self.form_type}, fields={repr(self.fields)}, page_range={repr(self.page_range)}, "
-            f"pages={repr(self.pages)}, form_type_confidence={self.form_type_confidence}, model_id={self.model_id})"
+            f"RecognizedForm(form_type={self.form_type}, fields={repr(self.fields)}, "
+            f"page_range={repr(self.page_range)}, pages={repr(self.pages)}, "
+            f"form_type_confidence={self.form_type_confidence}, model_id={self.model_id})"
             )[:1024]
 
     def to_dict(self) -> dict:
