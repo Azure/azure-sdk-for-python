@@ -1,0 +1,95 @@
+interactions:
+- request:
+    body: '{"displayName": "Analyze PII in conversation", "analysisInput": {"conversations":
+      [{"conversationItems": [{"id": "1", "participantId": "0", "modality": "transcript",
+      "text": "It is john doe.", "lexical": "It is john doe", "itn": "It is john doe",
+      "maskedItn": "It is john doe"}, {"id": "2", "participantId": "1", "modality":
+      "transcript", "text": "Yes, 633-27-8199 is my phone", "lexical": "yes six three
+      three two seven eight one nine nine is my phone", "itn": "yes 633278199 is my
+      phone", "maskedItn": "yes 633278199 is my phone"}, {"id": "3", "participantId":
+      "1", "modality": "transcript", "text": "j.doe@yahoo.com is my email", "lexical":
+      "j dot doe at yahoo dot com is my email", "maskedItn": "j.doe@yahoo.com is my
+      email", "itn": "j.doe@yahoo.com is my email"}], "modality": "transcript", "id":
+      "1", "language": "en"}]}, "tasks": [{"kind": "ConversationalPIITask", "parameters":
+      {"redactionSource": "lexical", "piiCategories": ["all"]}}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '945'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-conversations/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs?api-version=2022-05-15-preview
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 20b1a932-6bbf-401c-8676-2a63c76912ce
+      content-length:
+      - '0'
+      date:
+      - Tue, 28 Jun 2022 21:11:47 GMT
+      operation-location:
+      - https://test-resource.api.cognitive.microsoft.comlanguage/analyze-conversations/jobs/79cb6a09-62d3-4aa7-8b94-fad6ccb28857?api-version=2022-05-15-preview
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '2585'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-language-conversations/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://test-resource.api.cognitive.microsoft.comlanguage/analyze-conversations/jobs/79cb6a09-62d3-4aa7-8b94-fad6ccb28857?api-version=2022-05-15-preview
+  response:
+    body:
+      string: '{"jobId":"79cb6a09-62d3-4aa7-8b94-fad6ccb28857","lastUpdatedDateTime":"2022-06-28T21:11:49Z","createdDateTime":"2022-06-28T21:11:47Z","expirationDateTime":"2022-06-29T21:11:47Z","status":"succeeded","errors":[],"displayName":"Analyze
+        PII in conversation","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"items":[{"kind":"conversationalPIIResults","lastUpdateDateTime":"2022-06-28T21:11:49.1660162Z","status":"succeeded","results":{"conversations":[{"id":"1","conversationItems":[{"id":"1","redactedContent":{"itn":"It
+        is **** do*","lexical":"It is **** do*","maskedItn":"It is **** do*","text":"It
+        is **** ***."},"entities":[{"text":"john","category":"Name","offset":6,"length":4,"confidenceScore":0.57},{"text":"e","category":"Name","offset":13,"length":1,"confidenceScore":0.53}]},{"id":"2","redactedContent":{"itn":"yes
+        ********* is my phone","lexical":"yes *********************************************
+        is my phone","maskedItn":"yes ********* is my phone","text":"Yes, ***********
+        is my phone"},"entities":[{"text":"six three three two seven eight one nine
+        nine","category":"Phone","offset":4,"length":45,"confidenceScore":0.88}]},{"id":"3","redactedContent":{"itn":"***************
+        is my email","lexical":"************************** is my email","maskedItn":"***************
+        is my email","text":"*************** is my email"},"entities":[{"text":"j
+        dot doe at yahoo dot com","category":"Email","offset":0,"length":26,"confidenceScore":0.78}]}],"warnings":[]}],"errors":[],"modelVersion":"2022-05-15-preview"}}]}}'
+    headers:
+      apim-request-id:
+      - bcdb0d7b-3a5b-4d8c-89ed-b1462dbcdb1a
+      content-length:
+      - '1528'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 28 Jun 2022 21:12:20 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '2420'
+    status:
+      code: 200
+      message: OK
+version: 1

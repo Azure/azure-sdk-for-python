@@ -19,7 +19,8 @@ _LOG = logging.getLogger(__name__)
 _LANGUAGE_OWNER = {'msyyc'}
 
 # 'github assignee': 'token'
-_ASSIGNEE_TOKEN = {'msyyc': os.getenv('AZURESDK_BOT_TOKEN')}
+_BOT_NAME = 'azure-sdk'
+_ASSIGNEE_TOKEN = os.getenv('AZURESDK_BOT_TOKEN')
 
 _SWAGGER_URL = 'https://github.com/Azure/azure-rest-api-specs/blob/main/specification'
 _SWAGGER_PULL = 'https://github.com/Azure/azure-rest-api-specs/pull'
@@ -51,15 +52,18 @@ class IssueProcess:
         self.request_repo_dict = request_repo_dict
         self.assignee = issue_package.issue.assignee.login if issue_package.issue.assignee else ''
         self.owner = issue_package.issue.user.login
+        self.created_time = issue_package.issue.created_at
         self.assignee_candidates = assignee_candidates
         self.language_owner = language_owner
         self.bot_advice = []
         self.target_readme_tag = ''
         self.readme_link = ''
         self.default_readme_tag = ''
+        self.edit_content = ''
         self.package_name = ''
         self.target_date = ''
         self.date_from_target = 0
+        self.is_open = True
 
     def get_issue_body(self) -> List[str]:
         return [i for i in self.issue_package.issue.body.split("\n") if i]
@@ -76,7 +80,7 @@ class IssueProcess:
         self.issue_package.issue.create_comment(message)
 
     def get_readme_from_pr_link(self, link: str) -> str:
-        pr_number = int(link.replace(f"{_SWAGGER_PULL}/", "").strip('/'))
+        pr_number = int(link.replace(f"{_SWAGGER_PULL}/", "").split('/')[0])
 
         # Get Readme link
         pr_info = self.issue_package.rest_repo.get_pull(number=pr_number)
@@ -139,9 +143,13 @@ class IssueProcess:
         pattern_tag = re.compile(r'tag: package-[\w+-.]+')
         self.default_readme_tag = pattern_tag.search(contents).group().split(':')[-1].strip()
 
+    def get_edit_content(self) -> None:
+        self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}'
+
     def edit_issue_body(self) -> None:
+        self.get_edit_content()
         issue_body_list = [i for i in self.issue_package.issue.body.split("\n") if i]
-        issue_body_list.insert(0, f'\n{self.readme_link.replace("/readme.md", "")}')
+        issue_body_list.insert(0, self.edit_content)
         issue_body_up = ''
         # solve format problems
         for raw in issue_body_list:
@@ -287,10 +295,11 @@ class Common:
     file_out_name = ''  # file that storages issue status
     """
 
-    def __init__(self, issues_package: List[IssuePackage], assignee_token: Dict[str, str], language_owner: Set[str]):
+    def __init__(self, issues_package: List[IssuePackage], language_owner: Set[str],
+                 sdk_assignees: Set[str], assignee_token=_ASSIGNEE_TOKEN):
         self.issues_package = issues_package
-        self.assignee_candidates = set(assignee_token.keys())
-        self.language_owner = language_owner
+        self.language_owner = language_owner | sdk_assignees
+        self.assignee_candidates = sdk_assignees
         # arguments add to language.md
         self.file_out_name = 'common.md'
         self.target_release_date = ''
@@ -300,8 +309,11 @@ class Common:
         self.request_repo_dict = {}
         self.issue_process_function = IssueProcess
 
-        for assignee in assignee_token:
-            self.request_repo_dict[assignee] = Github(assignee_token[assignee]).get_repo(REQUEST_REPO)
+        for assignee in self.assignee_candidates:
+            self.request_repo_dict[assignee] = Github(assignee_token).get_repo(REQUEST_REPO)
+
+    def log_error(self, message: str) -> None:
+        _LOG.error(message)
 
     def output(self):
         with open(self.file_out_name, 'w') as file_out:
@@ -309,10 +321,11 @@ class Common:
             file_out.write('| ------ | ------ | ------ | ------ | ------ | ------ | ------ | :-----: |\n')
             for item in self.result:
                 try:
-                    item_status = Common.output_md(item)
-                    file_out.write(item_status)
+                    if item.is_open:
+                        item_status = Common.output_md(item)
+                        file_out.write(item_status)
                 except Exception as e:
-                    _LOG.error(f'Error happened during output result of handled issue {item.issue_package.issue.number}: {e}')
+                    self.log_error(f'Error happened during output result of handled issue {item.issue_package.issue.number}: {e}')
 
     @staticmethod
     def output_md(item: IssueProcess):
@@ -334,18 +347,20 @@ class Common:
             item.print_date_from_target_date()
         )
 
-    def run(self):
-        items = []
+    def proc_issue(self):
         for item in self.issues_package:
-            issue = self.issue_process_function(item, self.request_repo_dict, self.assignee_candidates, self.language_owner)
+            issue = self.issue_process_function(item, self.request_repo_dict, self.assignee_candidates,
+                                                self.language_owner)
             try:
                 issue.run()
                 self.result.append(issue)
             except Exception as e:
-                _LOG.error(f'Error happened during handling issue {item.issue.number}: {e}')
+                self.log_error(f'Error happened during handling issue {item.issue.number}: {e}')
+
+    def run(self):
+        self.proc_issue()
         self.output()
 
-
 def common_process(issues: List[IssuePackage]):
-    instance = Common(issues, _ASSIGNEE_TOKEN, _LANGUAGE_OWNER)
+    instance = Common(issues,  _LANGUAGE_OWNER, _LANGUAGE_OWNER)
     instance.run()
