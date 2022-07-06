@@ -6,62 +6,46 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class DeploymentMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DeploymentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes the type of ARM deployment to be performed on the resource.
     """
 
     INCREMENTAL = "Incremental"
     COMPLETE = "Complete"
 
-class RestAuthLocation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RestAuthLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The location of the authentication key/value pair in the request.
     """
 
     QUERY = "Query"
     HEADER = "Header"
 
-class RestAuthType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RestAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The authentication type.
     """
 
     API_KEY = "ApiKey"
     ROLLOUT_IDENTITY = "RolloutIdentity"
 
-class RestMatchQuantifier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RestMatchQuantifier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates whether any or all of the expressions should match with the response content.
     """
 
     ALL = "All"
     ANY = "Any"
 
-class RestRequestMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RestRequestMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The HTTP method to use for the request.
     """
 
     GET = "GET"
     POST = "POST"
 
-class StepType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StepType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of step.
     """
 

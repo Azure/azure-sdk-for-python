@@ -6,11 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._azure_deployment_manager_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class RestRequestAuthentication(msrest.serialization.Model):
@@ -21,9 +23,9 @@ class RestRequestAuthentication(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The authentication type.Constant filled by server.  Possible values
-     include: "ApiKey", "RolloutIdentity".
-    :type type: str or ~azure.mgmt.deploymentmanager.models.RestAuthType
+    :ivar type: Required. The authentication type.Constant filled by server. Known values are:
+     "ApiKey", "RolloutIdentity".
+    :vartype type: str or ~azure.mgmt.deploymentmanager.models.RestAuthType
     """
 
     _validation = {
@@ -42,6 +44,8 @@ class RestRequestAuthentication(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(RestRequestAuthentication, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -51,16 +55,16 @@ class ApiKeyAuthentication(RestRequestAuthentication):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The authentication type.Constant filled by server.  Possible values
-     include: "ApiKey", "RolloutIdentity".
-    :type type: str or ~azure.mgmt.deploymentmanager.models.RestAuthType
-    :param name: Required. The key name of the authentication key/value pair.
-    :type name: str
-    :param in_property: Required. The location of the authentication key/value pair in the request.
-     Possible values include: "Query", "Header".
-    :type in_property: str or ~azure.mgmt.deploymentmanager.models.RestAuthLocation
-    :param value: Required. The value of the authentication key/value pair.
-    :type value: str
+    :ivar type: Required. The authentication type.Constant filled by server. Known values are:
+     "ApiKey", "RolloutIdentity".
+    :vartype type: str or ~azure.mgmt.deploymentmanager.models.RestAuthType
+    :ivar name: Required. The key name of the authentication key/value pair.
+    :vartype name: str
+    :ivar in_property: Required. The location of the authentication key/value pair in the request.
+     Known values are: "Query", "Header".
+    :vartype in_property: str or ~azure.mgmt.deploymentmanager.models.RestAuthLocation
+    :ivar value: Required. The value of the authentication key/value pair.
+    :vartype value: str
     """
 
     _validation = {
@@ -81,10 +85,19 @@ class ApiKeyAuthentication(RestRequestAuthentication):
         self,
         *,
         name: str,
-        in_property: Union[str, "RestAuthLocation"],
+        in_property: Union[str, "_models.RestAuthLocation"],
         value: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. The key name of the authentication key/value pair.
+        :paramtype name: str
+        :keyword in_property: Required. The location of the authentication key/value pair in the
+         request. Known values are: "Query", "Header".
+        :paramtype in_property: str or ~azure.mgmt.deploymentmanager.models.RestAuthLocation
+        :keyword value: Required. The value of the authentication key/value pair.
+        :paramtype value: str
+        """
         super(ApiKeyAuthentication, self).__init__(**kwargs)
         self.type = 'ApiKey'  # type: str
         self.name = name
@@ -123,6 +136,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -144,10 +159,10 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     """
 
     _validation = {
@@ -172,6 +187,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -192,21 +213,21 @@ class ArtifactSource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param source_type: The type of artifact source used.
-    :type source_type: str
-    :param artifact_root: The path from the location that the 'authentication' property [say, a SAS
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar source_type: The type of artifact source used.
+    :vartype source_type: str
+    :ivar artifact_root: The path from the location that the 'authentication' property [say, a SAS
      URI to the blob container] refers to, to the location of the artifacts. This can be used to
      differentiate different versions of the artifacts. Or, different types of artifacts like
      binaries or templates. The location referenced by the authentication property concatenated with
      this optional artifactRoot path forms the artifact source location where the artifacts are
      expected to be found.
-    :type artifact_root: str
-    :param authentication: The authentication method to use to access the artifact source.
-    :type authentication: ~azure.mgmt.deploymentmanager.models.Authentication
+    :vartype artifact_root: str
+    :ivar authentication: The authentication method to use to access the artifact source.
+    :vartype authentication: ~azure.mgmt.deploymentmanager.models.Authentication
     """
 
     _validation = {
@@ -234,9 +255,26 @@ class ArtifactSource(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         source_type: Optional[str] = None,
         artifact_root: Optional[str] = None,
-        authentication: Optional["Authentication"] = None,
+        authentication: Optional["_models.Authentication"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword source_type: The type of artifact source used.
+        :paramtype source_type: str
+        :keyword artifact_root: The path from the location that the 'authentication' property [say, a
+         SAS URI to the blob container] refers to, to the location of the artifacts. This can be used to
+         differentiate different versions of the artifacts. Or, different types of artifacts like
+         binaries or templates. The location referenced by the authentication property concatenated with
+         this optional artifactRoot path forms the artifact source location where the artifacts are
+         expected to be found.
+        :paramtype artifact_root: str
+        :keyword authentication: The authentication method to use to access the artifact source.
+        :paramtype authentication: ~azure.mgmt.deploymentmanager.models.Authentication
+        """
         super(ArtifactSource, self).__init__(tags=tags, location=location, **kwargs)
         self.source_type = source_type
         self.artifact_root = artifact_root
@@ -248,18 +286,17 @@ class ArtifactSourceProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source_type: Required. The type of artifact source used.
-    :type source_type: str
-    :param artifact_root: The path from the location that the 'authentication' property [say, a SAS
+    :ivar source_type: Required. The type of artifact source used.
+    :vartype source_type: str
+    :ivar artifact_root: The path from the location that the 'authentication' property [say, a SAS
      URI to the blob container] refers to, to the location of the artifacts. This can be used to
      differentiate different versions of the artifacts. Or, different types of artifacts like
      binaries or templates. The location referenced by the authentication property concatenated with
      this optional artifactRoot path forms the artifact source location where the artifacts are
      expected to be found.
-    :type artifact_root: str
-    :param authentication: Required. The authentication method to use to access the artifact
-     source.
-    :type authentication: ~azure.mgmt.deploymentmanager.models.Authentication
+    :vartype artifact_root: str
+    :ivar authentication: Required. The authentication method to use to access the artifact source.
+    :vartype authentication: ~azure.mgmt.deploymentmanager.models.Authentication
     """
 
     _validation = {
@@ -277,10 +314,24 @@ class ArtifactSourceProperties(msrest.serialization.Model):
         self,
         *,
         source_type: str,
-        authentication: "Authentication",
+        authentication: "_models.Authentication",
         artifact_root: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword source_type: Required. The type of artifact source used.
+        :paramtype source_type: str
+        :keyword artifact_root: The path from the location that the 'authentication' property [say, a
+         SAS URI to the blob container] refers to, to the location of the artifacts. This can be used to
+         differentiate different versions of the artifacts. Or, different types of artifacts like
+         binaries or templates. The location referenced by the authentication property concatenated with
+         this optional artifactRoot path forms the artifact source location where the artifacts are
+         expected to be found.
+        :paramtype artifact_root: str
+        :keyword authentication: Required. The authentication method to use to access the artifact
+         source.
+        :paramtype authentication: ~azure.mgmt.deploymentmanager.models.Authentication
+        """
         super(ArtifactSourceProperties, self).__init__(**kwargs)
         self.source_type = source_type
         self.artifact_root = artifact_root
@@ -292,18 +343,17 @@ class ArtifactSourcePropertiesAutoGenerated(ArtifactSourceProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source_type: Required. The type of artifact source used.
-    :type source_type: str
-    :param artifact_root: The path from the location that the 'authentication' property [say, a SAS
+    :ivar source_type: Required. The type of artifact source used.
+    :vartype source_type: str
+    :ivar artifact_root: The path from the location that the 'authentication' property [say, a SAS
      URI to the blob container] refers to, to the location of the artifacts. This can be used to
      differentiate different versions of the artifacts. Or, different types of artifacts like
      binaries or templates. The location referenced by the authentication property concatenated with
      this optional artifactRoot path forms the artifact source location where the artifacts are
      expected to be found.
-    :type artifact_root: str
-    :param authentication: Required. The authentication method to use to access the artifact
-     source.
-    :type authentication: ~azure.mgmt.deploymentmanager.models.Authentication
+    :vartype artifact_root: str
+    :ivar authentication: Required. The authentication method to use to access the artifact source.
+    :vartype authentication: ~azure.mgmt.deploymentmanager.models.Authentication
     """
 
     _validation = {
@@ -321,10 +371,24 @@ class ArtifactSourcePropertiesAutoGenerated(ArtifactSourceProperties):
         self,
         *,
         source_type: str,
-        authentication: "Authentication",
+        authentication: "_models.Authentication",
         artifact_root: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword source_type: Required. The type of artifact source used.
+        :paramtype source_type: str
+        :keyword artifact_root: The path from the location that the 'authentication' property [say, a
+         SAS URI to the blob container] refers to, to the location of the artifacts. This can be used to
+         differentiate different versions of the artifacts. Or, different types of artifacts like
+         binaries or templates. The location referenced by the authentication property concatenated with
+         this optional artifactRoot path forms the artifact source location where the artifacts are
+         expected to be found.
+        :paramtype artifact_root: str
+        :keyword authentication: Required. The authentication method to use to access the artifact
+         source.
+        :paramtype authentication: ~azure.mgmt.deploymentmanager.models.Authentication
+        """
         super(ArtifactSourcePropertiesAutoGenerated, self).__init__(source_type=source_type, artifact_root=artifact_root, authentication=authentication, **kwargs)
 
 
@@ -336,8 +400,8 @@ class Authentication(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The authentication type.Constant filled by server.
-    :type type: str
+    :ivar type: Required. The authentication type.Constant filled by server.
+    :vartype type: str
     """
 
     _validation = {
@@ -356,6 +420,8 @@ class Authentication(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Authentication, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -369,10 +435,10 @@ class CloudErrorBody(msrest.serialization.Model):
     :vartype code: str
     :ivar message: Descriptive error information.
     :vartype message: str
-    :param target: Error target.
-    :type target: str
-    :param details: More detailed error information.
-    :type details: list[~azure.mgmt.deploymentmanager.models.CloudErrorBody]
+    :ivar target: Error target.
+    :vartype target: str
+    :ivar details: More detailed error information.
+    :vartype details: list[~azure.mgmt.deploymentmanager.models.CloudErrorBody]
     """
 
     _validation = {
@@ -391,9 +457,15 @@ class CloudErrorBody(msrest.serialization.Model):
         self,
         *,
         target: Optional[str] = None,
-        details: Optional[List["CloudErrorBody"]] = None,
+        details: Optional[List["_models.CloudErrorBody"]] = None,
         **kwargs
     ):
+        """
+        :keyword target: Error target.
+        :paramtype target: str
+        :keyword details: More detailed error information.
+        :paramtype details: list[~azure.mgmt.deploymentmanager.models.CloudErrorBody]
+        """
         super(CloudErrorBody, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -409,19 +481,19 @@ class HealthCheckStepAttributes(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The type of health check.Constant filled by server.
-    :type type: str
-    :param wait_duration: The duration in ISO 8601 format for which health check waits idly without
+    :ivar type: Required. The type of health check.Constant filled by server.
+    :vartype type: str
+    :ivar wait_duration: The duration in ISO 8601 format for which health check waits idly without
      any checks.
-    :type wait_duration: str
-    :param max_elastic_duration: The duration in ISO 8601 format for which the health check waits
+    :vartype wait_duration: str
+    :ivar max_elastic_duration: The duration in ISO 8601 format for which the health check waits
      for the resource to become healthy. Health check fails if it doesn't. Health check starts to
      enforce healthyStateDuration once resource becomes healthy.
-    :type max_elastic_duration: str
-    :param healthy_state_duration: Required. The duration in ISO 8601 format for which the resource
+    :vartype max_elastic_duration: str
+    :ivar healthy_state_duration: Required. The duration in ISO 8601 format for which the resource
      is expected to be continuously healthy. If maxElasticDuration is specified, healthy state
      duration is enforced after the detection of first healthy signal.
-    :type healthy_state_duration: str
+    :vartype healthy_state_duration: str
     """
 
     _validation = {
@@ -448,6 +520,19 @@ class HealthCheckStepAttributes(msrest.serialization.Model):
         max_elastic_duration: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword wait_duration: The duration in ISO 8601 format for which health check waits idly
+         without any checks.
+        :paramtype wait_duration: str
+        :keyword max_elastic_duration: The duration in ISO 8601 format for which the health check waits
+         for the resource to become healthy. Health check fails if it doesn't. Health check starts to
+         enforce healthyStateDuration once resource becomes healthy.
+        :paramtype max_elastic_duration: str
+        :keyword healthy_state_duration: Required. The duration in ISO 8601 format for which the
+         resource is expected to be continuously healthy. If maxElasticDuration is specified, healthy
+         state duration is enforced after the detection of first healthy signal.
+        :paramtype healthy_state_duration: str
+        """
         super(HealthCheckStepAttributes, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
         self.wait_duration = wait_duration
@@ -463,9 +548,9 @@ class StepProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param step_type: Required. The type of step.Constant filled by server.  Possible values
-     include: "Wait", "HealthCheck".
-    :type step_type: str or ~azure.mgmt.deploymentmanager.models.StepType
+    :ivar step_type: Required. The type of step.Constant filled by server. Known values are:
+     "Wait", "HealthCheck".
+    :vartype step_type: str or ~azure.mgmt.deploymentmanager.models.StepType
     """
 
     _validation = {
@@ -484,6 +569,8 @@ class StepProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(StepProperties, self).__init__(**kwargs)
         self.step_type = None  # type: Optional[str]
 
@@ -493,11 +580,11 @@ class HealthCheckStepProperties(StepProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param step_type: Required. The type of step.Constant filled by server.  Possible values
-     include: "Wait", "HealthCheck".
-    :type step_type: str or ~azure.mgmt.deploymentmanager.models.StepType
-    :param attributes: Required. The health check step attributes.
-    :type attributes: ~azure.mgmt.deploymentmanager.models.HealthCheckStepAttributes
+    :ivar step_type: Required. The type of step.Constant filled by server. Known values are:
+     "Wait", "HealthCheck".
+    :vartype step_type: str or ~azure.mgmt.deploymentmanager.models.StepType
+    :ivar attributes: Required. The health check step attributes.
+    :vartype attributes: ~azure.mgmt.deploymentmanager.models.HealthCheckStepAttributes
     """
 
     _validation = {
@@ -513,9 +600,13 @@ class HealthCheckStepProperties(StepProperties):
     def __init__(
         self,
         *,
-        attributes: "HealthCheckStepAttributes",
+        attributes: "_models.HealthCheckStepAttributes",
         **kwargs
     ):
+        """
+        :keyword attributes: Required. The health check step attributes.
+        :paramtype attributes: ~azure.mgmt.deploymentmanager.models.HealthCheckStepAttributes
+        """
         super(HealthCheckStepProperties, self).__init__(**kwargs)
         self.step_type = 'HealthCheck'  # type: str
         self.attributes = attributes
@@ -526,10 +617,10 @@ class Identity(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The identity type.
-    :type type: str
-    :param identity_ids: Required. The list of identities.
-    :type identity_ids: list[str]
+    :ivar type: Required. The identity type.
+    :vartype type: str
+    :ivar identity_ids: Required. The list of identities.
+    :vartype identity_ids: list[str]
     """
 
     _validation = {
@@ -549,6 +640,12 @@ class Identity(msrest.serialization.Model):
         identity_ids: List[str],
         **kwargs
     ):
+        """
+        :keyword type: Required. The identity type.
+        :paramtype type: str
+        :keyword identity_ids: Required. The list of identities.
+        :paramtype identity_ids: list[str]
+        """
         super(Identity, self).__init__(**kwargs)
         self.type = type
         self.identity_ids = identity_ids
@@ -579,6 +676,8 @@ class Message(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Message, self).__init__(**kwargs)
         self.time_stamp = None
         self.message = None
@@ -587,14 +686,14 @@ class Message(msrest.serialization.Model):
 class Operation(msrest.serialization.Model):
     """Represents an operation that can be performed on the service.
 
-    :param name: The name of the operation.
-    :type name: str
-    :param display: The display name of the operation.
-    :type display: ~azure.mgmt.deploymentmanager.models.OperationDetail
-    :param origin: The origin of the operation.
-    :type origin: str
-    :param properties: The properties of the operation.
-    :type properties: any
+    :ivar name: The name of the operation.
+    :vartype name: str
+    :ivar display: The display name of the operation.
+    :vartype display: ~azure.mgmt.deploymentmanager.models.OperationDetail
+    :ivar origin: The origin of the operation.
+    :vartype origin: str
+    :ivar properties: The properties of the operation.
+    :vartype properties: any
     """
 
     _attribute_map = {
@@ -608,11 +707,21 @@ class Operation(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["OperationDetail"] = None,
+        display: Optional["_models.OperationDetail"] = None,
         origin: Optional[str] = None,
         properties: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword name: The name of the operation.
+        :paramtype name: str
+        :keyword display: The display name of the operation.
+        :paramtype display: ~azure.mgmt.deploymentmanager.models.OperationDetail
+        :keyword origin: The origin of the operation.
+        :paramtype origin: str
+        :keyword properties: The properties of the operation.
+        :paramtype properties: any
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -623,14 +732,14 @@ class Operation(msrest.serialization.Model):
 class OperationDetail(msrest.serialization.Model):
     """The detail about an operation.
 
-    :param provider: The name of the provider that supports the operation.
-    :type provider: str
-    :param resource: The resource type on which this operation can be performed.
-    :type resource: str
-    :param operation: The name of the operation.
-    :type operation: str
-    :param description: The description of the operation.
-    :type description: str
+    :ivar provider: The name of the provider that supports the operation.
+    :vartype provider: str
+    :ivar resource: The resource type on which this operation can be performed.
+    :vartype resource: str
+    :ivar operation: The name of the operation.
+    :vartype operation: str
+    :ivar description: The description of the operation.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -649,6 +758,16 @@ class OperationDetail(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: The name of the provider that supports the operation.
+        :paramtype provider: str
+        :keyword resource: The resource type on which this operation can be performed.
+        :paramtype resource: str
+        :keyword operation: The name of the operation.
+        :paramtype operation: str
+        :keyword description: The description of the operation.
+        :paramtype description: str
+        """
         super(OperationDetail, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -659,8 +778,8 @@ class OperationDetail(msrest.serialization.Model):
 class OperationsList(msrest.serialization.Model):
     """The operations response.
 
-    :param value: The list of supported operations.
-    :type value: ~azure.mgmt.deploymentmanager.models.Operation
+    :ivar value: The list of supported operations.
+    :vartype value: ~azure.mgmt.deploymentmanager.models.Operation
     """
 
     _attribute_map = {
@@ -670,9 +789,13 @@ class OperationsList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional["Operation"] = None,
+        value: Optional["_models.Operation"] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of supported operations.
+        :paramtype value: ~azure.mgmt.deploymentmanager.models.Operation
+        """
         super(OperationsList, self).__init__(**kwargs)
         self.value = value
 
@@ -682,8 +805,8 @@ class PrePostStep(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param step_id: Required. The resource Id of the step to be run.
-    :type step_id: str
+    :ivar step_id: Required. The resource Id of the step to be run.
+    :vartype step_id: str
     """
 
     _validation = {
@@ -700,6 +823,10 @@ class PrePostStep(msrest.serialization.Model):
         step_id: str,
         **kwargs
     ):
+        """
+        :keyword step_id: Required. The resource Id of the step to be run.
+        :paramtype step_id: str
+        """
         super(PrePostStep, self).__init__(**kwargs)
         self.step_id = step_id
 
@@ -709,15 +836,15 @@ class ResourceOperation(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param resource_name: Name of the resource as specified in the artifacts. For ARM resources,
+    :ivar resource_name: Name of the resource as specified in the artifacts. For ARM resources,
      this is the name of the resource specified in the template.
-    :type resource_name: str
+    :vartype resource_name: str
     :ivar operation_id: Unique identifier of the operation. For ARM resources, this is the
      operationId obtained from ARM service.
     :vartype operation_id: str
-    :param resource_type: Type of the resource as specified in the artifacts. For ARM resources,
+    :ivar resource_type: Type of the resource as specified in the artifacts. For ARM resources,
      this is the type of the resource specified in the template.
-    :type resource_type: str
+    :vartype resource_type: str
     :ivar provisioning_state: State of the resource deployment. For ARM resources, this is the
      current provisioning state of the resource.
     :vartype provisioning_state: str
@@ -750,6 +877,14 @@ class ResourceOperation(msrest.serialization.Model):
         resource_type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword resource_name: Name of the resource as specified in the artifacts. For ARM resources,
+         this is the name of the resource specified in the template.
+        :paramtype resource_name: str
+        :keyword resource_type: Type of the resource as specified in the artifacts. For ARM resources,
+         this is the type of the resource specified in the template.
+        :paramtype resource_type: str
+        """
         super(ResourceOperation, self).__init__(**kwargs)
         self.resource_name = resource_name
         self.operation_id = None
@@ -764,13 +899,13 @@ class RestHealthCheck(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. A unique name for this check.
-    :type name: str
-    :param request: Required. The request to the health provider.
-    :type request: ~azure.mgmt.deploymentmanager.models.RestRequest
-    :param response: The expected response from the health provider. If no expected response is
+    :ivar name: Required. A unique name for this check.
+    :vartype name: str
+    :ivar request: Required. The request to the health provider.
+    :vartype request: ~azure.mgmt.deploymentmanager.models.RestRequest
+    :ivar response: The expected response from the health provider. If no expected response is
      provided, the default is to expect the received response to have an HTTP status code of 200 OK.
-    :type response: ~azure.mgmt.deploymentmanager.models.RestResponse
+    :vartype response: ~azure.mgmt.deploymentmanager.models.RestResponse
     """
 
     _validation = {
@@ -788,10 +923,19 @@ class RestHealthCheck(msrest.serialization.Model):
         self,
         *,
         name: str,
-        request: "RestRequest",
-        response: Optional["RestResponse"] = None,
+        request: "_models.RestRequest",
+        response: Optional["_models.RestResponse"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. A unique name for this check.
+        :paramtype name: str
+        :keyword request: Required. The request to the health provider.
+        :paramtype request: ~azure.mgmt.deploymentmanager.models.RestRequest
+        :keyword response: The expected response from the health provider. If no expected response is
+         provided, the default is to expect the received response to have an HTTP status code of 200 OK.
+        :paramtype response: ~azure.mgmt.deploymentmanager.models.RestResponse
+        """
         super(RestHealthCheck, self).__init__(**kwargs)
         self.name = name
         self.request = request
@@ -803,21 +947,21 @@ class RestHealthCheckStepAttributes(HealthCheckStepAttributes):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The type of health check.Constant filled by server.
-    :type type: str
-    :param wait_duration: The duration in ISO 8601 format for which health check waits idly without
+    :ivar type: Required. The type of health check.Constant filled by server.
+    :vartype type: str
+    :ivar wait_duration: The duration in ISO 8601 format for which health check waits idly without
      any checks.
-    :type wait_duration: str
-    :param max_elastic_duration: The duration in ISO 8601 format for which the health check waits
+    :vartype wait_duration: str
+    :ivar max_elastic_duration: The duration in ISO 8601 format for which the health check waits
      for the resource to become healthy. Health check fails if it doesn't. Health check starts to
      enforce healthyStateDuration once resource becomes healthy.
-    :type max_elastic_duration: str
-    :param healthy_state_duration: Required. The duration in ISO 8601 format for which the resource
+    :vartype max_elastic_duration: str
+    :ivar healthy_state_duration: Required. The duration in ISO 8601 format for which the resource
      is expected to be continuously healthy. If maxElasticDuration is specified, healthy state
      duration is enforced after the detection of first healthy signal.
-    :type healthy_state_duration: str
-    :param health_checks: The list of checks that form the health check step.
-    :type health_checks: list[~azure.mgmt.deploymentmanager.models.RestHealthCheck]
+    :vartype healthy_state_duration: str
+    :ivar health_checks: The list of checks that form the health check step.
+    :vartype health_checks: list[~azure.mgmt.deploymentmanager.models.RestHealthCheck]
     """
 
     _validation = {
@@ -839,9 +983,24 @@ class RestHealthCheckStepAttributes(HealthCheckStepAttributes):
         healthy_state_duration: str,
         wait_duration: Optional[str] = None,
         max_elastic_duration: Optional[str] = None,
-        health_checks: Optional[List["RestHealthCheck"]] = None,
+        health_checks: Optional[List["_models.RestHealthCheck"]] = None,
         **kwargs
     ):
+        """
+        :keyword wait_duration: The duration in ISO 8601 format for which health check waits idly
+         without any checks.
+        :paramtype wait_duration: str
+        :keyword max_elastic_duration: The duration in ISO 8601 format for which the health check waits
+         for the resource to become healthy. Health check fails if it doesn't. Health check starts to
+         enforce healthyStateDuration once resource becomes healthy.
+        :paramtype max_elastic_duration: str
+        :keyword healthy_state_duration: Required. The duration in ISO 8601 format for which the
+         resource is expected to be continuously healthy. If maxElasticDuration is specified, healthy
+         state duration is enforced after the detection of first healthy signal.
+        :paramtype healthy_state_duration: str
+        :keyword health_checks: The list of checks that form the health check step.
+        :paramtype health_checks: list[~azure.mgmt.deploymentmanager.models.RestHealthCheck]
+        """
         super(RestHealthCheckStepAttributes, self).__init__(wait_duration=wait_duration, max_elastic_duration=max_elastic_duration, healthy_state_duration=healthy_state_duration, **kwargs)
         self.type = 'REST'  # type: str
         self.health_checks = health_checks
@@ -852,14 +1011,14 @@ class RestRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param method: Required. The HTTP method to use for the request. Possible values include:
-     "GET", "POST".
-    :type method: str or ~azure.mgmt.deploymentmanager.models.RestRequestMethod
-    :param uri: Required. The HTTP URI to use for the request.
-    :type uri: str
-    :param authentication: Required. The authentication information required in the request to the
+    :ivar method: Required. The HTTP method to use for the request. Known values are: "GET",
+     "POST".
+    :vartype method: str or ~azure.mgmt.deploymentmanager.models.RestRequestMethod
+    :ivar uri: Required. The HTTP URI to use for the request.
+    :vartype uri: str
+    :ivar authentication: Required. The authentication information required in the request to the
      health provider.
-    :type authentication: ~azure.mgmt.deploymentmanager.models.RestRequestAuthentication
+    :vartype authentication: ~azure.mgmt.deploymentmanager.models.RestRequestAuthentication
     """
 
     _validation = {
@@ -877,11 +1036,21 @@ class RestRequest(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        method: Union[str, "RestRequestMethod"],
+        method: Union[str, "_models.RestRequestMethod"],
         uri: str,
-        authentication: "RestRequestAuthentication",
+        authentication: "_models.RestRequestAuthentication",
         **kwargs
     ):
+        """
+        :keyword method: Required. The HTTP method to use for the request. Known values are: "GET",
+         "POST".
+        :paramtype method: str or ~azure.mgmt.deploymentmanager.models.RestRequestMethod
+        :keyword uri: Required. The HTTP URI to use for the request.
+        :paramtype uri: str
+        :keyword authentication: Required. The authentication information required in the request to
+         the health provider.
+        :paramtype authentication: ~azure.mgmt.deploymentmanager.models.RestRequestAuthentication
+        """
         super(RestRequest, self).__init__(**kwargs)
         self.method = method
         self.uri = uri
@@ -891,12 +1060,12 @@ class RestRequest(msrest.serialization.Model):
 class RestResponse(msrest.serialization.Model):
     """The properties that make up the expected REST response.
 
-    :param success_status_codes: The HTTP status codes expected in a successful health check
+    :ivar success_status_codes: The HTTP status codes expected in a successful health check
      response. The response is expected to match one of the given status codes. If no expected
      status codes are provided, default expected status code is 200 OK.
-    :type success_status_codes: list[str]
-    :param regex: The regular expressions to match the response content with.
-    :type regex: ~azure.mgmt.deploymentmanager.models.RestResponseRegex
+    :vartype success_status_codes: list[str]
+    :ivar regex: The regular expressions to match the response content with.
+    :vartype regex: ~azure.mgmt.deploymentmanager.models.RestResponseRegex
     """
 
     _attribute_map = {
@@ -908,9 +1077,17 @@ class RestResponse(msrest.serialization.Model):
         self,
         *,
         success_status_codes: Optional[List[str]] = None,
-        regex: Optional["RestResponseRegex"] = None,
+        regex: Optional["_models.RestResponseRegex"] = None,
         **kwargs
     ):
+        """
+        :keyword success_status_codes: The HTTP status codes expected in a successful health check
+         response. The response is expected to match one of the given status codes. If no expected
+         status codes are provided, default expected status code is 200 OK.
+        :paramtype success_status_codes: list[str]
+        :keyword regex: The regular expressions to match the response content with.
+        :paramtype regex: ~azure.mgmt.deploymentmanager.models.RestResponseRegex
+        """
         super(RestResponse, self).__init__(**kwargs)
         self.success_status_codes = success_status_codes
         self.regex = regex
@@ -919,11 +1096,11 @@ class RestResponse(msrest.serialization.Model):
 class RestResponseRegex(msrest.serialization.Model):
     """The regular expressions to match the response content with.
 
-    :param matches: The list of regular expressions.
-    :type matches: list[str]
-    :param match_quantifier: Indicates whether any or all of the expressions should match with the
-     response content. Possible values include: "All", "Any".
-    :type match_quantifier: str or ~azure.mgmt.deploymentmanager.models.RestMatchQuantifier
+    :ivar matches: The list of regular expressions.
+    :vartype matches: list[str]
+    :ivar match_quantifier: Indicates whether any or all of the expressions should match with the
+     response content. Known values are: "All", "Any".
+    :vartype match_quantifier: str or ~azure.mgmt.deploymentmanager.models.RestMatchQuantifier
     """
 
     _attribute_map = {
@@ -935,9 +1112,16 @@ class RestResponseRegex(msrest.serialization.Model):
         self,
         *,
         matches: Optional[List[str]] = None,
-        match_quantifier: Optional[Union[str, "RestMatchQuantifier"]] = None,
+        match_quantifier: Optional[Union[str, "_models.RestMatchQuantifier"]] = None,
         **kwargs
     ):
+        """
+        :keyword matches: The list of regular expressions.
+        :paramtype matches: list[str]
+        :keyword match_quantifier: Indicates whether any or all of the expressions should match with
+         the response content. Known values are: "All", "Any".
+        :paramtype match_quantifier: str or ~azure.mgmt.deploymentmanager.models.RestMatchQuantifier
+        """
         super(RestResponseRegex, self).__init__(**kwargs)
         self.matches = matches
         self.match_quantifier = match_quantifier
@@ -958,22 +1142,22 @@ class Rollout(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param identity: Identity for the resource.
-    :type identity: ~azure.mgmt.deploymentmanager.models.Identity
-    :param build_version: The version of the build being deployed.
-    :type build_version: str
-    :param artifact_source_id: The reference to the artifact source resource Id where the payload
-     is located.
-    :type artifact_source_id: str
-    :param target_service_topology_id: The resource Id of the service topology from which service
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar identity: Identity for the resource.
+    :vartype identity: ~azure.mgmt.deploymentmanager.models.Identity
+    :ivar build_version: The version of the build being deployed.
+    :vartype build_version: str
+    :ivar artifact_source_id: The reference to the artifact source resource Id where the payload is
+     located.
+    :vartype artifact_source_id: str
+    :ivar target_service_topology_id: The resource Id of the service topology from which service
      units are being referenced in step groups to be deployed.
-    :type target_service_topology_id: str
-    :param step_groups: The list of step groups that define the orchestration.
-    :type step_groups: list[~azure.mgmt.deploymentmanager.models.StepGroup]
+    :vartype target_service_topology_id: str
+    :ivar step_groups: The list of step groups that define the orchestration.
+    :vartype step_groups: list[~azure.mgmt.deploymentmanager.models.StepGroup]
     :ivar status: The current status of the rollout.
     :vartype status: str
     :ivar total_retry_attempts: The cardinal count of total number of retries performed on the
@@ -1018,13 +1202,31 @@ class Rollout(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["Identity"] = None,
+        identity: Optional["_models.Identity"] = None,
         build_version: Optional[str] = None,
         artifact_source_id: Optional[str] = None,
         target_service_topology_id: Optional[str] = None,
-        step_groups: Optional[List["StepGroup"]] = None,
+        step_groups: Optional[List["_models.StepGroup"]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword identity: Identity for the resource.
+        :paramtype identity: ~azure.mgmt.deploymentmanager.models.Identity
+        :keyword build_version: The version of the build being deployed.
+        :paramtype build_version: str
+        :keyword artifact_source_id: The reference to the artifact source resource Id where the payload
+         is located.
+        :paramtype artifact_source_id: str
+        :keyword target_service_topology_id: The resource Id of the service topology from which service
+         units are being referenced in step groups to be deployed.
+        :paramtype target_service_topology_id: str
+        :keyword step_groups: The list of step groups that define the orchestration.
+        :paramtype step_groups: list[~azure.mgmt.deploymentmanager.models.StepGroup]
+        """
         super(Rollout, self).__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.build_version = build_version
@@ -1042,9 +1244,9 @@ class RolloutIdentityAuthentication(RestRequestAuthentication):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The authentication type.Constant filled by server.  Possible values
-     include: "ApiKey", "RolloutIdentity".
-    :type type: str or ~azure.mgmt.deploymentmanager.models.RestAuthType
+    :ivar type: Required. The authentication type.Constant filled by server. Known values are:
+     "ApiKey", "RolloutIdentity".
+    :vartype type: str or ~azure.mgmt.deploymentmanager.models.RestAuthType
     """
 
     _validation = {
@@ -1059,6 +1261,8 @@ class RolloutIdentityAuthentication(RestRequestAuthentication):
         self,
         **kwargs
     ):
+        """
+        """
         super(RolloutIdentityAuthentication, self).__init__(**kwargs)
         self.type = 'RolloutIdentity'  # type: str
 
@@ -1104,6 +1308,8 @@ class RolloutOperationInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(RolloutOperationInfo, self).__init__(**kwargs)
         self.retry_attempt = None
         self.skip_succeeded_on_retry = None
@@ -1146,6 +1352,8 @@ class RolloutProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(RolloutProperties, self).__init__(**kwargs)
         self.status = None
         self.total_retry_attempts = None
@@ -1158,16 +1366,16 @@ class RolloutRequestProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param build_version: Required. The version of the build being deployed.
-    :type build_version: str
-    :param artifact_source_id: The reference to the artifact source resource Id where the payload
-     is located.
-    :type artifact_source_id: str
-    :param target_service_topology_id: Required. The resource Id of the service topology from which
+    :ivar build_version: Required. The version of the build being deployed.
+    :vartype build_version: str
+    :ivar artifact_source_id: The reference to the artifact source resource Id where the payload is
+     located.
+    :vartype artifact_source_id: str
+    :ivar target_service_topology_id: Required. The resource Id of the service topology from which
      service units are being referenced in step groups to be deployed.
-    :type target_service_topology_id: str
-    :param step_groups: Required. The list of step groups that define the orchestration.
-    :type step_groups: list[~azure.mgmt.deploymentmanager.models.StepGroup]
+    :vartype target_service_topology_id: str
+    :ivar step_groups: Required. The list of step groups that define the orchestration.
+    :vartype step_groups: list[~azure.mgmt.deploymentmanager.models.StepGroup]
     """
 
     _validation = {
@@ -1188,10 +1396,22 @@ class RolloutRequestProperties(msrest.serialization.Model):
         *,
         build_version: str,
         target_service_topology_id: str,
-        step_groups: List["StepGroup"],
+        step_groups: List["_models.StepGroup"],
         artifact_source_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword build_version: Required. The version of the build being deployed.
+        :paramtype build_version: str
+        :keyword artifact_source_id: The reference to the artifact source resource Id where the payload
+         is located.
+        :paramtype artifact_source_id: str
+        :keyword target_service_topology_id: Required. The resource Id of the service topology from
+         which service units are being referenced in step groups to be deployed.
+        :paramtype target_service_topology_id: str
+        :keyword step_groups: Required. The list of step groups that define the orchestration.
+        :paramtype step_groups: list[~azure.mgmt.deploymentmanager.models.StepGroup]
+        """
         super(RolloutRequestProperties, self).__init__(**kwargs)
         self.build_version = build_version
         self.artifact_source_id = artifact_source_id
@@ -1215,16 +1435,16 @@ class RolloutPropertiesAutoGenerated(RolloutRequestProperties, RolloutProperties
     :vartype operation_info: ~azure.mgmt.deploymentmanager.models.RolloutOperationInfo
     :ivar services: The detailed information on the services being deployed.
     :vartype services: list[~azure.mgmt.deploymentmanager.models.Service]
-    :param build_version: Required. The version of the build being deployed.
-    :type build_version: str
-    :param artifact_source_id: The reference to the artifact source resource Id where the payload
-     is located.
-    :type artifact_source_id: str
-    :param target_service_topology_id: Required. The resource Id of the service topology from which
+    :ivar build_version: Required. The version of the build being deployed.
+    :vartype build_version: str
+    :ivar artifact_source_id: The reference to the artifact source resource Id where the payload is
+     located.
+    :vartype artifact_source_id: str
+    :ivar target_service_topology_id: Required. The resource Id of the service topology from which
      service units are being referenced in step groups to be deployed.
-    :type target_service_topology_id: str
-    :param step_groups: Required. The list of step groups that define the orchestration.
-    :type step_groups: list[~azure.mgmt.deploymentmanager.models.StepGroup]
+    :vartype target_service_topology_id: str
+    :ivar step_groups: Required. The list of step groups that define the orchestration.
+    :vartype step_groups: list[~azure.mgmt.deploymentmanager.models.StepGroup]
     """
 
     _validation = {
@@ -1253,10 +1473,22 @@ class RolloutPropertiesAutoGenerated(RolloutRequestProperties, RolloutProperties
         *,
         build_version: str,
         target_service_topology_id: str,
-        step_groups: List["StepGroup"],
+        step_groups: List["_models.StepGroup"],
         artifact_source_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword build_version: Required. The version of the build being deployed.
+        :paramtype build_version: str
+        :keyword artifact_source_id: The reference to the artifact source resource Id where the payload
+         is located.
+        :paramtype artifact_source_id: str
+        :keyword target_service_topology_id: Required. The resource Id of the service topology from
+         which service units are being referenced in step groups to be deployed.
+        :paramtype target_service_topology_id: str
+        :keyword step_groups: Required. The list of step groups that define the orchestration.
+        :paramtype step_groups: list[~azure.mgmt.deploymentmanager.models.StepGroup]
+        """
         super(RolloutPropertiesAutoGenerated, self).__init__(build_version=build_version, artifact_source_id=artifact_source_id, target_service_topology_id=target_service_topology_id, step_groups=step_groups, **kwargs)
         self.status = None
         self.total_retry_attempts = None
@@ -1283,22 +1515,22 @@ class RolloutRequest(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param identity: Required. Identity for the resource.
-    :type identity: ~azure.mgmt.deploymentmanager.models.Identity
-    :param build_version: Required. The version of the build being deployed.
-    :type build_version: str
-    :param artifact_source_id: The reference to the artifact source resource Id where the payload
-     is located.
-    :type artifact_source_id: str
-    :param target_service_topology_id: Required. The resource Id of the service topology from which
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar identity: Required. Identity for the resource.
+    :vartype identity: ~azure.mgmt.deploymentmanager.models.Identity
+    :ivar build_version: Required. The version of the build being deployed.
+    :vartype build_version: str
+    :ivar artifact_source_id: The reference to the artifact source resource Id where the payload is
+     located.
+    :vartype artifact_source_id: str
+    :ivar target_service_topology_id: Required. The resource Id of the service topology from which
      service units are being referenced in step groups to be deployed.
-    :type target_service_topology_id: str
-    :param step_groups: Required. The list of step groups that define the orchestration.
-    :type step_groups: list[~azure.mgmt.deploymentmanager.models.StepGroup]
+    :vartype target_service_topology_id: str
+    :ivar step_groups: Required. The list of step groups that define the orchestration.
+    :vartype step_groups: list[~azure.mgmt.deploymentmanager.models.StepGroup]
     """
 
     _validation = {
@@ -1329,14 +1561,32 @@ class RolloutRequest(TrackedResource):
         self,
         *,
         location: str,
-        identity: "Identity",
+        identity: "_models.Identity",
         build_version: str,
         target_service_topology_id: str,
-        step_groups: List["StepGroup"],
+        step_groups: List["_models.StepGroup"],
         tags: Optional[Dict[str, str]] = None,
         artifact_source_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword identity: Required. Identity for the resource.
+        :paramtype identity: ~azure.mgmt.deploymentmanager.models.Identity
+        :keyword build_version: Required. The version of the build being deployed.
+        :paramtype build_version: str
+        :keyword artifact_source_id: The reference to the artifact source resource Id where the payload
+         is located.
+        :paramtype artifact_source_id: str
+        :keyword target_service_topology_id: Required. The resource Id of the service topology from
+         which service units are being referenced in step groups to be deployed.
+        :paramtype target_service_topology_id: str
+        :keyword step_groups: Required. The list of step groups that define the orchestration.
+        :paramtype step_groups: list[~azure.mgmt.deploymentmanager.models.StepGroup]
+        """
         super(RolloutRequest, self).__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.build_version = build_version
@@ -1352,12 +1602,12 @@ class RolloutStep(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name of the step.
-    :type name: str
+    :ivar name: Required. Name of the step.
+    :vartype name: str
     :ivar status: Current state of the step.
     :vartype status: str
-    :param step_group: The step group the current step is part of.
-    :type step_group: str
+    :ivar step_group: The step group the current step is part of.
+    :vartype step_group: str
     :ivar operation_info: Detailed information of specific action execution.
     :vartype operation_info: ~azure.mgmt.deploymentmanager.models.StepOperationInfo
     :ivar resource_operations: Set of resource operations that were performed, if any, on an Azure
@@ -1391,6 +1641,12 @@ class RolloutStep(msrest.serialization.Model):
         step_group: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. Name of the step.
+        :paramtype name: str
+        :keyword step_group: The step group the current step is part of.
+        :paramtype step_group: str
+        """
         super(RolloutStep, self).__init__(**kwargs)
         self.name = name
         self.status = None
@@ -1405,11 +1661,11 @@ class SasAuthentication(Authentication):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The authentication type.Constant filled by server.
-    :type type: str
-    :param sas_uri: The SAS URI to the Azure Storage blob container. Any offset from the root of
-     the container to where the artifacts are located can be defined in the artifactRoot.
-    :type sas_uri: str
+    :ivar type: Required. The authentication type.Constant filled by server.
+    :vartype type: str
+    :ivar sas_uri: The SAS URI to the Azure Storage blob container. Any offset from the root of the
+     container to where the artifacts are located can be defined in the artifactRoot.
+    :vartype sas_uri: str
     """
 
     _validation = {
@@ -1427,6 +1683,11 @@ class SasAuthentication(Authentication):
         sas_uri: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword sas_uri: The SAS URI to the Azure Storage blob container. Any offset from the root of
+         the container to where the artifacts are located can be defined in the artifactRoot.
+        :paramtype sas_uri: str
+        """
         super(SasAuthentication, self).__init__(**kwargs)
         self.type = 'Sas'  # type: str
         self.sas_uri = sas_uri
@@ -1437,12 +1698,12 @@ class ServiceProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_location: Required. The Azure location to which the resources in the service
+    :ivar target_location: Required. The Azure location to which the resources in the service
      belong to or should be deployed to.
-    :type target_location: str
-    :param target_subscription_id: Required. The subscription to which the resources in the service
+    :vartype target_location: str
+    :ivar target_subscription_id: Required. The subscription to which the resources in the service
      belong to or should be deployed to.
-    :type target_subscription_id: str
+    :vartype target_subscription_id: str
     """
 
     _validation = {
@@ -1462,6 +1723,14 @@ class ServiceProperties(msrest.serialization.Model):
         target_subscription_id: str,
         **kwargs
     ):
+        """
+        :keyword target_location: Required. The Azure location to which the resources in the service
+         belong to or should be deployed to.
+        :paramtype target_location: str
+        :keyword target_subscription_id: Required. The subscription to which the resources in the
+         service belong to or should be deployed to.
+        :paramtype target_subscription_id: str
+        """
         super(ServiceProperties, self).__init__(**kwargs)
         self.target_location = target_location
         self.target_subscription_id = target_subscription_id
@@ -1472,16 +1741,16 @@ class Service(ServiceProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_location: Required. The Azure location to which the resources in the service
+    :ivar target_location: Required. The Azure location to which the resources in the service
      belong to or should be deployed to.
-    :type target_location: str
-    :param target_subscription_id: Required. The subscription to which the resources in the service
+    :vartype target_location: str
+    :ivar target_subscription_id: Required. The subscription to which the resources in the service
      belong to or should be deployed to.
-    :type target_subscription_id: str
-    :param name: Name of the service.
-    :type name: str
-    :param service_units: The detailed information about the units that make up the service.
-    :type service_units: list[~azure.mgmt.deploymentmanager.models.ServiceUnit]
+    :vartype target_subscription_id: str
+    :ivar name: Name of the service.
+    :vartype name: str
+    :ivar service_units: The detailed information about the units that make up the service.
+    :vartype service_units: list[~azure.mgmt.deploymentmanager.models.ServiceUnit]
     """
 
     _validation = {
@@ -1502,9 +1771,21 @@ class Service(ServiceProperties):
         target_location: str,
         target_subscription_id: str,
         name: Optional[str] = None,
-        service_units: Optional[List["ServiceUnit"]] = None,
+        service_units: Optional[List["_models.ServiceUnit"]] = None,
         **kwargs
     ):
+        """
+        :keyword target_location: Required. The Azure location to which the resources in the service
+         belong to or should be deployed to.
+        :paramtype target_location: str
+        :keyword target_subscription_id: Required. The subscription to which the resources in the
+         service belong to or should be deployed to.
+        :paramtype target_subscription_id: str
+        :keyword name: Name of the service.
+        :paramtype name: str
+        :keyword service_units: The detailed information about the units that make up the service.
+        :paramtype service_units: list[~azure.mgmt.deploymentmanager.models.ServiceUnit]
+        """
         super(Service, self).__init__(target_location=target_location, target_subscription_id=target_subscription_id, **kwargs)
         self.name = name
         self.service_units = service_units
@@ -1525,16 +1806,16 @@ class ServiceResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param target_location: Required. The Azure location to which the resources in the service
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar target_location: Required. The Azure location to which the resources in the service
      belong to or should be deployed to.
-    :type target_location: str
-    :param target_subscription_id: Required. The subscription to which the resources in the service
+    :vartype target_location: str
+    :ivar target_subscription_id: Required. The subscription to which the resources in the service
      belong to or should be deployed to.
-    :type target_subscription_id: str
+    :vartype target_subscription_id: str
     """
 
     _validation = {
@@ -1565,6 +1846,18 @@ class ServiceResource(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword target_location: Required. The Azure location to which the resources in the service
+         belong to or should be deployed to.
+        :paramtype target_location: str
+        :keyword target_subscription_id: Required. The subscription to which the resources in the
+         service belong to or should be deployed to.
+        :paramtype target_subscription_id: str
+        """
         super(ServiceResource, self).__init__(tags=tags, location=location, **kwargs)
         self.target_location = target_location
         self.target_subscription_id = target_subscription_id
@@ -1575,12 +1868,12 @@ class ServiceResourceProperties(ServiceProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_location: Required. The Azure location to which the resources in the service
+    :ivar target_location: Required. The Azure location to which the resources in the service
      belong to or should be deployed to.
-    :type target_location: str
-    :param target_subscription_id: Required. The subscription to which the resources in the service
+    :vartype target_location: str
+    :ivar target_subscription_id: Required. The subscription to which the resources in the service
      belong to or should be deployed to.
-    :type target_subscription_id: str
+    :vartype target_subscription_id: str
     """
 
     _validation = {
@@ -1600,15 +1893,23 @@ class ServiceResourceProperties(ServiceProperties):
         target_subscription_id: str,
         **kwargs
     ):
+        """
+        :keyword target_location: Required. The Azure location to which the resources in the service
+         belong to or should be deployed to.
+        :paramtype target_location: str
+        :keyword target_subscription_id: Required. The subscription to which the resources in the
+         service belong to or should be deployed to.
+        :paramtype target_subscription_id: str
+        """
         super(ServiceResourceProperties, self).__init__(target_location=target_location, target_subscription_id=target_subscription_id, **kwargs)
 
 
 class ServiceTopologyProperties(msrest.serialization.Model):
     """The properties of a service topology.
 
-    :param artifact_source_id: The resource Id of the artifact source that contains the artifacts
+    :ivar artifact_source_id: The resource Id of the artifact source that contains the artifacts
      that can be referenced in the service units.
-    :type artifact_source_id: str
+    :vartype artifact_source_id: str
     """
 
     _attribute_map = {
@@ -1621,6 +1922,11 @@ class ServiceTopologyProperties(msrest.serialization.Model):
         artifact_source_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword artifact_source_id: The resource Id of the artifact source that contains the artifacts
+         that can be referenced in the service units.
+        :paramtype artifact_source_id: str
+        """
         super(ServiceTopologyProperties, self).__init__(**kwargs)
         self.artifact_source_id = artifact_source_id
 
@@ -1640,13 +1946,13 @@ class ServiceTopologyResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param artifact_source_id: The resource Id of the artifact source that contains the artifacts
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar artifact_source_id: The resource Id of the artifact source that contains the artifacts
      that can be referenced in the service units.
-    :type artifact_source_id: str
+    :vartype artifact_source_id: str
     """
 
     _validation = {
@@ -1673,6 +1979,15 @@ class ServiceTopologyResource(TrackedResource):
         artifact_source_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword artifact_source_id: The resource Id of the artifact source that contains the artifacts
+         that can be referenced in the service units.
+        :paramtype artifact_source_id: str
+        """
         super(ServiceTopologyResource, self).__init__(tags=tags, location=location, **kwargs)
         self.artifact_source_id = artifact_source_id
 
@@ -1680,9 +1995,9 @@ class ServiceTopologyResource(TrackedResource):
 class ServiceTopologyResourceProperties(ServiceTopologyProperties):
     """The properties that define the service topology.
 
-    :param artifact_source_id: The resource Id of the artifact source that contains the artifacts
+    :ivar artifact_source_id: The resource Id of the artifact source that contains the artifacts
      that can be referenced in the service units.
-    :type artifact_source_id: str
+    :vartype artifact_source_id: str
     """
 
     _attribute_map = {
@@ -1695,6 +2010,11 @@ class ServiceTopologyResourceProperties(ServiceTopologyProperties):
         artifact_source_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword artifact_source_id: The resource Id of the artifact source that contains the artifacts
+         that can be referenced in the service units.
+        :paramtype artifact_source_id: str
+        """
         super(ServiceTopologyResourceProperties, self).__init__(artifact_source_id=artifact_source_id, **kwargs)
 
 
@@ -1703,14 +2023,14 @@ class ServiceUnitProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_resource_group: Required. The Azure Resource Group to which the resources in the
+    :ivar target_resource_group: Required. The Azure Resource Group to which the resources in the
      service unit belong to or should be deployed to.
-    :type target_resource_group: str
-    :param deployment_mode: Required. Describes the type of ARM deployment to be performed on the
-     resource. Possible values include: "Incremental", "Complete".
-    :type deployment_mode: str or ~azure.mgmt.deploymentmanager.models.DeploymentMode
-    :param artifacts: The artifacts for the service unit.
-    :type artifacts: ~azure.mgmt.deploymentmanager.models.ServiceUnitArtifacts
+    :vartype target_resource_group: str
+    :ivar deployment_mode: Required. Describes the type of ARM deployment to be performed on the
+     resource. Known values are: "Incremental", "Complete".
+    :vartype deployment_mode: str or ~azure.mgmt.deploymentmanager.models.DeploymentMode
+    :ivar artifacts: The artifacts for the service unit.
+    :vartype artifacts: ~azure.mgmt.deploymentmanager.models.ServiceUnitArtifacts
     """
 
     _validation = {
@@ -1728,10 +2048,20 @@ class ServiceUnitProperties(msrest.serialization.Model):
         self,
         *,
         target_resource_group: str,
-        deployment_mode: Union[str, "DeploymentMode"],
-        artifacts: Optional["ServiceUnitArtifacts"] = None,
+        deployment_mode: Union[str, "_models.DeploymentMode"],
+        artifacts: Optional["_models.ServiceUnitArtifacts"] = None,
         **kwargs
     ):
+        """
+        :keyword target_resource_group: Required. The Azure Resource Group to which the resources in
+         the service unit belong to or should be deployed to.
+        :paramtype target_resource_group: str
+        :keyword deployment_mode: Required. Describes the type of ARM deployment to be performed on the
+         resource. Known values are: "Incremental", "Complete".
+        :paramtype deployment_mode: str or ~azure.mgmt.deploymentmanager.models.DeploymentMode
+        :keyword artifacts: The artifacts for the service unit.
+        :paramtype artifacts: ~azure.mgmt.deploymentmanager.models.ServiceUnitArtifacts
+        """
         super(ServiceUnitProperties, self).__init__(**kwargs)
         self.target_resource_group = target_resource_group
         self.deployment_mode = deployment_mode
@@ -1743,18 +2073,18 @@ class ServiceUnit(ServiceUnitProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_resource_group: Required. The Azure Resource Group to which the resources in the
+    :ivar target_resource_group: Required. The Azure Resource Group to which the resources in the
      service unit belong to or should be deployed to.
-    :type target_resource_group: str
-    :param deployment_mode: Required. Describes the type of ARM deployment to be performed on the
-     resource. Possible values include: "Incremental", "Complete".
-    :type deployment_mode: str or ~azure.mgmt.deploymentmanager.models.DeploymentMode
-    :param artifacts: The artifacts for the service unit.
-    :type artifacts: ~azure.mgmt.deploymentmanager.models.ServiceUnitArtifacts
-    :param name: Name of the service unit.
-    :type name: str
-    :param steps: Detailed step information, if present.
-    :type steps: list[~azure.mgmt.deploymentmanager.models.RolloutStep]
+    :vartype target_resource_group: str
+    :ivar deployment_mode: Required. Describes the type of ARM deployment to be performed on the
+     resource. Known values are: "Incremental", "Complete".
+    :vartype deployment_mode: str or ~azure.mgmt.deploymentmanager.models.DeploymentMode
+    :ivar artifacts: The artifacts for the service unit.
+    :vartype artifacts: ~azure.mgmt.deploymentmanager.models.ServiceUnitArtifacts
+    :ivar name: Name of the service unit.
+    :vartype name: str
+    :ivar steps: Detailed step information, if present.
+    :vartype steps: list[~azure.mgmt.deploymentmanager.models.RolloutStep]
     """
 
     _validation = {
@@ -1774,12 +2104,26 @@ class ServiceUnit(ServiceUnitProperties):
         self,
         *,
         target_resource_group: str,
-        deployment_mode: Union[str, "DeploymentMode"],
-        artifacts: Optional["ServiceUnitArtifacts"] = None,
+        deployment_mode: Union[str, "_models.DeploymentMode"],
+        artifacts: Optional["_models.ServiceUnitArtifacts"] = None,
         name: Optional[str] = None,
-        steps: Optional[List["RolloutStep"]] = None,
+        steps: Optional[List["_models.RolloutStep"]] = None,
         **kwargs
     ):
+        """
+        :keyword target_resource_group: Required. The Azure Resource Group to which the resources in
+         the service unit belong to or should be deployed to.
+        :paramtype target_resource_group: str
+        :keyword deployment_mode: Required. Describes the type of ARM deployment to be performed on the
+         resource. Known values are: "Incremental", "Complete".
+        :paramtype deployment_mode: str or ~azure.mgmt.deploymentmanager.models.DeploymentMode
+        :keyword artifacts: The artifacts for the service unit.
+        :paramtype artifacts: ~azure.mgmt.deploymentmanager.models.ServiceUnitArtifacts
+        :keyword name: Name of the service unit.
+        :paramtype name: str
+        :keyword steps: Detailed step information, if present.
+        :paramtype steps: list[~azure.mgmt.deploymentmanager.models.RolloutStep]
+        """
         super(ServiceUnit, self).__init__(target_resource_group=target_resource_group, deployment_mode=deployment_mode, artifacts=artifacts, **kwargs)
         self.name = name
         self.steps = steps
@@ -1788,16 +2132,16 @@ class ServiceUnit(ServiceUnitProperties):
 class ServiceUnitArtifacts(msrest.serialization.Model):
     """Defines the artifacts of a service unit.
 
-    :param template_uri: The full URI of the ARM template file with the SAS token.
-    :type template_uri: str
-    :param parameters_uri: The full URI of the ARM parameters file with the SAS token.
-    :type parameters_uri: str
-    :param template_artifact_source_relative_path: The path to the ARM template file relative to
+    :ivar template_uri: The full URI of the ARM template file with the SAS token.
+    :vartype template_uri: str
+    :ivar parameters_uri: The full URI of the ARM parameters file with the SAS token.
+    :vartype parameters_uri: str
+    :ivar template_artifact_source_relative_path: The path to the ARM template file relative to the
+     artifact source.
+    :vartype template_artifact_source_relative_path: str
+    :ivar parameters_artifact_source_relative_path: The path to the ARM parameters file relative to
      the artifact source.
-    :type template_artifact_source_relative_path: str
-    :param parameters_artifact_source_relative_path: The path to the ARM parameters file relative
-     to the artifact source.
-    :type parameters_artifact_source_relative_path: str
+    :vartype parameters_artifact_source_relative_path: str
     """
 
     _attribute_map = {
@@ -1816,6 +2160,18 @@ class ServiceUnitArtifacts(msrest.serialization.Model):
         parameters_artifact_source_relative_path: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword template_uri: The full URI of the ARM template file with the SAS token.
+        :paramtype template_uri: str
+        :keyword parameters_uri: The full URI of the ARM parameters file with the SAS token.
+        :paramtype parameters_uri: str
+        :keyword template_artifact_source_relative_path: The path to the ARM template file relative to
+         the artifact source.
+        :paramtype template_artifact_source_relative_path: str
+        :keyword parameters_artifact_source_relative_path: The path to the ARM parameters file relative
+         to the artifact source.
+        :paramtype parameters_artifact_source_relative_path: str
+        """
         super(ServiceUnitArtifacts, self).__init__(**kwargs)
         self.template_uri = template_uri
         self.parameters_uri = parameters_uri
@@ -1838,18 +2194,18 @@ class ServiceUnitResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param target_resource_group: Required. The Azure Resource Group to which the resources in the
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar target_resource_group: Required. The Azure Resource Group to which the resources in the
      service unit belong to or should be deployed to.
-    :type target_resource_group: str
-    :param deployment_mode: Required. Describes the type of ARM deployment to be performed on the
-     resource. Possible values include: "Incremental", "Complete".
-    :type deployment_mode: str or ~azure.mgmt.deploymentmanager.models.DeploymentMode
-    :param artifacts: The artifacts for the service unit.
-    :type artifacts: ~azure.mgmt.deploymentmanager.models.ServiceUnitArtifacts
+    :vartype target_resource_group: str
+    :ivar deployment_mode: Required. Describes the type of ARM deployment to be performed on the
+     resource. Known values are: "Incremental", "Complete".
+    :vartype deployment_mode: str or ~azure.mgmt.deploymentmanager.models.DeploymentMode
+    :ivar artifacts: The artifacts for the service unit.
+    :vartype artifacts: ~azure.mgmt.deploymentmanager.models.ServiceUnitArtifacts
     """
 
     _validation = {
@@ -1877,11 +2233,25 @@ class ServiceUnitResource(TrackedResource):
         *,
         location: str,
         target_resource_group: str,
-        deployment_mode: Union[str, "DeploymentMode"],
+        deployment_mode: Union[str, "_models.DeploymentMode"],
         tags: Optional[Dict[str, str]] = None,
-        artifacts: Optional["ServiceUnitArtifacts"] = None,
+        artifacts: Optional["_models.ServiceUnitArtifacts"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword target_resource_group: Required. The Azure Resource Group to which the resources in
+         the service unit belong to or should be deployed to.
+        :paramtype target_resource_group: str
+        :keyword deployment_mode: Required. Describes the type of ARM deployment to be performed on the
+         resource. Known values are: "Incremental", "Complete".
+        :paramtype deployment_mode: str or ~azure.mgmt.deploymentmanager.models.DeploymentMode
+        :keyword artifacts: The artifacts for the service unit.
+        :paramtype artifacts: ~azure.mgmt.deploymentmanager.models.ServiceUnitArtifacts
+        """
         super(ServiceUnitResource, self).__init__(tags=tags, location=location, **kwargs)
         self.target_resource_group = target_resource_group
         self.deployment_mode = deployment_mode
@@ -1893,14 +2263,14 @@ class ServiceUnitResourceProperties(ServiceUnitProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_resource_group: Required. The Azure Resource Group to which the resources in the
+    :ivar target_resource_group: Required. The Azure Resource Group to which the resources in the
      service unit belong to or should be deployed to.
-    :type target_resource_group: str
-    :param deployment_mode: Required. Describes the type of ARM deployment to be performed on the
-     resource. Possible values include: "Incremental", "Complete".
-    :type deployment_mode: str or ~azure.mgmt.deploymentmanager.models.DeploymentMode
-    :param artifacts: The artifacts for the service unit.
-    :type artifacts: ~azure.mgmt.deploymentmanager.models.ServiceUnitArtifacts
+    :vartype target_resource_group: str
+    :ivar deployment_mode: Required. Describes the type of ARM deployment to be performed on the
+     resource. Known values are: "Incremental", "Complete".
+    :vartype deployment_mode: str or ~azure.mgmt.deploymentmanager.models.DeploymentMode
+    :ivar artifacts: The artifacts for the service unit.
+    :vartype artifacts: ~azure.mgmt.deploymentmanager.models.ServiceUnitArtifacts
     """
 
     _validation = {
@@ -1918,10 +2288,20 @@ class ServiceUnitResourceProperties(ServiceUnitProperties):
         self,
         *,
         target_resource_group: str,
-        deployment_mode: Union[str, "DeploymentMode"],
-        artifacts: Optional["ServiceUnitArtifacts"] = None,
+        deployment_mode: Union[str, "_models.DeploymentMode"],
+        artifacts: Optional["_models.ServiceUnitArtifacts"] = None,
         **kwargs
     ):
+        """
+        :keyword target_resource_group: Required. The Azure Resource Group to which the resources in
+         the service unit belong to or should be deployed to.
+        :paramtype target_resource_group: str
+        :keyword deployment_mode: Required. Describes the type of ARM deployment to be performed on the
+         resource. Known values are: "Incremental", "Complete".
+        :paramtype deployment_mode: str or ~azure.mgmt.deploymentmanager.models.DeploymentMode
+        :keyword artifacts: The artifacts for the service unit.
+        :paramtype artifacts: ~azure.mgmt.deploymentmanager.models.ServiceUnitArtifacts
+        """
         super(ServiceUnitResourceProperties, self).__init__(target_resource_group=target_resource_group, deployment_mode=deployment_mode, artifacts=artifacts, **kwargs)
 
 
@@ -1930,18 +2310,17 @@ class StepGroup(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the step group.
-    :type name: str
-    :param depends_on_step_groups: The list of step group names on which this step group depends
-     on.
-    :type depends_on_step_groups: list[str]
-    :param pre_deployment_steps: The list of steps to be run before deploying the target.
-    :type pre_deployment_steps: list[~azure.mgmt.deploymentmanager.models.PrePostStep]
-    :param deployment_target_id: Required. The resource Id of service unit to be deployed. The
+    :ivar name: Required. The name of the step group.
+    :vartype name: str
+    :ivar depends_on_step_groups: The list of step group names on which this step group depends on.
+    :vartype depends_on_step_groups: list[str]
+    :ivar pre_deployment_steps: The list of steps to be run before deploying the target.
+    :vartype pre_deployment_steps: list[~azure.mgmt.deploymentmanager.models.PrePostStep]
+    :ivar deployment_target_id: Required. The resource Id of service unit to be deployed. The
      service unit should be from the service topology referenced in targetServiceTopologyId.
-    :type deployment_target_id: str
-    :param post_deployment_steps: The list of steps to be run after deploying the target.
-    :type post_deployment_steps: list[~azure.mgmt.deploymentmanager.models.PrePostStep]
+    :vartype deployment_target_id: str
+    :ivar post_deployment_steps: The list of steps to be run after deploying the target.
+    :vartype post_deployment_steps: list[~azure.mgmt.deploymentmanager.models.PrePostStep]
     """
 
     _validation = {
@@ -1963,10 +2342,24 @@ class StepGroup(msrest.serialization.Model):
         name: str,
         deployment_target_id: str,
         depends_on_step_groups: Optional[List[str]] = None,
-        pre_deployment_steps: Optional[List["PrePostStep"]] = None,
-        post_deployment_steps: Optional[List["PrePostStep"]] = None,
+        pre_deployment_steps: Optional[List["_models.PrePostStep"]] = None,
+        post_deployment_steps: Optional[List["_models.PrePostStep"]] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the step group.
+        :paramtype name: str
+        :keyword depends_on_step_groups: The list of step group names on which this step group depends
+         on.
+        :paramtype depends_on_step_groups: list[str]
+        :keyword pre_deployment_steps: The list of steps to be run before deploying the target.
+        :paramtype pre_deployment_steps: list[~azure.mgmt.deploymentmanager.models.PrePostStep]
+        :keyword deployment_target_id: Required. The resource Id of service unit to be deployed. The
+         service unit should be from the service topology referenced in targetServiceTopologyId.
+        :paramtype deployment_target_id: str
+        :keyword post_deployment_steps: The list of steps to be run after deploying the target.
+        :paramtype post_deployment_steps: list[~azure.mgmt.deploymentmanager.models.PrePostStep]
+        """
         super(StepGroup, self).__init__(**kwargs)
         self.name = name
         self.depends_on_step_groups = depends_on_step_groups
@@ -1990,8 +2383,8 @@ class StepOperationInfo(msrest.serialization.Model):
     :vartype end_time: ~datetime.datetime
     :ivar last_updated_time: Last time in UTC this operation was updated.
     :vartype last_updated_time: ~datetime.datetime
-    :param error: The errors, if any, for the action.
-    :type error: ~azure.mgmt.deploymentmanager.models.CloudErrorBody
+    :ivar error: The errors, if any, for the action.
+    :vartype error: ~azure.mgmt.deploymentmanager.models.CloudErrorBody
     """
 
     _validation = {
@@ -2014,9 +2407,13 @@ class StepOperationInfo(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["CloudErrorBody"] = None,
+        error: Optional["_models.CloudErrorBody"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The errors, if any, for the action.
+        :paramtype error: ~azure.mgmt.deploymentmanager.models.CloudErrorBody
+        """
         super(StepOperationInfo, self).__init__(**kwargs)
         self.deployment_name = None
         self.correlation_id = None
@@ -2041,12 +2438,12 @@ class StepResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param properties: Required. The properties that define the step.
-    :type properties: ~azure.mgmt.deploymentmanager.models.StepProperties
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar properties: Required. The properties that define the step.
+    :vartype properties: ~azure.mgmt.deploymentmanager.models.StepProperties
     """
 
     _validation = {
@@ -2070,10 +2467,18 @@ class StepResource(TrackedResource):
         self,
         *,
         location: str,
-        properties: "StepProperties",
+        properties: "_models.StepProperties",
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword properties: Required. The properties that define the step.
+        :paramtype properties: ~azure.mgmt.deploymentmanager.models.StepProperties
+        """
         super(StepResource, self).__init__(tags=tags, location=location, **kwargs)
         self.properties = properties
 
@@ -2083,8 +2488,8 @@ class WaitStepAttributes(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param duration: Required. The duration in ISO 8601 format of how long the wait should be.
-    :type duration: str
+    :ivar duration: Required. The duration in ISO 8601 format of how long the wait should be.
+    :vartype duration: str
     """
 
     _validation = {
@@ -2101,6 +2506,10 @@ class WaitStepAttributes(msrest.serialization.Model):
         duration: str,
         **kwargs
     ):
+        """
+        :keyword duration: Required. The duration in ISO 8601 format of how long the wait should be.
+        :paramtype duration: str
+        """
         super(WaitStepAttributes, self).__init__(**kwargs)
         self.duration = duration
 
@@ -2110,11 +2519,11 @@ class WaitStepProperties(StepProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param step_type: Required. The type of step.Constant filled by server.  Possible values
-     include: "Wait", "HealthCheck".
-    :type step_type: str or ~azure.mgmt.deploymentmanager.models.StepType
-    :param attributes: Required. The Wait attributes.
-    :type attributes: ~azure.mgmt.deploymentmanager.models.WaitStepAttributes
+    :ivar step_type: Required. The type of step.Constant filled by server. Known values are:
+     "Wait", "HealthCheck".
+    :vartype step_type: str or ~azure.mgmt.deploymentmanager.models.StepType
+    :ivar attributes: Required. The Wait attributes.
+    :vartype attributes: ~azure.mgmt.deploymentmanager.models.WaitStepAttributes
     """
 
     _validation = {
@@ -2130,9 +2539,13 @@ class WaitStepProperties(StepProperties):
     def __init__(
         self,
         *,
-        attributes: "WaitStepAttributes",
+        attributes: "_models.WaitStepAttributes",
         **kwargs
     ):
+        """
+        :keyword attributes: Required. The Wait attributes.
+        :paramtype attributes: ~azure.mgmt.deploymentmanager.models.WaitStepAttributes
+        """
         super(WaitStepProperties, self).__init__(**kwargs)
         self.step_type = 'Wait'  # type: str
         self.attributes = attributes
