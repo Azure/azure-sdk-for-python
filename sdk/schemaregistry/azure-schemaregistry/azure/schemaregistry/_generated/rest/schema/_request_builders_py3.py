@@ -284,7 +284,7 @@ def build_get_schema_by_version_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    accept = _headers.pop('Accept', "application/json; serialization=Avro")
 
     # Construct URL
     _url = "/$schemaGroups/{groupName}/schemas/{schemaName}/versions/{version_id}"
@@ -309,3 +309,4 @@ def build_get_schema_by_version_request(
         headers=_headers,
         **kwargs
     )
+    

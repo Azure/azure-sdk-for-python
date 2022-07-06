@@ -172,8 +172,10 @@ class SchemaRegistryClient(object):
         return _parse_response_schema(response)
 
     def get_schema_by_version(self,version,group_name, schema_name, **kwargs):
+        # type: (str,str,str,Any) -> Schema
         """
         Gets a registered schema by its version, group name and schema name.
+        
         :param str version: References schema version for a schema in a schema group.
         :param str group_name: References schema group in registry namespace.
         :param str schema_name: References specific schema in registry namespace.
