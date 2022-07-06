@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._confidential_ledger_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AADBasedSecurityPrincipal(msrest.serialization.Model):
@@ -22,8 +24,8 @@ class AADBasedSecurityPrincipal(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: UUID/GUID based Tenant Id of the Security Principal.
     :vartype tenant_id: str
-    :ivar ledger_role_name: LedgerRole associated with the Security Principal of Ledger. Possible
-     values include: "Reader", "Contributor", "Administrator".
+    :ivar ledger_role_name: LedgerRole associated with the Security Principal of Ledger. Known
+     values are: "Reader", "Contributor", "Administrator".
     :vartype ledger_role_name: str or ~azure.mgmt.confidentialledger.models.LedgerRoleName
     """
 
@@ -38,7 +40,7 @@ class AADBasedSecurityPrincipal(msrest.serialization.Model):
         *,
         principal_id: Optional[str] = None,
         tenant_id: Optional[str] = None,
-        ledger_role_name: Optional[Union[str, "LedgerRoleName"]] = None,
+        ledger_role_name: Optional[Union[str, "_models.LedgerRoleName"]] = None,
         **kwargs
     ):
         """
@@ -46,8 +48,8 @@ class AADBasedSecurityPrincipal(msrest.serialization.Model):
         :paramtype principal_id: str
         :keyword tenant_id: UUID/GUID based Tenant Id of the Security Principal.
         :paramtype tenant_id: str
-        :keyword ledger_role_name: LedgerRole associated with the Security Principal of Ledger.
-         Possible values include: "Reader", "Contributor", "Administrator".
+        :keyword ledger_role_name: LedgerRole associated with the Security Principal of Ledger. Known
+         values are: "Reader", "Contributor", "Administrator".
         :paramtype ledger_role_name: str or ~azure.mgmt.confidentialledger.models.LedgerRoleName
         """
         super(AADBasedSecurityPrincipal, self).__init__(**kwargs)
@@ -61,8 +63,8 @@ class CertBasedSecurityPrincipal(msrest.serialization.Model):
 
     :ivar cert: Public key of the user cert (.pem or .cer).
     :vartype cert: str
-    :ivar ledger_role_name: LedgerRole associated with the Security Principal of Ledger. Possible
-     values include: "Reader", "Contributor", "Administrator".
+    :ivar ledger_role_name: LedgerRole associated with the Security Principal of Ledger. Known
+     values are: "Reader", "Contributor", "Administrator".
     :vartype ledger_role_name: str or ~azure.mgmt.confidentialledger.models.LedgerRoleName
     """
 
@@ -75,14 +77,14 @@ class CertBasedSecurityPrincipal(msrest.serialization.Model):
         self,
         *,
         cert: Optional[str] = None,
-        ledger_role_name: Optional[Union[str, "LedgerRoleName"]] = None,
+        ledger_role_name: Optional[Union[str, "_models.LedgerRoleName"]] = None,
         **kwargs
     ):
         """
         :keyword cert: Public key of the user cert (.pem or .cer).
         :paramtype cert: str
-        :keyword ledger_role_name: LedgerRole associated with the Security Principal of Ledger.
-         Possible values include: "Reader", "Contributor", "Administrator".
+        :keyword ledger_role_name: LedgerRole associated with the Security Principal of Ledger. Known
+         values are: "Reader", "Contributor", "Administrator".
         :paramtype ledger_role_name: str or ~azure.mgmt.confidentialledger.models.LedgerRoleName
         """
         super(CertBasedSecurityPrincipal, self).__init__(**kwargs)
@@ -127,8 +129,8 @@ class CheckNameAvailabilityResponse(msrest.serialization.Model):
 
     :ivar name_available: Indicates if the resource name is available.
     :vartype name_available: bool
-    :ivar reason: The reason why the given name is not available. Possible values include:
-     "Invalid", "AlreadyExists".
+    :ivar reason: The reason why the given name is not available. Known values are: "Invalid",
+     "AlreadyExists".
     :vartype reason: str or ~azure.mgmt.confidentialledger.models.CheckNameAvailabilityReason
     :ivar message: Detailed reason why the given name is available.
     :vartype message: str
@@ -144,15 +146,15 @@ class CheckNameAvailabilityResponse(msrest.serialization.Model):
         self,
         *,
         name_available: Optional[bool] = None,
-        reason: Optional[Union[str, "CheckNameAvailabilityReason"]] = None,
+        reason: Optional[Union[str, "_models.CheckNameAvailabilityReason"]] = None,
         message: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword name_available: Indicates if the resource name is available.
         :paramtype name_available: bool
-        :keyword reason: The reason why the given name is not available. Possible values include:
-         "Invalid", "AlreadyExists".
+        :keyword reason: The reason why the given name is not available. Known values are: "Invalid",
+         "AlreadyExists".
         :paramtype reason: str or ~azure.mgmt.confidentialledger.models.CheckNameAvailabilityReason
         :keyword message: Detailed reason why the given name is available.
         :paramtype message: str
@@ -298,7 +300,7 @@ class ConfidentialLedger(Resource, ResourceLocation, Tags):
         *,
         tags: Optional[Dict[str, str]] = None,
         location: Optional[str] = None,
-        properties: Optional["LedgerProperties"] = None,
+        properties: Optional["_models.LedgerProperties"] = None,
         **kwargs
     ):
         """
@@ -336,7 +338,7 @@ class ConfidentialLedgerList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ConfidentialLedger"]] = None,
+        value: Optional[List["_models.ConfidentialLedger"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -445,7 +447,7 @@ class ErrorResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["ErrorDetail"] = None,
+        error: Optional["_models.ErrorDetail"] = None,
         **kwargs
     ):
         """
@@ -469,11 +471,11 @@ class LedgerProperties(msrest.serialization.Model):
     :vartype identity_service_uri: str
     :ivar ledger_internal_namespace: Internal namespace for the Ledger.
     :vartype ledger_internal_namespace: str
-    :ivar ledger_type: Type of Confidential Ledger. Possible values include: "Unknown", "Public",
+    :ivar ledger_type: Type of Confidential Ledger. Known values are: "Unknown", "Public",
      "Private".
     :vartype ledger_type: str or ~azure.mgmt.confidentialledger.models.LedgerType
-    :ivar provisioning_state: Provisioning state of Ledger Resource. Possible values include:
-     "Unknown", "Succeeded", "Failed", "Canceled", "Creating", "Deleting", "Updating".
+    :ivar provisioning_state: Provisioning state of Ledger Resource. Known values are: "Unknown",
+     "Succeeded", "Failed", "Canceled", "Creating", "Deleting", "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.confidentialledger.models.ProvisioningState
     :ivar aad_based_security_principals: Array of all AAD based Security Principals.
     :vartype aad_based_security_principals:
@@ -505,14 +507,14 @@ class LedgerProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        ledger_type: Optional[Union[str, "LedgerType"]] = None,
-        aad_based_security_principals: Optional[List["AADBasedSecurityPrincipal"]] = None,
-        cert_based_security_principals: Optional[List["CertBasedSecurityPrincipal"]] = None,
+        ledger_type: Optional[Union[str, "_models.LedgerType"]] = None,
+        aad_based_security_principals: Optional[List["_models.AADBasedSecurityPrincipal"]] = None,
+        cert_based_security_principals: Optional[List["_models.CertBasedSecurityPrincipal"]] = None,
         **kwargs
     ):
         """
-        :keyword ledger_type: Type of Confidential Ledger. Possible values include: "Unknown",
-         "Public", "Private".
+        :keyword ledger_type: Type of Confidential Ledger. Known values are: "Unknown", "Public",
+         "Private".
         :paramtype ledger_type: str or ~azure.mgmt.confidentialledger.models.LedgerType
         :keyword aad_based_security_principals: Array of all AAD based Security Principals.
         :paramtype aad_based_security_principals:
@@ -554,7 +556,7 @@ class ResourceProviderOperationDefinition(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         is_data_action: Optional[bool] = None,
-        display: Optional["ResourceProviderOperationDisplay"] = None,
+        display: Optional["_models.ResourceProviderOperationDisplay"] = None,
         **kwargs
     ):
         """
@@ -655,15 +657,15 @@ class SystemData(msrest.serialization.Model):
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
      "User", "Application", "ManagedIdentity", "Key".
     :vartype created_by_type: str or ~azure.mgmt.confidentialledger.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.confidentialledger.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
@@ -682,25 +684,25 @@ class SystemData(msrest.serialization.Model):
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", "Key".
         :paramtype created_by_type: str or ~azure.mgmt.confidentialledger.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", "Key".
         :paramtype last_modified_by_type: str or ~azure.mgmt.confidentialledger.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
