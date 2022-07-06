@@ -144,6 +144,9 @@ class WorkspacePurgeOperations:
         includes all user identities that require purging. Use the in operator to specify multiple
         identities. You should run the query prior to using for a purge request to verify that the
         results are expected.
+        Log Analytics only supports purge operations required for compliance with GDPR. The Log
+        Analytics product team reserves the right to reject requests for purge operations that are not
+        for the purpose of GDPR compliance. In the event of a dispute, please create a support ticket.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str

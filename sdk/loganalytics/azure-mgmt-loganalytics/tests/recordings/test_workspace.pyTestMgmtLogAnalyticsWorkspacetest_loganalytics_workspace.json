@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.11.0b2 Python/3.8.12 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.8.13 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 24 Jun 2022 01:09:15 GMT",
+        "Date": "Wed, 06 Jul 2022 06:22:13 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13006.6 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.13081.9 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -101,7 +101,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.11.0b2 Python/3.8.12 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.8.13 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -111,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 24 Jun 2022 01:09:15 GMT",
+        "Date": "Wed, 06 Jul 2022 06:22:13 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12890.7 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13006.6 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,12 +172,12 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "73a02bdc-e4d5-4f0d-8b26-a5a972aa8647",
+        "client-request-id": "d303f23f-c239-4cd3-9e58-123d041baa06",
         "Connection": "keep-alive",
         "Content-Length": "289",
         "Content-Type": "application/x-www-form-urlencoded",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.11.0b2 Python/3.8.12 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0",
+        "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.8.13 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
@@ -190,10 +190,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "73a02bdc-e4d5-4f0d-8b26-a5a972aa8647",
+        "client-request-id": "d303f23f-c239-4cd3-9e58-123d041baa06",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 24 Jun 2022 01:09:15 GMT",
+        "Date": "Wed, 06 Jul 2022 06:22:14 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.13006.6 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.13081.9 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -220,71 +220,11 @@
         "Connection": "keep-alive",
         "Content-Length": "22",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-mgmt-loganalytics/0.0.0 Python/3.8.12 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-loganalytics/0.0.0 (it should be perview) Python/3.8.13 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": {
         "location": "westus"
       },
-      "StatusCode": 201,
-      "ResponseHeaders": {
-        "Access-Control-Allow-Origin": "*",
-        "api-supported-versions": "2021-12-01-preview",
-        "Cache-Control": "no-cache",
-        "Content-Length": "822",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 24 Jun 2022 01:09:18 GMT",
-        "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/5b75337b/providers/Microsoft.OperationalInsights/workspaces/WorkspaceName?api-version=2021-12-01-preview",
-        "Pragma": "no-cache",
-        "Request-Context": "appId=cid-v1:e6336c63-aab2-45f0-996a-e5dbab2a1508",
-        "Server": "Microsoft-IIS/10.0",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "9ca72d00-a275-47fc-818f-9e8d940ccd92",
-        "x-ms-ratelimit-remaining-subscription-writes": "1199",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220624T010918Z:9ca72d00-a275-47fc-818f-9e8d940ccd92",
-        "X-Powered-By": "ASP.NET"
-      },
-      "ResponseBody": {
-        "properties": {
-          "customerId": "eabeaa91-bda5-40b0-9c72-a47c3956089e",
-          "provisioningState": "Creating",
-          "sku": {
-            "name": "pergb2018",
-            "lastSkuUpdate": "2022-06-24T01:09:17.600234Z"
-          },
-          "retentionInDays": 30,
-          "features": {
-            "legacy": 0,
-            "searchVersion": 1,
-            "enableLogAccessUsingOnlyResourcePermissions": true
-          },
-          "workspaceCapping": {
-            "dailyQuotaGb": -1.0,
-            "quotaNextResetTime": "2022-06-24T22:00:00Z",
-            "dataIngestionStatus": "RespectQuota"
-          },
-          "publicNetworkAccessForIngestion": "Enabled",
-          "publicNetworkAccessForQuery": "Enabled",
-          "createdDate": "2022-06-24T01:09:17.600234Z",
-          "modifiedDate": "2022-06-24T01:09:17.600234Z"
-        },
-        "location": "westus",
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/5b75337b/providers/Microsoft.OperationalInsights/workspaces/WorkspaceName",
-        "name": "WorkspaceName",
-        "type": "Microsoft.OperationalInsights/workspaces"
-      }
-    },
-    {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/5b75337b/providers/Microsoft.OperationalInsights/workspaces/WorkspaceName?api-version=2021-12-01-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-loganalytics/0.0.0 Python/3.8.12 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
-      },
-      "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Access-Control-Allow-Origin": "*",
@@ -292,7 +232,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 24 Jun 2022 01:09:48 GMT",
+        "Date": "Wed, 06 Jul 2022 06:22:17 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:e6336c63-aab2-45f0-996a-e5dbab2a1508",
@@ -304,9 +244,9 @@
           "Accept-Encoding"
         ],
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "2b7023d3-5a16-4a36-aa7f-8de8747f24ea",
-        "x-ms-ratelimit-remaining-subscription-reads": "11999",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220624T010948Z:2b7023d3-5a16-4a36-aa7f-8de8747f24ea",
+        "x-ms-correlation-request-id": "0365e3a7-f86e-4574-a5de-d36135cfa03b",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-routing-request-id": "EASTUS2:20220706T062217Z:0365e3a7-f86e-4574-a5de-d36135cfa03b",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": {
@@ -325,18 +265,19 @@
           },
           "workspaceCapping": {
             "dailyQuotaGb": -1.0,
-            "quotaNextResetTime": "2022-06-24T22:00:00Z",
+            "quotaNextResetTime": "2022-07-06T22:00:00Z",
             "dataIngestionStatus": "RespectQuota"
           },
           "publicNetworkAccessForIngestion": "Enabled",
           "publicNetworkAccessForQuery": "Enabled",
           "createdDate": "2022-06-24T01:09:17.600234Z",
-          "modifiedDate": "2022-06-24T01:09:17.600234Z"
+          "modifiedDate": "2022-07-06T06:22:16.4028052Z"
         },
         "location": "westus",
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/5b75337b/providers/Microsoft.OperationalInsights/workspaces/WorkspaceName",
         "name": "WorkspaceName",
-        "type": "Microsoft.OperationalInsights/workspaces"
+        "type": "Microsoft.OperationalInsights/workspaces",
+        "etag": "\u0022da011628-0000-0700-0000-62b50ee30000\u0022"
       }
     },
     {
@@ -346,7 +287,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-loganalytics/0.0.0 Python/3.8.12 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-loganalytics/0.0.0 (it should be perview) Python/3.8.13 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -356,7 +297,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 24 Jun 2022 01:09:48 GMT",
+        "Date": "Wed, 06 Jul 2022 06:22:17 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:e6336c63-aab2-45f0-996a-e5dbab2a1508",
@@ -368,9 +309,9 @@
           "Accept-Encoding"
         ],
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "8c60f2b9-b897-4431-9db3-d023c9a5adbe",
-        "x-ms-ratelimit-remaining-subscription-reads": "11998",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220624T010948Z:8c60f2b9-b897-4431-9db3-d023c9a5adbe",
+        "x-ms-correlation-request-id": "43329ac7-e778-4ba6-b850-87ba567b20de",
+        "x-ms-ratelimit-remaining-subscription-reads": "11999",
+        "x-ms-routing-request-id": "EASTUS2:20220706T062218Z:43329ac7-e778-4ba6-b850-87ba567b20de",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": {
@@ -389,18 +330,19 @@
           },
           "workspaceCapping": {
             "dailyQuotaGb": -1.0,
-            "quotaNextResetTime": "2022-06-24T22:00:00Z",
+            "quotaNextResetTime": "2022-07-06T22:00:00Z",
             "dataIngestionStatus": "RespectQuota"
           },
           "publicNetworkAccessForIngestion": "Enabled",
           "publicNetworkAccessForQuery": "Enabled",
           "createdDate": "2022-06-24T01:09:17.600234Z",
-          "modifiedDate": "2022-06-24T01:09:17.600234Z"
+          "modifiedDate": "2022-07-06T06:22:16.4028052Z"
         },
         "location": "westus",
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/5b75337b/providers/Microsoft.OperationalInsights/workspaces/WorkspaceName",
         "name": "WorkspaceName",
-        "type": "Microsoft.OperationalInsights/workspaces"
+        "type": "Microsoft.OperationalInsights/workspaces",
+        "etag": "\u0022da011628-0000-0700-0000-62b50ee30000\u0022"
       }
     }
   ],
