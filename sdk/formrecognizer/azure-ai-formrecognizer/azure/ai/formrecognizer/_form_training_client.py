@@ -359,7 +359,7 @@ class FormTrainingClient(FormRecognizerClientBase):
     def begin_copy_model(
         self,
         model_id: str,
-        target: dict,
+        target: Dict[str, Union[str, int]],
         **kwargs: Any
     ) -> LROPoller[CustomFormModelInfo]:
         """Copy a custom model stored in this resource (the source) to the user specified
@@ -368,7 +368,7 @@ class FormTrainingClient(FormRecognizerClientBase):
         target resource's output from calling the :func:`~get_copy_authorization()` method.
 
         :param str model_id: Model identifier of the model to copy to target resource.
-        :param dict target:
+        :param Dict[str, Union[str, int]] target:
             The copy authorization generated from the target resource's call to
             :func:`~get_copy_authorization()`.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.

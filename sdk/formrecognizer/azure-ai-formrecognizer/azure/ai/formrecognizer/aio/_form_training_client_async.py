@@ -358,7 +358,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
 
     @distributed_trace_async
     async def begin_copy_model(
-        self, model_id: str, target: dict, **kwargs: Any
+        self, model_id: str, target: Dict[str, Union[str, int]], **kwargs: Any
     ) -> AsyncLROPoller[CustomFormModelInfo]:
         """Copy a custom model stored in this resource (the source) to the user specified
         target Form Recognizer resource. This should be called with the source Form Recognizer resource
@@ -366,7 +366,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         target resource's output from calling the :func:`~get_copy_authorization()` method.
 
         :param str model_id: Model identifier of the model to copy to target resource.
-        :param dict target:
+        :param Dict[str, Union[str, int]] target:
             The copy authorization generated from the target resource's call to
             :func:`~get_copy_authorization()`.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
