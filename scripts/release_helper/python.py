@@ -69,6 +69,8 @@ class IssueProcessPython(IssueProcess):
         contents = str(self.issue_package.rest_repo.get_contents(readme_path).decoded_content)
         pattern_tag = re.compile(r'tag: package-[\w+-.]+')
         package_tags = pattern_tag.findall(contents)
+        print(f"*** self.target_readme_tag: {self.target_readme_tag}")
+        print(f"*** package_tags: {package_tags}")
         whether_same_tag = self.target_readme_tag in package_tags
         whether_change_readme = not whether_same_tag or self.is_multiapi
         return whether_change_readme
