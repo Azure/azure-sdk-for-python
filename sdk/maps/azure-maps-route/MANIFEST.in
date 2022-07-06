@@ -1,0 +1,7 @@
+recursive-include tests *.py *.yaml
+recursive-include samples *.py *.md
+include *.md
+include LICENSE
+include azure/__init__.py
+include azure/maps/__init__.py
+include azure/maps/route/py.typed

@@ -24,6 +24,7 @@ azure-keyvault==4.0.0b5
 azure-keyvault-secrets~=4.0
 azure-keyvault-keys~=4.0
 azure-loganalytics~=0.1.0
+azure-maps-nspkg~=3.0.2
 azure-mgmt~=4.0
 azure-mgmt-advisor~=1.0
 azure-mgmt-applicationinsights~=0.1.1
