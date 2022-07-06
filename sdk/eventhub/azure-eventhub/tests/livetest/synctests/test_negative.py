@@ -22,7 +22,7 @@ from azure.eventhub import EventHubProducerClient
 from azure.eventhub._transport._uamqp_transport import UamqpTransport
 
 
-@pytest.mark.parametrize("amqp_transport", [UamqpTransport()], )
+@pytest.mark.parametrize("amqp_transport", [UamqpTransport(), ], )
 @pytest.mark.liveTest
 def test_send_batch_with_invalid_hostname(invalid_hostname, amqp_transport):
     if sys.platform.startswith('darwin'):
@@ -31,8 +31,8 @@ def test_send_batch_with_invalid_hostname(invalid_hostname, amqp_transport):
     client = EventHubProducerClient.from_connection_string(invalid_hostname)
     with client:
         with pytest.raises(ConnectError):
-            batch = EventDataBatch()
-            batch.add(EventData("test data", amqp_transport=amqp_transport))
+            batch = EventDataBatch(amqp_transport=amqp_transport)
+            batch.add(EventData("test data"))
             client.send_batch(batch)
 
 
