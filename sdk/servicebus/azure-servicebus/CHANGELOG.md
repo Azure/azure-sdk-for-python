@@ -1,5 +1,14 @@
 # Release History
 
+## 7.8.0 (2022-07-07)
+
+### Features Added
+
+- In `ServiceBusClient`, `get_queue_receiver`, `get_subscription_receiver`, `get_queue_sender`, and `get_topic_sender` now accept
+an optional `client_identifier` argument which allows for specifying a custom identifier for the respective sender or receiver. It can
+be useful during debugging as Service Bus associates the id with errors and helps with easier correlation.
+- `ServiceBusReceiver` and `ServiceBusSender` have an added property `identifier` which returns the `client_identifier` for the current instance.
+
 ## 7.7.0 (2022-06-07)
 
 ### Bugs Fixed

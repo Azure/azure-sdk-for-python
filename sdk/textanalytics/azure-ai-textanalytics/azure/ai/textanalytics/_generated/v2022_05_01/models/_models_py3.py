@@ -261,8 +261,8 @@ class JobState(msrest.serialization.Model):
     :vartype expiration_date_time: ~datetime.datetime
     :ivar job_id: Required.
     :vartype job_id: str
-    :ivar last_updated_date_time: Required.
-    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar last_update_date_time: Required.
+    :vartype last_update_date_time: ~datetime.datetime
     :ivar status: Required. Known values are: "notStarted", "running", "succeeded",
      "partiallyCompleted", "failed", "cancelled", "cancelling".
     :vartype status: str or ~azure.ai.textanalytics.v2022_05_01.models.State
@@ -275,7 +275,7 @@ class JobState(msrest.serialization.Model):
     _validation = {
         'created_date_time': {'required': True},
         'job_id': {'required': True},
-        'last_updated_date_time': {'required': True},
+        'last_update_date_time': {'required': True},
         'status': {'required': True},
     }
 
@@ -284,7 +284,7 @@ class JobState(msrest.serialization.Model):
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'expiration_date_time': {'key': 'expirationDateTime', 'type': 'iso-8601'},
         'job_id': {'key': 'jobId', 'type': 'str'},
-        'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
+        'last_update_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
         'errors': {'key': 'errors', 'type': '[Error]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
@@ -295,7 +295,7 @@ class JobState(msrest.serialization.Model):
         *,
         created_date_time: datetime.datetime,
         job_id: str,
-        last_updated_date_time: datetime.datetime,
+        last_update_date_time: datetime.datetime,
         status: Union[str, "_models.State"],
         display_name: Optional[str] = None,
         expiration_date_time: Optional[datetime.datetime] = None,
@@ -312,8 +312,8 @@ class JobState(msrest.serialization.Model):
         :paramtype expiration_date_time: ~datetime.datetime
         :keyword job_id: Required.
         :paramtype job_id: str
-        :keyword last_updated_date_time: Required.
-        :paramtype last_updated_date_time: ~datetime.datetime
+        :keyword last_update_date_time: Required.
+        :paramtype last_update_date_time: ~datetime.datetime
         :keyword status: Required. Known values are: "notStarted", "running", "succeeded",
          "partiallyCompleted", "failed", "cancelled", "cancelling".
         :paramtype status: str or ~azure.ai.textanalytics.v2022_05_01.models.State
@@ -327,7 +327,7 @@ class JobState(msrest.serialization.Model):
         self.created_date_time = created_date_time
         self.expiration_date_time = expiration_date_time
         self.job_id = job_id
-        self.last_updated_date_time = last_updated_date_time
+        self.last_update_date_time = last_update_date_time
         self.status = status
         self.errors = errors
         self.next_link = next_link
@@ -351,8 +351,8 @@ class AnalyzeTextJobState(JobState, TasksState, AnalyzeTextJobStatistics):
     :vartype expiration_date_time: ~datetime.datetime
     :ivar job_id: Required.
     :vartype job_id: str
-    :ivar last_updated_date_time: Required.
-    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar last_update_date_time: Required.
+    :vartype last_update_date_time: ~datetime.datetime
     :ivar status: Required. Known values are: "notStarted", "running", "succeeded",
      "partiallyCompleted", "failed", "cancelled", "cancelling".
     :vartype status: str or ~azure.ai.textanalytics.v2022_05_01.models.State
@@ -366,7 +366,7 @@ class AnalyzeTextJobState(JobState, TasksState, AnalyzeTextJobStatistics):
         'tasks': {'required': True},
         'created_date_time': {'required': True},
         'job_id': {'required': True},
-        'last_updated_date_time': {'required': True},
+        'last_update_date_time': {'required': True},
         'status': {'required': True},
     }
 
@@ -377,7 +377,7 @@ class AnalyzeTextJobState(JobState, TasksState, AnalyzeTextJobStatistics):
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'expiration_date_time': {'key': 'expirationDateTime', 'type': 'iso-8601'},
         'job_id': {'key': 'jobId', 'type': 'str'},
-        'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
+        'last_update_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
         'errors': {'key': 'errors', 'type': '[Error]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
@@ -389,7 +389,7 @@ class AnalyzeTextJobState(JobState, TasksState, AnalyzeTextJobStatistics):
         tasks: "_models.TasksStateTasks",
         created_date_time: datetime.datetime,
         job_id: str,
-        last_updated_date_time: datetime.datetime,
+        last_update_date_time: datetime.datetime,
         status: Union[str, "_models.State"],
         statistics: Optional["_models.RequestStatistics"] = None,
         display_name: Optional[str] = None,
@@ -412,8 +412,8 @@ class AnalyzeTextJobState(JobState, TasksState, AnalyzeTextJobStatistics):
         :paramtype expiration_date_time: ~datetime.datetime
         :keyword job_id: Required.
         :paramtype job_id: str
-        :keyword last_updated_date_time: Required.
-        :paramtype last_updated_date_time: ~datetime.datetime
+        :keyword last_update_date_time: Required.
+        :paramtype last_update_date_time: ~datetime.datetime
         :keyword status: Required. Known values are: "notStarted", "running", "succeeded",
          "partiallyCompleted", "failed", "cancelled", "cancelling".
         :paramtype status: str or ~azure.ai.textanalytics.v2022_05_01.models.State
@@ -422,14 +422,14 @@ class AnalyzeTextJobState(JobState, TasksState, AnalyzeTextJobStatistics):
         :keyword next_link:
         :paramtype next_link: str
         """
-        super(AnalyzeTextJobState, self).__init__(display_name=display_name, created_date_time=created_date_time, expiration_date_time=expiration_date_time, job_id=job_id, last_updated_date_time=last_updated_date_time, status=status, errors=errors, next_link=next_link, tasks=tasks, statistics=statistics, **kwargs)
+        super(AnalyzeTextJobState, self).__init__(display_name=display_name, created_date_time=created_date_time, expiration_date_time=expiration_date_time, job_id=job_id, last_update_date_time=last_update_date_time, status=status, errors=errors, next_link=next_link, tasks=tasks, statistics=statistics, **kwargs)
         self.statistics = statistics
         self.tasks = tasks
         self.display_name = display_name
         self.created_date_time = created_date_time
         self.expiration_date_time = expiration_date_time
         self.job_id = job_id
-        self.last_updated_date_time = last_updated_date_time
+        self.last_update_date_time = last_update_date_time
         self.status = status
         self.errors = errors
         self.next_link = next_link

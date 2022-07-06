@@ -1,5 +1,10 @@
 # Release History
 
+## 12.8.0 (Unreleased)
+
+### Features Added
+- Stable release of features from 12.8.0b1.
+
 ## 12.8.0b1 (2022-06-15)
 
 ### Features Added

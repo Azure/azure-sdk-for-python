@@ -7,25 +7,24 @@
 import sys
 import threading
 import time
-
 import warnings
 from io import BytesIO
 from typing import Iterator, Union
 
 import requests
 from azure.core.exceptions import HttpResponseError, ServiceResponseError
-
 from azure.core.tracing.common import with_current_context
-from ._shared.encryption import (
+
+from ._shared.request_handlers import validate_and_format_range_headers
+from ._shared.response_handlers import process_storage_error, parse_length_from_content_range
+from ._deserialize import deserialize_blob_properties, get_page_ranges_result
+from ._encryption import (
     adjust_blob_size_for_encryption,
     decrypt_blob,
     get_adjusted_download_range_and_offset,
     is_encryption_v2,
     parse_encryption_data
 )
-from ._shared.request_handlers import validate_and_format_range_headers
-from ._shared.response_handlers import process_storage_error, parse_length_from_content_range
-from ._deserialize import deserialize_blob_properties, get_page_ranges_result
 
 
 def process_range_and_offset(start_range, end_range, length, encryption_options, encryption_data):

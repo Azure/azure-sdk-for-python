@@ -24,27 +24,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-conversations/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-conversations/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs?api-version=2022-05-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs?api-version=2022-05-15-preview
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - f0326e90-20a4-4357-a6bf-8fa46c85ee8c
+      - 20b1a932-6bbf-401c-8676-2a63c76912ce
       content-length:
       - '0'
       date:
-      - Thu, 26 May 2022 16:34:15 GMT
+      - Tue, 28 Jun 2022 21:11:47 GMT
       operation-location:
-      - https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs/6cbafec8-80fb-4a3c-bf71-bd5e4205169f?api-version=2022-05-15-preview
+      - https://test-resource.api.cognitive.microsoft.comlanguage/analyze-conversations/jobs/79cb6a09-62d3-4aa7-8b94-fad6ccb28857?api-version=2022-05-15-preview
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '1430'
+      - '2585'
     status:
       code: 202
       message: Accepted
@@ -58,13 +58,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-language-conversations/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-conversations/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs/6cbafec8-80fb-4a3c-bf71-bd5e4205169f?api-version=2022-05-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.comlanguage/analyze-conversations/jobs/79cb6a09-62d3-4aa7-8b94-fad6ccb28857?api-version=2022-05-15-preview
   response:
     body:
-      string: '{"jobId":"6cbafec8-80fb-4a3c-bf71-bd5e4205169f","lastUpdatedDateTime":"2022-05-26T16:34:15Z","createdDateTime":"2022-05-26T16:34:14Z","expirationDateTime":"2022-05-27T16:34:14Z","status":"succeeded","errors":[],"displayName":"Analyze
-        PII in conversation","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"items":[{"kind":"conversationalPIIResults","lastUpdateDateTime":"2022-05-26T16:34:15.636556Z","status":"succeeded","results":{"conversations":[{"id":"1","conversationItems":[{"id":"1","redactedContent":{"itn":"It
+      string: '{"jobId":"79cb6a09-62d3-4aa7-8b94-fad6ccb28857","lastUpdatedDateTime":"2022-06-28T21:11:49Z","createdDateTime":"2022-06-28T21:11:47Z","expirationDateTime":"2022-06-29T21:11:47Z","status":"succeeded","errors":[],"displayName":"Analyze
+        PII in conversation","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"items":[{"kind":"conversationalPIIResults","lastUpdateDateTime":"2022-06-28T21:11:49.1660162Z","status":"succeeded","results":{"conversations":[{"id":"1","conversationItems":[{"id":"1","redactedContent":{"itn":"It
         is **** do*","lexical":"It is **** do*","maskedItn":"It is **** do*","text":"It
         is **** ***."},"entities":[{"text":"john","category":"Name","offset":6,"length":4,"confidenceScore":0.57},{"text":"e","category":"Name","offset":13,"length":1,"confidenceScore":0.53}]},{"id":"2","redactedContent":{"itn":"yes
         ********* is my phone","lexical":"yes *********************************************
@@ -76,19 +76,19 @@ interactions:
         dot doe at yahoo dot com","category":"Email","offset":0,"length":26,"confidenceScore":0.78}]}],"warnings":[]}],"errors":[],"modelVersion":"2022-05-15-preview"}}]}}'
     headers:
       apim-request-id:
-      - a9cdb99e-c12a-4742-938d-07b1fb6ecf54
+      - bcdb0d7b-3a5b-4d8c-89ed-b1462dbcdb1a
       content-length:
-      - '1527'
+      - '1528'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 26 May 2022 16:34:44 GMT
+      - Tue, 28 Jun 2022 21:12:20 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '190'
+      - '2420'
     status:
       code: 200
       message: OK

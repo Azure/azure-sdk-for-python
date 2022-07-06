@@ -143,6 +143,7 @@ from ._models_py3 import LogSpecification
 from ._models_py3 import MediaService
 from ._models_py3 import MediaServiceCollection
 from ._models_py3 import MediaServiceIdentity
+from ._models_py3 import MediaServiceOperationStatus
 from ._models_py3 import MediaServiceUpdate
 from ._models_py3 import MetricDimension
 from ._models_py3 import MetricSpecification
@@ -281,7 +282,9 @@ from ._azure_media_services_enums import (
     VideoSyncMode,
     Visibility,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'AacAudio',
     'AbsoluteClipTime',
@@ -420,6 +423,7 @@ __all__ = [
     'MediaService',
     'MediaServiceCollection',
     'MediaServiceIdentity',
+    'MediaServiceOperationStatus',
     'MediaServiceUpdate',
     'MetricDimension',
     'MetricSpecification',
@@ -555,3 +559,5 @@ __all__ = [
     'VideoSyncMode',
     'Visibility',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
