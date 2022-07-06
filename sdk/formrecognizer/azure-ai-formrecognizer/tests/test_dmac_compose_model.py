@@ -8,7 +8,7 @@ import pytest
 import uuid
 import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
-from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentModel
+from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentModelInfo
 from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -33,7 +33,7 @@ class TestTraining(FormRecognizerTest):
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", model_id=model_id_2, description="model2")
         model_2 = poller.result()
 
-        poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id], model_id=composed_id, description="my composed model", tags={"testkey": "testvalue"})
+        poller = client.begin_compose_model([model_1.model_id, model_2.model_id], model_id=composed_id, description="my composed model", tags={"testkey": "testvalue"})
 
         composed_model = poller.result()
         if self.is_live:
@@ -66,11 +66,11 @@ class TestTraining(FormRecognizerTest):
         def callback(response, _, headers):
             op_response = client._deserialize(GetOperationResponse, response)
             model_info = client._deserialize(ModelInfo, op_response.result)
-            document_model = DocumentModel._from_generated(model_info)
+            document_model = DocumentModelInfo._from_generated(model_info)
             raw_response.append(model_info)
             raw_response.append(document_model)
 
-        poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id], description="my composed model", cls=callback)
+        poller = client.begin_compose_model([model_1.model_id, model_2.model_id], description="my composed model", cls=callback)
         model = poller.result()
 
         generated = raw_response[0]
@@ -78,7 +78,7 @@ class TestTraining(FormRecognizerTest):
         self.assertModelTransformCorrect(document_model, generated)
 
         document_model_dict = document_model.to_dict()
-        document_model_from_dict = DocumentModel.from_dict(document_model_dict)
+        document_model_from_dict = DocumentModelInfo.from_dict(document_model_dict)
         self.assertModelTransformCorrect(document_model_from_dict, generated)
 
     @pytest.mark.live_test_only
@@ -93,10 +93,10 @@ class TestTraining(FormRecognizerTest):
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
         model_2 = poller.result()
 
-        initial_poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id])
+        initial_poller = client.begin_compose_model([model_1.model_id, model_2.model_id])
         cont_token = initial_poller.continuation_token()
 
-        poller = client.begin_create_composed_model(None, continuation_token=cont_token)
+        poller = client.begin_compose_model(None, continuation_token=cont_token)
         result = poller.result()
         assert result
 
@@ -113,7 +113,7 @@ class TestTraining(FormRecognizerTest):
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
         model_2 = poller.result()
 
-        poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id])
+        poller = client.begin_compose_model([model_1.model_id, model_2.model_id])
         assert poller.operation_id
         assert poller.percent_completed is not None
         poller.result()

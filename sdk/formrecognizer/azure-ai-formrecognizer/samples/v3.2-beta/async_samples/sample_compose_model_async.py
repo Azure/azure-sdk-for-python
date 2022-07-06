@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_create_composed_model.py
+FILE: sample_compose_model_async.py
 
 DESCRIPTION:
     Model compose allows multiple models to be composed and called with a single model ID.
@@ -24,7 +24,7 @@ DESCRIPTION:
     SAS URLs for this sample.
 
 USAGE:
-    python sample_create_composed_model.py
+    python sample_compose_model_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
@@ -36,12 +36,14 @@ USAGE:
 """
 
 import os
+import asyncio
 
 
-def sample_create_composed_model():
-    # [START composed_model]
+async def sample_compose_model_async():
+    # [START composed_model_async]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentBuildMode
+    from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
+    from azure.ai.formrecognizer import DocumentBuildMode
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -51,34 +53,35 @@ def sample_create_composed_model():
     po_cleaning_supplies = os.environ['PURCHASE_ORDER_OFFICE_CLEANING_SUPPLIES_SAS_URL']
 
     document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-    supplies_poller = document_model_admin_client.begin_build_model(
-        po_supplies, DocumentBuildMode.TEMPLATE, description="Purchase order-Office supplies"
-    )
-    equipment_poller = document_model_admin_client.begin_build_model(
-        po_equipment, DocumentBuildMode.TEMPLATE, description="Purchase order-Office Equipment"
-    )
-    furniture_poller = document_model_admin_client.begin_build_model(
-        po_furniture, DocumentBuildMode.TEMPLATE, description="Purchase order-Furniture"
-    )
-    cleaning_supplies_poller = document_model_admin_client.begin_build_model(
-        po_cleaning_supplies, DocumentBuildMode.TEMPLATE, description="Purchase order-Cleaning Supplies"
-    )
-    supplies_model = supplies_poller.result()
-    equipment_model = equipment_poller.result()
-    furniture_model = furniture_poller.result()
-    cleaning_supplies_model = cleaning_supplies_poller.result()
+    async with document_model_admin_client:
+        supplies_poller = await document_model_admin_client.begin_build_model(
+            po_supplies, DocumentBuildMode.TEMPLATE, description="Purchase order-Office supplies"
+        )
+        equipment_poller = await document_model_admin_client.begin_build_model(
+            po_equipment, DocumentBuildMode.TEMPLATE, description="Purchase order-Office Equipment"
+        )
+        furniture_poller = await document_model_admin_client.begin_build_model(
+            po_furniture, DocumentBuildMode.TEMPLATE, description="Purchase order-Furniture"
+        )
+        cleaning_supplies_poller = await document_model_admin_client.begin_build_model(
+            po_cleaning_supplies, DocumentBuildMode.TEMPLATE, description="Purchase order-Cleaning Supplies"
+        )
+        supplies_model = await supplies_poller.result()
+        equipment_model = await equipment_poller.result()
+        furniture_model = await furniture_poller.result()
+        cleaning_supplies_model = await cleaning_supplies_poller.result()
 
-    purchase_order_models = [
-        supplies_model.model_id,
-        equipment_model.model_id,
-        furniture_model.model_id,
-        cleaning_supplies_model.model_id
-    ]
+        purchase_order_models = [
+            supplies_model.model_id,
+            equipment_model.model_id,
+            furniture_model.model_id,
+            cleaning_supplies_model.model_id
+        ]
 
-    poller = document_model_admin_client.begin_create_composed_model(
-        purchase_order_models, description="Office Supplies Composed Model"
-    )
-    model = poller.result()
+        poller = await document_model_admin_client.begin_compose_model(
+            purchase_order_models, description="Office Supplies Composed Model"
+        )
+        model = await poller.result()
 
     print("Office Supplies Composed Model Info:")
     print("Model ID: {}".format(model.model_id))
@@ -91,8 +94,11 @@ def sample_create_composed_model():
             print("Field: '{}' has type '{}' and confidence score {}".format(
                 field_name, field["type"], doc_type.field_confidence[field_name]
             ))
-    # [END composed_model]
+    # [END composed_model_async]
 
+
+async def main():
+    await sample_compose_model_async()
 
 if __name__ == '__main__':
-    sample_create_composed_model()
+    asyncio.run(main())

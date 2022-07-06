@@ -34,7 +34,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         endpoint = self.get_oauth_endpoint()
         client = DocumentModelAdministrationClient(endpoint, token)
         async with client:
-            info = await client.get_account_info()
+            info = await client.get_resource_info()
         assert info
 
     @FormRecognizerPreparer()
@@ -43,7 +43,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with pytest.raises(ClientAuthenticationError):
             async with client:
-                result = await client.get_account_info()
+                result = await client.get_resource_info()
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -82,7 +82,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @recorded_by_proxy_async
     async def test_account_info(self, client):
         async with client:
-            info = await client.get_account_info()
+            info = await client.get_resource_info()
 
         assert info.document_model_limit
         assert info.document_model_count
@@ -209,11 +209,11 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         dtc = DocumentModelAdministrationClient(endpoint=formrecognizer_test_endpoint, credential=AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
 
         async with dtc:
-            await dtc.get_account_info()
+            await dtc.get_resource_info()
             assert transport.session is not None
             async with dtc.get_document_analysis_client() as dac:
                 assert transport.session is not None
                 await (await dac.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)).wait()
                 assert dac._api_version == DocumentAnalysisApiVersion.V2022_06_30_PREVIEW
-            await dtc.get_account_info()
+            await dtc.get_resource_info()
             assert transport.session is not None
