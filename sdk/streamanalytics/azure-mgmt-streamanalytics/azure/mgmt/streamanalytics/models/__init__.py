@@ -6,9 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import AggregateFunctionProperties
 from ._models_py3 import AvroSerialization
 from ._models_py3 import AzureDataLakeStoreOutputDataSource
 from ._models_py3 import AzureDataLakeStoreOutputDataSourceProperties
+from ._models_py3 import AzureFunctionOutputDataSource
 from ._models_py3 import AzureMachineLearningWebServiceFunctionBinding
 from ._models_py3 import AzureMachineLearningWebServiceFunctionRetrieveDefaultDefinitionParameters
 from ._models_py3 import AzureMachineLearningWebServiceInputColumn
@@ -51,6 +53,7 @@ from ._models_py3 import EventHubStreamInputDataSource
 from ._models_py3 import EventHubStreamInputDataSourceProperties
 from ._models_py3 import EventHubV2OutputDataSource
 from ._models_py3 import EventHubV2StreamInputDataSource
+from ._models_py3 import FileReferenceInputDataSource
 from ._models_py3 import Function
 from ._models_py3 import FunctionBinding
 from ._models_py3 import FunctionInput
@@ -58,6 +61,11 @@ from ._models_py3 import FunctionListResult
 from ._models_py3 import FunctionOutput
 from ._models_py3 import FunctionProperties
 from ._models_py3 import FunctionRetrieveDefaultDefinitionParameters
+from ._models_py3 import GatewayMessageBusOutputDataSource
+from ._models_py3 import GatewayMessageBusOutputDataSourceProperties
+from ._models_py3 import GatewayMessageBusSourceProperties
+from ._models_py3 import GatewayMessageBusStreamInputDataSource
+from ._models_py3 import GatewayMessageBusStreamInputDataSourceProperties
 from ._models_py3 import Identity
 from ._models_py3 import Input
 from ._models_py3 import InputListResult
@@ -126,11 +134,15 @@ from ._stream_analytics_management_client_enums import (
     RefreshType,
     SkuName,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
+    'AggregateFunctionProperties',
     'AvroSerialization',
     'AzureDataLakeStoreOutputDataSource',
     'AzureDataLakeStoreOutputDataSourceProperties',
+    'AzureFunctionOutputDataSource',
     'AzureMachineLearningWebServiceFunctionBinding',
     'AzureMachineLearningWebServiceFunctionRetrieveDefaultDefinitionParameters',
     'AzureMachineLearningWebServiceInputColumn',
@@ -173,6 +185,7 @@ __all__ = [
     'EventHubStreamInputDataSourceProperties',
     'EventHubV2OutputDataSource',
     'EventHubV2StreamInputDataSource',
+    'FileReferenceInputDataSource',
     'Function',
     'FunctionBinding',
     'FunctionInput',
@@ -180,6 +193,11 @@ __all__ = [
     'FunctionOutput',
     'FunctionProperties',
     'FunctionRetrieveDefaultDefinitionParameters',
+    'GatewayMessageBusOutputDataSource',
+    'GatewayMessageBusOutputDataSourceProperties',
+    'GatewayMessageBusSourceProperties',
+    'GatewayMessageBusStreamInputDataSource',
+    'GatewayMessageBusStreamInputDataSourceProperties',
     'Identity',
     'Input',
     'InputListResult',
@@ -245,3 +263,5 @@ __all__ = [
     'RefreshType',
     'SkuName',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

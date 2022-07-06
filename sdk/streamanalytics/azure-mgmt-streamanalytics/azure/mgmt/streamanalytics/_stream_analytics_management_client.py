@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import StreamAnalyticsManagementClientConfiguration
@@ -21,35 +22,36 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class StreamAnalyticsManagementClient:
+class StreamAnalyticsManagementClient:    # pylint: disable=too-many-instance-attributes
     """Stream Analytics Client.
 
     :ivar operations: Operations operations
-    :vartype operations: stream_analytics_management_client.operations.Operations
+    :vartype operations: azure.mgmt.streamanalytics.operations.Operations
     :ivar streaming_jobs: StreamingJobsOperations operations
-    :vartype streaming_jobs: stream_analytics_management_client.operations.StreamingJobsOperations
+    :vartype streaming_jobs: azure.mgmt.streamanalytics.operations.StreamingJobsOperations
     :ivar inputs: InputsOperations operations
-    :vartype inputs: stream_analytics_management_client.operations.InputsOperations
+    :vartype inputs: azure.mgmt.streamanalytics.operations.InputsOperations
     :ivar outputs: OutputsOperations operations
-    :vartype outputs: stream_analytics_management_client.operations.OutputsOperations
+    :vartype outputs: azure.mgmt.streamanalytics.operations.OutputsOperations
     :ivar transformations: TransformationsOperations operations
-    :vartype transformations:
-     stream_analytics_management_client.operations.TransformationsOperations
+    :vartype transformations: azure.mgmt.streamanalytics.operations.TransformationsOperations
     :ivar functions: FunctionsOperations operations
-    :vartype functions: stream_analytics_management_client.operations.FunctionsOperations
+    :vartype functions: azure.mgmt.streamanalytics.operations.FunctionsOperations
     :ivar subscriptions: SubscriptionsOperations operations
-    :vartype subscriptions: stream_analytics_management_client.operations.SubscriptionsOperations
+    :vartype subscriptions: azure.mgmt.streamanalytics.operations.SubscriptionsOperations
     :ivar clusters: ClustersOperations operations
-    :vartype clusters: stream_analytics_management_client.operations.ClustersOperations
+    :vartype clusters: azure.mgmt.streamanalytics.operations.ClustersOperations
     :ivar private_endpoints: PrivateEndpointsOperations operations
-    :vartype private_endpoints:
-     stream_analytics_management_client.operations.PrivateEndpointsOperations
+    :vartype private_endpoints: azure.mgmt.streamanalytics.operations.PrivateEndpointsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2020-03-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -68,20 +70,38 @@ class StreamAnalyticsManagementClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.streaming_jobs = StreamingJobsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.inputs = InputsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.outputs = OutputsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.transformations = TransformationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.functions = FunctionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.subscriptions = SubscriptionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoints = PrivateEndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.streaming_jobs = StreamingJobsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.inputs = InputsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.outputs = OutputsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.transformations = TransformationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.functions = FunctionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.subscriptions = SubscriptionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.clusters = ClustersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_endpoints = PrivateEndpointsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(
         self,
-        request,  # type: HttpRequest
+        request: HttpRequest,
         **kwargs: Any
     ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
