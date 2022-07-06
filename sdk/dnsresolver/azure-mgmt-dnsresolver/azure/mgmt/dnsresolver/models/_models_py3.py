@@ -7,11 +7,13 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._dns_resolver_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class CloudErrorBody(msrest.serialization.Model):
@@ -24,7 +26,7 @@ class CloudErrorBody(msrest.serialization.Model):
     :ivar target: The target resource of the error message.
     :vartype target: str
     :ivar details: Extra error information.
-    :vartype details: list[~dns_resolver_management_client.models.CloudErrorBody]
+    :vartype details: list[~azure.mgmt.dnsresolver.models.CloudErrorBody]
     """
 
     _attribute_map = {
@@ -40,7 +42,7 @@ class CloudErrorBody(msrest.serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["CloudErrorBody"]] = None,
+        details: Optional[List["_models.CloudErrorBody"]] = None,
         **kwargs
     ):
         """
@@ -51,7 +53,7 @@ class CloudErrorBody(msrest.serialization.Model):
         :keyword target: The target resource of the error message.
         :paramtype target: str
         :keyword details: Extra error information.
-        :paramtype details: list[~dns_resolver_management_client.models.CloudErrorBody]
+        :paramtype details: list[~azure.mgmt.dnsresolver.models.CloudErrorBody]
         """
         super(CloudErrorBody, self).__init__(**kwargs)
         self.code = code
@@ -175,16 +177,15 @@ class DnsForwardingRuleset(TrackedResource):
     :ivar etag: ETag of the DNS forwarding ruleset.
     :vartype etag: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~dns_resolver_management_client.models.SystemData
-    :ivar dns_resolver_outbound_endpoints: The reference to the DNS resolver outbound endpoints
-     that are used to route DNS queries matching the forwarding rules in the ruleset to the target
-     DNS servers.
-    :vartype dns_resolver_outbound_endpoints:
-     list[~dns_resolver_management_client.models.SubResource]
+    :vartype system_data: ~azure.mgmt.dnsresolver.models.SystemData
+    :ivar dns_resolver_outbound_endpoints: Required. The reference to the DNS resolver outbound
+     endpoints that are used to route DNS queries matching the forwarding rules in the ruleset to
+     the target DNS servers.
+    :vartype dns_resolver_outbound_endpoints: list[~azure.mgmt.dnsresolver.models.SubResource]
     :ivar provisioning_state: The current provisioning state of the DNS forwarding ruleset. This is
-     a read-only property and any attempt to set this value will be ignored. Possible values
-     include: "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
-    :vartype provisioning_state: str or ~dns_resolver_management_client.models.ProvisioningState
+     a read-only property and any attempt to set this value will be ignored. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.dnsresolver.models.ProvisioningState
     :ivar resource_guid: The resourceGuid for the DNS forwarding ruleset.
     :vartype resource_guid: str
     """
@@ -196,6 +197,7 @@ class DnsForwardingRuleset(TrackedResource):
         'location': {'required': True},
         'etag': {'readonly': True},
         'system_data': {'readonly': True},
+        'dns_resolver_outbound_endpoints': {'required': True},
         'provisioning_state': {'readonly': True},
         'resource_guid': {'readonly': True},
     }
@@ -217,8 +219,8 @@ class DnsForwardingRuleset(TrackedResource):
         self,
         *,
         location: str,
+        dns_resolver_outbound_endpoints: List["_models.SubResource"],
         tags: Optional[Dict[str, str]] = None,
-        dns_resolver_outbound_endpoints: Optional[List["SubResource"]] = None,
         **kwargs
     ):
         """
@@ -226,11 +228,10 @@ class DnsForwardingRuleset(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
-        :keyword dns_resolver_outbound_endpoints: The reference to the DNS resolver outbound endpoints
-         that are used to route DNS queries matching the forwarding rules in the ruleset to the target
-         DNS servers.
-        :paramtype dns_resolver_outbound_endpoints:
-         list[~dns_resolver_management_client.models.SubResource]
+        :keyword dns_resolver_outbound_endpoints: Required. The reference to the DNS resolver outbound
+         endpoints that are used to route DNS queries matching the forwarding rules in the ruleset to
+         the target DNS servers.
+        :paramtype dns_resolver_outbound_endpoints: list[~azure.mgmt.dnsresolver.models.SubResource]
         """
         super(DnsForwardingRuleset, self).__init__(tags=tags, location=location, **kwargs)
         self.etag = None
@@ -246,7 +247,7 @@ class DnsForwardingRulesetListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Enumeration of the DNS forwarding rulesets.
-    :vartype value: list[~dns_resolver_management_client.models.DnsForwardingRuleset]
+    :vartype value: list[~azure.mgmt.dnsresolver.models.DnsForwardingRuleset]
     :ivar next_link: The continuation token for the next page of results.
     :vartype next_link: str
     """
@@ -263,12 +264,12 @@ class DnsForwardingRulesetListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["DnsForwardingRuleset"]] = None,
+        value: Optional[List["_models.DnsForwardingRuleset"]] = None,
         **kwargs
     ):
         """
         :keyword value: Enumeration of the DNS forwarding rulesets.
-        :paramtype value: list[~dns_resolver_management_client.models.DnsForwardingRuleset]
+        :paramtype value: list[~azure.mgmt.dnsresolver.models.DnsForwardingRuleset]
         """
         super(DnsForwardingRulesetListResult, self).__init__(**kwargs)
         self.value = value
@@ -278,25 +279,36 @@ class DnsForwardingRulesetListResult(msrest.serialization.Model):
 class DnsForwardingRulesetPatch(msrest.serialization.Model):
     """Describes a DNS forwarding ruleset PATCH operation.
 
+    :ivar dns_resolver_outbound_endpoints: The reference to the DNS resolver outbound endpoints
+     that are used to route DNS queries matching the forwarding rules in the ruleset to the target
+     DNS servers.
+    :vartype dns_resolver_outbound_endpoints: list[~azure.mgmt.dnsresolver.models.SubResource]
     :ivar tags: A set of tags. Tags for DNS Resolver.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
+        'dns_resolver_outbound_endpoints': {'key': 'dnsResolverOutboundEndpoints', 'type': '[SubResource]'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
     def __init__(
         self,
         *,
+        dns_resolver_outbound_endpoints: Optional[List["_models.SubResource"]] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         """
+        :keyword dns_resolver_outbound_endpoints: The reference to the DNS resolver outbound endpoints
+         that are used to route DNS queries matching the forwarding rules in the ruleset to the target
+         DNS servers.
+        :paramtype dns_resolver_outbound_endpoints: list[~azure.mgmt.dnsresolver.models.SubResource]
         :keyword tags: A set of tags. Tags for DNS Resolver.
         :paramtype tags: dict[str, str]
         """
         super(DnsForwardingRulesetPatch, self).__init__(**kwargs)
+        self.dns_resolver_outbound_endpoints = dns_resolver_outbound_endpoints
         self.tags = tags
 
 
@@ -322,18 +334,18 @@ class DnsResolver(TrackedResource):
     :ivar etag: ETag of the DNS resolver.
     :vartype etag: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~dns_resolver_management_client.models.SystemData
-    :ivar virtual_network: The reference to the virtual network. This cannot be changed after
-     creation.
-    :vartype virtual_network: ~dns_resolver_management_client.models.SubResource
+    :vartype system_data: ~azure.mgmt.dnsresolver.models.SystemData
+    :ivar virtual_network: Required. The reference to the virtual network. This cannot be changed
+     after creation.
+    :vartype virtual_network: ~azure.mgmt.dnsresolver.models.SubResource
     :ivar dns_resolver_state: The current status of the DNS resolver. This is a read-only property
-     and any attempt to set this value will be ignored. Possible values include: "Connected",
+     and any attempt to set this value will be ignored. Known values are: "Connected",
      "Disconnected".
-    :vartype dns_resolver_state: str or ~dns_resolver_management_client.models.DnsResolverState
+    :vartype dns_resolver_state: str or ~azure.mgmt.dnsresolver.models.DnsResolverState
     :ivar provisioning_state: The current provisioning state of the DNS resolver. This is a
-     read-only property and any attempt to set this value will be ignored. Possible values include:
+     read-only property and any attempt to set this value will be ignored. Known values are:
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
-    :vartype provisioning_state: str or ~dns_resolver_management_client.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.dnsresolver.models.ProvisioningState
     :ivar resource_guid: The resourceGuid property of the DNS resolver resource.
     :vartype resource_guid: str
     """
@@ -345,6 +357,7 @@ class DnsResolver(TrackedResource):
         'location': {'required': True},
         'etag': {'readonly': True},
         'system_data': {'readonly': True},
+        'virtual_network': {'required': True},
         'dns_resolver_state': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'resource_guid': {'readonly': True},
@@ -368,8 +381,8 @@ class DnsResolver(TrackedResource):
         self,
         *,
         location: str,
+        virtual_network: "_models.SubResource",
         tags: Optional[Dict[str, str]] = None,
-        virtual_network: Optional["SubResource"] = None,
         **kwargs
     ):
         """
@@ -377,9 +390,9 @@ class DnsResolver(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
-        :keyword virtual_network: The reference to the virtual network. This cannot be changed after
-         creation.
-        :paramtype virtual_network: ~dns_resolver_management_client.models.SubResource
+        :keyword virtual_network: Required. The reference to the virtual network. This cannot be
+         changed after creation.
+        :paramtype virtual_network: ~azure.mgmt.dnsresolver.models.SubResource
         """
         super(DnsResolver, self).__init__(tags=tags, location=location, **kwargs)
         self.etag = None
@@ -396,7 +409,7 @@ class DnsResolverListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Enumeration of the DNS resolvers.
-    :vartype value: list[~dns_resolver_management_client.models.DnsResolver]
+    :vartype value: list[~azure.mgmt.dnsresolver.models.DnsResolver]
     :ivar next_link: The continuation token for the next page of results.
     :vartype next_link: str
     """
@@ -413,12 +426,12 @@ class DnsResolverListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["DnsResolver"]] = None,
+        value: Optional[List["_models.DnsResolver"]] = None,
         **kwargs
     ):
         """
         :keyword value: Enumeration of the DNS resolvers.
-        :paramtype value: list[~dns_resolver_management_client.models.DnsResolver]
+        :paramtype value: list[~azure.mgmt.dnsresolver.models.DnsResolver]
         """
         super(DnsResolverListResult, self).__init__(**kwargs)
         self.value = value
@@ -491,6 +504,8 @@ class ForwardingRule(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
@@ -502,21 +517,20 @@ class ForwardingRule(ProxyResource):
     :ivar etag: ETag of the forwarding rule.
     :vartype etag: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~dns_resolver_management_client.models.SystemData
-    :ivar domain_name: The domain name for the forwarding rule.
+    :vartype system_data: ~azure.mgmt.dnsresolver.models.SystemData
+    :ivar domain_name: Required. The domain name for the forwarding rule.
     :vartype domain_name: str
-    :ivar target_dns_servers: DNS servers to forward the DNS query to.
-    :vartype target_dns_servers: list[~dns_resolver_management_client.models.TargetDnsServer]
+    :ivar target_dns_servers: Required. DNS servers to forward the DNS query to.
+    :vartype target_dns_servers: list[~azure.mgmt.dnsresolver.models.TargetDnsServer]
     :ivar metadata: Metadata attached to the forwarding rule.
     :vartype metadata: dict[str, str]
-    :ivar forwarding_rule_state: The state of forwarding rule. Possible values include: "Enabled",
+    :ivar forwarding_rule_state: The state of forwarding rule. Known values are: "Enabled",
      "Disabled".
-    :vartype forwarding_rule_state: str or
-     ~dns_resolver_management_client.models.ForwardingRuleState
+    :vartype forwarding_rule_state: str or ~azure.mgmt.dnsresolver.models.ForwardingRuleState
     :ivar provisioning_state: The current provisioning state of the forwarding rule. This is a
-     read-only property and any attempt to set this value will be ignored. Possible values include:
+     read-only property and any attempt to set this value will be ignored. Known values are:
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
-    :vartype provisioning_state: str or ~dns_resolver_management_client.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.dnsresolver.models.ProvisioningState
     """
 
     _validation = {
@@ -525,6 +539,8 @@ class ForwardingRule(ProxyResource):
         'type': {'readonly': True},
         'etag': {'readonly': True},
         'system_data': {'readonly': True},
+        'domain_name': {'required': True},
+        'target_dns_servers': {'required': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -544,23 +560,22 @@ class ForwardingRule(ProxyResource):
     def __init__(
         self,
         *,
-        domain_name: Optional[str] = None,
-        target_dns_servers: Optional[List["TargetDnsServer"]] = None,
+        domain_name: str,
+        target_dns_servers: List["_models.TargetDnsServer"],
         metadata: Optional[Dict[str, str]] = None,
-        forwarding_rule_state: Optional[Union[str, "ForwardingRuleState"]] = None,
+        forwarding_rule_state: Optional[Union[str, "_models.ForwardingRuleState"]] = None,
         **kwargs
     ):
         """
-        :keyword domain_name: The domain name for the forwarding rule.
+        :keyword domain_name: Required. The domain name for the forwarding rule.
         :paramtype domain_name: str
-        :keyword target_dns_servers: DNS servers to forward the DNS query to.
-        :paramtype target_dns_servers: list[~dns_resolver_management_client.models.TargetDnsServer]
+        :keyword target_dns_servers: Required. DNS servers to forward the DNS query to.
+        :paramtype target_dns_servers: list[~azure.mgmt.dnsresolver.models.TargetDnsServer]
         :keyword metadata: Metadata attached to the forwarding rule.
         :paramtype metadata: dict[str, str]
-        :keyword forwarding_rule_state: The state of forwarding rule. Possible values include:
-         "Enabled", "Disabled".
-        :paramtype forwarding_rule_state: str or
-         ~dns_resolver_management_client.models.ForwardingRuleState
+        :keyword forwarding_rule_state: The state of forwarding rule. Known values are: "Enabled",
+         "Disabled".
+        :paramtype forwarding_rule_state: str or ~azure.mgmt.dnsresolver.models.ForwardingRuleState
         """
         super(ForwardingRule, self).__init__(**kwargs)
         self.etag = None
@@ -578,7 +593,7 @@ class ForwardingRuleListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Enumeration of the forwarding rules.
-    :vartype value: list[~dns_resolver_management_client.models.ForwardingRule]
+    :vartype value: list[~azure.mgmt.dnsresolver.models.ForwardingRule]
     :ivar next_link: The continuation token for the next page of results.
     :vartype next_link: str
     """
@@ -595,12 +610,12 @@ class ForwardingRuleListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ForwardingRule"]] = None,
+        value: Optional[List["_models.ForwardingRule"]] = None,
         **kwargs
     ):
         """
         :keyword value: Enumeration of the forwarding rules.
-        :paramtype value: list[~dns_resolver_management_client.models.ForwardingRule]
+        :paramtype value: list[~azure.mgmt.dnsresolver.models.ForwardingRule]
         """
         super(ForwardingRuleListResult, self).__init__(**kwargs)
         self.value = value
@@ -611,13 +626,12 @@ class ForwardingRulePatch(msrest.serialization.Model):
     """Describes a forwarding rule for PATCH operation.
 
     :ivar target_dns_servers: DNS servers to forward the DNS query to.
-    :vartype target_dns_servers: list[~dns_resolver_management_client.models.TargetDnsServer]
+    :vartype target_dns_servers: list[~azure.mgmt.dnsresolver.models.TargetDnsServer]
     :ivar metadata: Metadata attached to the forwarding rule.
     :vartype metadata: dict[str, str]
-    :ivar forwarding_rule_state: The state of forwarding rule. Possible values include: "Enabled",
+    :ivar forwarding_rule_state: The state of forwarding rule. Known values are: "Enabled",
      "Disabled".
-    :vartype forwarding_rule_state: str or
-     ~dns_resolver_management_client.models.ForwardingRuleState
+    :vartype forwarding_rule_state: str or ~azure.mgmt.dnsresolver.models.ForwardingRuleState
     """
 
     _attribute_map = {
@@ -629,20 +643,19 @@ class ForwardingRulePatch(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        target_dns_servers: Optional[List["TargetDnsServer"]] = None,
+        target_dns_servers: Optional[List["_models.TargetDnsServer"]] = None,
         metadata: Optional[Dict[str, str]] = None,
-        forwarding_rule_state: Optional[Union[str, "ForwardingRuleState"]] = None,
+        forwarding_rule_state: Optional[Union[str, "_models.ForwardingRuleState"]] = None,
         **kwargs
     ):
         """
         :keyword target_dns_servers: DNS servers to forward the DNS query to.
-        :paramtype target_dns_servers: list[~dns_resolver_management_client.models.TargetDnsServer]
+        :paramtype target_dns_servers: list[~azure.mgmt.dnsresolver.models.TargetDnsServer]
         :keyword metadata: Metadata attached to the forwarding rule.
         :paramtype metadata: dict[str, str]
-        :keyword forwarding_rule_state: The state of forwarding rule. Possible values include:
-         "Enabled", "Disabled".
-        :paramtype forwarding_rule_state: str or
-         ~dns_resolver_management_client.models.ForwardingRuleState
+        :keyword forwarding_rule_state: The state of forwarding rule. Known values are: "Enabled",
+         "Disabled".
+        :paramtype forwarding_rule_state: str or ~azure.mgmt.dnsresolver.models.ForwardingRuleState
         """
         super(ForwardingRulePatch, self).__init__(**kwargs)
         self.target_dns_servers = target_dns_servers
@@ -672,13 +685,13 @@ class InboundEndpoint(TrackedResource):
     :ivar etag: ETag of the inbound endpoint.
     :vartype etag: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~dns_resolver_management_client.models.SystemData
-    :ivar ip_configurations: IP configurations for the inbound endpoint.
-    :vartype ip_configurations: list[~dns_resolver_management_client.models.IpConfiguration]
+    :vartype system_data: ~azure.mgmt.dnsresolver.models.SystemData
+    :ivar ip_configurations: Required. IP configurations for the inbound endpoint.
+    :vartype ip_configurations: list[~azure.mgmt.dnsresolver.models.IpConfiguration]
     :ivar provisioning_state: The current provisioning state of the inbound endpoint. This is a
-     read-only property and any attempt to set this value will be ignored. Possible values include:
+     read-only property and any attempt to set this value will be ignored. Known values are:
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
-    :vartype provisioning_state: str or ~dns_resolver_management_client.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.dnsresolver.models.ProvisioningState
     :ivar resource_guid: The resourceGuid property of the inbound endpoint resource.
     :vartype resource_guid: str
     """
@@ -690,6 +703,7 @@ class InboundEndpoint(TrackedResource):
         'location': {'required': True},
         'etag': {'readonly': True},
         'system_data': {'readonly': True},
+        'ip_configurations': {'required': True},
         'provisioning_state': {'readonly': True},
         'resource_guid': {'readonly': True},
     }
@@ -711,8 +725,8 @@ class InboundEndpoint(TrackedResource):
         self,
         *,
         location: str,
+        ip_configurations: List["_models.IpConfiguration"],
         tags: Optional[Dict[str, str]] = None,
-        ip_configurations: Optional[List["IpConfiguration"]] = None,
         **kwargs
     ):
         """
@@ -720,8 +734,8 @@ class InboundEndpoint(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
-        :keyword ip_configurations: IP configurations for the inbound endpoint.
-        :paramtype ip_configurations: list[~dns_resolver_management_client.models.IpConfiguration]
+        :keyword ip_configurations: Required. IP configurations for the inbound endpoint.
+        :paramtype ip_configurations: list[~azure.mgmt.dnsresolver.models.IpConfiguration]
         """
         super(InboundEndpoint, self).__init__(tags=tags, location=location, **kwargs)
         self.etag = None
@@ -737,7 +751,7 @@ class InboundEndpointListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Enumeration of the inbound endpoints for a DNS resolver.
-    :vartype value: list[~dns_resolver_management_client.models.InboundEndpoint]
+    :vartype value: list[~azure.mgmt.dnsresolver.models.InboundEndpoint]
     :ivar next_link: The continuation token for the next page of results.
     :vartype next_link: str
     """
@@ -754,12 +768,12 @@ class InboundEndpointListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["InboundEndpoint"]] = None,
+        value: Optional[List["_models.InboundEndpoint"]] = None,
         **kwargs
     ):
         """
         :keyword value: Enumeration of the inbound endpoints for a DNS resolver.
-        :paramtype value: list[~dns_resolver_management_client.models.InboundEndpoint]
+        :paramtype value: list[~azure.mgmt.dnsresolver.models.InboundEndpoint]
         """
         super(InboundEndpointListResult, self).__init__(**kwargs)
         self.value = value
@@ -794,15 +808,20 @@ class InboundEndpointPatch(msrest.serialization.Model):
 class IpConfiguration(msrest.serialization.Model):
     """IP configuration.
 
-    :ivar subnet: The reference to the subnet bound to the IP configuration.
-    :vartype subnet: ~dns_resolver_management_client.models.SubResource
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar subnet: Required. The reference to the subnet bound to the IP configuration.
+    :vartype subnet: ~azure.mgmt.dnsresolver.models.SubResource
     :ivar private_ip_address: Private IP address of the IP configuration.
     :vartype private_ip_address: str
-    :ivar private_ip_allocation_method: Private IP address allocation method. Possible values
-     include: "Static", "Dynamic". Default value: "Dynamic".
-    :vartype private_ip_allocation_method: str or
-     ~dns_resolver_management_client.models.IpAllocationMethod
+    :ivar private_ip_allocation_method: Private IP address allocation method. Known values are:
+     "Static", "Dynamic". Default value: "Dynamic".
+    :vartype private_ip_allocation_method: str or ~azure.mgmt.dnsresolver.models.IpAllocationMethod
     """
+
+    _validation = {
+        'subnet': {'required': True},
+    }
 
     _attribute_map = {
         'subnet': {'key': 'subnet', 'type': 'SubResource'},
@@ -813,20 +832,20 @@ class IpConfiguration(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        subnet: Optional["SubResource"] = None,
+        subnet: "_models.SubResource",
         private_ip_address: Optional[str] = None,
-        private_ip_allocation_method: Optional[Union[str, "IpAllocationMethod"]] = "Dynamic",
+        private_ip_allocation_method: Optional[Union[str, "_models.IpAllocationMethod"]] = "Dynamic",
         **kwargs
     ):
         """
-        :keyword subnet: The reference to the subnet bound to the IP configuration.
-        :paramtype subnet: ~dns_resolver_management_client.models.SubResource
+        :keyword subnet: Required. The reference to the subnet bound to the IP configuration.
+        :paramtype subnet: ~azure.mgmt.dnsresolver.models.SubResource
         :keyword private_ip_address: Private IP address of the IP configuration.
         :paramtype private_ip_address: str
-        :keyword private_ip_allocation_method: Private IP address allocation method. Possible values
-         include: "Static", "Dynamic". Default value: "Dynamic".
+        :keyword private_ip_allocation_method: Private IP address allocation method. Known values are:
+         "Static", "Dynamic". Default value: "Dynamic".
         :paramtype private_ip_allocation_method: str or
-         ~dns_resolver_management_client.models.IpAllocationMethod
+         ~azure.mgmt.dnsresolver.models.IpAllocationMethod
         """
         super(IpConfiguration, self).__init__(**kwargs)
         self.subnet = subnet
@@ -856,13 +875,13 @@ class OutboundEndpoint(TrackedResource):
     :ivar etag: ETag of the outbound endpoint.
     :vartype etag: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~dns_resolver_management_client.models.SystemData
-    :ivar subnet: The reference to the subnet used for the outbound endpoint.
-    :vartype subnet: ~dns_resolver_management_client.models.SubResource
+    :vartype system_data: ~azure.mgmt.dnsresolver.models.SystemData
+    :ivar subnet: Required. The reference to the subnet used for the outbound endpoint.
+    :vartype subnet: ~azure.mgmt.dnsresolver.models.SubResource
     :ivar provisioning_state: The current provisioning state of the outbound endpoint. This is a
-     read-only property and any attempt to set this value will be ignored. Possible values include:
+     read-only property and any attempt to set this value will be ignored. Known values are:
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
-    :vartype provisioning_state: str or ~dns_resolver_management_client.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.dnsresolver.models.ProvisioningState
     :ivar resource_guid: The resourceGuid property of the outbound endpoint resource.
     :vartype resource_guid: str
     """
@@ -874,6 +893,7 @@ class OutboundEndpoint(TrackedResource):
         'location': {'required': True},
         'etag': {'readonly': True},
         'system_data': {'readonly': True},
+        'subnet': {'required': True},
         'provisioning_state': {'readonly': True},
         'resource_guid': {'readonly': True},
     }
@@ -895,8 +915,8 @@ class OutboundEndpoint(TrackedResource):
         self,
         *,
         location: str,
+        subnet: "_models.SubResource",
         tags: Optional[Dict[str, str]] = None,
-        subnet: Optional["SubResource"] = None,
         **kwargs
     ):
         """
@@ -904,8 +924,8 @@ class OutboundEndpoint(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
-        :keyword subnet: The reference to the subnet used for the outbound endpoint.
-        :paramtype subnet: ~dns_resolver_management_client.models.SubResource
+        :keyword subnet: Required. The reference to the subnet used for the outbound endpoint.
+        :paramtype subnet: ~azure.mgmt.dnsresolver.models.SubResource
         """
         super(OutboundEndpoint, self).__init__(tags=tags, location=location, **kwargs)
         self.etag = None
@@ -921,7 +941,7 @@ class OutboundEndpointListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Enumeration of the outbound endpoints for a DNS resolver.
-    :vartype value: list[~dns_resolver_management_client.models.OutboundEndpoint]
+    :vartype value: list[~azure.mgmt.dnsresolver.models.OutboundEndpoint]
     :ivar next_link: The continuation token for the next page of results.
     :vartype next_link: str
     """
@@ -938,12 +958,12 @@ class OutboundEndpointListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["OutboundEndpoint"]] = None,
+        value: Optional[List["_models.OutboundEndpoint"]] = None,
         **kwargs
     ):
         """
         :keyword value: Enumeration of the outbound endpoints for a DNS resolver.
-        :paramtype value: list[~dns_resolver_management_client.models.OutboundEndpoint]
+        :paramtype value: list[~azure.mgmt.dnsresolver.models.OutboundEndpoint]
         """
         super(OutboundEndpointListResult, self).__init__(**kwargs)
         self.value = value
@@ -978,9 +998,15 @@ class OutboundEndpointPatch(msrest.serialization.Model):
 class SubResource(msrest.serialization.Model):
     """Reference to another ARM resource.
 
-    :ivar id: Resource ID.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Required. Resource ID.
     :vartype id: str
     """
+
+    _validation = {
+        'id': {'required': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -989,11 +1015,11 @@ class SubResource(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: str,
         **kwargs
     ):
         """
-        :keyword id: Resource ID.
+        :keyword id: Required. Resource ID.
         :paramtype id: str
         """
         super(SubResource, self).__init__(**kwargs)
@@ -1006,7 +1032,7 @@ class SubResourceListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Enumeration of the sub-resources.
-    :vartype value: list[~dns_resolver_management_client.models.SubResource]
+    :vartype value: list[~azure.mgmt.dnsresolver.models.SubResource]
     :ivar next_link: The continuation token for the next page of results.
     :vartype next_link: str
     """
@@ -1023,12 +1049,12 @@ class SubResourceListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["SubResource"]] = None,
+        value: Optional[List["_models.SubResource"]] = None,
         **kwargs
     ):
         """
         :keyword value: Enumeration of the sub-resources.
-        :paramtype value: list[~dns_resolver_management_client.models.SubResource]
+        :paramtype value: list[~azure.mgmt.dnsresolver.models.SubResource]
         """
         super(SubResourceListResult, self).__init__(**kwargs)
         self.value = value
@@ -1040,16 +1066,16 @@ class SystemData(msrest.serialization.Model):
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
      "User", "Application", "ManagedIdentity", "Key".
-    :vartype created_by_type: str or ~dns_resolver_management_client.models.CreatedByType
+    :vartype created_by_type: str or ~azure.mgmt.dnsresolver.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :vartype last_modified_by_type: str or ~dns_resolver_management_client.models.CreatedByType
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.dnsresolver.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
@@ -1067,26 +1093,26 @@ class SystemData(msrest.serialization.Model):
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype created_by_type: str or ~dns_resolver_management_client.models.CreatedByType
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.dnsresolver.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype last_modified_by_type: str or ~dns_resolver_management_client.models.CreatedByType
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.dnsresolver.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
@@ -1102,11 +1128,17 @@ class SystemData(msrest.serialization.Model):
 class TargetDnsServer(msrest.serialization.Model):
     """Describes a server to forward the DNS queries to.
 
-    :ivar ip_address: DNS server IP address.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar ip_address: Required. DNS server IP address.
     :vartype ip_address: str
     :ivar port: DNS server port.
     :vartype port: int
     """
+
+    _validation = {
+        'ip_address': {'required': True},
+    }
 
     _attribute_map = {
         'ip_address': {'key': 'ipAddress', 'type': 'str'},
@@ -1116,12 +1148,12 @@ class TargetDnsServer(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        ip_address: Optional[str] = None,
+        ip_address: str,
         port: Optional[int] = 53,
         **kwargs
     ):
         """
-        :keyword ip_address: DNS server IP address.
+        :keyword ip_address: Required. DNS server IP address.
         :paramtype ip_address: str
         :keyword port: DNS server port.
         :paramtype port: int
@@ -1137,7 +1169,7 @@ class VirtualNetworkDnsForwardingRuleset(msrest.serialization.Model):
     :ivar id: DNS Forwarding Ruleset Resource ID.
     :vartype id: str
     :ivar virtual_network_link: The reference to the virtual network link.
-    :vartype virtual_network_link: ~dns_resolver_management_client.models.SubResource
+    :vartype virtual_network_link: ~azure.mgmt.dnsresolver.models.SubResource
     """
 
     _attribute_map = {
@@ -1149,14 +1181,14 @@ class VirtualNetworkDnsForwardingRuleset(msrest.serialization.Model):
         self,
         *,
         id: Optional[str] = None,
-        virtual_network_link: Optional["SubResource"] = None,
+        virtual_network_link: Optional["_models.SubResource"] = None,
         **kwargs
     ):
         """
         :keyword id: DNS Forwarding Ruleset Resource ID.
         :paramtype id: str
         :keyword virtual_network_link: The reference to the virtual network link.
-        :paramtype virtual_network_link: ~dns_resolver_management_client.models.SubResource
+        :paramtype virtual_network_link: ~azure.mgmt.dnsresolver.models.SubResource
         """
         super(VirtualNetworkDnsForwardingRuleset, self).__init__(**kwargs)
         self.id = id
@@ -1169,7 +1201,7 @@ class VirtualNetworkDnsForwardingRulesetListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Enumeration of the Virtual Network DNS Forwarding Ruleset.
-    :vartype value: list[~dns_resolver_management_client.models.VirtualNetworkDnsForwardingRuleset]
+    :vartype value: list[~azure.mgmt.dnsresolver.models.VirtualNetworkDnsForwardingRuleset]
     :ivar next_link: The continuation token for the next page of results.
     :vartype next_link: str
     """
@@ -1186,13 +1218,12 @@ class VirtualNetworkDnsForwardingRulesetListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["VirtualNetworkDnsForwardingRuleset"]] = None,
+        value: Optional[List["_models.VirtualNetworkDnsForwardingRuleset"]] = None,
         **kwargs
     ):
         """
         :keyword value: Enumeration of the Virtual Network DNS Forwarding Ruleset.
-        :paramtype value:
-         list[~dns_resolver_management_client.models.VirtualNetworkDnsForwardingRuleset]
+        :paramtype value: list[~azure.mgmt.dnsresolver.models.VirtualNetworkDnsForwardingRuleset]
         """
         super(VirtualNetworkDnsForwardingRulesetListResult, self).__init__(**kwargs)
         self.value = value
@@ -1203,6 +1234,8 @@ class VirtualNetworkLink(ProxyResource):
     """Describes a virtual network link.
 
     Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -1215,16 +1248,16 @@ class VirtualNetworkLink(ProxyResource):
     :ivar etag: ETag of the virtual network link.
     :vartype etag: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~dns_resolver_management_client.models.SystemData
-    :ivar virtual_network: The reference to the virtual network. This cannot be changed after
-     creation.
-    :vartype virtual_network: ~dns_resolver_management_client.models.SubResource
+    :vartype system_data: ~azure.mgmt.dnsresolver.models.SystemData
+    :ivar virtual_network: Required. The reference to the virtual network. This cannot be changed
+     after creation.
+    :vartype virtual_network: ~azure.mgmt.dnsresolver.models.SubResource
     :ivar metadata: Metadata attached to the virtual network link.
     :vartype metadata: dict[str, str]
     :ivar provisioning_state: The current provisioning state of the virtual network link. This is a
-     read-only property and any attempt to set this value will be ignored. Possible values include:
+     read-only property and any attempt to set this value will be ignored. Known values are:
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
-    :vartype provisioning_state: str or ~dns_resolver_management_client.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.dnsresolver.models.ProvisioningState
     """
 
     _validation = {
@@ -1233,6 +1266,7 @@ class VirtualNetworkLink(ProxyResource):
         'type': {'readonly': True},
         'etag': {'readonly': True},
         'system_data': {'readonly': True},
+        'virtual_network': {'required': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -1250,14 +1284,14 @@ class VirtualNetworkLink(ProxyResource):
     def __init__(
         self,
         *,
-        virtual_network: Optional["SubResource"] = None,
+        virtual_network: "_models.SubResource",
         metadata: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         """
-        :keyword virtual_network: The reference to the virtual network. This cannot be changed after
-         creation.
-        :paramtype virtual_network: ~dns_resolver_management_client.models.SubResource
+        :keyword virtual_network: Required. The reference to the virtual network. This cannot be
+         changed after creation.
+        :paramtype virtual_network: ~azure.mgmt.dnsresolver.models.SubResource
         :keyword metadata: Metadata attached to the virtual network link.
         :paramtype metadata: dict[str, str]
         """
@@ -1275,7 +1309,7 @@ class VirtualNetworkLinkListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Enumeration of the virtual network links.
-    :vartype value: list[~dns_resolver_management_client.models.VirtualNetworkLink]
+    :vartype value: list[~azure.mgmt.dnsresolver.models.VirtualNetworkLink]
     :ivar next_link: The continuation token for the next page of results.
     :vartype next_link: str
     """
@@ -1292,12 +1326,12 @@ class VirtualNetworkLinkListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["VirtualNetworkLink"]] = None,
+        value: Optional[List["_models.VirtualNetworkLink"]] = None,
         **kwargs
     ):
         """
         :keyword value: Enumeration of the virtual network links.
-        :paramtype value: list[~dns_resolver_management_client.models.VirtualNetworkLink]
+        :paramtype value: list[~azure.mgmt.dnsresolver.models.VirtualNetworkLink]
         """
         super(VirtualNetworkLinkListResult, self).__init__(**kwargs)
         self.value = value
