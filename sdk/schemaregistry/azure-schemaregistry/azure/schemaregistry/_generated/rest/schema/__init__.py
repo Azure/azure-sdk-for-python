@@ -11,15 +11,18 @@ try:
     from ._request_builders_py3 import build_get_versions_request
     from ._request_builders_py3 import build_query_id_by_content_request
     from ._request_builders_py3 import build_register_request
+    from ._request_builders_py3 import build_get_schema_by_version_request
 except (SyntaxError, ImportError):
     from ._request_builders import build_get_by_id_request  # type: ignore
     from ._request_builders import build_get_versions_request  # type: ignore
     from ._request_builders import build_query_id_by_content_request  # type: ignore
     from ._request_builders import build_register_request  # type: ignore
+    from ._request_builders import build_get_schema_by_version_request  # type: ignore
 
 __all__ = [
     'build_get_by_id_request',
     'build_get_versions_request',
     'build_query_id_by_content_request',
     'build_register_request',
+    'build_get_schema_by_version_request'
 ]

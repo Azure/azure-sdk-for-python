@@ -257,3 +257,55 @@ def build_register_request(
         **kwargs
     )
 
+def build_get_schema_by_version_request(
+    version:str,
+    group_name: str,
+    schema_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    """Get schema by version,group_name,schema_name.
+
+    Gets the schema of a version of schema specified.
+
+    :param version: Version of schema.
+    :type version: str
+    :param group_name: Schema group under which schema is registered.  Group's serialization type
+     should match the serialization type specified in the request.
+    :type group_name: str
+    :param schema_name: Name of schema.
+    :type schema_name: str
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
+    """
+
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
+
+    # Construct URL
+    _url = "/$schemaGroups/{groupName}/schemas/{schemaName}/versions/{version_id}"
+    path_format_arguments = {
+        "groupName": _SERIALIZER.url("group_name", group_name, 'str'),
+        "schemaName": _SERIALIZER.url("schema_name", schema_name, 'str', max_length=50, min_length=0, pattern=r'^[A-Za-z0-9][^\\/$:]*$'),
+        "version_id": _SERIALIZER.url("version_id", version, 'str')
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )

@@ -171,6 +171,23 @@ class SchemaRegistryClient(object):
         response.raise_for_status()
         return _parse_response_schema(response)
 
+    def get_schema_by_version(self,version,group_name, schema_name, **kwargs):
+        """
+        Gets a registered schema by its version, group name and schema name.
+        :param str version: References schema version for a schema in a schema group.
+        :param str group_name: References schema group in registry namespace.
+        :param str schema_name: References specific schema in registry namespace.
+        :rtype: ~azure.schemaregistry.Schema
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        """
+        http_request_kwargs = get_http_request_kwargs(kwargs)
+        request = schema_rest.build_get_schema_by_version_request(
+           version=version,group_name=group_name,schema_name=schema_name, **http_request_kwargs
+        )
+        response = self._generated_client.send_request(request, **kwargs)
+        response.raise_for_status()
+        return _parse_response_schema(response)
+
     def get_schema_properties(
         self,
         group_name,
