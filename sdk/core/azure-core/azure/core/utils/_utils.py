@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Dict, Iterable, Iterator, Mapping, MutableMapping, ValuesView
+from typing import Any, Dict, Iterator, Mapping, MutableMapping
 
 
 class _FixedOffset(datetime.tzinfo):
