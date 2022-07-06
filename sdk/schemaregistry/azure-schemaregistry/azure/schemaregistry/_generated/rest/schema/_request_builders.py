@@ -313,4 +313,3 @@ def build_get_schema_by_version_request(
         headers=_headers,
         **kwargs
     )
-
