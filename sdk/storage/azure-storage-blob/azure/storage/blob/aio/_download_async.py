@@ -12,8 +12,8 @@ from itertools import islice
 from typing import AsyncIterator
 
 import asyncio
-
-from azure.core.exceptions import HttpResponseError, ServiceResponseError, IncompleteReadError
+from aiohttp import ClientPayloadError
+from azure.core.exceptions import HttpResponseError, ServiceResponseError
 
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import process_storage_error, parse_length_from_content_range
@@ -114,14 +114,13 @@ class _AsyncChunkDownloader(_ChunkDownloader):
                     )
                     retry_active = False
 
-                except IncompleteReadError as error:
+                except HttpResponseError as error:
+                    process_storage_error(error)
+                except ClientPayloadError as error:
                     retry_total -= 1
                     if retry_total <= 0:
                         raise ServiceResponseError(error, error=error)
                     await asyncio.sleep(1)
-
-                except HttpResponseError as error:
-                    process_storage_error(error)
 
             chunk_data = await process_content(response, offset[0], offset[1], self.encryption_options)
 
@@ -357,12 +356,6 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                     self.size = self._file_size
                 retry_active = False
 
-            except IncompleteReadError as error:
-                retry_total -= 1
-                if retry_total <= 0:
-                    raise ServiceResponseError(error, error=error)
-                await asyncio.sleep(1)
-
             except HttpResponseError as error:
                 if self._start_range is None and error.response.status_code == 416:
                     # Get range will fail on an empty file. If the user did not
@@ -383,6 +376,12 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                     self._file_size = 0
                 else:
                     process_storage_error(error)
+
+            except ClientPayloadError as error:
+                retry_total -= 1
+                if retry_total <= 0:
+                    raise ServiceResponseError(error, error=error)
+                await asyncio.sleep(1)
 
         # get page ranges to optimize downloading sparse page blob
         if response.properties.blob_type == 'PageBlob':
