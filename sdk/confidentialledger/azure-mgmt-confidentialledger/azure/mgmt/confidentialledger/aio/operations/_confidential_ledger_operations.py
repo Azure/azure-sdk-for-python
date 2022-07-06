@@ -13,22 +13,24 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._confidential_ledger_operations import build_check_name_availability_request
+from .._vendor import MixinABC
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class ConfidentialLedgerOperationsMixin:
+class ConfidentialLedgerOperationsMixin(MixinABC):
 
     @distributed_trace_async
     async def check_name_availability(
         self,
-        name_availability_request: "_models.CheckNameAvailabilityRequest",
+        name_availability_request: _models.CheckNameAvailabilityRequest,
         **kwargs: Any
-    ) -> "_models.CheckNameAvailabilityResponse":
+    ) -> _models.CheckNameAvailabilityResponse:
         """To check whether a resource name is available.
 
         :param name_availability_request: Name availability request payload.
@@ -39,14 +41,17 @@ class ConfidentialLedgerOperationsMixin:
         :rtype: ~azure.mgmt.confidentialledger.models.CheckNameAvailabilityResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckNameAvailabilityResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-05-13")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-13"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CheckNameAvailabilityResponse]
 
         _json = self._serialize.body(name_availability_request, 'CheckNameAvailabilityRequest')
 
@@ -56,11 +61,13 @@ class ConfidentialLedgerOperationsMixin:
             content_type=content_type,
             json=_json,
             template_url=self.check_name_availability.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
