@@ -1,5 +1,11 @@
 # Release History
 
+## 1.3.2 (2022-07-06)
+
+### Other Changes
+
+- Updated mindep about `azure-core` from `1.23.0` to `1.24.0`
+
 ## 1.3.1 (2022-06-14)
 
 ### Other Changes
