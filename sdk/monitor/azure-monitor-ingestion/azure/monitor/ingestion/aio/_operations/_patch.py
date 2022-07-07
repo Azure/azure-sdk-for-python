@@ -8,14 +8,14 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import List, Any
 from ._operations import MonitorIngestionClientOperationsMixin as GeneratedOps
-from ..._models import SendLogsStatus, SendLogsResult
+from ..._models import UploadLogsStatus, UploadLogsResult
 from ..._helpers import _create_gzip_requests
 
 
 class MonitorIngestionClientOperationsMixin(GeneratedOps):
     async def upload( # pylint: disable=arguments-renamed, arguments-differ
         self, rule_id: str, stream_name: str, logs: List[Any], **kwargs: Any
-    ) -> SendLogsResult:
+    ) -> UploadLogsResult:
         """Ingestion API used to directly ingest data using Data Collection Rules.
 
         See error response code and error response message for more detail.
@@ -26,13 +26,13 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
         :type stream: str
         :param body: An array of objects matching the schema defined by the provided stream.
         :type body: list[any]
-        :return: SendLogsResult
-        :rtype: SendLogsResult
+        :return: UploadLogsResult
+        :rtype: UploadLogsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         requests = _create_gzip_requests(logs)
         results = []
-        status = SendLogsStatus.SUCCESS
+        status = UploadLogsStatus.SUCCESS
         for request in requests:
             response = await super().upload(
                 rule_id,
@@ -43,8 +43,8 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
             )
             if response is not None:
                 results.append(request)
-                status = SendLogsStatus.PARTIAL_FAILURE
-        return SendLogsResult(failed_logs=results, status=status)
+                status = UploadLogsStatus.PARTIAL_FAILURE
+        return UploadLogsResult(failed_logs=results, status=status)
 
 
 __all__: List[str] = [

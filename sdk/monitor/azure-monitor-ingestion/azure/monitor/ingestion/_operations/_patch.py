@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import concurrent.futures
 from typing import List, Any, Optional
 from ._operations import MonitorIngestionClientOperationsMixin as GeneratedOps
-from .._models import SendLogsStatus, SendLogsResult
+from .._models import UploadLogsStatus, UploadLogsResult
 from .._helpers import _create_gzip_requests
 
 
@@ -22,7 +22,7 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
         *,
         max_concurrency: Optional[int] = None,
         **kwargs: Any
-    ) -> SendLogsResult:
+    ) -> UploadLogsResult:
         """Ingestion API used to directly ingest data using Data Collection Rules.
 
         See error response code and error response message for more detail.
@@ -35,13 +35,13 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
         :type logs: list[any]
         :keyword max_concurrency: Number of parallel threads to use when logs size is > 1mb.
         :paramtype max_concurrency: int
-        :return: SendLogsResult
-        :rtype: SendLogsResult
+        :return: UploadLogsResult
+        :rtype: UploadLogsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         requests = _create_gzip_requests(logs)
         results = []
-        status = SendLogsStatus.SUCCESS
+        status = UploadLogsStatus.SUCCESS
         parallel = max_concurrency > 1 and len(requests) > 1
         if parallel:
             with concurrent.futures.ThreadPoolExecutor(max_concurrency) as executor:
@@ -61,8 +61,8 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
                     response = future.result()
                     if response is not None:
                         results.append(req)
-                        status = SendLogsStatus.PARTIAL_FAILURE
-            return SendLogsResult(failed_logs=results, status=status)
+                        status = UploadLogsStatus.PARTIAL_FAILURE
+            return UploadLogsResult(failed_logs=results, status=status)
         for request in requests:
             response = super().upload(
                 rule_id,
@@ -73,8 +73,8 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
             )
             if response is not None:
                 results.append(request)
-                status = SendLogsStatus.PARTIAL_FAILURE
-        return SendLogsResult(failed_logs=results, status=status)
+                status = UploadLogsStatus.PARTIAL_FAILURE
+        return UploadLogsResult(failed_logs=results, status=status)
 
 
 __all__: List[str] = [

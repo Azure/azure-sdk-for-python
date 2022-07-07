@@ -109,7 +109,7 @@ This example shows uploading logs to Azure monitor.
 
 ```python
 import os
-from azure.monitor.ingestion import LogsIngestionClient, SendLogsStatus
+from azure.monitor.ingestion import LogsIngestionClient, UploadLogsStatus
 from azure.identity import DefaultAzureCredential
 
 endpoint = os.environ['DATA_COLLECTION_ENDPOINT']
@@ -132,7 +132,7 @@ body = [
     ]
 
 response = client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
-if response.status != SendLogsStatus.SUCCESS:
+if response.status != UploadLogsStatus.SUCCESS:
     failed_logs = response.failed_logs_index
     print(failed_logs)
 ```

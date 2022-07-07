@@ -5,7 +5,7 @@ Usage: python sample_send_small_logs_async.py
 import os
 import asyncio
 from azure.monitor.ingestion.aio import LogsIngestionClient
-from azure.monitor.ingestion import SendLogsStatus
+from azure.monitor.ingestion import UploadLogsStatus
 from azure.identity.aio import DefaultAzureCredential
 
 async def send_logs():
@@ -29,7 +29,7 @@ async def send_logs():
         ]
 
     response = await client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
-    if response.status != SendLogsStatus.SUCCESS:
+    if response.status != UploadLogsStatus.SUCCESS:
         failed_logs = response.failed_logs_index
         print(failed_logs)
 
