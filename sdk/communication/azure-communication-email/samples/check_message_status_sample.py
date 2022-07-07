@@ -21,6 +21,7 @@ USAGE:
 
 import os
 import sys
+from azure.core.exceptions import HttpResponseError
 from azure.communication.email import (
     EmailClient,
     EmailContent,
@@ -57,15 +58,18 @@ class EmailCheckMessageStatusSample(object):
             content=content,
             recipients=recipients
         )
+        try:
+            # sending the email message
+            response = email_client.send(message)
 
-        # sending the email message
-        response = email_client.send(message)
+            # using the message id to get the status of the email
+            message_id = response.message_id
+            message_status = email_client.get_send_status(message_id)
 
-        # using the message id to get the status of the email
-        message_id = response.message_id
-        message_status = email_client.get_send_status(message_id)
-
-        print("Message Status: " + message_status.status)
+            print("Message Status: " + message_status.status)
+        except HttpResponseError as ex:
+            print(ex)
+            pass
 
 if __name__ == '__main__':
     sample = EmailCheckMessageStatusSample()

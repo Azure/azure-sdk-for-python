@@ -22,6 +22,7 @@ USAGE:
 import os
 import sys
 import asyncio
+from azure.core.exceptions import HttpResponseError
 from azure.communication.email.aio import EmailClient
 from azure.communication.email import (
     EmailContent,
@@ -64,14 +65,10 @@ class EmailSingleRecipientSampleAsync(object):
                 # sending the email message
                 response = await email_client.send(message)
                 print("Message ID: " + response.message_id)
-            except Exception:
-                print(Exception)
+            except HttpResponseError as ex:
+                print(ex)
                 pass
 
 if __name__ == '__main__':
     sample = EmailSingleRecipientSampleAsync()
-
-    # Comment in this line if you are running this sample on Windows
-    # asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-
     asyncio.run(sample.send_email_to_single_recipient_async())

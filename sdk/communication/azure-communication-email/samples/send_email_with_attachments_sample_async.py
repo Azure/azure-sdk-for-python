@@ -19,9 +19,11 @@ USAGE:
     3) RECIPIENT_ADDRESS - the address that will receive the email
 """
 
+import base64
 import os
 import sys
 import asyncio
+from azure.core.exceptions import HttpResponseError
 from azure.communication.email.aio import EmailClient
 from azure.communication.email import (
     EmailContent,
@@ -54,10 +56,15 @@ class EmailWithAttachmentSampleAsync(object):
             to=[EmailAddress(email=self.recipient_address, display_name="Customer Name")]
         )
 
+        with open("./attachment.txt", "r") as file:
+            file_contents = file.read()
+
+        file_bytes_b64 = base64.b64encode(bytes(file_contents, 'utf-8'))
+
         attachment = EmailAttachment(
-            name="readme.txt",
+            name="attachment.txt",
             attachment_type="txt",
-            content_bytes_base64="ZW1haWwgdGVzdCBhdHRhY2htZW50" #cspell:disable-line
+            content_bytes_base64=file_bytes_b64.decode()
         )
 
         message = EmailMessage(
@@ -72,14 +79,10 @@ class EmailWithAttachmentSampleAsync(object):
                 # sending the email message
                 response = await email_client.send(message)
                 print("Message ID: " + response.message_id)
-            except Exception:
-                print(Exception)
+            except HttpResponseError as ex:
+                print(ex)
                 pass
 
 if __name__ == '__main__':
     sample = EmailWithAttachmentSampleAsync()
-
-    # Comment in this line if you are running this sample on Windows
-    # asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-    
     asyncio.run(sample.send_email_with_attachment_async())

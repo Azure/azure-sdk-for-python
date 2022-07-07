@@ -19,13 +19,13 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
 
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
-    :param TokenCredential credential:
-        The TokenCredential we use to authenticate against the service.
+    :param AsyncTokenCredential credential:
+        The AsyncTokenCredential we use to authenticate against the service.
     """
     def __init__(
             self,
             endpoint, # type: str
-            credential, # type: str
+            credential, # type: AsyncTokenCredential
             **kwargs # type: Any
         ):
         # type: (...) -> None

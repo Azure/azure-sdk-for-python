@@ -25,7 +25,7 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
     def __init__(
             self,
             endpoint, # type: str
-            credential, # type: str
+            credential, # type: TokenCredential
             **kwargs # type: Any
         ):
         # type: (...) -> None
@@ -94,3 +94,10 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
             message_id=message_id,
             **kwargs
         )
+
+    async def __enter__(self) -> "EmailClient":
+        await self._generated_client.__enter__()
+        return self
+
+    async def __exit__(self, *args) -> None:
+        await self._generated_client.__exit__(*args)

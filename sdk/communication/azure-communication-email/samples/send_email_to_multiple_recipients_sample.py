@@ -22,6 +22,7 @@ USAGE:
 
 import os
 import sys
+from azure.core.exceptions import HttpResponseError
 from azure.communication.email import (
     EmailClient,
     EmailContent,
@@ -54,6 +55,14 @@ class EmailMultipleRecipientSample(object):
             to=[
                 EmailAddress(email=self.recipient_address, display_name="Customer Name"),
                 EmailAddress(email=self.second_recipient_address, display_name="Customer Name 2"),
+            ],
+            cc=[
+                EmailAddress(email=self.recipient_address, display_name="Customer Name"),
+                EmailAddress(email=self.second_recipient_address, display_name="Customer Name 2"),
+            ],
+            bcc=[
+                EmailAddress(email=self.recipient_address, display_name="Customer Name"),
+                EmailAddress(email=self.second_recipient_address, display_name="Customer Name 2"),
             ]
         )
 
@@ -63,9 +72,13 @@ class EmailMultipleRecipientSample(object):
             recipients=recipients
         )
 
-        # sending the email message
-        response = email_client.send(message)
-        print("Message ID: " + response.message_id)
+        try:
+            # sending the email message
+            response = email_client.send(message)
+            print("Message ID: " + response.message_id)
+        except HttpResponseError as ex:
+            print(ex)
+            pass
 
 if __name__ == '__main__':
     sample = EmailMultipleRecipientSample()

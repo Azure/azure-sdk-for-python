@@ -22,6 +22,7 @@ USAGE:
 import os
 import sys
 import asyncio
+from azure.core.exceptions import HttpResponseError
 from azure.communication.email.aio import EmailClient
 from azure.communication.email import (
     EmailContent,
@@ -69,14 +70,10 @@ class EmailCheckMessageStatusSampleAsync(object):
                 message_status = await email_client.get_send_status(message_id)
 
                 print("Message Status: " + message_status.status)
-            except Exception:
-                print(Exception)
+            except HttpResponseError as ex:
+                print(ex)
                 pass
 
 if __name__ == '__main__':
     sample = EmailCheckMessageStatusSampleAsync()
-
-    # Comment in this line if you are running this sample on Windows
-    # asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-
     asyncio.run(sample.check_message_status_async())

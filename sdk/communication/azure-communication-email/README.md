@@ -96,9 +96,7 @@ response = client.send(message)
 Azure Communication Services support sending email with attachments.
 
 ```python
-file = open("C://readme.txt", "r")
-file_contents = file.read()
-file.close()
+import base64
 
 content = EmailContent(
     subject="This is the subject",
@@ -108,10 +106,15 @@ content = EmailContent(
 
 address = EmailAddress(email="customer@domain.com", display_name="Customer Name")
 
+with open("C://readme.txt", "r") as file:
+    file_contents = file.read()
+
+file_bytes_b64 = base64.b64encode(bytes(file_contents, 'utf-8'))
+
 attachment = EmailAttachment(
-    name="readme.txt",
+    name="attachment.txt",
     attachment_type="txt",
-    content_bytes_base64=base64.b64encode(file_contents)
+    content_bytes_base64=file_bytes_b64.decode()
 )
 
 message = EmailMessage(
@@ -130,7 +133,7 @@ The result from the `send` call contains a `message_id` which can be used to que
 
 ```python
 response = client.send(message)
-status = client.get_sent_status(message_id)
+status = client.get_sent_status(response.message_id)
 ```
 
 ## Troubleshooting
@@ -138,9 +141,11 @@ status = client.get_sent_status(message_id)
 Email operations will throw an exception if the request to the server fails. The Email client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md).
 
 ```Python
+from azure.core.exceptions import HttpResponseError
+
 try:
     response = email_client.send(message)
-except Exception as ex:
+except HttpResponseError as ex:
     print('Exception:')
     print(ex)
 ```

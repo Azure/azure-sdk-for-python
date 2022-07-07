@@ -19,8 +19,10 @@ USAGE:
     3) RECIPIENT_ADDRESS - the address that will receive the email
 """
 
+import base64
 import os
 import sys
+from azure.core.exceptions import HttpResponseError
 from azure.communication.email import (
     EmailClient,
     EmailContent,
@@ -53,10 +55,15 @@ class EmailWithAttachmentSample(object):
             to=[EmailAddress(email=self.recipient_address, display_name="Customer Name")]
         )
 
+        with open("./attachment.txt", "r") as file:
+            file_contents = file.read()
+
+        file_bytes_b64 = base64.b64encode(bytes(file_contents, 'utf-8'))
+
         attachment = EmailAttachment(
-            name="readme.txt",
+            name="attachment.txt",
             attachment_type="txt",
-            content_bytes_base64="ZW1haWwgdGVzdCBhdHRhY2htZW50" #cspell:disable-line
+            content_bytes_base64=file_bytes_b64.decode()
         )
 
         message = EmailMessage(
@@ -66,9 +73,13 @@ class EmailWithAttachmentSample(object):
             attachments=[attachment]
         )
 
-        # sending the email message
-        response = email_client.send(message)
-        print("Message ID: " + response.message_id)
+        try:
+            # sending the email message
+            response = email_client.send(message)
+            print("Message ID: " + response.message_id)
+        except HttpResponseError as ex:
+            print(ex)
+            pass
 
 if __name__ == '__main__':
     sample = EmailWithAttachmentSample()
