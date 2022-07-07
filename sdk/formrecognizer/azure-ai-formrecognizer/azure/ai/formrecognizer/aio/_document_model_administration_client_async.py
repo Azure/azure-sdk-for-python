@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -12,8 +11,9 @@ from typing import (
     Union,
     List,
     Dict,
-    TYPE_CHECKING,
 )
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
@@ -33,10 +33,6 @@ from .._models import (
     ModelOperationInfo,
     ResourceInfo,
 )
-
-if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
@@ -86,13 +82,13 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
     def __init__(
         self,
         endpoint: str,
-        credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
         **kwargs: Any
     ) -> None:
         api_version = kwargs.pop(
             "api_version", DocumentAnalysisApiVersion.V2022_06_30_PREVIEW
         )
-        super(DocumentModelAdministrationClient, self).__init__(
+        super().__init__(
             endpoint=endpoint,
             credential=credential,
             api_version=api_version,
@@ -189,8 +185,9 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         )
 
     @distributed_trace_async
-    async def begin_compose_model(self, component_model_ids, **kwargs):
-        # type: (List[str], Any) -> AsyncDocumentModelAdministrationLROPoller[DocumentModelInfo]
+    async def begin_compose_model(
+        self, component_model_ids: List[str], **kwargs: Any
+    ) -> AsyncDocumentModelAdministrationLROPoller[DocumentModelInfo]:
         """Creates a composed model from a collection of existing models.
 
         A composed model allows multiple models to be called with a single model ID. When a document is
@@ -304,7 +301,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
     @distributed_trace_async
     async def begin_copy_model_to(
-        self, model_id: str, target: dict, **kwargs: Any
+        self, model_id: str, target: Dict[str, str], **kwargs: Any
     ) -> AsyncDocumentModelAdministrationLROPoller[DocumentModelInfo]:
         """Copy a model stored in this resource (the source) to the user specified
         target Form Recognizer resource.
@@ -314,7 +311,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         target resource's output from calling the :func:`~get_copy_authorization()` method.
 
         :param str model_id: Model identifier of the model to copy to target resource.
-        :param dict target:
+        :param Dict[str, str] target:
             The copy authorization generated from the target resource's call to
             :func:`~get_copy_authorization()`.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
