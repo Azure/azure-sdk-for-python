@@ -1,0 +1,150 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainer270e32da?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.13.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "ETag": "\u00220x8DA6068460CEE86\u0022",
+        "Last-Modified": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainersource270e32da?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.13.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "ETag": "\u00220x8DA606846174D42\u0022",
+        "Last-Modified": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainer270e32da/blob270e32da",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.13.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-blob-type": "AppendBlob",
+        "x-ms-date": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "ETag": "\u00220x8DA606846226EE4\u0022",
+        "Last-Modified": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainer270e32da/blob270e32da?comp=seal",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.13.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-blob-condition-appendpos": "1",
+        "x-ms-date": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 412,
+      "ResponseHeaders": {
+        "Content-Length": "251",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-error-code": "AppendPositionConditionNotMet",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\n",
+        "\u003CError\u003E\u003CCode\u003EAppendPositionConditionNotMet\u003C/Code\u003E\u003CMessage\u003EThe append position condition specified was not met.\n",
+        "RequestId:98c4054e-901e-006b-4f51-925d36000000\n",
+        "Time:2022-07-07T22:30:19.6623158Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainer270e32da/blob270e32da?comp=seal",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.13.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-blob-condition-appendpos": "0",
+        "x-ms-date": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "ETag": "\u00220x8DA60684637A177\u0022",
+        "Last-Modified": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-blob-sealed": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}
