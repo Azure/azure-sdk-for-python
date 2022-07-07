@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from multiprocessing.sharedctypes import Value
 import pytest
 
 from datetime import datetime, timedelta
@@ -37,7 +38,7 @@ from azure.data.tables import (
 )
 
 from _shared.testcase import TableTestCase
-from preparers import tables_decorator
+from preparers import tables_decorator, tables_decorator_with_wraps
 
 #------------------------------------------------------------------------------
 TEST_TABLE_PREFIX = 'table'
@@ -279,13 +280,18 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator
-    @recorded_by_proxy
-    def test_batch_single_op_if_doesnt_match(self, tables_storage_account_name, tables_primary_storage_account_key):
+    @tables_decorator_with_wraps
+    def test_batch_single_op_if_doesnt_match(self, variable_recorder, tables_storage_account_name=None, tables_primary_storage_account_key=None):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
+        # set_custom_default_matcher(
+        #     compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        # )
+
+        # Above section is intentionally commented to trigger a playback error
+        variables = variable_recorder.variables if self.is_live else {"variable_name": "value"}
+        particular_variable = variable_recorder.get("variable_name")
+        ...
+        variable_recorder.record(variables)
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
