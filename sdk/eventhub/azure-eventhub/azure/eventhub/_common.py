@@ -232,11 +232,11 @@ class EventData(object):
         # pylint: disable=protected-access
         body = self.raw_amqp_message.body
         if self.body_type == AmqpMessageBodyType.VALUE:
-            if not body.data:
+            if not body:
                 return ""
-            return str(decode_with_recurse(body.data, encoding))
+            return str(decode_with_recurse(body, encoding))
 
-        seq_list = [d for seq_section in body.data for d in seq_section]
+        seq_list = [d for seq_section in body for d in seq_section]
         return str(decode_with_recurse(seq_list, encoding))
 
     @property

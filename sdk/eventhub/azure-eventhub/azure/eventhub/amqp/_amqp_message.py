@@ -171,10 +171,10 @@ class AmqpAnnotatedMessage(object):
         self._delivery_annotations = message.delivery_annotations if message.delivery_annotations else {}
         self._application_properties = message.application_properties if message.application_properties else {}
         if message.data:
-            self._body = message.data
+            self._body = list(message.data)
             self._body_type = AmqpMessageBodyType.DATA
         elif message.sequence:
-            self._body = message.sequence
+            self._body = list(message.sequence)
             self._body_type = AmqpMessageBodyType.SEQUENCE
         else:
             self._body = message.value
