@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,13 +7,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, TYPE_CHECKING
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class ChangeAttributes(msrest.serialization.Model):
+class ChangeAttributes(_serialization.Model):
     """Details about the change resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -22,7 +26,7 @@ class ChangeAttributes(msrest.serialization.Model):
     :ivar timestamp: The time the change(s) on the target resource ocurred.
     :vartype timestamp: str
     :ivar changes_count: The number of changes this resource captures.
-    :vartype changes_count: long
+    :vartype changes_count: int
     :ivar previous_resource_snapshot_id: The GUID of the previous snapshot.
     :vartype previous_resource_snapshot_id: str
     :ivar new_resource_snapshot_id: The GUID of the new snapshot.
@@ -30,28 +34,24 @@ class ChangeAttributes(msrest.serialization.Model):
     """
 
     _validation = {
-        'correlation_id': {'readonly': True},
-        'timestamp': {'readonly': True},
-        'changes_count': {'readonly': True},
-        'previous_resource_snapshot_id': {'readonly': True},
-        'new_resource_snapshot_id': {'readonly': True},
+        "correlation_id": {"readonly": True},
+        "timestamp": {"readonly": True},
+        "changes_count": {"readonly": True},
+        "previous_resource_snapshot_id": {"readonly": True},
+        "new_resource_snapshot_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'correlation_id': {'key': 'correlationId', 'type': 'str'},
-        'timestamp': {'key': 'timestamp', 'type': 'str'},
-        'changes_count': {'key': 'changesCount', 'type': 'long'},
-        'previous_resource_snapshot_id': {'key': 'previousResourceSnapshotId', 'type': 'str'},
-        'new_resource_snapshot_id': {'key': 'newResourceSnapshotId', 'type': 'str'},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+        "timestamp": {"key": "timestamp", "type": "str"},
+        "changes_count": {"key": "changesCount", "type": "int"},
+        "previous_resource_snapshot_id": {"key": "previousResourceSnapshotId", "type": "str"},
+        "new_resource_snapshot_id": {"key": "newResourceSnapshotId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ChangeAttributes, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.correlation_id = None
         self.timestamp = None
         self.changes_count = None
@@ -59,17 +59,16 @@ class ChangeAttributes(msrest.serialization.Model):
         self.new_resource_snapshot_id = None
 
 
-class ChangeBase(msrest.serialization.Model):
+class ChangeBase(_serialization.Model):
     """An individual change on the target resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar property_change_type: The type of change that occurred. Possible values include:
-     "Update", "Insert", "Remove".
+    :ivar property_change_type: The type of change that occurred. Known values are: "Update",
+     "Insert", and "Remove".
     :vartype property_change_type: str or
      ~azure.mgmt.resource.changes.v2022_05_01.models.PropertyChangeType
-    :ivar change_category: The entity that made the change. Possible values include: "User",
-     "System".
+    :ivar change_category: The entity that made the change. Known values are: "User" and "System".
     :vartype change_category: str or ~azure.mgmt.resource.changes.v2022_05_01.models.ChangeCategory
     :ivar previous_value: The target resource property value before the change.
     :vartype previous_value: str
@@ -78,33 +77,29 @@ class ChangeBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'property_change_type': {'readonly': True},
-        'change_category': {'readonly': True},
-        'previous_value': {'readonly': True},
-        'new_value': {'readonly': True},
+        "property_change_type": {"readonly": True},
+        "change_category": {"readonly": True},
+        "previous_value": {"readonly": True},
+        "new_value": {"readonly": True},
     }
 
     _attribute_map = {
-        'property_change_type': {'key': 'propertyChangeType', 'type': 'str'},
-        'change_category': {'key': 'changeCategory', 'type': 'str'},
-        'previous_value': {'key': 'previousValue', 'type': 'str'},
-        'new_value': {'key': 'newValue', 'type': 'str'},
+        "property_change_type": {"key": "propertyChangeType", "type": "str"},
+        "change_category": {"key": "changeCategory", "type": "str"},
+        "previous_value": {"key": "previousValue", "type": "str"},
+        "new_value": {"key": "newValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ChangeBase, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.property_change_type = None
         self.change_category = None
         self.previous_value = None
         self.new_value = None
 
 
-class ChangeProperties(msrest.serialization.Model):
+class ChangeProperties(_serialization.Model):
     """The properties of a change.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -113,8 +108,8 @@ class ChangeProperties(msrest.serialization.Model):
     :vartype target_resource_id: str
     :ivar target_resource_type: The namespace and type of the resource.
     :vartype target_resource_type: str
-    :ivar change_type: The type of change that was captured in the resource. Possible values
-     include: "Update", "Delete", "Create".
+    :ivar change_type: The type of change that was captured in the resource. Known values are:
+     "Update", "Delete", and "Create".
     :vartype change_type: str or ~azure.mgmt.resource.changes.v2022_05_01.models.ChangeType
     :ivar change_attributes: Details about the change resource.
     :vartype change_attributes: ~azure.mgmt.resource.changes.v2022_05_01.models.ChangeAttributes
@@ -124,24 +119,24 @@ class ChangeProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'target_resource_id': {'readonly': True},
-        'target_resource_type': {'readonly': True},
-        'change_type': {'readonly': True},
+        "target_resource_id": {"readonly": True},
+        "target_resource_type": {"readonly": True},
+        "change_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
-        'target_resource_type': {'key': 'targetResourceType', 'type': 'str'},
-        'change_type': {'key': 'changeType', 'type': 'str'},
-        'change_attributes': {'key': 'changeAttributes', 'type': 'ChangeAttributes'},
-        'changes': {'key': 'changes', 'type': '{ChangeBase}'},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
+        "target_resource_type": {"key": "targetResourceType", "type": "str"},
+        "change_type": {"key": "changeType", "type": "str"},
+        "change_attributes": {"key": "changeAttributes", "type": "ChangeAttributes"},
+        "changes": {"key": "changes", "type": "{ChangeBase}"},
     }
 
     def __init__(
         self,
         *,
-        change_attributes: Optional["ChangeAttributes"] = None,
-        changes: Optional[Dict[str, "ChangeBase"]] = None,
+        change_attributes: Optional["_models.ChangeAttributes"] = None,
+        changes: Optional[Dict[str, "_models.ChangeBase"]] = None,
         **kwargs
     ):
         """
@@ -151,7 +146,7 @@ class ChangeProperties(msrest.serialization.Model):
          the value.
         :paramtype changes: dict[str, ~azure.mgmt.resource.changes.v2022_05_01.models.ChangeBase]
         """
-        super(ChangeProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.target_resource_id = None
         self.target_resource_type = None
         self.change_type = None
@@ -159,7 +154,7 @@ class ChangeProperties(msrest.serialization.Model):
         self.changes = changes
 
 
-class ChangeResourceListResult(msrest.serialization.Model):
+class ChangeResourceListResult(_serialization.Model):
     """The list of resources.
 
     :ivar next_link: The link used to get the next page of Change Resources.
@@ -169,16 +164,12 @@ class ChangeResourceListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[ChangeResourceResult]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[ChangeResourceResult]"},
     }
 
     def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        value: Optional[List["ChangeResourceResult"]] = None,
-        **kwargs
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.ChangeResourceResult"]] = None, **kwargs
     ):
         """
         :keyword next_link: The link used to get the next page of Change Resources.
@@ -186,12 +177,12 @@ class ChangeResourceListResult(msrest.serialization.Model):
         :keyword value: The list of resources.
         :paramtype value: list[~azure.mgmt.resource.changes.v2022_05_01.models.ChangeResourceResult]
         """
-        super(ChangeResourceListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -207,24 +198,20 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -248,33 +235,28 @@ class ChangeResourceResult(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ChangeProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "ChangeProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["ChangeProperties"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, properties: Optional["_models.ChangeProperties"] = None, **kwargs):
         """
         :keyword properties: The properties of a change.
         :paramtype properties: ~azure.mgmt.resource.changes.v2022_05_01.models.ChangeProperties
         """
-        super(ChangeResourceResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -282,31 +264,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -325,28 +303,24 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -354,7 +328,7 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
@@ -362,18 +336,13 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetail"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.resource.changes.v2022_05_01.models.ErrorDetail
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error

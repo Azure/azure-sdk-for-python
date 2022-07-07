@@ -26,9 +26,9 @@ class TemplateSpecsClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: Subscription Id which forms part of the URI for every service call.
+    :param subscription_id: Subscription Id which forms part of the URI for every service call. Required.
     :type subscription_id: str
     """
 

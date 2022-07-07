@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,14 +7,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from ... import _serialization
 
-from ._resource_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class Alias(msrest.serialization.Model):
+class Alias(_serialization.Model):
     """The alias type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -22,8 +31,7 @@ class Alias(msrest.serialization.Model):
     :vartype name: str
     :ivar paths: The paths for an alias.
     :vartype paths: list[~azure.mgmt.resource.resources.v2020_06_01.models.AliasPath]
-    :ivar type: The type of the alias. Possible values include: "NotSpecified", "PlainText",
-     "Mask".
+    :ivar type: The type of the alias. Known values are: "NotSpecified", "PlainText", and "Mask".
     :vartype type: str or ~azure.mgmt.resource.resources.v2020_06_01.models.AliasType
     :ivar default_path: The default path for an alias.
     :vartype default_path: str
@@ -35,26 +43,26 @@ class Alias(msrest.serialization.Model):
     """
 
     _validation = {
-        'default_metadata': {'readonly': True},
+        "default_metadata": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'paths': {'key': 'paths', 'type': '[AliasPath]'},
-        'type': {'key': 'type', 'type': 'str'},
-        'default_path': {'key': 'defaultPath', 'type': 'str'},
-        'default_pattern': {'key': 'defaultPattern', 'type': 'AliasPattern'},
-        'default_metadata': {'key': 'defaultMetadata', 'type': 'AliasPathMetadata'},
+        "name": {"key": "name", "type": "str"},
+        "paths": {"key": "paths", "type": "[AliasPath]"},
+        "type": {"key": "type", "type": "str"},
+        "default_path": {"key": "defaultPath", "type": "str"},
+        "default_pattern": {"key": "defaultPattern", "type": "AliasPattern"},
+        "default_metadata": {"key": "defaultMetadata", "type": "AliasPathMetadata"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        paths: Optional[List["AliasPath"]] = None,
-        type: Optional[Union[str, "AliasType"]] = None,
+        paths: Optional[List["_models.AliasPath"]] = None,
+        type: Optional[Union[str, "_models.AliasType"]] = None,
         default_path: Optional[str] = None,
-        default_pattern: Optional["AliasPattern"] = None,
+        default_pattern: Optional["_models.AliasPattern"] = None,
         **kwargs
     ):
         """
@@ -62,7 +70,7 @@ class Alias(msrest.serialization.Model):
         :paramtype name: str
         :keyword paths: The paths for an alias.
         :paramtype paths: list[~azure.mgmt.resource.resources.v2020_06_01.models.AliasPath]
-        :keyword type: The type of the alias. Possible values include: "NotSpecified", "PlainText",
+        :keyword type: The type of the alias. Known values are: "NotSpecified", "PlainText", and
          "Mask".
         :paramtype type: str or ~azure.mgmt.resource.resources.v2020_06_01.models.AliasType
         :keyword default_path: The default path for an alias.
@@ -70,7 +78,7 @@ class Alias(msrest.serialization.Model):
         :keyword default_pattern: The default pattern for an alias.
         :paramtype default_pattern: ~azure.mgmt.resource.resources.v2020_06_01.models.AliasPattern
         """
-        super(Alias, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.paths = paths
         self.type = type
@@ -79,7 +87,7 @@ class Alias(msrest.serialization.Model):
         self.default_metadata = None
 
 
-class AliasPath(msrest.serialization.Model):
+class AliasPath(_serialization.Model):
     """The type of the paths for alias.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -96,14 +104,14 @@ class AliasPath(msrest.serialization.Model):
     """
 
     _validation = {
-        'metadata': {'readonly': True},
+        "metadata": {"readonly": True},
     }
 
     _attribute_map = {
-        'path': {'key': 'path', 'type': 'str'},
-        'api_versions': {'key': 'apiVersions', 'type': '[str]'},
-        'pattern': {'key': 'pattern', 'type': 'AliasPattern'},
-        'metadata': {'key': 'metadata', 'type': 'AliasPathMetadata'},
+        "path": {"key": "path", "type": "str"},
+        "api_versions": {"key": "apiVersions", "type": "[str]"},
+        "pattern": {"key": "pattern", "type": "AliasPattern"},
+        "metadata": {"key": "metadata", "type": "AliasPathMetadata"},
     }
 
     def __init__(
@@ -111,7 +119,7 @@ class AliasPath(msrest.serialization.Model):
         *,
         path: Optional[str] = None,
         api_versions: Optional[List[str]] = None,
-        pattern: Optional["AliasPattern"] = None,
+        pattern: Optional["_models.AliasPattern"] = None,
         **kwargs
     ):
         """
@@ -122,63 +130,59 @@ class AliasPath(msrest.serialization.Model):
         :keyword pattern: The pattern for an alias path.
         :paramtype pattern: ~azure.mgmt.resource.resources.v2020_06_01.models.AliasPattern
         """
-        super(AliasPath, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.path = path
         self.api_versions = api_versions
         self.pattern = pattern
         self.metadata = None
 
 
-class AliasPathMetadata(msrest.serialization.Model):
+class AliasPathMetadata(_serialization.Model):
     """AliasPathMetadata.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: The type of the token that the alias path is referring to. Possible values include:
-     "NotSpecified", "Any", "String", "Object", "Array", "Integer", "Number", "Boolean".
+    :ivar type: The type of the token that the alias path is referring to. Known values are:
+     "NotSpecified", "Any", "String", "Object", "Array", "Integer", "Number", and "Boolean".
     :vartype type: str or ~azure.mgmt.resource.resources.v2020_06_01.models.AliasPathTokenType
-    :ivar attributes: The attributes of the token that the alias path is referring to. Possible
-     values include: "None", "Modifiable".
+    :ivar attributes: The attributes of the token that the alias path is referring to. Known values
+     are: "None" and "Modifiable".
     :vartype attributes: str or
      ~azure.mgmt.resource.resources.v2020_06_01.models.AliasPathAttributes
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'attributes': {'readonly': True},
+        "type": {"readonly": True},
+        "attributes": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'attributes': {'key': 'attributes', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "attributes": {"key": "attributes", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AliasPathMetadata, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.attributes = None
 
 
-class AliasPattern(msrest.serialization.Model):
+class AliasPattern(_serialization.Model):
     """The type of the pattern for an alias path.
 
     :ivar phrase: The alias pattern phrase.
     :vartype phrase: str
     :ivar variable: The alias pattern variable.
     :vartype variable: str
-    :ivar type: The type of alias pattern. Possible values include: "NotSpecified", "Extract".
+    :ivar type: The type of alias pattern. Known values are: "NotSpecified" and "Extract".
     :vartype type: str or ~azure.mgmt.resource.resources.v2020_06_01.models.AliasPatternType
     """
 
     _attribute_map = {
-        'phrase': {'key': 'phrase', 'type': 'str'},
-        'variable': {'key': 'variable', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "phrase": {"key": "phrase", "type": "str"},
+        "variable": {"key": "variable", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
@@ -186,7 +190,7 @@ class AliasPattern(msrest.serialization.Model):
         *,
         phrase: Optional[str] = None,
         variable: Optional[str] = None,
-        type: Optional[Union[str, "AliasPatternType"]] = None,
+        type: Optional[Union[str, "_models.AliasPatternType"]] = None,
         **kwargs
     ):
         """
@@ -194,16 +198,16 @@ class AliasPattern(msrest.serialization.Model):
         :paramtype phrase: str
         :keyword variable: The alias pattern variable.
         :paramtype variable: str
-        :keyword type: The type of alias pattern. Possible values include: "NotSpecified", "Extract".
+        :keyword type: The type of alias pattern. Known values are: "NotSpecified" and "Extract".
         :paramtype type: str or ~azure.mgmt.resource.resources.v2020_06_01.models.AliasPatternType
         """
-        super(AliasPattern, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.phrase = phrase
         self.variable = variable
         self.type = type
 
 
-class ApiProfile(msrest.serialization.Model):
+class ApiProfile(_serialization.Model):
     """ApiProfile.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -215,27 +219,23 @@ class ApiProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'profile_version': {'readonly': True},
-        'api_version': {'readonly': True},
+        "profile_version": {"readonly": True},
+        "api_version": {"readonly": True},
     }
 
     _attribute_map = {
-        'profile_version': {'key': 'profileVersion', 'type': 'str'},
-        'api_version': {'key': 'apiVersion', 'type': 'str'},
+        "profile_version": {"key": "profileVersion", "type": "str"},
+        "api_version": {"key": "apiVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ApiProfile, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.profile_version = None
         self.api_version = None
 
 
-class BasicDependency(msrest.serialization.Model):
+class BasicDependency(_serialization.Model):
     """Deployment dependency information.
 
     :ivar id: The ID of the dependency.
@@ -247,15 +247,15 @@ class BasicDependency(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'resource_name': {'key': 'resourceName', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "resource_name": {"key": "resourceName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         resource_type: Optional[str] = None,
         resource_name: Optional[str] = None,
         **kwargs
@@ -268,13 +268,13 @@ class BasicDependency(msrest.serialization.Model):
         :keyword resource_name: The dependency resource name.
         :paramtype resource_name: str
         """
-        super(BasicDependency, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.resource_type = resource_type
         self.resource_name = resource_name
 
 
-class DebugSetting(msrest.serialization.Model):
+class DebugSetting(_serialization.Model):
     """The debug setting.
 
     :ivar detail_level: Specifies the type of information to log for debugging. The permitted
@@ -287,15 +287,10 @@ class DebugSetting(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'detail_level': {'key': 'detailLevel', 'type': 'str'},
+        "detail_level": {"key": "detailLevel", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        detail_level: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, detail_level: Optional[str] = None, **kwargs):
         """
         :keyword detail_level: Specifies the type of information to log for debugging. The permitted
          values are none, requestContent, responseContent, or both requestContent and responseContent
@@ -305,11 +300,11 @@ class DebugSetting(msrest.serialization.Model):
          deployment operations.
         :paramtype detail_level: str
         """
-        super(DebugSetting, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.detail_level = detail_level
 
 
-class Dependency(msrest.serialization.Model):
+class Dependency(_serialization.Model):
     """Deployment dependency information.
 
     :ivar depends_on: The list of dependencies.
@@ -323,17 +318,17 @@ class Dependency(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'depends_on': {'key': 'dependsOn', 'type': '[BasicDependency]'},
-        'id': {'key': 'id', 'type': 'str'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'resource_name': {'key': 'resourceName', 'type': 'str'},
+        "depends_on": {"key": "dependsOn", "type": "[BasicDependency]"},
+        "id": {"key": "id", "type": "str"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "resource_name": {"key": "resourceName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        depends_on: Optional[List["BasicDependency"]] = None,
-        id: Optional[str] = None,
+        depends_on: Optional[List["_models.BasicDependency"]] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         resource_type: Optional[str] = None,
         resource_name: Optional[str] = None,
         **kwargs
@@ -348,40 +343,40 @@ class Dependency(msrest.serialization.Model):
         :keyword resource_name: The dependency resource name.
         :paramtype resource_name: str
         """
-        super(Dependency, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.depends_on = depends_on
         self.id = id
         self.resource_type = resource_type
         self.resource_name = resource_name
 
 
-class Deployment(msrest.serialization.Model):
+class Deployment(_serialization.Model):
     """Deployment operation parameters.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar location: The location to store the deployment data.
     :vartype location: str
-    :ivar properties: Required. The deployment properties.
+    :ivar properties: The deployment properties. Required.
     :vartype properties: ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentProperties
-    :ivar tags: A set of tags. Deployment tags.
+    :ivar tags: Deployment tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'properties': {'required': True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'DeploymentProperties'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "DeploymentProperties"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        properties: "DeploymentProperties",
+        properties: "_models.DeploymentProperties",
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
@@ -389,43 +384,38 @@ class Deployment(msrest.serialization.Model):
         """
         :keyword location: The location to store the deployment data.
         :paramtype location: str
-        :keyword properties: Required. The deployment properties.
+        :keyword properties: The deployment properties. Required.
         :paramtype properties: ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentProperties
-        :keyword tags: A set of tags. Deployment tags.
+        :keyword tags: Deployment tags.
         :paramtype tags: dict[str, str]
         """
-        super(Deployment, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.location = location
         self.properties = properties
         self.tags = tags
 
 
-class DeploymentExportResult(msrest.serialization.Model):
+class DeploymentExportResult(_serialization.Model):
     """The deployment export result.
 
     :ivar template: The template content.
-    :vartype template: any
+    :vartype template: JSON
     """
 
     _attribute_map = {
-        'template': {'key': 'template', 'type': 'object'},
+        "template": {"key": "template", "type": "object"},
     }
 
-    def __init__(
-        self,
-        *,
-        template: Optional[Any] = None,
-        **kwargs
-    ):
+    def __init__(self, *, template: Optional[JSON] = None, **kwargs):
         """
         :keyword template: The template content.
-        :paramtype template: any
+        :paramtype template: JSON
         """
-        super(DeploymentExportResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.template = template
 
 
-class DeploymentExtended(msrest.serialization.Model):
+class DeploymentExtended(_serialization.Model):
     """Deployment information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -441,30 +431,30 @@ class DeploymentExtended(msrest.serialization.Model):
     :ivar properties: Deployment properties.
     :vartype properties:
      ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentPropertiesExtended
-    :ivar tags: A set of tags. Deployment tags.
+    :ivar tags: Deployment tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'DeploymentPropertiesExtended'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "DeploymentPropertiesExtended"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
         location: Optional[str] = None,
-        properties: Optional["DeploymentPropertiesExtended"] = None,
+        properties: Optional["_models.DeploymentPropertiesExtended"] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
@@ -474,10 +464,10 @@ class DeploymentExtended(msrest.serialization.Model):
         :keyword properties: Deployment properties.
         :paramtype properties:
          ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentPropertiesExtended
-        :keyword tags: A set of tags. Deployment tags.
+        :keyword tags: Deployment tags.
         :paramtype tags: dict[str, str]
         """
-        super(DeploymentExtended, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -486,7 +476,7 @@ class DeploymentExtended(msrest.serialization.Model):
         self.tags = tags
 
 
-class DeploymentExtendedFilter(msrest.serialization.Model):
+class DeploymentExtendedFilter(_serialization.Model):
     """Deployment filter.
 
     :ivar provisioning_state: The provisioning state.
@@ -494,24 +484,19 @@ class DeploymentExtendedFilter(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, provisioning_state: Optional[str] = None, **kwargs):
         """
         :keyword provisioning_state: The provisioning state.
         :paramtype provisioning_state: str
         """
-        super(DeploymentExtendedFilter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provisioning_state = provisioning_state
 
 
-class DeploymentListResult(msrest.serialization.Model):
+class DeploymentListResult(_serialization.Model):
     """List of deployments.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -523,30 +508,25 @@ class DeploymentListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DeploymentExtended]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DeploymentExtended]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["DeploymentExtended"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.DeploymentExtended"]] = None, **kwargs):
         """
         :keyword value: An array of deployments.
         :paramtype value: list[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended]
         """
-        super(DeploymentListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class DeploymentOperation(msrest.serialization.Model):
+class DeploymentOperation(_serialization.Model):
     """Deployment operation information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -561,41 +541,36 @@ class DeploymentOperation(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'operation_id': {'readonly': True},
+        "id": {"readonly": True},
+        "operation_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'operation_id': {'key': 'operationId', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'DeploymentOperationProperties'},
+        "id": {"key": "id", "type": "str"},
+        "operation_id": {"key": "operationId", "type": "str"},
+        "properties": {"key": "properties", "type": "DeploymentOperationProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["DeploymentOperationProperties"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, properties: Optional["_models.DeploymentOperationProperties"] = None, **kwargs):
         """
         :keyword properties: Deployment properties.
         :paramtype properties:
          ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperationProperties
         """
-        super(DeploymentOperation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.operation_id = None
         self.properties = properties
 
 
-class DeploymentOperationProperties(msrest.serialization.Model):
+class DeploymentOperationProperties(_serialization.Model):
     """Deployment operation properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar provisioning_operation: The name of the current provisioning operation. Possible values
-     include: "NotSpecified", "Create", "Delete", "Waiting", "AzureAsyncOperationWaiting",
-     "ResourceCacheWaiting", "Action", "Read", "EvaluateDeploymentOutput", "DeploymentCleanup".
+    :ivar provisioning_operation: The name of the current provisioning operation. Known values are:
+     "NotSpecified", "Create", "Delete", "Waiting", "AzureAsyncOperationWaiting",
+     "ResourceCacheWaiting", "Action", "Read", "EvaluateDeploymentOutput", and "DeploymentCleanup".
     :vartype provisioning_operation: str or
      ~azure.mgmt.resource.resources.v2020_06_01.models.ProvisioningOperation
     :ivar provisioning_state: The state of the provisioning.
@@ -621,38 +596,34 @@ class DeploymentOperationProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'provisioning_operation': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'timestamp': {'readonly': True},
-        'duration': {'readonly': True},
-        'service_request_id': {'readonly': True},
-        'status_code': {'readonly': True},
-        'status_message': {'readonly': True},
-        'target_resource': {'readonly': True},
-        'request': {'readonly': True},
-        'response': {'readonly': True},
+        "provisioning_operation": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "timestamp": {"readonly": True},
+        "duration": {"readonly": True},
+        "service_request_id": {"readonly": True},
+        "status_code": {"readonly": True},
+        "status_message": {"readonly": True},
+        "target_resource": {"readonly": True},
+        "request": {"readonly": True},
+        "response": {"readonly": True},
     }
 
     _attribute_map = {
-        'provisioning_operation': {'key': 'provisioningOperation', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'duration': {'key': 'duration', 'type': 'str'},
-        'service_request_id': {'key': 'serviceRequestId', 'type': 'str'},
-        'status_code': {'key': 'statusCode', 'type': 'str'},
-        'status_message': {'key': 'statusMessage', 'type': 'StatusMessage'},
-        'target_resource': {'key': 'targetResource', 'type': 'TargetResource'},
-        'request': {'key': 'request', 'type': 'HttpMessage'},
-        'response': {'key': 'response', 'type': 'HttpMessage'},
+        "provisioning_operation": {"key": "provisioningOperation", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "duration": {"key": "duration", "type": "str"},
+        "service_request_id": {"key": "serviceRequestId", "type": "str"},
+        "status_code": {"key": "statusCode", "type": "str"},
+        "status_message": {"key": "statusMessage", "type": "StatusMessage"},
+        "target_resource": {"key": "targetResource", "type": "TargetResource"},
+        "request": {"key": "request", "type": "HttpMessage"},
+        "response": {"key": "response", "type": "HttpMessage"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DeploymentOperationProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.provisioning_operation = None
         self.provisioning_state = None
         self.timestamp = None
@@ -665,7 +636,7 @@ class DeploymentOperationProperties(msrest.serialization.Model):
         self.response = None
 
 
-class DeploymentOperationsListResult(msrest.serialization.Model):
+class DeploymentOperationsListResult(_serialization.Model):
     """List of deployment operations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -677,30 +648,25 @@ class DeploymentOperationsListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DeploymentOperation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DeploymentOperation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["DeploymentOperation"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.DeploymentOperation"]] = None, **kwargs):
         """
         :keyword value: An array of deployment operations.
         :paramtype value: list[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperation]
         """
-        super(DeploymentOperationsListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class DeploymentProperties(msrest.serialization.Model):
+class DeploymentProperties(_serialization.Model):
     """Deployment properties.
 
     All required parameters must be populated in order to send to Azure.
@@ -709,7 +675,7 @@ class DeploymentProperties(msrest.serialization.Model):
      syntax directly in the request rather than link to an existing template. It can be a JObject or
      well-formed JSON string. Use either the templateLink property or the template property, but not
      both.
-    :vartype template: any
+    :vartype template: JSON
     :ivar template_link: The URI of the template. Use either the templateLink property or the
      template property, but not both.
     :vartype template_link: ~azure.mgmt.resource.resources.v2020_06_01.models.TemplateLink
@@ -717,17 +683,17 @@ class DeploymentProperties(msrest.serialization.Model):
      You use this element when you want to provide the parameter values directly in the request
      rather than link to an existing parameter file. Use either the parametersLink property or the
      parameters property, but not both. It can be a JObject or a well formed JSON string.
-    :vartype parameters: any
+    :vartype parameters: JSON
     :ivar parameters_link: The URI of parameters file. You use this element to link to an existing
      parameters file. Use either the parametersLink property or the parameters property, but not
      both.
     :vartype parameters_link: ~azure.mgmt.resource.resources.v2020_06_01.models.ParametersLink
-    :ivar mode: Required. The mode that is used to deploy resources. This value can be either
-     Incremental or Complete. In Incremental mode, resources are deployed without deleting existing
-     resources that are not included in the template. In Complete mode, resources are deployed and
-     existing resources in the resource group that are not included in the template are deleted. Be
-     careful when using Complete mode as you may unintentionally delete resources. Possible values
-     include: "Incremental", "Complete".
+    :ivar mode: The mode that is used to deploy resources. This value can be either Incremental or
+     Complete. In Incremental mode, resources are deployed without deleting existing resources that
+     are not included in the template. In Complete mode, resources are deployed and existing
+     resources in the resource group that are not included in the template are deleted. Be careful
+     when using Complete mode as you may unintentionally delete resources. Required. Known values
+     are: "Incremental" and "Complete".
     :vartype mode: str or ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentMode
     :ivar debug_setting: The debug setting of the deployment.
     :vartype debug_setting: ~azure.mgmt.resource.resources.v2020_06_01.models.DebugSetting
@@ -742,31 +708,31 @@ class DeploymentProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'mode': {'required': True},
+        "mode": {"required": True},
     }
 
     _attribute_map = {
-        'template': {'key': 'template', 'type': 'object'},
-        'template_link': {'key': 'templateLink', 'type': 'TemplateLink'},
-        'parameters': {'key': 'parameters', 'type': 'object'},
-        'parameters_link': {'key': 'parametersLink', 'type': 'ParametersLink'},
-        'mode': {'key': 'mode', 'type': 'str'},
-        'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
-        'on_error_deployment': {'key': 'onErrorDeployment', 'type': 'OnErrorDeployment'},
-        'expression_evaluation_options': {'key': 'expressionEvaluationOptions', 'type': 'ExpressionEvaluationOptions'},
+        "template": {"key": "template", "type": "object"},
+        "template_link": {"key": "templateLink", "type": "TemplateLink"},
+        "parameters": {"key": "parameters", "type": "object"},
+        "parameters_link": {"key": "parametersLink", "type": "ParametersLink"},
+        "mode": {"key": "mode", "type": "str"},
+        "debug_setting": {"key": "debugSetting", "type": "DebugSetting"},
+        "on_error_deployment": {"key": "onErrorDeployment", "type": "OnErrorDeployment"},
+        "expression_evaluation_options": {"key": "expressionEvaluationOptions", "type": "ExpressionEvaluationOptions"},
     }
 
     def __init__(
         self,
         *,
-        mode: Union[str, "DeploymentMode"],
-        template: Optional[Any] = None,
-        template_link: Optional["TemplateLink"] = None,
-        parameters: Optional[Any] = None,
-        parameters_link: Optional["ParametersLink"] = None,
-        debug_setting: Optional["DebugSetting"] = None,
-        on_error_deployment: Optional["OnErrorDeployment"] = None,
-        expression_evaluation_options: Optional["ExpressionEvaluationOptions"] = None,
+        mode: Union[str, "_models.DeploymentMode"],
+        template: Optional[JSON] = None,
+        template_link: Optional["_models.TemplateLink"] = None,
+        parameters: Optional[JSON] = None,
+        parameters_link: Optional["_models.ParametersLink"] = None,
+        debug_setting: Optional["_models.DebugSetting"] = None,
+        on_error_deployment: Optional["_models.OnErrorDeployment"] = None,
+        expression_evaluation_options: Optional["_models.ExpressionEvaluationOptions"] = None,
         **kwargs
     ):
         """
@@ -774,7 +740,7 @@ class DeploymentProperties(msrest.serialization.Model):
          template syntax directly in the request rather than link to an existing template. It can be a
          JObject or well-formed JSON string. Use either the templateLink property or the template
          property, but not both.
-        :paramtype template: any
+        :paramtype template: JSON
         :keyword template_link: The URI of the template. Use either the templateLink property or the
          template property, but not both.
         :paramtype template_link: ~azure.mgmt.resource.resources.v2020_06_01.models.TemplateLink
@@ -782,17 +748,17 @@ class DeploymentProperties(msrest.serialization.Model):
          template. You use this element when you want to provide the parameter values directly in the
          request rather than link to an existing parameter file. Use either the parametersLink property
          or the parameters property, but not both. It can be a JObject or a well formed JSON string.
-        :paramtype parameters: any
+        :paramtype parameters: JSON
         :keyword parameters_link: The URI of parameters file. You use this element to link to an
          existing parameters file. Use either the parametersLink property or the parameters property,
          but not both.
         :paramtype parameters_link: ~azure.mgmt.resource.resources.v2020_06_01.models.ParametersLink
-        :keyword mode: Required. The mode that is used to deploy resources. This value can be either
-         Incremental or Complete. In Incremental mode, resources are deployed without deleting existing
-         resources that are not included in the template. In Complete mode, resources are deployed and
-         existing resources in the resource group that are not included in the template are deleted. Be
-         careful when using Complete mode as you may unintentionally delete resources. Possible values
-         include: "Incremental", "Complete".
+        :keyword mode: The mode that is used to deploy resources. This value can be either Incremental
+         or Complete. In Incremental mode, resources are deployed without deleting existing resources
+         that are not included in the template. In Complete mode, resources are deployed and existing
+         resources in the resource group that are not included in the template are deleted. Be careful
+         when using Complete mode as you may unintentionally delete resources. Required. Known values
+         are: "Incremental" and "Complete".
         :paramtype mode: str or ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentMode
         :keyword debug_setting: The debug setting of the deployment.
         :paramtype debug_setting: ~azure.mgmt.resource.resources.v2020_06_01.models.DebugSetting
@@ -805,7 +771,7 @@ class DeploymentProperties(msrest.serialization.Model):
         :paramtype expression_evaluation_options:
          ~azure.mgmt.resource.resources.v2020_06_01.models.ExpressionEvaluationOptions
         """
-        super(DeploymentProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.template = template
         self.template_link = template_link
         self.parameters = parameters
@@ -816,14 +782,14 @@ class DeploymentProperties(msrest.serialization.Model):
         self.expression_evaluation_options = expression_evaluation_options
 
 
-class DeploymentPropertiesExtended(msrest.serialization.Model):
+class DeploymentPropertiesExtended(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Deployment properties with additional details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar provisioning_state: Denotes the state of provisioning. Possible values include:
-     "NotSpecified", "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted",
-     "Canceled", "Failed", "Succeeded", "Updating".
+    :ivar provisioning_state: Denotes the state of provisioning. Known values are: "NotSpecified",
+     "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
+     "Failed", "Succeeded", and "Updating".
     :vartype provisioning_state: str or
      ~azure.mgmt.resource.resources.v2020_06_01.models.ProvisioningState
     :ivar correlation_id: The correlation ID of the deployment.
@@ -833,7 +799,7 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
     :ivar duration: The duration of the template deployment.
     :vartype duration: str
     :ivar outputs: Key/value pairs that represent deployment output.
-    :vartype outputs: any
+    :vartype outputs: JSON
     :ivar providers: The list of resource providers needed for the deployment.
     :vartype providers: list[~azure.mgmt.resource.resources.v2020_06_01.models.Provider]
     :ivar dependencies: The list of deployment dependencies.
@@ -841,11 +807,11 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
     :ivar template_link: The URI referencing the template.
     :vartype template_link: ~azure.mgmt.resource.resources.v2020_06_01.models.TemplateLink
     :ivar parameters: Deployment parameters.
-    :vartype parameters: any
+    :vartype parameters: JSON
     :ivar parameters_link: The URI referencing the parameters.
     :vartype parameters_link: ~azure.mgmt.resource.resources.v2020_06_01.models.ParametersLink
-    :ivar mode: The deployment mode. Possible values are Incremental and Complete. Possible values
-     include: "Incremental", "Complete".
+    :ivar mode: The deployment mode. Possible values are Incremental and Complete. Known values
+     are: "Incremental" and "Complete".
     :vartype mode: str or ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentMode
     :ivar debug_setting: The debug setting of the deployment.
     :vartype debug_setting: ~azure.mgmt.resource.resources.v2020_06_01.models.DebugSetting
@@ -865,52 +831,48 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'correlation_id': {'readonly': True},
-        'timestamp': {'readonly': True},
-        'duration': {'readonly': True},
-        'outputs': {'readonly': True},
-        'providers': {'readonly': True},
-        'dependencies': {'readonly': True},
-        'template_link': {'readonly': True},
-        'parameters': {'readonly': True},
-        'parameters_link': {'readonly': True},
-        'mode': {'readonly': True},
-        'debug_setting': {'readonly': True},
-        'on_error_deployment': {'readonly': True},
-        'template_hash': {'readonly': True},
-        'output_resources': {'readonly': True},
-        'validated_resources': {'readonly': True},
-        'error': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "correlation_id": {"readonly": True},
+        "timestamp": {"readonly": True},
+        "duration": {"readonly": True},
+        "outputs": {"readonly": True},
+        "providers": {"readonly": True},
+        "dependencies": {"readonly": True},
+        "template_link": {"readonly": True},
+        "parameters": {"readonly": True},
+        "parameters_link": {"readonly": True},
+        "mode": {"readonly": True},
+        "debug_setting": {"readonly": True},
+        "on_error_deployment": {"readonly": True},
+        "template_hash": {"readonly": True},
+        "output_resources": {"readonly": True},
+        "validated_resources": {"readonly": True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'correlation_id': {'key': 'correlationId', 'type': 'str'},
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'duration': {'key': 'duration', 'type': 'str'},
-        'outputs': {'key': 'outputs', 'type': 'object'},
-        'providers': {'key': 'providers', 'type': '[Provider]'},
-        'dependencies': {'key': 'dependencies', 'type': '[Dependency]'},
-        'template_link': {'key': 'templateLink', 'type': 'TemplateLink'},
-        'parameters': {'key': 'parameters', 'type': 'object'},
-        'parameters_link': {'key': 'parametersLink', 'type': 'ParametersLink'},
-        'mode': {'key': 'mode', 'type': 'str'},
-        'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
-        'on_error_deployment': {'key': 'onErrorDeployment', 'type': 'OnErrorDeploymentExtended'},
-        'template_hash': {'key': 'templateHash', 'type': 'str'},
-        'output_resources': {'key': 'outputResources', 'type': '[ResourceReference]'},
-        'validated_resources': {'key': 'validatedResources', 'type': '[ResourceReference]'},
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "duration": {"key": "duration", "type": "str"},
+        "outputs": {"key": "outputs", "type": "object"},
+        "providers": {"key": "providers", "type": "[Provider]"},
+        "dependencies": {"key": "dependencies", "type": "[Dependency]"},
+        "template_link": {"key": "templateLink", "type": "TemplateLink"},
+        "parameters": {"key": "parameters", "type": "object"},
+        "parameters_link": {"key": "parametersLink", "type": "ParametersLink"},
+        "mode": {"key": "mode", "type": "str"},
+        "debug_setting": {"key": "debugSetting", "type": "DebugSetting"},
+        "on_error_deployment": {"key": "onErrorDeployment", "type": "OnErrorDeploymentExtended"},
+        "template_hash": {"key": "templateHash", "type": "str"},
+        "output_resources": {"key": "outputResources", "type": "[ResourceReference]"},
+        "validated_resources": {"key": "validatedResources", "type": "[ResourceReference]"},
+        "error": {"key": "error", "type": "ErrorResponse"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DeploymentPropertiesExtended, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.provisioning_state = None
         self.correlation_id = None
         self.timestamp = None
@@ -930,7 +892,7 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
         self.error = None
 
 
-class DeploymentValidateResult(msrest.serialization.Model):
+class DeploymentValidateResult(_serialization.Model):
     """Information from validate template deployment response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -943,66 +905,55 @@ class DeploymentValidateResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'error': {'readonly': True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
-        'properties': {'key': 'properties', 'type': 'DeploymentPropertiesExtended'},
+        "error": {"key": "error", "type": "ErrorResponse"},
+        "properties": {"key": "properties", "type": "DeploymentPropertiesExtended"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["DeploymentPropertiesExtended"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, properties: Optional["_models.DeploymentPropertiesExtended"] = None, **kwargs):
         """
         :keyword properties: The template deployment properties.
         :paramtype properties:
          ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentPropertiesExtended
         """
-        super(DeploymentValidateResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = None
         self.properties = properties
 
 
-class DeploymentWhatIf(msrest.serialization.Model):
+class DeploymentWhatIf(_serialization.Model):
     """Deployment What-if operation parameters.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar location: The location to store the deployment data.
     :vartype location: str
-    :ivar properties: Required. The deployment properties.
+    :ivar properties: The deployment properties. Required.
     :vartype properties:
      ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentWhatIfProperties
     """
 
     _validation = {
-        'properties': {'required': True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'DeploymentWhatIfProperties'},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "DeploymentWhatIfProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: "DeploymentWhatIfProperties",
-        location: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, properties: "_models.DeploymentWhatIfProperties", location: Optional[str] = None, **kwargs):
         """
         :keyword location: The location to store the deployment data.
         :paramtype location: str
-        :keyword properties: Required. The deployment properties.
+        :keyword properties: The deployment properties. Required.
         :paramtype properties:
          ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentWhatIfProperties
         """
-        super(DeploymentWhatIf, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.location = location
         self.properties = properties
 
@@ -1016,7 +967,7 @@ class DeploymentWhatIfProperties(DeploymentProperties):
      syntax directly in the request rather than link to an existing template. It can be a JObject or
      well-formed JSON string. Use either the templateLink property or the template property, but not
      both.
-    :vartype template: any
+    :vartype template: JSON
     :ivar template_link: The URI of the template. Use either the templateLink property or the
      template property, but not both.
     :vartype template_link: ~azure.mgmt.resource.resources.v2020_06_01.models.TemplateLink
@@ -1024,17 +975,17 @@ class DeploymentWhatIfProperties(DeploymentProperties):
      You use this element when you want to provide the parameter values directly in the request
      rather than link to an existing parameter file. Use either the parametersLink property or the
      parameters property, but not both. It can be a JObject or a well formed JSON string.
-    :vartype parameters: any
+    :vartype parameters: JSON
     :ivar parameters_link: The URI of parameters file. You use this element to link to an existing
      parameters file. Use either the parametersLink property or the parameters property, but not
      both.
     :vartype parameters_link: ~azure.mgmt.resource.resources.v2020_06_01.models.ParametersLink
-    :ivar mode: Required. The mode that is used to deploy resources. This value can be either
-     Incremental or Complete. In Incremental mode, resources are deployed without deleting existing
-     resources that are not included in the template. In Complete mode, resources are deployed and
-     existing resources in the resource group that are not included in the template are deleted. Be
-     careful when using Complete mode as you may unintentionally delete resources. Possible values
-     include: "Incremental", "Complete".
+    :ivar mode: The mode that is used to deploy resources. This value can be either Incremental or
+     Complete. In Incremental mode, resources are deployed without deleting existing resources that
+     are not included in the template. In Complete mode, resources are deployed and existing
+     resources in the resource group that are not included in the template are deleted. Be careful
+     when using Complete mode as you may unintentionally delete resources. Required. Known values
+     are: "Incremental" and "Complete".
     :vartype mode: str or ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentMode
     :ivar debug_setting: The debug setting of the deployment.
     :vartype debug_setting: ~azure.mgmt.resource.resources.v2020_06_01.models.DebugSetting
@@ -1052,33 +1003,33 @@ class DeploymentWhatIfProperties(DeploymentProperties):
     """
 
     _validation = {
-        'mode': {'required': True},
+        "mode": {"required": True},
     }
 
     _attribute_map = {
-        'template': {'key': 'template', 'type': 'object'},
-        'template_link': {'key': 'templateLink', 'type': 'TemplateLink'},
-        'parameters': {'key': 'parameters', 'type': 'object'},
-        'parameters_link': {'key': 'parametersLink', 'type': 'ParametersLink'},
-        'mode': {'key': 'mode', 'type': 'str'},
-        'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
-        'on_error_deployment': {'key': 'onErrorDeployment', 'type': 'OnErrorDeployment'},
-        'expression_evaluation_options': {'key': 'expressionEvaluationOptions', 'type': 'ExpressionEvaluationOptions'},
-        'what_if_settings': {'key': 'whatIfSettings', 'type': 'DeploymentWhatIfSettings'},
+        "template": {"key": "template", "type": "object"},
+        "template_link": {"key": "templateLink", "type": "TemplateLink"},
+        "parameters": {"key": "parameters", "type": "object"},
+        "parameters_link": {"key": "parametersLink", "type": "ParametersLink"},
+        "mode": {"key": "mode", "type": "str"},
+        "debug_setting": {"key": "debugSetting", "type": "DebugSetting"},
+        "on_error_deployment": {"key": "onErrorDeployment", "type": "OnErrorDeployment"},
+        "expression_evaluation_options": {"key": "expressionEvaluationOptions", "type": "ExpressionEvaluationOptions"},
+        "what_if_settings": {"key": "whatIfSettings", "type": "DeploymentWhatIfSettings"},
     }
 
     def __init__(
         self,
         *,
-        mode: Union[str, "DeploymentMode"],
-        template: Optional[Any] = None,
-        template_link: Optional["TemplateLink"] = None,
-        parameters: Optional[Any] = None,
-        parameters_link: Optional["ParametersLink"] = None,
-        debug_setting: Optional["DebugSetting"] = None,
-        on_error_deployment: Optional["OnErrorDeployment"] = None,
-        expression_evaluation_options: Optional["ExpressionEvaluationOptions"] = None,
-        what_if_settings: Optional["DeploymentWhatIfSettings"] = None,
+        mode: Union[str, "_models.DeploymentMode"],
+        template: Optional[JSON] = None,
+        template_link: Optional["_models.TemplateLink"] = None,
+        parameters: Optional[JSON] = None,
+        parameters_link: Optional["_models.ParametersLink"] = None,
+        debug_setting: Optional["_models.DebugSetting"] = None,
+        on_error_deployment: Optional["_models.OnErrorDeployment"] = None,
+        expression_evaluation_options: Optional["_models.ExpressionEvaluationOptions"] = None,
+        what_if_settings: Optional["_models.DeploymentWhatIfSettings"] = None,
         **kwargs
     ):
         """
@@ -1086,7 +1037,7 @@ class DeploymentWhatIfProperties(DeploymentProperties):
          template syntax directly in the request rather than link to an existing template. It can be a
          JObject or well-formed JSON string. Use either the templateLink property or the template
          property, but not both.
-        :paramtype template: any
+        :paramtype template: JSON
         :keyword template_link: The URI of the template. Use either the templateLink property or the
          template property, but not both.
         :paramtype template_link: ~azure.mgmt.resource.resources.v2020_06_01.models.TemplateLink
@@ -1094,17 +1045,17 @@ class DeploymentWhatIfProperties(DeploymentProperties):
          template. You use this element when you want to provide the parameter values directly in the
          request rather than link to an existing parameter file. Use either the parametersLink property
          or the parameters property, but not both. It can be a JObject or a well formed JSON string.
-        :paramtype parameters: any
+        :paramtype parameters: JSON
         :keyword parameters_link: The URI of parameters file. You use this element to link to an
          existing parameters file. Use either the parametersLink property or the parameters property,
          but not both.
         :paramtype parameters_link: ~azure.mgmt.resource.resources.v2020_06_01.models.ParametersLink
-        :keyword mode: Required. The mode that is used to deploy resources. This value can be either
-         Incremental or Complete. In Incremental mode, resources are deployed without deleting existing
-         resources that are not included in the template. In Complete mode, resources are deployed and
-         existing resources in the resource group that are not included in the template are deleted. Be
-         careful when using Complete mode as you may unintentionally delete resources. Possible values
-         include: "Incremental", "Complete".
+        :keyword mode: The mode that is used to deploy resources. This value can be either Incremental
+         or Complete. In Incremental mode, resources are deployed without deleting existing resources
+         that are not included in the template. In Complete mode, resources are deployed and existing
+         resources in the resource group that are not included in the template are deleted. Be careful
+         when using Complete mode as you may unintentionally delete resources. Required. Known values
+         are: "Incremental" and "Complete".
         :paramtype mode: str or ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentMode
         :keyword debug_setting: The debug setting of the deployment.
         :paramtype debug_setting: ~azure.mgmt.resource.resources.v2020_06_01.models.DebugSetting
@@ -1120,40 +1071,45 @@ class DeploymentWhatIfProperties(DeploymentProperties):
         :paramtype what_if_settings:
          ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentWhatIfSettings
         """
-        super(DeploymentWhatIfProperties, self).__init__(template=template, template_link=template_link, parameters=parameters, parameters_link=parameters_link, mode=mode, debug_setting=debug_setting, on_error_deployment=on_error_deployment, expression_evaluation_options=expression_evaluation_options, **kwargs)
+        super().__init__(
+            template=template,
+            template_link=template_link,
+            parameters=parameters,
+            parameters_link=parameters_link,
+            mode=mode,
+            debug_setting=debug_setting,
+            on_error_deployment=on_error_deployment,
+            expression_evaluation_options=expression_evaluation_options,
+            **kwargs
+        )
         self.what_if_settings = what_if_settings
 
 
-class DeploymentWhatIfSettings(msrest.serialization.Model):
+class DeploymentWhatIfSettings(_serialization.Model):
     """Deployment What-If operation settings.
 
-    :ivar result_format: The format of the What-If results. Possible values include:
-     "ResourceIdOnly", "FullResourcePayloads".
+    :ivar result_format: The format of the What-If results. Known values are: "ResourceIdOnly" and
+     "FullResourcePayloads".
     :vartype result_format: str or
      ~azure.mgmt.resource.resources.v2020_06_01.models.WhatIfResultFormat
     """
 
     _attribute_map = {
-        'result_format': {'key': 'resultFormat', 'type': 'str'},
+        "result_format": {"key": "resultFormat", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        result_format: Optional[Union[str, "WhatIfResultFormat"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, result_format: Optional[Union[str, "_models.WhatIfResultFormat"]] = None, **kwargs):
         """
-        :keyword result_format: The format of the What-If results. Possible values include:
-         "ResourceIdOnly", "FullResourcePayloads".
+        :keyword result_format: The format of the What-If results. Known values are: "ResourceIdOnly"
+         and "FullResourcePayloads".
         :paramtype result_format: str or
          ~azure.mgmt.resource.resources.v2020_06_01.models.WhatIfResultFormat
         """
-        super(DeploymentWhatIfSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.result_format = result_format
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1161,31 +1117,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1204,28 +1156,24 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponse]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorResponse]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -1233,7 +1181,7 @@ class ErrorResponse(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ExportTemplateRequest(msrest.serialization.Model):
+class ExportTemplateRequest(_serialization.Model):
     """Export resource group template request parameters.
 
     :ivar resources: The IDs of the resources to filter the export by. To export all resources,
@@ -1246,17 +1194,11 @@ class ExportTemplateRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resources': {'key': 'resources', 'type': '[str]'},
-        'options': {'key': 'options', 'type': 'str'},
+        "resources": {"key": "resources", "type": "[str]"},
+        "options": {"key": "options", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        resources: Optional[List[str]] = None,
-        options: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, resources: Optional[List[str]] = None, options: Optional[str] = None, **kwargs):
         """
         :keyword resources: The IDs of the resources to filter the export by. To export all resources,
          supply an array with single entry '*'.
@@ -1266,41 +1208,36 @@ class ExportTemplateRequest(msrest.serialization.Model):
          'SkipResourceNameParameterization', 'SkipAllParameterization'.
         :paramtype options: str
         """
-        super(ExportTemplateRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resources = resources
         self.options = options
 
 
-class ExpressionEvaluationOptions(msrest.serialization.Model):
+class ExpressionEvaluationOptions(_serialization.Model):
     """Specifies whether template expressions are evaluated within the scope of the parent template or nested template.
 
     :ivar scope: The scope to be used for evaluation of parameters, variables and functions in a
-     nested template. Possible values include: "NotSpecified", "Outer", "Inner".
+     nested template. Known values are: "NotSpecified", "Outer", and "Inner".
     :vartype scope: str or
      ~azure.mgmt.resource.resources.v2020_06_01.models.ExpressionEvaluationOptionsScopeType
     """
 
     _attribute_map = {
-        'scope': {'key': 'scope', 'type': 'str'},
+        "scope": {"key": "scope", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        scope: Optional[Union[str, "ExpressionEvaluationOptionsScopeType"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, scope: Optional[Union[str, "_models.ExpressionEvaluationOptionsScopeType"]] = None, **kwargs):
         """
         :keyword scope: The scope to be used for evaluation of parameters, variables and functions in a
-         nested template. Possible values include: "NotSpecified", "Outer", "Inner".
+         nested template. Known values are: "NotSpecified", "Outer", and "Inner".
         :paramtype scope: str or
          ~azure.mgmt.resource.resources.v2020_06_01.models.ExpressionEvaluationOptionsScopeType
         """
-        super(ExpressionEvaluationOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.scope = scope
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Specified resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1313,38 +1250,32 @@ class Resource(msrest.serialization.Model):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(Resource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -1352,7 +1283,7 @@ class Resource(msrest.serialization.Model):
         self.tags = tags
 
 
-class GenericResource(Resource):
+class GenericResource(Resource):  # pylint: disable=too-many-instance-attributes
     """Resource information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1365,12 +1296,12 @@ class GenericResource(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar plan: The plan of the resource.
     :vartype plan: ~azure.mgmt.resource.resources.v2020_06_01.models.Plan
     :ivar properties: The resource properties.
-    :vartype properties: any
+    :vartype properties: JSON
     :ivar kind: The kind of the resource.
     :vartype kind: str
     :ivar managed_by: ID of the resource that manages this resource.
@@ -1382,23 +1313,23 @@ class GenericResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'plan': {'key': 'plan', 'type': 'Plan'},
-        'properties': {'key': 'properties', 'type': 'object'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'managed_by': {'key': 'managedBy', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "plan": {"key": "plan", "type": "Plan"},
+        "properties": {"key": "properties", "type": "object"},
+        "kind": {"key": "kind", "type": "str"},
+        "managed_by": {"key": "managedBy", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "identity": {"key": "identity", "type": "Identity"},
     }
 
     def __init__(
@@ -1406,23 +1337,23 @@ class GenericResource(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        plan: Optional["Plan"] = None,
-        properties: Optional[Any] = None,
+        plan: Optional["_models.Plan"] = None,
+        properties: Optional[JSON] = None,
         kind: Optional[str] = None,
         managed_by: Optional[str] = None,
-        sku: Optional["Sku"] = None,
-        identity: Optional["Identity"] = None,
+        sku: Optional["_models.Sku"] = None,
+        identity: Optional["_models.Identity"] = None,
         **kwargs
     ):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword plan: The plan of the resource.
         :paramtype plan: ~azure.mgmt.resource.resources.v2020_06_01.models.Plan
         :keyword properties: The resource properties.
-        :paramtype properties: any
+        :paramtype properties: JSON
         :keyword kind: The kind of the resource.
         :paramtype kind: str
         :keyword managed_by: ID of the resource that manages this resource.
@@ -1432,7 +1363,7 @@ class GenericResource(Resource):
         :keyword identity: The identity of the resource.
         :paramtype identity: ~azure.mgmt.resource.resources.v2020_06_01.models.Identity
         """
-        super(GenericResource, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.plan = plan
         self.properties = properties
         self.kind = kind
@@ -1441,7 +1372,7 @@ class GenericResource(Resource):
         self.identity = identity
 
 
-class GenericResourceExpanded(GenericResource):
+class GenericResourceExpanded(GenericResource):  # pylint: disable=too-many-instance-attributes
     """Resource information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1454,12 +1385,12 @@ class GenericResourceExpanded(GenericResource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar plan: The plan of the resource.
     :vartype plan: ~azure.mgmt.resource.resources.v2020_06_01.models.Plan
     :ivar properties: The resource properties.
-    :vartype properties: any
+    :vartype properties: JSON
     :ivar kind: The kind of the resource.
     :vartype kind: str
     :ivar managed_by: ID of the resource that manages this resource.
@@ -1480,29 +1411,29 @@ class GenericResourceExpanded(GenericResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'created_time': {'readonly': True},
-        'changed_time': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "created_time": {"readonly": True},
+        "changed_time": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'plan': {'key': 'plan', 'type': 'Plan'},
-        'properties': {'key': 'properties', 'type': 'object'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'managed_by': {'key': 'managedBy', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'changed_time': {'key': 'changedTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "plan": {"key": "plan", "type": "Plan"},
+        "properties": {"key": "properties", "type": "object"},
+        "kind": {"key": "kind", "type": "str"},
+        "managed_by": {"key": "managedBy", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "changed_time": {"key": "changedTime", "type": "iso-8601"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -1510,23 +1441,23 @@ class GenericResourceExpanded(GenericResource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        plan: Optional["Plan"] = None,
-        properties: Optional[Any] = None,
+        plan: Optional["_models.Plan"] = None,
+        properties: Optional[JSON] = None,
         kind: Optional[str] = None,
         managed_by: Optional[str] = None,
-        sku: Optional["Sku"] = None,
-        identity: Optional["Identity"] = None,
+        sku: Optional["_models.Sku"] = None,
+        identity: Optional["_models.Identity"] = None,
         **kwargs
     ):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword plan: The plan of the resource.
         :paramtype plan: ~azure.mgmt.resource.resources.v2020_06_01.models.Plan
         :keyword properties: The resource properties.
-        :paramtype properties: any
+        :paramtype properties: JSON
         :keyword kind: The kind of the resource.
         :paramtype kind: str
         :keyword managed_by: ID of the resource that manages this resource.
@@ -1536,13 +1467,23 @@ class GenericResourceExpanded(GenericResource):
         :keyword identity: The identity of the resource.
         :paramtype identity: ~azure.mgmt.resource.resources.v2020_06_01.models.Identity
         """
-        super(GenericResourceExpanded, self).__init__(location=location, tags=tags, plan=plan, properties=properties, kind=kind, managed_by=managed_by, sku=sku, identity=identity, **kwargs)
+        super().__init__(
+            location=location,
+            tags=tags,
+            plan=plan,
+            properties=properties,
+            kind=kind,
+            managed_by=managed_by,
+            sku=sku,
+            identity=identity,
+            **kwargs
+        )
         self.created_time = None
         self.changed_time = None
         self.provisioning_state = None
 
 
-class GenericResourceFilter(msrest.serialization.Model):
+class GenericResourceFilter(_serialization.Model):
     """Resource filter.
 
     :ivar resource_type: The resource type.
@@ -1554,9 +1495,9 @@ class GenericResourceFilter(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'tagname': {'key': 'tagname', 'type': 'str'},
-        'tagvalue': {'key': 'tagvalue', 'type': 'str'},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "tagname": {"key": "tagname", "type": "str"},
+        "tagvalue": {"key": "tagvalue", "type": "str"},
     }
 
     def __init__(
@@ -1575,38 +1516,33 @@ class GenericResourceFilter(msrest.serialization.Model):
         :keyword tagvalue: The tag value.
         :paramtype tagvalue: str
         """
-        super(GenericResourceFilter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_type = resource_type
         self.tagname = tagname
         self.tagvalue = tagvalue
 
 
-class HttpMessage(msrest.serialization.Model):
+class HttpMessage(_serialization.Model):
     """HTTP message.
 
     :ivar content: HTTP message content.
-    :vartype content: any
+    :vartype content: JSON
     """
 
     _attribute_map = {
-        'content': {'key': 'content', 'type': 'object'},
+        "content": {"key": "content", "type": "object"},
     }
 
-    def __init__(
-        self,
-        *,
-        content: Optional[Any] = None,
-        **kwargs
-    ):
+    def __init__(self, *, content: Optional[JSON] = None, **kwargs):
         """
         :keyword content: HTTP message content.
-        :paramtype content: any
+        :paramtype content: JSON
         """
-        super(HttpMessage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.content = content
 
 
-class Identity(msrest.serialization.Model):
+class Identity(_serialization.Model):
     """Identity for the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1615,8 +1551,8 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: The identity type. Possible values include: "SystemAssigned", "UserAssigned",
-     "SystemAssigned, UserAssigned", "None".
+    :ivar type: The identity type. Known values are: "SystemAssigned", "UserAssigned",
+     "SystemAssigned, UserAssigned", and "None".
     :vartype type: str or ~azure.mgmt.resource.resources.v2020_06_01.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the resource. The
      user identity dictionary key references will be ARM resource ids in the form:
@@ -1626,27 +1562,27 @@ class Identity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{IdentityUserAssignedIdentitiesValue}'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{IdentityUserAssignedIdentitiesValue}"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "IdentityUserAssignedIdentitiesValue"]] = None,
+        type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.IdentityUserAssignedIdentitiesValue"]] = None,
         **kwargs
     ):
         """
-        :keyword type: The identity type. Possible values include: "SystemAssigned", "UserAssigned",
-         "SystemAssigned, UserAssigned", "None".
+        :keyword type: The identity type. Known values are: "SystemAssigned", "UserAssigned",
+         "SystemAssigned, UserAssigned", and "None".
         :paramtype type: str or ~azure.mgmt.resource.resources.v2020_06_01.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user identities associated with the resource.
          The user identity dictionary key references will be ARM resource ids in the form:
@@ -1654,14 +1590,14 @@ class Identity(msrest.serialization.Model):
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.resource.resources.v2020_06_01.models.IdentityUserAssignedIdentitiesValue]
         """
-        super(Identity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
 
-class IdentityUserAssignedIdentitiesValue(msrest.serialization.Model):
+class IdentityUserAssignedIdentitiesValue(_serialization.Model):
     """IdentityUserAssignedIdentitiesValue.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1673,61 +1609,57 @@ class IdentityUserAssignedIdentitiesValue(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(IdentityUserAssignedIdentitiesValue, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
 
 
-class OnErrorDeployment(msrest.serialization.Model):
+class OnErrorDeployment(_serialization.Model):
     """Deployment on error behavior.
 
     :ivar type: The deployment on error behavior type. Possible values are LastSuccessful and
-     SpecificDeployment. Possible values include: "LastSuccessful", "SpecificDeployment".
+     SpecificDeployment. Known values are: "LastSuccessful" and "SpecificDeployment".
     :vartype type: str or ~azure.mgmt.resource.resources.v2020_06_01.models.OnErrorDeploymentType
     :ivar deployment_name: The deployment to be used on error case.
     :vartype deployment_name: str
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "deployment_name": {"key": "deploymentName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "OnErrorDeploymentType"]] = None,
+        type: Optional[Union[str, "_models.OnErrorDeploymentType"]] = None,
         deployment_name: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword type: The deployment on error behavior type. Possible values are LastSuccessful and
-         SpecificDeployment. Possible values include: "LastSuccessful", "SpecificDeployment".
+         SpecificDeployment. Known values are: "LastSuccessful" and "SpecificDeployment".
         :paramtype type: str or ~azure.mgmt.resource.resources.v2020_06_01.models.OnErrorDeploymentType
         :keyword deployment_name: The deployment to be used on error case.
         :paramtype deployment_name: str
         """
-        super(OnErrorDeployment, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.deployment_name = deployment_name
 
 
-class OnErrorDeploymentExtended(msrest.serialization.Model):
+class OnErrorDeploymentExtended(_serialization.Model):
     """Deployment on error behavior with additional details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1735,43 +1667,43 @@ class OnErrorDeploymentExtended(msrest.serialization.Model):
     :ivar provisioning_state: The state of the provisioning for the on error deployment.
     :vartype provisioning_state: str
     :ivar type: The deployment on error behavior type. Possible values are LastSuccessful and
-     SpecificDeployment. Possible values include: "LastSuccessful", "SpecificDeployment".
+     SpecificDeployment. Known values are: "LastSuccessful" and "SpecificDeployment".
     :vartype type: str or ~azure.mgmt.resource.resources.v2020_06_01.models.OnErrorDeploymentType
     :ivar deployment_name: The deployment to be used on error case.
     :vartype deployment_name: str
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "deployment_name": {"key": "deploymentName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "OnErrorDeploymentType"]] = None,
+        type: Optional[Union[str, "_models.OnErrorDeploymentType"]] = None,
         deployment_name: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword type: The deployment on error behavior type. Possible values are LastSuccessful and
-         SpecificDeployment. Possible values include: "LastSuccessful", "SpecificDeployment".
+         SpecificDeployment. Known values are: "LastSuccessful" and "SpecificDeployment".
         :paramtype type: str or ~azure.mgmt.resource.resources.v2020_06_01.models.OnErrorDeploymentType
         :keyword deployment_name: The deployment to be used on error case.
         :paramtype deployment_name: str
         """
-        super(OnErrorDeploymentExtended, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provisioning_state = None
         self.type = type
         self.deployment_name = deployment_name
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """Microsoft.Resources operation.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -1781,29 +1713,23 @@ class Operation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs):
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
         :keyword display: The object that represents the operation.
         :paramtype display: ~azure.mgmt.resource.resources.v2020_06_01.models.OperationDisplay
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The object that represents the operation.
 
     :ivar provider: Service provider: Microsoft.Resources.
@@ -1817,10 +1743,10 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -1842,14 +1768,14 @@ class OperationDisplay(msrest.serialization.Model):
         :keyword description: Description of the operation.
         :paramtype description: str
         """
-        super(OperationDisplay, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """Result of the request to list Microsoft.Resources operations. It contains a list of operations and a URL link to get the next set of results.
 
     :ivar value: List of Microsoft.Resources operations.
@@ -1859,67 +1785,55 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Operation"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: List of Microsoft.Resources operations.
         :paramtype value: list[~azure.mgmt.resource.resources.v2020_06_01.models.Operation]
         :keyword next_link: URL to get the next set of operation list results if there are any.
         :paramtype next_link: str
         """
-        super(OperationListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ParametersLink(msrest.serialization.Model):
+class ParametersLink(_serialization.Model):
     """Entity representing the reference to the deployment parameters.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar uri: Required. The URI of the parameters file.
+    :ivar uri: The URI of the parameters file. Required.
     :vartype uri: str
     :ivar content_version: If included, must match the ContentVersion in the template.
     :vartype content_version: str
     """
 
     _validation = {
-        'uri': {'required': True},
+        "uri": {"required": True},
     }
 
     _attribute_map = {
-        'uri': {'key': 'uri', 'type': 'str'},
-        'content_version': {'key': 'contentVersion', 'type': 'str'},
+        "uri": {"key": "uri", "type": "str"},
+        "content_version": {"key": "contentVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        uri: str,
-        content_version: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, uri: str, content_version: Optional[str] = None, **kwargs):
         """
-        :keyword uri: Required. The URI of the parameters file.
+        :keyword uri: The URI of the parameters file. Required.
         :paramtype uri: str
         :keyword content_version: If included, must match the ContentVersion in the template.
         :paramtype content_version: str
         """
-        super(ParametersLink, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.uri = uri
         self.content_version = content_version
 
 
-class Plan(msrest.serialization.Model):
+class Plan(_serialization.Model):
     """Plan for the resource.
 
     :ivar name: The plan ID.
@@ -1935,11 +1849,11 @@ class Plan(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'product': {'key': 'product', 'type': 'str'},
-        'promotion_code': {'key': 'promotionCode', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "product": {"key": "product", "type": "str"},
+        "promotion_code": {"key": "promotionCode", "type": "str"},
+        "version": {"key": "version", "type": "str"},
     }
 
     def __init__(
@@ -1964,7 +1878,7 @@ class Plan(msrest.serialization.Model):
         :keyword version: The plan's version.
         :paramtype version: str
         """
-        super(Plan, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.publisher = publisher
         self.product = product
@@ -1972,7 +1886,7 @@ class Plan(msrest.serialization.Model):
         self.version = version
 
 
-class Provider(msrest.serialization.Model):
+class Provider(_serialization.Model):
     """Resource provider information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1991,31 +1905,26 @@ class Provider(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'registration_state': {'readonly': True},
-        'registration_policy': {'readonly': True},
-        'resource_types': {'readonly': True},
+        "id": {"readonly": True},
+        "registration_state": {"readonly": True},
+        "registration_policy": {"readonly": True},
+        "resource_types": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'namespace': {'key': 'namespace', 'type': 'str'},
-        'registration_state': {'key': 'registrationState', 'type': 'str'},
-        'registration_policy': {'key': 'registrationPolicy', 'type': 'str'},
-        'resource_types': {'key': 'resourceTypes', 'type': '[ProviderResourceType]'},
+        "id": {"key": "id", "type": "str"},
+        "namespace": {"key": "namespace", "type": "str"},
+        "registration_state": {"key": "registrationState", "type": "str"},
+        "registration_policy": {"key": "registrationPolicy", "type": "str"},
+        "resource_types": {"key": "resourceTypes", "type": "[ProviderResourceType]"},
     }
 
-    def __init__(
-        self,
-        *,
-        namespace: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, namespace: Optional[str] = None, **kwargs):
         """
         :keyword namespace: The namespace of the resource provider.
         :paramtype namespace: str
         """
-        super(Provider, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.namespace = namespace
         self.registration_state = None
@@ -2023,7 +1932,7 @@ class Provider(msrest.serialization.Model):
         self.resource_types = None
 
 
-class ProviderListResult(msrest.serialization.Model):
+class ProviderListResult(_serialization.Model):
     """List of resource providers.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2035,30 +1944,25 @@ class ProviderListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Provider]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Provider]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Provider"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Provider"]] = None, **kwargs):
         """
         :keyword value: An array of resource providers.
         :paramtype value: list[~azure.mgmt.resource.resources.v2020_06_01.models.Provider]
         """
-        super(ProviderListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ProviderResourceType(msrest.serialization.Model):
+class ProviderResourceType(_serialization.Model):
     """Resource type managed by the resource provider.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2084,20 +1988,20 @@ class ProviderResourceType(msrest.serialization.Model):
     """
 
     _validation = {
-        'default_api_version': {'readonly': True},
-        'api_profiles': {'readonly': True},
+        "default_api_version": {"readonly": True},
+        "api_profiles": {"readonly": True},
     }
 
     _attribute_map = {
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'locations': {'key': 'locations', 'type': '[str]'},
-        'aliases': {'key': 'aliases', 'type': '[Alias]'},
-        'api_versions': {'key': 'apiVersions', 'type': '[str]'},
-        'default_api_version': {'key': 'defaultApiVersion', 'type': 'str'},
-        'zone_mappings': {'key': 'zoneMappings', 'type': '[ZoneMapping]'},
-        'api_profiles': {'key': 'apiProfiles', 'type': '[ApiProfile]'},
-        'capabilities': {'key': 'capabilities', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "locations": {"key": "locations", "type": "[str]"},
+        "aliases": {"key": "aliases", "type": "[Alias]"},
+        "api_versions": {"key": "apiVersions", "type": "[str]"},
+        "default_api_version": {"key": "defaultApiVersion", "type": "str"},
+        "zone_mappings": {"key": "zoneMappings", "type": "[ZoneMapping]"},
+        "api_profiles": {"key": "apiProfiles", "type": "[ApiProfile]"},
+        "capabilities": {"key": "capabilities", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
     }
 
     def __init__(
@@ -2105,9 +2009,9 @@ class ProviderResourceType(msrest.serialization.Model):
         *,
         resource_type: Optional[str] = None,
         locations: Optional[List[str]] = None,
-        aliases: Optional[List["Alias"]] = None,
+        aliases: Optional[List["_models.Alias"]] = None,
         api_versions: Optional[List[str]] = None,
-        zone_mappings: Optional[List["ZoneMapping"]] = None,
+        zone_mappings: Optional[List["_models.ZoneMapping"]] = None,
         capabilities: Optional[str] = None,
         properties: Optional[Dict[str, str]] = None,
         **kwargs
@@ -2128,7 +2032,7 @@ class ProviderResourceType(msrest.serialization.Model):
         :keyword properties: The properties.
         :paramtype properties: dict[str, str]
         """
-        super(ProviderResourceType, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_type = resource_type
         self.locations = locations
         self.aliases = aliases
@@ -2140,7 +2044,7 @@ class ProviderResourceType(msrest.serialization.Model):
         self.properties = properties
 
 
-class ResourceGroup(msrest.serialization.Model):
+class ResourceGroup(_serialization.Model):
     """Resource group information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2155,37 +2059,37 @@ class ResourceGroup(msrest.serialization.Model):
     :vartype type: str
     :ivar properties: The resource group properties.
     :vartype properties: ~azure.mgmt.resource.resources.v2020_06_01.models.ResourceGroupProperties
-    :ivar location: Required. The location of the resource group. It cannot be changed after the
-     resource group has been created. It must be one of the supported Azure locations.
+    :ivar location: The location of the resource group. It cannot be changed after the resource
+     group has been created. It must be one of the supported Azure locations. Required.
     :vartype location: str
     :ivar managed_by: The ID of the resource that manages this resource group.
     :vartype managed_by: str
-    :ivar tags: A set of tags. The tags attached to the resource group.
+    :ivar tags: The tags attached to the resource group.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ResourceGroupProperties'},
-        'location': {'key': 'location', 'type': 'str'},
-        'managed_by': {'key': 'managedBy', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "ResourceGroupProperties"},
+        "location": {"key": "location", "type": "str"},
+        "managed_by": {"key": "managedBy", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        properties: Optional["ResourceGroupProperties"] = None,
+        properties: Optional["_models.ResourceGroupProperties"] = None,
         managed_by: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
@@ -2194,15 +2098,15 @@ class ResourceGroup(msrest.serialization.Model):
         :keyword properties: The resource group properties.
         :paramtype properties:
          ~azure.mgmt.resource.resources.v2020_06_01.models.ResourceGroupProperties
-        :keyword location: Required. The location of the resource group. It cannot be changed after the
-         resource group has been created. It must be one of the supported Azure locations.
+        :keyword location: The location of the resource group. It cannot be changed after the resource
+         group has been created. It must be one of the supported Azure locations. Required.
         :paramtype location: str
         :keyword managed_by: The ID of the resource that manages this resource group.
         :paramtype managed_by: str
-        :keyword tags: A set of tags. The tags attached to the resource group.
+        :keyword tags: The tags attached to the resource group.
         :paramtype tags: dict[str, str]
         """
-        super(ResourceGroup, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -2212,39 +2116,33 @@ class ResourceGroup(msrest.serialization.Model):
         self.tags = tags
 
 
-class ResourceGroupExportResult(msrest.serialization.Model):
+class ResourceGroupExportResult(_serialization.Model):
     """Resource group export result.
 
     :ivar template: The template content.
-    :vartype template: any
+    :vartype template: JSON
     :ivar error: The template export error.
     :vartype error: ~azure.mgmt.resource.resources.v2020_06_01.models.ErrorResponse
     """
 
     _attribute_map = {
-        'template': {'key': 'template', 'type': 'object'},
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
+        "template": {"key": "template", "type": "object"},
+        "error": {"key": "error", "type": "ErrorResponse"},
     }
 
-    def __init__(
-        self,
-        *,
-        template: Optional[Any] = None,
-        error: Optional["ErrorResponse"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, template: Optional[JSON] = None, error: Optional["_models.ErrorResponse"] = None, **kwargs):
         """
         :keyword template: The template content.
-        :paramtype template: any
+        :paramtype template: JSON
         :keyword error: The template export error.
         :paramtype error: ~azure.mgmt.resource.resources.v2020_06_01.models.ErrorResponse
         """
-        super(ResourceGroupExportResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.template = template
         self.error = error
 
 
-class ResourceGroupFilter(msrest.serialization.Model):
+class ResourceGroupFilter(_serialization.Model):
     """Resource group filter.
 
     :ivar tag_name: The tag name.
@@ -2254,29 +2152,23 @@ class ResourceGroupFilter(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tag_name': {'key': 'tagName', 'type': 'str'},
-        'tag_value': {'key': 'tagValue', 'type': 'str'},
+        "tag_name": {"key": "tagName", "type": "str"},
+        "tag_value": {"key": "tagValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        tag_name: Optional[str] = None,
-        tag_value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tag_name: Optional[str] = None, tag_value: Optional[str] = None, **kwargs):
         """
         :keyword tag_name: The tag name.
         :paramtype tag_name: str
         :keyword tag_value: The tag value.
         :paramtype tag_value: str
         """
-        super(ResourceGroupFilter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tag_name = tag_name
         self.tag_value = tag_value
 
 
-class ResourceGroupListResult(msrest.serialization.Model):
+class ResourceGroupListResult(_serialization.Model):
     """List of resource groups.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2288,30 +2180,25 @@ class ResourceGroupListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ResourceGroup]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ResourceGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ResourceGroup"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.ResourceGroup"]] = None, **kwargs):
         """
         :keyword value: An array of resource groups.
         :paramtype value: list[~azure.mgmt.resource.resources.v2020_06_01.models.ResourceGroup]
         """
-        super(ResourceGroupListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ResourceGroupPatchable(msrest.serialization.Model):
+class ResourceGroupPatchable(_serialization.Model):
     """Resource group information.
 
     :ivar name: The name of the resource group.
@@ -2320,22 +2207,22 @@ class ResourceGroupPatchable(msrest.serialization.Model):
     :vartype properties: ~azure.mgmt.resource.resources.v2020_06_01.models.ResourceGroupProperties
     :ivar managed_by: The ID of the resource that manages this resource group.
     :vartype managed_by: str
-    :ivar tags: A set of tags. The tags attached to the resource group.
+    :ivar tags: The tags attached to the resource group.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ResourceGroupProperties'},
-        'managed_by': {'key': 'managedBy', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "ResourceGroupProperties"},
+        "managed_by": {"key": "managedBy", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        properties: Optional["ResourceGroupProperties"] = None,
+        properties: Optional["_models.ResourceGroupProperties"] = None,
         managed_by: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
@@ -2348,17 +2235,17 @@ class ResourceGroupPatchable(msrest.serialization.Model):
          ~azure.mgmt.resource.resources.v2020_06_01.models.ResourceGroupProperties
         :keyword managed_by: The ID of the resource that manages this resource group.
         :paramtype managed_by: str
-        :keyword tags: A set of tags. The tags attached to the resource group.
+        :keyword tags: The tags attached to the resource group.
         :paramtype tags: dict[str, str]
         """
-        super(ResourceGroupPatchable, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.properties = properties
         self.managed_by = managed_by
         self.tags = tags
 
 
-class ResourceGroupProperties(msrest.serialization.Model):
+class ResourceGroupProperties(_serialization.Model):
     """The resource group properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2368,24 +2255,20 @@ class ResourceGroupProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResourceGroupProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.provisioning_state = None
 
 
-class ResourceListResult(msrest.serialization.Model):
+class ResourceListResult(_serialization.Model):
     """List of resource groups.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2397,31 +2280,26 @@ class ResourceListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[GenericResourceExpanded]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[GenericResourceExpanded]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["GenericResourceExpanded"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.GenericResourceExpanded"]] = None, **kwargs):
         """
         :keyword value: An array of resources.
         :paramtype value:
          list[~azure.mgmt.resource.resources.v2020_06_01.models.GenericResourceExpanded]
         """
-        super(ResourceListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ResourceProviderOperationDisplayProperties(msrest.serialization.Model):
+class ResourceProviderOperationDisplayProperties(_serialization.Model):
     """Resource provider operation's display properties.
 
     :ivar publisher: Operation description.
@@ -2437,11 +2315,11 @@ class ResourceProviderOperationDisplayProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "publisher": {"key": "publisher", "type": "str"},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -2466,7 +2344,7 @@ class ResourceProviderOperationDisplayProperties(msrest.serialization.Model):
         :keyword description: Operation description.
         :paramtype description: str
         """
-        super(ResourceProviderOperationDisplayProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.publisher = publisher
         self.provider = provider
         self.resource = resource
@@ -2474,7 +2352,7 @@ class ResourceProviderOperationDisplayProperties(msrest.serialization.Model):
         self.description = description
 
 
-class ResourceReference(msrest.serialization.Model):
+class ResourceReference(_serialization.Model):
     """The resource Id model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2484,24 +2362,20 @@ class ResourceReference(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResourceReference, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
 
 
-class ResourcesMoveInfo(msrest.serialization.Model):
+class ResourcesMoveInfo(_serialization.Model):
     """Parameters of move resources.
 
     :ivar resources: The IDs of the resources.
@@ -2511,116 +2385,104 @@ class ResourcesMoveInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resources': {'key': 'resources', 'type': '[str]'},
-        'target_resource_group': {'key': 'targetResourceGroup', 'type': 'str'},
+        "resources": {"key": "resources", "type": "[str]"},
+        "target_resource_group": {"key": "targetResourceGroup", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        resources: Optional[List[str]] = None,
-        target_resource_group: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, resources: Optional[List[str]] = None, target_resource_group: Optional[str] = None, **kwargs):
         """
         :keyword resources: The IDs of the resources.
         :paramtype resources: list[str]
         :keyword target_resource_group: The target resource group.
         :paramtype target_resource_group: str
         """
-        super(ResourcesMoveInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resources = resources
         self.target_resource_group = target_resource_group
 
 
-class ScopedDeployment(msrest.serialization.Model):
+class ScopedDeployment(_serialization.Model):
     """Deployment operation parameters.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar location: Required. The location to store the deployment data.
+    :ivar location: The location to store the deployment data. Required.
     :vartype location: str
-    :ivar properties: Required. The deployment properties.
+    :ivar properties: The deployment properties. Required.
     :vartype properties: ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentProperties
-    :ivar tags: A set of tags. Deployment tags.
+    :ivar tags: Deployment tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'location': {'required': True},
-        'properties': {'required': True},
+        "location": {"required": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'DeploymentProperties'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "DeploymentProperties"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        properties: "DeploymentProperties",
+        properties: "_models.DeploymentProperties",
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. The location to store the deployment data.
+        :keyword location: The location to store the deployment data. Required.
         :paramtype location: str
-        :keyword properties: Required. The deployment properties.
+        :keyword properties: The deployment properties. Required.
         :paramtype properties: ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentProperties
-        :keyword tags: A set of tags. Deployment tags.
+        :keyword tags: Deployment tags.
         :paramtype tags: dict[str, str]
         """
-        super(ScopedDeployment, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.location = location
         self.properties = properties
         self.tags = tags
 
 
-class ScopedDeploymentWhatIf(msrest.serialization.Model):
+class ScopedDeploymentWhatIf(_serialization.Model):
     """Deployment What-if operation parameters.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar location: Required. The location to store the deployment data.
+    :ivar location: The location to store the deployment data. Required.
     :vartype location: str
-    :ivar properties: Required. The deployment properties.
+    :ivar properties: The deployment properties. Required.
     :vartype properties:
      ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentWhatIfProperties
     """
 
     _validation = {
-        'location': {'required': True},
-        'properties': {'required': True},
+        "location": {"required": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'DeploymentWhatIfProperties'},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "DeploymentWhatIfProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        properties: "DeploymentWhatIfProperties",
-        **kwargs
-    ):
+    def __init__(self, *, location: str, properties: "_models.DeploymentWhatIfProperties", **kwargs):
         """
-        :keyword location: Required. The location to store the deployment data.
+        :keyword location: The location to store the deployment data. Required.
         :paramtype location: str
-        :keyword properties: Required. The deployment properties.
+        :keyword properties: The deployment properties. Required.
         :paramtype properties:
          ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentWhatIfProperties
         """
-        super(ScopedDeploymentWhatIf, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.location = location
         self.properties = properties
 
 
-class Sku(msrest.serialization.Model):
+class Sku(_serialization.Model):
     """SKU for the resource.
 
     :ivar name: The SKU name.
@@ -2638,12 +2500,12 @@ class Sku(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'size': {'key': 'size', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'model': {'key': 'model', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "size": {"key": "size", "type": "str"},
+        "family": {"key": "family", "type": "str"},
+        "model": {"key": "model", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
     def __init__(
@@ -2671,7 +2533,7 @@ class Sku(msrest.serialization.Model):
         :keyword capacity: The SKU capacity.
         :paramtype capacity: int
         """
-        super(Sku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.tier = tier
         self.size = size
@@ -2680,7 +2542,7 @@ class Sku(msrest.serialization.Model):
         self.capacity = capacity
 
 
-class StatusMessage(msrest.serialization.Model):
+class StatusMessage(_serialization.Model):
     """Operation status message object.
 
     :ivar status: Status of the deployment operation.
@@ -2690,29 +2552,23 @@ class StatusMessage(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "ErrorResponse"},
     }
 
-    def __init__(
-        self,
-        *,
-        status: Optional[str] = None,
-        error: Optional["ErrorResponse"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, status: Optional[str] = None, error: Optional["_models.ErrorResponse"] = None, **kwargs):
         """
         :keyword status: Status of the deployment operation.
         :paramtype status: str
         :keyword error: The error reported by the operation.
         :paramtype error: ~azure.mgmt.resource.resources.v2020_06_01.models.ErrorResponse
         """
-        super(StatusMessage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.status = status
         self.error = error
 
 
-class SubResource(msrest.serialization.Model):
+class SubResource(_serialization.Model):
     """Sub-resource.
 
     :ivar id: Resource ID.
@@ -2720,24 +2576,19 @@ class SubResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID.
         :paramtype id: str
         """
-        super(SubResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
-class TagCount(msrest.serialization.Model):
+class TagCount(_serialization.Model):
     """Tag count.
 
     :ivar type: Type of count.
@@ -2747,29 +2598,23 @@ class TagCount(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'int'},
+        "type": {"key": "type", "type": "str"},
+        "value": {"key": "value", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        value: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: Optional[str] = None, value: Optional[int] = None, **kwargs):
         """
         :keyword type: Type of count.
         :paramtype type: str
         :keyword value: Value of count.
         :paramtype value: int
         """
-        super(TagCount, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.value = value
 
 
-class TagDetails(msrest.serialization.Model):
+class TagDetails(_serialization.Model):
     """Tag details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2786,22 +2631,22 @@ class TagDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'tag_name': {'key': 'tagName', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'TagCount'},
-        'values': {'key': 'values', 'type': '[TagValue]'},
+        "id": {"key": "id", "type": "str"},
+        "tag_name": {"key": "tagName", "type": "str"},
+        "count": {"key": "count", "type": "TagCount"},
+        "values": {"key": "values", "type": "[TagValue]"},
     }
 
     def __init__(
         self,
         *,
         tag_name: Optional[str] = None,
-        count: Optional["TagCount"] = None,
-        values: Optional[List["TagValue"]] = None,
+        count: Optional["_models.TagCount"] = None,
+        values: Optional[List["_models.TagValue"]] = None,
         **kwargs
     ):
         """
@@ -2813,39 +2658,34 @@ class TagDetails(msrest.serialization.Model):
         :keyword values: The list of tag values.
         :paramtype values: list[~azure.mgmt.resource.resources.v2020_06_01.models.TagValue]
         """
-        super(TagDetails, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.tag_name = tag_name
         self.count = count
         self.values = values
 
 
-class Tags(msrest.serialization.Model):
+class Tags(_serialization.Model):
     """A dictionary of name and value pairs.
 
-    :ivar tags: A set of tags. Dictionary of :code:`<string>`.
+    :ivar tags: Dictionary of :code:`<string>`.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Dictionary of :code:`<string>`.
+        :keyword tags: Dictionary of :code:`<string>`.
         :paramtype tags: dict[str, str]
         """
-        super(Tags, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
 
 
-class TagsListResult(msrest.serialization.Model):
+class TagsListResult(_serialization.Model):
     """List of subscription tags.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2857,65 +2697,60 @@ class TagsListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[TagDetails]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[TagDetails]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["TagDetails"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.TagDetails"]] = None, **kwargs):
         """
         :keyword value: An array of tags.
         :paramtype value: list[~azure.mgmt.resource.resources.v2020_06_01.models.TagDetails]
         """
-        super(TagsListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class TagsPatchResource(msrest.serialization.Model):
+class TagsPatchResource(_serialization.Model):
     """Wrapper resource for tags patch API request only.
 
-    :ivar operation: The operation type for the patch API. Possible values include: "Replace",
-     "Merge", "Delete".
+    :ivar operation: The operation type for the patch API. Known values are: "Replace", "Merge",
+     and "Delete".
     :vartype operation: str or ~azure.mgmt.resource.resources.v2020_06_01.models.TagsPatchOperation
     :ivar properties: The set of tags.
     :vartype properties: ~azure.mgmt.resource.resources.v2020_06_01.models.Tags
     """
 
     _attribute_map = {
-        'operation': {'key': 'operation', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'Tags'},
+        "operation": {"key": "operation", "type": "str"},
+        "properties": {"key": "properties", "type": "Tags"},
     }
 
     def __init__(
         self,
         *,
-        operation: Optional[Union[str, "TagsPatchOperation"]] = None,
-        properties: Optional["Tags"] = None,
+        operation: Optional[Union[str, "_models.TagsPatchOperation"]] = None,
+        properties: Optional["_models.Tags"] = None,
         **kwargs
     ):
         """
-        :keyword operation: The operation type for the patch API. Possible values include: "Replace",
-         "Merge", "Delete".
+        :keyword operation: The operation type for the patch API. Known values are: "Replace", "Merge",
+         and "Delete".
         :paramtype operation: str or
          ~azure.mgmt.resource.resources.v2020_06_01.models.TagsPatchOperation
         :keyword properties: The set of tags.
         :paramtype properties: ~azure.mgmt.resource.resources.v2020_06_01.models.Tags
         """
-        super(TagsPatchResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.operation = operation
         self.properties = properties
 
 
-class TagsResource(msrest.serialization.Model):
+class TagsResource(_serialization.Model):
     """Wrapper resource for tags API requests and responses.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2928,42 +2763,37 @@ class TagsResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The type of the tags wrapper resource.
     :vartype type: str
-    :ivar properties: Required. The set of tags.
+    :ivar properties: The set of tags. Required.
     :vartype properties: ~azure.mgmt.resource.resources.v2020_06_01.models.Tags
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'Tags'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "Tags"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: "Tags",
-        **kwargs
-    ):
+    def __init__(self, *, properties: "_models.Tags", **kwargs):
         """
-        :keyword properties: Required. The set of tags.
+        :keyword properties: The set of tags. Required.
         :paramtype properties: ~azure.mgmt.resource.resources.v2020_06_01.models.Tags
         """
-        super(TagsResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
         self.properties = properties
 
 
-class TagValue(msrest.serialization.Model):
+class TagValue(_serialization.Model):
     """Tag information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2977,35 +2807,29 @@ class TagValue(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'tag_value': {'key': 'tagValue', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'TagCount'},
+        "id": {"key": "id", "type": "str"},
+        "tag_value": {"key": "tagValue", "type": "str"},
+        "count": {"key": "count", "type": "TagCount"},
     }
 
-    def __init__(
-        self,
-        *,
-        tag_value: Optional[str] = None,
-        count: Optional["TagCount"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tag_value: Optional[str] = None, count: Optional["_models.TagCount"] = None, **kwargs):
         """
         :keyword tag_value: The tag value.
         :paramtype tag_value: str
         :keyword count: The tag value count.
         :paramtype count: ~azure.mgmt.resource.resources.v2020_06_01.models.TagCount
         """
-        super(TagValue, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.tag_value = tag_value
         self.count = count
 
 
-class TargetResource(msrest.serialization.Model):
+class TargetResource(_serialization.Model):
     """Target resource.
 
     :ivar id: The ID of the resource.
@@ -3017,15 +2841,15 @@ class TargetResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'resource_name': {'key': 'resourceName', 'type': 'str'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "resource_name": {"key": "resourceName", "type": "str"},
+        "resource_type": {"key": "resourceType", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         resource_name: Optional[str] = None,
         resource_type: Optional[str] = None,
         **kwargs
@@ -3038,13 +2862,13 @@ class TargetResource(msrest.serialization.Model):
         :keyword resource_type: The type of the resource.
         :paramtype resource_type: str
         """
-        super(TargetResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.resource_name = resource_name
         self.resource_type = resource_type
 
 
-class TemplateHashResult(msrest.serialization.Model):
+class TemplateHashResult(_serialization.Model):
     """Result of the request to calculate template hash. It contains a string of minified template and its hash.
 
     :ivar minified_template: The minified template string.
@@ -3054,29 +2878,23 @@ class TemplateHashResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'minified_template': {'key': 'minifiedTemplate', 'type': 'str'},
-        'template_hash': {'key': 'templateHash', 'type': 'str'},
+        "minified_template": {"key": "minifiedTemplate", "type": "str"},
+        "template_hash": {"key": "templateHash", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        minified_template: Optional[str] = None,
-        template_hash: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, minified_template: Optional[str] = None, template_hash: Optional[str] = None, **kwargs):
         """
         :keyword minified_template: The minified template string.
         :paramtype minified_template: str
         :keyword template_hash: The template hash.
         :paramtype template_hash: str
         """
-        super(TemplateHashResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.minified_template = minified_template
         self.template_hash = template_hash
 
 
-class TemplateLink(msrest.serialization.Model):
+class TemplateLink(_serialization.Model):
     """Entity representing the reference to the template.
 
     :ivar uri: The URI of the template to deploy. Use either the uri or id property, but not both.
@@ -3091,17 +2909,17 @@ class TemplateLink(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'uri': {'key': 'uri', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'relative_path': {'key': 'relativePath', 'type': 'str'},
-        'content_version': {'key': 'contentVersion', 'type': 'str'},
+        "uri": {"key": "uri", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "relative_path": {"key": "relativePath", "type": "str"},
+        "content_version": {"key": "contentVersion", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         uri: Optional[str] = None,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         relative_path: Optional[str] = None,
         content_version: Optional[str] = None,
         **kwargs
@@ -3119,70 +2937,70 @@ class TemplateLink(msrest.serialization.Model):
         :keyword content_version: If included, must match the ContentVersion in the template.
         :paramtype content_version: str
         """
-        super(TemplateLink, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.uri = uri
         self.id = id
         self.relative_path = relative_path
         self.content_version = content_version
 
 
-class WhatIfChange(msrest.serialization.Model):
+class WhatIfChange(_serialization.Model):
     """Information about a single resource change predicted by What-If operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar resource_id: Required. Resource ID.
+    :ivar resource_id: Resource ID. Required.
     :vartype resource_id: str
-    :ivar change_type: Required. Type of change that will be made to the resource when the
-     deployment is executed. Possible values include: "Create", "Delete", "Ignore", "Deploy",
-     "NoChange", "Modify".
+    :ivar change_type: Type of change that will be made to the resource when the deployment is
+     executed. Required. Known values are: "Create", "Delete", "Ignore", "Deploy", "NoChange", and
+     "Modify".
     :vartype change_type: str or ~azure.mgmt.resource.resources.v2020_06_01.models.ChangeType
     :ivar before: The snapshot of the resource before the deployment is executed.
-    :vartype before: any
+    :vartype before: JSON
     :ivar after: The predicted snapshot of the resource after the deployment is executed.
-    :vartype after: any
+    :vartype after: JSON
     :ivar delta: The predicted changes to resource properties.
     :vartype delta: list[~azure.mgmt.resource.resources.v2020_06_01.models.WhatIfPropertyChange]
     """
 
     _validation = {
-        'resource_id': {'required': True},
-        'change_type': {'required': True},
+        "resource_id": {"required": True},
+        "change_type": {"required": True},
     }
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'change_type': {'key': 'changeType', 'type': 'str'},
-        'before': {'key': 'before', 'type': 'object'},
-        'after': {'key': 'after', 'type': 'object'},
-        'delta': {'key': 'delta', 'type': '[WhatIfPropertyChange]'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "change_type": {"key": "changeType", "type": "str"},
+        "before": {"key": "before", "type": "object"},
+        "after": {"key": "after", "type": "object"},
+        "delta": {"key": "delta", "type": "[WhatIfPropertyChange]"},
     }
 
     def __init__(
         self,
         *,
         resource_id: str,
-        change_type: Union[str, "ChangeType"],
-        before: Optional[Any] = None,
-        after: Optional[Any] = None,
-        delta: Optional[List["WhatIfPropertyChange"]] = None,
+        change_type: Union[str, "_models.ChangeType"],
+        before: Optional[JSON] = None,
+        after: Optional[JSON] = None,
+        delta: Optional[List["_models.WhatIfPropertyChange"]] = None,
         **kwargs
     ):
         """
-        :keyword resource_id: Required. Resource ID.
+        :keyword resource_id: Resource ID. Required.
         :paramtype resource_id: str
-        :keyword change_type: Required. Type of change that will be made to the resource when the
-         deployment is executed. Possible values include: "Create", "Delete", "Ignore", "Deploy",
-         "NoChange", "Modify".
+        :keyword change_type: Type of change that will be made to the resource when the deployment is
+         executed. Required. Known values are: "Create", "Delete", "Ignore", "Deploy", "NoChange", and
+         "Modify".
         :paramtype change_type: str or ~azure.mgmt.resource.resources.v2020_06_01.models.ChangeType
         :keyword before: The snapshot of the resource before the deployment is executed.
-        :paramtype before: any
+        :paramtype before: JSON
         :keyword after: The predicted snapshot of the resource after the deployment is executed.
-        :paramtype after: any
+        :paramtype after: JSON
         :keyword delta: The predicted changes to resource properties.
         :paramtype delta: list[~azure.mgmt.resource.resources.v2020_06_01.models.WhatIfPropertyChange]
         """
-        super(WhatIfChange, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_id = resource_id
         self.change_type = change_type
         self.before = before
@@ -3190,7 +3008,7 @@ class WhatIfChange(msrest.serialization.Model):
         self.delta = delta
 
 
-class WhatIfOperationResult(msrest.serialization.Model):
+class WhatIfOperationResult(_serialization.Model):
     """Result of the What-If operation. Contains a list of predicted changes and a URL link to get to the next set of results.
 
     :ivar status: Status of the What-If operation.
@@ -3202,17 +3020,17 @@ class WhatIfOperationResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
-        'changes': {'key': 'properties.changes', 'type': '[WhatIfChange]'},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "ErrorResponse"},
+        "changes": {"key": "properties.changes", "type": "[WhatIfChange]"},
     }
 
     def __init__(
         self,
         *,
         status: Optional[str] = None,
-        error: Optional["ErrorResponse"] = None,
-        changes: Optional[List["WhatIfChange"]] = None,
+        error: Optional["_models.ErrorResponse"] = None,
+        changes: Optional[List["_models.WhatIfChange"]] = None,
         **kwargs
     ):
         """
@@ -3223,70 +3041,70 @@ class WhatIfOperationResult(msrest.serialization.Model):
         :keyword changes: List of resource changes predicted by What-If operation.
         :paramtype changes: list[~azure.mgmt.resource.resources.v2020_06_01.models.WhatIfChange]
         """
-        super(WhatIfOperationResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.status = status
         self.error = error
         self.changes = changes
 
 
-class WhatIfPropertyChange(msrest.serialization.Model):
+class WhatIfPropertyChange(_serialization.Model):
     """The predicted change to the resource property.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar path: Required. The path of the property.
+    :ivar path: The path of the property. Required.
     :vartype path: str
-    :ivar property_change_type: Required. The type of property change. Possible values include:
-     "Create", "Delete", "Modify", "Array".
+    :ivar property_change_type: The type of property change. Required. Known values are: "Create",
+     "Delete", "Modify", and "Array".
     :vartype property_change_type: str or
      ~azure.mgmt.resource.resources.v2020_06_01.models.PropertyChangeType
     :ivar before: The value of the property before the deployment is executed.
-    :vartype before: any
+    :vartype before: JSON
     :ivar after: The value of the property after the deployment is executed.
-    :vartype after: any
+    :vartype after: JSON
     :ivar children: Nested property changes.
     :vartype children: list[~azure.mgmt.resource.resources.v2020_06_01.models.WhatIfPropertyChange]
     """
 
     _validation = {
-        'path': {'required': True},
-        'property_change_type': {'required': True},
+        "path": {"required": True},
+        "property_change_type": {"required": True},
     }
 
     _attribute_map = {
-        'path': {'key': 'path', 'type': 'str'},
-        'property_change_type': {'key': 'propertyChangeType', 'type': 'str'},
-        'before': {'key': 'before', 'type': 'object'},
-        'after': {'key': 'after', 'type': 'object'},
-        'children': {'key': 'children', 'type': '[WhatIfPropertyChange]'},
+        "path": {"key": "path", "type": "str"},
+        "property_change_type": {"key": "propertyChangeType", "type": "str"},
+        "before": {"key": "before", "type": "object"},
+        "after": {"key": "after", "type": "object"},
+        "children": {"key": "children", "type": "[WhatIfPropertyChange]"},
     }
 
     def __init__(
         self,
         *,
         path: str,
-        property_change_type: Union[str, "PropertyChangeType"],
-        before: Optional[Any] = None,
-        after: Optional[Any] = None,
-        children: Optional[List["WhatIfPropertyChange"]] = None,
+        property_change_type: Union[str, "_models.PropertyChangeType"],
+        before: Optional[JSON] = None,
+        after: Optional[JSON] = None,
+        children: Optional[List["_models.WhatIfPropertyChange"]] = None,
         **kwargs
     ):
         """
-        :keyword path: Required. The path of the property.
+        :keyword path: The path of the property. Required.
         :paramtype path: str
-        :keyword property_change_type: Required. The type of property change. Possible values include:
-         "Create", "Delete", "Modify", "Array".
+        :keyword property_change_type: The type of property change. Required. Known values are:
+         "Create", "Delete", "Modify", and "Array".
         :paramtype property_change_type: str or
          ~azure.mgmt.resource.resources.v2020_06_01.models.PropertyChangeType
         :keyword before: The value of the property before the deployment is executed.
-        :paramtype before: any
+        :paramtype before: JSON
         :keyword after: The value of the property after the deployment is executed.
-        :paramtype after: any
+        :paramtype after: JSON
         :keyword children: Nested property changes.
         :paramtype children:
          list[~azure.mgmt.resource.resources.v2020_06_01.models.WhatIfPropertyChange]
         """
-        super(WhatIfPropertyChange, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.path = path
         self.property_change_type = property_change_type
         self.before = before
@@ -3294,7 +3112,7 @@ class WhatIfPropertyChange(msrest.serialization.Model):
         self.children = children
 
 
-class ZoneMapping(msrest.serialization.Model):
+class ZoneMapping(_serialization.Model):
     """ZoneMapping.
 
     :ivar location: The location of the zone mapping.
@@ -3304,23 +3122,17 @@ class ZoneMapping(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'zones': {'key': 'zones', 'type': '[str]'},
+        "location": {"key": "location", "type": "str"},
+        "zones": {"key": "zones", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        zones: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: Optional[str] = None, zones: Optional[List[str]] = None, **kwargs):
         """
         :keyword location: The location of the zone mapping.
         :paramtype location: str
         :keyword zones:
         :paramtype zones: list[str]
         """
-        super(ZoneMapping, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.location = location
         self.zones = zones

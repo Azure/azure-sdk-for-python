@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,15 +7,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
-from ._application_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Resource information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -27,38 +35,32 @@ class Resource(msrest.serialization.Model):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(Resource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -79,7 +81,7 @@ class GenericResource(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar managed_by: ID of the resource that manages this resource.
     :vartype managed_by: str
@@ -90,20 +92,20 @@ class GenericResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'managed_by': {'key': 'managedBy', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "managed_by": {"key": "managedBy", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "identity": {"key": "identity", "type": "Identity"},
     }
 
     def __init__(
@@ -112,14 +114,14 @@ class GenericResource(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         managed_by: Optional[str] = None,
-        sku: Optional["Sku"] = None,
-        identity: Optional["Identity"] = None,
+        sku: Optional["_models.Sku"] = None,
+        identity: Optional["_models.Identity"] = None,
         **kwargs
     ):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword managed_by: ID of the resource that manages this resource.
         :paramtype managed_by: str
@@ -128,13 +130,13 @@ class GenericResource(Resource):
         :keyword identity: The identity of the resource.
         :paramtype identity: ~azure.mgmt.resource.managedapplications.models.Identity
         """
-        super(GenericResource, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.managed_by = managed_by
         self.sku = sku
         self.identity = identity
 
 
-class Application(GenericResource):
+class Application(GenericResource):  # pylint: disable=too-many-instance-attributes
     """Information about managed application.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -149,7 +151,7 @@ class Application(GenericResource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar managed_by: ID of the resource that manages this resource.
     :vartype managed_by: str
@@ -159,51 +161,51 @@ class Application(GenericResource):
     :vartype identity: ~azure.mgmt.resource.managedapplications.models.Identity
     :ivar plan: The plan information.
     :vartype plan: ~azure.mgmt.resource.managedapplications.models.Plan
-    :ivar kind: Required. The kind of the managed application. Allowed values are MarketPlace and
-     ServiceCatalog.
+    :ivar kind: The kind of the managed application. Allowed values are MarketPlace and
+     ServiceCatalog. Required.
     :vartype kind: str
-    :ivar managed_resource_group_id: Required. The managed resource group Id.
+    :ivar managed_resource_group_id: The managed resource group Id. Required.
     :vartype managed_resource_group_id: str
     :ivar application_definition_id: The fully qualified path of managed application definition Id.
     :vartype application_definition_id: str
     :ivar parameters: Name and value pairs that define the managed application parameters. It can
      be a JObject or a well formed JSON string.
-    :vartype parameters: any
+    :vartype parameters: JSON
     :ivar outputs: Name and value pairs that define the managed application outputs.
-    :vartype outputs: any
-    :ivar provisioning_state: The managed application provisioning state. Possible values include:
+    :vartype outputs: JSON
+    :ivar provisioning_state: The managed application provisioning state. Known values are:
      "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
-     "Failed", "Succeeded", "Updating".
+     "Failed", "Succeeded", and "Updating".
     :vartype provisioning_state: str or
      ~azure.mgmt.resource.managedapplications.models.ProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'kind': {'required': True, 'pattern': r'^[-\w\._,\(\)]+$'},
-        'managed_resource_group_id': {'required': True},
-        'outputs': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "kind": {"required": True, "pattern": r"^[-\w\._,\(\)]+$"},
+        "managed_resource_group_id": {"required": True},
+        "outputs": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'managed_by': {'key': 'managedBy', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'plan': {'key': 'plan', 'type': 'Plan'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'managed_resource_group_id': {'key': 'properties.managedResourceGroupId', 'type': 'str'},
-        'application_definition_id': {'key': 'properties.applicationDefinitionId', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': 'object'},
-        'outputs': {'key': 'properties.outputs', 'type': 'object'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "managed_by": {"key": "managedBy", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "plan": {"key": "plan", "type": "Plan"},
+        "kind": {"key": "kind", "type": "str"},
+        "managed_resource_group_id": {"key": "properties.managedResourceGroupId", "type": "str"},
+        "application_definition_id": {"key": "properties.applicationDefinitionId", "type": "str"},
+        "parameters": {"key": "properties.parameters", "type": "object"},
+        "outputs": {"key": "properties.outputs", "type": "object"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -214,17 +216,17 @@ class Application(GenericResource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         managed_by: Optional[str] = None,
-        sku: Optional["Sku"] = None,
-        identity: Optional["Identity"] = None,
-        plan: Optional["Plan"] = None,
+        sku: Optional["_models.Sku"] = None,
+        identity: Optional["_models.Identity"] = None,
+        plan: Optional["_models.Plan"] = None,
         application_definition_id: Optional[str] = None,
-        parameters: Optional[Any] = None,
+        parameters: Optional[JSON] = None,
         **kwargs
     ):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword managed_by: ID of the resource that manages this resource.
         :paramtype managed_by: str
@@ -234,19 +236,19 @@ class Application(GenericResource):
         :paramtype identity: ~azure.mgmt.resource.managedapplications.models.Identity
         :keyword plan: The plan information.
         :paramtype plan: ~azure.mgmt.resource.managedapplications.models.Plan
-        :keyword kind: Required. The kind of the managed application. Allowed values are MarketPlace
-         and ServiceCatalog.
+        :keyword kind: The kind of the managed application. Allowed values are MarketPlace and
+         ServiceCatalog. Required.
         :paramtype kind: str
-        :keyword managed_resource_group_id: Required. The managed resource group Id.
+        :keyword managed_resource_group_id: The managed resource group Id. Required.
         :paramtype managed_resource_group_id: str
         :keyword application_definition_id: The fully qualified path of managed application definition
          Id.
         :paramtype application_definition_id: str
         :keyword parameters: Name and value pairs that define the managed application parameters. It
          can be a JObject or a well formed JSON string.
-        :paramtype parameters: any
+        :paramtype parameters: JSON
         """
-        super(Application, self).__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity, **kwargs)
+        super().__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity, **kwargs)
         self.plan = plan
         self.kind = kind
         self.managed_resource_group_id = managed_resource_group_id
@@ -256,22 +258,21 @@ class Application(GenericResource):
         self.provisioning_state = None
 
 
-class ApplicationArtifact(msrest.serialization.Model):
+class ApplicationArtifact(_serialization.Model):
     """Managed application artifact.
 
     :ivar name: The managed application artifact name.
     :vartype name: str
     :ivar uri: The managed application artifact blob uri.
     :vartype uri: str
-    :ivar type: The managed application artifact type. Possible values include: "Template",
-     "Custom".
+    :ivar type: The managed application artifact type. Known values are: "Template" and "Custom".
     :vartype type: str or ~azure.mgmt.resource.managedapplications.models.ApplicationArtifactType
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
@@ -279,7 +280,7 @@ class ApplicationArtifact(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         uri: Optional[str] = None,
-        type: Optional[Union[str, "ApplicationArtifactType"]] = None,
+        type: Optional[Union[str, "_models.ApplicationArtifactType"]] = None,
         **kwargs
     ):
         """
@@ -287,17 +288,17 @@ class ApplicationArtifact(msrest.serialization.Model):
         :paramtype name: str
         :keyword uri: The managed application artifact blob uri.
         :paramtype uri: str
-        :keyword type: The managed application artifact type. Possible values include: "Template",
+        :keyword type: The managed application artifact type. Known values are: "Template" and
          "Custom".
         :paramtype type: str or ~azure.mgmt.resource.managedapplications.models.ApplicationArtifactType
         """
-        super(ApplicationArtifact, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.uri = uri
         self.type = type
 
 
-class ApplicationDefinition(GenericResource):
+class ApplicationDefinition(GenericResource):  # pylint: disable=too-many-instance-attributes
     """Information about managed application definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -312,7 +313,7 @@ class ApplicationDefinition(GenericResource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar managed_by: ID of the resource that manages this resource.
     :vartype managed_by: str
@@ -320,15 +321,15 @@ class ApplicationDefinition(GenericResource):
     :vartype sku: ~azure.mgmt.resource.managedapplications.models.Sku
     :ivar identity: The identity of the resource.
     :vartype identity: ~azure.mgmt.resource.managedapplications.models.Identity
-    :ivar lock_level: Required. The managed application lock level. Possible values include:
-     "CanNotDelete", "ReadOnly", "None".
+    :ivar lock_level: The managed application lock level. Required. Known values are:
+     "CanNotDelete", "ReadOnly", and "None".
     :vartype lock_level: str or
      ~azure.mgmt.resource.managedapplications.models.ApplicationLockLevel
     :ivar display_name: The managed application definition display name.
     :vartype display_name: str
     :ivar is_enabled: A value indicating whether the package is enabled or not.
     :vartype is_enabled: str
-    :ivar authorizations: Required. The managed application provider authorizations.
+    :ivar authorizations: The managed application provider authorizations. Required.
     :vartype authorizations:
      list[~azure.mgmt.resource.managedapplications.models.ApplicationProviderAuthorization]
     :ivar artifacts: The collection of managed application artifacts. The portal will use the files
@@ -341,63 +342,63 @@ class ApplicationDefinition(GenericResource):
     :vartype package_file_uri: str
     :ivar main_template: The inline main template json which has resources to be provisioned. It
      can be a JObject or well-formed JSON string.
-    :vartype main_template: any
+    :vartype main_template: JSON
     :ivar create_ui_definition: The createUiDefinition json for the backing template with
      Microsoft.Solutions/applications resource. It can be a JObject or well-formed JSON string.
-    :vartype create_ui_definition: any
+    :vartype create_ui_definition: JSON
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'lock_level': {'required': True},
-        'authorizations': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "lock_level": {"required": True},
+        "authorizations": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'managed_by': {'key': 'managedBy', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'lock_level': {'key': 'properties.lockLevel', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'is_enabled': {'key': 'properties.isEnabled', 'type': 'str'},
-        'authorizations': {'key': 'properties.authorizations', 'type': '[ApplicationProviderAuthorization]'},
-        'artifacts': {'key': 'properties.artifacts', 'type': '[ApplicationArtifact]'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'package_file_uri': {'key': 'properties.packageFileUri', 'type': 'str'},
-        'main_template': {'key': 'properties.mainTemplate', 'type': 'object'},
-        'create_ui_definition': {'key': 'properties.createUiDefinition', 'type': 'object'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "managed_by": {"key": "managedBy", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "lock_level": {"key": "properties.lockLevel", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "is_enabled": {"key": "properties.isEnabled", "type": "str"},
+        "authorizations": {"key": "properties.authorizations", "type": "[ApplicationProviderAuthorization]"},
+        "artifacts": {"key": "properties.artifacts", "type": "[ApplicationArtifact]"},
+        "description": {"key": "properties.description", "type": "str"},
+        "package_file_uri": {"key": "properties.packageFileUri", "type": "str"},
+        "main_template": {"key": "properties.mainTemplate", "type": "object"},
+        "create_ui_definition": {"key": "properties.createUiDefinition", "type": "object"},
     }
 
     def __init__(
         self,
         *,
-        lock_level: Union[str, "ApplicationLockLevel"],
-        authorizations: List["ApplicationProviderAuthorization"],
+        lock_level: Union[str, "_models.ApplicationLockLevel"],
+        authorizations: List["_models.ApplicationProviderAuthorization"],
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         managed_by: Optional[str] = None,
-        sku: Optional["Sku"] = None,
-        identity: Optional["Identity"] = None,
+        sku: Optional["_models.Sku"] = None,
+        identity: Optional["_models.Identity"] = None,
         display_name: Optional[str] = None,
         is_enabled: Optional[str] = None,
-        artifacts: Optional[List["ApplicationArtifact"]] = None,
+        artifacts: Optional[List["_models.ApplicationArtifact"]] = None,
         description: Optional[str] = None,
         package_file_uri: Optional[str] = None,
-        main_template: Optional[Any] = None,
-        create_ui_definition: Optional[Any] = None,
+        main_template: Optional[JSON] = None,
+        create_ui_definition: Optional[JSON] = None,
         **kwargs
     ):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword managed_by: ID of the resource that manages this resource.
         :paramtype managed_by: str
@@ -405,15 +406,15 @@ class ApplicationDefinition(GenericResource):
         :paramtype sku: ~azure.mgmt.resource.managedapplications.models.Sku
         :keyword identity: The identity of the resource.
         :paramtype identity: ~azure.mgmt.resource.managedapplications.models.Identity
-        :keyword lock_level: Required. The managed application lock level. Possible values include:
-         "CanNotDelete", "ReadOnly", "None".
+        :keyword lock_level: The managed application lock level. Required. Known values are:
+         "CanNotDelete", "ReadOnly", and "None".
         :paramtype lock_level: str or
          ~azure.mgmt.resource.managedapplications.models.ApplicationLockLevel
         :keyword display_name: The managed application definition display name.
         :paramtype display_name: str
         :keyword is_enabled: A value indicating whether the package is enabled or not.
         :paramtype is_enabled: str
-        :keyword authorizations: Required. The managed application provider authorizations.
+        :keyword authorizations: The managed application provider authorizations. Required.
         :paramtype authorizations:
          list[~azure.mgmt.resource.managedapplications.models.ApplicationProviderAuthorization]
         :keyword artifacts: The collection of managed application artifacts. The portal will use the
@@ -427,12 +428,12 @@ class ApplicationDefinition(GenericResource):
         :paramtype package_file_uri: str
         :keyword main_template: The inline main template json which has resources to be provisioned. It
          can be a JObject or well-formed JSON string.
-        :paramtype main_template: any
+        :paramtype main_template: JSON
         :keyword create_ui_definition: The createUiDefinition json for the backing template with
          Microsoft.Solutions/applications resource. It can be a JObject or well-formed JSON string.
-        :paramtype create_ui_definition: any
+        :paramtype create_ui_definition: JSON
         """
-        super(ApplicationDefinition, self).__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity, **kwargs)
+        super().__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity, **kwargs)
         self.lock_level = lock_level
         self.display_name = display_name
         self.is_enabled = is_enabled
@@ -444,7 +445,7 @@ class ApplicationDefinition(GenericResource):
         self.create_ui_definition = create_ui_definition
 
 
-class ApplicationDefinitionListResult(msrest.serialization.Model):
+class ApplicationDefinitionListResult(_serialization.Model):
     """List of managed application definitions.
 
     :ivar value: The array of managed application definitions.
@@ -454,14 +455,14 @@ class ApplicationDefinitionListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ApplicationDefinition]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ApplicationDefinition]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["ApplicationDefinition"]] = None,
+        value: Optional[List["_models.ApplicationDefinition"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -471,12 +472,12 @@ class ApplicationDefinitionListResult(msrest.serialization.Model):
         :keyword next_link: The URL to use for getting the next set of results.
         :paramtype next_link: str
         """
-        super(ApplicationDefinitionListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ApplicationListResult(msrest.serialization.Model):
+class ApplicationListResult(_serialization.Model):
     """List of managed applications.
 
     :ivar value: The array of managed applications.
@@ -486,16 +487,12 @@ class ApplicationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Application]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Application]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["Application"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.Application"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: The array of managed applications.
@@ -503,12 +500,12 @@ class ApplicationListResult(msrest.serialization.Model):
         :keyword next_link: The URL to use for getting the next set of results.
         :paramtype next_link: str
         """
-        super(ApplicationListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ApplicationPatchable(GenericResource):
+class ApplicationPatchable(GenericResource):  # pylint: disable=too-many-instance-attributes
     """Information about managed application.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -521,7 +518,7 @@ class ApplicationPatchable(GenericResource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar managed_by: ID of the resource that manages this resource.
     :vartype managed_by: str
@@ -540,41 +537,41 @@ class ApplicationPatchable(GenericResource):
     :vartype application_definition_id: str
     :ivar parameters: Name and value pairs that define the managed application parameters. It can
      be a JObject or a well formed JSON string.
-    :vartype parameters: any
+    :vartype parameters: JSON
     :ivar outputs: Name and value pairs that define the managed application outputs.
-    :vartype outputs: any
-    :ivar provisioning_state: The managed application provisioning state. Possible values include:
+    :vartype outputs: JSON
+    :ivar provisioning_state: The managed application provisioning state. Known values are:
      "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
-     "Failed", "Succeeded", "Updating".
+     "Failed", "Succeeded", and "Updating".
     :vartype provisioning_state: str or
      ~azure.mgmt.resource.managedapplications.models.ProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'kind': {'pattern': r'^[-\w\._,\(\)]+$'},
-        'outputs': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "kind": {"pattern": r"^[-\w\._,\(\)]+$"},
+        "outputs": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'managed_by': {'key': 'managedBy', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'plan': {'key': 'plan', 'type': 'PlanPatchable'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'managed_resource_group_id': {'key': 'properties.managedResourceGroupId', 'type': 'str'},
-        'application_definition_id': {'key': 'properties.applicationDefinitionId', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': 'object'},
-        'outputs': {'key': 'properties.outputs', 'type': 'object'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "managed_by": {"key": "managedBy", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "plan": {"key": "plan", "type": "PlanPatchable"},
+        "kind": {"key": "kind", "type": "str"},
+        "managed_resource_group_id": {"key": "properties.managedResourceGroupId", "type": "str"},
+        "application_definition_id": {"key": "properties.applicationDefinitionId", "type": "str"},
+        "parameters": {"key": "properties.parameters", "type": "object"},
+        "outputs": {"key": "properties.outputs", "type": "object"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -583,19 +580,19 @@ class ApplicationPatchable(GenericResource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         managed_by: Optional[str] = None,
-        sku: Optional["Sku"] = None,
-        identity: Optional["Identity"] = None,
-        plan: Optional["PlanPatchable"] = None,
+        sku: Optional["_models.Sku"] = None,
+        identity: Optional["_models.Identity"] = None,
+        plan: Optional["_models.PlanPatchable"] = None,
         kind: Optional[str] = None,
         managed_resource_group_id: Optional[str] = None,
         application_definition_id: Optional[str] = None,
-        parameters: Optional[Any] = None,
+        parameters: Optional[JSON] = None,
         **kwargs
     ):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword managed_by: ID of the resource that manages this resource.
         :paramtype managed_by: str
@@ -615,9 +612,9 @@ class ApplicationPatchable(GenericResource):
         :paramtype application_definition_id: str
         :keyword parameters: Name and value pairs that define the managed application parameters. It
          can be a JObject or a well formed JSON string.
-        :paramtype parameters: any
+        :paramtype parameters: JSON
         """
-        super(ApplicationPatchable, self).__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity, **kwargs)
+        super().__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity, **kwargs)
         self.plan = plan
         self.kind = kind
         self.managed_resource_group_id = managed_resource_group_id
@@ -627,53 +624,46 @@ class ApplicationPatchable(GenericResource):
         self.provisioning_state = None
 
 
-class ApplicationProviderAuthorization(msrest.serialization.Model):
+class ApplicationProviderAuthorization(_serialization.Model):
     """The managed application provider authorization.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar principal_id: Required. The provider's principal identifier. This is the identity that
-     the provider will use to call ARM to manage the managed application resources.
+    :ivar principal_id: The provider's principal identifier. This is the identity that the provider
+     will use to call ARM to manage the managed application resources. Required.
     :vartype principal_id: str
-    :ivar role_definition_id: Required. The provider's role definition identifier. This role will
-     define all the permissions that the provider must have on the managed application's container
-     resource group. This role definition cannot have permission to delete the resource group.
+    :ivar role_definition_id: The provider's role definition identifier. This role will define all
+     the permissions that the provider must have on the managed application's container resource
+     group. This role definition cannot have permission to delete the resource group. Required.
     :vartype role_definition_id: str
     """
 
     _validation = {
-        'principal_id': {'required': True},
-        'role_definition_id': {'required': True},
+        "principal_id": {"required": True},
+        "role_definition_id": {"required": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'role_definition_id': {'key': 'roleDefinitionId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "role_definition_id": {"key": "roleDefinitionId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        principal_id: str,
-        role_definition_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, principal_id: str, role_definition_id: str, **kwargs):
         """
-        :keyword principal_id: Required. The provider's principal identifier. This is the identity that
-         the provider will use to call ARM to manage the managed application resources.
+        :keyword principal_id: The provider's principal identifier. This is the identity that the
+         provider will use to call ARM to manage the managed application resources. Required.
         :paramtype principal_id: str
-        :keyword role_definition_id: Required. The provider's role definition identifier. This role
-         will define all the permissions that the provider must have on the managed application's
-         container resource group. This role definition cannot have permission to delete the resource
-         group.
+        :keyword role_definition_id: The provider's role definition identifier. This role will define
+         all the permissions that the provider must have on the managed application's container resource
+         group. This role definition cannot have permission to delete the resource group. Required.
         :paramtype role_definition_id: str
         """
-        super(ApplicationProviderAuthorization, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.principal_id = principal_id
         self.role_definition_id = role_definition_id
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Error response indicates managed application is not able to process the incoming request. The reason is provided in the error message.
 
     :ivar http_status: Http status code.
@@ -685,9 +675,9 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'http_status': {'key': 'httpStatus', 'type': 'str'},
-        'error_code': {'key': 'errorCode', 'type': 'str'},
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
+        "http_status": {"key": "httpStatus", "type": "str"},
+        "error_code": {"key": "errorCode", "type": "str"},
+        "error_message": {"key": "errorMessage", "type": "str"},
     }
 
     def __init__(
@@ -706,13 +696,13 @@ class ErrorResponse(msrest.serialization.Model):
         :keyword error_message: Error message indicating why the operation failed.
         :paramtype error_message: str
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.http_status = http_status
         self.error_code = error_code
         self.error_message = error_message
 
 
-class Identity(msrest.serialization.Model):
+class Identity(_serialization.Model):
     """Identity for the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -721,40 +711,33 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: The identity type. The only acceptable values to pass in are None and
-     "SystemAssigned". The default value is None.
+    :ivar type: The identity type. Default value is "SystemAssigned".
     :vartype type: str
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: Optional[str] = None, **kwargs):
         """
-        :keyword type: The identity type. The only acceptable values to pass in are None and
-         "SystemAssigned". The default value is None.
+        :keyword type: The identity type. Default value is "SystemAssigned".
         :paramtype type: str
         """
-        super(Identity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """Microsoft.Solutions operation.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -764,29 +747,23 @@ class Operation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs):
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
         :keyword display: The object that represents the operation.
         :paramtype display: ~azure.mgmt.resource.managedapplications.models.OperationDisplay
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The object that represents the operation.
 
     :ivar provider: Service provider: Microsoft.Solutions.
@@ -798,9 +775,9 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
     }
 
     def __init__(
@@ -819,13 +796,13 @@ class OperationDisplay(msrest.serialization.Model):
         :keyword operation: Operation type: Read, write, delete, etc.
         :paramtype operation: str
         """
-        super(OperationDisplay, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """Result of the request to list Microsoft.Solutions operations. It contains a list of operations and a URL link to get the next set of results.
 
     :ivar value: List of Microsoft.Solutions operations.
@@ -835,83 +812,70 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Operation"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: List of Microsoft.Solutions operations.
         :paramtype value: list[~azure.mgmt.resource.managedapplications.models.Operation]
         :keyword next_link: URL to get the next set of operation list results if there are any.
         :paramtype next_link: str
         """
-        super(OperationListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class Plan(msrest.serialization.Model):
+class Plan(_serialization.Model):
     """Plan for the managed application.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The plan name.
+    :ivar name: The plan name. Required.
     :vartype name: str
-    :ivar publisher: Required. The publisher ID.
+    :ivar publisher: The publisher ID. Required.
     :vartype publisher: str
-    :ivar product: Required. The product code.
+    :ivar product: The product code. Required.
     :vartype product: str
     :ivar promotion_code: The promotion code.
     :vartype promotion_code: str
-    :ivar version: Required. The plan's version.
+    :ivar version: The plan's version. Required.
     :vartype version: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'publisher': {'required': True},
-        'product': {'required': True},
-        'version': {'required': True},
+        "name": {"required": True},
+        "publisher": {"required": True},
+        "product": {"required": True},
+        "version": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'product': {'key': 'product', 'type': 'str'},
-        'promotion_code': {'key': 'promotionCode', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "product": {"key": "product", "type": "str"},
+        "promotion_code": {"key": "promotionCode", "type": "str"},
+        "version": {"key": "version", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        name: str,
-        publisher: str,
-        product: str,
-        version: str,
-        promotion_code: Optional[str] = None,
-        **kwargs
+        self, *, name: str, publisher: str, product: str, version: str, promotion_code: Optional[str] = None, **kwargs
     ):
         """
-        :keyword name: Required. The plan name.
+        :keyword name: The plan name. Required.
         :paramtype name: str
-        :keyword publisher: Required. The publisher ID.
+        :keyword publisher: The publisher ID. Required.
         :paramtype publisher: str
-        :keyword product: Required. The product code.
+        :keyword product: The product code. Required.
         :paramtype product: str
         :keyword promotion_code: The promotion code.
         :paramtype promotion_code: str
-        :keyword version: Required. The plan's version.
+        :keyword version: The plan's version. Required.
         :paramtype version: str
         """
-        super(Plan, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.publisher = publisher
         self.product = product
@@ -919,7 +883,7 @@ class Plan(msrest.serialization.Model):
         self.version = version
 
 
-class PlanPatchable(msrest.serialization.Model):
+class PlanPatchable(_serialization.Model):
     """Plan for the managed application.
 
     :ivar name: The plan name.
@@ -935,11 +899,11 @@ class PlanPatchable(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'product': {'key': 'product', 'type': 'str'},
-        'promotion_code': {'key': 'promotionCode', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "product": {"key": "product", "type": "str"},
+        "promotion_code": {"key": "promotionCode", "type": "str"},
+        "version": {"key": "version", "type": "str"},
     }
 
     def __init__(
@@ -964,7 +928,7 @@ class PlanPatchable(msrest.serialization.Model):
         :keyword version: The plan's version.
         :paramtype version: str
         """
-        super(PlanPatchable, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.publisher = publisher
         self.product = product
@@ -972,12 +936,12 @@ class PlanPatchable(msrest.serialization.Model):
         self.version = version
 
 
-class Sku(msrest.serialization.Model):
+class Sku(_serialization.Model):
     """SKU for the resource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The SKU name.
+    :ivar name: The SKU name. Required.
     :vartype name: str
     :ivar tier: The SKU tier.
     :vartype tier: str
@@ -992,16 +956,16 @@ class Sku(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'size': {'key': 'size', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'model': {'key': 'model', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "size": {"key": "size", "type": "str"},
+        "family": {"key": "family", "type": "str"},
+        "model": {"key": "model", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
     def __init__(
@@ -1016,7 +980,7 @@ class Sku(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. The SKU name.
+        :keyword name: The SKU name. Required.
         :paramtype name: str
         :keyword tier: The SKU tier.
         :paramtype tier: str
@@ -1029,7 +993,7 @@ class Sku(msrest.serialization.Model):
         :keyword capacity: The SKU capacity.
         :paramtype capacity: int
         """
-        super(Sku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.tier = tier
         self.size = size

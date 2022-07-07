@@ -7,28 +7,26 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ApplicationArtifactType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The managed application artifact type.
-    """
+class ApplicationArtifactType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The managed application artifact type."""
 
     TEMPLATE = "Template"
     CUSTOM = "Custom"
 
-class ApplicationLockLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The managed application lock level.
-    """
+
+class ApplicationLockLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The managed application lock level."""
 
     CAN_NOT_DELETE = "CanNotDelete"
     READ_ONLY = "ReadOnly"
     NONE = "None"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning status of the managed application.
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning status of the managed application."""
 
     ACCEPTED = "Accepted"
     RUNNING = "Running"

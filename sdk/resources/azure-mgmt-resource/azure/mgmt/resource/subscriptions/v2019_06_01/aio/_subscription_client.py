@@ -9,12 +9,11 @@
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
 from .. import models
+from ..._serialization import Deserializer, Serializer
 from ._configuration import SubscriptionClientConfiguration
 from .operations import Operations, SubscriptionClientOperationsMixin, SubscriptionsOperations, TenantsOperations
 
@@ -22,7 +21,8 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class SubscriptionClient(SubscriptionClientOperationsMixin):
+
+class SubscriptionClient(SubscriptionClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """All resource groups and resources exist within subscriptions. These operation enable you get
     information about your subscriptions and tenants. A tenant is a dedicated instance of Azure
     Active Directory (Azure AD) for your organization.
@@ -35,7 +35,7 @@ class SubscriptionClient(SubscriptionClientOperationsMixin):
     :ivar tenants: TenantsOperations operations
     :vartype tenants:
      azure.mgmt.resource.subscriptions.v2019_06_01.aio.operations.TenantsOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
@@ -45,10 +45,7 @@ class SubscriptionClient(SubscriptionClientOperationsMixin):
     """
 
     def __init__(
-        self,
-        credential: "AsyncTokenCredential",
-        base_url: str = "https://management.azure.com",
-        **kwargs: Any
+        self, credential: "AsyncTokenCredential", base_url: str = "https://management.azure.com", **kwargs: Any
     ) -> None:
         self._config = SubscriptionClientConfiguration(credential=credential, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
@@ -61,12 +58,7 @@ class SubscriptionClient(SubscriptionClientOperationsMixin):
         self.subscriptions = SubscriptionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.tenants = TenantsOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -75,7 +67,7 @@ class SubscriptionClient(SubscriptionClientOperationsMixin):
         >>> response = await client._send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
