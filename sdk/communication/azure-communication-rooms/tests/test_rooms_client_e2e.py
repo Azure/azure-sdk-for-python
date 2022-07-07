@@ -23,6 +23,7 @@ from _shared.testcase import (
     CommunicationTestCase,
     ResponseReplacerProcessor
 )
+from helper import URIIdentityReplacer, RequestBodyIdentityReplacer
 
 class FakeTokenCredential(object):
     def __init__(self):
@@ -39,7 +40,9 @@ class RoomsClientTest(CommunicationTestCase):
         super(RoomsClientTest, self).setUp()
         if not self.is_playback():
             self.recording_processors.extend([
-                ResponseReplacerProcessor(keys=[self._resource_name])])
+                ResponseReplacerProcessor(keys=[self._resource_name, "8:acs:[A-Za-z0-9-_]+"]),
+                URIIdentityReplacer(),
+                RequestBodyIdentityReplacer()])
         # create multiple users users
         self.identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str)
