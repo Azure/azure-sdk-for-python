@@ -562,7 +562,7 @@ class CodegenTestPR:
     def run(self):
         self.prepare_branch()
         self.check_file()
-        self.run_test()
+        # self.run_test()
         self.create_pr()
 
 
