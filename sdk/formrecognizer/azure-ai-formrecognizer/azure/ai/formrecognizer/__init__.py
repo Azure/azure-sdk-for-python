@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -58,10 +57,10 @@ from ._models import (
     DocumentWord,
     ModelOperationInfo,
     ModelOperation,
-    DocumentModel,
     DocumentModelInfo,
+    DocumentModelSummary,
     DocTypeInfo,
-    AccountInfo,
+    ResourceInfo,
     DocumentAnalysisError,
     DocumentAnalysisInnerError,
 )
@@ -123,10 +122,10 @@ __all__ = [
     "ModelOperationInfo",
     "ModelOperation",
     "DocumentAnalysisApiVersion",
-    "DocumentModel",
     "DocumentModelInfo",
+    "DocumentModelSummary",
     "DocTypeInfo",
-    "AccountInfo",
+    "ResourceInfo",
     "DocumentAnalysisError",
     "DocumentAnalysisInnerError",
 ]

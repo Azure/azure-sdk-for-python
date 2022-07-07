@@ -31,7 +31,7 @@ class TestManagement(FormRecognizerTest):
         token = self.generate_oauth_token()
         endpoint = self.get_oauth_endpoint()
         client = DocumentModelAdministrationClient(endpoint, token)
-        info = client.get_account_info()
+        info = client.get_resource_info()
         assert info
 
     @FormRecognizerPreparer()
@@ -39,7 +39,7 @@ class TestManagement(FormRecognizerTest):
     def test_dmac_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with pytest.raises(ClientAuthenticationError):
-            result = client.get_account_info()
+            result = client.get_resource_info()
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -73,7 +73,7 @@ class TestManagement(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_account_info(self, client):
-        info = client.get_account_info()
+        info = client.get_resource_info()
 
         assert info.document_model_limit
         assert info.document_model_count
@@ -198,11 +198,11 @@ class TestManagement(FormRecognizerTest):
         dtc = DocumentModelAdministrationClient(endpoint=formrecognizer_test_endpoint, credential=AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
 
         with dtc:
-            dtc.get_account_info()
+            dtc.get_resource_info()
             assert transport.session is not None
             with dtc.get_document_analysis_client() as dac:
                 assert transport.session is not None
                 dac.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg).wait()
                 assert dac._api_version == DocumentAnalysisApiVersion.V2022_06_30_PREVIEW
-            dtc.get_account_info()
+            dtc.get_resource_info()
             assert transport.session is not None

@@ -1,14 +1,11 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import (
-    Any,
-    Union,
-    TYPE_CHECKING,
-)
+from typing import Any, Union
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import HttpLoggingPolicy
 from .._generated.aio._form_recognizer_client import (
     FormRecognizerClient as FormRecognizer,
@@ -22,16 +19,12 @@ from .._helpers import (
 )
 from .._user_agent import USER_AGENT
 
-if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential
-    from azure.core.credentials_async import AsyncTokenCredential
 
-
-class FormRecognizerClientBaseAsync(object):
+class FormRecognizerClientBaseAsync:
     def __init__(
         self,
         endpoint: str,
-        credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
         **kwargs: Any
     ) -> None:
 
