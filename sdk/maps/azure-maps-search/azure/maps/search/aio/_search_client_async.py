@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
-from ._base_client_async import AsyncSearchClientBase
+from ._base_client_async import AsyncMapsSearchClientBase
 from .._generated.models import BatchRequest, SearchAddressBatchResult
 
 if TYPE_CHECKING:
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 
 # By default, use the latest supported API version
-class SearchClient(AsyncSearchClientBase):
+class MapsSearchClient(AsyncMapsSearchClientBase):
     """Azure Maps Search REST APIs.
 
     :param credential: Credential needed for the client to connect to Azure.

@@ -6,7 +6,7 @@ from devtools_testutils import AzureTestCase
 from azure_devtools.scenario_tests import RecordingProcessor
 from azure.core.credentials import AzureKeyCredential
 from _shared.utils import AzureKeyInQueryCredentialPolicy
-from azure.maps.search import SearchClient
+from azure.maps.search import MapsSearchClient
 from azure.maps.search.models import LatLon, StructuredAddress
 
 
@@ -38,7 +38,7 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
 
     def setUp(self):
         super(AzureMapsSearchClientE2ETest, self).setUp()
-        self.client = SearchClient(
+        self.client = MapsSearchClient(
             client_id=self.get_settings_value('CLIENT_ID'),
             credential=AzureKeyCredential(self.get_settings_value('SUBSCRIPTION_KEY')),
         )

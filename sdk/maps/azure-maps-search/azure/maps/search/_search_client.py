@@ -10,7 +10,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import AzureKeyCredential
 from azure.core.polling import LROPoller
 
-from ._base_client import SearchClientBase
+from ._base_client import MapsSearchClientBase
 from ._generated.models import (
     PointOfInterestCategory,
     ReverseSearchCrossStreetAddressResult,
@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 
 
 # By default, use the latest supported API version
-class SearchClient(SearchClientBase):
+class MapsSearchClient(MapsSearchClientBase):
     """Azure Maps Search REST APIs.
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential

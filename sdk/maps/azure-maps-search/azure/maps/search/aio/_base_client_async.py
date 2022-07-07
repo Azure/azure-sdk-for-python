@@ -6,7 +6,7 @@
 from typing import Union, TYPE_CHECKING
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
-from .._generated.aio import SearchClient as _SearchClient
+from .._generated.aio import SearchClient as _MapsSearchClient
 from .._version import VERSION
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -26,7 +26,7 @@ def _authentication_policy(credential):
         )
     return authentication_policy
 
-class AsyncSearchClientBase:
+class AsyncMapsSearchClientBase:
     def __init__(
         self,
         credential, #type: Union[AzureKeyCredential, AsyncTokenCredential]
@@ -34,7 +34,7 @@ class AsyncSearchClientBase:
     ):
         # type: (...) -> None
 
-        self._search_client = _SearchClient(
+        self._search_client = _MapsSearchClient(
             credential=credential,  # type: ignore
             api_version=kwargs.pop("api_version", VERSION),
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),

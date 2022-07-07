@@ -39,11 +39,11 @@ pass the key as a string into an instance of [AzureKeyCredential][azure-key-cred
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.maps.search import SearchClient
+from azure.maps.search import MapsSearchClient
 
 credential = AzureKeyCredential(os.environ.get("AZURE_SUBSCRIPTION_KEY"))
 
-search_client = SearchClient(
+search_client = MapsSearchClient(
     credential=credential,
 )
 ```
@@ -69,17 +69,17 @@ Set the values of the client ID, tenant ID, and client secret of the AAD applica
 Use the returned token credential to authenticate the client:
 
 ```python
-from azure.maps.search import SearchClient
+from azure.maps.search import MapsSearchClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-search_client = SearchClient(credential=credential)
+search_client = MapsSearchClient(credential=credential)
 ```
 
 ## Key concepts
 
-`SearchClient` is the primary client for developers using the Azure Maps Search client library for Python.
-Once you initialized a `SearchClient` class, you can explore the methods on this client object to understand the different features of the Azure Maps Search service that you can access.
+`MapsSearchClient` is the primary client for developers using the Azure Maps Search client library for Python.
+Once you initialized a `MapsSearchClient` class, you can explore the methods on this client object to understand the different features of the Azure Maps Search service that you can access.
 
 ## Examples
 

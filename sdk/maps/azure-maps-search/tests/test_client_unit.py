@@ -10,7 +10,7 @@ from azure.core.pipeline.transport import HttpTransport, HttpResponse
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
-from azure.maps.search import SearchClient
+from azure.maps.search import MapsSearchClient
 from azure.maps.search.models import LatLon, StructuredAddress
 
 
@@ -36,7 +36,7 @@ class MockTransport(HttpTransport):
         return response
 
 def create_mock_client(status_code=0, body=None, **kwargs):
-    return SearchClient(credential= Mock(AzureKeyCredential),
+    return MapsSearchClient(credential= Mock(AzureKeyCredential),
                         transport=MockTransport(status_code, body, **kwargs))
 
 class AzureMapsSearchClientUnitTest(AzureTestCase):

@@ -12,7 +12,7 @@ from azure.maps.search import *
 from azure.maps.search.models import LatLon, StructuredAddress
 
 """
-In this samples, I have used AzureCredential and Azure_Subscription_Key as the way to authenticate the SearchClient.
+In this samples, I have used AzureCredential and Azure_Subscription_Key as the way to authenticate the MapsSearchClient.
 
 There is another way of authentication, to use an Azure Active Directory (AAD) token credential,
 provide an instance of the desired credential type obtained from the azure-identity library.
@@ -30,18 +30,18 @@ set `AZURE_CLIENT_ID` = <RealClientId>
 set `AZURE_TENANT_ID` = <RealTenantId>
 set `AZURE_CLIENT_SECRET` = <RealClientSecret>
 
-from azure.maps.search import SearchClient
+from azure.maps.search import MapsSearchClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-search_client = SearchClient(credential=credential)
+search_client = MapsSearchClient(credential=credential)
 """
 
 parser = argparse.ArgumentParser(
     description='Search Samples Program. Set AZURE_SUBSCRIPTION_KEY env variable.')
 parser.parse_args()
 
-client = SearchClient(
+client = MapsSearchClient(
     credential=AzureKeyCredential(os.environ.get("AZURE_SUBSCRIPTION_KEY")),
 )
 

@@ -1,7 +1,7 @@
 from ._version import VERSION
-from ._search_client import SearchClient
+from ._search_client import MapsSearchClient
 
 __all__ = [
-    'SearchClient'
+    'MapsSearchClient'
 ]
 __version__ = VERSION
