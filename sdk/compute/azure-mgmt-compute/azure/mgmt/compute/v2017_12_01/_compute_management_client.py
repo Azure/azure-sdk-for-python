@@ -9,20 +9,36 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
 from . import models
+from .._serialization import Deserializer, Serializer
 from ._configuration import ComputeManagementClientConfiguration
-from .operations import AvailabilitySetsOperations, ImagesOperations, LogAnalyticsOperations, Operations, UsageOperations, VirtualMachineExtensionImagesOperations, VirtualMachineExtensionsOperations, VirtualMachineImagesOperations, VirtualMachineRunCommandsOperations, VirtualMachineScaleSetExtensionsOperations, VirtualMachineScaleSetRollingUpgradesOperations, VirtualMachineScaleSetVMsOperations, VirtualMachineScaleSetsOperations, VirtualMachineSizesOperations, VirtualMachinesOperations
+from .operations import (
+    AvailabilitySetsOperations,
+    ImagesOperations,
+    LogAnalyticsOperations,
+    Operations,
+    UsageOperations,
+    VirtualMachineExtensionImagesOperations,
+    VirtualMachineExtensionsOperations,
+    VirtualMachineImagesOperations,
+    VirtualMachineRunCommandsOperations,
+    VirtualMachineScaleSetExtensionsOperations,
+    VirtualMachineScaleSetRollingUpgradesOperations,
+    VirtualMachineScaleSetVMsOperations,
+    VirtualMachineScaleSetsOperations,
+    VirtualMachineSizesOperations,
+    VirtualMachinesOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class ComputeManagementClient:    # pylint: disable=too-many-instance-attributes
+
+class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Compute Client.
 
     :ivar operations: Operations operations
@@ -67,10 +83,10 @@ class ComputeManagementClient:    # pylint: disable=too-many-instance-attributes
     :ivar virtual_machine_run_commands: VirtualMachineRunCommandsOperations operations
     :vartype virtual_machine_run_commands:
      azure.mgmt.compute.v2017_12_01.operations.VirtualMachineRunCommandsOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure
-     subscription. The subscription ID forms part of the URI for every service call.
+     subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
@@ -88,16 +104,16 @@ class ComputeManagementClient:    # pylint: disable=too-many-instance-attributes
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = ComputeManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = ComputeManagementClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.availability_sets = AvailabilitySetsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -113,15 +129,11 @@ class ComputeManagementClient:    # pylint: disable=too-many-instance-attributes
         self.virtual_machine_images = VirtualMachineImagesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.usage = UsageOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.usage = UsageOperations(self._client, self._config, self._serialize, self._deserialize)
         self.virtual_machine_sizes = VirtualMachineSizesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.images = ImagesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.images = ImagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.virtual_machine_scale_sets = VirtualMachineScaleSetsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -134,19 +146,12 @@ class ComputeManagementClient:    # pylint: disable=too-many-instance-attributes
         self.virtual_machine_scale_set_vms = VirtualMachineScaleSetVMsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.log_analytics = LogAnalyticsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.log_analytics = LogAnalyticsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.virtual_machine_run_commands = VirtualMachineRunCommandsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -155,7 +160,7 @@ class ComputeManagementClient:    # pylint: disable=too-many-instance-attributes
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest

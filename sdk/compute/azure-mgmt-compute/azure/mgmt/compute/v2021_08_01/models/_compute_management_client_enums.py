@@ -11,14 +11,15 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AccessLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AccessLevel."""
 
     NONE = "None"
     READ = "Read"
     WRITE = "Write"
 
+
 class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """This enumerates the possible sources of a disk's creation.
-    """
+    """This enumerates the possible sources of a disk's creation."""
 
     #: Create an empty data disk of a size given by diskSizeGB.
     EMPTY = "Empty"
@@ -29,7 +30,7 @@ class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FROM_IMAGE = "FromImage"
     #: Create a disk by importing from a blob specified by a sourceUri in a storage account specified
     #: by storageAccountId.
-    IMPORT_ENUM = "Import"
+    IMPORT = "Import"
     #: Create a new disk or snapshot by copying from a disk or snapshot specified by the given
     #: sourceResourceId.
     COPY = "Copy"
@@ -43,11 +44,12 @@ class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COPY_START = "CopyStart"
     #: Similar to Import create option. Create a new Trusted Launch VM or Confidential VM supported
     #: disk by importing additional blob for VM guest state specified by securityDataUri in storage
-    #: account specified by storageAccountId.
+    #: account specified by storageAccountId
     IMPORT_SECURE = "ImportSecure"
     #: Similar to Upload create option. Create a new Trusted Launch VM or Confidential VM supported
-    #: disk and upload using write token in both disk and VM guest state.
+    #: disk and upload using write token in both disk and VM guest state
     UPLOAD_PREPARED_SECURE = "UploadPreparedSecure"
+
 
 class DiskEncryptionSetIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of Managed Identity used by the DiskEncryptionSet. Only SystemAssigned is supported
@@ -59,9 +61,9 @@ class DiskEncryptionSetIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta
     SYSTEM_ASSIGNED = "SystemAssigned"
     NONE = "None"
 
+
 class DiskEncryptionSetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of key used to encrypt the data of the disk.
-    """
+    """The type of key used to encrypt the data of the disk."""
 
     #: Resource using diskEncryptionSet would be encrypted at rest with Customer managed key that can
     #: be changed and revoked by a customer.
@@ -72,25 +74,27 @@ class DiskEncryptionSetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Confidential VM supported disk and VM guest state would be encrypted with customer managed key.
     CONFIDENTIAL_VM_ENCRYPTED_WITH_CUSTOMER_KEY = "ConfidentialVmEncryptedWithCustomerKey"
 
+
 class DiskSecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the SecurityType of the VM. Applicable for OS disks only.
-    """
+    """Specifies the SecurityType of the VM. Applicable for OS disks only."""
 
     #: Trusted Launch provides security features such as secure boot and virtual Trusted Platform
-    #: Module (vTPM).
+    #: Module (vTPM)
     TRUSTED_LAUNCH = "TrustedLaunch"
-    #: Indicates Confidential VM disk with only VM guest state encrypted.
-    CONFIDENTIAL_VM_VMGUEST_STATE_ONLY_ENCRYPTED_WITH_PLATFORM_KEY = "ConfidentialVM_VMGuestStateOnlyEncryptedWithPlatformKey"
+    #: Indicates Confidential VM disk with only VM guest state encrypted
+    CONFIDENTIAL_VM_VMGUEST_STATE_ONLY_ENCRYPTED_WITH_PLATFORM_KEY = (
+        "ConfidentialVM_VMGuestStateOnlyEncryptedWithPlatformKey"
+    )
     #: Indicates Confidential VM disk with both OS disk and VM guest state encrypted with a platform
-    #: managed key.
+    #: managed key
     CONFIDENTIAL_VM_DISK_ENCRYPTED_WITH_PLATFORM_KEY = "ConfidentialVM_DiskEncryptedWithPlatformKey"
     #: Indicates Confidential VM disk with both OS disk and VM guest state encrypted with a customer
-    #: managed key.
+    #: managed key
     CONFIDENTIAL_VM_DISK_ENCRYPTED_WITH_CUSTOMER_KEY = "ConfidentialVM_DiskEncryptedWithCustomerKey"
 
+
 class DiskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """This enumerates the possible state of the disk.
-    """
+    """This enumerates the possible state of the disk."""
 
     #: The disk is not being used and can be attached to a VM.
     UNATTACHED = "Unattached"
@@ -109,9 +113,9 @@ class DiskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: A disk is created for upload and a write token has been issued for uploading to it.
     ACTIVE_UPLOAD = "ActiveUpload"
 
+
 class DiskStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The sku name.
-    """
+    """The sku name."""
 
     #: Standard HDD locally redundant storage. Best for backup, non-critical, and infrequent access.
     STANDARD_LRS = "Standard_LRS"
@@ -130,9 +134,9 @@ class DiskStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: and dev/test that need storage resiliency against zone failures.
     STANDARD_SSD_ZRS = "StandardSSD_ZRS"
 
+
 class EncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of key used to encrypt the data of the disk.
-    """
+    """The type of key used to encrypt the data of the disk."""
 
     #: Disk is encrypted at rest with Platform managed key. It is the default encryption type. This is
     #: not a valid encryption type for disk encryption sets.
@@ -144,22 +148,22 @@ class EncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: the other key is Platform managed.
     ENCRYPTION_AT_REST_WITH_PLATFORM_AND_CUSTOMER_KEYS = "EncryptionAtRestWithPlatformAndCustomerKeys"
 
+
 class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of extendedLocation.
-    """
+    """The type of extendedLocation."""
 
     EDGE_ZONE = "EdgeZone"
 
+
 class HyperVGeneration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The hypervisor generation of the Virtual Machine. Applicable to OS disks only.
-    """
+    """The hypervisor generation of the Virtual Machine. Applicable to OS disks only."""
 
     V1 = "V1"
     V2 = "V2"
 
+
 class NetworkAccessPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Policy for accessing the disk via network.
-    """
+    """Policy for accessing the disk via network."""
 
     #: The disk can be exported or uploaded to from any network.
     ALLOW_ALL = "AllowAll"
@@ -168,33 +172,33 @@ class NetworkAccessPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: The disk cannot be exported.
     DENY_ALL = "DenyAll"
 
+
 class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The Operating System type.
-    """
+    """The Operating System type."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
+
 class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current provisioning state.
-    """
+    """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
     CREATING = "Creating"
     DELETING = "Deleting"
     FAILED = "Failed"
 
+
 class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The private endpoint connection status.
-    """
+    """The private endpoint connection status."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
 
+
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Policy for controlling export on the disk.
-    """
+    """Policy for controlling export on the disk."""
 
     #: You can generate a SAS URI to access the underlying data of the disk publicly on the internet
     #: when NetworkAccessPolicy is set to AllowAll. You can access the data via the SAS URI only from
@@ -205,13 +209,13 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: trusted Azure VNET when NetworkAccessPolicy is set to AllowPrivate.
     DISABLED = "Disabled"
 
-class SnapshotStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The sku name.
-    """
 
-    #: Standard HDD locally redundant storage.
+class SnapshotStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The sku name."""
+
+    #: Standard HDD locally redundant storage
     STANDARD_LRS = "Standard_LRS"
-    #: Premium SSD locally redundant storage.
+    #: Premium SSD locally redundant storage
     PREMIUM_LRS = "Premium_LRS"
-    #: Standard zone redundant storage.
+    #: Standard zone redundant storage
     STANDARD_ZRS = "Standard_ZRS"
