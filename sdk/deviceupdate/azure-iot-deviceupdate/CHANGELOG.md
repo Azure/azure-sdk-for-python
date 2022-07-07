@@ -1,5 +1,18 @@
 # Release History
 
+## 1.0.0b3 (2022-07-07)
+
+### Features Added
+
+- Added `relatedFiles` and `downloadHandler` to `Update`
+- Updated various model that reference update to include not only `updateId` but also update `description` and `friendlyName`
+- Removed device tag concept
+- Allow to filter by deployment status in the `list_devices` method
+- Added ability to update device class friendly name
+- Added ability to delete device class
+- Added device class subgroups to groups
+- Added new method to retrieve devices health information
+
 ## 1.0.0b2 (2022-01-25)
 
 ### Features Added
@@ -18,7 +31,7 @@
   - Parameter `account_endpoint` of DeviceUpdateClient is renamed to `endpoint`
   - Renamed `client.updates` to `client.device_update`
   - Removed `client.devices`
-  - Removed `client.deployments`  
+  - Removed `client.deployments`
   - Renamed UpdatesOperations.get_update to DeviceUpdateOperations.get_update
   - Renamed UpdatesOperations.delete_update to DeviceUpdateOperations.begin_delete_update
   - Renamed UpdatesOperations.get_providers to DeviceUpdateOperations.list_providers

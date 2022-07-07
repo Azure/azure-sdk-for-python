@@ -131,10 +131,6 @@ IGNORED_SAMPLES = {
         "sample_begin_translation_with_filters.py",
         "sample_begin_translation_with_filters_async.py"
     ],
-    "azure-ai-formrecognizer": [
-        "sample_manage_custom_models.py",
-        "sample_manage_custom_models_async.py",
-    ],
     "azure-ai-language-questionanswering": ["sample_chat.py"],
     "azure-ai-textanalytics": [
         "sample_analyze_healthcare_entities_with_cancellation.py",
