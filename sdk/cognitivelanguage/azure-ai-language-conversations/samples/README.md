@@ -25,6 +25,9 @@ These sample programs show common scenarios for the Conversational Language Unde
 | [sample_analyze_orchestration_app_conv_response.py][sample_analyze_orchestration_app_conv_response] and [sample_analyze_orchestration_app_conv_response_async.py][sample_analyze_orchestration_app_conv_response_async]| Analyze user utterance using an orchestration project, which selects the best candidate from one of your different apps to analyze user query (ex: Qna, Conversation, and Luis). In this case, it uses a conversation project. |
 | [sample_analyze_orchestration_app_luis_response.py][sample_analyze_orchestration_app_luis_response] and [sample_analyze_orchestration_app_luis_response_async.py][sample_analyze_orchestration_app_luis_response_async]| Analyze user utterance using an orchestration project, which selects the best candidate from one of your different apps to analyze user query (ex: Qna, Conversation, and Luis). In this case, it uses a Luis project. |
 | [sample_analyze_orchestration_app_qna_response.py][sample_analyze_orchestration_app_qna_response] and [sample_analyze_orchestration_app_qna_response_async.py][sample_analyze_orchestration_app_qna_response_async]| Analyze user utterance using an orchestration project, which selects the best candidate from one of your different apps to analyze user query (ex: Qna, Conversation, and Luis). In this case, it uses a Qna project. |
+| [sample_conv_summarization.py][sample_conv_summarization] and [sample_conv_summarization_async.py][sample_conv_summarization_async]| Summarize conversation in the form of issues and resolutions (ex: tech support conversation) |
+| [sample_conv_pii_transcript_input.py][sample_conv_pii_transcript_input] and [sample_conv_pii_transcript_input_async.py][sample_conv_pii_transcript_input_async]| Extract and redact personally-identifiable info from/in conversations |
+
 
 ## Prerequisites
 
@@ -37,7 +40,7 @@ These sample programs show common scenarios for the Conversational Language Unde
 1. Install the Azure Conversational Language Understanding client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-language-conversations
+pip install azure-ai-language-conversations --pre
 ```
 
 For more information about how the versioning of the SDK corresponds to the versioning of the service's API, see [here][versioning_story_readme].
