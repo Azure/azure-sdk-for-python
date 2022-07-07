@@ -44,3 +44,6 @@ def _check_common_schedule_fields(job_schedule: Union[CronSchedule, RecurrenceSc
     assert job_schedule.start_time
     assert job_schedule.time_zone == job_dict_schedule.get("time_zone", "UTC")
     assert job_schedule.status == job_dict_schedule["status"]
+
+
+_PIPELINE_JOB_TIMEOUT_SECOND = 20 * 60  # timeout for pipeline job's tests, unit in second.

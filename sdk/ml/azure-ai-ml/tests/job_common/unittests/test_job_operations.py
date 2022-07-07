@@ -27,11 +27,11 @@ from azure.ai.ml.operations._job_ops_helper import get_git_properties
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.constants import AzureMLResourceType, AZUREML_PRIVATE_FEATURES_ENV_VAR
-from azure.ai.ml.entities._job.command_job import CommandJob
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml._restclient.v2021_10_01 import models
+from azure.ai.ml.entities._builders import Command
 
 
 @pytest.fixture
@@ -125,7 +125,7 @@ class TestJobOperations:
 
     @patch.object(Job, "_from_rest_object")
     def test_get(self, mock_method, mock_job_operation: JobOperations, randstr: Callable[[], str]) -> None:
-        mock_method.return_value = CommandJob()
+        mock_method.return_value = Command(component=None)
         mock_job_operation.get(randstr())
         mock_job_operation._operation_2022_02_preview.get.assert_called_once()
 
@@ -134,7 +134,7 @@ class TestJobOperations:
     def test_get_private_preview_flag_returns_latest(
         self, mock_method, mock_job_operation: JobOperations, randstr: Callable[[], str]
     ) -> None:
-        mock_method.return_value = CommandJob()
+        mock_method.return_value = Command(component=None)
         mock_job_operation.get(randstr())
         mock_job_operation._operation_2022_02_preview.get.assert_called_once()
 
@@ -170,7 +170,7 @@ class TestJobOperations:
     @pytest.mark.skip(reason="Mock Job missing properties to complete full test in Feb API")
     @patch.object(Job, "_from_rest_object")
     def test_submit_command_job(self, mock_method, mock_job_operation: JobOperations) -> None:
-        mock_method.return_value = CommandJob()
+        mock_method.return_value = Command(component=None)
         job = load_job(path="./tests/test_configs/command_job/command_job_test.yml")
         mock_job_operation.create_or_update(job=job)
         git_props = get_git_properties()
@@ -192,7 +192,7 @@ class TestJobOperations:
     @patch.object(Job, "_from_rest_object")
     @pytest.mark.vcr()
     def test_archive(self, mock_method, mock_job_operation: JobOperations, randstr: Callable[[], str]) -> None:
-        mock_method.return_value = CommandJob()
+        mock_method.return_value = Command(component=None)
         mock_job_operation.archive(name=randstr())
         mock_job_operation._operation_2022_02_preview.get.assert_called_once()
         mock_job_operation._operation_2022_02_preview.create_or_update.assert_called_once()
@@ -200,7 +200,7 @@ class TestJobOperations:
     @patch.object(Job, "_from_rest_object")
     @pytest.mark.vcr()
     def test_restore(self, mock_method, mock_job_operation: JobOperations, randstr: Callable[[], str]) -> None:
-        mock_method.return_value = CommandJob()
+        mock_method.return_value = Command(component=None)
         mock_job_operation.restore(name=randstr())
         mock_job_operation._operation_2022_02_preview.get.assert_called_once()
         mock_job_operation._operation_2022_02_preview.create_or_update.assert_called_once()
