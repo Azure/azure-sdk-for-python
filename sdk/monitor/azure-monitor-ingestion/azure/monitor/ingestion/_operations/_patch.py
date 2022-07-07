@@ -8,13 +8,21 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import concurrent.futures
 from typing import List, Any, Optional
-from azure.core.tracing.common import with_current_context
 from ._operations import MonitorIngestionClientOperationsMixin as GeneratedOps
 from .._models import SendLogsStatus, SendLogsResult
 from .._helpers import _create_gzip_requests
-class MonitorIngestionClientOperationsMixin(GeneratedOps):
 
-    def upload(self, rule_id: str, stream_name: str, logs: List[Any], *, max_concurrency: Optional[int] = None, **kwargs: Any) -> SendLogsResult:
+
+class MonitorIngestionClientOperationsMixin(GeneratedOps):
+    def upload( # pylint: disable=arguments-renamed, arguments-differ
+        self,
+        rule_id: str,
+        stream_name: str,
+        logs: List[Any],
+        *,
+        max_concurrency: Optional[int] = None,
+        **kwargs: Any
+    ) -> SendLogsResult:
         """Ingestion API used to directly ingest data using Data Collection Rules.
 
         See error response code and error response message for more detail.
@@ -34,14 +42,45 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
         requests = _create_gzip_requests(logs)
         results = []
         status = SendLogsStatus.SUCCESS
-        for ind, request in enumerate(requests):
-            response = super().upload(rule_id, stream=stream_name, body=request, content_encoding='gzip', **kwargs)
+        parallel = max_concurrency > 1 and len(requests) > 1
+        if parallel:
+            with concurrent.futures.ThreadPoolExecutor(max_concurrency) as executor:
+                future_to_req = {
+                    executor.submit(
+                        super().upload,
+                        rule_id,
+                        stream=stream_name,
+                        body=request,
+                        content_encoding="gzip",
+                        **kwargs
+                    ): request
+                    for request in requests
+                }
+                for future in concurrent.futures.as_completed(future_to_req):
+                    req = future_to_req[future]
+                    response = future.result()
+                    if response is not None:
+                        results.append(req)
+                        status = SendLogsStatus.PARTIAL_FAILURE
+            return SendLogsResult(failed_logs=results, status=status)
+        for request in requests:
+            response = super().upload(
+                rule_id,
+                stream=stream_name,
+                body=request,
+                content_encoding="gzip",
+                **kwargs
+            )
             if response is not None:
-                results.append(ind)
+                results.append(request)
                 status = SendLogsStatus.PARTIAL_FAILURE
-        return SendLogsResult(failed_logs_index=results, status=status)
+        return SendLogsResult(failed_logs=results, status=status)
 
-__all__: List[str] = ["MonitorIngestionClientOperationsMixin"]  # Add all objects you want publicly available to users at this package level
+
+__all__: List[str] = [
+    "MonitorIngestionClientOperationsMixin"
+]  # Add all objects you want publicly available to users at this package level
+
 
 def patch_sdk():
     """Do not remove from this file.

@@ -13,6 +13,7 @@ from ._client import MonitorIngestionClient as GeneratedClient
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
+
 class LogsIngestionClient(GeneratedClient):
     """Azure Monitor Data Collection Python Client.
 
@@ -25,14 +26,23 @@ class LogsIngestionClient(GeneratedClient):
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
-    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
-        scope = 'https://monitor.azure.com//.default'
-        super().__init__(
-            endpoint, credential,
-            authentication_policy=BearerTokenCredentialPolicy(credential, scope, **kwargs),
-            **kwargs)
 
-__all__ = ['LogsIngestionClient']
+    def __init__(
+        self, endpoint: str, credential: "TokenCredential", **kwargs: Any
+    ) -> None:
+        scope = "https://monitor.azure.com//.default"
+        super().__init__(
+            endpoint,
+            credential,
+            authentication_policy=BearerTokenCredentialPolicy(
+                credential, scope, **kwargs
+            ),
+            **kwargs
+        )
+
+
+__all__ = ["LogsIngestionClient"]
+
 
 def patch_sdk():
     """Do not remove from this file.

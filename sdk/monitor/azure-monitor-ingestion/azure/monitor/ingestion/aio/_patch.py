@@ -13,6 +13,7 @@ from ._client import MonitorIngestionClient as GeneratedClient
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
+
 class LogsIngestionClient(GeneratedClient):
     """Azure Monitor Data Collection Python Client.
 
@@ -25,14 +26,23 @@ class LogsIngestionClient(GeneratedClient):
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
-    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
-        scope = 'https://monitor.azure.com//.default'
-        super().__init__(
-            endpoint, credential,
-            authentication_policy=AsyncBearerTokenCredentialPolicy(credential, scope),
-            **kwargs)
 
-__all__: List[str] = ["LogsIngestionClient"]  # Add all objects you want publicly available to users at this package level
+    def __init__(
+        self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any
+    ) -> None:
+        scope = "https://monitor.azure.com//.default"
+        super().__init__(
+            endpoint,
+            credential,
+            authentication_policy=AsyncBearerTokenCredentialPolicy(credential, scope),
+            **kwargs
+        )
+
+
+__all__: List[str] = [
+    "LogsIngestionClient"
+]  # Add all objects you want publicly available to users at this package level
+
 
 def patch_sdk():
     """Do not remove from this file.
