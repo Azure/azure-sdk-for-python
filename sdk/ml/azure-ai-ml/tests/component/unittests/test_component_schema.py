@@ -30,7 +30,7 @@ from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, Error
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
-tests_root_dir = Path(__file__).parent.parent.parent.parent
+tests_root_dir = Path(__file__).parent.parent.parent
 components_dir = tests_root_dir / "test_configs/components/"
 
 
