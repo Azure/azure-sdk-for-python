@@ -290,6 +290,13 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         :keyword file_last_write_time:
             Last write time for the file.
         :paramtype file_last_write_time:~datetime.datetime or str
+        :keyword file_change_time:
+            Change time for the directory. If not specified, change time will be set to the current date/time.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword Dict[str,str] metadata:
             A name-value pair to associate with a file storage object.
         :keyword destination_lease:

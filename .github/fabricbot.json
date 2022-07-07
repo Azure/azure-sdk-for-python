@@ -12,7 +12,6 @@
             {
               "name": "isAction",
               "parameters": {
-                "action": "opened"
               }
             },
             {
@@ -1916,7 +1915,8 @@
             ],
             "mentionees": [
               "simorenoh",
-              "gahl-levy"
+              "gahl-levy",
+              "pjohari-ms"
             ]
           },
           {
