@@ -33,6 +33,7 @@ from azure.ai.ml.sweep import (
 )
 from azure.ai.ml._schema import SweepJobSchema
 from azure.ai.ml import load_job
+from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
 
 
 @pytest.mark.unittest
@@ -166,16 +167,9 @@ class TestSweepJobSchema:
         assert rest.properties.search_space["ss"] == expected_rest
         assert vars(sweep.search_space["ss"]) == expected_ss
 
-    @pytest.mark.parametrize(
-        "yaml_path",
-        [
-            "./tests/test_configs/command_job/command_job_input_types.yml",
-            "./tests/test_configs/sweep_job/sweep_job_input_types.yml",
-        ],
-    )
-    def test_inputs_types_sweep_job(self, yaml_path: str):
-        original_entity = load_job(Path(yaml_path))
-        rest_representation = original_entity._to_rest_object()
+    def test_inputs_types_sweep_job(self):
+        original_entity = load_job(Path("./tests/test_configs/sweep_job/sweep_job_input_types.yml"))
+        rest_representation = to_rest_job_object(original_entity)
         reconstructed_entity = Job._from_rest_object(rest_representation)
 
         assert original_entity.inputs["test_dataset"].mode == InputOutputModes.RO_MOUNT
@@ -203,16 +197,9 @@ class TestSweepJobSchema:
         assert rest_representation.properties.inputs["test_literal_valued_int"].value == "42"
         assert reconstructed_entity.inputs["test_literal_valued_int"] == "42"
 
-    @pytest.mark.parametrize(
-        "yaml_path",
-        [
-            "./tests/test_configs/command_job/command_job_output_types.yml",
-            "./tests/test_configs/sweep_job/sweep_job_output_types.yml",
-        ],
-    )
-    def test_outputs_types_standalone_jobs(self, yaml_path: str):
-        original_entity = load_job(Path(yaml_path))
-        rest_representation = original_entity._to_rest_object()
+    def test_outputs_types_standalone_jobs(self):
+        original_entity = load_job(Path("./tests/test_configs/sweep_job/sweep_job_output_types.yml"))
+        rest_representation = to_rest_job_object(original_entity)
         dummy_default = RestUriFolderJobOutput(uri="azureml://foo", mode=OutputDeliveryMode.READ_WRITE_MOUNT)
         rest_representation.properties.outputs["default"] = dummy_default
         reconstructed_entity = Job._from_rest_object(rest_representation)

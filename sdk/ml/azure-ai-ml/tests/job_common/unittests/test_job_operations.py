@@ -10,6 +10,9 @@ from pytest_mock import MockFixture
 
 import pytest
 import vcr
+
+from azure.ai.ml.operations._code_operations import CodeOperations
+from azure.ai.ml.operations._run_operations import RunOperations
 from .test_vcr_utils import before_record_cb, vcr_header_filters
 from azure.identity import DefaultAzureCredential
 from azure.ai.ml import MLClient, load_job
@@ -20,8 +23,6 @@ from azure.ai.ml.operations import (
     JobOperations,
     WorkspaceOperations,
 )
-from azure.ai.ml.operations._code_operations import CodeOperations
-from azure.ai.ml.operations._run_operations import RunOperations
 from azure.ai.ml.operations._job_ops_helper import get_git_properties
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml._scope_dependent_operations import OperationScope
@@ -180,11 +181,11 @@ class TestJobOperations:
     @pytest.mark.skip(reason="Function under test no longer returns Job as output")
     def test_command_job_resolver_with_virtual_cluster(self, mock_job_operation: JobOperations) -> None:
         expected = "/subscriptions/test_subscription/resourceGroups/test_resource_group/providers/Microsoft.MachineLearningServices/virtualclusters/testvcinmaster"
-        job = Job.load(path="tests/test_configs/command_job/command_job_with_virtualcluster.yaml")
+        job = load_job(path="tests/test_configs/command_job/command_job_with_virtualcluster.yaml")
         mock_job_operation._resolve_arm_id_or_upload_dependencies(job)
         assert job.compute == expected
 
-        job = Job.load(path="tests/test_configs/command_job/command_job_with_virtualcluster_2.yaml")
+        job = load_job(path="tests/test_configs/command_job/command_job_with_virtualcluster_2.yaml")
         mock_job_operation._resolve_arm_id_or_upload_dependencies(job)
         assert job.compute == expected
 
