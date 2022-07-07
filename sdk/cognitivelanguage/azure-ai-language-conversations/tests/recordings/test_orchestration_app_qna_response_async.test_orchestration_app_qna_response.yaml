@@ -1,0 +1,47 @@
+interactions:
+- request:
+    body: '{"kind": "Conversation", "analysisInput": {"conversationItem": {"participantId":
+      "1", "id": "1", "modality": "text", "language": "en", "text": "How are you?"},
+      "isLoggingEnabled": false}, "parameters": {"projectName": "orch_test", "deploymentName":
+      "dep_test", "verbose": true}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '298'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-conversations/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?api-version=2022-05-15-preview
+  response:
+    body:
+      string: '{"kind":"ConversationResult","result":{"query":"How are you?","prediction":{"topIntent":"ChitChat-QnA","projectKind":"Orchestration","intents":{"ChitChat-QnA":{"confidenceScore":1,"targetProjectKind":"QuestionAnswering","result":{"answers":[{"questions":["How''d
+        you sleep last night?","Are you doing good?","Are you feeling well?","How
+        are you doing?","How is the day treating you?","Are you feeling OK?","How
+        are you?","How''s it hangin?","How''s tricks?","Are you doing OK?","Hey, how
+        are you?","How are you feeling?","How are ya?","How are things?","How are
+        you going?","How art thou?","Greetings, Bot. How are you doing?","Are you
+        feeling good?","Are you doing well?","How are things going?","How''s it going?","Say,
+        how are you doing?","How''s the day treating you?","How''s life?","How''s
+        life treating you?","How are you today?","Yo, how are you?","How you doing?","How
+        you doing bot?","How ya doing?","How is the day treating ya?","How''s it hanging?"],"answer":"I''m
+        doing great, thanks for asking!","confidenceScore":1.0,"id":72,"source":"qna_chitchat_friendly.tsv","metadata":{"editorial":"chitchat"},"dialog":{"isContextOnly":false,"prompts":[]}}]}},"EmailIntent":{"confidenceScore":0.2013731,"targetProjectKind":"Conversation"},"None":{"confidenceScore":0.1674014,"targetProjectKind":"NonLinked"}}}}}'
+    headers:
+      apim-request-id: 8584df84-672d-494c-b029-6f95b3ab9822
+      cache-control: no-store, proxy-revalidate, no-cache, max-age=0, private
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.Language.OrchestrationWorkflow.Prediction=1
+      date: Tue, 28 Jun 2022 21:16:45 GMT
+      pragma: no-cache
+      request-id: 8584df84-672d-494c-b029-6f95b3ab9822
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '932'
+    status:
+      code: 200
+      message: OK
+    url: https://languagesdkresource.cognitiveservices.azure.com//language/:analyze-conversations?api-version=2022-05-15-preview
+version: 1

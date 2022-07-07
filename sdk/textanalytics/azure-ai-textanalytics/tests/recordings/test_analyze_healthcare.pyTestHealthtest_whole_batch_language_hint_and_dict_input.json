@@ -1,81 +1,122 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs?stringIndexType=UnicodeCodePoint",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "240",
+        "Content-Length": "366",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "1af87b88-5d10-11ec-9b10-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "I will go to the park.",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "I did not like the hotel we stayed at.",
+              "language": "en"
+            },
+            {
+              "id": "3",
+              "text": "The restaurant had really good food.",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "taskName": "0",
+            "kind": "Healthcare",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          }
+        ]
+      },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "b2c622e9-f509-4223-9cb6-f5b5556f9ab1",
-        "Date": "Tue, 14 Dec 2021 19:00:28 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/52e0ff16-9425-4684-b8c8-f50615c12a23",
+        "apim-request-id": "34b550ed-5a03-4295-8c1e-8f0362067f26",
+        "Content-Length": "0",
+        "Date": "Thu, 09 Jun 2022 23:09:39 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/66b4307b-5215-43ca-b3ac-3a27dd18b81d?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "178"
+        "x-envoy-upstream-service-time": "161"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/52e0ff16-9425-4684-b8c8-f50615c12a23",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/66b4307b-5215-43ca-b3ac-3a27dd18b81d?api-version=2022-05-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "1af87b88-5d10-11ec-9b10-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "495cb490-d735-41d6-bc32-a6cecf1eb49f",
+        "apim-request-id": "1b95f722-2757-45f2-96b8-967af7352b06",
+        "Content-Length": "629",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 19:00:33 GMT",
+        "Date": "Thu, 09 Jun 2022 23:09:44 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "98"
+        "x-envoy-upstream-service-time": "63"
       },
       "ResponseBody": {
-        "jobId": "52e0ff16-9425-4684-b8c8-f50615c12a23",
-        "lastUpdateDateTime": "2021-12-14T19:00:30Z",
-        "createdDateTime": "2021-12-14T19:00:29Z",
-        "expirationDateTime": "2021-12-15T19:00:29Z",
+        "jobId": "66b4307b-5215-43ca-b3ac-3a27dd18b81d",
+        "lastUpdatedDateTime": "2022-06-09T23:09:40Z",
+        "createdDateTime": "2022-06-09T23:09:39Z",
+        "expirationDateTime": "2022-06-10T23:09:39Z",
         "status": "succeeded",
         "errors": [],
-        "results": {
-          "documents": [
+        "tasks": {
+          "completed": 1,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 1,
+          "items": [
             {
-              "id": "1",
-              "entities": [],
-              "relations": [],
-              "warnings": []
-            },
-            {
-              "id": "2",
-              "entities": [],
-              "relations": [],
-              "warnings": []
-            },
-            {
-              "id": "3",
-              "entities": [],
-              "relations": [],
-              "warnings": []
+              "kind": "HealthcareLROResults",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-06-09T23:09:40.5556581Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "1",
+                    "entities": [],
+                    "relations": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "2",
+                    "entities": [],
+                    "relations": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "3",
+                    "entities": [],
+                    "relations": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2022-03-01"
+              }
             }
-          ],
-          "errors": [],
-          "modelVersion": "2021-05-15"
+          ]
         }
       }
     }

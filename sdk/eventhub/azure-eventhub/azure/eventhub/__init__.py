@@ -16,7 +16,7 @@ from ._eventprocessor.common import CloseReason, LoadBalancingStrategy
 from ._eventprocessor.partition_context import PartitionContext
 from ._connection_string_parser import (
     parse_connection_string,
-    EventHubConnectionStringProperties
+    EventHubConnectionStringProperties,
 )
 
 TransportType = constants.TransportType

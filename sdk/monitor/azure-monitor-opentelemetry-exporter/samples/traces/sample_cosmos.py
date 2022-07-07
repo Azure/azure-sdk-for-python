@@ -1,9 +1,9 @@
 """
 Examples to show usage of the azure-core-tracing-opentelemetry
-with the storage SDK and exporting to Azure monitor backend.
-This example traces calls for creating a container using storage SDK.
-The telemetry will be collected automatically and sent to Application
-Insights via the AzureMonitorTraceExporter
+with the CosmosDb SDK and exporting to Azure monitor backend.
+This example traces calls for creating a database and container using
+CosmosDb SDK. The telemetry will be collected automatically and sent
+to Application Insights via the AzureMonitorTraceExporter
 """
 
 import os
@@ -40,15 +40,18 @@ key = os.environ["ACCOUNT_KEY"]
 client = CosmosClient(url, key)
 
 database_name = "testDatabase"
-try:
-    database = client.create_database(id=database_name)  # Call will be traced
-except exceptions.CosmosResourceExistsError:
-    database = client.get_database_client(database=database_name)
+
+with tracer.start_as_current_span(name="CreateDatabase"):
+    try:
+        database = client.create_database(id=database_name)  # Call will be traced
+    except exceptions.CosmosResourceExistsError:
+        database = client.get_database_client(database=database_name)
 
 container_name = "products"
-try:
-    container = database.create_container(
-        id=container_name, partition_key=PartitionKey(path="/productName")  # Call will be traced
-    )
-except exceptions.CosmosResourceExistsError:
-    container = database.get_container_client(container_name)
+with tracer.start_as_current_span(name="CreateContainer"):
+    try:
+        container = database.create_container(
+            id=container_name, partition_key=PartitionKey(path="/productName")  # Call will be traced
+        )
+    except exceptions.CosmosResourceExistsError:
+        container = database.get_container_client(container_name)

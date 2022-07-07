@@ -1,5 +1,35 @@
 # Release History
 
+## 5.10.0 (2022-06-08)
+
+### Features Added
+
+- Includes the following features related to buffered sending of events:
+  - A new method `send_event` to `EventHubProducerClient` which allows sending single `EventData` or `AmqpAnnotatedMessage`.
+  - Buffered mode sending to `EventHubProducerClient` which is intended to allow for efficient publishing of events
+   without having to explicitly manage batches in the application.
+    - The constructor of `EventHubProducerClient` and `from_connection_string` method takes the following new keyword arguments
+     for configuration:
+      - `buffered_mode`: The flag to enable/disable buffered mode sending.
+      - `on_success`: The callback to be called once events have been successfully published.
+      - `on_error`: The callback to be called once events have failed to be published.
+      - `max_buffer_length`: The total number of events per partition that can be buffered before a flush will be triggered.
+      - `max_wait_time`: The amount of time to wait for a batch to be built with events in the buffer before publishing.
+    - A new method `EventHubProducerClient.flush` which flushes events in the buffer to be sent immediately.
+    - A new method `EventHubProducerClient.get_buffered_event_count` which returns the number of events that are buffered and waiting to be published for a given partition.
+    - A new property `EventHubProducerClient.total_buffered_event_count` which returns the total number of events that are currently buffered and waiting to be published, across all partitions.
+    - A new boolean keyword argument `flush` to `EventHubProducerClient.close` which indicates whether to flush the buffer or not while closing.
+
+## 5.9.0 (2022-05-10)
+
+### Features Added
+
+- The classmethod `from_message_content` has been added to `EventData` for interoperability with the Schema Registry Avro Encoder library, and takes `content` and `content_type` as positional parameters.
+
+### Other Changes
+
+- Features related to buffered sending of events are still in beta and will not be included in this release.
+
 ## 5.9.0b3 (2022-04-20)
 
 ### Features Added

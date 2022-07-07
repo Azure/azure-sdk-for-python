@@ -4,11 +4,12 @@
 # ------------------------------------
 
 import os
+import json
 import pytest
 import platform
 import functools
 import itertools
-
+import datetime
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer
@@ -19,11 +20,13 @@ from azure.ai.textanalytics import (
     TextDocumentInput,
     VERSION,
     TextAnalyticsApiVersion,
-    HealthcareEntityRelation
+    HealthcareEntityRelation,
+    AnalyzeHealthcareEntitiesLROPoller
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
+
 
 class TestHealth(TextAnalyticsTest):
     def _interval(self):
@@ -56,6 +59,25 @@ class TestHealth(TextAnalyticsTest):
         assert response[2].is_error
 
     @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
+    @recorded_by_proxy
+    def test_passing_only_string_v3_1(self, client):
+        docs = [
+            "Patient does not suffer from high blood pressure.",
+            "Prescribed 100mg ibuprofen, taken twice daily.",
+            ""
+        ]
+
+        response = list(client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result())
+
+        for i in range(2):
+            assert response[i].id is not None
+            assert response[i].statistics is None
+            assert response[i].entities is not None
+
+        assert response[2].is_error
+
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
     def test_input_with_some_errors(self, client):
@@ -72,7 +94,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
     def test_too_many_documents(self, client):
-        docs = list(itertools.repeat("input document", 11))  # Maximum number of documents per request is 10
+        docs = list(itertools.repeat("input document", 26))  # Maximum number of documents per request is 25
 
         with pytest.raises(HttpResponseError) as excinfo:
             client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
@@ -129,9 +151,9 @@ class TestHealth(TextAnalyticsTest):
         assert num_error == 1
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.1"})
     @recorded_by_proxy
-    def test_show_stats_and_model_version(self, client):
+    def test_show_stats_and_model_version_v3_1(self, client):
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "22", "text": ""},
@@ -150,6 +172,51 @@ class TestHealth(TextAnalyticsTest):
             docs,
             show_stats=True,
             model_version="2021-01-11",
+            polling_interval=self._interval(),
+            raw_response_hook = callback,
+        ).result()
+
+        num_error = 0
+        for doc in response:
+            if doc.is_error:
+                num_error += 1
+                continue
+            assert doc.statistics.character_count
+            assert doc.statistics.transaction_count
+        assert num_error == 1
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_show_stats_and_model_version(self, client):
+        docs = [{"id": "56", "text": ":)"},
+                {"id": "0", "text": ":("},
+                {"id": "22", "text": ""},
+                {"id": "19", "text": ":P"},
+                {"id": "1", "text": ":D"}]
+
+        def callback(resp):
+            assert resp.raw_response
+            tasks = resp.raw_response['tasks']
+            assert tasks['completed'] == 1
+            assert tasks['inProgress'] == 0
+            assert tasks['failed'] == 0
+            assert tasks['total'] == 1
+            num_tasks = 0
+            for task in tasks["items"]:
+                num_tasks += 1
+                task_stats = task['results']['statistics']
+                # assert "2022-03-01" == task['results']['modelVersion']  https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14685418
+                assert task_stats['documentsCount'] == 5
+                assert task_stats['validDocumentsCount'] == 4
+                assert task_stats['erroneousDocumentsCount'] == 1
+                assert task_stats['transactionsCount'] == 4
+            assert num_tasks == 1
+
+        response = client.begin_analyze_healthcare_entities(
+            docs,
+            show_stats=True,
+            model_version="latest",
             polling_interval=self._interval(),
             raw_response_hook = callback,
         ).result()
@@ -212,7 +279,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
     def test_document_attribute_error_no_result_attribute(self, client):
-        docs = [{"id": "1", "text": ""}]
+        docs = [{"id": "1", "text": ""}, {"id": "2", "text": "okay"}]
         result = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result()
         response = list(result)
 
@@ -234,13 +301,12 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
     def test_bad_model_version_error(self, client):
-        docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
+        docs = [{"id": "1", "language": "en", "text": "I did not like the hotel we stayed at."}]
 
-        try:
+        with pytest.raises(HttpResponseError) as err:
             result = client.begin_analyze_healthcare_entities(docs, model_version="bad", polling_interval=self._interval()).result()
-        except HttpResponseError as err:
-            assert err.error.code == "ModelVersionIncorrect"
-            assert err.error.message is not None
+        assert err.value.error.code == "InvalidParameterValue"
+        assert err.value.error.message is not None
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -290,24 +356,36 @@ class TestHealth(TextAnalyticsTest):
         ).result()
         assert res == "cls result"
 
+    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14303656/")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
     def test_cancellation(self, client):
-        single_doc = "hello world"
-        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
+        large_doc = "RECORD #333582770390100 | MH | 85986313 | | 054351 | 2/14/2001 12:00:00 AM | \
+            CORONARY ARTERY DISEASE | Signed | DIS | Admission Date: 5/22/2001 \
+            Report Status: Signed Discharge Date: 4/24/2001 ADMISSION DIAGNOSIS: \
+            CORONARY ARTERY DISEASE. HISTORY OF PRESENT ILLNESS: \
+            The patient is a 54-year-old gentleman with a history of progressive angina over the past several months. \
+            The patient had a cardiac catheterization in July of this year revealing total occlusion of the RCA and \
+            50% left main disease , with a strong family history of coronary artery disease with a brother dying at \
+            the age of 52 from a myocardial infarction and another brother who is status post coronary artery bypass grafting. \
+            The patient had a stress echocardiogram done on July , 2001 , which showed no wall motion abnormalities ,\
+            but this was a difficult study due to body habitus. The patient went for six minutes with minimal ST depressions \
+            in the anterior lateral leads , thought due to fatigue and wrist pain , his anginal equivalent. Due to the patient's \
+            increased symptoms and family history and history left main disease with total occasional of his RCA was referred \
+            for revascularization with open heart surgery."
+        docs = [{"id": str(idx), "text": large_doc*3} for (idx, val) in enumerate(list(itertools.repeat(large_doc, 25)))]
 
         poller = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
 
         try:
             cancellation_poller = poller.cancel()
-            cancellation_poller.wait()
-
+            cancellation_poller.result()
         except HttpResponseError:
             pass # expected if the operation was already in a terminal state.
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy
     def test_default_string_index_type_is_UnicodeCodePoint(self, client):
         poller = client.begin_analyze_healthcare_entities(documents=["Hello world"], polling_interval=self._interval())
@@ -318,15 +396,37 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
+    def test_default_string_index_type_UnicodeCodePoint_body_param(self, client):
+        def callback(response):
+            assert json.loads(response.http_request.body)['parameters']["stringIndexType"] == "UnicodeCodePoint"
+        poller = client.begin_analyze_healthcare_entities(documents=["Hello world"], polling_interval=self._interval(), raw_response_hook=callback)
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
+    @recorded_by_proxy
     def test_explicit_set_string_index_type(self, client):
         poller = client.begin_analyze_healthcare_entities(
             documents=["Hello world"],
-            string_index_type="TextElements_v8",
+            string_index_type="TextElement_v8",
             polling_interval=self._interval(),
         )
         actual_string_index_type = poller._polling_method._initial_response.http_request.query["stringIndexType"]
-        assert actual_string_index_type == "TextElements_v8"
+        assert actual_string_index_type == "TextElement_v8"
         poller.result()
+
+    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14243209/")
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_explicit_set_string_index_type_body_param(self, client):
+        def callback(response):
+            assert json.loads(response.http_request.body)['parameters']["stringIndexType"] == "TextElements_v8"
+
+        res = client.begin_analyze_healthcare_entities(
+            documents=["Hello world"],
+            string_index_type="TextElement_v8",
+            raw_response_hook=callback
+        )
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -438,3 +538,63 @@ class TestHealth(TextAnalyticsTest):
                 assert result.entities
 
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_poller_metadata(self, client):
+        docs = [{"id": "56", "text": ":)"}]
+
+        poller = client.begin_analyze_healthcare_entities(
+            docs,
+            display_name="hello",
+            polling_interval=self._interval(),
+        )
+
+        poller.result()
+
+        assert isinstance(poller, AnalyzeHealthcareEntitiesLROPoller)
+        assert isinstance(poller.created_on, datetime.datetime)
+        assert poller.display_name == "hello"
+        assert isinstance(poller.expires_on, datetime.datetime)
+        assert isinstance(poller.last_modified_on, datetime.datetime)
+        assert poller.id
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.0"})
+    def test_healthcare_multiapi_validate_v3_0(self, **kwargs):
+        client = kwargs.pop("client")
+
+        with pytest.raises(ValueError) as e:
+            poller = client.begin_analyze_healthcare_entities(
+                documents=[
+                    {"id": "1",
+                     "text": "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."},
+                    {"id": "2", "text": "patients must have histologically confirmed NHL"},
+                    {"id": "3", "text": ""},
+                    {"id": "4", "text": "The patient was diagnosed with Parkinsons Disease (PD)"}
+                ],
+                show_stats=True,
+                polling_interval=self._interval(),
+            )
+        assert str(e.value) == "'begin_analyze_healthcare_entities' is only available for API version v3.1 and up."
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.1"})
+    def test_healthcare_multiapi_validate_v3_1(self, **kwargs):
+        client = kwargs.pop("client")
+
+        with pytest.raises(ValueError) as e:
+            poller = client.begin_analyze_healthcare_entities(
+                documents=[
+                    {"id": "1",
+                     "text": "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."},
+                    {"id": "2", "text": "patients must have histologically confirmed NHL"},
+                    {"id": "3", "text": ""},
+                    {"id": "4", "text": "The patient was diagnosed with Parkinsons Disease (PD)"}
+                ],
+                display_name="this won't work",
+                show_stats=True,
+                polling_interval=self._interval(),
+            )
+        assert str(e.value) == "'display_name' is only available for API version 2022-05-01 and up.\n"

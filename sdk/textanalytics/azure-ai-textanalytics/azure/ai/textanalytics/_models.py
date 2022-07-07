@@ -11,8 +11,9 @@ from ._generated.models import (
     MultiLanguageInput,
 )
 from ._generated.v3_0 import models as _v3_0_models
-from ._generated.v3_2_preview_2 import models as _v3_2_preview_models
-from ._version import DEFAULT_API_VERSION
+from ._generated.v3_1 import models as _v3_1_models
+from ._generated.v2022_05_01 import models as _v2022_05_01_models
+from ._check import is_language_api, string_index_type_compatibility
 
 
 def _get_indices(relation):
@@ -1189,6 +1190,9 @@ class DocumentError(DictMixin):
             + RecognizeLinkedEntitiesResult().keys()
             + AnalyzeSentimentResult().keys()
             + ExtractKeyPhrasesResult().keys()
+            + AnalyzeHealthcareEntitiesResult().keys()
+            + RecognizeCustomEntitiesResult().keys()
+            + ClassifyDocumentResult().keys()
         )
         result_attrs = result_set.difference(DocumentError().keys())
         if attr in result_attrs:
@@ -1745,22 +1749,19 @@ class _AnalyzeActionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         "recognize_linked_entities"  #: Linked Entities Recognition action.
     )
     ANALYZE_SENTIMENT = "analyze_sentiment"  #: Sentiment Analysis action.
-    EXTRACT_SUMMARY = "extract_summary"
     RECOGNIZE_CUSTOM_ENTITIES = "recognize_custom_entities"
     SINGLE_CATEGORY_CLASSIFY = "single_category_classify"
     MULTI_CATEGORY_CLASSIFY = "multi_category_classify"
+    ANALYZE_HEALTHCARE_ENTITIES = "analyze_healthcare_entities"
 
 
 class ActionPointerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """v3.1 only"""
     RECOGNIZE_ENTITIES = "entityRecognitionTasks"
     RECOGNIZE_PII_ENTITIES = "entityRecognitionPiiTasks"
     EXTRACT_KEY_PHRASES = "keyPhraseExtractionTasks"
     RECOGNIZE_LINKED_ENTITIES = "entityLinkingTasks"
     ANALYZE_SENTIMENT = "sentimentAnalysisTasks"
-    EXTRACT_SUMMARY = "extractiveSummarizationTasks"
-    RECOGNIZE_CUSTOM_ENTITIES = "customEntityRecognitionTasks"
-    SINGLE_CATEGORY_CLASSIFY = "customSingleClassificationTasks"
-    MULTI_CATEGORY_CLASSIFY = "customMultiClassificationTasks"
 
 
 class RecognizeEntitiesAction(DictMixin):
@@ -1773,12 +1774,12 @@ class RecognizeEntitiesAction(DictMixin):
     :keyword str model_version: The model version to use for the analysis.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Setting this parameter to true,
+        the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
@@ -1786,12 +1787,12 @@ class RecognizeEntitiesAction(DictMixin):
     :ivar str model_version: The model version to use for the analysis.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Setting this parameter to true,
+        the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
@@ -1811,12 +1812,18 @@ class RecognizeEntitiesAction(DictMixin):
         ]
 
     def _to_generated(self, api_version, task_id):
-        if api_version == DEFAULT_API_VERSION:
-            from ._generated.v3_2_preview_2 import models
-        else:
-            from ._generated.v3_1 import models
-        return models.EntitiesTask(
-            parameters=models.EntitiesTaskParameters(
+        if is_language_api(api_version):
+            return _v2022_05_01_models.EntitiesLROTask(
+                task_name=task_id,
+                parameters=_v2022_05_01_models.EntitiesTaskParameters(
+                    model_version=self.model_version,
+                    string_index_type=string_index_type_compatibility(self.string_index_type),
+                    logging_opt_out=self.disable_service_logs,
+                )
+            )
+
+        return _v3_1_models.EntitiesTask(
+            parameters=_v3_1_models.EntitiesTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
@@ -1841,12 +1848,12 @@ class AnalyzeSentimentAction(DictMixin):
         will have property `mined_opinions` containing the result of this analysis.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Setting this parameter to true,
+        the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
@@ -1859,12 +1866,12 @@ class AnalyzeSentimentAction(DictMixin):
         will have property `mined_opinions` containing the result of this analysis.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Setting this parameter to true,
+        the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
@@ -1889,12 +1896,18 @@ class AnalyzeSentimentAction(DictMixin):
         )
 
     def _to_generated(self, api_version, task_id):
-        if api_version == DEFAULT_API_VERSION:
-            from ._generated.v3_2_preview_2 import models
-        else:
-            from ._generated.v3_1 import models
-        return models.SentimentAnalysisTask(
-            parameters=models.SentimentAnalysisTaskParameters(
+        if is_language_api(api_version):
+            return _v2022_05_01_models.SentimentAnalysisLROTask(
+                task_name=task_id,
+                parameters=_v2022_05_01_models.SentimentAnalysisTaskParameters(
+                    model_version=self.model_version,
+                    opinion_mining=self.show_opinion_mining,
+                    string_index_type=string_index_type_compatibility(self.string_index_type),
+                    logging_opt_out=self.disable_service_logs,
+                )
+            )
+        return _v3_1_models.SentimentAnalysisTask(
+            parameters=_v3_1_models.SentimentAnalysisTaskParameters(
                 model_version=self.model_version,
                 opinion_mining=self.show_opinion_mining,
                 string_index_type=self.string_index_type,
@@ -1922,12 +1935,12 @@ class RecognizePiiEntitiesAction(DictMixin):
     :paramtype categories_filter: list[str or ~azure.ai.textanalytics.PiiEntityCategory]
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
-    :keyword bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
-        input text on the service side for troubleshooting. If set to False, Text Analytics logs your
+    :keyword bool disable_service_logs: Defaults to true, meaning that the Language service will not log your
+        input text on the service side for troubleshooting. If set to False, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Please see
+        the service's natural language processing functions. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
@@ -1941,12 +1954,12 @@ class RecognizePiiEntitiesAction(DictMixin):
     :vartype categories_filter: list[str or ~azure.ai.textanalytics.PiiEntityCategory]
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
-    :ivar bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
-        input text on the service side for troubleshooting. If set to False, Text Analytics logs your
+    :ivar bool disable_service_logs: Defaults to true, meaning that the Language service will not log your
+        input text on the service side for troubleshooting. If set to False, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Please see
+        the service's natural language processing functions. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
@@ -1972,12 +1985,20 @@ class RecognizePiiEntitiesAction(DictMixin):
         )
 
     def _to_generated(self, api_version, task_id):
-        if api_version == DEFAULT_API_VERSION:
-            from ._generated.v3_2_preview_2 import models
-        else:
-            from ._generated.v3_1 import models
-        return models.PiiTask(
-            parameters=models.PiiTaskParameters(
+        if is_language_api(api_version):
+            return _v2022_05_01_models.PiiLROTask(
+                task_name=task_id,
+                parameters=_v2022_05_01_models.PiiTaskParameters(
+                    model_version=self.model_version,
+                    domain=self.domain_filter,
+                    pii_categories=self.categories_filter,
+                    string_index_type=string_index_type_compatibility(self.string_index_type),
+                    logging_opt_out=self.disable_service_logs,
+                )
+            )
+
+        return _v3_1_models.PiiTask(
+            parameters=_v3_1_models.PiiTaskParameters(
                 model_version=self.model_version,
                 domain=self.domain_filter,
                 pii_categories=self.categories_filter,
@@ -1998,18 +2019,18 @@ class ExtractKeyPhrasesAction(DictMixin):
 
     :keyword str model_version: The model version to use for the analysis.
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Setting this parameter to true,
+        the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
     :ivar str model_version: The model version to use for the analysis.
     :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Setting this parameter to true,
+        the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
@@ -2028,12 +2049,17 @@ class ExtractKeyPhrasesAction(DictMixin):
         )
 
     def _to_generated(self, api_version, task_id):
-        if api_version == DEFAULT_API_VERSION:
-            from ._generated.v3_2_preview_2 import models
-        else:
-            from ._generated.v3_1 import models
-        return models.KeyPhrasesTask(
-            parameters=models.KeyPhrasesTaskParameters(
+        if is_language_api(api_version):
+            return _v2022_05_01_models.KeyPhraseLROTask(
+                task_name=task_id,
+                parameters=_v2022_05_01_models.KeyPhraseTaskParameters(
+                    model_version=self.model_version,
+                    logging_opt_out=self.disable_service_logs,
+                )
+            )
+
+        return _v3_1_models.KeyPhrasesTask(
+            parameters=_v3_1_models.KeyPhrasesTaskParameters(
                 model_version=self.model_version,
                 logging_opt_out=self.disable_service_logs,
             ),
@@ -2052,12 +2078,12 @@ class RecognizeLinkedEntitiesAction(DictMixin):
     :keyword str model_version: The model version to use for the analysis.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Setting this parameter to true,
+        the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
@@ -2065,12 +2091,12 @@ class RecognizeLinkedEntitiesAction(DictMixin):
     :ivar str model_version: The model version to use for the analysis.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Setting this parameter to true,
+        the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
@@ -2091,180 +2117,23 @@ class RecognizeLinkedEntitiesAction(DictMixin):
         )
 
     def _to_generated(self, api_version, task_id):
-        if api_version == DEFAULT_API_VERSION:
-            from ._generated.v3_2_preview_2 import models
-        else:
-            from ._generated.v3_1 import models
-        return models.EntityLinkingTask(
-            parameters=models.EntityLinkingTaskParameters(
+        if is_language_api(api_version):
+            return _v2022_05_01_models.EntityLinkingLROTask(
+                task_name=task_id,
+                parameters=_v2022_05_01_models.EntityLinkingTaskParameters(
+                    model_version=self.model_version,
+                    string_index_type=string_index_type_compatibility(self.string_index_type),
+                    logging_opt_out=self.disable_service_logs,
+                )
+            )
+
+        return _v3_1_models.EntityLinkingTask(
+            parameters=_v3_1_models.EntityLinkingTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
             ),
             task_name=task_id
-        )
-
-
-class ExtractSummaryAction(DictMixin):
-    """ExtractSummaryAction encapsulates the parameters for starting a long-running Extractive Text
-    Summarization operation. For a conceptual discussion of extractive summarization, see the service documentation:
-    https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/extractive-summarization
-
-    :keyword str model_version: The model version to use for the analysis.
-    :keyword str string_index_type: Specifies the method used to interpret string offsets.
-        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
-        see https://aka.ms/text-analytics-offsets
-    :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, Text Analytics logs your
-        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Setting this parameter to true,
-        disables input logging and may limit our ability to remediate issues that occur. Please see
-        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
-        additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/ai/responsible-ai.
-    :keyword int max_sentence_count: Maximum number of sentences to return. Defaults to 3.
-    :keyword str order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
-    :ivar str model_version: The model version to use for the analysis.
-    :ivar str string_index_type: Specifies the method used to interpret string offsets.
-        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
-        see https://aka.ms/text-analytics-offsets
-    :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, Text Analytics logs your
-        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Setting this parameter to true,
-        disables input logging and may limit our ability to remediate issues that occur. Please see
-        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
-        additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/ai/responsible-ai.
-    :ivar int max_sentence_count: Number of sentences to return. Defaults to 3.
-    :ivar str order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
-    """
-
-    def __init__(self, **kwargs):
-        self.model_version = kwargs.get("model_version", None)
-        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
-        self.disable_service_logs = kwargs.get("disable_service_logs", None)
-        self.max_sentence_count = kwargs.get("max_sentence_count", None)
-        self.order_by = kwargs.get("order_by", None)
-
-    def __repr__(self):
-        return (
-            "ExtractSummaryAction(model_version={}, string_index_type={}, disable_service_logs={}, "
-            "max_sentence_count={}, order_by={})".format(
-                self.model_version,
-                self.string_index_type,
-                self.disable_service_logs,
-                self.max_sentence_count,
-                self.order_by,
-            )[:1024]
-        )
-
-    def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        return _v3_2_preview_models.ExtractiveSummarizationTask(
-            parameters=_v3_2_preview_models.ExtractiveSummarizationTaskParameters(
-                model_version=self.model_version,
-                string_index_type=self.string_index_type,
-                logging_opt_out=self.disable_service_logs,
-                sentence_count=self.max_sentence_count,
-                sort_by=self.order_by,
-            ),
-            task_name=task_id
-        )
-
-
-class ExtractSummaryResult(DictMixin):
-    """ExtractSummaryResult is a result object which contains
-    the extractive text summarization from a particular document.
-
-    :ivar str id: Unique, non-empty document identifier.
-    :ivar sentences: A ranked list of sentences representing the extracted summary.
-    :vartype sentences: list[~azure.ai.textanalytics.SummarySentence]
-    :ivar warnings: Warnings encountered while processing document.
-    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=True` was specified in the request this
-        field will contain information about the document payload.
-    :vartype statistics: ~azure.ai.textanalytics.TextDocumentStatistics
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of an ExtractSummaryResult.
-    """
-
-    def __init__(self, **kwargs):
-        self.id = kwargs.get("id", None)
-        self.sentences = kwargs.get("sentences", None)
-        self.warnings = kwargs.get("warnings", None)
-        self.statistics = kwargs.get("statistics", None)
-        self.is_error = False
-
-    def __repr__(self):
-        return "ExtractSummaryResult(id={}, sentences={}, warnings={}, statistics={}, is_error={})".format(
-            self.id,
-            repr(self.sentences),
-            repr(self.warnings),
-            repr(self.statistics),
-            self.is_error,
-        )[
-            :1024
-        ]
-
-    @classmethod
-    def _from_generated(cls, summary):
-        return cls(
-            id=summary.id,
-            sentences=[
-                SummarySentence._from_generated(  # pylint: disable=protected-access
-                    sentence
-                )
-                for sentence in summary.sentences
-            ],
-            warnings=[
-                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
-                    w
-                )
-                for w in summary.warnings
-            ],
-            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
-                summary.statistics
-            ),
-        )
-
-
-class SummarySentence(DictMixin):
-    """Represents a single sentence from the extractive text summarization.
-
-    :ivar str text: The extracted sentence text.
-    :ivar float rank_score: A float value representing the relevance of the sentence within
-        the summary. Higher values indicate higher importance.
-    :ivar int offset: The sentence offset from the start of the document.
-        The value depends on the value of the `string_index_type` parameter
-        set in the original request, which is UnicodeCodePoint by default.
-    :ivar int length: The length of the sentence. This value depends on the value of the
-        `string_index_type` parameter set in the original request, which is UnicodeCodePoint
-        by default.
-    """
-
-    def __init__(self, **kwargs):
-        self.text = kwargs.get("text", None)
-        self.rank_score = kwargs.get("rank_score", None)
-        self.offset = kwargs.get("offset", None)
-        self.length = kwargs.get("length", None)
-
-    def __repr__(self):
-        return "SummarySentence(text={}, rank_score={}, offset={}, length={})".format(
-            self.text,
-            self.rank_score,
-            self.offset,
-            self.length,
-        )[:1024]
-
-    @classmethod
-    def _from_generated(cls, sentence):
-        return cls(
-            text=sentence.text,
-            rank_score=sentence.rank_score,
-            offset=sentence.offset,
-            length=sentence.length,
         )
 
 
@@ -2277,12 +2146,12 @@ class RecognizeCustomEntitiesAction(DictMixin):
     :param str deployment_name: This field indicates the deployment name for the model.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Setting this parameter to true,
+        the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
@@ -2291,12 +2160,12 @@ class RecognizeCustomEntitiesAction(DictMixin):
     :ivar str deployment_name: This field indicates the deployment name for the model.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Setting this parameter to true,
+        the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
@@ -2324,14 +2193,14 @@ class RecognizeCustomEntitiesAction(DictMixin):
         )[:1024]
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        return _v3_2_preview_models.CustomEntitiesTask(
-            parameters=_v3_2_preview_models.CustomEntitiesTaskParameters(
+        return _v2022_05_01_models.CustomEntitiesLROTask(
+            task_name=task_id,
+            parameters=_v2022_05_01_models.CustomEntitiesTaskParameters(
                 project_name=self.project_name,
                 deployment_name=self.deployment_name,
-                string_index_type=self.string_index_type,
+                string_index_type=string_index_type_compatibility(self.string_index_type),
                 logging_opt_out=self.disable_service_logs,
-            ),
-            task_name=task_id
+            )
         )
 
 
@@ -2400,9 +2269,9 @@ class MultiCategoryClassifyAction(DictMixin):
     :param str project_name: Required. This field indicates the project name for the model.
     :param str deployment_name: Required. This field indicates the deployment name for the model.
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Setting this parameter to true,
+        the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
@@ -2410,9 +2279,9 @@ class MultiCategoryClassifyAction(DictMixin):
     :ivar str project_name: This field indicates the project name for the model.
     :ivar str deployment_name: This field indicates the deployment name for the model.
     :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Setting this parameter to true,
+        the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
@@ -2438,18 +2307,18 @@ class MultiCategoryClassifyAction(DictMixin):
         )[:1024]
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        return _v3_2_preview_models.CustomMultiClassificationTask(
-            parameters=_v3_2_preview_models.CustomMultiClassificationTaskParameters(
+        return _v2022_05_01_models.CustomMultiLabelClassificationLROTask(
+            task_name=task_id,
+            parameters=_v2022_05_01_models.CustomMultiLabelClassificationTaskParameters(
                 project_name=self.project_name,
                 deployment_name=self.deployment_name,
                 logging_opt_out=self.disable_service_logs,
-            ),
-            task_name=task_id
+            )
         )
 
 
-class MultiCategoryClassifyResult(DictMixin):
-    """MultiCategoryClassifyResult is a result object which contains
+class ClassifyDocumentResult(DictMixin):
+    """ClassifyDocumentResult is a result object which contains
     the classifications for a particular document.
 
     :ivar str id: Unique, non-empty document identifier.
@@ -2475,7 +2344,7 @@ class MultiCategoryClassifyResult(DictMixin):
         self.is_error = False
 
     def __repr__(self):
-        return "MultiCategoryClassifyResult(id={}, classifications={}, warnings={}, statistics={}, " \
+        return "ClassifyDocumentResult(id={}, classifications={}, warnings={}, statistics={}, " \
                "is_error={})".format(
                 self.id,
                 repr(self.classifications),
@@ -2492,7 +2361,7 @@ class MultiCategoryClassifyResult(DictMixin):
             id=result.id,
             classifications=[
                 ClassificationCategory._from_generated(e)  # pylint: disable=protected-access
-                for e in result.classifications
+                for e in result.class_property
             ],
             warnings=[
                 TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
@@ -2514,9 +2383,9 @@ class SingleCategoryClassifyAction(DictMixin):
     :param str project_name: Required. This field indicates the project name for the model.
     :param str deployment_name: Required. This field indicates the deployment name for the model.
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Setting this parameter to true,
+        the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
@@ -2524,9 +2393,9 @@ class SingleCategoryClassifyAction(DictMixin):
     :ivar str project_name: This field indicates the project name for the model.
     :ivar str deployment_name: This field indicates the deployment name for the model.
     :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Setting this parameter to true,
+        the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
@@ -2552,69 +2421,13 @@ class SingleCategoryClassifyAction(DictMixin):
         )[:1024]
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        return _v3_2_preview_models.CustomSingleClassificationTask(
-            parameters=_v3_2_preview_models.CustomSingleClassificationTaskParameters(
+        return _v2022_05_01_models.CustomSingleLabelClassificationLROTask(
+            task_name=task_id,
+            parameters=_v2022_05_01_models.CustomSingleLabelClassificationTaskParameters(
                 project_name=self.project_name,
                 deployment_name=self.deployment_name,
                 logging_opt_out=self.disable_service_logs,
-            ),
-            task_name=task_id
-        )
-
-
-class SingleCategoryClassifyResult(DictMixin):
-    """SingleCategoryClassifyResult is a result object which contains
-    the classification for a particular document.
-
-    :ivar str id: Unique, non-empty document identifier.
-    :ivar classification: Recognized classification results in the document.
-    :vartype classification: ~azure.ai.textanalytics.ClassificationCategory
-    :ivar warnings: Warnings encountered while processing document.
-    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=True` was specified in the request this
-        field will contain information about the document payload.
-    :vartype statistics: ~azure.ai.textanalytics.TextDocumentStatistics
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a SingleCategoryClassifyResult.
-    """
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        self.id = kwargs.get('id', None)
-        self.classification = kwargs.get('classification', None)
-        self.warnings = kwargs.get('warnings', [])
-        self.statistics = kwargs.get('statistics', None)
-        self.is_error = False
-
-    def __repr__(self):
-        return "SingleCategoryClassifyResult(id={}, classification={}, warnings={}, statistics={}, " \
-               "is_error={})".format(
-                self.id,
-                repr(self.classification),
-                repr(self.warnings),
-                repr(self.statistics),
-                self.is_error,
-            )[
-                :1024
-            ]
-
-    @classmethod
-    def _from_generated(cls, result):
-        return cls(
-            id=result.id,
-            classification=
-            ClassificationCategory._from_generated(result.classification),  # pylint: disable=protected-access
-            warnings=[
-                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
-                    w
-                )
-                for w in result.warnings
-            ],
-            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
-                result.statistics
-            ),
+            )
         )
 
 
@@ -2643,4 +2456,65 @@ class ClassificationCategory(DictMixin):
         return cls(
             category=result.category,
             confidence_score=result.confidence_score
+        )
+
+
+class AnalyzeHealthcareEntitiesAction(DictMixin):
+    """AnalyzeHealthcareEntitiesAction encapsulates the parameters for starting a long-running
+    healthcare entities analysis operation.
+
+    If you just want to analyze healthcare entities in a list of documents, and not perform multiple
+    long running actions on the input of documents, call method `begin_analyze_healthcare_entities` instead
+    of interfacing with this model.
+
+    :keyword str model_version: The model version to use for the analysis.
+    :keyword str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, the Language service logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the service's natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+    :ivar str model_version: The model version to use for the analysis.
+    :ivar str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, the Language service logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the service's natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+    """
+
+    def __init__(self, **kwargs):
+        self.model_version = kwargs.get("model_version", None)
+        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
+        self.disable_service_logs = kwargs.get("disable_service_logs", None)
+
+    def __repr__(self):
+        return (
+            "AnalyzeHealthcareEntitiesAction(model_version={}, string_index_type={}, disable_service_logs={})".format(
+                self.model_version,
+                self.string_index_type,
+                self.disable_service_logs,
+            )[:1024]
+        )
+
+    def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
+        return _v2022_05_01_models.HealthcareLROTask(
+            task_name=task_id,
+            parameters=_v2022_05_01_models.HealthcareTaskParameters(
+                model_version=self.model_version,
+                string_index_type=string_index_type_compatibility(self.string_index_type),
+                logging_opt_out=self.disable_service_logs,
+            )
         )

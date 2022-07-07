@@ -7,17 +7,16 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AccessLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NONE = "None"
     READ = "Read"
     WRITE = "Write"
 
-class DiskCreateOption(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This enumerates the possible sources of a disk's creation.
     """
 
@@ -40,13 +39,13 @@ class DiskCreateOption(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: the disk.
     UPLOAD = "Upload"
 
-class DiskEncryptionSetIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DiskEncryptionSetIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of Managed Identity used by the DiskEncryptionSet. Only SystemAssigned is supported.
     """
 
     SYSTEM_ASSIGNED = "SystemAssigned"
 
-class DiskState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DiskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state of the disk.
     """
 
@@ -63,7 +62,7 @@ class DiskState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: A disk is created for upload and a write token has been issued for uploading to it.
     ACTIVE_UPLOAD = "ActiveUpload"
 
-class DiskStorageAccountTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DiskStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The sku name.
     """
 
@@ -78,7 +77,7 @@ class DiskStorageAccountTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     #: databases (for example, SQL, Oracle), and other transaction-heavy workloads.
     ULTRA_SSD_LRS = "UltraSSD_LRS"
 
-class EncryptionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of key used to encrypt the data of the disk.
     """
 
@@ -92,14 +91,14 @@ class EncryptionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: the other key is Platform managed.
     ENCRYPTION_AT_REST_WITH_PLATFORM_AND_CUSTOMER_KEYS = "EncryptionAtRestWithPlatformAndCustomerKeys"
 
-class HyperVGeneration(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class HyperVGeneration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The hypervisor generation of the Virtual Machine. Applicable to OS disks only.
     """
 
     V1 = "V1"
     V2 = "V2"
 
-class NetworkAccessPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class NetworkAccessPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Policy for accessing the disk via network.
     """
 
@@ -110,14 +109,14 @@ class NetworkAccessPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: The disk cannot be exported.
     DENY_ALL = "DenyAll"
 
-class OperatingSystemTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Operating System type.
     """
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
-class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current provisioning state.
     """
 
@@ -126,7 +125,7 @@ class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveE
     DELETING = "Deleting"
     FAILED = "Failed"
 
-class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The private endpoint connection status.
     """
 
@@ -134,7 +133,7 @@ class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumM
     APPROVED = "Approved"
     REJECTED = "Rejected"
 
-class SnapshotStorageAccountTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SnapshotStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The sku name.
     """
 

@@ -69,6 +69,10 @@ setup(
     packages=[
         'azure.storage.blob.changefeed',
     ],
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     python_requires=">=3.6",
     install_requires=[
         "azure-storage-blob>=12.5.0,<13.0.0"

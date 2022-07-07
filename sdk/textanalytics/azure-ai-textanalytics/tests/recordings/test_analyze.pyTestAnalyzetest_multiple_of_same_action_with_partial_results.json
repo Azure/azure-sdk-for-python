@@ -1,324 +1,93 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "984",
+        "Content-Length": "761",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "1b114058-5d0f-11ec-9837-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [], \u0022entityRecognitionPiiTasks\u0022: [{\u0022parameters\u0022: {\u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00221\u0022}], \u0022keyPhraseExtractionTasks\u0022: [], \u0022entityLinkingTasks\u0022: [], \u0022sentimentAnalysisTasks\u0022: [], \u0022extractiveSummarizationTasks\u0022: [{\u0022parameters\u0022: {\u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022, \u0022sentenceCount\u0022: 3}, \u0022taskName\u0022: \u00220\u0022}, {\u0022parameters\u0022: {\u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022, \u0022sentenceCount\u0022: 5}, \u0022taskName\u0022: \u00222\u0022}], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: []}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00225\u0022, \u0022text\u0022: \u0022A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022\u0022, \u0022language\u0022: \u0022en\u0022}]}}",
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "5",
+              "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "taskName": "0",
+            "kind": "EntityRecognition",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "1",
+            "kind": "PiiEntityRecognition",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "2",
+            "kind": "EntityRecognition",
+            "parameters": {
+              "loggingOptOut": true,
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          }
+        ]
+      },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "8ec84279-bd25-41f0-af22-f0c5f58f3b72",
-        "Date": "Tue, 14 Dec 2021 18:53:19 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/95748418-8b20-493b-bcd6-2cfed38c5cb0",
+        "apim-request-id": "12c97a00-1418-4c23-aece-e55b5992ec7f",
+        "Content-Length": "0",
+        "Date": "Thu, 09 Jun 2022 17:29:36 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/a38b58fe-8024-4e2d-ab92-b2c9638bccf1?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "355"
+        "x-envoy-upstream-service-time": "325"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/95748418-8b20-493b-bcd6-2cfed38c5cb0",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/a38b58fe-8024-4e2d-ab92-b2c9638bccf1?api-version=2022-05-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "1b114058-5d0f-11ec-9837-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "60b02a8e-712d-4a74-912a-fd0ef446f792",
+        "apim-request-id": "36cae872-0537-4627-833d-0e991f2c5d62",
+        "Content-Length": "4117",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 18:53:25 GMT",
+        "Date": "Thu, 09 Jun 2022 17:29:42 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "404"
+        "x-envoy-upstream-service-time": "138"
       },
       "ResponseBody": {
-        "jobId": "95748418-8b20-493b-bcd6-2cfed38c5cb0",
-        "lastUpdateDateTime": "2021-12-14T18:53:22Z",
-        "createdDateTime": "2021-12-14T18:53:20Z",
-        "expirationDateTime": "2021-12-15T18:53:20Z",
-        "status": "running",
-        "errors": [],
-        "tasks": {
-          "completed": 2,
-          "failed": 0,
-          "inProgress": 1,
-          "total": 3,
-          "entityRecognitionPiiTasks": [
-            {
-              "lastUpdateDateTime": "2021-12-14T18:53:22.2016407Z",
-              "taskName": "1",
-              "state": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "redactedText": "A recent report by the ******************************** (***) found that the dramatic increase in oil and natural gas development on federal lands over the ************** has stretched the staff of the *** to a point that it has been unable to meet its environmental protection responsibilities.",
-                    "id": "5",
-                    "entities": [
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.95
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.9
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.87
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [
-                  {
-                    "id": "2",
-                    "error": {
-                      "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
-                      "innererror": {
-                        "code": "InvalidDocument",
-                        "message": "Document text is empty."
-                      }
-                    }
-                  }
-                ],
-                "modelVersion": "2021-01-15"
-              }
-            }
-          ],
-          "extractiveSummarizationTasks": [
-            {
-              "lastUpdateDateTime": "2021-12-14T18:53:22.9224168Z",
-              "taskName": "2",
-              "state": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "5",
-                    "sentences": [
-                      {
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.",
-                        "rankScore": 1.0,
-                        "offset": 0,
-                        "length": 295
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [
-                  {
-                    "id": "2",
-                    "error": {
-                      "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
-                      "innererror": {
-                        "code": "InvalidDocument",
-                        "message": "Document text is empty."
-                      }
-                    }
-                  }
-                ],
-                "modelVersion": "2021-08-01"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/95748418-8b20-493b-bcd6-2cfed38c5cb0",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "1b114058-5d0f-11ec-9837-b831b58100e8"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "c6b57c05-a0c5-4d14-af91-d4112580e172",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 18:53:31 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "120"
-      },
-      "ResponseBody": {
-        "jobId": "95748418-8b20-493b-bcd6-2cfed38c5cb0",
-        "lastUpdateDateTime": "2021-12-14T18:53:26Z",
-        "createdDateTime": "2021-12-14T18:53:20Z",
-        "expirationDateTime": "2021-12-15T18:53:20Z",
-        "status": "running",
-        "errors": [],
-        "tasks": {
-          "completed": 2,
-          "failed": 0,
-          "inProgress": 1,
-          "total": 3,
-          "entityRecognitionPiiTasks": [
-            {
-              "lastUpdateDateTime": "2021-12-14T18:53:22.2016407Z",
-              "taskName": "1",
-              "state": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "redactedText": "A recent report by the ******************************** (***) found that the dramatic increase in oil and natural gas development on federal lands over the ************** has stretched the staff of the *** to a point that it has been unable to meet its environmental protection responsibilities.",
-                    "id": "5",
-                    "entities": [
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.95
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.9
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.87
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [
-                  {
-                    "id": "2",
-                    "error": {
-                      "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
-                      "innererror": {
-                        "code": "InvalidDocument",
-                        "message": "Document text is empty."
-                      }
-                    }
-                  }
-                ],
-                "modelVersion": "2021-01-15"
-              }
-            }
-          ],
-          "extractiveSummarizationTasks": [
-            {
-              "lastUpdateDateTime": "2021-12-14T18:53:22.9224168Z",
-              "taskName": "2",
-              "state": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "5",
-                    "sentences": [
-                      {
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.",
-                        "rankScore": 1.0,
-                        "offset": 0,
-                        "length": 295
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [
-                  {
-                    "id": "2",
-                    "error": {
-                      "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
-                      "innererror": {
-                        "code": "InvalidDocument",
-                        "message": "Document text is empty."
-                      }
-                    }
-                  }
-                ],
-                "modelVersion": "2021-08-01"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/95748418-8b20-493b-bcd6-2cfed38c5cb0",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "1b114058-5d0f-11ec-9837-b831b58100e8"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "5aa4a437-8e3a-4ccf-a69a-a03ca4430b98",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 18:53:36 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "184"
-      },
-      "ResponseBody": {
-        "jobId": "95748418-8b20-493b-bcd6-2cfed38c5cb0",
-        "lastUpdateDateTime": "2021-12-14T18:53:33Z",
-        "createdDateTime": "2021-12-14T18:53:20Z",
-        "expirationDateTime": "2021-12-15T18:53:20Z",
+        "jobId": "a38b58fe-8024-4e2d-ab92-b2c9638bccf1",
+        "lastUpdatedDateTime": "2022-06-09T17:29:41Z",
+        "createdDateTime": "2022-06-09T17:29:37Z",
+        "expirationDateTime": "2022-06-10T17:29:37Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -326,11 +95,114 @@
           "failed": 0,
           "inProgress": 0,
           "total": 3,
-          "entityRecognitionPiiTasks": [
+          "items": [
             {
-              "lastUpdateDateTime": "2021-12-14T18:53:22.2016407Z",
+              "kind": "EntityRecognitionLROResults",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-06-09T17:29:41.2348593Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "5",
+                    "entities": [
+                      {
+                        "text": "cent",
+                        "category": "Quantity",
+                        "subcategory": "Percentage",
+                        "offset": 4,
+                        "length": 4,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "Government Accountability Office",
+                        "category": "Organization",
+                        "offset": 23,
+                        "length": 32,
+                        "confidenceScore": 0.99
+                      },
+                      {
+                        "text": "GAO",
+                        "category": "Organization",
+                        "offset": 57,
+                        "length": 3,
+                        "confidenceScore": 0.94
+                      },
+                      {
+                        "text": "oil",
+                        "category": "Product",
+                        "offset": 98,
+                        "length": 3,
+                        "confidenceScore": 0.67
+                      },
+                      {
+                        "text": "natural",
+                        "category": "Product",
+                        "offset": 106,
+                        "length": 7,
+                        "confidenceScore": 0.68
+                      },
+                      {
+                        "text": "gas",
+                        "category": "Skill",
+                        "offset": 114,
+                        "length": 3,
+                        "confidenceScore": 0.57
+                      },
+                      {
+                        "text": "development",
+                        "category": "Skill",
+                        "offset": 118,
+                        "length": 11,
+                        "confidenceScore": 0.48
+                      },
+                      {
+                        "text": "past six years",
+                        "category": "DateTime",
+                        "subcategory": "DateRange",
+                        "offset": 156,
+                        "length": 14,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "BLM",
+                        "category": "Organization",
+                        "offset": 202,
+                        "length": 3,
+                        "confidenceScore": 0.96
+                      },
+                      {
+                        "text": "environmental protection",
+                        "category": "Skill",
+                        "offset": 253,
+                        "length": 24,
+                        "confidenceScore": 0.79
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [
+                  {
+                    "id": "2",
+                    "error": {
+                      "code": "InvalidArgument",
+                      "message": "Invalid Document in request.",
+                      "innererror": {
+                        "code": "InvalidDocument",
+                        "message": "Document text is empty."
+                      }
+                    }
+                  }
+                ],
+                "modelVersion": "2021-06-01"
+              }
+            },
+            {
+              "kind": "PiiEntityRecognitionLROResults",
               "taskName": "1",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-06-09T17:29:39.477272Z",
+              "status": "succeeded",
               "results": {
                 "documents": [
                   {
@@ -375,7 +247,7 @@
                     "id": "2",
                     "error": {
                       "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
+                      "message": "Invalid Document in request.",
                       "innererror": {
                         "code": "InvalidDocument",
                         "message": "Document text is empty."
@@ -385,58 +257,88 @@
                 ],
                 "modelVersion": "2021-01-15"
               }
-            }
-          ],
-          "extractiveSummarizationTasks": [
-            {
-              "lastUpdateDateTime": "2021-12-14T18:53:33.3990305Z",
-              "taskName": "0",
-              "state": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "5",
-                    "sentences": [
-                      {
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.",
-                        "rankScore": 1.0,
-                        "offset": 0,
-                        "length": 295
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [
-                  {
-                    "id": "2",
-                    "error": {
-                      "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
-                      "innererror": {
-                        "code": "InvalidDocument",
-                        "message": "Document text is empty."
-                      }
-                    }
-                  }
-                ],
-                "modelVersion": "2021-08-01"
-              }
             },
             {
-              "lastUpdateDateTime": "2021-12-14T18:53:22.9224168Z",
+              "kind": "EntityRecognitionLROResults",
               "taskName": "2",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-06-09T17:29:39.8686681Z",
+              "status": "succeeded",
               "results": {
                 "documents": [
                   {
                     "id": "5",
-                    "sentences": [
+                    "entities": [
                       {
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.",
-                        "rankScore": 1.0,
-                        "offset": 0,
-                        "length": 295
+                        "text": "cent",
+                        "category": "Quantity",
+                        "subcategory": "Percentage",
+                        "offset": 4,
+                        "length": 4,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "Government Accountability Office",
+                        "category": "Organization",
+                        "offset": 23,
+                        "length": 32,
+                        "confidenceScore": 0.99
+                      },
+                      {
+                        "text": "GAO",
+                        "category": "Organization",
+                        "offset": 57,
+                        "length": 3,
+                        "confidenceScore": 0.94
+                      },
+                      {
+                        "text": "oil",
+                        "category": "Product",
+                        "offset": 98,
+                        "length": 3,
+                        "confidenceScore": 0.67
+                      },
+                      {
+                        "text": "natural",
+                        "category": "Product",
+                        "offset": 106,
+                        "length": 7,
+                        "confidenceScore": 0.68
+                      },
+                      {
+                        "text": "gas",
+                        "category": "Skill",
+                        "offset": 114,
+                        "length": 3,
+                        "confidenceScore": 0.57
+                      },
+                      {
+                        "text": "development",
+                        "category": "Skill",
+                        "offset": 118,
+                        "length": 11,
+                        "confidenceScore": 0.48
+                      },
+                      {
+                        "text": "past six years",
+                        "category": "DateTime",
+                        "subcategory": "DateRange",
+                        "offset": 156,
+                        "length": 14,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "BLM",
+                        "category": "Organization",
+                        "offset": 202,
+                        "length": 3,
+                        "confidenceScore": 0.96
+                      },
+                      {
+                        "text": "environmental protection",
+                        "category": "Skill",
+                        "offset": 253,
+                        "length": 24,
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -447,7 +349,7 @@
                     "id": "2",
                     "error": {
                       "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
+                      "message": "Invalid Document in request.",
                       "innererror": {
                         "code": "InvalidDocument",
                         "message": "Document text is empty."
@@ -455,7 +357,7 @@
                     }
                   }
                 ],
-                "modelVersion": "2021-08-01"
+                "modelVersion": "2021-06-01"
               }
             }
           ]

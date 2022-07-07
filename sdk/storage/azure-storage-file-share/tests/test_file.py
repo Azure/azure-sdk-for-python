@@ -7,18 +7,15 @@
 # --------------------------------------------------------------------------
 import base64
 import os
-import unittest
 from datetime import datetime, timedelta
 
-import requests
 import pytest
+import requests
 import uuid
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
-
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from azure.storage.blob import BlobServiceClient
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.fileshare import (
     generate_account_sas,
     generate_file_sas,
@@ -33,9 +30,11 @@ from azure.storage.fileshare import (
     AccountSasPermissions,
     StorageErrorCode,
     NTFSAttributes)
-from azure.storage.fileshare._parser import _datetime_to_str
-from devtools_testutils.storage import StorageTestCase
+
 from settings.testcase import FileSharePreparer
+from devtools_testutils.storage import StorageTestCase
+from test_helpers import ProgressTracker
+
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = 'share'
 TEST_BLOB_PREFIX = 'blob'
@@ -47,9 +46,8 @@ LARGE_FILE_SIZE = 64 * 1024 + 5
 TEST_FILE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-' \
                         '1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;' \
                         'S-1-5-21-397955417-626881126-188441444-3053964)'
-
-
 # ------------------------------------------------------------------------------
+
 
 class StorageFileTest(StorageTestCase):
     def _setup(self, storage_account_name, storage_account_key, rmt_account=None, rmt_key=None):
@@ -787,7 +785,7 @@ class StorageFileTest(StorageTestCase):
 
         # Act
         data = b'abcdefghijklmnop' * 32
-        file_client.upload_range(data, offset=0, length=512, file_last_written_mode="Now")
+        file_client.upload_range(data, offset=0, length=512, file_last_write_mode="Now")
 
         # Assert
         new_last_write_time = file_client.get_file_properties().last_write_time
@@ -801,7 +799,7 @@ class StorageFileTest(StorageTestCase):
 
         # Act
         data = b'abcdefghijklmnop' * 32
-        file_client.upload_range(data, offset=0, length=512, file_last_written_mode="Preserve")
+        file_client.upload_range(data, offset=0, length=512, file_last_write_mode="Preserve")
 
         # Assert
         new_last_write_time = file_client.get_file_properties().last_write_time
@@ -982,7 +980,7 @@ class StorageFileTest(StorageTestCase):
 
         # Act
         destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
-                                                      file_last_written_mode="Now")
+                                                      file_last_write_mode="Now")
 
         # Assert
         new_last_write_time = destination_file_client.get_file_properties().last_write_time
@@ -1011,7 +1009,7 @@ class StorageFileTest(StorageTestCase):
 
         # Act
         destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
-                                                      file_last_written_mode="Preserve")
+                                                      file_last_write_mode="Preserve")
 
         # Assert
         new_last_write_time = destination_file_client.get_file_properties().last_write_time
@@ -1312,6 +1310,7 @@ class StorageFileTest(StorageTestCase):
 
         file_creation_time = source_props.creation_time - timedelta(hours=1)
         file_last_write_time = source_props.last_write_time - timedelta(hours=1)
+        file_change_time = source_props.change_time - timedelta(hours=1)
         file_attributes = "Temporary|NoScrubData"
 
         # Act
@@ -1322,6 +1321,7 @@ class StorageFileTest(StorageTestCase):
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
             file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time,
         )
 
         # Assert
@@ -1329,6 +1329,7 @@ class StorageFileTest(StorageTestCase):
         # to make sure the attributes are the same as the set ones
         self.assertEqual(file_creation_time, dest_prop['creation_time'])
         self.assertEqual(file_last_write_time, dest_prop['last_write_time'])
+        self.assertEqual(file_change_time, dest_prop['change_time'])
         self.assertIn('Temporary', dest_prop['file_attributes'])
         self.assertIn('NoScrubData', dest_prop['file_attributes'])
 
@@ -1983,6 +1984,50 @@ class StorageFileTest(StorageTestCase):
 
         # Assert
 
+    @FileSharePreparer()
+    def test_create_file_progress(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key,
+            max_range_size=1024)
+
+        data = b'a' * 5 * 1024
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        file_client.upload_file(data, progress_hook=progress.assert_progress)
+
+        # Assert
+        progress.assert_complete()
+
+    @pytest.mark.live_test_only
+    @FileSharePreparer()
+    def test_create_file_progress_parallel(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        self._setup(storage_account_name, storage_account_key)
+
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key,
+            max_range_size=1024)
+
+        data = b'a' * 5 * 1024
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        file_client.upload_file(data, progress_hook=progress.assert_progress, max_concurrency=3)
+
+        # Assert
+        progress.assert_complete()
+
     # --Test cases for sas & acl ------------------------------------------------
     @FileSharePreparer()
     def test_sas_access_file(self, storage_account_name, storage_account_key):
@@ -2357,20 +2402,17 @@ class StorageFileTest(StorageTestCase):
     def test_rename_file_content_type(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         source_file = self._create_file('file1')
-
-        content_settings = ContentSettings (
-            content_type='text/plain'
-        )
+        content_type = 'text/plain'
 
         # Act
         new_file = source_file.rename_file(
             'file2',
-            content_settings=content_settings)
+            content_type=content_type)
 
         # Assert
         props = new_file.get_file_properties()
         self.assertIsNotNone(props)
-        self.assertEqual(content_settings.content_type, props.content_settings.content_type)
+        self.assertEqual(content_type, props.content_settings.content_type)
 
     @FileSharePreparer()
     def test_rename_file_with_lease(self, storage_account_name, storage_account_key):

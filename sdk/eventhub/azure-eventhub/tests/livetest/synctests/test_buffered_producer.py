@@ -456,128 +456,6 @@ def test_send_with_timing_configuration(connection_str):
     receive_thread.join()
 
 
-def test_send_failure_cases(connection_str):
-    sent_events = defaultdict(list)
-
-    def on_success(events, pid):
-        sent_events[pid].extend(events)
-
-    def on_error(events, pid, err):
-        assert len(events) == 1
-        assert pid == "0"
-        on_error.err = err
-
-    executor = ThreadPoolExecutor()
-    on_error.err = None
-
-    with EventHubProducerClient.from_connection_string(
-            connection_str, buffered_mode=True, on_success=on_success, on_error=on_error
-    ) as producer:
-        # init the underlying producer
-        producer.send_event(EventData('data'), partition_id="0")
-        producer.flush()
-
-        # error case: underlying producer send timed out
-        producer.send_event(EventData('data'), partition_id="0")
-        producer.flush(timeout=0.01)
-        assert type(on_error.err) == OperationTimeoutError
-
-    with EventHubProducerClient.from_connection_string(
-            connection_str, buffered_mode=True, on_success=on_success, on_error=on_error
-    ) as producer:
-        # init the underlying producer
-        producer.send_event(EventData('data'), partition_id="0")
-        producer.flush()
-
-        # error case: raw producer send error
-        def error_send(self, **kwargs):
-            raise EventDataSendError("Send failure")
-
-        raw_producer = producer._buffered_producer_dispatcher._buffered_producers["0"]._producer
-        original_send = raw_producer.send
-        raw_producer.send = error_send
-        producer.send_event(EventData('data'), partition_id="0")
-        producer.flush()
-        assert type(on_error.err) == EventDataSendError
-        raw_producer.send = original_send
-
-    with EventHubProducerClient.from_connection_string(
-            connection_str, buffered_mode=True, on_success=on_success, on_error=on_error
-    ) as producer:
-        # init the underlying producer
-        producer.send_event(EventData('data'), partition_id="0")
-        producer.flush()
-
-        # error case: enqueue time out
-        with pytest.raises(OperationTimeoutError):
-            # mock back pressure
-            producer._buffered_producer_dispatcher._buffered_producers["0"]._not_full.acquire()
-            future = executor.submit(producer.send_event, EventData('data'), partition_id='0', timeout=1)
-            time.sleep(2)
-            producer._buffered_producer_dispatcher._buffered_producers["0"]._not_full.release()
-            future.result()
-
-    with EventHubProducerClient.from_connection_string(
-            connection_str, buffered_mode=True, on_success=on_success, on_error=on_error
-    ) as producer:
-        producer._max_wait_time = 0  # disable background flush
-        # init the underlying producer
-        producer.send_event(EventData('data'), partition_id="0")
-        producer.flush()
-
-        # error case: flush error, unable to flush/backpressure
-        with pytest.raises(EventDataSendError):
-            # mock back pressure
-            producer.send_event(EventData('back pressure event1'), partition_id='0')
-            producer._buffered_producer_dispatcher._buffered_producers["0"]._not_full.acquire()
-            future = executor.submit(producer.flush, timeout=1)
-            time.sleep(10)
-            producer._buffered_producer_dispatcher._buffered_producers["0"]._not_full.release()
-            future.result()
-
-        # event is still in the queue
-        producer.flush()
-        assert sent_events['0'][-1].body_as_str() == 'back pressure event1'
-
-    with EventHubProducerClient.from_connection_string(
-            connection_str, buffered_mode=True, on_success=on_success, on_error=on_error
-    ) as producer:
-        # init the underlying producer
-        producer.send_event(EventData('data'), partition_id="0")
-        producer.flush()
-
-        # error case: close error, unable to flush/backpressure in timeout
-        with pytest.raises(EventHubError):
-            # mock back pressure
-            producer.send_event(EventData('back pressure event2'), partition_id='0')
-            producer._buffered_producer_dispatcher._buffered_producers["0"]._not_full.acquire()
-            future = executor.submit(producer.close, timeout=1)
-            time.sleep(5)
-            producer._buffered_producer_dispatcher._buffered_producers["0"]._not_full.release()
-            future.result()
-
-        # event is still in the queue
-        producer.flush()
-        assert sent_events['0'][-1].body_as_str() == 'back pressure event2'
-
-    with EventHubProducerClient.from_connection_string(
-            connection_str, buffered_mode=True, on_success=on_success, on_error=on_error
-    ) as producer:
-        # init the underlying producer
-        producer.send_event(EventData('data'), partition_id="0")
-        producer.flush()
-
-        # error case: enqueue error, time out
-        def error_put_events(self, events, timeout=None):
-            raise OperationTimeoutError("Times out")
-
-        original_put_events = producer._buffered_producer_dispatcher._buffered_producers["0"].put_events
-        producer._buffered_producer_dispatcher._buffered_producers["0"].put_events = error_put_events
-        with pytest.raises(OperationTimeoutError):
-            producer.send_event(EventData('data'), partition_id="0", timeout=1)
-        producer._buffered_producer_dispatcher._buffered_producers["0"].put_events = original_put_events
-
-
 @pytest.mark.liveTest
 def test_long_sleep(connection_str):
     received_events = defaultdict(list)
@@ -608,7 +486,7 @@ def test_long_sleep(connection_str):
 
     with producer:
         producer.send_event(EventData("test"), partition_id="0")
-        time.sleep(300)
+        time.sleep(220)
         producer.send_event(EventData("test"), partition_id="0")
         time.sleep(5)
 

@@ -6,7 +6,7 @@ import os
 import pytest
 import platform
 import functools
-
+import json
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest
@@ -603,15 +603,6 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
-    @recorded_by_proxy_async
-    async def test_recognize_pii_entities_v3(self, client):
-        with pytest.raises(ValueError) as excinfo:
-            await client.recognize_pii_entities(["this should fail"])
-
-        assert "'recognize_pii_entities' endpoint is only available for API version V3_1 and up" in str(excinfo.value)
-
-    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_redacted_text(self, client):
@@ -669,15 +660,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         assert entity.category == PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER.value
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
-    @recorded_by_proxy_async
-    async def test_string_index_type_explicit_fails_v3(self, client):
-        with pytest.raises(ValueError) as excinfo:
-            await client.recognize_pii_entities(["this should fail"], string_index_type="UnicodeCodePoint")
-        assert "'string_index_type' is only available for API version V3_1 and up" in str(excinfo.value)
-
-    @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy_async
     async def test_default_string_index_type_is_UnicodeCodePoint(self, client):
         def callback(response):
@@ -689,20 +672,45 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy_async
-    async def test_explicit_set_string_index_type(self, client):
+    async def test_default_string_index_type_UnicodeCodePoint_body_param(self, client):
         def callback(response):
-            assert response.http_request.query["stringIndexType"] == "TextElements_v8"
+            assert json.loads(response.http_request.body)['parameters']["stringIndexType"] == "UnicodeCodePoint"
 
         res = await client.recognize_pii_entities(
             documents=["Hello world"],
-            string_index_type="TextElements_v8",
             raw_response_hook=callback
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
+    @recorded_by_proxy_async
+    async def test_explicit_set_string_index_type(self, client):
+        def callback(response):
+            assert response.http_request.query["stringIndexType"] == "TextElement_v8"
+
+        res = await client.recognize_pii_entities(
+            documents=["Hello world"],
+            string_index_type="TextElement_v8",
+            raw_response_hook=callback
+        )
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
+    @recorded_by_proxy_async
+    async def test_explicit_set_string_index_type_body_param(self, client):
+        def callback(response):
+            assert json.loads(response.http_request.body)['parameters']["stringIndexType"] == "TextElements_v8"
+
+        res = await client.recognize_pii_entities(
+            documents=["Hello world"],
+            string_index_type="TextElement_v8",
+            raw_response_hook=callback
+        )
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy_async
     async def test_disable_service_logs(self, client):
         def callback(resp):
@@ -712,3 +720,26 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             disable_service_logs=True,
             raw_response_hook=callback,
         )
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
+    @recorded_by_proxy_async
+    async def test_disable_service_logs_body_param(self, client):
+        def callback(resp):
+            assert json.loads(resp.http_request.body)['parameters']['loggingOptOut']
+        await client.recognize_pii_entities(
+            documents=["Test for logging disable"],
+            disable_service_logs=True,
+            raw_response_hook=callback,
+        )
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.0"})
+    async def test_pii_entities_multiapi_validate_v3_0(self, **kwargs):
+        client = kwargs.pop("client")
+
+        with pytest.raises(ValueError) as e:
+            await client.recognize_pii_entities(
+                documents=["Test"]
+            )
+        assert str(e.value) == "'recognize_pii_entities' is only available for API version v3.1 and up."

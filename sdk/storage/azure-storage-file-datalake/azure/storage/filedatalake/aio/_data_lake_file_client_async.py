@@ -101,6 +101,31 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
+        :keyword str owner:
+            The owner of the file or directory.
+        :keyword str group:
+            The owning group of the file or directory.
+        :keyword str acl:
+            Sets POSIX access control rights on files and directories. The value is a
+            comma-separated list of access control entries. Each access control entry (ACE) consists of a
+            scope, a type, a user or group identifier, and permissions in the format
+            "[scope:][type]:[id]:[permissions]".
+        :keyword str lease_id:
+            Proposed lease ID, in a GUID string format. The DataLake service returns
+            400 (Invalid request) if the proposed lease ID is not in the correct format.
+        :keyword int lease_duration:
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change.
+        :keyword expires_on:
+            The time to set the file to expiry.
+            If the type of expires_on is an int, expiration time will be set
+            as the number of milliseconds elapsed from creation time.
+            If the type of expires_on is datetime, expiration time will be set
+            absolute to the time provided. If no time zone info is provided, this
+            will be interpreted as UTC.
+        :paramtype expires_on: datetime or int
         :keyword str permissions:
             Optional and only valid if Hierarchical Namespace
             is enabled for the account. Sets POSIX access permissions for the file
@@ -595,9 +620,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             "{}://{}".format(self.scheme, self.primary_hostname), new_file_system, file_path=new_path,
             credential=self._raw_credential or new_file_sas,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            _location_mode=self._location_mode)
         await new_file_client._rename_path(  # pylint: disable=protected-access
             '/{}/{}{}'.format(quote(unquote(self.file_system_name)),
                               quote(unquote(self.path_name)),

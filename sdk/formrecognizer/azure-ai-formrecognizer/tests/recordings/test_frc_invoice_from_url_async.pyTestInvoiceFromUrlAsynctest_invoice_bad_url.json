@@ -8,25 +8,26 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "32",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "bad223df-5ef3-11ec-859e-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
-      "RequestBody": "{\u0022source\u0022: \u0022https://badurl.jpg\u0022}",
+      "RequestBody": {
+        "source": "https://badurl.jpg"
+      },
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "71288f18-d135-4ef1-8786-b1ee0ff4be27",
+        "apim-request-id": "4a6edc38-21fb-4d34-8be3-f3c40f221e68",
         "Content-Length": "161",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Dec 2021 04:42:27 GMT",
+        "Date": "Fri, 24 Jun 2022 00:51:20 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "3192"
+        "x-envoy-upstream-service-time": "3274"
       },
       "ResponseBody": {
         "error": {
           "code": "FailedToDownloadImage",
           "innerError": {
-            "requestId": "71288f18-d135-4ef1-8786-b1ee0ff4be27"
+            "requestId": "4a6edc38-21fb-4d34-8be3-f3c40f221e68"
           },
           "message": "Failed to download image from input URL."
         }

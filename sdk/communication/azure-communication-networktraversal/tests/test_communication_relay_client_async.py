@@ -7,7 +7,6 @@
 from azure.core.credentials import AccessToken
 from azure.communication.identity.aio import CommunicationIdentityClient
 from azure.communication.networktraversal import RouteType
-from azure.communication.identity._api_versions import ApiVersion
 from azure.communication.networktraversal.aio import CommunicationRelayClient
 from _shared.helper import URIIdentityReplacer
 from _shared.testcase import (

@@ -27,9 +27,7 @@ import json
 from io import StringIO
 
 import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos import exceptions
-from azure.identity import ClientSecretCredential
-from azure.core import exceptions
+from azure.cosmos import exceptions, PartitionKey
 from azure.core.credentials import AccessToken
 import test_config
 
@@ -114,19 +112,10 @@ class AadTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.database = test_config._test_config.create_database_if_not_exist(cls.client)
-        cls.container = test_config._test_config.create_collection_if_not_exist_no_custom_throughput(cls.client)
-
-    def test_wrong_credentials(self):
-        wrong_aad_credentials = ClientSecretCredential(
-            "wrong_tenant_id",
-            "wrong_client_id",
-            "wrong_client_secret")
-
-        try:
-            cosmos_client.CosmosClient(self.host, wrong_aad_credentials)
-        except exceptions.ClientAuthenticationError as e:
-            print("Client successfully failed to authenticate with message: {}".format(e.message))
+        cls.database = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
+        cls.container = cls.database.create_container_if_not_exists(
+            id=test_config._test_config.TEST_COLLECTION_SINGLE_PARTITION_ID,
+            partition_key=PartitionKey(path="/id"))
 
     def test_emulator_aad_credentials(self):
         if self.host != 'https://localhost:8081/':

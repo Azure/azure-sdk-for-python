@@ -11,6 +11,7 @@ from azure.eventhub.aio._buffered_producer._partition_resolver_async import Part
 
 class TestPartitionResolver:
 
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("partition_cnt", [1, 2, 16, 32, 256])
     async def test_basic_round_robin(self, partition_cnt):
         partitions = [str(i) for i in range(partition_cnt)]
@@ -20,6 +21,7 @@ class TestPartitionResolver:
             real = await pr.get_next_partition_id()
             assert expected == real
 
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("partition_cnt", [1, 2, 16, 32, 256])
     async def test_concurrent_round_robin_fairly(self, partition_cnt):
         partitions = [str(i) for i in range(partition_cnt)]

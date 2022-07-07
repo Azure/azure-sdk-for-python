@@ -7,7 +7,7 @@ import base64
 import functools
 import json
 import datetime
-from typing import Generic, Any, Optional
+from typing import Any, Optional
 from urllib.parse import urlencode
 from azure.core.polling._poller import PollingReturnType
 from azure.core.exceptions import HttpResponseError
@@ -18,10 +18,11 @@ from azure.core.polling.base_polling import (
     OperationFailed,
     BadStatus,
 )
+from ._generated.v2022_05_01.models import JobState
 
-_FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted"])
+_FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted", "partiallysucceeded"])
 _FAILED = frozenset(["failed"])
-_SUCCEEDED = frozenset(["succeeded", "partiallycompleted"])
+_SUCCEEDED = frozenset(["succeeded", "partiallycompleted", "partiallysucceeded"])
 
 
 class TextAnalyticsOperationResourcePolling(OperationResourcePolling):
@@ -38,9 +39,12 @@ class TextAnalyticsOperationResourcePolling(OperationResourcePolling):
         if not self._show_stats:
             return super().get_polling_url()
 
+        # language api compat
+        delimiter = "&" if super().get_polling_url().find("?") != -1 else "?"
+
         return (
             super().get_polling_url()
-            + "?"
+            + delimiter
             + urlencode(self._query_params)
         )
 
@@ -124,9 +128,7 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
 
     @property
     def _current_body(self):
-        from ._generated.models import JobMetadata
-
-        return JobMetadata.deserialize(self._pipeline_response)
+        return JobState.deserialize(self._pipeline_response)
 
     @property
     def created_on(self):
@@ -152,6 +154,12 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
             return None
         return self._current_body.job_id
 
+    @property
+    def display_name(self):
+        if not self._current_body:
+            return None
+        return self._current_body.display_name
+
     def get_continuation_token(self):
         # type: () -> str
         import pickle
@@ -160,7 +168,7 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
         return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
 
 
-class AnalyzeHealthcareEntitiesLROPoller(LROPoller, Generic[PollingReturnType]):
+class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType]):
     def polling_method(self) -> AnalyzeHealthcareEntitiesLROPollingMethod:
         """Return the polling method associated to this poller."""
         return self._polling_method  # type: ignore
@@ -200,6 +208,18 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller, Generic[PollingReturnType]):
         :rtype: str
         """
         return self.polling_method().id
+
+    @property
+    def display_name(self) -> str:
+        """Given display_name to the healthcare entities job
+
+        :return: Display name of the healthcare entities job.
+        :rtype: str
+
+        .. versionadded:: 2022-04-01-preview
+            *display_name* property.
+        """
+        return self.polling_method().display_name
 
     @classmethod
     def from_continuation_token(  # type: ignore
@@ -245,17 +265,22 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller, Generic[PollingReturnType]):
 
         try:
             # Join the thread so we no longer have to wait for a result from it.
-            getattr(self, "_thread").join()
+            getattr(self, "_thread").join(timeout=0)
 
             # Get a final status update.
             getattr(self._polling_method, "update_status")()
 
-            return getattr(
+            client = getattr(
                 self._polling_method, "_text_analytics_client"
-            ).begin_cancel_health_job(
-                self.id, polling=TextAnalyticsLROPollingMethod(timeout=polling_interval)
             )
-
+            try:
+                return client.begin_cancel_health_job(
+                    self.id, polling=TextAnalyticsLROPollingMethod(timeout=polling_interval)
+                )
+            except ValueError:  # language API compat
+                return client.begin_analyze_text_cancel_job(
+                    self.id, polling=TextAnalyticsLROPollingMethod(timeout=polling_interval)
+                )
         except HttpResponseError as error:
             from ._response_handlers import process_http_response_error
 
@@ -271,9 +296,7 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
 
     @property
     def _current_body(self):
-        from ._generated.models import AnalyzeJobMetadata
-
-        return AnalyzeJobMetadata.deserialize(self._pipeline_response)
+        return JobState.deserialize(self._pipeline_response)
 
     @property
     def created_on(self):
@@ -338,7 +361,7 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
         return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
 
 
-class AnalyzeActionsLROPoller(LROPoller, Generic[PollingReturnType]):
+class AnalyzeActionsLROPoller(LROPoller[PollingReturnType]):
     def polling_method(self) -> AnalyzeActionsLROPollingMethod:
         """Return the polling method associated to this poller."""
         return self._polling_method  # type: ignore

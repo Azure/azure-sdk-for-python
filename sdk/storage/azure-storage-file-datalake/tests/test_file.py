@@ -99,6 +99,94 @@ class FileTest(StorageTestCase):
         self.assertIsNotNone(response)
 
     @DataLakePreparer()
+    def test_create_file_owner_group_acl(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        test_string = '4cf4e284-f6a8-4540-b53e-c3469af032dc'
+        test_string_acl = 'user::rwx,group::r-x,other::rwx'
+        # Arrange
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        file_client.create_file(owner=test_string, group=test_string, acl=test_string_acl)
+
+        # Assert
+        acl_properties = file_client.get_access_control()
+        self.assertIsNotNone(acl_properties)
+        self.assertEqual(acl_properties['owner'], test_string)
+        self.assertEqual(acl_properties['group'], test_string)
+        self.assertEqual(acl_properties['acl'], test_string_acl)
+
+    @DataLakePreparer()
+    def test_create_file_proposed_lease_id(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        test_string = '4cf4e284-f6a8-4540-b53e-c3469af032dc'
+        test_duration = 15
+        # Arrange
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        file_client.create_file(lease_id=test_string, lease_duration=test_duration)
+
+        # Assert
+        properties = file_client.get_file_properties()
+        self.assertIsNotNone(properties)
+        self.assertEqual(properties.lease['status'], 'locked')
+        self.assertEqual(properties.lease['state'], 'leased')
+        self.assertEqual(properties.lease['duration'], 'fixed')
+
+    @DataLakePreparer()
+    def test_create_file_relative_expiry(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        test_expiry_time = 86400000  # 1 day in milliseconds
+        # Arrange
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        file_client.create_file(expires_on=test_expiry_time)
+
+        # Assert
+        file_properties = file_client.get_file_properties()
+        expiry_time = file_properties['expiry_time']
+        expiry_time = expiry_time.replace(tzinfo=None)  # Strip timezone info to be able to compare
+        creation_time = file_properties['creation_time']
+        creation_time = creation_time.replace(tzinfo=None)  # Strip timezone info to be able to compare
+        self.assertIsNotNone(file_properties)
+        self.assertAlmostEqual(expiry_time, creation_time + timedelta(days=1), delta=timedelta(seconds=60))
+
+    @DataLakePreparer()
+    def test_create_file_absolute_expiry(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        test_expiry_time = datetime(2075, 4, 4)
+        # Arrange
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        file_client.create_file(expires_on=test_expiry_time)
+
+        # Assert
+        file_properties = file_client.get_file_properties()
+        expiry_time = file_properties['expiry_time']
+        expiry_time = expiry_time.replace(tzinfo=None)  # Strip timezone info to be able to compare
+        self.assertIsNotNone(file_properties)
+        self.assertAlmostEqual(expiry_time, test_expiry_time, delta=timedelta(seconds=1))
+
+    @DataLakePreparer()
     def test_create_file_extra_backslashes(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
@@ -108,7 +196,7 @@ class FileTest(StorageTestCase):
                                              file_client.file_system_name + '/',
                                              '/' + file_client.path_name,
                                              credential=datalake_storage_account_key, logging_enable=True)
-        response = file_client.create_file()
+        response = new_file_client.create_file()
 
         # Assert
         self.assertIsNotNone(response)
@@ -859,10 +947,10 @@ class FileTest(StorageTestCase):
         self.assertEqual(data, data_bytes)
         self.assertEqual(new_client.path_name, "newname")
 
+    @pytest.mark.skip(reason="Service bug, requires further investigation.")
     @DataLakePreparer()
     def test_rename_file_with_account_sas(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        pytest.skip("service bug")
         token = generate_account_sas(
             self.dsc.account_name,
             self.dsc.credential.account_key,

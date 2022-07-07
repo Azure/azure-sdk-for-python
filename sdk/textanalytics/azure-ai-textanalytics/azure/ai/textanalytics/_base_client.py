@@ -17,10 +17,10 @@ if TYPE_CHECKING:
 
 
 class TextAnalyticsApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Text Analytics API versions supported by this package"""
+    """Cognitive Service for Language or Text Analytics API versions supported by this package"""
 
     #: this is the default version
-    V3_2_PREVIEW = "v3.2-preview.2"
+    V2022_05_01 = "2022-05-01"
     V3_1 = "v3.1"
     V3_0 = "v3.0"
 
@@ -69,6 +69,7 @@ class TextAnalyticsClientBase:
                 "$top",
                 "$skip",
                 "opinionMining",
+                "api-version"
             }
         )
         try:

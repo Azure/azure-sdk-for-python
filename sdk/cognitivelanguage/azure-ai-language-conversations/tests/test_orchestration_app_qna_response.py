@@ -15,15 +15,6 @@ from testcase import (
 )
 
 from azure.ai.language.conversations import ConversationAnalysisClient
-from azure.ai.language.conversations.models import (
-    CustomConversationalTaskResult,
-    QuestionAnsweringTargetIntentResult,
-    OrchestratorPrediction,
-    CustomConversationalTask,
-    ConversationAnalysisOptions,
-    CustomConversationTaskParameters,
-    TextConversationItem
-)
 
 class OrchestrationAppQnaResponseTests(ConversationTest):
 
@@ -35,36 +26,43 @@ class OrchestrationAppQnaResponseTests(ConversationTest):
         with client:
             query = "How are you?"
             result = client.analyze_conversation(
-                task=CustomConversationalTask(
-                    analysis_input=ConversationAnalysisOptions(
-                        conversation_item=TextConversationItem(
-                            id=1,
-                            participant_id=1,
-                            text=query
-                        )
-                    ),
-                    parameters=CustomConversationTaskParameters(
-                        project_name=orch_project_name,
-                        deployment_name=orch_deployment_name
-                    )
-                )
+                task={
+                    "kind": "Conversation",
+                    "analysisInput": {
+                        "conversationItem": {
+                            "participantId": "1",
+                            "id": "1",
+                            "modality": "text",
+                            "language": "en",
+                            "text": query
+                        },
+                        "isLoggingEnabled": False
+                    },
+                    "parameters": {
+                        "projectName": orch_project_name,
+                        "deploymentName": orch_deployment_name,
+                        "verbose": True
+                    }
+                }
             )
 
             # assert - main object
             top_project = 'ChitChat-QnA'
             assert not result is None
-            assert isinstance(result, CustomConversationalTaskResult)
-            assert result.results.query == query
+            assert result["kind"] == "ConversationResult"
+            assert result["result"]["query"] == query
+            
             # assert - prediction type
-            assert isinstance(result.results.prediction, OrchestratorPrediction)
-            assert result.results.prediction.project_kind == "workflow"
+            assert result["result"]["prediction"]["projectKind"] == "Orchestration"
+            
             # assert - top matching project
-            assert result.results.prediction.top_intent == top_project
-            top_intent_object = result.results.prediction.intents[top_project]
-            assert isinstance(top_intent_object, QuestionAnsweringTargetIntentResult)
-            assert top_intent_object.target_kind == "question_answering"
+            assert result["result"]["prediction"]["topIntent"] == top_project
+            top_intent_object = result["result"]["prediction"]["intents"][top_project]
+            assert top_intent_object["targetProjectKind"] == "QuestionAnswering"
+            
             # assert intent and entities
-            qna_result = top_intent_object.result
-            answer = qna_result.answers[0].answer
+            qna_result = top_intent_object["result"]
+            answer = qna_result["answers"][0]["answer"]
             assert not answer is None
+            assert qna_result["answers"][0]["confidenceScore"] >= 0
 

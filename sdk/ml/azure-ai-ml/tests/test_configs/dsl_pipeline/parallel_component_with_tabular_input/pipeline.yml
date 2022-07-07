@@ -1,0 +1,35 @@
+type: pipeline
+
+compute: azureml:cpu-cluster
+
+inputs:
+  pipeline_job_data_path:
+    type: mltable
+    path: ./dataset/iris-mltable/
+    mode: direct
+  pipeline_score_model:
+    type: uri_folder
+    path: ./model
+    mode: download
+
+outputs:
+  pipeline_job_out_path:
+    type: uri_file
+    mode: rw_mount
+
+jobs:
+  batch_inference_node1:
+    type: parallel
+    compute: azureml:cpu-cluster
+    component: file:./tabular_input_e2e.yml
+    inputs:
+      job_data_path: ${{parent.inputs.pipeline_job_data_path}}
+      score_model: ${{parent.inputs.pipeline_score_model}}
+    outputs:
+      job_out_path: ${{parent.outputs.pipeline_job_out_path}}
+
+    mini_batch_size: "100"
+    mini_batch_error_threshold: 5
+    logging_level: "DEBUG"
+    input_data: ${{inputs.job_data_path}}
+    max_concurrency_per_instance: 2

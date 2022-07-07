@@ -1,82 +1,127 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/languages",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "249",
+        "Content-Length": "315",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "f044e89e-5d10-11ec-9cb5-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022countryHint\u0022: \u0022US\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022countryHint\u0022: \u0022US\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food.\u0022, \u0022countryHint\u0022: \u0022US\u0022}]}",
+      "RequestBody": {
+        "kind": "LanguageDetection",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "I will go to the park.",
+              "countryHint": "US"
+            },
+            {
+              "id": "2",
+              "text": "I did not like the hotel we stayed at.",
+              "countryHint": "US"
+            },
+            {
+              "id": "3",
+              "text": "The restaurant had really good food.",
+              "countryHint": "US"
+            }
+          ]
+        },
+        "parameters": {}
+      },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "7005c437-16e3-4d09-b870-d2b96e039ee2",
+        "apim-request-id": "3bf81bc5-0135-4195-91e1-ce2d9ce43e7f",
+        "Content-Length": "415",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Tue, 14 Dec 2021 19:06:27 GMT",
+        "Date": "Wed, 08 Jun 2022 01:33:24 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
         "x-envoy-upstream-service-time": "8"
       },
       "ResponseBody": {
-        "documents": [
-          {
-            "id": "1",
-            "detectedLanguage": {
-              "name": "English",
-              "iso6391Name": "en",
-              "confidenceScore": 0.99
+        "kind": "LanguageDetectionResults",
+        "results": {
+          "documents": [
+            {
+              "id": "1",
+              "detectedLanguage": {
+                "name": "English",
+                "iso6391Name": "en",
+                "confidenceScore": 0.98
+              },
+              "warnings": []
             },
-            "warnings": []
-          },
-          {
-            "id": "2",
-            "detectedLanguage": {
-              "name": "English",
-              "iso6391Name": "en",
-              "confidenceScore": 1.0
+            {
+              "id": "2",
+              "detectedLanguage": {
+                "name": "English",
+                "iso6391Name": "en",
+                "confidenceScore": 1.0
+              },
+              "warnings": []
             },
-            "warnings": []
-          },
-          {
-            "id": "3",
-            "detectedLanguage": {
-              "name": "English",
-              "iso6391Name": "en",
-              "confidenceScore": 0.99
-            },
-            "warnings": []
-          }
-        ],
-        "errors": [],
-        "modelVersion": "2021-01-05"
+            {
+              "id": "3",
+              "detectedLanguage": {
+                "name": "English",
+                "iso6391Name": "en",
+                "confidenceScore": 0.99
+              },
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-11-20"
+        }
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/languages",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "249",
+        "Content-Length": "315",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "f05f4cf2-5d10-11ec-b0ec-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022countryHint\u0022: \u0022US\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022countryHint\u0022: \u0022US\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food.\u0022, \u0022countryHint\u0022: \u0022US\u0022}]}",
+      "RequestBody": {
+        "kind": "LanguageDetection",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "I will go to the park.",
+              "countryHint": "US"
+            },
+            {
+              "id": "2",
+              "text": "I did not like the hotel we stayed at.",
+              "countryHint": "US"
+            },
+            {
+              "id": "3",
+              "text": "The restaurant had really good food.",
+              "countryHint": "US"
+            }
+          ]
+        },
+        "parameters": {}
+      },
       "StatusCode": 401,
       "ResponseHeaders": {
-        "apim-request-id": "f9e6fd43-1c8f-49c4-9732-78b6c0d51866",
+        "apim-request-id": "b53e76bb-4634-450e-9c79-4cc8cf61cc85",
         "Content-Length": "224",
         "Content-Type": "application/json",
-        "Date": "Tue, 14 Dec 2021 19:06:27 GMT"
+        "Date": "Wed, 08 Jun 2022 01:33:24 GMT"
       },
       "ResponseBody": {
         "error": {
@@ -86,61 +131,85 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/languages",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "249",
+        "Content-Length": "315",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "f07067b9-5d10-11ec-b91e-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022countryHint\u0022: \u0022US\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022countryHint\u0022: \u0022US\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food.\u0022, \u0022countryHint\u0022: \u0022US\u0022}]}",
+      "RequestBody": {
+        "kind": "LanguageDetection",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "I will go to the park.",
+              "countryHint": "US"
+            },
+            {
+              "id": "2",
+              "text": "I did not like the hotel we stayed at.",
+              "countryHint": "US"
+            },
+            {
+              "id": "3",
+              "text": "The restaurant had really good food.",
+              "countryHint": "US"
+            }
+          ]
+        },
+        "parameters": {}
+      },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "ed83c2b9-5957-496e-9107-a48d8fe20dd0",
+        "apim-request-id": "3c81cb21-e405-402d-8b79-60fa17292084",
+        "Content-Length": "415",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Tue, 14 Dec 2021 19:06:27 GMT",
+        "Date": "Wed, 08 Jun 2022 01:33:24 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "8"
+        "x-envoy-upstream-service-time": "9"
       },
       "ResponseBody": {
-        "documents": [
-          {
-            "id": "1",
-            "detectedLanguage": {
-              "name": "English",
-              "iso6391Name": "en",
-              "confidenceScore": 0.99
+        "kind": "LanguageDetectionResults",
+        "results": {
+          "documents": [
+            {
+              "id": "1",
+              "detectedLanguage": {
+                "name": "English",
+                "iso6391Name": "en",
+                "confidenceScore": 0.98
+              },
+              "warnings": []
             },
-            "warnings": []
-          },
-          {
-            "id": "2",
-            "detectedLanguage": {
-              "name": "English",
-              "iso6391Name": "en",
-              "confidenceScore": 1.0
+            {
+              "id": "2",
+              "detectedLanguage": {
+                "name": "English",
+                "iso6391Name": "en",
+                "confidenceScore": 1.0
+              },
+              "warnings": []
             },
-            "warnings": []
-          },
-          {
-            "id": "3",
-            "detectedLanguage": {
-              "name": "English",
-              "iso6391Name": "en",
-              "confidenceScore": 0.99
-            },
-            "warnings": []
-          }
-        ],
-        "errors": [],
-        "modelVersion": "2021-01-05"
+            {
+              "id": "3",
+              "detectedLanguage": {
+                "name": "English",
+                "iso6391Name": "en",
+                "confidenceScore": 0.99
+              },
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-11-20"
+        }
       }
     }
   ],
