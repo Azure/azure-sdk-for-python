@@ -28,26 +28,32 @@ from ._extension_topics_operations import ExtensionTopicsOperations
 from ._topic_types_operations import TopicTypesOperations
 from ._verified_partners_operations import VerifiedPartnersOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'ChannelsOperations',
-    'DomainsOperations',
-    'DomainTopicsOperations',
-    'TopicEventSubscriptionsOperations',
-    'DomainEventSubscriptionsOperations',
-    'EventSubscriptionsOperations',
-    'DomainTopicEventSubscriptionsOperations',
-    'SystemTopicEventSubscriptionsOperations',
-    'PartnerTopicEventSubscriptionsOperations',
-    'Operations',
-    'TopicsOperations',
-    'PartnerConfigurationsOperations',
-    'PartnerNamespacesOperations',
-    'PartnerRegistrationsOperations',
-    'PartnerTopicsOperations',
-    'PrivateEndpointConnectionsOperations',
-    'PrivateLinkResourcesOperations',
-    'SystemTopicsOperations',
-    'ExtensionTopicsOperations',
-    'TopicTypesOperations',
-    'VerifiedPartnersOperations',
+    "ChannelsOperations",
+    "DomainsOperations",
+    "DomainTopicsOperations",
+    "TopicEventSubscriptionsOperations",
+    "DomainEventSubscriptionsOperations",
+    "EventSubscriptionsOperations",
+    "DomainTopicEventSubscriptionsOperations",
+    "SystemTopicEventSubscriptionsOperations",
+    "PartnerTopicEventSubscriptionsOperations",
+    "Operations",
+    "TopicsOperations",
+    "PartnerConfigurationsOperations",
+    "PartnerNamespacesOperations",
+    "PartnerRegistrationsOperations",
+    "PartnerTopicsOperations",
+    "PrivateEndpointConnectionsOperations",
+    "PrivateLinkResourcesOperations",
+    "SystemTopicsOperations",
+    "ExtensionTopicsOperations",
+    "TopicTypesOperations",
+    "VerifiedPartnersOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

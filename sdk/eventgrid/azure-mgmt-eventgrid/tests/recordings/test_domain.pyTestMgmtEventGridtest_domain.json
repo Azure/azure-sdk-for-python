@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.8.0b2 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.8.13 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 20 Jun 2022 07:26:30 GMT",
+        "Date": "Fri, 08 Jul 2022 06:10:14 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12890.7 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13156.10 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -101,7 +101,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.8.0b2 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.8.13 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -111,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 20 Jun 2022 07:26:30 GMT",
+        "Date": "Fri, 08 Jul 2022 06:10:14 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13006.6 - SEASLR2 ProdSlices",
+        "x-ms-ests-server": "2.1.13156.10 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,28 +172,28 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "515e670a-8e04-4c8d-b2db-2cd7d4dbb434",
+        "client-request-id": "97a81fde-8c18-4922-9826-4f7a20566738",
         "Connection": "keep-alive",
         "Content-Length": "289",
         "Content-Type": "application/x-www-form-urlencoded",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.8.0b2 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
+        "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.8.13 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
-        "x-client-os": "win32",
+        "x-client-os": "linux",
         "x-client-sku": "MSAL.Python",
-        "x-client-ver": "1.16.0",
+        "x-client-ver": "1.18.0",
         "x-ms-lib-capability": "retry-after, h429"
       },
       "RequestBody": "client_id=a2df54d5-ab03-4725-9b80-9a00b3b1967f\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=0vj7Q~IsFayrD0V_8oyOfygU-GE3ELOabq95a\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.azure.com%2F.default",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "515e670a-8e04-4c8d-b2db-2cd7d4dbb434",
+        "client-request-id": "97a81fde-8c18-4922-9826-4f7a20566738",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 20 Jun 2022 07:26:31 GMT",
+        "Date": "Fri, 08 Jul 2022 06:10:14 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.12890.7 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13156.10 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -220,27 +220,27 @@
         "Connection": "keep-alive",
         "Content-Length": "23",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-mgmt-eventgrid/10.2.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-mgmt-eventgrid/0.0.0 (it should be stable) Python/3.8.13 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": {
         "location": "eastus2"
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "Azure-AsyncOperation": "https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/eastus2/operationsStatus/FB85846B-BEA2-4B71-A1F3-983352EE023C?api-version=2022-06-15",
+        "Azure-AsyncOperation": "https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/eastus2/operationsStatus/1E7309E1-3A79-4E2F-9BE2-0732466B7B24?api-version=2022-06-15",
         "Cache-Control": "no-cache",
         "Content-Length": "309",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 20 Jun 2022 07:26:38 GMT",
+        "Date": "Fri, 08 Jul 2022 06:10:15 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Retry-After": "10",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "b1defd0c-a9a9-4655-9d80-7938061a522b",
+        "x-ms-correlation-request-id": "df8ac44b-8f5c-4abd-b328-2fbc32c40fdb",
         "x-ms-ratelimit-remaining-subscription-writes": "1199",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220620T072638Z:b1defd0c-a9a9-4655-9d80-7938061a522b"
+        "x-ms-routing-request-id": "EASTUS2:20220708T061015Z:df8ac44b-8f5c-4abd-b328-2fbc32c40fdb"
       },
       "ResponseBody": {
         "properties": {
@@ -256,33 +256,35 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/eastus2/operationsStatus/FB85846B-BEA2-4B71-A1F3-983352EE023C?api-version=2022-06-15",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/eastus2/operationsStatus/1E7309E1-3A79-4E2F-9BE2-0732466B7B24?api-version=2022-06-15",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-eventgrid/10.2.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-mgmt-eventgrid/0.0.0 (it should be stable) Python/3.8.13 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "280",
+        "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 20 Jun 2022 07:26:48 GMT",
+        "Date": "Fri, 08 Jul 2022 06:10:25 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "a0d813e3-618f-4ccc-bb37-02bfab667f42",
-        "x-ms-ratelimit-remaining-subscription-reads": "11998",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220620T072649Z:a0d813e3-618f-4ccc-bb37-02bfab667f42"
+        "x-ms-correlation-request-id": "941e80b1-98b0-49ef-a138-cba29098e094",
+        "x-ms-ratelimit-remaining-subscription-reads": "11999",
+        "x-ms-routing-request-id": "EASTUS2:20220708T061025Z:941e80b1-98b0-49ef-a138-cba29098e094"
       },
       "ResponseBody": {
-        "id": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/eastus2/operationsStatus/FB85846B-BEA2-4B71-A1F3-983352EE023C?api-version=2022-06-15",
-        "name": "fb85846b-bea2-4b71-a1f3-983352ee023c",
+        "id": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/eastus2/operationsStatus/1E7309E1-3A79-4E2F-9BE2-0732466B7B24?api-version=2022-06-15",
+        "name": "1e7309e1-3a79-4e2f-9be2-0732466b7b24",
         "status": "Succeeded"
       }
     },
@@ -293,30 +295,32 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-eventgrid/10.2.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-mgmt-eventgrid/0.0.0 (it should be stable) Python/3.8.13 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "493",
+        "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 20 Jun 2022 07:26:49 GMT",
+        "Date": "Fri, 08 Jul 2022 06:10:25 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "95784b14-91cf-421b-860a-71916b907252",
-        "x-ms-ratelimit-remaining-subscription-reads": "11997",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220620T072649Z:95784b14-91cf-421b-860a-71916b907252"
+        "x-ms-correlation-request-id": "75969dbb-3482-4b9c-81ea-6aae25cc6efd",
+        "x-ms-ratelimit-remaining-subscription-reads": "11998",
+        "x-ms-routing-request-id": "EASTUS2:20220708T061025Z:75969dbb-3482-4b9c-81ea-6aae25cc6efd"
       },
       "ResponseBody": {
         "properties": {
           "provisioningState": "Succeeded",
           "endpoint": "https://domainc98a23ef.eastus2-1.eventgrid.azure.net/api/events",
           "inputSchema": "EventGridSchema",
-          "metricResourceId": "ca249b55-f104-477b-aa8f-53b1c3b8dc81",
+          "metricResourceId": "25906c26-ed5b-401c-ac29-57a7b44f24eb",
           "publicNetworkAccess": "Enabled"
         },
         "systemData": null,
@@ -336,7 +340,7 @@
         "Connection": "keep-alive",
         "Content-Length": "46",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-mgmt-eventgrid/10.2.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-mgmt-eventgrid/0.0.0 (it should be stable) Python/3.8.13 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": {
         "tags": {
@@ -346,27 +350,27 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "Azure-AsyncOperation": "https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/eastus2/operationsStatus/899D1B34-A7DA-4B1F-B912-CD78EDA31F10?api-version=2022-06-15",
+        "Azure-AsyncOperation": "https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/eastus2/operationsStatus/796D0F7B-D368-4A13-93CB-FEC58E327930?api-version=2022-06-15",
         "Cache-Control": "no-cache",
         "Content-Length": "521",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 20 Jun 2022 07:26:52 GMT",
+        "Date": "Fri, 08 Jul 2022 06:10:25 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Retry-After": "10",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "df1e3052-03ac-4366-8c32-a7dbaccdc196",
+        "x-ms-correlation-request-id": "ba5b3268-5b92-45b5-860b-7cdfd9aa6905",
         "x-ms-ratelimit-remaining-subscription-writes": "1198",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220620T072652Z:df1e3052-03ac-4366-8c32-a7dbaccdc196"
+        "x-ms-routing-request-id": "EASTUS2:20220708T061026Z:ba5b3268-5b92-45b5-860b-7cdfd9aa6905"
       },
       "ResponseBody": {
         "properties": {
           "provisioningState": "Updating",
           "endpoint": "https://domainc98a23ef.eastus2-1.eventgrid.azure.net/api/events",
           "inputSchema": "EventGridSchema",
-          "metricResourceId": "ca249b55-f104-477b-aa8f-53b1c3b8dc81",
+          "metricResourceId": "25906c26-ed5b-401c-ac29-57a7b44f24eb",
           "publicNetworkAccess": "Enabled"
         },
         "systemData": null,
@@ -381,33 +385,35 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/eastus2/operationsStatus/899D1B34-A7DA-4B1F-B912-CD78EDA31F10?api-version=2022-06-15",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/eastus2/operationsStatus/796D0F7B-D368-4A13-93CB-FEC58E327930?api-version=2022-06-15",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-eventgrid/10.2.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-mgmt-eventgrid/0.0.0 (it should be stable) Python/3.8.13 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "280",
+        "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 20 Jun 2022 07:27:02 GMT",
+        "Date": "Fri, 08 Jul 2022 06:10:35 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "2263311c-ee5f-481e-b113-67424c45e207",
-        "x-ms-ratelimit-remaining-subscription-reads": "11996",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220620T072702Z:2263311c-ee5f-481e-b113-67424c45e207"
+        "x-ms-correlation-request-id": "4757008e-35a8-4c73-bfc1-966c94e06edf",
+        "x-ms-ratelimit-remaining-subscription-reads": "11997",
+        "x-ms-routing-request-id": "EASTUS2:20220708T061036Z:4757008e-35a8-4c73-bfc1-966c94e06edf"
       },
       "ResponseBody": {
-        "id": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/eastus2/operationsStatus/899D1B34-A7DA-4B1F-B912-CD78EDA31F10?api-version=2022-06-15",
-        "name": "899d1b34-a7da-4b1f-b912-cd78eda31f10",
+        "id": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/eastus2/operationsStatus/796D0F7B-D368-4A13-93CB-FEC58E327930?api-version=2022-06-15",
+        "name": "796d0f7b-d368-4a13-93cb-fec58e327930",
         "status": "Succeeded"
       }
     },
@@ -418,30 +424,32 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-eventgrid/10.2.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-mgmt-eventgrid/0.0.0 (it should be stable) Python/3.8.13 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "522",
+        "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 20 Jun 2022 07:27:02 GMT",
+        "Date": "Fri, 08 Jul 2022 06:10:35 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "668284ec-727a-421c-b8f4-62fa938129e9",
-        "x-ms-ratelimit-remaining-subscription-reads": "11995",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220620T072703Z:668284ec-727a-421c-b8f4-62fa938129e9"
+        "x-ms-correlation-request-id": "9ff10e12-8f3c-46ba-9f0f-0c3e32032bc1",
+        "x-ms-ratelimit-remaining-subscription-reads": "11996",
+        "x-ms-routing-request-id": "EASTUS2:20220708T061036Z:9ff10e12-8f3c-46ba-9f0f-0c3e32032bc1"
       },
       "ResponseBody": {
         "properties": {
           "provisioningState": "Succeeded",
           "endpoint": "https://domainc98a23ef.eastus2-1.eventgrid.azure.net/api/events",
           "inputSchema": "EventGridSchema",
-          "metricResourceId": "ca249b55-f104-477b-aa8f-53b1c3b8dc81",
+          "metricResourceId": "25906c26-ed5b-401c-ac29-57a7b44f24eb",
           "publicNetworkAccess": "Enabled"
         },
         "systemData": null,
@@ -462,30 +470,32 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-eventgrid/10.2.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-mgmt-eventgrid/0.0.0 (it should be stable) Python/3.8.13 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "522",
+        "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 20 Jun 2022 07:27:02 GMT",
+        "Date": "Fri, 08 Jul 2022 06:10:35 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "c506fcc8-a643-4504-950b-d08cb3c90f3c",
-        "x-ms-ratelimit-remaining-subscription-reads": "11994",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220620T072703Z:c506fcc8-a643-4504-950b-d08cb3c90f3c"
+        "x-ms-correlation-request-id": "7402902c-5db5-4d43-9b14-463ccf8fcac7",
+        "x-ms-ratelimit-remaining-subscription-reads": "11995",
+        "x-ms-routing-request-id": "EASTUS2:20220708T061036Z:7402902c-5db5-4d43-9b14-463ccf8fcac7"
       },
       "ResponseBody": {
         "properties": {
           "provisioningState": "Succeeded",
           "endpoint": "https://domainc98a23ef.eastus2-1.eventgrid.azure.net/api/events",
           "inputSchema": "EventGridSchema",
-          "metricResourceId": "ca249b55-f104-477b-aa8f-53b1c3b8dc81",
+          "metricResourceId": "25906c26-ed5b-401c-ac29-57a7b44f24eb",
           "publicNetworkAccess": "Enabled"
         },
         "systemData": null,
@@ -507,56 +517,58 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-mgmt-eventgrid/10.2.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-mgmt-eventgrid/0.0.0 (it should be stable) Python/3.8.13 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
-        "Azure-AsyncOperation": "https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/eastus2/operationsStatus/8615A211-86B6-48C3-B53A-B29500B491C4?api-version=2022-06-15",
+        "Azure-AsyncOperation": "https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/eastus2/operationsStatus/04DB13DE-9AB7-4016-9E34-14BA80F05C34?api-version=2022-06-15",
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Mon, 20 Jun 2022 07:27:03 GMT",
+        "Date": "Fri, 08 Jul 2022 06:10:36 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/eastus2/operationResults/8615A211-86B6-48C3-B53A-B29500B491C4?api-version=2022-06-15",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/eastus2/operationResults/04DB13DE-9AB7-4016-9E34-14BA80F05C34?api-version=2022-06-15",
         "Pragma": "no-cache",
         "Retry-After": "10",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "a5ba428c-00f9-404e-9b46-356fc256cea3",
+        "x-ms-correlation-request-id": "36444c5c-2859-4565-b60a-c500121a4ec6",
         "x-ms-ratelimit-remaining-subscription-deletes": "14999",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220620T072704Z:a5ba428c-00f9-404e-9b46-356fc256cea3"
+        "x-ms-routing-request-id": "EASTUS2:20220708T061036Z:36444c5c-2859-4565-b60a-c500121a4ec6"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/eastus2/operationsStatus/8615A211-86B6-48C3-B53A-B29500B491C4?api-version=2022-06-15",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/eastus2/operationsStatus/04DB13DE-9AB7-4016-9E34-14BA80F05C34?api-version=2022-06-15",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-eventgrid/10.2.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-mgmt-eventgrid/0.0.0 (it should be stable) Python/3.8.13 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "280",
+        "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 20 Jun 2022 07:27:14 GMT",
+        "Date": "Fri, 08 Jul 2022 06:10:46 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "9d30d721-f786-4ba5-8523-d5f35f44d037",
-        "x-ms-ratelimit-remaining-subscription-reads": "11993",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220620T072715Z:9d30d721-f786-4ba5-8523-d5f35f44d037"
+        "x-ms-correlation-request-id": "fb2eb6a6-4a96-42a2-93c4-7da231c7e2f2",
+        "x-ms-ratelimit-remaining-subscription-reads": "11994",
+        "x-ms-routing-request-id": "EASTUS2:20220708T061046Z:fb2eb6a6-4a96-42a2-93c4-7da231c7e2f2"
       },
       "ResponseBody": {
-        "id": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/eastus2/operationsStatus/8615A211-86B6-48C3-B53A-B29500B491C4?api-version=2022-06-15",
-        "name": "8615a211-86b6-48c3-b53a-b29500b491c4",
+        "id": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/eastus2/operationsStatus/04DB13DE-9AB7-4016-9E34-14BA80F05C34?api-version=2022-06-15",
+        "name": "04db13de-9ab7-4016-9e34-14ba80f05c34",
         "status": "Succeeded"
       }
     }
