@@ -1,5 +1,23 @@
 # Release History
 
+## 21.0.0 (2022-07-08)
+
+**Features**
+
+  - Added operation NetworkSecurityPerimetersOperations.check_members
+  - Added operation NetworkSecurityPerimetersOperations.query
+  - Added operation group NspAccessRulesReconcileOperations
+  - Added operation group NspAssociationsProxyOperations
+  - Model ApplicationGatewayRoutingRule has a new parameter priority
+  - Model NetworkSecurityPerimeter has a new parameter perimeter_guid
+
+**Breaking changes**
+
+  - Model NetworkSecurityPerimeter no longer has parameter description
+  - Model NetworkSecurityPerimeter no longer has parameter display_name
+  - Model NetworkSecurityPerimeter no longer has parameter etag
+  - Model NspProfile no longer has parameter enabled_log_categories
+
 ## 20.0.0 (2022-05-10)
 
 **Features**

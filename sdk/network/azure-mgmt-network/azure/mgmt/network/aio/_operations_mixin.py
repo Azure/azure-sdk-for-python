@@ -8,33 +8,36 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-from msrest import Serializer, Deserializer
-from typing import Any, AsyncIterable, Optional
+from .._serialization import Serializer, Deserializer
+from typing import Any, AsyncIterable, IO, Optional, Union
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.polling import AsyncLROPoller
 
+from .. import models as _models
+
 
 class NetworkManagementClientOperationsMixin(object):
 
-    async def begin_delete_bastion_shareable_link(  # pylint: disable=inconsistent-return-statements
+    async def begin_delete_bastion_shareable_link(
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        bsl_request: "_models.BastionShareableLinkListRequest",
+        bsl_request: Union[_models.BastionShareableLinkListRequest, IO],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the Bastion Shareable Links for all the VMs specified in the request.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param bastion_host_name: The name of the Bastion Host.
+        :param bastion_host_name: The name of the Bastion Host. Required.
         :type bastion_host_name: str
-        :param bsl_request: Post request for all the Bastion Shareable Link endpoints.
-        :type bsl_request: ~azure.mgmt.network.v2021_08_01.models.BastionShareableLinkListRequest
-        :keyword api_version: Api Version. Default value is "2021-08-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
+        :param bsl_request: Post request for all the Bastion Shareable Link endpoints. Is either a
+         model type or a IO type. Required.
+        :type bsl_request: ~azure.mgmt.network.v2021_08_01.models.BastionShareableLinkListRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -45,7 +48,7 @@ class NetworkManagementClientOperationsMixin(object):
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_delete_bastion_shareable_link')
         if api_version == '2019-09-01':
@@ -86,23 +89,24 @@ class NetworkManagementClientOperationsMixin(object):
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        vpn_client_params: "_models.VirtualWanVpnProfileParameters",
+        vpn_client_params: Union[_models.VirtualWanVpnProfileParameters, IO],
         **kwargs: Any
-    ) -> AsyncLROPoller["_models.VpnProfileResponse"]:
+    ) -> AsyncLROPoller[_models.VpnProfileResponse]:
         """Generates a unique VPN profile for P2S clients for VirtualWan and associated
         VpnServerConfiguration combination in the specified resource group.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: The resource group name. Required.
         :type resource_group_name: str
         :param virtual_wan_name: The name of the VirtualWAN whose associated VpnServerConfigurations is
-         needed.
+         needed. Required.
         :type virtual_wan_name: str
         :param vpn_client_params: Parameters supplied to the generate VirtualWan VPN profile generation
-         operation.
+         operation. Is either a model type or a IO type. Required.
         :type vpn_client_params: ~azure.mgmt.network.v2021_08_01.models.VirtualWanVpnProfileParameters
-        :keyword api_version: Api Version. Default value is "2021-08-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
+         or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -115,7 +119,7 @@ class NetworkManagementClientOperationsMixin(object):
          cls(response)
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2021_08_01.models.VpnProfileResponse]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_generatevirtualwanvpnserverconfigurationvpnprofile')
         if api_version == '2019-08-01':
@@ -159,16 +163,13 @@ class NetworkManagementClientOperationsMixin(object):
         resource_group_name: str,
         bastion_host_name: str,
         **kwargs: Any
-    ) -> AsyncLROPoller[AsyncItemPaged["_models.BastionActiveSessionListResult"]]:
+    ) -> AsyncLROPoller[AsyncIterable["_models.BastionActiveSession"]]:
         """Returns the list of currently active sessions on the Bastion.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param bastion_host_name: The name of the Bastion Host.
+        :param bastion_host_name: The name of the Bastion Host. Required.
         :type bastion_host_name: str
-        :keyword api_version: Api Version. Default value is "2021-08-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -177,11 +178,11 @@ class NetworkManagementClientOperationsMixin(object):
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns an iterator like instance of either
+        :return: An instance of LROPoller that returns an iterator like instance of either
          BastionActiveSessionListResult or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_08_01.models.BastionActiveSessionListResult]]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_08_01.models.BastionActiveSession]]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_get_active_sessions')
         if api_version == '2019-09-01':
@@ -222,20 +223,21 @@ class NetworkManagementClientOperationsMixin(object):
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        bsl_request: "_models.BastionShareableLinkListRequest",
+        bsl_request: Union[_models.BastionShareableLinkListRequest, IO],
         **kwargs: Any
-    ) -> AsyncLROPoller[AsyncItemPaged["_models.BastionShareableLinkListResult"]]:
+    ) -> AsyncLROPoller[AsyncIterable["_models.BastionShareableLink"]]:
         """Creates a Bastion Shareable Links for all the VMs specified in the request.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param bastion_host_name: The name of the Bastion Host.
+        :param bastion_host_name: The name of the Bastion Host. Required.
         :type bastion_host_name: str
-        :param bsl_request: Post request for all the Bastion Shareable Link endpoints.
-        :type bsl_request: ~azure.mgmt.network.v2021_08_01.models.BastionShareableLinkListRequest
-        :keyword api_version: Api Version. Default value is "2021-08-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
+        :param bsl_request: Post request for all the Bastion Shareable Link endpoints. Is either a
+         model type or a IO type. Required.
+        :type bsl_request: ~azure.mgmt.network.v2021_08_01.models.BastionShareableLinkListRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -244,11 +246,11 @@ class NetworkManagementClientOperationsMixin(object):
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns an iterator like instance of either
+        :return: An instance of LROPoller that returns an iterator like instance of either
          BastionShareableLinkListResult or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_08_01.models.BastionShareableLinkListResult]]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_08_01.models.BastionShareableLink]]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_put_bastion_shareable_link')
         if api_version == '2019-09-01':
@@ -290,21 +292,18 @@ class NetworkManagementClientOperationsMixin(object):
         location: str,
         domain_name_label: str,
         **kwargs: Any
-    ) -> "_models.DnsNameAvailabilityResult":
+    ) -> _models.DnsNameAvailabilityResult:
         """Checks whether a domain name in the cloudapp.azure.com zone is available for use.
 
-        :param location: The location of the domain name.
+        :param location: The location of the domain name. Required.
         :type location: str
         :param domain_name_label: The domain name to be verified. It must conform to the following
-         regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.
+         regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$. Required.
         :type domain_name_label: str
-        :keyword api_version: Api Version. Default value is "2021-08-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DnsNameAvailabilityResult, or the result of cls(response)
+        :return: DnsNameAvailabilityResult or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2021_08_01.models.DnsNameAvailabilityResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('check_dns_name_availability')
         if api_version == '2015-06-15':
@@ -385,26 +384,26 @@ class NetworkManagementClientOperationsMixin(object):
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        session_ids: "_models.SessionIds",
+        session_ids: Union[_models.SessionIds, IO],
         **kwargs: Any
-    ) -> AsyncIterable["_models.BastionSessionDeleteResult"]:
+    ) -> AsyncIterable["_models.BastionSessionState"]:
         """Returns the list of currently active sessions on the Bastion.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param bastion_host_name: The name of the Bastion Host.
+        :param bastion_host_name: The name of the Bastion Host. Required.
         :type bastion_host_name: str
-        :param session_ids: The list of sessionids to disconnect.
-        :type session_ids: ~azure.mgmt.network.v2021_08_01.models.SessionIds
-        :keyword api_version: Api Version. Default value is "2021-08-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
+        :param session_ids: The list of sessionids to disconnect. Is either a model type or a IO type.
+         Required.
+        :type session_ids: ~azure.mgmt.network.v2021_08_01.models.SessionIds or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either BastionSessionDeleteResult or the result of
-         cls(response)
+        :return: An iterator like instance of either BastionSessionState or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_08_01.models.BastionSessionDeleteResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_08_01.models.BastionSessionState]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('disconnect_active_sessions')
         if api_version == '2019-09-01':
@@ -445,26 +444,27 @@ class NetworkManagementClientOperationsMixin(object):
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        bsl_request: "_models.BastionShareableLinkListRequest",
+        bsl_request: Union[_models.BastionShareableLinkListRequest, IO],
         **kwargs: Any
-    ) -> AsyncIterable["_models.BastionShareableLinkListResult"]:
+    ) -> AsyncIterable["_models.BastionShareableLink"]:
         """Return the Bastion Shareable Links for all the VMs specified in the request.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param bastion_host_name: The name of the Bastion Host.
+        :param bastion_host_name: The name of the Bastion Host. Required.
         :type bastion_host_name: str
-        :param bsl_request: Post request for all the Bastion Shareable Link endpoints.
-        :type bsl_request: ~azure.mgmt.network.v2021_08_01.models.BastionShareableLinkListRequest
-        :keyword api_version: Api Version. Default value is "2021-08-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
+        :param bsl_request: Post request for all the Bastion Shareable Link endpoints. Is either a
+         model type or a IO type. Required.
+        :type bsl_request: ~azure.mgmt.network.v2021_08_01.models.BastionShareableLinkListRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either BastionShareableLinkListResult or the result of
+        :return: An iterator like instance of either BastionShareableLink or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_08_01.models.BastionShareableLinkListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_08_01.models.BastionShareableLink]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('get_bastion_shareable_link')
         if api_version == '2019-09-01':
@@ -506,21 +506,18 @@ class NetworkManagementClientOperationsMixin(object):
         resource_group_name: str,
         virtual_wan_name: str,
         **kwargs: Any
-    ) -> "_models.VirtualWanSecurityProviders":
+    ) -> _models.VirtualWanSecurityProviders:
         """Gives the supported security providers for the virtual wan.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: The resource group name. Required.
         :type resource_group_name: str
         :param virtual_wan_name: The name of the VirtualWAN for which supported security providers are
-         needed.
+         needed. Required.
         :type virtual_wan_name: str
-        :keyword api_version: Api Version. Default value is "2021-08-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: VirtualWanSecurityProviders, or the result of cls(response)
+        :return: VirtualWanSecurityProviders or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2021_08_01.models.VirtualWanSecurityProviders
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('supported_security_providers')
         if api_version == '2018-08-01':

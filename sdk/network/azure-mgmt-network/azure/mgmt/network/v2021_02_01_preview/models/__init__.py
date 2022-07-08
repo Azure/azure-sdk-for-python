@@ -22,6 +22,7 @@ from ._models_py3 import AdminRule
 from ._models_py3 import AdminRuleListResult
 from ._models_py3 import BaseAdminRule
 from ._models_py3 import BaseUserRule
+from ._models_py3 import CheckMembers
 from ._models_py3 import CloudErrorBody
 from ._models_py3 import ConfigurationGroup
 from ._models_py3 import ConnectivityConfiguration
@@ -38,7 +39,7 @@ from ._models_py3 import EffectiveVirtualNetworksListResult
 from ._models_py3 import EffectiveVirtualNetworksParameter
 from ._models_py3 import GroupMembersItem
 from ._models_py3 import Hub
-from ._models_py3 import LoggingCategory
+from ._models_py3 import MemberDestination
 from ._models_py3 import NetworkGroup
 from ._models_py3 import NetworkGroupListResult
 from ._models_py3 import NetworkManager
@@ -63,6 +64,8 @@ from ._models_py3 import PerimeterAssociableResource
 from ._models_py3 import PerimeterAssociableResourcesListResult
 from ._models_py3 import PerimeterBasedAccessRule
 from ._models_py3 import ProxyResource
+from ._models_py3 import QueryNSPObj
+from ._models_py3 import QueryNSPReqRes
 from ._models_py3 import QueryRequestOptions
 from ._models_py3 import Resource
 from ._models_py3 import RuleCollection
@@ -75,123 +78,130 @@ from ._models_py3 import TagsObject
 from ._models_py3 import UserRule
 from ._models_py3 import UserRuleListResult
 
-
-from ._network_management_client_enums import (
-    AccessRuleDirection,
-    AddressPrefixType,
-    AdminRuleKind,
-    AssociationAccessMode,
-    ConfigurationType,
-    ConnectivityTopology,
-    CreatedByType,
-    DeleteExistingNSGs,
-    DeleteExistingPeering,
-    DeploymentStatus,
-    EffectiveAdminRuleKind,
-    EffectiveUserRuleKind,
-    GroupConnectivity,
-    IsGlobal,
-    MembershipType,
-    NspProvisioningState,
-    ProvisioningState,
-    SecurityConfigurationRuleAccess,
-    SecurityConfigurationRuleDirection,
-    SecurityConfigurationRuleProtocol,
-    SecurityType,
-    UseHubGateway,
-    UserRuleKind,
-)
+from ._network_management_client_enums import AccessRuleDirection
+from ._network_management_client_enums import AddressPrefixType
+from ._network_management_client_enums import AdminRuleKind
+from ._network_management_client_enums import AssociationAccessMode
+from ._network_management_client_enums import ConfigurationType
+from ._network_management_client_enums import ConnectivityTopology
+from ._network_management_client_enums import CreatedByType
+from ._network_management_client_enums import DeleteExistingNSGs
+from ._network_management_client_enums import DeleteExistingPeering
+from ._network_management_client_enums import DeploymentStatus
+from ._network_management_client_enums import EffectiveAdminRuleKind
+from ._network_management_client_enums import EffectiveUserRuleKind
+from ._network_management_client_enums import GroupConnectivity
+from ._network_management_client_enums import IsGlobal
+from ._network_management_client_enums import IsMember
+from ._network_management_client_enums import MembershipType
+from ._network_management_client_enums import NspProvisioningState
+from ._network_management_client_enums import ProvisioningState
+from ._network_management_client_enums import SecurityConfigurationRuleAccess
+from ._network_management_client_enums import SecurityConfigurationRuleDirection
+from ._network_management_client_enums import SecurityConfigurationRuleProtocol
+from ._network_management_client_enums import SecurityType
+from ._network_management_client_enums import UseHubGateway
+from ._network_management_client_enums import UserRuleKind
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ActiveBaseSecurityAdminRule',
-    'ActiveBaseSecurityUserRule',
-    'ActiveConfigurationParameter',
-    'ActiveConnectivityConfiguration',
-    'ActiveConnectivityConfigurationsListResult',
-    'ActiveDefaultSecurityAdminRule',
-    'ActiveDefaultSecurityUserRule',
-    'ActiveSecurityAdminRule',
-    'ActiveSecurityAdminRulesListResult',
-    'ActiveSecurityUserRule',
-    'ActiveSecurityUserRulesListResult',
-    'AddressPrefixItem',
-    'AdminRule',
-    'AdminRuleListResult',
-    'BaseAdminRule',
-    'BaseUserRule',
-    'CloudErrorBody',
-    'ConfigurationGroup',
-    'ConnectivityConfiguration',
-    'ConnectivityConfigurationListResult',
-    'ConnectivityGroupItem',
-    'DefaultAdminRule',
-    'DefaultUserRule',
-    'EffectiveBaseSecurityAdminRule',
-    'EffectiveConnectivityConfiguration',
-    'EffectiveDefaultSecurityAdminRule',
-    'EffectiveSecurityAdminRule',
-    'EffectiveVirtualNetwork',
-    'EffectiveVirtualNetworksListResult',
-    'EffectiveVirtualNetworksParameter',
-    'GroupMembersItem',
-    'Hub',
-    'LoggingCategory',
-    'NetworkGroup',
-    'NetworkGroupListResult',
-    'NetworkManager',
-    'NetworkManagerCommit',
-    'NetworkManagerDeploymentStatus',
-    'NetworkManagerDeploymentStatusListResult',
-    'NetworkManagerDeploymentStatusParameter',
-    'NetworkManagerEffectiveConnectivityConfigurationListResult',
-    'NetworkManagerEffectiveSecurityAdminRulesListResult',
-    'NetworkManagerListResult',
-    'NetworkManagerPropertiesNetworkManagerScopes',
-    'NetworkManagerSecurityGroupItem',
-    'NetworkSecurityPerimeter',
-    'NetworkSecurityPerimeterListResult',
-    'NspAccessRule',
-    'NspAccessRuleListResult',
-    'NspAssociation',
-    'NspAssociationsListResult',
-    'NspProfile',
-    'NspProfileListResult',
-    'PerimeterAssociableResource',
-    'PerimeterAssociableResourcesListResult',
-    'PerimeterBasedAccessRule',
-    'ProxyResource',
-    'QueryRequestOptions',
-    'Resource',
-    'RuleCollection',
-    'RuleCollectionListResult',
-    'SecurityConfiguration',
-    'SecurityConfigurationListResult',
-    'SubResource',
-    'SystemData',
-    'TagsObject',
-    'UserRule',
-    'UserRuleListResult',
-    'AccessRuleDirection',
-    'AddressPrefixType',
-    'AdminRuleKind',
-    'AssociationAccessMode',
-    'ConfigurationType',
-    'ConnectivityTopology',
-    'CreatedByType',
-    'DeleteExistingNSGs',
-    'DeleteExistingPeering',
-    'DeploymentStatus',
-    'EffectiveAdminRuleKind',
-    'EffectiveUserRuleKind',
-    'GroupConnectivity',
-    'IsGlobal',
-    'MembershipType',
-    'NspProvisioningState',
-    'ProvisioningState',
-    'SecurityConfigurationRuleAccess',
-    'SecurityConfigurationRuleDirection',
-    'SecurityConfigurationRuleProtocol',
-    'SecurityType',
-    'UseHubGateway',
-    'UserRuleKind',
+    "ActiveBaseSecurityAdminRule",
+    "ActiveBaseSecurityUserRule",
+    "ActiveConfigurationParameter",
+    "ActiveConnectivityConfiguration",
+    "ActiveConnectivityConfigurationsListResult",
+    "ActiveDefaultSecurityAdminRule",
+    "ActiveDefaultSecurityUserRule",
+    "ActiveSecurityAdminRule",
+    "ActiveSecurityAdminRulesListResult",
+    "ActiveSecurityUserRule",
+    "ActiveSecurityUserRulesListResult",
+    "AddressPrefixItem",
+    "AdminRule",
+    "AdminRuleListResult",
+    "BaseAdminRule",
+    "BaseUserRule",
+    "CheckMembers",
+    "CloudErrorBody",
+    "ConfigurationGroup",
+    "ConnectivityConfiguration",
+    "ConnectivityConfigurationListResult",
+    "ConnectivityGroupItem",
+    "DefaultAdminRule",
+    "DefaultUserRule",
+    "EffectiveBaseSecurityAdminRule",
+    "EffectiveConnectivityConfiguration",
+    "EffectiveDefaultSecurityAdminRule",
+    "EffectiveSecurityAdminRule",
+    "EffectiveVirtualNetwork",
+    "EffectiveVirtualNetworksListResult",
+    "EffectiveVirtualNetworksParameter",
+    "GroupMembersItem",
+    "Hub",
+    "MemberDestination",
+    "NetworkGroup",
+    "NetworkGroupListResult",
+    "NetworkManager",
+    "NetworkManagerCommit",
+    "NetworkManagerDeploymentStatus",
+    "NetworkManagerDeploymentStatusListResult",
+    "NetworkManagerDeploymentStatusParameter",
+    "NetworkManagerEffectiveConnectivityConfigurationListResult",
+    "NetworkManagerEffectiveSecurityAdminRulesListResult",
+    "NetworkManagerListResult",
+    "NetworkManagerPropertiesNetworkManagerScopes",
+    "NetworkManagerSecurityGroupItem",
+    "NetworkSecurityPerimeter",
+    "NetworkSecurityPerimeterListResult",
+    "NspAccessRule",
+    "NspAccessRuleListResult",
+    "NspAssociation",
+    "NspAssociationsListResult",
+    "NspProfile",
+    "NspProfileListResult",
+    "PerimeterAssociableResource",
+    "PerimeterAssociableResourcesListResult",
+    "PerimeterBasedAccessRule",
+    "ProxyResource",
+    "QueryNSPObj",
+    "QueryNSPReqRes",
+    "QueryRequestOptions",
+    "Resource",
+    "RuleCollection",
+    "RuleCollectionListResult",
+    "SecurityConfiguration",
+    "SecurityConfigurationListResult",
+    "SubResource",
+    "SystemData",
+    "TagsObject",
+    "UserRule",
+    "UserRuleListResult",
+    "AccessRuleDirection",
+    "AddressPrefixType",
+    "AdminRuleKind",
+    "AssociationAccessMode",
+    "ConfigurationType",
+    "ConnectivityTopology",
+    "CreatedByType",
+    "DeleteExistingNSGs",
+    "DeleteExistingPeering",
+    "DeploymentStatus",
+    "EffectiveAdminRuleKind",
+    "EffectiveUserRuleKind",
+    "GroupConnectivity",
+    "IsGlobal",
+    "IsMember",
+    "MembershipType",
+    "NspProvisioningState",
+    "ProvisioningState",
+    "SecurityConfigurationRuleAccess",
+    "SecurityConfigurationRuleDirection",
+    "SecurityConfigurationRuleProtocol",
+    "SecurityType",
+    "UseHubGateway",
+    "UserRuleKind",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

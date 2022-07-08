@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,18 +8,20 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from ... import _serialization
 
-from ._network_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class ActiveBaseSecurityAdminRule(msrest.serialization.Model):
+class ActiveBaseSecurityAdminRule(_serialization.Model):
     """Network base admin rule.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ActiveSecurityAdminRule, ActiveDefaultSecurityAdminRule.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ActiveSecurityAdminRule, ActiveDefaultSecurityAdminRule
 
     All required parameters must be populated in order to send to Azure.
 
@@ -41,44 +44,45 @@ class ActiveBaseSecurityAdminRule(msrest.serialization.Model):
      list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkManagerSecurityGroupItem]
     :ivar rule_groups: Effective configuration groups.
     :vartype rule_groups: list[~azure.mgmt.network.v2021_02_01_preview.models.ConfigurationGroup]
-    :ivar kind: Required. Whether the rule is custom or default.Constant filled by server. Possible
-     values include: "Custom", "Default".
+    :ivar kind: Whether the rule is custom or default. Required. Known values are: "Custom" and
+     "Default".
     :vartype kind: str or ~azure.mgmt.network.v2021_02_01_preview.models.EffectiveAdminRuleKind
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'commit_time': {'key': 'commitTime', 'type': 'iso-8601'},
-        'region': {'key': 'region', 'type': 'str'},
-        'configuration_display_name': {'key': 'configurationDisplayName', 'type': 'str'},
-        'configuration_description': {'key': 'configurationDescription', 'type': 'str'},
-        'rule_collection_display_name': {'key': 'ruleCollectionDisplayName', 'type': 'str'},
-        'rule_collection_description': {'key': 'ruleCollectionDescription', 'type': 'str'},
-        'rule_collection_applies_to_groups': {'key': 'ruleCollectionAppliesToGroups', 'type': '[NetworkManagerSecurityGroupItem]'},
-        'rule_groups': {'key': 'ruleGroups', 'type': '[ConfigurationGroup]'},
-        'kind': {'key': 'kind', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "commit_time": {"key": "commitTime", "type": "iso-8601"},
+        "region": {"key": "region", "type": "str"},
+        "configuration_display_name": {"key": "configurationDisplayName", "type": "str"},
+        "configuration_description": {"key": "configurationDescription", "type": "str"},
+        "rule_collection_display_name": {"key": "ruleCollectionDisplayName", "type": "str"},
+        "rule_collection_description": {"key": "ruleCollectionDescription", "type": "str"},
+        "rule_collection_applies_to_groups": {
+            "key": "ruleCollectionAppliesToGroups",
+            "type": "[NetworkManagerSecurityGroupItem]",
+        },
+        "rule_groups": {"key": "ruleGroups", "type": "[ConfigurationGroup]"},
+        "kind": {"key": "kind", "type": "str"},
     }
 
-    _subtype_map = {
-        'kind': {'Custom': 'ActiveSecurityAdminRule', 'Default': 'ActiveDefaultSecurityAdminRule'}
-    }
+    _subtype_map = {"kind": {"Custom": "ActiveSecurityAdminRule", "Default": "ActiveDefaultSecurityAdminRule"}}
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         commit_time: Optional[datetime.datetime] = None,
         region: Optional[str] = None,
         configuration_display_name: Optional[str] = None,
         configuration_description: Optional[str] = None,
         rule_collection_display_name: Optional[str] = None,
         rule_collection_description: Optional[str] = None,
-        rule_collection_applies_to_groups: Optional[List["NetworkManagerSecurityGroupItem"]] = None,
-        rule_groups: Optional[List["ConfigurationGroup"]] = None,
+        rule_collection_applies_to_groups: Optional[List["_models.NetworkManagerSecurityGroupItem"]] = None,
+        rule_groups: Optional[List["_models.ConfigurationGroup"]] = None,
         **kwargs
     ):
         """
@@ -102,7 +106,7 @@ class ActiveBaseSecurityAdminRule(msrest.serialization.Model):
         :keyword rule_groups: Effective configuration groups.
         :paramtype rule_groups: list[~azure.mgmt.network.v2021_02_01_preview.models.ConfigurationGroup]
         """
-        super(ActiveBaseSecurityAdminRule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.commit_time = commit_time
         self.region = region
@@ -115,11 +119,11 @@ class ActiveBaseSecurityAdminRule(msrest.serialization.Model):
         self.kind = None  # type: Optional[str]
 
 
-class ActiveBaseSecurityUserRule(msrest.serialization.Model):
+class ActiveBaseSecurityUserRule(_serialization.Model):
     """Network base rule.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ActiveSecurityUserRule, ActiveDefaultSecurityUserRule.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ActiveSecurityUserRule, ActiveDefaultSecurityUserRule
 
     All required parameters must be populated in order to send to Azure.
 
@@ -142,44 +146,45 @@ class ActiveBaseSecurityUserRule(msrest.serialization.Model):
      list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkManagerSecurityGroupItem]
     :ivar rule_groups: Effective configuration groups.
     :vartype rule_groups: list[~azure.mgmt.network.v2021_02_01_preview.models.ConfigurationGroup]
-    :ivar kind: Required. Whether the rule is custom or default.Constant filled by server. Possible
-     values include: "Custom", "Default".
+    :ivar kind: Whether the rule is custom or default. Required. Known values are: "Custom" and
+     "Default".
     :vartype kind: str or ~azure.mgmt.network.v2021_02_01_preview.models.EffectiveUserRuleKind
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'commit_time': {'key': 'commitTime', 'type': 'iso-8601'},
-        'region': {'key': 'region', 'type': 'str'},
-        'configuration_display_name': {'key': 'configurationDisplayName', 'type': 'str'},
-        'configuration_description': {'key': 'configurationDescription', 'type': 'str'},
-        'rule_collection_display_name': {'key': 'ruleCollectionDisplayName', 'type': 'str'},
-        'rule_collection_description': {'key': 'ruleCollectionDescription', 'type': 'str'},
-        'rule_collection_applies_to_groups': {'key': 'ruleCollectionAppliesToGroups', 'type': '[NetworkManagerSecurityGroupItem]'},
-        'rule_groups': {'key': 'ruleGroups', 'type': '[ConfigurationGroup]'},
-        'kind': {'key': 'kind', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "commit_time": {"key": "commitTime", "type": "iso-8601"},
+        "region": {"key": "region", "type": "str"},
+        "configuration_display_name": {"key": "configurationDisplayName", "type": "str"},
+        "configuration_description": {"key": "configurationDescription", "type": "str"},
+        "rule_collection_display_name": {"key": "ruleCollectionDisplayName", "type": "str"},
+        "rule_collection_description": {"key": "ruleCollectionDescription", "type": "str"},
+        "rule_collection_applies_to_groups": {
+            "key": "ruleCollectionAppliesToGroups",
+            "type": "[NetworkManagerSecurityGroupItem]",
+        },
+        "rule_groups": {"key": "ruleGroups", "type": "[ConfigurationGroup]"},
+        "kind": {"key": "kind", "type": "str"},
     }
 
-    _subtype_map = {
-        'kind': {'Custom': 'ActiveSecurityUserRule', 'Default': 'ActiveDefaultSecurityUserRule'}
-    }
+    _subtype_map = {"kind": {"Custom": "ActiveSecurityUserRule", "Default": "ActiveDefaultSecurityUserRule"}}
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         commit_time: Optional[datetime.datetime] = None,
         region: Optional[str] = None,
         configuration_display_name: Optional[str] = None,
         configuration_description: Optional[str] = None,
         rule_collection_display_name: Optional[str] = None,
         rule_collection_description: Optional[str] = None,
-        rule_collection_applies_to_groups: Optional[List["NetworkManagerSecurityGroupItem"]] = None,
-        rule_groups: Optional[List["ConfigurationGroup"]] = None,
+        rule_collection_applies_to_groups: Optional[List["_models.NetworkManagerSecurityGroupItem"]] = None,
+        rule_groups: Optional[List["_models.ConfigurationGroup"]] = None,
         **kwargs
     ):
         """
@@ -203,7 +208,7 @@ class ActiveBaseSecurityUserRule(msrest.serialization.Model):
         :keyword rule_groups: Effective configuration groups.
         :paramtype rule_groups: list[~azure.mgmt.network.v2021_02_01_preview.models.ConfigurationGroup]
         """
-        super(ActiveBaseSecurityUserRule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.commit_time = commit_time
         self.region = region
@@ -216,7 +221,7 @@ class ActiveBaseSecurityUserRule(msrest.serialization.Model):
         self.kind = None  # type: Optional[str]
 
 
-class ActiveConfigurationParameter(msrest.serialization.Model):
+class ActiveConfigurationParameter(_serialization.Model):
     """Effective Virtual Networks Parameter.
 
     :ivar regions: List of regions.
@@ -227,17 +232,11 @@ class ActiveConfigurationParameter(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'regions': {'key': 'regions', 'type': '[str]'},
-        'skip_token': {'key': 'skipToken', 'type': 'str'},
+        "regions": {"key": "regions", "type": "[str]"},
+        "skip_token": {"key": "skipToken", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        regions: Optional[List[str]] = None,
-        skip_token: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, regions: Optional[List[str]] = None, skip_token: Optional[str] = None, **kwargs):
         """
         :keyword regions: List of regions.
         :paramtype regions: list[str]
@@ -245,12 +244,12 @@ class ActiveConfigurationParameter(msrest.serialization.Model):
          with the same query and scopes used in the current request) to retrieve the next page of data.
         :paramtype skip_token: str
         """
-        super(ActiveConfigurationParameter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.regions = regions
         self.skip_token = skip_token
 
 
-class EffectiveConnectivityConfiguration(msrest.serialization.Model):
+class EffectiveConnectivityConfiguration(_serialization.Model):
     """The network manager effective connectivity configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -264,56 +263,56 @@ class EffectiveConnectivityConfiguration(msrest.serialization.Model):
     :vartype display_name: str
     :ivar description: A description of the connectivity configuration.
     :vartype description: str
-    :ivar connectivity_topology: Connectivity topology type. Possible values include:
-     "HubAndSpoke", "Mesh".
+    :ivar connectivity_topology: Connectivity topology type. Known values are: "HubAndSpoke" and
+     "Mesh".
     :vartype connectivity_topology: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ConnectivityTopology
     :ivar hubs: List of hubItems.
     :vartype hubs: list[~azure.mgmt.network.v2021_02_01_preview.models.Hub]
-    :ivar is_global: Flag if global mesh is supported. Possible values include: "False", "True".
+    :ivar is_global: Flag if global mesh is supported. Known values are: "False" and "True".
     :vartype is_global: str or ~azure.mgmt.network.v2021_02_01_preview.models.IsGlobal
     :ivar applies_to_groups: Groups for configuration.
     :vartype applies_to_groups:
      list[~azure.mgmt.network.v2021_02_01_preview.models.ConnectivityGroupItem]
     :ivar provisioning_state: The provisioning state of the connectivity configuration resource.
-     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ProvisioningState
-    :ivar delete_existing_peering: Flag if need to remove current existing peerings. Possible
-     values include: "False", "True".
+    :ivar delete_existing_peering: Flag if need to remove current existing peerings. Known values
+     are: "False" and "True".
     :vartype delete_existing_peering: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.DeleteExistingPeering
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'configuration_groups': {'key': 'configurationGroups', 'type': '[ConfigurationGroup]'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'connectivity_topology': {'key': 'properties.connectivityTopology', 'type': 'str'},
-        'hubs': {'key': 'properties.hubs', 'type': '[Hub]'},
-        'is_global': {'key': 'properties.isGlobal', 'type': 'str'},
-        'applies_to_groups': {'key': 'properties.appliesToGroups', 'type': '[ConnectivityGroupItem]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'delete_existing_peering': {'key': 'properties.deleteExistingPeering', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "configuration_groups": {"key": "configurationGroups", "type": "[ConfigurationGroup]"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "connectivity_topology": {"key": "properties.connectivityTopology", "type": "str"},
+        "hubs": {"key": "properties.hubs", "type": "[Hub]"},
+        "is_global": {"key": "properties.isGlobal", "type": "str"},
+        "applies_to_groups": {"key": "properties.appliesToGroups", "type": "[ConnectivityGroupItem]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "delete_existing_peering": {"key": "properties.deleteExistingPeering", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
-        configuration_groups: Optional[List["ConfigurationGroup"]] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        configuration_groups: Optional[List["_models.ConfigurationGroup"]] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        connectivity_topology: Optional[Union[str, "ConnectivityTopology"]] = None,
-        hubs: Optional[List["Hub"]] = None,
-        is_global: Optional[Union[str, "IsGlobal"]] = None,
-        applies_to_groups: Optional[List["ConnectivityGroupItem"]] = None,
-        delete_existing_peering: Optional[Union[str, "DeleteExistingPeering"]] = None,
+        connectivity_topology: Optional[Union[str, "_models.ConnectivityTopology"]] = None,
+        hubs: Optional[List["_models.Hub"]] = None,
+        is_global: Optional[Union[str, "_models.IsGlobal"]] = None,
+        applies_to_groups: Optional[List["_models.ConnectivityGroupItem"]] = None,
+        delete_existing_peering: Optional[Union[str, "_models.DeleteExistingPeering"]] = None,
         **kwargs
     ):
         """
@@ -326,23 +325,23 @@ class EffectiveConnectivityConfiguration(msrest.serialization.Model):
         :paramtype display_name: str
         :keyword description: A description of the connectivity configuration.
         :paramtype description: str
-        :keyword connectivity_topology: Connectivity topology type. Possible values include:
-         "HubAndSpoke", "Mesh".
+        :keyword connectivity_topology: Connectivity topology type. Known values are: "HubAndSpoke" and
+         "Mesh".
         :paramtype connectivity_topology: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.ConnectivityTopology
         :keyword hubs: List of hubItems.
         :paramtype hubs: list[~azure.mgmt.network.v2021_02_01_preview.models.Hub]
-        :keyword is_global: Flag if global mesh is supported. Possible values include: "False", "True".
+        :keyword is_global: Flag if global mesh is supported. Known values are: "False" and "True".
         :paramtype is_global: str or ~azure.mgmt.network.v2021_02_01_preview.models.IsGlobal
         :keyword applies_to_groups: Groups for configuration.
         :paramtype applies_to_groups:
          list[~azure.mgmt.network.v2021_02_01_preview.models.ConnectivityGroupItem]
-        :keyword delete_existing_peering: Flag if need to remove current existing peerings. Possible
-         values include: "False", "True".
+        :keyword delete_existing_peering: Flag if need to remove current existing peerings. Known
+         values are: "False" and "True".
         :paramtype delete_existing_peering: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.DeleteExistingPeering
         """
-        super(EffectiveConnectivityConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.configuration_groups = configuration_groups
         self.display_name = display_name
@@ -355,7 +354,9 @@ class EffectiveConnectivityConfiguration(msrest.serialization.Model):
         self.delete_existing_peering = delete_existing_peering
 
 
-class ActiveConnectivityConfiguration(EffectiveConnectivityConfiguration):
+class ActiveConnectivityConfiguration(
+    EffectiveConnectivityConfiguration
+):  # pylint: disable=too-many-instance-attributes
     """Active connectivity configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -369,23 +370,23 @@ class ActiveConnectivityConfiguration(EffectiveConnectivityConfiguration):
     :vartype display_name: str
     :ivar description: A description of the connectivity configuration.
     :vartype description: str
-    :ivar connectivity_topology: Connectivity topology type. Possible values include:
-     "HubAndSpoke", "Mesh".
+    :ivar connectivity_topology: Connectivity topology type. Known values are: "HubAndSpoke" and
+     "Mesh".
     :vartype connectivity_topology: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ConnectivityTopology
     :ivar hubs: List of hubItems.
     :vartype hubs: list[~azure.mgmt.network.v2021_02_01_preview.models.Hub]
-    :ivar is_global: Flag if global mesh is supported. Possible values include: "False", "True".
+    :ivar is_global: Flag if global mesh is supported. Known values are: "False" and "True".
     :vartype is_global: str or ~azure.mgmt.network.v2021_02_01_preview.models.IsGlobal
     :ivar applies_to_groups: Groups for configuration.
     :vartype applies_to_groups:
      list[~azure.mgmt.network.v2021_02_01_preview.models.ConnectivityGroupItem]
     :ivar provisioning_state: The provisioning state of the connectivity configuration resource.
-     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ProvisioningState
-    :ivar delete_existing_peering: Flag if need to remove current existing peerings. Possible
-     values include: "False", "True".
+    :ivar delete_existing_peering: Flag if need to remove current existing peerings. Known values
+     are: "False" and "True".
     :vartype delete_existing_peering: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.DeleteExistingPeering
     :ivar commit_time: Deployment time string.
@@ -395,36 +396,36 @@ class ActiveConnectivityConfiguration(EffectiveConnectivityConfiguration):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'configuration_groups': {'key': 'configurationGroups', 'type': '[ConfigurationGroup]'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'connectivity_topology': {'key': 'properties.connectivityTopology', 'type': 'str'},
-        'hubs': {'key': 'properties.hubs', 'type': '[Hub]'},
-        'is_global': {'key': 'properties.isGlobal', 'type': 'str'},
-        'applies_to_groups': {'key': 'properties.appliesToGroups', 'type': '[ConnectivityGroupItem]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'delete_existing_peering': {'key': 'properties.deleteExistingPeering', 'type': 'str'},
-        'commit_time': {'key': 'commitTime', 'type': 'iso-8601'},
-        'region': {'key': 'region', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "configuration_groups": {"key": "configurationGroups", "type": "[ConfigurationGroup]"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "connectivity_topology": {"key": "properties.connectivityTopology", "type": "str"},
+        "hubs": {"key": "properties.hubs", "type": "[Hub]"},
+        "is_global": {"key": "properties.isGlobal", "type": "str"},
+        "applies_to_groups": {"key": "properties.appliesToGroups", "type": "[ConnectivityGroupItem]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "delete_existing_peering": {"key": "properties.deleteExistingPeering", "type": "str"},
+        "commit_time": {"key": "commitTime", "type": "iso-8601"},
+        "region": {"key": "region", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
-        configuration_groups: Optional[List["ConfigurationGroup"]] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        configuration_groups: Optional[List["_models.ConfigurationGroup"]] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        connectivity_topology: Optional[Union[str, "ConnectivityTopology"]] = None,
-        hubs: Optional[List["Hub"]] = None,
-        is_global: Optional[Union[str, "IsGlobal"]] = None,
-        applies_to_groups: Optional[List["ConnectivityGroupItem"]] = None,
-        delete_existing_peering: Optional[Union[str, "DeleteExistingPeering"]] = None,
+        connectivity_topology: Optional[Union[str, "_models.ConnectivityTopology"]] = None,
+        hubs: Optional[List["_models.Hub"]] = None,
+        is_global: Optional[Union[str, "_models.IsGlobal"]] = None,
+        applies_to_groups: Optional[List["_models.ConnectivityGroupItem"]] = None,
+        delete_existing_peering: Optional[Union[str, "_models.DeleteExistingPeering"]] = None,
         commit_time: Optional[datetime.datetime] = None,
         region: Optional[str] = None,
         **kwargs
@@ -439,19 +440,19 @@ class ActiveConnectivityConfiguration(EffectiveConnectivityConfiguration):
         :paramtype display_name: str
         :keyword description: A description of the connectivity configuration.
         :paramtype description: str
-        :keyword connectivity_topology: Connectivity topology type. Possible values include:
-         "HubAndSpoke", "Mesh".
+        :keyword connectivity_topology: Connectivity topology type. Known values are: "HubAndSpoke" and
+         "Mesh".
         :paramtype connectivity_topology: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.ConnectivityTopology
         :keyword hubs: List of hubItems.
         :paramtype hubs: list[~azure.mgmt.network.v2021_02_01_preview.models.Hub]
-        :keyword is_global: Flag if global mesh is supported. Possible values include: "False", "True".
+        :keyword is_global: Flag if global mesh is supported. Known values are: "False" and "True".
         :paramtype is_global: str or ~azure.mgmt.network.v2021_02_01_preview.models.IsGlobal
         :keyword applies_to_groups: Groups for configuration.
         :paramtype applies_to_groups:
          list[~azure.mgmt.network.v2021_02_01_preview.models.ConnectivityGroupItem]
-        :keyword delete_existing_peering: Flag if need to remove current existing peerings. Possible
-         values include: "False", "True".
+        :keyword delete_existing_peering: Flag if need to remove current existing peerings. Known
+         values are: "False" and "True".
         :paramtype delete_existing_peering: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.DeleteExistingPeering
         :keyword commit_time: Deployment time string.
@@ -459,12 +460,23 @@ class ActiveConnectivityConfiguration(EffectiveConnectivityConfiguration):
         :keyword region: Deployment region.
         :paramtype region: str
         """
-        super(ActiveConnectivityConfiguration, self).__init__(id=id, configuration_groups=configuration_groups, display_name=display_name, description=description, connectivity_topology=connectivity_topology, hubs=hubs, is_global=is_global, applies_to_groups=applies_to_groups, delete_existing_peering=delete_existing_peering, **kwargs)
+        super().__init__(
+            id=id,
+            configuration_groups=configuration_groups,
+            display_name=display_name,
+            description=description,
+            connectivity_topology=connectivity_topology,
+            hubs=hubs,
+            is_global=is_global,
+            applies_to_groups=applies_to_groups,
+            delete_existing_peering=delete_existing_peering,
+            **kwargs
+        )
         self.commit_time = commit_time
         self.region = region
 
 
-class ActiveConnectivityConfigurationsListResult(msrest.serialization.Model):
+class ActiveConnectivityConfigurationsListResult(_serialization.Model):
     """Result of the request to list active connectivity configurations. It contains a list of active connectivity configurations and a skiptoken to get the next set of results.
 
     :ivar value: Gets a page of active connectivity configurations.
@@ -476,14 +488,14 @@ class ActiveConnectivityConfigurationsListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ActiveConnectivityConfiguration]'},
-        'skip_token': {'key': 'skipToken', 'type': 'str'},
+        "value": {"key": "value", "type": "[ActiveConnectivityConfiguration]"},
+        "skip_token": {"key": "skipToken", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["ActiveConnectivityConfiguration"]] = None,
+        value: Optional[List["_models.ActiveConnectivityConfiguration"]] = None,
         skip_token: Optional[str] = None,
         **kwargs
     ):
@@ -495,12 +507,12 @@ class ActiveConnectivityConfigurationsListResult(msrest.serialization.Model):
          with the same query and scopes used in the current request) to retrieve the next page of data.
         :paramtype skip_token: str
         """
-        super(ActiveConnectivityConfigurationsListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.skip_token = skip_token
 
 
-class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):
+class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: disable=too-many-instance-attributes
     """Network default admin rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -526,8 +538,8 @@ class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):
      list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkManagerSecurityGroupItem]
     :ivar rule_groups: Effective configuration groups.
     :vartype rule_groups: list[~azure.mgmt.network.v2021_02_01_preview.models.ConfigurationGroup]
-    :ivar kind: Required. Whether the rule is custom or default.Constant filled by server. Possible
-     values include: "Custom", "Default".
+    :ivar kind: Whether the rule is custom or default. Required. Known values are: "Custom" and
+     "Default".
     :vartype kind: str or ~azure.mgmt.network.v2021_02_01_preview.models.EffectiveAdminRuleKind
     :ivar display_name: A friendly name for the rule.
     :vartype display_name: str
@@ -535,8 +547,8 @@ class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):
     :vartype description: str
     :ivar flag: Default rule flag.
     :vartype flag: str
-    :ivar protocol: Network protocol this rule applies to. Possible values include: "Tcp", "Udp",
-     "Icmp", "Esp", "Any", "Ah".
+    :ivar protocol: Network protocol this rule applies to. Known values are: "Tcp", "Udp", "Icmp",
+     "Esp", "Any", and "Ah".
     :vartype protocol: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleProtocol
     :ivar sources: The CIDR or source IP ranges.
@@ -547,8 +559,8 @@ class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):
     :vartype source_port_ranges: list[str]
     :ivar destination_port_ranges: The destination port ranges.
     :vartype destination_port_ranges: list[str]
-    :ivar access: Indicates the access allowed for this particular rule. Possible values include:
-     "Allow", "Deny", "AlwaysAllow".
+    :ivar access: Indicates the access allowed for this particular rule. Known values are: "Allow",
+     "Deny", and "AlwaysAllow".
     :vartype access: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleAccess
     :ivar priority: The priority of the rule. The value can be between 1 and 4096. The priority
@@ -556,67 +568,70 @@ class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):
      higher the priority of the rule.
     :vartype priority: int
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
-     Possible values include: "Inbound", "Outbound".
+     Known values are: "Inbound" and "Outbound".
     :vartype direction: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleDirection
-    :ivar provisioning_state: The provisioning state of the resource. Possible values include:
-     "Succeeded", "Updating", "Deleting", "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ProvisioningState
     """
 
     _validation = {
-        'kind': {'required': True},
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'protocol': {'readonly': True},
-        'sources': {'readonly': True},
-        'destinations': {'readonly': True},
-        'source_port_ranges': {'readonly': True},
-        'destination_port_ranges': {'readonly': True},
-        'access': {'readonly': True},
-        'priority': {'readonly': True},
-        'direction': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "kind": {"required": True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "protocol": {"readonly": True},
+        "sources": {"readonly": True},
+        "destinations": {"readonly": True},
+        "source_port_ranges": {"readonly": True},
+        "destination_port_ranges": {"readonly": True},
+        "access": {"readonly": True},
+        "priority": {"readonly": True},
+        "direction": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'commit_time': {'key': 'commitTime', 'type': 'iso-8601'},
-        'region': {'key': 'region', 'type': 'str'},
-        'configuration_display_name': {'key': 'configurationDisplayName', 'type': 'str'},
-        'configuration_description': {'key': 'configurationDescription', 'type': 'str'},
-        'rule_collection_display_name': {'key': 'ruleCollectionDisplayName', 'type': 'str'},
-        'rule_collection_description': {'key': 'ruleCollectionDescription', 'type': 'str'},
-        'rule_collection_applies_to_groups': {'key': 'ruleCollectionAppliesToGroups', 'type': '[NetworkManagerSecurityGroupItem]'},
-        'rule_groups': {'key': 'ruleGroups', 'type': '[ConfigurationGroup]'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'flag': {'key': 'properties.flag', 'type': 'str'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'sources': {'key': 'properties.sources', 'type': '[AddressPrefixItem]'},
-        'destinations': {'key': 'properties.destinations', 'type': '[AddressPrefixItem]'},
-        'source_port_ranges': {'key': 'properties.sourcePortRanges', 'type': '[str]'},
-        'destination_port_ranges': {'key': 'properties.destinationPortRanges', 'type': '[str]'},
-        'access': {'key': 'properties.access', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'direction': {'key': 'properties.direction', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "commit_time": {"key": "commitTime", "type": "iso-8601"},
+        "region": {"key": "region", "type": "str"},
+        "configuration_display_name": {"key": "configurationDisplayName", "type": "str"},
+        "configuration_description": {"key": "configurationDescription", "type": "str"},
+        "rule_collection_display_name": {"key": "ruleCollectionDisplayName", "type": "str"},
+        "rule_collection_description": {"key": "ruleCollectionDescription", "type": "str"},
+        "rule_collection_applies_to_groups": {
+            "key": "ruleCollectionAppliesToGroups",
+            "type": "[NetworkManagerSecurityGroupItem]",
+        },
+        "rule_groups": {"key": "ruleGroups", "type": "[ConfigurationGroup]"},
+        "kind": {"key": "kind", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "flag": {"key": "properties.flag", "type": "str"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "sources": {"key": "properties.sources", "type": "[AddressPrefixItem]"},
+        "destinations": {"key": "properties.destinations", "type": "[AddressPrefixItem]"},
+        "source_port_ranges": {"key": "properties.sourcePortRanges", "type": "[str]"},
+        "destination_port_ranges": {"key": "properties.destinationPortRanges", "type": "[str]"},
+        "access": {"key": "properties.access", "type": "str"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "direction": {"key": "properties.direction", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         commit_time: Optional[datetime.datetime] = None,
         region: Optional[str] = None,
         configuration_display_name: Optional[str] = None,
         configuration_description: Optional[str] = None,
         rule_collection_display_name: Optional[str] = None,
         rule_collection_description: Optional[str] = None,
-        rule_collection_applies_to_groups: Optional[List["NetworkManagerSecurityGroupItem"]] = None,
-        rule_groups: Optional[List["ConfigurationGroup"]] = None,
+        rule_collection_applies_to_groups: Optional[List["_models.NetworkManagerSecurityGroupItem"]] = None,
+        rule_groups: Optional[List["_models.ConfigurationGroup"]] = None,
         flag: Optional[str] = None,
         **kwargs
     ):
@@ -643,8 +658,19 @@ class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):
         :keyword flag: Default rule flag.
         :paramtype flag: str
         """
-        super(ActiveDefaultSecurityAdminRule, self).__init__(id=id, commit_time=commit_time, region=region, configuration_display_name=configuration_display_name, configuration_description=configuration_description, rule_collection_display_name=rule_collection_display_name, rule_collection_description=rule_collection_description, rule_collection_applies_to_groups=rule_collection_applies_to_groups, rule_groups=rule_groups, **kwargs)
-        self.kind = 'Default'  # type: str
+        super().__init__(
+            id=id,
+            commit_time=commit_time,
+            region=region,
+            configuration_display_name=configuration_display_name,
+            configuration_description=configuration_description,
+            rule_collection_display_name=rule_collection_display_name,
+            rule_collection_description=rule_collection_description,
+            rule_collection_applies_to_groups=rule_collection_applies_to_groups,
+            rule_groups=rule_groups,
+            **kwargs
+        )
+        self.kind = "Default"  # type: str
         self.display_name = None
         self.description = None
         self.flag = flag
@@ -659,7 +685,7 @@ class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):
         self.provisioning_state = None
 
 
-class ActiveDefaultSecurityUserRule(ActiveBaseSecurityUserRule):
+class ActiveDefaultSecurityUserRule(ActiveBaseSecurityUserRule):  # pylint: disable=too-many-instance-attributes
     """Network security default user rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -685,8 +711,8 @@ class ActiveDefaultSecurityUserRule(ActiveBaseSecurityUserRule):
      list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkManagerSecurityGroupItem]
     :ivar rule_groups: Effective configuration groups.
     :vartype rule_groups: list[~azure.mgmt.network.v2021_02_01_preview.models.ConfigurationGroup]
-    :ivar kind: Required. Whether the rule is custom or default.Constant filled by server. Possible
-     values include: "Custom", "Default".
+    :ivar kind: Whether the rule is custom or default. Required. Known values are: "Custom" and
+     "Default".
     :vartype kind: str or ~azure.mgmt.network.v2021_02_01_preview.models.EffectiveUserRuleKind
     :ivar display_name: A friendly name for the rule.
     :vartype display_name: str
@@ -694,8 +720,8 @@ class ActiveDefaultSecurityUserRule(ActiveBaseSecurityUserRule):
     :vartype description: str
     :ivar flag: Default rule flag.
     :vartype flag: str
-    :ivar protocol: Network protocol this rule applies to. Possible values include: "Tcp", "Udp",
-     "Icmp", "Esp", "Any", "Ah".
+    :ivar protocol: Network protocol this rule applies to. Known values are: "Tcp", "Udp", "Icmp",
+     "Esp", "Any", and "Ah".
     :vartype protocol: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleProtocol
     :ivar sources: The CIDR or source IP ranges.
@@ -707,63 +733,66 @@ class ActiveDefaultSecurityUserRule(ActiveBaseSecurityUserRule):
     :ivar destination_port_ranges: The destination port ranges.
     :vartype destination_port_ranges: list[str]
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
-     Possible values include: "Inbound", "Outbound".
+     Known values are: "Inbound" and "Outbound".
     :vartype direction: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleDirection
     :ivar provisioning_state: The provisioning state of the security configuration user rule
-     resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ProvisioningState
     """
 
     _validation = {
-        'kind': {'required': True},
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'protocol': {'readonly': True},
-        'sources': {'readonly': True},
-        'destinations': {'readonly': True},
-        'source_port_ranges': {'readonly': True},
-        'destination_port_ranges': {'readonly': True},
-        'direction': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "kind": {"required": True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "protocol": {"readonly": True},
+        "sources": {"readonly": True},
+        "destinations": {"readonly": True},
+        "source_port_ranges": {"readonly": True},
+        "destination_port_ranges": {"readonly": True},
+        "direction": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'commit_time': {'key': 'commitTime', 'type': 'iso-8601'},
-        'region': {'key': 'region', 'type': 'str'},
-        'configuration_display_name': {'key': 'configurationDisplayName', 'type': 'str'},
-        'configuration_description': {'key': 'configurationDescription', 'type': 'str'},
-        'rule_collection_display_name': {'key': 'ruleCollectionDisplayName', 'type': 'str'},
-        'rule_collection_description': {'key': 'ruleCollectionDescription', 'type': 'str'},
-        'rule_collection_applies_to_groups': {'key': 'ruleCollectionAppliesToGroups', 'type': '[NetworkManagerSecurityGroupItem]'},
-        'rule_groups': {'key': 'ruleGroups', 'type': '[ConfigurationGroup]'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'flag': {'key': 'properties.flag', 'type': 'str'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'sources': {'key': 'properties.sources', 'type': '[AddressPrefixItem]'},
-        'destinations': {'key': 'properties.destinations', 'type': '[AddressPrefixItem]'},
-        'source_port_ranges': {'key': 'properties.sourcePortRanges', 'type': '[str]'},
-        'destination_port_ranges': {'key': 'properties.destinationPortRanges', 'type': '[str]'},
-        'direction': {'key': 'properties.direction', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "commit_time": {"key": "commitTime", "type": "iso-8601"},
+        "region": {"key": "region", "type": "str"},
+        "configuration_display_name": {"key": "configurationDisplayName", "type": "str"},
+        "configuration_description": {"key": "configurationDescription", "type": "str"},
+        "rule_collection_display_name": {"key": "ruleCollectionDisplayName", "type": "str"},
+        "rule_collection_description": {"key": "ruleCollectionDescription", "type": "str"},
+        "rule_collection_applies_to_groups": {
+            "key": "ruleCollectionAppliesToGroups",
+            "type": "[NetworkManagerSecurityGroupItem]",
+        },
+        "rule_groups": {"key": "ruleGroups", "type": "[ConfigurationGroup]"},
+        "kind": {"key": "kind", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "flag": {"key": "properties.flag", "type": "str"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "sources": {"key": "properties.sources", "type": "[AddressPrefixItem]"},
+        "destinations": {"key": "properties.destinations", "type": "[AddressPrefixItem]"},
+        "source_port_ranges": {"key": "properties.sourcePortRanges", "type": "[str]"},
+        "destination_port_ranges": {"key": "properties.destinationPortRanges", "type": "[str]"},
+        "direction": {"key": "properties.direction", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         commit_time: Optional[datetime.datetime] = None,
         region: Optional[str] = None,
         configuration_display_name: Optional[str] = None,
         configuration_description: Optional[str] = None,
         rule_collection_display_name: Optional[str] = None,
         rule_collection_description: Optional[str] = None,
-        rule_collection_applies_to_groups: Optional[List["NetworkManagerSecurityGroupItem"]] = None,
-        rule_groups: Optional[List["ConfigurationGroup"]] = None,
+        rule_collection_applies_to_groups: Optional[List["_models.NetworkManagerSecurityGroupItem"]] = None,
+        rule_groups: Optional[List["_models.ConfigurationGroup"]] = None,
         flag: Optional[str] = None,
         **kwargs
     ):
@@ -790,8 +819,19 @@ class ActiveDefaultSecurityUserRule(ActiveBaseSecurityUserRule):
         :keyword flag: Default rule flag.
         :paramtype flag: str
         """
-        super(ActiveDefaultSecurityUserRule, self).__init__(id=id, commit_time=commit_time, region=region, configuration_display_name=configuration_display_name, configuration_description=configuration_description, rule_collection_display_name=rule_collection_display_name, rule_collection_description=rule_collection_description, rule_collection_applies_to_groups=rule_collection_applies_to_groups, rule_groups=rule_groups, **kwargs)
-        self.kind = 'Default'  # type: str
+        super().__init__(
+            id=id,
+            commit_time=commit_time,
+            region=region,
+            configuration_display_name=configuration_display_name,
+            configuration_description=configuration_description,
+            rule_collection_display_name=rule_collection_display_name,
+            rule_collection_description=rule_collection_description,
+            rule_collection_applies_to_groups=rule_collection_applies_to_groups,
+            rule_groups=rule_groups,
+            **kwargs
+        )
+        self.kind = "Default"  # type: str
         self.display_name = None
         self.description = None
         self.flag = flag
@@ -804,7 +844,7 @@ class ActiveDefaultSecurityUserRule(ActiveBaseSecurityUserRule):
         self.provisioning_state = None
 
 
-class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):
+class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: disable=too-many-instance-attributes
     """Network admin rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -830,15 +870,15 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):
      list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkManagerSecurityGroupItem]
     :ivar rule_groups: Effective configuration groups.
     :vartype rule_groups: list[~azure.mgmt.network.v2021_02_01_preview.models.ConfigurationGroup]
-    :ivar kind: Required. Whether the rule is custom or default.Constant filled by server. Possible
-     values include: "Custom", "Default".
+    :ivar kind: Whether the rule is custom or default. Required. Known values are: "Custom" and
+     "Default".
     :vartype kind: str or ~azure.mgmt.network.v2021_02_01_preview.models.EffectiveAdminRuleKind
     :ivar display_name: A friendly name for the rule.
     :vartype display_name: str
     :ivar description: A description for this rule. Restricted to 140 chars.
     :vartype description: str
-    :ivar protocol: Network protocol this rule applies to. Possible values include: "Tcp", "Udp",
-     "Icmp", "Esp", "Any", "Ah".
+    :ivar protocol: Network protocol this rule applies to. Known values are: "Tcp", "Udp", "Icmp",
+     "Esp", "Any", and "Ah".
     :vartype protocol: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleProtocol
     :ivar sources: The CIDR or source IP ranges.
@@ -849,8 +889,8 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):
     :vartype source_port_ranges: list[str]
     :ivar destination_port_ranges: The destination port ranges.
     :vartype destination_port_ranges: list[str]
-    :ivar access: Indicates the access allowed for this particular rule. Possible values include:
-     "Allow", "Deny", "AlwaysAllow".
+    :ivar access: Indicates the access allowed for this particular rule. Known values are: "Allow",
+     "Deny", and "AlwaysAllow".
     :vartype access: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleAccess
     :ivar priority: The priority of the rule. The value can be between 1 and 4096. The priority
@@ -858,67 +898,70 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):
      higher the priority of the rule.
     :vartype priority: int
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
-     Possible values include: "Inbound", "Outbound".
+     Known values are: "Inbound" and "Outbound".
     :vartype direction: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleDirection
-    :ivar provisioning_state: The provisioning state of the resource. Possible values include:
-     "Succeeded", "Updating", "Deleting", "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ProvisioningState
     """
 
     _validation = {
-        'kind': {'required': True},
-        'priority': {'maximum': 4096, 'minimum': 1},
-        'provisioning_state': {'readonly': True},
+        "kind": {"required": True},
+        "priority": {"maximum": 4096, "minimum": 1},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'commit_time': {'key': 'commitTime', 'type': 'iso-8601'},
-        'region': {'key': 'region', 'type': 'str'},
-        'configuration_display_name': {'key': 'configurationDisplayName', 'type': 'str'},
-        'configuration_description': {'key': 'configurationDescription', 'type': 'str'},
-        'rule_collection_display_name': {'key': 'ruleCollectionDisplayName', 'type': 'str'},
-        'rule_collection_description': {'key': 'ruleCollectionDescription', 'type': 'str'},
-        'rule_collection_applies_to_groups': {'key': 'ruleCollectionAppliesToGroups', 'type': '[NetworkManagerSecurityGroupItem]'},
-        'rule_groups': {'key': 'ruleGroups', 'type': '[ConfigurationGroup]'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'sources': {'key': 'properties.sources', 'type': '[AddressPrefixItem]'},
-        'destinations': {'key': 'properties.destinations', 'type': '[AddressPrefixItem]'},
-        'source_port_ranges': {'key': 'properties.sourcePortRanges', 'type': '[str]'},
-        'destination_port_ranges': {'key': 'properties.destinationPortRanges', 'type': '[str]'},
-        'access': {'key': 'properties.access', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'direction': {'key': 'properties.direction', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "commit_time": {"key": "commitTime", "type": "iso-8601"},
+        "region": {"key": "region", "type": "str"},
+        "configuration_display_name": {"key": "configurationDisplayName", "type": "str"},
+        "configuration_description": {"key": "configurationDescription", "type": "str"},
+        "rule_collection_display_name": {"key": "ruleCollectionDisplayName", "type": "str"},
+        "rule_collection_description": {"key": "ruleCollectionDescription", "type": "str"},
+        "rule_collection_applies_to_groups": {
+            "key": "ruleCollectionAppliesToGroups",
+            "type": "[NetworkManagerSecurityGroupItem]",
+        },
+        "rule_groups": {"key": "ruleGroups", "type": "[ConfigurationGroup]"},
+        "kind": {"key": "kind", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "sources": {"key": "properties.sources", "type": "[AddressPrefixItem]"},
+        "destinations": {"key": "properties.destinations", "type": "[AddressPrefixItem]"},
+        "source_port_ranges": {"key": "properties.sourcePortRanges", "type": "[str]"},
+        "destination_port_ranges": {"key": "properties.destinationPortRanges", "type": "[str]"},
+        "access": {"key": "properties.access", "type": "str"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "direction": {"key": "properties.direction", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         commit_time: Optional[datetime.datetime] = None,
         region: Optional[str] = None,
         configuration_display_name: Optional[str] = None,
         configuration_description: Optional[str] = None,
         rule_collection_display_name: Optional[str] = None,
         rule_collection_description: Optional[str] = None,
-        rule_collection_applies_to_groups: Optional[List["NetworkManagerSecurityGroupItem"]] = None,
-        rule_groups: Optional[List["ConfigurationGroup"]] = None,
+        rule_collection_applies_to_groups: Optional[List["_models.NetworkManagerSecurityGroupItem"]] = None,
+        rule_groups: Optional[List["_models.ConfigurationGroup"]] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        protocol: Optional[Union[str, "SecurityConfigurationRuleProtocol"]] = None,
-        sources: Optional[List["AddressPrefixItem"]] = None,
-        destinations: Optional[List["AddressPrefixItem"]] = None,
+        protocol: Optional[Union[str, "_models.SecurityConfigurationRuleProtocol"]] = None,
+        sources: Optional[List["_models.AddressPrefixItem"]] = None,
+        destinations: Optional[List["_models.AddressPrefixItem"]] = None,
         source_port_ranges: Optional[List[str]] = None,
         destination_port_ranges: Optional[List[str]] = None,
-        access: Optional[Union[str, "SecurityConfigurationRuleAccess"]] = None,
+        access: Optional[Union[str, "_models.SecurityConfigurationRuleAccess"]] = None,
         priority: Optional[int] = None,
-        direction: Optional[Union[str, "SecurityConfigurationRuleDirection"]] = None,
+        direction: Optional[Union[str, "_models.SecurityConfigurationRuleDirection"]] = None,
         **kwargs
     ):
         """
@@ -945,8 +988,8 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):
         :paramtype display_name: str
         :keyword description: A description for this rule. Restricted to 140 chars.
         :paramtype description: str
-        :keyword protocol: Network protocol this rule applies to. Possible values include: "Tcp",
-         "Udp", "Icmp", "Esp", "Any", "Ah".
+        :keyword protocol: Network protocol this rule applies to. Known values are: "Tcp", "Udp",
+         "Icmp", "Esp", "Any", and "Ah".
         :paramtype protocol: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleProtocol
         :keyword sources: The CIDR or source IP ranges.
@@ -957,8 +1000,8 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):
         :paramtype source_port_ranges: list[str]
         :keyword destination_port_ranges: The destination port ranges.
         :paramtype destination_port_ranges: list[str]
-        :keyword access: Indicates the access allowed for this particular rule. Possible values
-         include: "Allow", "Deny", "AlwaysAllow".
+        :keyword access: Indicates the access allowed for this particular rule. Known values are:
+         "Allow", "Deny", and "AlwaysAllow".
         :paramtype access: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleAccess
         :keyword priority: The priority of the rule. The value can be between 1 and 4096. The priority
@@ -966,12 +1009,23 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):
          higher the priority of the rule.
         :paramtype priority: int
         :keyword direction: Indicates if the traffic matched against the rule in inbound or outbound.
-         Possible values include: "Inbound", "Outbound".
+         Known values are: "Inbound" and "Outbound".
         :paramtype direction: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleDirection
         """
-        super(ActiveSecurityAdminRule, self).__init__(id=id, commit_time=commit_time, region=region, configuration_display_name=configuration_display_name, configuration_description=configuration_description, rule_collection_display_name=rule_collection_display_name, rule_collection_description=rule_collection_description, rule_collection_applies_to_groups=rule_collection_applies_to_groups, rule_groups=rule_groups, **kwargs)
-        self.kind = 'Custom'  # type: str
+        super().__init__(
+            id=id,
+            commit_time=commit_time,
+            region=region,
+            configuration_display_name=configuration_display_name,
+            configuration_description=configuration_description,
+            rule_collection_display_name=rule_collection_display_name,
+            rule_collection_description=rule_collection_description,
+            rule_collection_applies_to_groups=rule_collection_applies_to_groups,
+            rule_groups=rule_groups,
+            **kwargs
+        )
+        self.kind = "Custom"  # type: str
         self.display_name = display_name
         self.description = description
         self.protocol = protocol
@@ -985,7 +1039,7 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):
         self.provisioning_state = None
 
 
-class ActiveSecurityAdminRulesListResult(msrest.serialization.Model):
+class ActiveSecurityAdminRulesListResult(_serialization.Model):
     """Result of the request to list active security admin rules. It contains a list of active security admin rules and a skiptoken to get the next set of results.
 
     :ivar value: Gets a page of active security admin rules.
@@ -997,14 +1051,14 @@ class ActiveSecurityAdminRulesListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ActiveBaseSecurityAdminRule]'},
-        'skip_token': {'key': 'skipToken', 'type': 'str'},
+        "value": {"key": "value", "type": "[ActiveBaseSecurityAdminRule]"},
+        "skip_token": {"key": "skipToken", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["ActiveBaseSecurityAdminRule"]] = None,
+        value: Optional[List["_models.ActiveBaseSecurityAdminRule"]] = None,
         skip_token: Optional[str] = None,
         **kwargs
     ):
@@ -1016,12 +1070,12 @@ class ActiveSecurityAdminRulesListResult(msrest.serialization.Model):
          with the same query and scopes used in the current request) to retrieve the next page of data.
         :paramtype skip_token: str
         """
-        super(ActiveSecurityAdminRulesListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.skip_token = skip_token
 
 
-class ActiveSecurityUserRule(ActiveBaseSecurityUserRule):
+class ActiveSecurityUserRule(ActiveBaseSecurityUserRule):  # pylint: disable=too-many-instance-attributes
     """Network security user rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1047,15 +1101,15 @@ class ActiveSecurityUserRule(ActiveBaseSecurityUserRule):
      list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkManagerSecurityGroupItem]
     :ivar rule_groups: Effective configuration groups.
     :vartype rule_groups: list[~azure.mgmt.network.v2021_02_01_preview.models.ConfigurationGroup]
-    :ivar kind: Required. Whether the rule is custom or default.Constant filled by server. Possible
-     values include: "Custom", "Default".
+    :ivar kind: Whether the rule is custom or default. Required. Known values are: "Custom" and
+     "Default".
     :vartype kind: str or ~azure.mgmt.network.v2021_02_01_preview.models.EffectiveUserRuleKind
     :ivar display_name: A friendly name for the rule.
     :vartype display_name: str
     :ivar description: A description for this rule.
     :vartype description: str
-    :ivar protocol: Network protocol this rule applies to. Possible values include: "Tcp", "Udp",
-     "Icmp", "Esp", "Any", "Ah".
+    :ivar protocol: Network protocol this rule applies to. Known values are: "Tcp", "Udp", "Icmp",
+     "Esp", "Any", and "Ah".
     :vartype protocol: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleProtocol
     :ivar sources: The CIDR or source IP ranges.
@@ -1067,62 +1121,65 @@ class ActiveSecurityUserRule(ActiveBaseSecurityUserRule):
     :ivar destination_port_ranges: The destination port ranges.
     :vartype destination_port_ranges: list[str]
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
-     Possible values include: "Inbound", "Outbound".
+     Known values are: "Inbound" and "Outbound".
     :vartype direction: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleDirection
     :ivar provisioning_state: The provisioning state of the security configuration user rule
-     resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ProvisioningState
     """
 
     _validation = {
-        'kind': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "kind": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'commit_time': {'key': 'commitTime', 'type': 'iso-8601'},
-        'region': {'key': 'region', 'type': 'str'},
-        'configuration_display_name': {'key': 'configurationDisplayName', 'type': 'str'},
-        'configuration_description': {'key': 'configurationDescription', 'type': 'str'},
-        'rule_collection_display_name': {'key': 'ruleCollectionDisplayName', 'type': 'str'},
-        'rule_collection_description': {'key': 'ruleCollectionDescription', 'type': 'str'},
-        'rule_collection_applies_to_groups': {'key': 'ruleCollectionAppliesToGroups', 'type': '[NetworkManagerSecurityGroupItem]'},
-        'rule_groups': {'key': 'ruleGroups', 'type': '[ConfigurationGroup]'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'sources': {'key': 'properties.sources', 'type': '[AddressPrefixItem]'},
-        'destinations': {'key': 'properties.destinations', 'type': '[AddressPrefixItem]'},
-        'source_port_ranges': {'key': 'properties.sourcePortRanges', 'type': '[str]'},
-        'destination_port_ranges': {'key': 'properties.destinationPortRanges', 'type': '[str]'},
-        'direction': {'key': 'properties.direction', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "commit_time": {"key": "commitTime", "type": "iso-8601"},
+        "region": {"key": "region", "type": "str"},
+        "configuration_display_name": {"key": "configurationDisplayName", "type": "str"},
+        "configuration_description": {"key": "configurationDescription", "type": "str"},
+        "rule_collection_display_name": {"key": "ruleCollectionDisplayName", "type": "str"},
+        "rule_collection_description": {"key": "ruleCollectionDescription", "type": "str"},
+        "rule_collection_applies_to_groups": {
+            "key": "ruleCollectionAppliesToGroups",
+            "type": "[NetworkManagerSecurityGroupItem]",
+        },
+        "rule_groups": {"key": "ruleGroups", "type": "[ConfigurationGroup]"},
+        "kind": {"key": "kind", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "sources": {"key": "properties.sources", "type": "[AddressPrefixItem]"},
+        "destinations": {"key": "properties.destinations", "type": "[AddressPrefixItem]"},
+        "source_port_ranges": {"key": "properties.sourcePortRanges", "type": "[str]"},
+        "destination_port_ranges": {"key": "properties.destinationPortRanges", "type": "[str]"},
+        "direction": {"key": "properties.direction", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         commit_time: Optional[datetime.datetime] = None,
         region: Optional[str] = None,
         configuration_display_name: Optional[str] = None,
         configuration_description: Optional[str] = None,
         rule_collection_display_name: Optional[str] = None,
         rule_collection_description: Optional[str] = None,
-        rule_collection_applies_to_groups: Optional[List["NetworkManagerSecurityGroupItem"]] = None,
-        rule_groups: Optional[List["ConfigurationGroup"]] = None,
+        rule_collection_applies_to_groups: Optional[List["_models.NetworkManagerSecurityGroupItem"]] = None,
+        rule_groups: Optional[List["_models.ConfigurationGroup"]] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        protocol: Optional[Union[str, "SecurityConfigurationRuleProtocol"]] = None,
-        sources: Optional[List["AddressPrefixItem"]] = None,
-        destinations: Optional[List["AddressPrefixItem"]] = None,
+        protocol: Optional[Union[str, "_models.SecurityConfigurationRuleProtocol"]] = None,
+        sources: Optional[List["_models.AddressPrefixItem"]] = None,
+        destinations: Optional[List["_models.AddressPrefixItem"]] = None,
         source_port_ranges: Optional[List[str]] = None,
         destination_port_ranges: Optional[List[str]] = None,
-        direction: Optional[Union[str, "SecurityConfigurationRuleDirection"]] = None,
+        direction: Optional[Union[str, "_models.SecurityConfigurationRuleDirection"]] = None,
         **kwargs
     ):
         """
@@ -1149,8 +1206,8 @@ class ActiveSecurityUserRule(ActiveBaseSecurityUserRule):
         :paramtype display_name: str
         :keyword description: A description for this rule.
         :paramtype description: str
-        :keyword protocol: Network protocol this rule applies to. Possible values include: "Tcp",
-         "Udp", "Icmp", "Esp", "Any", "Ah".
+        :keyword protocol: Network protocol this rule applies to. Known values are: "Tcp", "Udp",
+         "Icmp", "Esp", "Any", and "Ah".
         :paramtype protocol: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleProtocol
         :keyword sources: The CIDR or source IP ranges.
@@ -1162,12 +1219,23 @@ class ActiveSecurityUserRule(ActiveBaseSecurityUserRule):
         :keyword destination_port_ranges: The destination port ranges.
         :paramtype destination_port_ranges: list[str]
         :keyword direction: Indicates if the traffic matched against the rule in inbound or outbound.
-         Possible values include: "Inbound", "Outbound".
+         Known values are: "Inbound" and "Outbound".
         :paramtype direction: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleDirection
         """
-        super(ActiveSecurityUserRule, self).__init__(id=id, commit_time=commit_time, region=region, configuration_display_name=configuration_display_name, configuration_description=configuration_description, rule_collection_display_name=rule_collection_display_name, rule_collection_description=rule_collection_description, rule_collection_applies_to_groups=rule_collection_applies_to_groups, rule_groups=rule_groups, **kwargs)
-        self.kind = 'Custom'  # type: str
+        super().__init__(
+            id=id,
+            commit_time=commit_time,
+            region=region,
+            configuration_display_name=configuration_display_name,
+            configuration_description=configuration_description,
+            rule_collection_display_name=rule_collection_display_name,
+            rule_collection_description=rule_collection_description,
+            rule_collection_applies_to_groups=rule_collection_applies_to_groups,
+            rule_groups=rule_groups,
+            **kwargs
+        )
+        self.kind = "Custom"  # type: str
         self.display_name = display_name
         self.description = description
         self.protocol = protocol
@@ -1179,7 +1247,7 @@ class ActiveSecurityUserRule(ActiveBaseSecurityUserRule):
         self.provisioning_state = None
 
 
-class ActiveSecurityUserRulesListResult(msrest.serialization.Model):
+class ActiveSecurityUserRulesListResult(_serialization.Model):
     """Result of the request to list active security user rules. It contains a list of active security user rules and a skiptoken to get the next set of results.
 
     :ivar value: Gets a page of active security user rules.
@@ -1190,14 +1258,14 @@ class ActiveSecurityUserRulesListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ActiveBaseSecurityUserRule]'},
-        'skip_token': {'key': 'skipToken', 'type': 'str'},
+        "value": {"key": "value", "type": "[ActiveBaseSecurityUserRule]"},
+        "skip_token": {"key": "skipToken", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["ActiveBaseSecurityUserRule"]] = None,
+        value: Optional[List["_models.ActiveBaseSecurityUserRule"]] = None,
         skip_token: Optional[str] = None,
         **kwargs
     ):
@@ -1209,48 +1277,47 @@ class ActiveSecurityUserRulesListResult(msrest.serialization.Model):
          with the same query and scopes used in the current request) to retrieve the next page of data.
         :paramtype skip_token: str
         """
-        super(ActiveSecurityUserRulesListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.skip_token = skip_token
 
 
-class AddressPrefixItem(msrest.serialization.Model):
+class AddressPrefixItem(_serialization.Model):
     """Address prefix item.
 
     :ivar address_prefix: Address prefix.
     :vartype address_prefix: str
-    :ivar address_prefix_type: Address prefix type. Possible values include: "IPPrefix",
-     "ServiceTag".
+    :ivar address_prefix_type: Address prefix type. Known values are: "IPPrefix" and "ServiceTag".
     :vartype address_prefix_type: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.AddressPrefixType
     """
 
     _attribute_map = {
-        'address_prefix': {'key': 'addressPrefix', 'type': 'str'},
-        'address_prefix_type': {'key': 'addressPrefixType', 'type': 'str'},
+        "address_prefix": {"key": "addressPrefix", "type": "str"},
+        "address_prefix_type": {"key": "addressPrefixType", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         address_prefix: Optional[str] = None,
-        address_prefix_type: Optional[Union[str, "AddressPrefixType"]] = None,
+        address_prefix_type: Optional[Union[str, "_models.AddressPrefixType"]] = None,
         **kwargs
     ):
         """
         :keyword address_prefix: Address prefix.
         :paramtype address_prefix: str
-        :keyword address_prefix_type: Address prefix type. Possible values include: "IPPrefix",
+        :keyword address_prefix_type: Address prefix type. Known values are: "IPPrefix" and
          "ServiceTag".
         :paramtype address_prefix_type: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.AddressPrefixType
         """
-        super(AddressPrefixItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.address_prefix = address_prefix
         self.address_prefix_type = address_prefix_type
 
 
-class ProxyResource(msrest.serialization.Model):
+class ProxyResource(_serialization.Model):
     """Proxy resource representation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1266,26 +1333,22 @@ class ProxyResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -1295,8 +1358,8 @@ class ProxyResource(msrest.serialization.Model):
 class BaseAdminRule(ProxyResource):
     """Network base admin rule.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AdminRule, DefaultAdminRule.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AdminRule, DefaultAdminRule
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1310,47 +1373,41 @@ class BaseAdminRule(ProxyResource):
     :vartype type: str
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :ivar kind: Required. Whether the rule is custom or default.Constant filled by server. Possible
-     values include: "Custom", "Default".
+    :ivar kind: Whether the rule is custom or default. Required. Known values are: "Custom" and
+     "Default".
     :vartype kind: str or ~azure.mgmt.network.v2021_02_01_preview.models.AdminRuleKind
     :ivar system_data: The system metadata related to this resource.
     :vartype system_data: ~azure.mgmt.network.v2021_02_01_preview.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'kind': {'required': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "kind": {"required": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    _subtype_map = {
-        'kind': {'Custom': 'AdminRule', 'Default': 'DefaultAdminRule'}
-    }
+    _subtype_map = {"kind": {"Custom": "AdminRule", "Default": "DefaultAdminRule"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(BaseAdminRule, self).__init__(**kwargs)
-        self.kind = 'BaseAdminRule'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.kind = None  # type: Optional[str]
         self.system_data = None
 
 
-class AdminRule(BaseAdminRule):
+class AdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attributes
     """Network admin rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1365,8 +1422,8 @@ class AdminRule(BaseAdminRule):
     :vartype type: str
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :ivar kind: Required. Whether the rule is custom or default.Constant filled by server. Possible
-     values include: "Custom", "Default".
+    :ivar kind: Whether the rule is custom or default. Required. Known values are: "Custom" and
+     "Default".
     :vartype kind: str or ~azure.mgmt.network.v2021_02_01_preview.models.AdminRuleKind
     :ivar system_data: The system metadata related to this resource.
     :vartype system_data: ~azure.mgmt.network.v2021_02_01_preview.models.SystemData
@@ -1374,8 +1431,8 @@ class AdminRule(BaseAdminRule):
     :vartype display_name: str
     :ivar description: A description for this rule. Restricted to 140 chars.
     :vartype description: str
-    :ivar protocol: Network protocol this rule applies to. Possible values include: "Tcp", "Udp",
-     "Icmp", "Esp", "Any", "Ah".
+    :ivar protocol: Network protocol this rule applies to. Known values are: "Tcp", "Udp", "Icmp",
+     "Esp", "Any", and "Ah".
     :vartype protocol: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleProtocol
     :ivar sources: The CIDR or source IP ranges.
@@ -1386,8 +1443,8 @@ class AdminRule(BaseAdminRule):
     :vartype source_port_ranges: list[str]
     :ivar destination_port_ranges: The destination port ranges.
     :vartype destination_port_ranges: list[str]
-    :ivar access: Indicates the access allowed for this particular rule. Possible values include:
-     "Allow", "Deny", "AlwaysAllow".
+    :ivar access: Indicates the access allowed for this particular rule. Known values are: "Allow",
+     "Deny", and "AlwaysAllow".
     :vartype access: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleAccess
     :ivar priority: The priority of the rule. The value can be between 1 and 4096. The priority
@@ -1395,44 +1452,44 @@ class AdminRule(BaseAdminRule):
      higher the priority of the rule.
     :vartype priority: int
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
-     Possible values include: "Inbound", "Outbound".
+     Known values are: "Inbound" and "Outbound".
     :vartype direction: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleDirection
-    :ivar provisioning_state: The provisioning state of the resource. Possible values include:
-     "Succeeded", "Updating", "Deleting", "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'kind': {'required': True},
-        'system_data': {'readonly': True},
-        'priority': {'maximum': 4096, 'minimum': 1},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "kind": {"required": True},
+        "system_data": {"readonly": True},
+        "priority": {"maximum": 4096, "minimum": 1},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'sources': {'key': 'properties.sources', 'type': '[AddressPrefixItem]'},
-        'destinations': {'key': 'properties.destinations', 'type': '[AddressPrefixItem]'},
-        'source_port_ranges': {'key': 'properties.sourcePortRanges', 'type': '[str]'},
-        'destination_port_ranges': {'key': 'properties.destinationPortRanges', 'type': '[str]'},
-        'access': {'key': 'properties.access', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'direction': {'key': 'properties.direction', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "sources": {"key": "properties.sources", "type": "[AddressPrefixItem]"},
+        "destinations": {"key": "properties.destinations", "type": "[AddressPrefixItem]"},
+        "source_port_ranges": {"key": "properties.sourcePortRanges", "type": "[str]"},
+        "destination_port_ranges": {"key": "properties.destinationPortRanges", "type": "[str]"},
+        "access": {"key": "properties.access", "type": "str"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "direction": {"key": "properties.direction", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -1440,14 +1497,14 @@ class AdminRule(BaseAdminRule):
         *,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        protocol: Optional[Union[str, "SecurityConfigurationRuleProtocol"]] = None,
-        sources: Optional[List["AddressPrefixItem"]] = None,
-        destinations: Optional[List["AddressPrefixItem"]] = None,
+        protocol: Optional[Union[str, "_models.SecurityConfigurationRuleProtocol"]] = None,
+        sources: Optional[List["_models.AddressPrefixItem"]] = None,
+        destinations: Optional[List["_models.AddressPrefixItem"]] = None,
         source_port_ranges: Optional[List[str]] = None,
         destination_port_ranges: Optional[List[str]] = None,
-        access: Optional[Union[str, "SecurityConfigurationRuleAccess"]] = None,
+        access: Optional[Union[str, "_models.SecurityConfigurationRuleAccess"]] = None,
         priority: Optional[int] = None,
-        direction: Optional[Union[str, "SecurityConfigurationRuleDirection"]] = None,
+        direction: Optional[Union[str, "_models.SecurityConfigurationRuleDirection"]] = None,
         **kwargs
     ):
         """
@@ -1455,8 +1512,8 @@ class AdminRule(BaseAdminRule):
         :paramtype display_name: str
         :keyword description: A description for this rule. Restricted to 140 chars.
         :paramtype description: str
-        :keyword protocol: Network protocol this rule applies to. Possible values include: "Tcp",
-         "Udp", "Icmp", "Esp", "Any", "Ah".
+        :keyword protocol: Network protocol this rule applies to. Known values are: "Tcp", "Udp",
+         "Icmp", "Esp", "Any", and "Ah".
         :paramtype protocol: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleProtocol
         :keyword sources: The CIDR or source IP ranges.
@@ -1467,8 +1524,8 @@ class AdminRule(BaseAdminRule):
         :paramtype source_port_ranges: list[str]
         :keyword destination_port_ranges: The destination port ranges.
         :paramtype destination_port_ranges: list[str]
-        :keyword access: Indicates the access allowed for this particular rule. Possible values
-         include: "Allow", "Deny", "AlwaysAllow".
+        :keyword access: Indicates the access allowed for this particular rule. Known values are:
+         "Allow", "Deny", and "AlwaysAllow".
         :paramtype access: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleAccess
         :keyword priority: The priority of the rule. The value can be between 1 and 4096. The priority
@@ -1476,12 +1533,12 @@ class AdminRule(BaseAdminRule):
          higher the priority of the rule.
         :paramtype priority: int
         :keyword direction: Indicates if the traffic matched against the rule in inbound or outbound.
-         Possible values include: "Inbound", "Outbound".
+         Known values are: "Inbound" and "Outbound".
         :paramtype direction: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleDirection
         """
-        super(AdminRule, self).__init__(**kwargs)
-        self.kind = 'Custom'  # type: str
+        super().__init__(**kwargs)
+        self.kind = "Custom"  # type: str
         self.display_name = display_name
         self.description = description
         self.protocol = protocol
@@ -1495,7 +1552,7 @@ class AdminRule(BaseAdminRule):
         self.provisioning_state = None
 
 
-class AdminRuleListResult(msrest.serialization.Model):
+class AdminRuleListResult(_serialization.Model):
     """security configuration admin rule list result.
 
     :ivar value: A list of admin rules.
@@ -1505,16 +1562,12 @@ class AdminRuleListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BaseAdminRule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[BaseAdminRule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["BaseAdminRule"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.BaseAdminRule"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: A list of admin rules.
@@ -1522,7 +1575,7 @@ class AdminRuleListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(AdminRuleListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -1530,8 +1583,8 @@ class AdminRuleListResult(msrest.serialization.Model):
 class BaseUserRule(ProxyResource):
     """Network base rule.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: UserRule, DefaultUserRule.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    UserRule, DefaultUserRule
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1545,47 +1598,63 @@ class BaseUserRule(ProxyResource):
     :vartype type: str
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :ivar kind: Required. Whether the rule is custom or default.Constant filled by server. Possible
-     values include: "Custom", "Default".
+    :ivar kind: Whether the rule is custom or default. Required. Known values are: "Custom" and
+     "Default".
     :vartype kind: str or ~azure.mgmt.network.v2021_02_01_preview.models.UserRuleKind
     :ivar system_data: The system metadata related to this resource.
     :vartype system_data: ~azure.mgmt.network.v2021_02_01_preview.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'kind': {'required': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "kind": {"required": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    _subtype_map = {
-        'kind': {'Custom': 'UserRule', 'Default': 'DefaultUserRule'}
-    }
+    _subtype_map = {"kind": {"Custom": "UserRule", "Default": "DefaultUserRule"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(BaseUserRule, self).__init__(**kwargs)
-        self.kind = 'BaseUserRule'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.kind = None  # type: Optional[str]
         self.system_data = None
 
 
-class CloudErrorBody(msrest.serialization.Model):
+class CheckMembers(_serialization.Model):
+    """Request object for check members API.
+
+    :ivar member_destinations:
+    :vartype member_destinations:
+     list[~azure.mgmt.network.v2021_02_01_preview.models.MemberDestination]
+    """
+
+    _attribute_map = {
+        "member_destinations": {"key": "memberDestinations", "type": "[MemberDestination]"},
+    }
+
+    def __init__(self, *, member_destinations: Optional[List["_models.MemberDestination"]] = None, **kwargs):
+        """
+        :keyword member_destinations:
+        :paramtype member_destinations:
+         list[~azure.mgmt.network.v2021_02_01_preview.models.MemberDestination]
+        """
+        super().__init__(**kwargs)
+        self.member_destinations = member_destinations
+
+
+class CloudErrorBody(_serialization.Model):
     """An error response from the service.
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
@@ -1602,10 +1671,10 @@ class CloudErrorBody(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[CloudErrorBody]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBody]"},
     }
 
     def __init__(
@@ -1614,7 +1683,7 @@ class CloudErrorBody(msrest.serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["CloudErrorBody"]] = None,
+        details: Optional[List["_models.CloudErrorBody"]] = None,
         **kwargs
     ):
         """
@@ -1630,14 +1699,14 @@ class CloudErrorBody(msrest.serialization.Model):
         :keyword details: A list of additional details about the error.
         :paramtype details: list[~azure.mgmt.network.v2021_02_01_preview.models.CloudErrorBody]
         """
-        super(CloudErrorBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = target
         self.details = details
 
 
-class ConfigurationGroup(msrest.serialization.Model):
+class ConfigurationGroup(_serialization.Model):
     """The network configuration group resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1654,34 +1723,34 @@ class ConfigurationGroup(msrest.serialization.Model):
     :vartype group_members: list[~azure.mgmt.network.v2021_02_01_preview.models.GroupMembersItem]
     :ivar conditional_membership: Network group conditional filter.
     :vartype conditional_membership: str
-    :ivar provisioning_state: The provisioning state of the scope assignment resource. Possible
-     values include: "Succeeded", "Updating", "Deleting", "Failed".
+    :ivar provisioning_state: The provisioning state of the scope assignment resource. Known values
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ProvisioningState
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'member_type': {'key': 'properties.memberType', 'type': 'str'},
-        'group_members': {'key': 'properties.groupMembers', 'type': '[GroupMembersItem]'},
-        'conditional_membership': {'key': 'properties.conditionalMembership', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "member_type": {"key": "properties.memberType", "type": "str"},
+        "group_members": {"key": "properties.groupMembers", "type": "[GroupMembersItem]"},
+        "conditional_membership": {"key": "properties.conditionalMembership", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         member_type: Optional[str] = None,
-        group_members: Optional[List["GroupMembersItem"]] = None,
+        group_members: Optional[List["_models.GroupMembersItem"]] = None,
         conditional_membership: Optional[str] = None,
         **kwargs
     ):
@@ -1699,7 +1768,7 @@ class ConfigurationGroup(msrest.serialization.Model):
         :keyword conditional_membership: Network group conditional filter.
         :paramtype conditional_membership: str
         """
-        super(ConfigurationGroup, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.display_name = display_name
         self.description = description
@@ -1709,7 +1778,7 @@ class ConfigurationGroup(msrest.serialization.Model):
         self.provisioning_state = None
 
 
-class ConnectivityConfiguration(ProxyResource):
+class ConnectivityConfiguration(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """The network manager connectivity configuration resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1728,50 +1797,50 @@ class ConnectivityConfiguration(ProxyResource):
     :vartype display_name: str
     :ivar description: A description of the connectivity configuration.
     :vartype description: str
-    :ivar connectivity_topology: Connectivity topology type. Possible values include:
-     "HubAndSpoke", "Mesh".
+    :ivar connectivity_topology: Connectivity topology type. Known values are: "HubAndSpoke" and
+     "Mesh".
     :vartype connectivity_topology: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ConnectivityTopology
     :ivar hubs: List of hubItems.
     :vartype hubs: list[~azure.mgmt.network.v2021_02_01_preview.models.Hub]
-    :ivar is_global: Flag if global mesh is supported. Possible values include: "False", "True".
+    :ivar is_global: Flag if global mesh is supported. Known values are: "False" and "True".
     :vartype is_global: str or ~azure.mgmt.network.v2021_02_01_preview.models.IsGlobal
     :ivar applies_to_groups: Groups for configuration.
     :vartype applies_to_groups:
      list[~azure.mgmt.network.v2021_02_01_preview.models.ConnectivityGroupItem]
     :ivar provisioning_state: The provisioning state of the connectivity configuration resource.
-     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ProvisioningState
-    :ivar delete_existing_peering: Flag if need to remove current existing peerings. Possible
-     values include: "False", "True".
+    :ivar delete_existing_peering: Flag if need to remove current existing peerings. Known values
+     are: "False" and "True".
     :vartype delete_existing_peering: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.DeleteExistingPeering
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'connectivity_topology': {'key': 'properties.connectivityTopology', 'type': 'str'},
-        'hubs': {'key': 'properties.hubs', 'type': '[Hub]'},
-        'is_global': {'key': 'properties.isGlobal', 'type': 'str'},
-        'applies_to_groups': {'key': 'properties.appliesToGroups', 'type': '[ConnectivityGroupItem]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'delete_existing_peering': {'key': 'properties.deleteExistingPeering', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "connectivity_topology": {"key": "properties.connectivityTopology", "type": "str"},
+        "hubs": {"key": "properties.hubs", "type": "[Hub]"},
+        "is_global": {"key": "properties.isGlobal", "type": "str"},
+        "applies_to_groups": {"key": "properties.appliesToGroups", "type": "[ConnectivityGroupItem]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "delete_existing_peering": {"key": "properties.deleteExistingPeering", "type": "str"},
     }
 
     def __init__(
@@ -1779,11 +1848,11 @@ class ConnectivityConfiguration(ProxyResource):
         *,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        connectivity_topology: Optional[Union[str, "ConnectivityTopology"]] = None,
-        hubs: Optional[List["Hub"]] = None,
-        is_global: Optional[Union[str, "IsGlobal"]] = None,
-        applies_to_groups: Optional[List["ConnectivityGroupItem"]] = None,
-        delete_existing_peering: Optional[Union[str, "DeleteExistingPeering"]] = None,
+        connectivity_topology: Optional[Union[str, "_models.ConnectivityTopology"]] = None,
+        hubs: Optional[List["_models.Hub"]] = None,
+        is_global: Optional[Union[str, "_models.IsGlobal"]] = None,
+        applies_to_groups: Optional[List["_models.ConnectivityGroupItem"]] = None,
+        delete_existing_peering: Optional[Union[str, "_models.DeleteExistingPeering"]] = None,
         **kwargs
     ):
         """
@@ -1791,23 +1860,23 @@ class ConnectivityConfiguration(ProxyResource):
         :paramtype display_name: str
         :keyword description: A description of the connectivity configuration.
         :paramtype description: str
-        :keyword connectivity_topology: Connectivity topology type. Possible values include:
-         "HubAndSpoke", "Mesh".
+        :keyword connectivity_topology: Connectivity topology type. Known values are: "HubAndSpoke" and
+         "Mesh".
         :paramtype connectivity_topology: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.ConnectivityTopology
         :keyword hubs: List of hubItems.
         :paramtype hubs: list[~azure.mgmt.network.v2021_02_01_preview.models.Hub]
-        :keyword is_global: Flag if global mesh is supported. Possible values include: "False", "True".
+        :keyword is_global: Flag if global mesh is supported. Known values are: "False" and "True".
         :paramtype is_global: str or ~azure.mgmt.network.v2021_02_01_preview.models.IsGlobal
         :keyword applies_to_groups: Groups for configuration.
         :paramtype applies_to_groups:
          list[~azure.mgmt.network.v2021_02_01_preview.models.ConnectivityGroupItem]
-        :keyword delete_existing_peering: Flag if need to remove current existing peerings. Possible
-         values include: "False", "True".
+        :keyword delete_existing_peering: Flag if need to remove current existing peerings. Known
+         values are: "False" and "True".
         :paramtype delete_existing_peering: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.DeleteExistingPeering
         """
-        super(ConnectivityConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.display_name = display_name
         self.description = description
@@ -1819,7 +1888,7 @@ class ConnectivityConfiguration(ProxyResource):
         self.delete_existing_peering = delete_existing_peering
 
 
-class ConnectivityConfigurationListResult(msrest.serialization.Model):
+class ConnectivityConfigurationListResult(_serialization.Model):
     """Result of the request to list network manager connectivity configurations. It contains a list of configurations and a link to get the next set of results.
 
     :ivar value: Gets a page of Connectivity Configurations.
@@ -1829,14 +1898,14 @@ class ConnectivityConfigurationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ConnectivityConfiguration]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ConnectivityConfiguration]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["ConnectivityConfiguration"]] = None,
+        value: Optional[List["_models.ConnectivityConfiguration"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1847,64 +1916,63 @@ class ConnectivityConfigurationListResult(msrest.serialization.Model):
         :keyword next_link: Gets the URL to get the next page of results.
         :paramtype next_link: str
         """
-        super(ConnectivityConfigurationListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ConnectivityGroupItem(msrest.serialization.Model):
+class ConnectivityGroupItem(_serialization.Model):
     """ConnectivityGroupItem.
 
     :ivar network_group_id: Network group Id.
     :vartype network_group_id: str
-    :ivar use_hub_gateway: Flag if need to use hub gateway. Possible values include: "False",
-     "True".
+    :ivar use_hub_gateway: Flag if need to use hub gateway. Known values are: "False" and "True".
     :vartype use_hub_gateway: str or ~azure.mgmt.network.v2021_02_01_preview.models.UseHubGateway
-    :ivar is_global: Flag if global is supported. Possible values include: "False", "True".
+    :ivar is_global: Flag if global is supported. Known values are: "False" and "True".
     :vartype is_global: str or ~azure.mgmt.network.v2021_02_01_preview.models.IsGlobal
-    :ivar group_connectivity: Group connectivity type. Possible values include: "None",
+    :ivar group_connectivity: Group connectivity type. Known values are: "None" and
      "DirectlyConnected".
     :vartype group_connectivity: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.GroupConnectivity
     """
 
     _attribute_map = {
-        'network_group_id': {'key': 'networkGroupId', 'type': 'str'},
-        'use_hub_gateway': {'key': 'useHubGateway', 'type': 'str'},
-        'is_global': {'key': 'isGlobal', 'type': 'str'},
-        'group_connectivity': {'key': 'groupConnectivity', 'type': 'str'},
+        "network_group_id": {"key": "networkGroupId", "type": "str"},
+        "use_hub_gateway": {"key": "useHubGateway", "type": "str"},
+        "is_global": {"key": "isGlobal", "type": "str"},
+        "group_connectivity": {"key": "groupConnectivity", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         network_group_id: Optional[str] = None,
-        use_hub_gateway: Optional[Union[str, "UseHubGateway"]] = None,
-        is_global: Optional[Union[str, "IsGlobal"]] = None,
-        group_connectivity: Optional[Union[str, "GroupConnectivity"]] = None,
+        use_hub_gateway: Optional[Union[str, "_models.UseHubGateway"]] = None,
+        is_global: Optional[Union[str, "_models.IsGlobal"]] = None,
+        group_connectivity: Optional[Union[str, "_models.GroupConnectivity"]] = None,
         **kwargs
     ):
         """
         :keyword network_group_id: Network group Id.
         :paramtype network_group_id: str
-        :keyword use_hub_gateway: Flag if need to use hub gateway. Possible values include: "False",
+        :keyword use_hub_gateway: Flag if need to use hub gateway. Known values are: "False" and
          "True".
         :paramtype use_hub_gateway: str or ~azure.mgmt.network.v2021_02_01_preview.models.UseHubGateway
-        :keyword is_global: Flag if global is supported. Possible values include: "False", "True".
+        :keyword is_global: Flag if global is supported. Known values are: "False" and "True".
         :paramtype is_global: str or ~azure.mgmt.network.v2021_02_01_preview.models.IsGlobal
-        :keyword group_connectivity: Group connectivity type. Possible values include: "None",
+        :keyword group_connectivity: Group connectivity type. Known values are: "None" and
          "DirectlyConnected".
         :paramtype group_connectivity: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.GroupConnectivity
         """
-        super(ConnectivityGroupItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.network_group_id = network_group_id
         self.use_hub_gateway = use_hub_gateway
         self.is_global = is_global
         self.group_connectivity = group_connectivity
 
 
-class DefaultAdminRule(BaseAdminRule):
+class DefaultAdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attributes
     """Network default admin rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1919,8 +1987,8 @@ class DefaultAdminRule(BaseAdminRule):
     :vartype type: str
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :ivar kind: Required. Whether the rule is custom or default.Constant filled by server. Possible
-     values include: "Custom", "Default".
+    :ivar kind: Whether the rule is custom or default. Required. Known values are: "Custom" and
+     "Default".
     :vartype kind: str or ~azure.mgmt.network.v2021_02_01_preview.models.AdminRuleKind
     :ivar system_data: The system metadata related to this resource.
     :vartype system_data: ~azure.mgmt.network.v2021_02_01_preview.models.SystemData
@@ -1930,8 +1998,8 @@ class DefaultAdminRule(BaseAdminRule):
     :vartype description: str
     :ivar flag: Default rule flag.
     :vartype flag: str
-    :ivar protocol: Network protocol this rule applies to. Possible values include: "Tcp", "Udp",
-     "Icmp", "Esp", "Any", "Ah".
+    :ivar protocol: Network protocol this rule applies to. Known values are: "Tcp", "Udp", "Icmp",
+     "Esp", "Any", and "Ah".
     :vartype protocol: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleProtocol
     :ivar sources: The CIDR or source IP ranges.
@@ -1942,8 +2010,8 @@ class DefaultAdminRule(BaseAdminRule):
     :vartype source_port_ranges: list[str]
     :ivar destination_port_ranges: The destination port ranges.
     :vartype destination_port_ranges: list[str]
-    :ivar access: Indicates the access allowed for this particular rule. Possible values include:
-     "Allow", "Deny", "AlwaysAllow".
+    :ivar access: Indicates the access allowed for this particular rule. Known values are: "Allow",
+     "Deny", and "AlwaysAllow".
     :vartype access: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleAccess
     :ivar priority: The priority of the rule. The value can be between 1 and 4096. The priority
@@ -1951,68 +2019,63 @@ class DefaultAdminRule(BaseAdminRule):
      higher the priority of the rule.
     :vartype priority: int
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
-     Possible values include: "Inbound", "Outbound".
+     Known values are: "Inbound" and "Outbound".
     :vartype direction: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleDirection
-    :ivar provisioning_state: The provisioning state of the resource. Possible values include:
-     "Succeeded", "Updating", "Deleting", "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'kind': {'required': True},
-        'system_data': {'readonly': True},
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'protocol': {'readonly': True},
-        'sources': {'readonly': True},
-        'destinations': {'readonly': True},
-        'source_port_ranges': {'readonly': True},
-        'destination_port_ranges': {'readonly': True},
-        'access': {'readonly': True},
-        'priority': {'readonly': True},
-        'direction': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "kind": {"required": True},
+        "system_data": {"readonly": True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "protocol": {"readonly": True},
+        "sources": {"readonly": True},
+        "destinations": {"readonly": True},
+        "source_port_ranges": {"readonly": True},
+        "destination_port_ranges": {"readonly": True},
+        "access": {"readonly": True},
+        "priority": {"readonly": True},
+        "direction": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'flag': {'key': 'properties.flag', 'type': 'str'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'sources': {'key': 'properties.sources', 'type': '[AddressPrefixItem]'},
-        'destinations': {'key': 'properties.destinations', 'type': '[AddressPrefixItem]'},
-        'source_port_ranges': {'key': 'properties.sourcePortRanges', 'type': '[str]'},
-        'destination_port_ranges': {'key': 'properties.destinationPortRanges', 'type': '[str]'},
-        'access': {'key': 'properties.access', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'direction': {'key': 'properties.direction', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "flag": {"key": "properties.flag", "type": "str"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "sources": {"key": "properties.sources", "type": "[AddressPrefixItem]"},
+        "destinations": {"key": "properties.destinations", "type": "[AddressPrefixItem]"},
+        "source_port_ranges": {"key": "properties.sourcePortRanges", "type": "[str]"},
+        "destination_port_ranges": {"key": "properties.destinationPortRanges", "type": "[str]"},
+        "access": {"key": "properties.access", "type": "str"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "direction": {"key": "properties.direction", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        flag: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, flag: Optional[str] = None, **kwargs):
         """
         :keyword flag: Default rule flag.
         :paramtype flag: str
         """
-        super(DefaultAdminRule, self).__init__(**kwargs)
-        self.kind = 'Default'  # type: str
+        super().__init__(**kwargs)
+        self.kind = "Default"  # type: str
         self.display_name = None
         self.description = None
         self.flag = flag
@@ -2027,7 +2090,7 @@ class DefaultAdminRule(BaseAdminRule):
         self.provisioning_state = None
 
 
-class DefaultUserRule(BaseUserRule):
+class DefaultUserRule(BaseUserRule):  # pylint: disable=too-many-instance-attributes
     """Network security default user rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2042,8 +2105,8 @@ class DefaultUserRule(BaseUserRule):
     :vartype type: str
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :ivar kind: Required. Whether the rule is custom or default.Constant filled by server. Possible
-     values include: "Custom", "Default".
+    :ivar kind: Whether the rule is custom or default. Required. Known values are: "Custom" and
+     "Default".
     :vartype kind: str or ~azure.mgmt.network.v2021_02_01_preview.models.UserRuleKind
     :ivar system_data: The system metadata related to this resource.
     :vartype system_data: ~azure.mgmt.network.v2021_02_01_preview.models.SystemData
@@ -2053,8 +2116,8 @@ class DefaultUserRule(BaseUserRule):
     :vartype description: str
     :ivar flag: Default rule flag.
     :vartype flag: str
-    :ivar protocol: Network protocol this rule applies to. Possible values include: "Tcp", "Udp",
-     "Icmp", "Esp", "Any", "Ah".
+    :ivar protocol: Network protocol this rule applies to. Known values are: "Tcp", "Udp", "Icmp",
+     "Esp", "Any", and "Ah".
     :vartype protocol: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleProtocol
     :ivar sources: The CIDR or source IP ranges.
@@ -2066,64 +2129,59 @@ class DefaultUserRule(BaseUserRule):
     :ivar destination_port_ranges: The destination port ranges.
     :vartype destination_port_ranges: list[str]
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
-     Possible values include: "Inbound", "Outbound".
+     Known values are: "Inbound" and "Outbound".
     :vartype direction: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleDirection
     :ivar provisioning_state: The provisioning state of the security configuration user rule
-     resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'kind': {'required': True},
-        'system_data': {'readonly': True},
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'protocol': {'readonly': True},
-        'sources': {'readonly': True},
-        'destinations': {'readonly': True},
-        'source_port_ranges': {'readonly': True},
-        'destination_port_ranges': {'readonly': True},
-        'direction': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "kind": {"required": True},
+        "system_data": {"readonly": True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "protocol": {"readonly": True},
+        "sources": {"readonly": True},
+        "destinations": {"readonly": True},
+        "source_port_ranges": {"readonly": True},
+        "destination_port_ranges": {"readonly": True},
+        "direction": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'flag': {'key': 'properties.flag', 'type': 'str'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'sources': {'key': 'properties.sources', 'type': '[AddressPrefixItem]'},
-        'destinations': {'key': 'properties.destinations', 'type': '[AddressPrefixItem]'},
-        'source_port_ranges': {'key': 'properties.sourcePortRanges', 'type': '[str]'},
-        'destination_port_ranges': {'key': 'properties.destinationPortRanges', 'type': '[str]'},
-        'direction': {'key': 'properties.direction', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "flag": {"key": "properties.flag", "type": "str"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "sources": {"key": "properties.sources", "type": "[AddressPrefixItem]"},
+        "destinations": {"key": "properties.destinations", "type": "[AddressPrefixItem]"},
+        "source_port_ranges": {"key": "properties.sourcePortRanges", "type": "[str]"},
+        "destination_port_ranges": {"key": "properties.destinationPortRanges", "type": "[str]"},
+        "direction": {"key": "properties.direction", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        flag: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, flag: Optional[str] = None, **kwargs):
         """
         :keyword flag: Default rule flag.
         :paramtype flag: str
         """
-        super(DefaultUserRule, self).__init__(**kwargs)
-        self.kind = 'Default'  # type: str
+        super().__init__(**kwargs)
+        self.kind = "Default"  # type: str
         self.display_name = None
         self.description = None
         self.flag = flag
@@ -2136,11 +2194,11 @@ class DefaultUserRule(BaseUserRule):
         self.provisioning_state = None
 
 
-class EffectiveBaseSecurityAdminRule(msrest.serialization.Model):
+class EffectiveBaseSecurityAdminRule(_serialization.Model):
     """Network base admin rule.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: EffectiveSecurityAdminRule, EffectiveDefaultSecurityAdminRule.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    EffectiveSecurityAdminRule, EffectiveDefaultSecurityAdminRule
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2159,40 +2217,41 @@ class EffectiveBaseSecurityAdminRule(msrest.serialization.Model):
      list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkManagerSecurityGroupItem]
     :ivar rule_groups: Effective configuration groups.
     :vartype rule_groups: list[~azure.mgmt.network.v2021_02_01_preview.models.ConfigurationGroup]
-    :ivar kind: Required. Whether the rule is custom or default.Constant filled by server. Possible
-     values include: "Custom", "Default".
+    :ivar kind: Whether the rule is custom or default. Required. Known values are: "Custom" and
+     "Default".
     :vartype kind: str or ~azure.mgmt.network.v2021_02_01_preview.models.EffectiveAdminRuleKind
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'configuration_display_name': {'key': 'configurationDisplayName', 'type': 'str'},
-        'configuration_description': {'key': 'configurationDescription', 'type': 'str'},
-        'rule_collection_display_name': {'key': 'ruleCollectionDisplayName', 'type': 'str'},
-        'rule_collection_description': {'key': 'ruleCollectionDescription', 'type': 'str'},
-        'rule_collection_applies_to_groups': {'key': 'ruleCollectionAppliesToGroups', 'type': '[NetworkManagerSecurityGroupItem]'},
-        'rule_groups': {'key': 'ruleGroups', 'type': '[ConfigurationGroup]'},
-        'kind': {'key': 'kind', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "configuration_display_name": {"key": "configurationDisplayName", "type": "str"},
+        "configuration_description": {"key": "configurationDescription", "type": "str"},
+        "rule_collection_display_name": {"key": "ruleCollectionDisplayName", "type": "str"},
+        "rule_collection_description": {"key": "ruleCollectionDescription", "type": "str"},
+        "rule_collection_applies_to_groups": {
+            "key": "ruleCollectionAppliesToGroups",
+            "type": "[NetworkManagerSecurityGroupItem]",
+        },
+        "rule_groups": {"key": "ruleGroups", "type": "[ConfigurationGroup]"},
+        "kind": {"key": "kind", "type": "str"},
     }
 
-    _subtype_map = {
-        'kind': {'Custom': 'EffectiveSecurityAdminRule', 'Default': 'EffectiveDefaultSecurityAdminRule'}
-    }
+    _subtype_map = {"kind": {"Custom": "EffectiveSecurityAdminRule", "Default": "EffectiveDefaultSecurityAdminRule"}}
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         configuration_display_name: Optional[str] = None,
         configuration_description: Optional[str] = None,
         rule_collection_display_name: Optional[str] = None,
         rule_collection_description: Optional[str] = None,
-        rule_collection_applies_to_groups: Optional[List["NetworkManagerSecurityGroupItem"]] = None,
-        rule_groups: Optional[List["ConfigurationGroup"]] = None,
+        rule_collection_applies_to_groups: Optional[List["_models.NetworkManagerSecurityGroupItem"]] = None,
+        rule_groups: Optional[List["_models.ConfigurationGroup"]] = None,
         **kwargs
     ):
         """
@@ -2212,7 +2271,7 @@ class EffectiveBaseSecurityAdminRule(msrest.serialization.Model):
         :keyword rule_groups: Effective configuration groups.
         :paramtype rule_groups: list[~azure.mgmt.network.v2021_02_01_preview.models.ConfigurationGroup]
         """
-        super(EffectiveBaseSecurityAdminRule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.configuration_display_name = configuration_display_name
         self.configuration_description = configuration_description
@@ -2223,7 +2282,7 @@ class EffectiveBaseSecurityAdminRule(msrest.serialization.Model):
         self.kind = None  # type: Optional[str]
 
 
-class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):
+class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pylint: disable=too-many-instance-attributes
     """Network default admin rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2245,8 +2304,8 @@ class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):
      list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkManagerSecurityGroupItem]
     :ivar rule_groups: Effective configuration groups.
     :vartype rule_groups: list[~azure.mgmt.network.v2021_02_01_preview.models.ConfigurationGroup]
-    :ivar kind: Required. Whether the rule is custom or default.Constant filled by server. Possible
-     values include: "Custom", "Default".
+    :ivar kind: Whether the rule is custom or default. Required. Known values are: "Custom" and
+     "Default".
     :vartype kind: str or ~azure.mgmt.network.v2021_02_01_preview.models.EffectiveAdminRuleKind
     :ivar display_name: A friendly name for the rule.
     :vartype display_name: str
@@ -2254,8 +2313,8 @@ class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):
     :vartype description: str
     :ivar flag: Default rule flag.
     :vartype flag: str
-    :ivar protocol: Network protocol this rule applies to. Possible values include: "Tcp", "Udp",
-     "Icmp", "Esp", "Any", "Ah".
+    :ivar protocol: Network protocol this rule applies to. Known values are: "Tcp", "Udp", "Icmp",
+     "Esp", "Any", and "Ah".
     :vartype protocol: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleProtocol
     :ivar sources: The CIDR or source IP ranges.
@@ -2266,8 +2325,8 @@ class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):
     :vartype source_port_ranges: list[str]
     :ivar destination_port_ranges: The destination port ranges.
     :vartype destination_port_ranges: list[str]
-    :ivar access: Indicates the access allowed for this particular rule. Possible values include:
-     "Allow", "Deny", "AlwaysAllow".
+    :ivar access: Indicates the access allowed for this particular rule. Known values are: "Allow",
+     "Deny", and "AlwaysAllow".
     :vartype access: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleAccess
     :ivar priority: The priority of the rule. The value can be between 1 and 4096. The priority
@@ -2275,63 +2334,66 @@ class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):
      higher the priority of the rule.
     :vartype priority: int
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
-     Possible values include: "Inbound", "Outbound".
+     Known values are: "Inbound" and "Outbound".
     :vartype direction: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleDirection
-    :ivar provisioning_state: The provisioning state of the resource. Possible values include:
-     "Succeeded", "Updating", "Deleting", "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ProvisioningState
     """
 
     _validation = {
-        'kind': {'required': True},
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'protocol': {'readonly': True},
-        'sources': {'readonly': True},
-        'destinations': {'readonly': True},
-        'source_port_ranges': {'readonly': True},
-        'destination_port_ranges': {'readonly': True},
-        'access': {'readonly': True},
-        'priority': {'readonly': True},
-        'direction': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "kind": {"required": True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "protocol": {"readonly": True},
+        "sources": {"readonly": True},
+        "destinations": {"readonly": True},
+        "source_port_ranges": {"readonly": True},
+        "destination_port_ranges": {"readonly": True},
+        "access": {"readonly": True},
+        "priority": {"readonly": True},
+        "direction": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'configuration_display_name': {'key': 'configurationDisplayName', 'type': 'str'},
-        'configuration_description': {'key': 'configurationDescription', 'type': 'str'},
-        'rule_collection_display_name': {'key': 'ruleCollectionDisplayName', 'type': 'str'},
-        'rule_collection_description': {'key': 'ruleCollectionDescription', 'type': 'str'},
-        'rule_collection_applies_to_groups': {'key': 'ruleCollectionAppliesToGroups', 'type': '[NetworkManagerSecurityGroupItem]'},
-        'rule_groups': {'key': 'ruleGroups', 'type': '[ConfigurationGroup]'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'flag': {'key': 'properties.flag', 'type': 'str'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'sources': {'key': 'properties.sources', 'type': '[AddressPrefixItem]'},
-        'destinations': {'key': 'properties.destinations', 'type': '[AddressPrefixItem]'},
-        'source_port_ranges': {'key': 'properties.sourcePortRanges', 'type': '[str]'},
-        'destination_port_ranges': {'key': 'properties.destinationPortRanges', 'type': '[str]'},
-        'access': {'key': 'properties.access', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'direction': {'key': 'properties.direction', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "configuration_display_name": {"key": "configurationDisplayName", "type": "str"},
+        "configuration_description": {"key": "configurationDescription", "type": "str"},
+        "rule_collection_display_name": {"key": "ruleCollectionDisplayName", "type": "str"},
+        "rule_collection_description": {"key": "ruleCollectionDescription", "type": "str"},
+        "rule_collection_applies_to_groups": {
+            "key": "ruleCollectionAppliesToGroups",
+            "type": "[NetworkManagerSecurityGroupItem]",
+        },
+        "rule_groups": {"key": "ruleGroups", "type": "[ConfigurationGroup]"},
+        "kind": {"key": "kind", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "flag": {"key": "properties.flag", "type": "str"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "sources": {"key": "properties.sources", "type": "[AddressPrefixItem]"},
+        "destinations": {"key": "properties.destinations", "type": "[AddressPrefixItem]"},
+        "source_port_ranges": {"key": "properties.sourcePortRanges", "type": "[str]"},
+        "destination_port_ranges": {"key": "properties.destinationPortRanges", "type": "[str]"},
+        "access": {"key": "properties.access", "type": "str"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "direction": {"key": "properties.direction", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         configuration_display_name: Optional[str] = None,
         configuration_description: Optional[str] = None,
         rule_collection_display_name: Optional[str] = None,
         rule_collection_description: Optional[str] = None,
-        rule_collection_applies_to_groups: Optional[List["NetworkManagerSecurityGroupItem"]] = None,
-        rule_groups: Optional[List["ConfigurationGroup"]] = None,
+        rule_collection_applies_to_groups: Optional[List["_models.NetworkManagerSecurityGroupItem"]] = None,
+        rule_groups: Optional[List["_models.ConfigurationGroup"]] = None,
         flag: Optional[str] = None,
         **kwargs
     ):
@@ -2354,8 +2416,17 @@ class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):
         :keyword flag: Default rule flag.
         :paramtype flag: str
         """
-        super(EffectiveDefaultSecurityAdminRule, self).__init__(id=id, configuration_display_name=configuration_display_name, configuration_description=configuration_description, rule_collection_display_name=rule_collection_display_name, rule_collection_description=rule_collection_description, rule_collection_applies_to_groups=rule_collection_applies_to_groups, rule_groups=rule_groups, **kwargs)
-        self.kind = 'Default'  # type: str
+        super().__init__(
+            id=id,
+            configuration_display_name=configuration_display_name,
+            configuration_description=configuration_description,
+            rule_collection_display_name=rule_collection_display_name,
+            rule_collection_description=rule_collection_description,
+            rule_collection_applies_to_groups=rule_collection_applies_to_groups,
+            rule_groups=rule_groups,
+            **kwargs
+        )
+        self.kind = "Default"  # type: str
         self.display_name = None
         self.description = None
         self.flag = flag
@@ -2370,7 +2441,7 @@ class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):
         self.provisioning_state = None
 
 
-class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):
+class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pylint: disable=too-many-instance-attributes
     """Network admin rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2392,15 +2463,15 @@ class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):
      list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkManagerSecurityGroupItem]
     :ivar rule_groups: Effective configuration groups.
     :vartype rule_groups: list[~azure.mgmt.network.v2021_02_01_preview.models.ConfigurationGroup]
-    :ivar kind: Required. Whether the rule is custom or default.Constant filled by server. Possible
-     values include: "Custom", "Default".
+    :ivar kind: Whether the rule is custom or default. Required. Known values are: "Custom" and
+     "Default".
     :vartype kind: str or ~azure.mgmt.network.v2021_02_01_preview.models.EffectiveAdminRuleKind
     :ivar display_name: A friendly name for the rule.
     :vartype display_name: str
     :ivar description: A description for this rule. Restricted to 140 chars.
     :vartype description: str
-    :ivar protocol: Network protocol this rule applies to. Possible values include: "Tcp", "Udp",
-     "Icmp", "Esp", "Any", "Ah".
+    :ivar protocol: Network protocol this rule applies to. Known values are: "Tcp", "Udp", "Icmp",
+     "Esp", "Any", and "Ah".
     :vartype protocol: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleProtocol
     :ivar sources: The CIDR or source IP ranges.
@@ -2411,8 +2482,8 @@ class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):
     :vartype source_port_ranges: list[str]
     :ivar destination_port_ranges: The destination port ranges.
     :vartype destination_port_ranges: list[str]
-    :ivar access: Indicates the access allowed for this particular rule. Possible values include:
-     "Allow", "Deny", "AlwaysAllow".
+    :ivar access: Indicates the access allowed for this particular rule. Known values are: "Allow",
+     "Deny", and "AlwaysAllow".
     :vartype access: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleAccess
     :ivar priority: The priority of the rule. The value can be between 1 and 4096. The priority
@@ -2420,63 +2491,66 @@ class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):
      higher the priority of the rule.
     :vartype priority: int
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
-     Possible values include: "Inbound", "Outbound".
+     Known values are: "Inbound" and "Outbound".
     :vartype direction: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleDirection
-    :ivar provisioning_state: The provisioning state of the resource. Possible values include:
-     "Succeeded", "Updating", "Deleting", "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ProvisioningState
     """
 
     _validation = {
-        'kind': {'required': True},
-        'priority': {'maximum': 4096, 'minimum': 1},
-        'provisioning_state': {'readonly': True},
+        "kind": {"required": True},
+        "priority": {"maximum": 4096, "minimum": 1},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'configuration_display_name': {'key': 'configurationDisplayName', 'type': 'str'},
-        'configuration_description': {'key': 'configurationDescription', 'type': 'str'},
-        'rule_collection_display_name': {'key': 'ruleCollectionDisplayName', 'type': 'str'},
-        'rule_collection_description': {'key': 'ruleCollectionDescription', 'type': 'str'},
-        'rule_collection_applies_to_groups': {'key': 'ruleCollectionAppliesToGroups', 'type': '[NetworkManagerSecurityGroupItem]'},
-        'rule_groups': {'key': 'ruleGroups', 'type': '[ConfigurationGroup]'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'sources': {'key': 'properties.sources', 'type': '[AddressPrefixItem]'},
-        'destinations': {'key': 'properties.destinations', 'type': '[AddressPrefixItem]'},
-        'source_port_ranges': {'key': 'properties.sourcePortRanges', 'type': '[str]'},
-        'destination_port_ranges': {'key': 'properties.destinationPortRanges', 'type': '[str]'},
-        'access': {'key': 'properties.access', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'direction': {'key': 'properties.direction', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "configuration_display_name": {"key": "configurationDisplayName", "type": "str"},
+        "configuration_description": {"key": "configurationDescription", "type": "str"},
+        "rule_collection_display_name": {"key": "ruleCollectionDisplayName", "type": "str"},
+        "rule_collection_description": {"key": "ruleCollectionDescription", "type": "str"},
+        "rule_collection_applies_to_groups": {
+            "key": "ruleCollectionAppliesToGroups",
+            "type": "[NetworkManagerSecurityGroupItem]",
+        },
+        "rule_groups": {"key": "ruleGroups", "type": "[ConfigurationGroup]"},
+        "kind": {"key": "kind", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "sources": {"key": "properties.sources", "type": "[AddressPrefixItem]"},
+        "destinations": {"key": "properties.destinations", "type": "[AddressPrefixItem]"},
+        "source_port_ranges": {"key": "properties.sourcePortRanges", "type": "[str]"},
+        "destination_port_ranges": {"key": "properties.destinationPortRanges", "type": "[str]"},
+        "access": {"key": "properties.access", "type": "str"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "direction": {"key": "properties.direction", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         configuration_display_name: Optional[str] = None,
         configuration_description: Optional[str] = None,
         rule_collection_display_name: Optional[str] = None,
         rule_collection_description: Optional[str] = None,
-        rule_collection_applies_to_groups: Optional[List["NetworkManagerSecurityGroupItem"]] = None,
-        rule_groups: Optional[List["ConfigurationGroup"]] = None,
+        rule_collection_applies_to_groups: Optional[List["_models.NetworkManagerSecurityGroupItem"]] = None,
+        rule_groups: Optional[List["_models.ConfigurationGroup"]] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        protocol: Optional[Union[str, "SecurityConfigurationRuleProtocol"]] = None,
-        sources: Optional[List["AddressPrefixItem"]] = None,
-        destinations: Optional[List["AddressPrefixItem"]] = None,
+        protocol: Optional[Union[str, "_models.SecurityConfigurationRuleProtocol"]] = None,
+        sources: Optional[List["_models.AddressPrefixItem"]] = None,
+        destinations: Optional[List["_models.AddressPrefixItem"]] = None,
         source_port_ranges: Optional[List[str]] = None,
         destination_port_ranges: Optional[List[str]] = None,
-        access: Optional[Union[str, "SecurityConfigurationRuleAccess"]] = None,
+        access: Optional[Union[str, "_models.SecurityConfigurationRuleAccess"]] = None,
         priority: Optional[int] = None,
-        direction: Optional[Union[str, "SecurityConfigurationRuleDirection"]] = None,
+        direction: Optional[Union[str, "_models.SecurityConfigurationRuleDirection"]] = None,
         **kwargs
     ):
         """
@@ -2499,8 +2573,8 @@ class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):
         :paramtype display_name: str
         :keyword description: A description for this rule. Restricted to 140 chars.
         :paramtype description: str
-        :keyword protocol: Network protocol this rule applies to. Possible values include: "Tcp",
-         "Udp", "Icmp", "Esp", "Any", "Ah".
+        :keyword protocol: Network protocol this rule applies to. Known values are: "Tcp", "Udp",
+         "Icmp", "Esp", "Any", and "Ah".
         :paramtype protocol: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleProtocol
         :keyword sources: The CIDR or source IP ranges.
@@ -2511,8 +2585,8 @@ class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):
         :paramtype source_port_ranges: list[str]
         :keyword destination_port_ranges: The destination port ranges.
         :paramtype destination_port_ranges: list[str]
-        :keyword access: Indicates the access allowed for this particular rule. Possible values
-         include: "Allow", "Deny", "AlwaysAllow".
+        :keyword access: Indicates the access allowed for this particular rule. Known values are:
+         "Allow", "Deny", and "AlwaysAllow".
         :paramtype access: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleAccess
         :keyword priority: The priority of the rule. The value can be between 1 and 4096. The priority
@@ -2520,12 +2594,21 @@ class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):
          higher the priority of the rule.
         :paramtype priority: int
         :keyword direction: Indicates if the traffic matched against the rule in inbound or outbound.
-         Possible values include: "Inbound", "Outbound".
+         Known values are: "Inbound" and "Outbound".
         :paramtype direction: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleDirection
         """
-        super(EffectiveSecurityAdminRule, self).__init__(id=id, configuration_display_name=configuration_display_name, configuration_description=configuration_description, rule_collection_display_name=rule_collection_display_name, rule_collection_description=rule_collection_description, rule_collection_applies_to_groups=rule_collection_applies_to_groups, rule_groups=rule_groups, **kwargs)
-        self.kind = 'Custom'  # type: str
+        super().__init__(
+            id=id,
+            configuration_display_name=configuration_display_name,
+            configuration_description=configuration_description,
+            rule_collection_display_name=rule_collection_display_name,
+            rule_collection_description=rule_collection_description,
+            rule_collection_applies_to_groups=rule_collection_applies_to_groups,
+            rule_groups=rule_groups,
+            **kwargs
+        )
+        self.kind = "Custom"  # type: str
         self.display_name = display_name
         self.description = description
         self.protocol = protocol
@@ -2539,29 +2622,29 @@ class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):
         self.provisioning_state = None
 
 
-class EffectiveVirtualNetwork(msrest.serialization.Model):
+class EffectiveVirtualNetwork(_serialization.Model):
     """Effective Virtual Network.
 
     :ivar id: Effective vnet Id.
     :vartype id: str
     :ivar location: Location of vnet.
     :vartype location: str
-    :ivar membership_type: Membership Type. Possible values include: "Static", "Dynamic".
+    :ivar membership_type: Membership Type. Known values are: "Static" and "Dynamic".
     :vartype membership_type: str or ~azure.mgmt.network.v2021_02_01_preview.models.MembershipType
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'membership_type': {'key': 'membershipType', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "membership_type": {"key": "membershipType", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
-        membership_type: Optional[Union[str, "MembershipType"]] = None,
+        membership_type: Optional[Union[str, "_models.MembershipType"]] = None,
         **kwargs
     ):
         """
@@ -2569,17 +2652,17 @@ class EffectiveVirtualNetwork(msrest.serialization.Model):
         :paramtype id: str
         :keyword location: Location of vnet.
         :paramtype location: str
-        :keyword membership_type: Membership Type. Possible values include: "Static", "Dynamic".
+        :keyword membership_type: Membership Type. Known values are: "Static" and "Dynamic".
         :paramtype membership_type: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.MembershipType
         """
-        super(EffectiveVirtualNetwork, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.location = location
         self.membership_type = membership_type
 
 
-class EffectiveVirtualNetworksListResult(msrest.serialization.Model):
+class EffectiveVirtualNetworksListResult(_serialization.Model):
     """Result of the request to list Effective Virtual Network. It contains a list of groups and a URL link to get the next set of results.
 
     :ivar value: Gets a page of EffectiveVirtualNetwork.
@@ -2590,14 +2673,14 @@ class EffectiveVirtualNetworksListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[EffectiveVirtualNetwork]'},
-        'skip_token': {'key': 'skipToken', 'type': 'str'},
+        "value": {"key": "value", "type": "[EffectiveVirtualNetwork]"},
+        "skip_token": {"key": "skipToken", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["EffectiveVirtualNetwork"]] = None,
+        value: Optional[List["_models.EffectiveVirtualNetwork"]] = None,
         skip_token: Optional[str] = None,
         **kwargs
     ):
@@ -2608,12 +2691,12 @@ class EffectiveVirtualNetworksListResult(msrest.serialization.Model):
          with the same query and scopes used in the current request) to retrieve the next page of data.
         :paramtype skip_token: str
         """
-        super(EffectiveVirtualNetworksListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.skip_token = skip_token
 
 
-class EffectiveVirtualNetworksParameter(msrest.serialization.Model):
+class EffectiveVirtualNetworksParameter(_serialization.Model):
     """Effective Virtual Networks Parameter.
 
     :ivar conditional_members: Conditional Members.
@@ -2624,17 +2707,11 @@ class EffectiveVirtualNetworksParameter(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'conditional_members': {'key': 'conditionalMembers', 'type': 'str'},
-        'skip_token': {'key': 'skipToken', 'type': 'str'},
+        "conditional_members": {"key": "conditionalMembers", "type": "str"},
+        "skip_token": {"key": "skipToken", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        conditional_members: Optional[str] = None,
-        skip_token: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, conditional_members: Optional[str] = None, skip_token: Optional[str] = None, **kwargs):
         """
         :keyword conditional_members: Conditional Members.
         :paramtype conditional_members: str
@@ -2642,12 +2719,12 @@ class EffectiveVirtualNetworksParameter(msrest.serialization.Model):
          offset, as well as the context of the query.
         :paramtype skip_token: str
         """
-        super(EffectiveVirtualNetworksParameter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.conditional_members = conditional_members
         self.skip_token = skip_token
 
 
-class GroupMembersItem(msrest.serialization.Model):
+class GroupMembersItem(_serialization.Model):
     """GroupMembers Item.
 
     :ivar resource_id: Resource Id.
@@ -2655,24 +2732,19 @@ class GroupMembersItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        "resource_id": {"key": "resourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, resource_id: Optional[str] = None, **kwargs):
         """
         :keyword resource_id: Resource Id.
         :paramtype resource_id: str
         """
-        super(GroupMembersItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_id = resource_id
 
 
-class Hub(msrest.serialization.Model):
+class Hub(_serialization.Model):
     """Hub Item.
 
     :ivar resource_id: Resource Id.
@@ -2682,54 +2754,58 @@ class Hub(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "resource_type": {"key": "resourceType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        resource_type: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, resource_id: Optional[str] = None, resource_type: Optional[str] = None, **kwargs):
         """
         :keyword resource_id: Resource Id.
         :paramtype resource_id: str
         :keyword resource_type: Resource Type.
         :paramtype resource_type: str
         """
-        super(Hub, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_id = resource_id
         self.resource_type = resource_type
 
 
-class LoggingCategory(msrest.serialization.Model):
-    """Logging Category.
+class MemberDestination(_serialization.Model):
+    """MemberDestination.
 
-    :ivar name: The name of the logging category.
-    :vartype name: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar private_link_resource_id: Private link resource Id.
+    :vartype private_link_resource_id: str
+    :ivar is_member: yes/no, if it is member or not. Known values are: "yes" and "no".
+    :vartype is_member: str or ~azure.mgmt.network.v2021_02_01_preview.models.IsMember
+    :ivar profile: Network security perimeter profile.
+    :vartype profile: str
     """
 
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+    _validation = {
+        "is_member": {"readonly": True},
+        "profile": {"readonly": True},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        **kwargs
-    ):
+    _attribute_map = {
+        "private_link_resource_id": {"key": "privateLinkResourceId", "type": "str"},
+        "is_member": {"key": "isMember", "type": "str"},
+        "profile": {"key": "profile", "type": "str"},
+    }
+
+    def __init__(self, *, private_link_resource_id: Optional[str] = None, **kwargs):
         """
-        :keyword name: The name of the logging category.
-        :paramtype name: str
+        :keyword private_link_resource_id: Private link resource Id.
+        :paramtype private_link_resource_id: str
         """
-        super(LoggingCategory, self).__init__(**kwargs)
-        self.name = name
+        super().__init__(**kwargs)
+        self.private_link_resource_id = private_link_resource_id
+        self.is_member = None
+        self.profile = None
 
 
-class NetworkGroup(ProxyResource):
+class NetworkGroup(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """The network group resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2754,33 +2830,33 @@ class NetworkGroup(ProxyResource):
     :vartype group_members: list[~azure.mgmt.network.v2021_02_01_preview.models.GroupMembersItem]
     :ivar conditional_membership: Network group conditional filter.
     :vartype conditional_membership: str
-    :ivar provisioning_state: The provisioning state of the scope assignment resource. Possible
-     values include: "Succeeded", "Updating", "Deleting", "Failed".
+    :ivar provisioning_state: The provisioning state of the scope assignment resource. Known values
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'member_type': {'key': 'properties.memberType', 'type': 'str'},
-        'group_members': {'key': 'properties.groupMembers', 'type': '[GroupMembersItem]'},
-        'conditional_membership': {'key': 'properties.conditionalMembership', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "member_type": {"key": "properties.memberType", "type": "str"},
+        "group_members": {"key": "properties.groupMembers", "type": "[GroupMembersItem]"},
+        "conditional_membership": {"key": "properties.conditionalMembership", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -2789,7 +2865,7 @@ class NetworkGroup(ProxyResource):
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         member_type: Optional[str] = None,
-        group_members: Optional[List["GroupMembersItem"]] = None,
+        group_members: Optional[List["_models.GroupMembersItem"]] = None,
         conditional_membership: Optional[str] = None,
         **kwargs
     ):
@@ -2805,7 +2881,7 @@ class NetworkGroup(ProxyResource):
         :keyword conditional_membership: Network group conditional filter.
         :paramtype conditional_membership: str
         """
-        super(NetworkGroup, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.display_name = display_name
         self.description = description
@@ -2815,7 +2891,7 @@ class NetworkGroup(ProxyResource):
         self.provisioning_state = None
 
 
-class NetworkGroupListResult(msrest.serialization.Model):
+class NetworkGroupListResult(_serialization.Model):
     """Result of the request to list NetworkGroup. It contains a list of groups and a URL link to get the next set of results.
 
     :ivar value: Gets a page of NetworkGroup.
@@ -2825,16 +2901,12 @@ class NetworkGroupListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NetworkGroup]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NetworkGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["NetworkGroup"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.NetworkGroup"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: Gets a page of NetworkGroup.
@@ -2842,12 +2914,12 @@ class NetworkGroupListResult(msrest.serialization.Model):
         :keyword next_link: Gets the URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(NetworkGroupListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common resource representation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2860,27 +2932,27 @@ class Resource(msrest.serialization.Model):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
@@ -2890,10 +2962,10 @@ class Resource(msrest.serialization.Model):
         :paramtype id: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(Resource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.name = None
         self.type = None
@@ -2901,7 +2973,7 @@ class Resource(msrest.serialization.Model):
         self.tags = tags
 
 
-class NetworkManager(Resource):
+class NetworkManager(Resource):  # pylint: disable=too-many-instance-attributes
     """The Managed Network resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2914,7 +2986,7 @@ class NetworkManager(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
@@ -2930,45 +3002,48 @@ class NetworkManager(Resource):
     :ivar network_manager_scope_accesses: Scope Access.
     :vartype network_manager_scope_accesses: list[str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ConfigurationType]
-    :ivar provisioning_state: The provisioning state of the scope assignment resource. Possible
-     values include: "Succeeded", "Updating", "Deleting", "Failed".
+    :ivar provisioning_state: The provisioning state of the scope assignment resource. Known values
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ProvisioningState
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'network_manager_scopes': {'key': 'properties.networkManagerScopes', 'type': 'NetworkManagerPropertiesNetworkManagerScopes'},
-        'network_manager_scope_accesses': {'key': 'properties.networkManagerScopeAccesses', 'type': '[str]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "network_manager_scopes": {
+            "key": "properties.networkManagerScopes",
+            "type": "NetworkManagerPropertiesNetworkManagerScopes",
+        },
+        "network_manager_scope_accesses": {"key": "properties.networkManagerScopeAccesses", "type": "[str]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        network_manager_scopes: Optional["NetworkManagerPropertiesNetworkManagerScopes"] = None,
-        network_manager_scope_accesses: Optional[List[Union[str, "ConfigurationType"]]] = None,
+        network_manager_scopes: Optional["_models.NetworkManagerPropertiesNetworkManagerScopes"] = None,
+        network_manager_scope_accesses: Optional[List[Union[str, "_models.ConfigurationType"]]] = None,
         **kwargs
     ):
         """
@@ -2976,7 +3051,7 @@ class NetworkManager(Resource):
         :paramtype id: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword display_name: A friendly name for the network manager.
         :paramtype display_name: str
@@ -2989,7 +3064,7 @@ class NetworkManager(Resource):
         :paramtype network_manager_scope_accesses: list[str or
          ~azure.mgmt.network.v2021_02_01_preview.models.ConfigurationType]
         """
-        super(NetworkManager, self).__init__(id=id, location=location, tags=tags, **kwargs)
+        super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.etag = None
         self.system_data = None
         self.display_name = display_name
@@ -2999,7 +3074,7 @@ class NetworkManager(Resource):
         self.provisioning_state = None
 
 
-class NetworkManagerCommit(msrest.serialization.Model):
+class NetworkManagerCommit(_serialization.Model):
     """Network Manager Commit.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3010,20 +3085,20 @@ class NetworkManagerCommit(msrest.serialization.Model):
     :vartype target_locations: list[str]
     :ivar configuration_ids: List of configuration ids.
     :vartype configuration_ids: list[str]
-    :ivar commit_type: Commit Type. Possible values include: "SecurityAdmin", "SecurityUser",
+    :ivar commit_type: Commit Type. Known values are: "SecurityAdmin", "SecurityUser", and
      "Connectivity".
     :vartype commit_type: str or ~azure.mgmt.network.v2021_02_01_preview.models.ConfigurationType
     """
 
     _validation = {
-        'commit_id': {'readonly': True},
+        "commit_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'commit_id': {'key': 'commitId', 'type': 'str'},
-        'target_locations': {'key': 'targetLocations', 'type': '[str]'},
-        'configuration_ids': {'key': 'configurationIds', 'type': '[str]'},
-        'commit_type': {'key': 'commitType', 'type': 'str'},
+        "commit_id": {"key": "commitId", "type": "str"},
+        "target_locations": {"key": "targetLocations", "type": "[str]"},
+        "configuration_ids": {"key": "configurationIds", "type": "[str]"},
+        "commit_type": {"key": "commitType", "type": "str"},
     }
 
     def __init__(
@@ -3031,7 +3106,7 @@ class NetworkManagerCommit(msrest.serialization.Model):
         *,
         target_locations: Optional[List[str]] = None,
         configuration_ids: Optional[List[str]] = None,
-        commit_type: Optional[Union[str, "ConfigurationType"]] = None,
+        commit_type: Optional[Union[str, "_models.ConfigurationType"]] = None,
         **kwargs
     ):
         """
@@ -3039,32 +3114,32 @@ class NetworkManagerCommit(msrest.serialization.Model):
         :paramtype target_locations: list[str]
         :keyword configuration_ids: List of configuration ids.
         :paramtype configuration_ids: list[str]
-        :keyword commit_type: Commit Type. Possible values include: "SecurityAdmin", "SecurityUser",
+        :keyword commit_type: Commit Type. Known values are: "SecurityAdmin", "SecurityUser", and
          "Connectivity".
         :paramtype commit_type: str or ~azure.mgmt.network.v2021_02_01_preview.models.ConfigurationType
         """
-        super(NetworkManagerCommit, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.commit_id = None
         self.target_locations = target_locations
         self.configuration_ids = configuration_ids
         self.commit_type = commit_type
 
 
-class NetworkManagerDeploymentStatus(msrest.serialization.Model):
+class NetworkManagerDeploymentStatus(_serialization.Model):
     """Network Manager Deployment Status.
 
     :ivar commit_time: Commit Time.
     :vartype commit_time: ~datetime.datetime
     :ivar region: Region Name.
     :vartype region: str
-    :ivar deployment_status: Deployment Status. Possible values include: "NotStarted", "Deploying",
-     "Deployed", "Failed".
+    :ivar deployment_status: Deployment Status. Known values are: "NotStarted", "Deploying",
+     "Deployed", and "Failed".
     :vartype deployment_status: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.DeploymentStatus
     :ivar configuration_ids: List of configuration ids.
     :vartype configuration_ids: list[str]
-    :ivar deployment_type: Configuration Deployment Type. Possible values include: "SecurityAdmin",
-     "SecurityUser", "Connectivity".
+    :ivar deployment_type: Configuration Deployment Type. Known values are: "SecurityAdmin",
+     "SecurityUser", and "Connectivity".
     :vartype deployment_type: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ConfigurationType
     :ivar error_message: Error Message.
@@ -3072,12 +3147,12 @@ class NetworkManagerDeploymentStatus(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'commit_time': {'key': 'commitTime', 'type': 'iso-8601'},
-        'region': {'key': 'region', 'type': 'str'},
-        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
-        'configuration_ids': {'key': 'configurationIds', 'type': '[str]'},
-        'deployment_type': {'key': 'deploymentType', 'type': 'str'},
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
+        "commit_time": {"key": "commitTime", "type": "iso-8601"},
+        "region": {"key": "region", "type": "str"},
+        "deployment_status": {"key": "deploymentStatus", "type": "str"},
+        "configuration_ids": {"key": "configurationIds", "type": "[str]"},
+        "deployment_type": {"key": "deploymentType", "type": "str"},
+        "error_message": {"key": "errorMessage", "type": "str"},
     }
 
     def __init__(
@@ -3085,9 +3160,9 @@ class NetworkManagerDeploymentStatus(msrest.serialization.Model):
         *,
         commit_time: Optional[datetime.datetime] = None,
         region: Optional[str] = None,
-        deployment_status: Optional[Union[str, "DeploymentStatus"]] = None,
+        deployment_status: Optional[Union[str, "_models.DeploymentStatus"]] = None,
         configuration_ids: Optional[List[str]] = None,
-        deployment_type: Optional[Union[str, "ConfigurationType"]] = None,
+        deployment_type: Optional[Union[str, "_models.ConfigurationType"]] = None,
         error_message: Optional[str] = None,
         **kwargs
     ):
@@ -3096,20 +3171,20 @@ class NetworkManagerDeploymentStatus(msrest.serialization.Model):
         :paramtype commit_time: ~datetime.datetime
         :keyword region: Region Name.
         :paramtype region: str
-        :keyword deployment_status: Deployment Status. Possible values include: "NotStarted",
-         "Deploying", "Deployed", "Failed".
+        :keyword deployment_status: Deployment Status. Known values are: "NotStarted", "Deploying",
+         "Deployed", and "Failed".
         :paramtype deployment_status: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.DeploymentStatus
         :keyword configuration_ids: List of configuration ids.
         :paramtype configuration_ids: list[str]
-        :keyword deployment_type: Configuration Deployment Type. Possible values include:
-         "SecurityAdmin", "SecurityUser", "Connectivity".
+        :keyword deployment_type: Configuration Deployment Type. Known values are: "SecurityAdmin",
+         "SecurityUser", and "Connectivity".
         :paramtype deployment_type: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.ConfigurationType
         :keyword error_message: Error Message.
         :paramtype error_message: str
         """
-        super(NetworkManagerDeploymentStatus, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.commit_time = commit_time
         self.region = region
         self.deployment_status = deployment_status
@@ -3118,7 +3193,7 @@ class NetworkManagerDeploymentStatus(msrest.serialization.Model):
         self.error_message = error_message
 
 
-class NetworkManagerDeploymentStatusListResult(msrest.serialization.Model):
+class NetworkManagerDeploymentStatusListResult(_serialization.Model):
     """A list of Network Manager Deployment Status.
 
     :ivar value: Gets a page of Network Manager Deployment Status.
@@ -3130,14 +3205,14 @@ class NetworkManagerDeploymentStatusListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NetworkManagerDeploymentStatus]'},
-        'skip_token': {'key': 'skipToken', 'type': 'str'},
+        "value": {"key": "value", "type": "[NetworkManagerDeploymentStatus]"},
+        "skip_token": {"key": "skipToken", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["NetworkManagerDeploymentStatus"]] = None,
+        value: Optional[List["_models.NetworkManagerDeploymentStatus"]] = None,
         skip_token: Optional[str] = None,
         **kwargs
     ):
@@ -3149,12 +3224,12 @@ class NetworkManagerDeploymentStatusListResult(msrest.serialization.Model):
          with the same query and scopes used in the current request) to retrieve the next page of data.
         :paramtype skip_token: str
         """
-        super(NetworkManagerDeploymentStatusListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.skip_token = skip_token
 
 
-class NetworkManagerDeploymentStatusParameter(msrest.serialization.Model):
+class NetworkManagerDeploymentStatusParameter(_serialization.Model):
     """Network Manager Deployment Status Parameter.
 
     :ivar regions: List of locations.
@@ -3168,16 +3243,16 @@ class NetworkManagerDeploymentStatusParameter(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'regions': {'key': 'regions', 'type': '[str]'},
-        'deployment_types': {'key': 'deploymentTypes', 'type': '[str]'},
-        'skip_token': {'key': 'skipToken', 'type': 'str'},
+        "regions": {"key": "regions", "type": "[str]"},
+        "deployment_types": {"key": "deploymentTypes", "type": "[str]"},
+        "skip_token": {"key": "skipToken", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         regions: Optional[List[str]] = None,
-        deployment_types: Optional[List[Union[str, "ConfigurationType"]]] = None,
+        deployment_types: Optional[List[Union[str, "_models.ConfigurationType"]]] = None,
         skip_token: Optional[str] = None,
         **kwargs
     ):
@@ -3191,13 +3266,13 @@ class NetworkManagerDeploymentStatusParameter(msrest.serialization.Model):
          offset, as well as the context of the query.
         :paramtype skip_token: str
         """
-        super(NetworkManagerDeploymentStatusParameter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.regions = regions
         self.deployment_types = deployment_types
         self.skip_token = skip_token
 
 
-class NetworkManagerEffectiveConnectivityConfigurationListResult(msrest.serialization.Model):
+class NetworkManagerEffectiveConnectivityConfigurationListResult(_serialization.Model):
     """Result of the request to list networkManagerEffectiveConnectivityConfiguration. It contains a list of groups and a skiptoken to get the next set of results.
 
     :ivar value: Gets a page of NetworkManagerEffectiveConnectivityConfiguration.
@@ -3209,14 +3284,14 @@ class NetworkManagerEffectiveConnectivityConfigurationListResult(msrest.serializ
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[EffectiveConnectivityConfiguration]'},
-        'skip_token': {'key': 'skipToken', 'type': 'str'},
+        "value": {"key": "value", "type": "[EffectiveConnectivityConfiguration]"},
+        "skip_token": {"key": "skipToken", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["EffectiveConnectivityConfiguration"]] = None,
+        value: Optional[List["_models.EffectiveConnectivityConfiguration"]] = None,
         skip_token: Optional[str] = None,
         **kwargs
     ):
@@ -3228,12 +3303,12 @@ class NetworkManagerEffectiveConnectivityConfigurationListResult(msrest.serializ
          with the same query and scopes used in the current request) to retrieve the next page of data.
         :paramtype skip_token: str
         """
-        super(NetworkManagerEffectiveConnectivityConfigurationListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.skip_token = skip_token
 
 
-class NetworkManagerEffectiveSecurityAdminRulesListResult(msrest.serialization.Model):
+class NetworkManagerEffectiveSecurityAdminRulesListResult(_serialization.Model):
     """Result of the request to list networkManagerEffectiveSecurityAdminRules. It contains a list of groups and a skiptoken to get the next set of results.
 
     :ivar value: Gets a page of NetworkManagerEffectiveSecurityAdminRules.
@@ -3245,14 +3320,14 @@ class NetworkManagerEffectiveSecurityAdminRulesListResult(msrest.serialization.M
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[EffectiveBaseSecurityAdminRule]'},
-        'skip_token': {'key': 'skipToken', 'type': 'str'},
+        "value": {"key": "value", "type": "[EffectiveBaseSecurityAdminRule]"},
+        "skip_token": {"key": "skipToken", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["EffectiveBaseSecurityAdminRule"]] = None,
+        value: Optional[List["_models.EffectiveBaseSecurityAdminRule"]] = None,
         skip_token: Optional[str] = None,
         **kwargs
     ):
@@ -3264,12 +3339,12 @@ class NetworkManagerEffectiveSecurityAdminRulesListResult(msrest.serialization.M
          with the same query and scopes used in the current request) to retrieve the next page of data.
         :paramtype skip_token: str
         """
-        super(NetworkManagerEffectiveSecurityAdminRulesListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.skip_token = skip_token
 
 
-class NetworkManagerListResult(msrest.serialization.Model):
+class NetworkManagerListResult(_serialization.Model):
     """Result of the request to list NetworkManager. It contains a list of network managers and a URL link to get the next set of results.
 
     :ivar value: Gets a page of NetworkManager.
@@ -3279,16 +3354,12 @@ class NetworkManagerListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NetworkManager]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NetworkManager]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["NetworkManager"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.NetworkManager"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: Gets a page of NetworkManager.
@@ -3296,12 +3367,12 @@ class NetworkManagerListResult(msrest.serialization.Model):
         :keyword next_link: Gets the URL to get the next page of results.
         :paramtype next_link: str
         """
-        super(NetworkManagerListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class NetworkManagerPropertiesNetworkManagerScopes(msrest.serialization.Model):
+class NetworkManagerPropertiesNetworkManagerScopes(_serialization.Model):
     """Scope of Network Manager.
 
     :ivar management_groups: List of management groups.
@@ -3311,16 +3382,12 @@ class NetworkManagerPropertiesNetworkManagerScopes(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'management_groups': {'key': 'managementGroups', 'type': '[str]'},
-        'subscriptions': {'key': 'subscriptions', 'type': '[str]'},
+        "management_groups": {"key": "managementGroups", "type": "[str]"},
+        "subscriptions": {"key": "subscriptions", "type": "[str]"},
     }
 
     def __init__(
-        self,
-        *,
-        management_groups: Optional[List[str]] = None,
-        subscriptions: Optional[List[str]] = None,
-        **kwargs
+        self, *, management_groups: Optional[List[str]] = None, subscriptions: Optional[List[str]] = None, **kwargs
     ):
         """
         :keyword management_groups: List of management groups.
@@ -3328,12 +3395,12 @@ class NetworkManagerPropertiesNetworkManagerScopes(msrest.serialization.Model):
         :keyword subscriptions: List of subscriptions.
         :paramtype subscriptions: list[str]
         """
-        super(NetworkManagerPropertiesNetworkManagerScopes, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.management_groups = management_groups
         self.subscriptions = subscriptions
 
 
-class NetworkManagerSecurityGroupItem(msrest.serialization.Model):
+class NetworkManagerSecurityGroupItem(_serialization.Model):
     """Network manager security group item.
 
     :ivar network_group_id: Network manager group Id.
@@ -3341,20 +3408,15 @@ class NetworkManagerSecurityGroupItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'network_group_id': {'key': 'networkGroupId', 'type': 'str'},
+        "network_group_id": {"key": "networkGroupId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        network_group_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, network_group_id: Optional[str] = None, **kwargs):
         """
         :keyword network_group_id: Network manager group Id.
         :paramtype network_group_id: str
         """
-        super(NetworkManagerSecurityGroupItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.network_group_id = network_group_id
 
 
@@ -3371,47 +3433,39 @@ class NetworkSecurityPerimeter(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar etag: A unique read-only string that changes whenever the resource is updated.
-    :vartype etag: str
-    :ivar display_name: A friendly name for the network security perimeter.
-    :vartype display_name: str
-    :ivar description: A description of the network security perimeter.
-    :vartype description: str
-    :ivar provisioning_state: The provisioning state of the scope assignment resource. Possible
-     values include: "Succeeded", "Creating", "Updating", "Deleting", "Accepted", "Failed".
+    :ivar provisioning_state: The provisioning state of the scope assignment resource. Known values
+     are: "Succeeded", "Creating", "Updating", "Deleting", "Accepted", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.NspProvisioningState
+    :ivar perimeter_guid: perimeter guid of the network security perimeter.
+    :vartype perimeter_guid: str
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "perimeter_guid": {"key": "properties.perimeterGuid", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        display_name: Optional[str] = None,
-        description: Optional[str] = None,
+        perimeter_guid: Optional[str] = None,
         **kwargs
     ):
         """
@@ -3419,21 +3473,17 @@ class NetworkSecurityPerimeter(Resource):
         :paramtype id: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword display_name: A friendly name for the network security perimeter.
-        :paramtype display_name: str
-        :keyword description: A description of the network security perimeter.
-        :paramtype description: str
+        :keyword perimeter_guid: perimeter guid of the network security perimeter.
+        :paramtype perimeter_guid: str
         """
-        super(NetworkSecurityPerimeter, self).__init__(id=id, location=location, tags=tags, **kwargs)
-        self.etag = None
-        self.display_name = display_name
-        self.description = description
+        super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.provisioning_state = None
+        self.perimeter_guid = perimeter_guid
 
 
-class NetworkSecurityPerimeterListResult(msrest.serialization.Model):
+class NetworkSecurityPerimeterListResult(_serialization.Model):
     """Result of the request to list NetworkSecurityPerimeter. It contains a list of network security perimeters and a URL link to get the next set of results.
 
     :ivar value: Gets a page of NetworkSecurityPerimeter.
@@ -3443,14 +3493,14 @@ class NetworkSecurityPerimeterListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NetworkSecurityPerimeter]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NetworkSecurityPerimeter]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["NetworkSecurityPerimeter"]] = None,
+        value: Optional[List["_models.NetworkSecurityPerimeter"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -3460,12 +3510,12 @@ class NetworkSecurityPerimeterListResult(msrest.serialization.Model):
         :keyword next_link: Gets the URL to get the next page of results.
         :paramtype next_link: str
         """
-        super(NetworkSecurityPerimeterListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class NspAccessRule(Resource):
+class NspAccessRule(Resource):  # pylint: disable=too-many-instance-attributes
     """The NSP access rule resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3478,14 +3528,14 @@ class NspAccessRule(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar provisioning_state: The provisioning state of the scope assignment resource. Possible
-     values include: "Succeeded", "Creating", "Updating", "Deleting", "Accepted", "Failed".
+    :ivar provisioning_state: The provisioning state of the scope assignment resource. Known values
+     are: "Succeeded", "Creating", "Updating", "Deleting", "Accepted", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.NspProvisioningState
-    :ivar direction: Direction that specifies whether the access rules is inbound/outbound.
-     Possible values include: "Inbound", "Outbound".
+    :ivar direction: Direction that specifies whether the access rules is inbound/outbound. Known
+     values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.network.v2021_02_01_preview.models.AccessRuleDirection
     :ivar address_prefixes: Inbound address prefixes (IPv4/IPv6).
     :vartype address_prefixes: list[str]
@@ -3499,36 +3549,39 @@ class NspAccessRule(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'direction': {'key': 'properties.direction', 'type': 'str'},
-        'address_prefixes': {'key': 'properties.addressPrefixes', 'type': '[str]'},
-        'fully_qualified_domain_names': {'key': 'properties.fullyQualifiedDomainNames', 'type': '[str]'},
-        'subscriptions': {'key': 'properties.subscriptions', 'type': '[str]'},
-        'network_security_perimeters': {'key': 'properties.networkSecurityPerimeters', 'type': '[PerimeterBasedAccessRule]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "direction": {"key": "properties.direction", "type": "str"},
+        "address_prefixes": {"key": "properties.addressPrefixes", "type": "[str]"},
+        "fully_qualified_domain_names": {"key": "properties.fullyQualifiedDomainNames", "type": "[str]"},
+        "subscriptions": {"key": "properties.subscriptions", "type": "[str]"},
+        "network_security_perimeters": {
+            "key": "properties.networkSecurityPerimeters",
+            "type": "[PerimeterBasedAccessRule]",
+        },
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        direction: Optional[Union[str, "AccessRuleDirection"]] = None,
+        direction: Optional[Union[str, "_models.AccessRuleDirection"]] = None,
         address_prefixes: Optional[List[str]] = None,
         fully_qualified_domain_names: Optional[List[str]] = None,
         subscriptions: Optional[List[str]] = None,
-        network_security_perimeters: Optional[List["PerimeterBasedAccessRule"]] = None,
+        network_security_perimeters: Optional[List["_models.PerimeterBasedAccessRule"]] = None,
         **kwargs
     ):
         """
@@ -3536,10 +3589,10 @@ class NspAccessRule(Resource):
         :paramtype id: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword direction: Direction that specifies whether the access rules is inbound/outbound.
-         Possible values include: "Inbound", "Outbound".
+         Known values are: "Inbound" and "Outbound".
         :paramtype direction: str or ~azure.mgmt.network.v2021_02_01_preview.models.AccessRuleDirection
         :keyword address_prefixes: Inbound address prefixes (IPv4/IPv6).
         :paramtype address_prefixes: list[str]
@@ -3551,7 +3604,7 @@ class NspAccessRule(Resource):
         :paramtype network_security_perimeters:
          list[~azure.mgmt.network.v2021_02_01_preview.models.PerimeterBasedAccessRule]
         """
-        super(NspAccessRule, self).__init__(id=id, location=location, tags=tags, **kwargs)
+        super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.direction = direction
         self.address_prefixes = address_prefixes
@@ -3560,7 +3613,7 @@ class NspAccessRule(Resource):
         self.network_security_perimeters = network_security_perimeters
 
 
-class NspAccessRuleListResult(msrest.serialization.Model):
+class NspAccessRuleListResult(_serialization.Model):
     """Result of the request to list NSP access rules. Contains a list of NSP access rules and a URL link to get the next set of results.
 
     :ivar value: Gets a page of NSP access rule.
@@ -3570,16 +3623,12 @@ class NspAccessRuleListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NspAccessRule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NspAccessRule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["NspAccessRule"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.NspAccessRule"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: Gets a page of NSP access rule.
@@ -3587,7 +3636,7 @@ class NspAccessRuleListResult(msrest.serialization.Model):
         :keyword next_link: Gets the URL to get the next page of results.
         :paramtype next_link: str
         """
-        super(NspAccessRuleListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -3605,18 +3654,18 @@ class NspAssociation(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar provisioning_state: The provisioning state of the resource  association resource.
-     Possible values include: "Succeeded", "Creating", "Updating", "Deleting", "Accepted", "Failed".
+    :ivar provisioning_state: The provisioning state of the resource  association resource. Known
+     values are: "Succeeded", "Creating", "Updating", "Deleting", "Accepted", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.NspProvisioningState
     :ivar private_link_resource: The PaaS resource to be associated.
     :vartype private_link_resource: ~azure.mgmt.network.v2021_02_01_preview.models.SubResource
     :ivar profile: Profile id to which the PaaS resource is associated.
     :vartype profile: ~azure.mgmt.network.v2021_02_01_preview.models.SubResource
-    :ivar access_mode: Access mode on the association. Possible values include: "Learning",
-     "Enforced", "Audit".
+    :ivar access_mode: Access mode on the association. Known values are: "Learning", "Enforced",
+     and "Audit".
     :vartype access_mode: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.AssociationAccessMode
     :ivar has_provisioning_issues: Specifies if there are provisioning issues.
@@ -3624,34 +3673,34 @@ class NspAssociation(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'has_provisioning_issues': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "has_provisioning_issues": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'private_link_resource': {'key': 'properties.privateLinkResource', 'type': 'SubResource'},
-        'profile': {'key': 'properties.profile', 'type': 'SubResource'},
-        'access_mode': {'key': 'properties.accessMode', 'type': 'str'},
-        'has_provisioning_issues': {'key': 'properties.hasProvisioningIssues', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "private_link_resource": {"key": "properties.privateLinkResource", "type": "SubResource"},
+        "profile": {"key": "properties.profile", "type": "SubResource"},
+        "access_mode": {"key": "properties.accessMode", "type": "str"},
+        "has_provisioning_issues": {"key": "properties.hasProvisioningIssues", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        private_link_resource: Optional["SubResource"] = None,
-        profile: Optional["SubResource"] = None,
-        access_mode: Optional[Union[str, "AssociationAccessMode"]] = None,
+        private_link_resource: Optional["_models.SubResource"] = None,
+        profile: Optional["_models.SubResource"] = None,
+        access_mode: Optional[Union[str, "_models.AssociationAccessMode"]] = None,
         **kwargs
     ):
         """
@@ -3659,18 +3708,18 @@ class NspAssociation(Resource):
         :paramtype id: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword private_link_resource: The PaaS resource to be associated.
         :paramtype private_link_resource: ~azure.mgmt.network.v2021_02_01_preview.models.SubResource
         :keyword profile: Profile id to which the PaaS resource is associated.
         :paramtype profile: ~azure.mgmt.network.v2021_02_01_preview.models.SubResource
-        :keyword access_mode: Access mode on the association. Possible values include: "Learning",
-         "Enforced", "Audit".
+        :keyword access_mode: Access mode on the association. Known values are: "Learning", "Enforced",
+         and "Audit".
         :paramtype access_mode: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.AssociationAccessMode
         """
-        super(NspAssociation, self).__init__(id=id, location=location, tags=tags, **kwargs)
+        super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.private_link_resource = private_link_resource
         self.profile = profile
@@ -3678,7 +3727,7 @@ class NspAssociation(Resource):
         self.has_provisioning_issues = None
 
 
-class NspAssociationsListResult(msrest.serialization.Model):
+class NspAssociationsListResult(_serialization.Model):
     """Result of the request to list NSP resource associations. Contains a list of NSP resource associations and a URL link to get the next set of results.
 
     :ivar value: Gets a page of NSP resource associations.
@@ -3688,16 +3737,12 @@ class NspAssociationsListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NspAssociation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NspAssociation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["NspAssociation"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.NspAssociation"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: Gets a page of NSP resource associations.
@@ -3705,7 +3750,7 @@ class NspAssociationsListResult(msrest.serialization.Model):
         :keyword next_link: Gets the URL to get the next page of results.
         :paramtype next_link: str
         """
-        super(NspAssociationsListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -3723,39 +3768,34 @@ class NspProfile(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar access_rules_version: Version number that increases with every update to access rules
      within the profile.
     :vartype access_rules_version: str
-    :ivar enabled_log_categories: Gets the enabled log categories.
-    :vartype enabled_log_categories:
-     list[~azure.mgmt.network.v2021_02_01_preview.models.LoggingCategory]
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'access_rules_version': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "access_rules_version": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'access_rules_version': {'key': 'properties.accessRulesVersion', 'type': 'str'},
-        'enabled_log_categories': {'key': 'properties.enabledLogCategories', 'type': '[LoggingCategory]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "access_rules_version": {"key": "properties.accessRulesVersion", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        enabled_log_categories: Optional[List["LoggingCategory"]] = None,
         **kwargs
     ):
         """
@@ -3763,18 +3803,14 @@ class NspProfile(Resource):
         :paramtype id: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword enabled_log_categories: Gets the enabled log categories.
-        :paramtype enabled_log_categories:
-         list[~azure.mgmt.network.v2021_02_01_preview.models.LoggingCategory]
         """
-        super(NspProfile, self).__init__(id=id, location=location, tags=tags, **kwargs)
+        super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.access_rules_version = None
-        self.enabled_log_categories = enabled_log_categories
 
 
-class NspProfileListResult(msrest.serialization.Model):
+class NspProfileListResult(_serialization.Model):
     """Result of the request to list NSP profiles. Contains a list of NSP profiles and a URL link to get the next set of results.
 
     :ivar value: Gets a page of NSP profile.
@@ -3784,16 +3820,12 @@ class NspProfileListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NspProfile]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NspProfile]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["NspProfile"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.NspProfile"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: Gets a page of NSP profile.
@@ -3801,7 +3833,7 @@ class NspProfileListResult(msrest.serialization.Model):
         :keyword next_link: Gets the URL to get the next page of results.
         :paramtype next_link: str
         """
-        super(NspProfileListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -3819,7 +3851,7 @@ class PerimeterAssociableResource(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar display_name: A friendly name for the properties of perimeter associable resources.
     :vartype display_name: str
@@ -3830,28 +3862,28 @@ class PerimeterAssociableResource(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'display_name': {'readonly': True},
-        'resource_type': {'readonly': True},
-        'public_dns_zones': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "display_name": {"readonly": True},
+        "resource_type": {"readonly": True},
+        "public_dns_zones": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'resource_type': {'key': 'properties.resourceType', 'type': 'str'},
-        'public_dns_zones': {'key': 'properties.publicDnsZones', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "resource_type": {"key": "properties.resourceType", "type": "str"},
+        "public_dns_zones": {"key": "properties.publicDnsZones", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
@@ -3861,16 +3893,16 @@ class PerimeterAssociableResource(Resource):
         :paramtype id: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(PerimeterAssociableResource, self).__init__(id=id, location=location, tags=tags, **kwargs)
+        super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.display_name = None
         self.resource_type = None
         self.public_dns_zones = None
 
 
-class PerimeterAssociableResourcesListResult(msrest.serialization.Model):
+class PerimeterAssociableResourcesListResult(_serialization.Model):
     """Paged list of perimeter associable resources.
 
     :ivar value: Gets paged list of perimeter associable resources.
@@ -3881,14 +3913,14 @@ class PerimeterAssociableResourcesListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PerimeterAssociableResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PerimeterAssociableResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["PerimeterAssociableResource"]] = None,
+        value: Optional[List["_models.PerimeterAssociableResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -3899,12 +3931,12 @@ class PerimeterAssociableResourcesListResult(msrest.serialization.Model):
         :keyword next_link: Gets the URL to get the next page of results.
         :paramtype next_link: str
         """
-        super(PerimeterAssociableResourcesListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class PerimeterBasedAccessRule(msrest.serialization.Model):
+class PerimeterBasedAccessRule(_serialization.Model):
     """PerimeterBasedAccessRule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3918,33 +3950,80 @@ class PerimeterBasedAccessRule(msrest.serialization.Model):
     """
 
     _validation = {
-        'perimeter_guid': {'readonly': True},
-        'location': {'readonly': True},
+        "perimeter_guid": {"readonly": True},
+        "location": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'perimeter_guid': {'key': 'perimeterGuid', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "perimeter_guid": {"key": "perimeterGuid", "type": "str"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: NSP id in the ARM id format.
         :paramtype id: str
         """
-        super(PerimeterBasedAccessRule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.perimeter_guid = None
         self.location = None
 
 
-class QueryRequestOptions(msrest.serialization.Model):
+class QueryNSPObj(_serialization.Model):
+    """QueryNSPObj.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar perimeter_guid: Perimeter guid of NSP.
+    :vartype perimeter_guid: str
+    :ivar id: Id of NSP.
+    :vartype id: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "perimeter_guid": {"key": "perimeterGuid", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, perimeter_guid: Optional[str] = None, **kwargs):
+        """
+        :keyword perimeter_guid: Perimeter guid of NSP.
+        :paramtype perimeter_guid: str
+        """
+        super().__init__(**kwargs)
+        self.perimeter_guid = perimeter_guid
+        self.id = None
+
+
+class QueryNSPReqRes(_serialization.Model):
+    """Request object for query NSP.
+
+    :ivar network_security_perimeters:
+    :vartype network_security_perimeters:
+     list[~azure.mgmt.network.v2021_02_01_preview.models.QueryNSPObj]
+    """
+
+    _attribute_map = {
+        "network_security_perimeters": {"key": "networkSecurityPerimeters", "type": "[QueryNSPObj]"},
+    }
+
+    def __init__(self, *, network_security_perimeters: Optional[List["_models.QueryNSPObj"]] = None, **kwargs):
+        """
+        :keyword network_security_perimeters:
+        :paramtype network_security_perimeters:
+         list[~azure.mgmt.network.v2021_02_01_preview.models.QueryNSPObj]
+        """
+        super().__init__(**kwargs)
+        self.network_security_perimeters = network_security_perimeters
+
+
+class QueryRequestOptions(_serialization.Model):
     """Query Request Options.
 
     :ivar skip_token: When present, the value can be passed to a subsequent query call (together
@@ -3953,21 +4032,16 @@ class QueryRequestOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'skip_token': {'key': 'skipToken', 'type': 'str'},
+        "skip_token": {"key": "skipToken", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        skip_token: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, skip_token: Optional[str] = None, **kwargs):
         """
         :keyword skip_token: When present, the value can be passed to a subsequent query call (together
          with the same query and scopes used in the current request) to retrieve the next page of data.
         :paramtype skip_token: str
         """
-        super(QueryRequestOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.skip_token = skip_token
 
 
@@ -3993,31 +4067,31 @@ class RuleCollection(ProxyResource):
     :ivar applies_to_groups: Groups for configuration.
     :vartype applies_to_groups:
      list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkManagerSecurityGroupItem]
-    :ivar provisioning_state: The provisioning state of the resource. Possible values include:
-     "Succeeded", "Updating", "Deleting", "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'applies_to_groups': {'key': 'properties.appliesToGroups', 'type': '[NetworkManagerSecurityGroupItem]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "applies_to_groups": {"key": "properties.appliesToGroups", "type": "[NetworkManagerSecurityGroupItem]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -4025,7 +4099,7 @@ class RuleCollection(ProxyResource):
         *,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        applies_to_groups: Optional[List["NetworkManagerSecurityGroupItem"]] = None,
+        applies_to_groups: Optional[List["_models.NetworkManagerSecurityGroupItem"]] = None,
         **kwargs
     ):
         """
@@ -4037,7 +4111,7 @@ class RuleCollection(ProxyResource):
         :paramtype applies_to_groups:
          list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkManagerSecurityGroupItem]
         """
-        super(RuleCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.display_name = display_name
         self.description = description
@@ -4045,7 +4119,7 @@ class RuleCollection(ProxyResource):
         self.provisioning_state = None
 
 
-class RuleCollectionListResult(msrest.serialization.Model):
+class RuleCollectionListResult(_serialization.Model):
     """Security configuration rule collection list result.
 
     :ivar value: A list of network manager security configuration rule collections.
@@ -4055,16 +4129,12 @@ class RuleCollectionListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RuleCollection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RuleCollection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["RuleCollection"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.RuleCollection"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: A list of network manager security configuration rule collections.
@@ -4072,7 +4142,7 @@ class RuleCollectionListResult(msrest.serialization.Model):
         :keyword next_link: Gets the URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(RuleCollectionListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -4096,38 +4166,38 @@ class SecurityConfiguration(ProxyResource):
     :vartype display_name: str
     :ivar description: A description of the security configuration.
     :vartype description: str
-    :ivar security_type: Security Type. Possible values include: "AdminPolicy", "UserPolicy".
+    :ivar security_type: Security Type. Known values are: "AdminPolicy" and "UserPolicy".
     :vartype security_type: str or ~azure.mgmt.network.v2021_02_01_preview.models.SecurityType
-    :ivar delete_existing_ns_gs: Flag if need to delete existing network security groups. Possible
-     values include: "False", "True".
+    :ivar delete_existing_ns_gs: Flag if need to delete existing network security groups. Known
+     values are: "False" and "True".
     :vartype delete_existing_ns_gs: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.DeleteExistingNSGs
-    :ivar provisioning_state: The provisioning state of the resource. Possible values include:
-     "Succeeded", "Updating", "Deleting", "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'security_type': {'key': 'properties.securityType', 'type': 'str'},
-        'delete_existing_ns_gs': {'key': 'properties.deleteExistingNSGs', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "security_type": {"key": "properties.securityType", "type": "str"},
+        "delete_existing_ns_gs": {"key": "properties.deleteExistingNSGs", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -4135,8 +4205,8 @@ class SecurityConfiguration(ProxyResource):
         *,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        security_type: Optional[Union[str, "SecurityType"]] = None,
-        delete_existing_ns_gs: Optional[Union[str, "DeleteExistingNSGs"]] = None,
+        security_type: Optional[Union[str, "_models.SecurityType"]] = None,
+        delete_existing_ns_gs: Optional[Union[str, "_models.DeleteExistingNSGs"]] = None,
         **kwargs
     ):
         """
@@ -4144,14 +4214,14 @@ class SecurityConfiguration(ProxyResource):
         :paramtype display_name: str
         :keyword description: A description of the security configuration.
         :paramtype description: str
-        :keyword security_type: Security Type. Possible values include: "AdminPolicy", "UserPolicy".
+        :keyword security_type: Security Type. Known values are: "AdminPolicy" and "UserPolicy".
         :paramtype security_type: str or ~azure.mgmt.network.v2021_02_01_preview.models.SecurityType
-        :keyword delete_existing_ns_gs: Flag if need to delete existing network security groups.
-         Possible values include: "False", "True".
+        :keyword delete_existing_ns_gs: Flag if need to delete existing network security groups. Known
+         values are: "False" and "True".
         :paramtype delete_existing_ns_gs: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.DeleteExistingNSGs
         """
-        super(SecurityConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.display_name = display_name
         self.description = description
@@ -4160,7 +4230,7 @@ class SecurityConfiguration(ProxyResource):
         self.provisioning_state = None
 
 
-class SecurityConfigurationListResult(msrest.serialization.Model):
+class SecurityConfigurationListResult(_serialization.Model):
     """A list of network manager security configurations.
 
     :ivar value: Gets a page of security configurations.
@@ -4170,14 +4240,14 @@ class SecurityConfigurationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SecurityConfiguration]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SecurityConfiguration]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["SecurityConfiguration"]] = None,
+        value: Optional[List["_models.SecurityConfiguration"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -4187,12 +4257,12 @@ class SecurityConfigurationListResult(msrest.serialization.Model):
         :keyword next_link: Gets the URL to get the next page of results.
         :paramtype next_link: str
         """
-        super(SecurityConfigurationListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SubResource(msrest.serialization.Model):
+class SubResource(_serialization.Model):
     """Reference to another subresource.
 
     :ivar id: Resource ID.
@@ -4200,37 +4270,32 @@ class SubResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID.
         :paramtype id: str
         """
-        super(SubResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.network.v2021_02_01_preview.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.CreatedByType
     :ivar last_modified_at: The type of identity that last modified the resource.
@@ -4238,43 +4303,43 @@ class SystemData(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or ~azure.mgmt.network.v2021_02_01_preview.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.CreatedByType
         :keyword last_modified_at: The type of identity that last modified the resource.
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -4283,32 +4348,27 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class TagsObject(msrest.serialization.Model):
+class TagsObject(_serialization.Model):
     """Tags object for patch operations.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(TagsObject, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
 
 
-class UserRule(BaseUserRule):
+class UserRule(BaseUserRule):  # pylint: disable=too-many-instance-attributes
     """Network security user rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4323,8 +4383,8 @@ class UserRule(BaseUserRule):
     :vartype type: str
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :ivar kind: Required. Whether the rule is custom or default.Constant filled by server. Possible
-     values include: "Custom", "Default".
+    :ivar kind: Whether the rule is custom or default. Required. Known values are: "Custom" and
+     "Default".
     :vartype kind: str or ~azure.mgmt.network.v2021_02_01_preview.models.UserRuleKind
     :ivar system_data: The system metadata related to this resource.
     :vartype system_data: ~azure.mgmt.network.v2021_02_01_preview.models.SystemData
@@ -4332,8 +4392,8 @@ class UserRule(BaseUserRule):
     :vartype display_name: str
     :ivar description: A description for this rule.
     :vartype description: str
-    :ivar protocol: Network protocol this rule applies to. Possible values include: "Tcp", "Udp",
-     "Icmp", "Esp", "Any", "Ah".
+    :ivar protocol: Network protocol this rule applies to. Known values are: "Tcp", "Udp", "Icmp",
+     "Esp", "Any", and "Ah".
     :vartype protocol: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleProtocol
     :ivar sources: The CIDR or source IP ranges.
@@ -4345,41 +4405,41 @@ class UserRule(BaseUserRule):
     :ivar destination_port_ranges: The destination port ranges.
     :vartype destination_port_ranges: list[str]
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
-     Possible values include: "Inbound", "Outbound".
+     Known values are: "Inbound" and "Outbound".
     :vartype direction: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleDirection
     :ivar provisioning_state: The provisioning state of the security configuration user rule
-     resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2021_02_01_preview.models.ProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'kind': {'required': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "kind": {"required": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'sources': {'key': 'properties.sources', 'type': '[AddressPrefixItem]'},
-        'destinations': {'key': 'properties.destinations', 'type': '[AddressPrefixItem]'},
-        'source_port_ranges': {'key': 'properties.sourcePortRanges', 'type': '[str]'},
-        'destination_port_ranges': {'key': 'properties.destinationPortRanges', 'type': '[str]'},
-        'direction': {'key': 'properties.direction', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "sources": {"key": "properties.sources", "type": "[AddressPrefixItem]"},
+        "destinations": {"key": "properties.destinations", "type": "[AddressPrefixItem]"},
+        "source_port_ranges": {"key": "properties.sourcePortRanges", "type": "[str]"},
+        "destination_port_ranges": {"key": "properties.destinationPortRanges", "type": "[str]"},
+        "direction": {"key": "properties.direction", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -4387,12 +4447,12 @@ class UserRule(BaseUserRule):
         *,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        protocol: Optional[Union[str, "SecurityConfigurationRuleProtocol"]] = None,
-        sources: Optional[List["AddressPrefixItem"]] = None,
-        destinations: Optional[List["AddressPrefixItem"]] = None,
+        protocol: Optional[Union[str, "_models.SecurityConfigurationRuleProtocol"]] = None,
+        sources: Optional[List["_models.AddressPrefixItem"]] = None,
+        destinations: Optional[List["_models.AddressPrefixItem"]] = None,
         source_port_ranges: Optional[List[str]] = None,
         destination_port_ranges: Optional[List[str]] = None,
-        direction: Optional[Union[str, "SecurityConfigurationRuleDirection"]] = None,
+        direction: Optional[Union[str, "_models.SecurityConfigurationRuleDirection"]] = None,
         **kwargs
     ):
         """
@@ -4400,8 +4460,8 @@ class UserRule(BaseUserRule):
         :paramtype display_name: str
         :keyword description: A description for this rule.
         :paramtype description: str
-        :keyword protocol: Network protocol this rule applies to. Possible values include: "Tcp",
-         "Udp", "Icmp", "Esp", "Any", "Ah".
+        :keyword protocol: Network protocol this rule applies to. Known values are: "Tcp", "Udp",
+         "Icmp", "Esp", "Any", and "Ah".
         :paramtype protocol: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleProtocol
         :keyword sources: The CIDR or source IP ranges.
@@ -4413,12 +4473,12 @@ class UserRule(BaseUserRule):
         :keyword destination_port_ranges: The destination port ranges.
         :paramtype destination_port_ranges: list[str]
         :keyword direction: Indicates if the traffic matched against the rule in inbound or outbound.
-         Possible values include: "Inbound", "Outbound".
+         Known values are: "Inbound" and "Outbound".
         :paramtype direction: str or
          ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleDirection
         """
-        super(UserRule, self).__init__(**kwargs)
-        self.kind = 'Custom'  # type: str
+        super().__init__(**kwargs)
+        self.kind = "Custom"  # type: str
         self.display_name = display_name
         self.description = description
         self.protocol = protocol
@@ -4430,7 +4490,7 @@ class UserRule(BaseUserRule):
         self.provisioning_state = None
 
 
-class UserRuleListResult(msrest.serialization.Model):
+class UserRuleListResult(_serialization.Model):
     """security user rule list result.
 
     :ivar value: A list of user rules.
@@ -4440,16 +4500,12 @@ class UserRuleListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BaseUserRule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[BaseUserRule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["BaseUserRule"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.BaseUserRule"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: A list of user rules.
@@ -4457,6 +4513,6 @@ class UserRuleListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(UserRuleListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link

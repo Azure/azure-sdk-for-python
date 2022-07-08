@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,14 +8,16 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from ... import _serialization
 
-from ._network_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class AddressSpace(msrest.serialization.Model):
+class AddressSpace(_serialization.Model):
     """AddressSpace contains an array of IP address ranges that can be used by subnets of the virtual network.
 
     :ivar address_prefixes: A list of address blocks reserved for this virtual network in CIDR
@@ -23,25 +26,20 @@ class AddressSpace(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'address_prefixes': {'key': 'addressPrefixes', 'type': '[str]'},
+        "address_prefixes": {"key": "addressPrefixes", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        address_prefixes: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, address_prefixes: Optional[List[str]] = None, **kwargs):
         """
         :keyword address_prefixes: A list of address blocks reserved for this virtual network in CIDR
          notation.
         :paramtype address_prefixes: list[str]
         """
-        super(AddressSpace, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.address_prefixes = address_prefixes
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -54,27 +52,27 @@ class Resource(msrest.serialization.Model):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
@@ -84,10 +82,10 @@ class Resource(msrest.serialization.Model):
         :paramtype id: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(Resource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.name = None
         self.type = None
@@ -95,7 +93,7 @@ class Resource(msrest.serialization.Model):
         self.tags = tags
 
 
-class ApplicationGateway(Resource):
+class ApplicationGateway(Resource):  # pylint: disable=too-many-instance-attributes
     """Application gateway resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -108,7 +106,7 @@ class ApplicationGateway(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
@@ -117,8 +115,8 @@ class ApplicationGateway(Resource):
     :ivar ssl_policy: SSL policy of the application gateway resource.
     :vartype ssl_policy: ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewaySslPolicy
     :ivar operational_state: Operational state of the application gateway resource. Possible values
-     are: 'Stopped', 'Started', 'Running', and 'Stopping'. Possible values include: "Stopped",
-     "Starting", "Running", "Stopping".
+     are: 'Stopped', 'Started', 'Running', and 'Stopping'. Known values are: "Stopped", "Starting",
+     "Running", and "Stopping".
     :vartype operational_state: str or
      ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayOperationalState
     :ivar gateway_ip_configurations: Subnets of application the gateway resource.
@@ -166,58 +164,81 @@ class ApplicationGateway(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'operational_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "operational_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'sku': {'key': 'properties.sku', 'type': 'ApplicationGatewaySku'},
-        'ssl_policy': {'key': 'properties.sslPolicy', 'type': 'ApplicationGatewaySslPolicy'},
-        'operational_state': {'key': 'properties.operationalState', 'type': 'str'},
-        'gateway_ip_configurations': {'key': 'properties.gatewayIPConfigurations', 'type': '[ApplicationGatewayIPConfiguration]'},
-        'authentication_certificates': {'key': 'properties.authenticationCertificates', 'type': '[ApplicationGatewayAuthenticationCertificate]'},
-        'ssl_certificates': {'key': 'properties.sslCertificates', 'type': '[ApplicationGatewaySslCertificate]'},
-        'frontend_ip_configurations': {'key': 'properties.frontendIPConfigurations', 'type': '[ApplicationGatewayFrontendIPConfiguration]'},
-        'frontend_ports': {'key': 'properties.frontendPorts', 'type': '[ApplicationGatewayFrontendPort]'},
-        'probes': {'key': 'properties.probes', 'type': '[ApplicationGatewayProbe]'},
-        'backend_address_pools': {'key': 'properties.backendAddressPools', 'type': '[ApplicationGatewayBackendAddressPool]'},
-        'backend_http_settings_collection': {'key': 'properties.backendHttpSettingsCollection', 'type': '[ApplicationGatewayBackendHttpSettings]'},
-        'http_listeners': {'key': 'properties.httpListeners', 'type': '[ApplicationGatewayHttpListener]'},
-        'url_path_maps': {'key': 'properties.urlPathMaps', 'type': '[ApplicationGatewayUrlPathMap]'},
-        'request_routing_rules': {'key': 'properties.requestRoutingRules', 'type': '[ApplicationGatewayRequestRoutingRule]'},
-        'web_application_firewall_configuration': {'key': 'properties.webApplicationFirewallConfiguration', 'type': 'ApplicationGatewayWebApplicationFirewallConfiguration'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "sku": {"key": "properties.sku", "type": "ApplicationGatewaySku"},
+        "ssl_policy": {"key": "properties.sslPolicy", "type": "ApplicationGatewaySslPolicy"},
+        "operational_state": {"key": "properties.operationalState", "type": "str"},
+        "gateway_ip_configurations": {
+            "key": "properties.gatewayIPConfigurations",
+            "type": "[ApplicationGatewayIPConfiguration]",
+        },
+        "authentication_certificates": {
+            "key": "properties.authenticationCertificates",
+            "type": "[ApplicationGatewayAuthenticationCertificate]",
+        },
+        "ssl_certificates": {"key": "properties.sslCertificates", "type": "[ApplicationGatewaySslCertificate]"},
+        "frontend_ip_configurations": {
+            "key": "properties.frontendIPConfigurations",
+            "type": "[ApplicationGatewayFrontendIPConfiguration]",
+        },
+        "frontend_ports": {"key": "properties.frontendPorts", "type": "[ApplicationGatewayFrontendPort]"},
+        "probes": {"key": "properties.probes", "type": "[ApplicationGatewayProbe]"},
+        "backend_address_pools": {
+            "key": "properties.backendAddressPools",
+            "type": "[ApplicationGatewayBackendAddressPool]",
+        },
+        "backend_http_settings_collection": {
+            "key": "properties.backendHttpSettingsCollection",
+            "type": "[ApplicationGatewayBackendHttpSettings]",
+        },
+        "http_listeners": {"key": "properties.httpListeners", "type": "[ApplicationGatewayHttpListener]"},
+        "url_path_maps": {"key": "properties.urlPathMaps", "type": "[ApplicationGatewayUrlPathMap]"},
+        "request_routing_rules": {
+            "key": "properties.requestRoutingRules",
+            "type": "[ApplicationGatewayRequestRoutingRule]",
+        },
+        "web_application_firewall_configuration": {
+            "key": "properties.webApplicationFirewallConfiguration",
+            "type": "ApplicationGatewayWebApplicationFirewallConfiguration",
+        },
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        sku: Optional["ApplicationGatewaySku"] = None,
-        ssl_policy: Optional["ApplicationGatewaySslPolicy"] = None,
-        gateway_ip_configurations: Optional[List["ApplicationGatewayIPConfiguration"]] = None,
-        authentication_certificates: Optional[List["ApplicationGatewayAuthenticationCertificate"]] = None,
-        ssl_certificates: Optional[List["ApplicationGatewaySslCertificate"]] = None,
-        frontend_ip_configurations: Optional[List["ApplicationGatewayFrontendIPConfiguration"]] = None,
-        frontend_ports: Optional[List["ApplicationGatewayFrontendPort"]] = None,
-        probes: Optional[List["ApplicationGatewayProbe"]] = None,
-        backend_address_pools: Optional[List["ApplicationGatewayBackendAddressPool"]] = None,
-        backend_http_settings_collection: Optional[List["ApplicationGatewayBackendHttpSettings"]] = None,
-        http_listeners: Optional[List["ApplicationGatewayHttpListener"]] = None,
-        url_path_maps: Optional[List["ApplicationGatewayUrlPathMap"]] = None,
-        request_routing_rules: Optional[List["ApplicationGatewayRequestRoutingRule"]] = None,
-        web_application_firewall_configuration: Optional["ApplicationGatewayWebApplicationFirewallConfiguration"] = None,
+        sku: Optional["_models.ApplicationGatewaySku"] = None,
+        ssl_policy: Optional["_models.ApplicationGatewaySslPolicy"] = None,
+        gateway_ip_configurations: Optional[List["_models.ApplicationGatewayIPConfiguration"]] = None,
+        authentication_certificates: Optional[List["_models.ApplicationGatewayAuthenticationCertificate"]] = None,
+        ssl_certificates: Optional[List["_models.ApplicationGatewaySslCertificate"]] = None,
+        frontend_ip_configurations: Optional[List["_models.ApplicationGatewayFrontendIPConfiguration"]] = None,
+        frontend_ports: Optional[List["_models.ApplicationGatewayFrontendPort"]] = None,
+        probes: Optional[List["_models.ApplicationGatewayProbe"]] = None,
+        backend_address_pools: Optional[List["_models.ApplicationGatewayBackendAddressPool"]] = None,
+        backend_http_settings_collection: Optional[List["_models.ApplicationGatewayBackendHttpSettings"]] = None,
+        http_listeners: Optional[List["_models.ApplicationGatewayHttpListener"]] = None,
+        url_path_maps: Optional[List["_models.ApplicationGatewayUrlPathMap"]] = None,
+        request_routing_rules: Optional[List["_models.ApplicationGatewayRequestRoutingRule"]] = None,
+        web_application_firewall_configuration: Optional[
+            "_models.ApplicationGatewayWebApplicationFirewallConfiguration"
+        ] = None,
         resource_guid: Optional[str] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
@@ -227,7 +248,7 @@ class ApplicationGateway(Resource):
         :paramtype id: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword etag: A unique read-only string that changes whenever the resource is updated.
         :paramtype etag: str
@@ -278,7 +299,7 @@ class ApplicationGateway(Resource):
          values are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(ApplicationGateway, self).__init__(id=id, location=location, tags=tags, **kwargs)
+        super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.etag = etag
         self.sku = sku
         self.ssl_policy = ssl_policy
@@ -299,7 +320,7 @@ class ApplicationGateway(Resource):
         self.provisioning_state = provisioning_state
 
 
-class SubResource(msrest.serialization.Model):
+class SubResource(_serialization.Model):
     """SubResource.
 
     :ivar id: Resource ID.
@@ -307,20 +328,15 @@ class SubResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID.
         :paramtype id: str
         """
-        super(SubResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
@@ -342,17 +358,17 @@ class ApplicationGatewayAuthenticationCertificate(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'data': {'key': 'properties.data', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "data": {"key": "properties.data", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
         data: Optional[str] = None,
@@ -373,14 +389,14 @@ class ApplicationGatewayAuthenticationCertificate(SubResource):
          Possible values are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(ApplicationGatewayAuthenticationCertificate, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.data = data
         self.provisioning_state = provisioning_state
 
 
-class ApplicationGatewayBackendAddress(msrest.serialization.Model):
+class ApplicationGatewayBackendAddress(_serialization.Model):
     """Backend address of an application gateway.
 
     :ivar fqdn: Fully qualified domain name (FQDN).
@@ -390,24 +406,18 @@ class ApplicationGatewayBackendAddress(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'fqdn': {'key': 'fqdn', 'type': 'str'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+        "fqdn": {"key": "fqdn", "type": "str"},
+        "ip_address": {"key": "ipAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        fqdn: Optional[str] = None,
-        ip_address: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, fqdn: Optional[str] = None, ip_address: Optional[str] = None, **kwargs):
         """
         :keyword fqdn: Fully qualified domain name (FQDN).
         :paramtype fqdn: str
         :keyword ip_address: IP address.
         :paramtype ip_address: str
         """
-        super(ApplicationGatewayBackendAddress, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.fqdn = fqdn
         self.ip_address = ip_address
 
@@ -434,22 +444,25 @@ class ApplicationGatewayBackendAddressPool(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'backend_ip_configurations': {'key': 'properties.backendIPConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
-        'backend_addresses': {'key': 'properties.backendAddresses', 'type': '[ApplicationGatewayBackendAddress]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "backend_ip_configurations": {
+            "key": "properties.backendIPConfigurations",
+            "type": "[NetworkInterfaceIPConfiguration]",
+        },
+        "backend_addresses": {"key": "properties.backendAddresses", "type": "[ApplicationGatewayBackendAddress]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
-        backend_ip_configurations: Optional[List["NetworkInterfaceIPConfiguration"]] = None,
-        backend_addresses: Optional[List["ApplicationGatewayBackendAddress"]] = None,
+        backend_ip_configurations: Optional[List["_models.NetworkInterfaceIPConfiguration"]] = None,
+        backend_addresses: Optional[List["_models.ApplicationGatewayBackendAddress"]] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -472,7 +485,7 @@ class ApplicationGatewayBackendAddressPool(SubResource):
          values are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(ApplicationGatewayBackendAddressPool, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.backend_ip_configurations = backend_ip_configurations
@@ -480,7 +493,7 @@ class ApplicationGatewayBackendAddressPool(SubResource):
         self.provisioning_state = provisioning_state
 
 
-class ApplicationGatewayBackendHealth(msrest.serialization.Model):
+class ApplicationGatewayBackendHealth(_serialization.Model):
     """List of ApplicationGatewayBackendHealthPool resources.
 
     :ivar backend_address_pools:
@@ -489,25 +502,22 @@ class ApplicationGatewayBackendHealth(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'backend_address_pools': {'key': 'backendAddressPools', 'type': '[ApplicationGatewayBackendHealthPool]'},
+        "backend_address_pools": {"key": "backendAddressPools", "type": "[ApplicationGatewayBackendHealthPool]"},
     }
 
     def __init__(
-        self,
-        *,
-        backend_address_pools: Optional[List["ApplicationGatewayBackendHealthPool"]] = None,
-        **kwargs
+        self, *, backend_address_pools: Optional[List["_models.ApplicationGatewayBackendHealthPool"]] = None, **kwargs
     ):
         """
         :keyword backend_address_pools:
         :paramtype backend_address_pools:
          list[~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayBackendHealthPool]
         """
-        super(ApplicationGatewayBackendHealth, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.backend_address_pools = backend_address_pools
 
 
-class ApplicationGatewayBackendHealthHttpSettings(msrest.serialization.Model):
+class ApplicationGatewayBackendHealthHttpSettings(_serialization.Model):
     """Application gateway BackendHealthHttp settings.
 
     :ivar backend_http_settings: Reference of an ApplicationGatewayBackendHttpSettings resource.
@@ -519,15 +529,15 @@ class ApplicationGatewayBackendHealthHttpSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'backend_http_settings': {'key': 'backendHttpSettings', 'type': 'ApplicationGatewayBackendHttpSettings'},
-        'servers': {'key': 'servers', 'type': '[ApplicationGatewayBackendHealthServer]'},
+        "backend_http_settings": {"key": "backendHttpSettings", "type": "ApplicationGatewayBackendHttpSettings"},
+        "servers": {"key": "servers", "type": "[ApplicationGatewayBackendHealthServer]"},
     }
 
     def __init__(
         self,
         *,
-        backend_http_settings: Optional["ApplicationGatewayBackendHttpSettings"] = None,
-        servers: Optional[List["ApplicationGatewayBackendHealthServer"]] = None,
+        backend_http_settings: Optional["_models.ApplicationGatewayBackendHttpSettings"] = None,
+        servers: Optional[List["_models.ApplicationGatewayBackendHealthServer"]] = None,
         **kwargs
     ):
         """
@@ -538,12 +548,12 @@ class ApplicationGatewayBackendHealthHttpSettings(msrest.serialization.Model):
         :paramtype servers:
          list[~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayBackendHealthServer]
         """
-        super(ApplicationGatewayBackendHealthHttpSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.backend_http_settings = backend_http_settings
         self.servers = servers
 
 
-class ApplicationGatewayBackendHealthPool(msrest.serialization.Model):
+class ApplicationGatewayBackendHealthPool(_serialization.Model):
     """Application gateway BackendHealth pool.
 
     :ivar backend_address_pool: Reference of an ApplicationGatewayBackendAddressPool resource.
@@ -556,15 +566,18 @@ class ApplicationGatewayBackendHealthPool(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'backend_address_pool': {'key': 'backendAddressPool', 'type': 'ApplicationGatewayBackendAddressPool'},
-        'backend_http_settings_collection': {'key': 'backendHttpSettingsCollection', 'type': '[ApplicationGatewayBackendHealthHttpSettings]'},
+        "backend_address_pool": {"key": "backendAddressPool", "type": "ApplicationGatewayBackendAddressPool"},
+        "backend_http_settings_collection": {
+            "key": "backendHttpSettingsCollection",
+            "type": "[ApplicationGatewayBackendHealthHttpSettings]",
+        },
     }
 
     def __init__(
         self,
         *,
-        backend_address_pool: Optional["ApplicationGatewayBackendAddressPool"] = None,
-        backend_http_settings_collection: Optional[List["ApplicationGatewayBackendHealthHttpSettings"]] = None,
+        backend_address_pool: Optional["_models.ApplicationGatewayBackendAddressPool"] = None,
+        backend_http_settings_collection: Optional[List["_models.ApplicationGatewayBackendHealthHttpSettings"]] = None,
         **kwargs
     ):
         """
@@ -576,12 +589,12 @@ class ApplicationGatewayBackendHealthPool(msrest.serialization.Model):
         :paramtype backend_http_settings_collection:
          list[~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayBackendHealthHttpSettings]
         """
-        super(ApplicationGatewayBackendHealthPool, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.backend_address_pool = backend_address_pool
         self.backend_http_settings_collection = backend_http_settings_collection
 
 
-class ApplicationGatewayBackendHealthServer(msrest.serialization.Model):
+class ApplicationGatewayBackendHealthServer(_serialization.Model):
     """Application gateway backendhealth http settings.
 
     :ivar address: IP address or FQDN of backend server.
@@ -589,23 +602,23 @@ class ApplicationGatewayBackendHealthServer(msrest.serialization.Model):
     :ivar ip_configuration: Reference of IP configuration of backend server.
     :vartype ip_configuration: ~azure.mgmt.network.v2016_09_01.models.SubResource
     :ivar health: Health of backend server. Possible values are: 'Unknown', 'Up', 'Down', and
-     'Partial'. Possible values include: "Unknown", "Up", "Down", "Partial".
+     'Partial'. Known values are: "Unknown", "Up", "Down", and "Partial".
     :vartype health: str or
      ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayBackendHealthServerHealth
     """
 
     _attribute_map = {
-        'address': {'key': 'address', 'type': 'str'},
-        'ip_configuration': {'key': 'ipConfiguration', 'type': 'SubResource'},
-        'health': {'key': 'health', 'type': 'str'},
+        "address": {"key": "address", "type": "str"},
+        "ip_configuration": {"key": "ipConfiguration", "type": "SubResource"},
+        "health": {"key": "health", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         address: Optional[str] = None,
-        ip_configuration: Optional["SubResource"] = None,
-        health: Optional[Union[str, "ApplicationGatewayBackendHealthServerHealth"]] = None,
+        ip_configuration: Optional["_models.SubResource"] = None,
+        health: Optional[Union[str, "_models.ApplicationGatewayBackendHealthServerHealth"]] = None,
         **kwargs
     ):
         """
@@ -614,11 +627,11 @@ class ApplicationGatewayBackendHealthServer(msrest.serialization.Model):
         :keyword ip_configuration: Reference of IP configuration of backend server.
         :paramtype ip_configuration: ~azure.mgmt.network.v2016_09_01.models.SubResource
         :keyword health: Health of backend server. Possible values are: 'Unknown', 'Up', 'Down', and
-         'Partial'. Possible values include: "Unknown", "Up", "Down", "Partial".
+         'Partial'. Known values are: "Unknown", "Up", "Down", and "Partial".
         :paramtype health: str or
          ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayBackendHealthServerHealth
         """
-        super(ApplicationGatewayBackendHealthServer, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.address = address
         self.ip_configuration = ip_configuration
         self.health = health
@@ -636,11 +649,11 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
     :vartype etag: str
     :ivar port: Port.
     :vartype port: int
-    :ivar protocol: Protocol. Possible values are: 'Http' and 'Https'. Possible values include:
-     "Http", "Https".
+    :ivar protocol: Protocol. Possible values are: 'Http' and 'Https'. Known values are: "Http" and
+     "Https".
     :vartype protocol: str or ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayProtocol
     :ivar cookie_based_affinity: Cookie based affinity. Possible values are: 'Enabled' and
-     'Disabled'. Possible values include: "Enabled", "Disabled".
+     'Disabled'. Known values are: "Enabled" and "Disabled".
     :vartype cookie_based_affinity: str or
      ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayCookieBasedAffinity
     :ivar request_timeout: Request timeout in seconds. Application Gateway will fail the request if
@@ -658,30 +671,30 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'port': {'key': 'properties.port', 'type': 'int'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'cookie_based_affinity': {'key': 'properties.cookieBasedAffinity', 'type': 'str'},
-        'request_timeout': {'key': 'properties.requestTimeout', 'type': 'int'},
-        'probe': {'key': 'properties.probe', 'type': 'SubResource'},
-        'authentication_certificates': {'key': 'properties.authenticationCertificates', 'type': '[SubResource]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "port": {"key": "properties.port", "type": "int"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "cookie_based_affinity": {"key": "properties.cookieBasedAffinity", "type": "str"},
+        "request_timeout": {"key": "properties.requestTimeout", "type": "int"},
+        "probe": {"key": "properties.probe", "type": "SubResource"},
+        "authentication_certificates": {"key": "properties.authenticationCertificates", "type": "[SubResource]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
         port: Optional[int] = None,
-        protocol: Optional[Union[str, "ApplicationGatewayProtocol"]] = None,
-        cookie_based_affinity: Optional[Union[str, "ApplicationGatewayCookieBasedAffinity"]] = None,
+        protocol: Optional[Union[str, "_models.ApplicationGatewayProtocol"]] = None,
+        cookie_based_affinity: Optional[Union[str, "_models.ApplicationGatewayCookieBasedAffinity"]] = None,
         request_timeout: Optional[int] = None,
-        probe: Optional["SubResource"] = None,
-        authentication_certificates: Optional[List["SubResource"]] = None,
+        probe: Optional["_models.SubResource"] = None,
+        authentication_certificates: Optional[List["_models.SubResource"]] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -695,11 +708,11 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
         :paramtype etag: str
         :keyword port: Port.
         :paramtype port: int
-        :keyword protocol: Protocol. Possible values are: 'Http' and 'Https'. Possible values include:
-         "Http", "Https".
+        :keyword protocol: Protocol. Possible values are: 'Http' and 'Https'. Known values are: "Http"
+         and "Https".
         :paramtype protocol: str or ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayProtocol
         :keyword cookie_based_affinity: Cookie based affinity. Possible values are: 'Enabled' and
-         'Disabled'. Possible values include: "Enabled", "Disabled".
+         'Disabled'. Known values are: "Enabled" and "Disabled".
         :paramtype cookie_based_affinity: str or
          ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayCookieBasedAffinity
         :keyword request_timeout: Request timeout in seconds. Application Gateway will fail the request
@@ -716,7 +729,7 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
          values are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(ApplicationGatewayBackendHttpSettings, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.port = port
@@ -741,7 +754,7 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
     :ivar private_ip_address: PrivateIPAddress of the network interface IP Configuration.
     :vartype private_ip_address: str
     :ivar private_ip_allocation_method: PrivateIP allocation method. Possible values are: 'Static'
-     and 'Dynamic'. Possible values include: "Static", "Dynamic".
+     and 'Dynamic'. Known values are: "Static" and "Dynamic".
     :vartype private_ip_allocation_method: str or
      ~azure.mgmt.network.v2016_09_01.models.IPAllocationMethod
     :ivar subnet: Reference of the subnet resource.
@@ -754,26 +767,26 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'SubResource'},
-        'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "private_ip_address": {"key": "properties.privateIPAddress", "type": "str"},
+        "private_ip_allocation_method": {"key": "properties.privateIPAllocationMethod", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "SubResource"},
+        "public_ip_address": {"key": "properties.publicIPAddress", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
         private_ip_address: Optional[str] = None,
-        private_ip_allocation_method: Optional[Union[str, "IPAllocationMethod"]] = None,
-        subnet: Optional["SubResource"] = None,
-        public_ip_address: Optional["SubResource"] = None,
+        private_ip_allocation_method: Optional[Union[str, "_models.IPAllocationMethod"]] = None,
+        subnet: Optional["_models.SubResource"] = None,
+        public_ip_address: Optional["_models.SubResource"] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -788,7 +801,7 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
         :keyword private_ip_address: PrivateIPAddress of the network interface IP Configuration.
         :paramtype private_ip_address: str
         :keyword private_ip_allocation_method: PrivateIP allocation method. Possible values are:
-         'Static' and 'Dynamic'. Possible values include: "Static", "Dynamic".
+         'Static' and 'Dynamic'. Known values are: "Static" and "Dynamic".
         :paramtype private_ip_allocation_method: str or
          ~azure.mgmt.network.v2016_09_01.models.IPAllocationMethod
         :keyword subnet: Reference of the subnet resource.
@@ -799,7 +812,7 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
          'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(ApplicationGatewayFrontendIPConfiguration, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.private_ip_address = private_ip_address
@@ -827,17 +840,17 @@ class ApplicationGatewayFrontendPort(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'port': {'key': 'properties.port', 'type': 'int'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "port": {"key": "properties.port", "type": "int"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
         port: Optional[int] = None,
@@ -858,7 +871,7 @@ class ApplicationGatewayFrontendPort(SubResource):
          are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(ApplicationGatewayFrontendPort, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.port = port
@@ -879,8 +892,8 @@ class ApplicationGatewayHttpListener(SubResource):
     :vartype frontend_ip_configuration: ~azure.mgmt.network.v2016_09_01.models.SubResource
     :ivar frontend_port: Frontend port resource of an application gateway.
     :vartype frontend_port: ~azure.mgmt.network.v2016_09_01.models.SubResource
-    :ivar protocol: Protocol. Possible values are: 'Http' and 'Https'. Possible values include:
-     "Http", "Https".
+    :ivar protocol: Protocol. Possible values are: 'Http' and 'Https'. Known values are: "Http" and
+     "Https".
     :vartype protocol: str or ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayProtocol
     :ivar host_name: Host name of HTTP listener.
     :vartype host_name: str
@@ -895,29 +908,29 @@ class ApplicationGatewayHttpListener(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'frontend_ip_configuration': {'key': 'properties.frontendIPConfiguration', 'type': 'SubResource'},
-        'frontend_port': {'key': 'properties.frontendPort', 'type': 'SubResource'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'ssl_certificate': {'key': 'properties.sslCertificate', 'type': 'SubResource'},
-        'require_server_name_indication': {'key': 'properties.requireServerNameIndication', 'type': 'bool'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "frontend_ip_configuration": {"key": "properties.frontendIPConfiguration", "type": "SubResource"},
+        "frontend_port": {"key": "properties.frontendPort", "type": "SubResource"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "host_name": {"key": "properties.hostName", "type": "str"},
+        "ssl_certificate": {"key": "properties.sslCertificate", "type": "SubResource"},
+        "require_server_name_indication": {"key": "properties.requireServerNameIndication", "type": "bool"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
-        frontend_ip_configuration: Optional["SubResource"] = None,
-        frontend_port: Optional["SubResource"] = None,
-        protocol: Optional[Union[str, "ApplicationGatewayProtocol"]] = None,
+        frontend_ip_configuration: Optional["_models.SubResource"] = None,
+        frontend_port: Optional["_models.SubResource"] = None,
+        protocol: Optional[Union[str, "_models.ApplicationGatewayProtocol"]] = None,
         host_name: Optional[str] = None,
-        ssl_certificate: Optional["SubResource"] = None,
+        ssl_certificate: Optional["_models.SubResource"] = None,
         require_server_name_indication: Optional[bool] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
@@ -935,8 +948,8 @@ class ApplicationGatewayHttpListener(SubResource):
         :paramtype frontend_ip_configuration: ~azure.mgmt.network.v2016_09_01.models.SubResource
         :keyword frontend_port: Frontend port resource of an application gateway.
         :paramtype frontend_port: ~azure.mgmt.network.v2016_09_01.models.SubResource
-        :keyword protocol: Protocol. Possible values are: 'Http' and 'Https'. Possible values include:
-         "Http", "Https".
+        :keyword protocol: Protocol. Possible values are: 'Http' and 'Https'. Known values are: "Http"
+         and "Https".
         :paramtype protocol: str or ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayProtocol
         :keyword host_name: Host name of HTTP listener.
         :paramtype host_name: str
@@ -949,7 +962,7 @@ class ApplicationGatewayHttpListener(SubResource):
          are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(ApplicationGatewayHttpListener, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.frontend_ip_configuration = frontend_ip_configuration
@@ -980,20 +993,20 @@ class ApplicationGatewayIPConfiguration(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
-        subnet: Optional["SubResource"] = None,
+        subnet: Optional["_models.SubResource"] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -1012,14 +1025,14 @@ class ApplicationGatewayIPConfiguration(SubResource):
          Possible values are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(ApplicationGatewayIPConfiguration, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.subnet = subnet
         self.provisioning_state = provisioning_state
 
 
-class ApplicationGatewayListResult(msrest.serialization.Model):
+class ApplicationGatewayListResult(_serialization.Model):
     """Response for ListApplicationGateways API service call.
 
     :ivar value: List of an application gateways in a resource group.
@@ -1029,16 +1042,12 @@ class ApplicationGatewayListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ApplicationGateway]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ApplicationGateway]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["ApplicationGateway"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.ApplicationGateway"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: List of an application gateways in a resource group.
@@ -1046,7 +1055,7 @@ class ApplicationGatewayListResult(msrest.serialization.Model):
         :keyword next_link: URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(ApplicationGatewayListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -1073,24 +1082,24 @@ class ApplicationGatewayPathRule(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'paths': {'key': 'properties.paths', 'type': '[str]'},
-        'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource'},
-        'backend_http_settings': {'key': 'properties.backendHttpSettings', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "paths": {"key": "properties.paths", "type": "[str]"},
+        "backend_address_pool": {"key": "properties.backendAddressPool", "type": "SubResource"},
+        "backend_http_settings": {"key": "properties.backendHttpSettings", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
         paths: Optional[List[str]] = None,
-        backend_address_pool: Optional["SubResource"] = None,
-        backend_http_settings: Optional["SubResource"] = None,
+        backend_address_pool: Optional["_models.SubResource"] = None,
+        backend_http_settings: Optional["_models.SubResource"] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -1112,7 +1121,7 @@ class ApplicationGatewayPathRule(SubResource):
          'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(ApplicationGatewayPathRule, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.paths = paths
@@ -1131,8 +1140,8 @@ class ApplicationGatewayProbe(SubResource):
     :vartype name: str
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :ivar protocol: Protocol. Possible values are: 'Http' and 'Https'. Possible values include:
-     "Http", "Https".
+    :ivar protocol: Protocol. Possible values are: 'Http' and 'Https'. Known values are: "Http" and
+     "Https".
     :vartype protocol: str or ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayProtocol
     :ivar host: Host name to send the probe to.
     :vartype host: str
@@ -1155,25 +1164,25 @@ class ApplicationGatewayProbe(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'host': {'key': 'properties.host', 'type': 'str'},
-        'path': {'key': 'properties.path', 'type': 'str'},
-        'interval': {'key': 'properties.interval', 'type': 'int'},
-        'timeout': {'key': 'properties.timeout', 'type': 'int'},
-        'unhealthy_threshold': {'key': 'properties.unhealthyThreshold', 'type': 'int'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "host": {"key": "properties.host", "type": "str"},
+        "path": {"key": "properties.path", "type": "str"},
+        "interval": {"key": "properties.interval", "type": "int"},
+        "timeout": {"key": "properties.timeout", "type": "int"},
+        "unhealthy_threshold": {"key": "properties.unhealthyThreshold", "type": "int"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
-        protocol: Optional[Union[str, "ApplicationGatewayProtocol"]] = None,
+        protocol: Optional[Union[str, "_models.ApplicationGatewayProtocol"]] = None,
         host: Optional[str] = None,
         path: Optional[str] = None,
         interval: Optional[int] = None,
@@ -1190,8 +1199,8 @@ class ApplicationGatewayProbe(SubResource):
         :paramtype name: str
         :keyword etag: A unique read-only string that changes whenever the resource is updated.
         :paramtype etag: str
-        :keyword protocol: Protocol. Possible values are: 'Http' and 'Https'. Possible values include:
-         "Http", "Https".
+        :keyword protocol: Protocol. Possible values are: 'Http' and 'Https'. Known values are: "Http"
+         and "Https".
         :paramtype protocol: str or ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayProtocol
         :keyword host: Host name to send the probe to.
         :paramtype host: str
@@ -1212,7 +1221,7 @@ class ApplicationGatewayProbe(SubResource):
          values are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(ApplicationGatewayProbe, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.protocol = protocol
@@ -1234,8 +1243,8 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
     :vartype name: str
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :ivar rule_type: Rule type. Possible values are: 'Basic' and 'PathBasedRouting'. Possible
-     values include: "Basic", "PathBasedRouting".
+    :ivar rule_type: Rule type. Possible values are: 'Basic' and 'PathBasedRouting'. Known values
+     are: "Basic" and "PathBasedRouting".
     :vartype rule_type: str or
      ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayRequestRoutingRuleType
     :ivar backend_address_pool: Backend address pool resource of the application gateway.
@@ -1252,28 +1261,28 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'rule_type': {'key': 'properties.ruleType', 'type': 'str'},
-        'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource'},
-        'backend_http_settings': {'key': 'properties.backendHttpSettings', 'type': 'SubResource'},
-        'http_listener': {'key': 'properties.httpListener', 'type': 'SubResource'},
-        'url_path_map': {'key': 'properties.urlPathMap', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "rule_type": {"key": "properties.ruleType", "type": "str"},
+        "backend_address_pool": {"key": "properties.backendAddressPool", "type": "SubResource"},
+        "backend_http_settings": {"key": "properties.backendHttpSettings", "type": "SubResource"},
+        "http_listener": {"key": "properties.httpListener", "type": "SubResource"},
+        "url_path_map": {"key": "properties.urlPathMap", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
-        rule_type: Optional[Union[str, "ApplicationGatewayRequestRoutingRuleType"]] = None,
-        backend_address_pool: Optional["SubResource"] = None,
-        backend_http_settings: Optional["SubResource"] = None,
-        http_listener: Optional["SubResource"] = None,
-        url_path_map: Optional["SubResource"] = None,
+        rule_type: Optional[Union[str, "_models.ApplicationGatewayRequestRoutingRuleType"]] = None,
+        backend_address_pool: Optional["_models.SubResource"] = None,
+        backend_http_settings: Optional["_models.SubResource"] = None,
+        http_listener: Optional["_models.SubResource"] = None,
+        url_path_map: Optional["_models.SubResource"] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -1285,8 +1294,8 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
         :paramtype name: str
         :keyword etag: A unique read-only string that changes whenever the resource is updated.
         :paramtype etag: str
-        :keyword rule_type: Rule type. Possible values are: 'Basic' and 'PathBasedRouting'. Possible
-         values include: "Basic", "PathBasedRouting".
+        :keyword rule_type: Rule type. Possible values are: 'Basic' and 'PathBasedRouting'. Known
+         values are: "Basic" and "PathBasedRouting".
         :paramtype rule_type: str or
          ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayRequestRoutingRuleType
         :keyword backend_address_pool: Backend address pool resource of the application gateway.
@@ -1301,7 +1310,7 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
          values are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(ApplicationGatewayRequestRoutingRule, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.rule_type = rule_type
@@ -1312,46 +1321,46 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
         self.provisioning_state = provisioning_state
 
 
-class ApplicationGatewaySku(msrest.serialization.Model):
+class ApplicationGatewaySku(_serialization.Model):
     """SKU of an application gateway.
 
     :ivar name: Name of an application gateway SKU. Possible values are: 'Standard_Small',
-     'Standard_Medium', 'Standard_Large', 'WAF_Medium', and 'WAF_Large'. Possible values include:
-     "Standard_Small", "Standard_Medium", "Standard_Large", "WAF_Medium", "WAF_Large".
+     'Standard_Medium', 'Standard_Large', 'WAF_Medium', and 'WAF_Large'. Known values are:
+     "Standard_Small", "Standard_Medium", "Standard_Large", "WAF_Medium", and "WAF_Large".
     :vartype name: str or ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewaySkuName
-    :ivar tier: Tier of an application gateway. Possible values are: 'Standard' and 'WAF'. Possible
-     values include: "Standard", "WAF".
+    :ivar tier: Tier of an application gateway. Possible values are: 'Standard' and 'WAF'. Known
+     values are: "Standard" and "WAF".
     :vartype tier: str or ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayTier
     :ivar capacity: Capacity (instance count) of an application gateway.
     :vartype capacity: int
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        name: Optional[Union[str, "ApplicationGatewaySkuName"]] = None,
-        tier: Optional[Union[str, "ApplicationGatewayTier"]] = None,
+        name: Optional[Union[str, "_models.ApplicationGatewaySkuName"]] = None,
+        tier: Optional[Union[str, "_models.ApplicationGatewayTier"]] = None,
         capacity: Optional[int] = None,
         **kwargs
     ):
         """
         :keyword name: Name of an application gateway SKU. Possible values are: 'Standard_Small',
-         'Standard_Medium', 'Standard_Large', 'WAF_Medium', and 'WAF_Large'. Possible values include:
-         "Standard_Small", "Standard_Medium", "Standard_Large", "WAF_Medium", "WAF_Large".
+         'Standard_Medium', 'Standard_Large', 'WAF_Medium', and 'WAF_Large'. Known values are:
+         "Standard_Small", "Standard_Medium", "Standard_Large", "WAF_Medium", and "WAF_Large".
         :paramtype name: str or ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewaySkuName
-        :keyword tier: Tier of an application gateway. Possible values are: 'Standard' and 'WAF'.
-         Possible values include: "Standard", "WAF".
+        :keyword tier: Tier of an application gateway. Possible values are: 'Standard' and 'WAF'. Known
+         values are: "Standard" and "WAF".
         :paramtype tier: str or ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayTier
         :keyword capacity: Capacity (instance count) of an application gateway.
         :paramtype capacity: int
         """
-        super(ApplicationGatewaySku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.tier = tier
         self.capacity = capacity
@@ -1380,19 +1389,19 @@ class ApplicationGatewaySslCertificate(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'data': {'key': 'properties.data', 'type': 'str'},
-        'password': {'key': 'properties.password', 'type': 'str'},
-        'public_cert_data': {'key': 'properties.publicCertData', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "data": {"key": "properties.data", "type": "str"},
+        "password": {"key": "properties.password", "type": "str"},
+        "public_cert_data": {"key": "properties.publicCertData", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
         data: Optional[str] = None,
@@ -1420,7 +1429,7 @@ class ApplicationGatewaySslCertificate(SubResource):
          are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(ApplicationGatewaySslCertificate, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.data = data
@@ -1429,7 +1438,7 @@ class ApplicationGatewaySslCertificate(SubResource):
         self.provisioning_state = provisioning_state
 
 
-class ApplicationGatewaySslPolicy(msrest.serialization.Model):
+class ApplicationGatewaySslPolicy(_serialization.Model):
     """Application gateway SSL policy.
 
     :ivar disabled_ssl_protocols: SSL protocols to be disabled on application gateway. Possible
@@ -1439,13 +1448,13 @@ class ApplicationGatewaySslPolicy(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'disabled_ssl_protocols': {'key': 'disabledSslProtocols', 'type': '[str]'},
+        "disabled_ssl_protocols": {"key": "disabledSslProtocols", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
-        disabled_ssl_protocols: Optional[List[Union[str, "ApplicationGatewaySslProtocol"]]] = None,
+        disabled_ssl_protocols: Optional[List[Union[str, "_models.ApplicationGatewaySslProtocol"]]] = None,
         **kwargs
     ):
         """
@@ -1454,7 +1463,7 @@ class ApplicationGatewaySslPolicy(msrest.serialization.Model):
         :paramtype disabled_ssl_protocols: list[str or
          ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewaySslProtocol]
         """
-        super(ApplicationGatewaySslPolicy, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.disabled_ssl_protocols = disabled_ssl_protocols
 
 
@@ -1480,24 +1489,24 @@ class ApplicationGatewayUrlPathMap(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'default_backend_address_pool': {'key': 'properties.defaultBackendAddressPool', 'type': 'SubResource'},
-        'default_backend_http_settings': {'key': 'properties.defaultBackendHttpSettings', 'type': 'SubResource'},
-        'path_rules': {'key': 'properties.pathRules', 'type': '[ApplicationGatewayPathRule]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "default_backend_address_pool": {"key": "properties.defaultBackendAddressPool", "type": "SubResource"},
+        "default_backend_http_settings": {"key": "properties.defaultBackendHttpSettings", "type": "SubResource"},
+        "path_rules": {"key": "properties.pathRules", "type": "[ApplicationGatewayPathRule]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
-        default_backend_address_pool: Optional["SubResource"] = None,
-        default_backend_http_settings: Optional["SubResource"] = None,
-        path_rules: Optional[List["ApplicationGatewayPathRule"]] = None,
+        default_backend_address_pool: Optional["_models.SubResource"] = None,
+        default_backend_http_settings: Optional["_models.SubResource"] = None,
+        path_rules: Optional[List["_models.ApplicationGatewayPathRule"]] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -1519,7 +1528,7 @@ class ApplicationGatewayUrlPathMap(SubResource):
          values are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(ApplicationGatewayUrlPathMap, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.default_backend_address_pool = default_backend_address_pool
@@ -1528,49 +1537,49 @@ class ApplicationGatewayUrlPathMap(SubResource):
         self.provisioning_state = provisioning_state
 
 
-class ApplicationGatewayWebApplicationFirewallConfiguration(msrest.serialization.Model):
+class ApplicationGatewayWebApplicationFirewallConfiguration(_serialization.Model):
     """Application gateway web application firewall configuration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar enabled: Required. Whether the web application firewall is enabled.
+    :ivar enabled: Whether the web application firewall is enabled. Required.
     :vartype enabled: bool
     :ivar firewall_mode: Web application firewall mode. Possible values are: 'Detection' and
-     'Prevention'. Possible values include: "Detection", "Prevention".
+     'Prevention'. Known values are: "Detection" and "Prevention".
     :vartype firewall_mode: str or
      ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayFirewallMode
     """
 
     _validation = {
-        'enabled': {'required': True},
+        "enabled": {"required": True},
     }
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'firewall_mode': {'key': 'firewallMode', 'type': 'str'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "firewall_mode": {"key": "firewallMode", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         enabled: bool,
-        firewall_mode: Optional[Union[str, "ApplicationGatewayFirewallMode"]] = None,
+        firewall_mode: Optional[Union[str, "_models.ApplicationGatewayFirewallMode"]] = None,
         **kwargs
     ):
         """
-        :keyword enabled: Required. Whether the web application firewall is enabled.
+        :keyword enabled: Whether the web application firewall is enabled. Required.
         :paramtype enabled: bool
         :keyword firewall_mode: Web application firewall mode. Possible values are: 'Detection' and
-         'Prevention'. Possible values include: "Detection", "Prevention".
+         'Prevention'. Known values are: "Detection" and "Prevention".
         :paramtype firewall_mode: str or
          ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayFirewallMode
         """
-        super(ApplicationGatewayWebApplicationFirewallConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.enabled = enabled
         self.firewall_mode = firewall_mode
 
 
-class AuthorizationListResult(msrest.serialization.Model):
+class AuthorizationListResult(_serialization.Model):
     """Response for ListAuthorizations API service call retrieves all authorizations that belongs to an ExpressRouteCircuit.
 
     :ivar value: The authorizations in an ExpressRoute Circuit.
@@ -1580,14 +1589,14 @@ class AuthorizationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCircuitAuthorization]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCircuitAuthorization]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["ExpressRouteCircuitAuthorization"]] = None,
+        value: Optional[List["_models.ExpressRouteCircuitAuthorization"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1597,41 +1606,41 @@ class AuthorizationListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(AuthorizationListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class AzureAsyncOperationResult(msrest.serialization.Model):
+class AzureAsyncOperationResult(_serialization.Model):
     """The response body contains the status of the specified asynchronous operation, indicating whether it has succeeded, is in progress, or has failed. Note that this status is distinct from the HTTP status code returned for the Get Operation Status operation itself. If the asynchronous operation succeeded, the response body includes the HTTP status code for the successful request. If the asynchronous operation failed, the response body includes the HTTP status code for the failed request and error information regarding the failure.
 
     :ivar status: Status of the Azure async operation. Possible values are: 'InProgress',
-     'Succeeded', and 'Failed'. Possible values include: "InProgress", "Succeeded", "Failed".
+     'Succeeded', and 'Failed'. Known values are: "InProgress", "Succeeded", and "Failed".
     :vartype status: str or ~azure.mgmt.network.v2016_09_01.models.NetworkOperationStatus
     :ivar error:
     :vartype error: ~azure.mgmt.network.v2016_09_01.models.Error
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'Error'},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "Error"},
     }
 
     def __init__(
         self,
         *,
-        status: Optional[Union[str, "NetworkOperationStatus"]] = None,
-        error: Optional["Error"] = None,
+        status: Optional[Union[str, "_models.NetworkOperationStatus"]] = None,
+        error: Optional["_models.Error"] = None,
         **kwargs
     ):
         """
         :keyword status: Status of the Azure async operation. Possible values are: 'InProgress',
-         'Succeeded', and 'Failed'. Possible values include: "InProgress", "Succeeded", "Failed".
+         'Succeeded', and 'Failed'. Known values are: "InProgress", "Succeeded", and "Failed".
         :paramtype status: str or ~azure.mgmt.network.v2016_09_01.models.NetworkOperationStatus
         :keyword error:
         :paramtype error: ~azure.mgmt.network.v2016_09_01.models.Error
         """
-        super(AzureAsyncOperationResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.status = status
         self.error = error
 
@@ -1662,25 +1671,28 @@ class BackendAddressPool(SubResource):
     """
 
     _validation = {
-        'backend_ip_configurations': {'readonly': True},
-        'load_balancing_rules': {'readonly': True},
-        'outbound_nat_rule': {'readonly': True},
+        "backend_ip_configurations": {"readonly": True},
+        "load_balancing_rules": {"readonly": True},
+        "outbound_nat_rule": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'backend_ip_configurations': {'key': 'properties.backendIPConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
-        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
-        'outbound_nat_rule': {'key': 'properties.outboundNatRule', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "backend_ip_configurations": {
+            "key": "properties.backendIPConfigurations",
+            "type": "[NetworkInterfaceIPConfiguration]",
+        },
+        "load_balancing_rules": {"key": "properties.loadBalancingRules", "type": "[SubResource]"},
+        "outbound_nat_rule": {"key": "properties.outboundNatRule", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
         provisioning_state: Optional[str] = None,
@@ -1698,7 +1710,7 @@ class BackendAddressPool(SubResource):
          are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(BackendAddressPool, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.backend_ip_configurations = None
@@ -1707,7 +1719,7 @@ class BackendAddressPool(SubResource):
         self.provisioning_state = provisioning_state
 
 
-class BgpPeerStatus(msrest.serialization.Model):
+class BgpPeerStatus(_serialization.Model):
     """BgpPeerStatus.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1718,48 +1730,44 @@ class BgpPeerStatus(msrest.serialization.Model):
     :vartype neighbor: str
     :ivar asn: The autonomous system number of the remote BGP peer.
     :vartype asn: int
-    :ivar state: The BGP peer state. Possible values include: "Unknown", "Stopped", "Idle",
-     "Connecting", "Connected".
+    :ivar state: The BGP peer state. Known values are: "Unknown", "Stopped", "Idle", "Connecting",
+     and "Connected".
     :vartype state: str or ~azure.mgmt.network.v2016_09_01.models.BgpPeerState
     :ivar connected_duration: For how long the peering has been up.
     :vartype connected_duration: str
     :ivar routes_received: The number of routes learned from this peer.
-    :vartype routes_received: long
+    :vartype routes_received: int
     :ivar messages_sent: The number of BGP messages sent.
-    :vartype messages_sent: long
+    :vartype messages_sent: int
     :ivar messages_received: The number of BGP messages received.
-    :vartype messages_received: long
+    :vartype messages_received: int
     """
 
     _validation = {
-        'local_address': {'readonly': True},
-        'neighbor': {'readonly': True},
-        'asn': {'readonly': True},
-        'state': {'readonly': True},
-        'connected_duration': {'readonly': True},
-        'routes_received': {'readonly': True},
-        'messages_sent': {'readonly': True},
-        'messages_received': {'readonly': True},
+        "local_address": {"readonly": True},
+        "neighbor": {"readonly": True},
+        "asn": {"readonly": True},
+        "state": {"readonly": True},
+        "connected_duration": {"readonly": True},
+        "routes_received": {"readonly": True},
+        "messages_sent": {"readonly": True},
+        "messages_received": {"readonly": True},
     }
 
     _attribute_map = {
-        'local_address': {'key': 'localAddress', 'type': 'str'},
-        'neighbor': {'key': 'neighbor', 'type': 'str'},
-        'asn': {'key': 'asn', 'type': 'int'},
-        'state': {'key': 'state', 'type': 'str'},
-        'connected_duration': {'key': 'connectedDuration', 'type': 'str'},
-        'routes_received': {'key': 'routesReceived', 'type': 'long'},
-        'messages_sent': {'key': 'messagesSent', 'type': 'long'},
-        'messages_received': {'key': 'messagesReceived', 'type': 'long'},
+        "local_address": {"key": "localAddress", "type": "str"},
+        "neighbor": {"key": "neighbor", "type": "str"},
+        "asn": {"key": "asn", "type": "int"},
+        "state": {"key": "state", "type": "str"},
+        "connected_duration": {"key": "connectedDuration", "type": "str"},
+        "routes_received": {"key": "routesReceived", "type": "int"},
+        "messages_sent": {"key": "messagesSent", "type": "int"},
+        "messages_received": {"key": "messagesReceived", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(BgpPeerStatus, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.local_address = None
         self.neighbor = None
         self.asn = None
@@ -1770,7 +1778,7 @@ class BgpPeerStatus(msrest.serialization.Model):
         self.messages_received = None
 
 
-class BgpPeerStatusListResult(msrest.serialization.Model):
+class BgpPeerStatusListResult(_serialization.Model):
     """Response for list BGP peer status API service call.
 
     :ivar value: List of BGP peers.
@@ -1778,28 +1786,23 @@ class BgpPeerStatusListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BgpPeerStatus]'},
+        "value": {"key": "value", "type": "[BgpPeerStatus]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["BgpPeerStatus"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.BgpPeerStatus"]] = None, **kwargs):
         """
         :keyword value: List of BGP peers.
         :paramtype value: list[~azure.mgmt.network.v2016_09_01.models.BgpPeerStatus]
         """
-        super(BgpPeerStatusListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class BgpSettings(msrest.serialization.Model):
+class BgpSettings(_serialization.Model):
     """BgpSettings.
 
     :ivar asn: The BGP speaker's ASN.
-    :vartype asn: long
+    :vartype asn: int
     :ivar bgp_peering_address: The BGP peering address and BGP identifier of this BGP speaker.
     :vartype bgp_peering_address: str
     :ivar peer_weight: The weight added to routes learned from this BGP speaker.
@@ -1807,9 +1810,9 @@ class BgpSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'asn': {'key': 'asn', 'type': 'long'},
-        'bgp_peering_address': {'key': 'bgpPeeringAddress', 'type': 'str'},
-        'peer_weight': {'key': 'peerWeight', 'type': 'int'},
+        "asn": {"key": "asn", "type": "int"},
+        "bgp_peering_address": {"key": "bgpPeeringAddress", "type": "str"},
+        "peer_weight": {"key": "peerWeight", "type": "int"},
     }
 
     def __init__(
@@ -1822,83 +1825,73 @@ class BgpSettings(msrest.serialization.Model):
     ):
         """
         :keyword asn: The BGP speaker's ASN.
-        :paramtype asn: long
+        :paramtype asn: int
         :keyword bgp_peering_address: The BGP peering address and BGP identifier of this BGP speaker.
         :paramtype bgp_peering_address: str
         :keyword peer_weight: The weight added to routes learned from this BGP speaker.
         :paramtype peer_weight: int
         """
-        super(BgpSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.asn = asn
         self.bgp_peering_address = bgp_peering_address
         self.peer_weight = peer_weight
 
 
-class ConnectionResetSharedKey(msrest.serialization.Model):
+class ConnectionResetSharedKey(_serialization.Model):
     """ConnectionResetSharedKey.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar key_length: Required. The virtual network connection reset shared key length, should
-     between 1 and 128.
+    :ivar key_length: The virtual network connection reset shared key length, should between 1 and
+     128. Required.
     :vartype key_length: int
     """
 
     _validation = {
-        'key_length': {'required': True, 'maximum': 128, 'minimum': 1},
+        "key_length": {"required": True, "maximum": 128, "minimum": 1},
     }
 
     _attribute_map = {
-        'key_length': {'key': 'keyLength', 'type': 'int'},
+        "key_length": {"key": "keyLength", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        key_length: int,
-        **kwargs
-    ):
+    def __init__(self, *, key_length: int, **kwargs):
         """
-        :keyword key_length: Required. The virtual network connection reset shared key length, should
-         between 1 and 128.
+        :keyword key_length: The virtual network connection reset shared key length, should between 1
+         and 128. Required.
         :paramtype key_length: int
         """
-        super(ConnectionResetSharedKey, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key_length = key_length
 
 
-class ConnectionSharedKey(msrest.serialization.Model):
+class ConnectionSharedKey(_serialization.Model):
     """Response for GetConnectionSharedKey API service call.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. The virtual network connection shared key value.
+    :ivar value: The virtual network connection shared key value. Required.
     :vartype value: str
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: str,
-        **kwargs
-    ):
+    def __init__(self, *, value: str, **kwargs):
         """
-        :keyword value: Required. The virtual network connection shared key value.
+        :keyword value: The virtual network connection shared key value. Required.
         :paramtype value: str
         """
-        super(ConnectionSharedKey, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class DhcpOptions(msrest.serialization.Model):
+class DhcpOptions(_serialization.Model):
     """DhcpOptions contains an array of DNS servers available to VMs deployed in the virtual network. Standard DHCP option for a subnet overrides VNET DHCP options.
 
     :ivar dns_servers: The list of DNS servers IP addresses.
@@ -1906,24 +1899,19 @@ class DhcpOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
+        "dns_servers": {"key": "dnsServers", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        dns_servers: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, dns_servers: Optional[List[str]] = None, **kwargs):
         """
         :keyword dns_servers: The list of DNS servers IP addresses.
         :paramtype dns_servers: list[str]
         """
-        super(DhcpOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.dns_servers = dns_servers
 
 
-class DnsNameAvailabilityResult(msrest.serialization.Model):
+class DnsNameAvailabilityResult(_serialization.Model):
     """Response for the CheckDnsNameAvailability API service call.
 
     :ivar available: Domain availability (True/False).
@@ -1931,24 +1919,19 @@ class DnsNameAvailabilityResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'available': {'key': 'available', 'type': 'bool'},
+        "available": {"key": "available", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        available: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, available: Optional[bool] = None, **kwargs):
         """
         :keyword available: Domain availability (True/False).
         :paramtype available: bool
         """
-        super(DnsNameAvailabilityResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.available = available
 
 
-class EffectiveNetworkSecurityGroup(msrest.serialization.Model):
+class EffectiveNetworkSecurityGroup(_serialization.Model):
     """Effective network security group.
 
     :ivar network_security_group: The ID of network security group that is applied.
@@ -1962,17 +1945,17 @@ class EffectiveNetworkSecurityGroup(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'network_security_group': {'key': 'networkSecurityGroup', 'type': 'SubResource'},
-        'association': {'key': 'association', 'type': 'EffectiveNetworkSecurityGroupAssociation'},
-        'effective_security_rules': {'key': 'effectiveSecurityRules', 'type': '[EffectiveNetworkSecurityRule]'},
+        "network_security_group": {"key": "networkSecurityGroup", "type": "SubResource"},
+        "association": {"key": "association", "type": "EffectiveNetworkSecurityGroupAssociation"},
+        "effective_security_rules": {"key": "effectiveSecurityRules", "type": "[EffectiveNetworkSecurityRule]"},
     }
 
     def __init__(
         self,
         *,
-        network_security_group: Optional["SubResource"] = None,
-        association: Optional["EffectiveNetworkSecurityGroupAssociation"] = None,
-        effective_security_rules: Optional[List["EffectiveNetworkSecurityRule"]] = None,
+        network_security_group: Optional["_models.SubResource"] = None,
+        association: Optional["_models.EffectiveNetworkSecurityGroupAssociation"] = None,
+        effective_security_rules: Optional[List["_models.EffectiveNetworkSecurityRule"]] = None,
         **kwargs
     ):
         """
@@ -1985,13 +1968,13 @@ class EffectiveNetworkSecurityGroup(msrest.serialization.Model):
         :paramtype effective_security_rules:
          list[~azure.mgmt.network.v2016_09_01.models.EffectiveNetworkSecurityRule]
         """
-        super(EffectiveNetworkSecurityGroup, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.network_security_group = network_security_group
         self.association = association
         self.effective_security_rules = effective_security_rules
 
 
-class EffectiveNetworkSecurityGroupAssociation(msrest.serialization.Model):
+class EffectiveNetworkSecurityGroupAssociation(_serialization.Model):
     """The effective network security group association.
 
     :ivar subnet: The ID of the subnet if assigned.
@@ -2001,15 +1984,15 @@ class EffectiveNetworkSecurityGroupAssociation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'subnet': {'key': 'subnet', 'type': 'SubResource'},
-        'network_interface': {'key': 'networkInterface', 'type': 'SubResource'},
+        "subnet": {"key": "subnet", "type": "SubResource"},
+        "network_interface": {"key": "networkInterface", "type": "SubResource"},
     }
 
     def __init__(
         self,
         *,
-        subnet: Optional["SubResource"] = None,
-        network_interface: Optional["SubResource"] = None,
+        subnet: Optional["_models.SubResource"] = None,
+        network_interface: Optional["_models.SubResource"] = None,
         **kwargs
     ):
         """
@@ -2018,12 +2001,12 @@ class EffectiveNetworkSecurityGroupAssociation(msrest.serialization.Model):
         :keyword network_interface: The ID of the network interface if assigned.
         :paramtype network_interface: ~azure.mgmt.network.v2016_09_01.models.SubResource
         """
-        super(EffectiveNetworkSecurityGroupAssociation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.subnet = subnet
         self.network_interface = network_interface
 
 
-class EffectiveNetworkSecurityGroupListResult(msrest.serialization.Model):
+class EffectiveNetworkSecurityGroupListResult(_serialization.Model):
     """Response for list effective network security groups API service call.
 
     :ivar value: A list of effective network security groups.
@@ -2033,14 +2016,14 @@ class EffectiveNetworkSecurityGroupListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[EffectiveNetworkSecurityGroup]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[EffectiveNetworkSecurityGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["EffectiveNetworkSecurityGroup"]] = None,
+        value: Optional[List["_models.EffectiveNetworkSecurityGroup"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -2050,18 +2033,18 @@ class EffectiveNetworkSecurityGroupListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(EffectiveNetworkSecurityGroupListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class EffectiveNetworkSecurityRule(msrest.serialization.Model):
+class EffectiveNetworkSecurityRule(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Effective network security rules.
 
     :ivar name: The name of the security rule specified by the user (if created by the user).
     :vartype name: str
     :ivar protocol: The network protocol this rule applies to. Possible values are: 'Tcp', 'Udp',
-     and '*'. Possible values include: "Tcp", "Udp", "*".
+     and '*'. Known values are: "Tcp", "Udp", and "*".
     :vartype protocol: str or ~azure.mgmt.network.v2016_09_01.models.SecurityRuleProtocol
     :ivar source_port_range: The source port or range.
     :vartype source_port_range: str
@@ -2076,50 +2059,50 @@ class EffectiveNetworkSecurityRule(msrest.serialization.Model):
     :ivar expanded_destination_address_prefix: Expanded destination address prefix.
     :vartype expanded_destination_address_prefix: list[str]
     :ivar access: Whether network traffic is allowed or denied. Possible values are: 'Allow' and
-     'Deny'. Possible values include: "Allow", "Deny".
+     'Deny'. Known values are: "Allow" and "Deny".
     :vartype access: str or ~azure.mgmt.network.v2016_09_01.models.SecurityRuleAccess
     :ivar priority: The priority of the rule.
     :vartype priority: int
-    :ivar direction: The direction of the rule. Possible values are: 'Inbound and Outbound'.
-     Possible values include: "Inbound", "Outbound".
+    :ivar direction: The direction of the rule. Possible values are: 'Inbound and Outbound'. Known
+     values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.network.v2016_09_01.models.SecurityRuleDirection
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'source_port_range': {'key': 'sourcePortRange', 'type': 'str'},
-        'destination_port_range': {'key': 'destinationPortRange', 'type': 'str'},
-        'source_address_prefix': {'key': 'sourceAddressPrefix', 'type': 'str'},
-        'destination_address_prefix': {'key': 'destinationAddressPrefix', 'type': 'str'},
-        'expanded_source_address_prefix': {'key': 'expandedSourceAddressPrefix', 'type': '[str]'},
-        'expanded_destination_address_prefix': {'key': 'expandedDestinationAddressPrefix', 'type': '[str]'},
-        'access': {'key': 'access', 'type': 'str'},
-        'priority': {'key': 'priority', 'type': 'int'},
-        'direction': {'key': 'direction', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "protocol": {"key": "protocol", "type": "str"},
+        "source_port_range": {"key": "sourcePortRange", "type": "str"},
+        "destination_port_range": {"key": "destinationPortRange", "type": "str"},
+        "source_address_prefix": {"key": "sourceAddressPrefix", "type": "str"},
+        "destination_address_prefix": {"key": "destinationAddressPrefix", "type": "str"},
+        "expanded_source_address_prefix": {"key": "expandedSourceAddressPrefix", "type": "[str]"},
+        "expanded_destination_address_prefix": {"key": "expandedDestinationAddressPrefix", "type": "[str]"},
+        "access": {"key": "access", "type": "str"},
+        "priority": {"key": "priority", "type": "int"},
+        "direction": {"key": "direction", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        protocol: Optional[Union[str, "SecurityRuleProtocol"]] = None,
+        protocol: Optional[Union[str, "_models.SecurityRuleProtocol"]] = None,
         source_port_range: Optional[str] = None,
         destination_port_range: Optional[str] = None,
         source_address_prefix: Optional[str] = None,
         destination_address_prefix: Optional[str] = None,
         expanded_source_address_prefix: Optional[List[str]] = None,
         expanded_destination_address_prefix: Optional[List[str]] = None,
-        access: Optional[Union[str, "SecurityRuleAccess"]] = None,
+        access: Optional[Union[str, "_models.SecurityRuleAccess"]] = None,
         priority: Optional[int] = None,
-        direction: Optional[Union[str, "SecurityRuleDirection"]] = None,
+        direction: Optional[Union[str, "_models.SecurityRuleDirection"]] = None,
         **kwargs
     ):
         """
         :keyword name: The name of the security rule specified by the user (if created by the user).
         :paramtype name: str
         :keyword protocol: The network protocol this rule applies to. Possible values are: 'Tcp',
-         'Udp', and '*'. Possible values include: "Tcp", "Udp", "*".
+         'Udp', and '*'. Known values are: "Tcp", "Udp", and "*".
         :paramtype protocol: str or ~azure.mgmt.network.v2016_09_01.models.SecurityRuleProtocol
         :keyword source_port_range: The source port or range.
         :paramtype source_port_range: str
@@ -2134,15 +2117,15 @@ class EffectiveNetworkSecurityRule(msrest.serialization.Model):
         :keyword expanded_destination_address_prefix: Expanded destination address prefix.
         :paramtype expanded_destination_address_prefix: list[str]
         :keyword access: Whether network traffic is allowed or denied. Possible values are: 'Allow' and
-         'Deny'. Possible values include: "Allow", "Deny".
+         'Deny'. Known values are: "Allow" and "Deny".
         :paramtype access: str or ~azure.mgmt.network.v2016_09_01.models.SecurityRuleAccess
         :keyword priority: The priority of the rule.
         :paramtype priority: int
         :keyword direction: The direction of the rule. Possible values are: 'Inbound and Outbound'.
-         Possible values include: "Inbound", "Outbound".
+         Known values are: "Inbound" and "Outbound".
         :paramtype direction: str or ~azure.mgmt.network.v2016_09_01.models.SecurityRuleDirection
         """
-        super(EffectiveNetworkSecurityRule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.protocol = protocol
         self.source_port_range = source_port_range
@@ -2156,68 +2139,68 @@ class EffectiveNetworkSecurityRule(msrest.serialization.Model):
         self.direction = direction
 
 
-class EffectiveRoute(msrest.serialization.Model):
+class EffectiveRoute(_serialization.Model):
     """Effective Route.
 
     :ivar name: The name of the user defined route. This is optional.
     :vartype name: str
     :ivar source: Who created the route. Possible values are: 'Unknown', 'User',
-     'VirtualNetworkGateway', and 'Default'. Possible values include: "Unknown", "User",
-     "VirtualNetworkGateway", "Default".
+     'VirtualNetworkGateway', and 'Default'. Known values are: "Unknown", "User",
+     "VirtualNetworkGateway", and "Default".
     :vartype source: str or ~azure.mgmt.network.v2016_09_01.models.EffectiveRouteSource
-    :ivar state: The value of effective route. Possible values are: 'Active' and 'Invalid'.
-     Possible values include: "Active", "Invalid".
+    :ivar state: The value of effective route. Possible values are: 'Active' and 'Invalid'. Known
+     values are: "Active" and "Invalid".
     :vartype state: str or ~azure.mgmt.network.v2016_09_01.models.EffectiveRouteState
     :ivar address_prefix: The address prefixes of the effective routes in CIDR notation.
     :vartype address_prefix: list[str]
     :ivar next_hop_ip_address: The IP address of the next hop of the effective route.
     :vartype next_hop_ip_address: list[str]
     :ivar next_hop_type: The type of Azure hop the packet should be sent to. Possible values are:
-     'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance', and 'None'. Possible
-     values include: "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance", "None".
+     'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance', and 'None'. Known values
+     are: "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance", and "None".
     :vartype next_hop_type: str or ~azure.mgmt.network.v2016_09_01.models.RouteNextHopType
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'address_prefix': {'key': 'addressPrefix', 'type': '[str]'},
-        'next_hop_ip_address': {'key': 'nextHopIpAddress', 'type': '[str]'},
-        'next_hop_type': {'key': 'nextHopType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "source": {"key": "source", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "address_prefix": {"key": "addressPrefix", "type": "[str]"},
+        "next_hop_ip_address": {"key": "nextHopIpAddress", "type": "[str]"},
+        "next_hop_type": {"key": "nextHopType", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        source: Optional[Union[str, "EffectiveRouteSource"]] = None,
-        state: Optional[Union[str, "EffectiveRouteState"]] = None,
+        source: Optional[Union[str, "_models.EffectiveRouteSource"]] = None,
+        state: Optional[Union[str, "_models.EffectiveRouteState"]] = None,
         address_prefix: Optional[List[str]] = None,
         next_hop_ip_address: Optional[List[str]] = None,
-        next_hop_type: Optional[Union[str, "RouteNextHopType"]] = None,
+        next_hop_type: Optional[Union[str, "_models.RouteNextHopType"]] = None,
         **kwargs
     ):
         """
         :keyword name: The name of the user defined route. This is optional.
         :paramtype name: str
         :keyword source: Who created the route. Possible values are: 'Unknown', 'User',
-         'VirtualNetworkGateway', and 'Default'. Possible values include: "Unknown", "User",
-         "VirtualNetworkGateway", "Default".
+         'VirtualNetworkGateway', and 'Default'. Known values are: "Unknown", "User",
+         "VirtualNetworkGateway", and "Default".
         :paramtype source: str or ~azure.mgmt.network.v2016_09_01.models.EffectiveRouteSource
         :keyword state: The value of effective route. Possible values are: 'Active' and 'Invalid'.
-         Possible values include: "Active", "Invalid".
+         Known values are: "Active" and "Invalid".
         :paramtype state: str or ~azure.mgmt.network.v2016_09_01.models.EffectiveRouteState
         :keyword address_prefix: The address prefixes of the effective routes in CIDR notation.
         :paramtype address_prefix: list[str]
         :keyword next_hop_ip_address: The IP address of the next hop of the effective route.
         :paramtype next_hop_ip_address: list[str]
         :keyword next_hop_type: The type of Azure hop the packet should be sent to. Possible values
-         are: 'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance', and 'None'. Possible
-         values include: "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance", "None".
+         are: 'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance', and 'None'. Known
+         values are: "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance", and "None".
         :paramtype next_hop_type: str or ~azure.mgmt.network.v2016_09_01.models.RouteNextHopType
         """
-        super(EffectiveRoute, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.source = source
         self.state = state
@@ -2226,7 +2209,7 @@ class EffectiveRoute(msrest.serialization.Model):
         self.next_hop_type = next_hop_type
 
 
-class EffectiveRouteListResult(msrest.serialization.Model):
+class EffectiveRouteListResult(_serialization.Model):
     """Response for list effective route API service call.
 
     :ivar value: A list of effective routes.
@@ -2236,16 +2219,12 @@ class EffectiveRouteListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[EffectiveRoute]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[EffectiveRoute]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["EffectiveRoute"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.EffectiveRoute"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: A list of effective routes.
@@ -2253,12 +2232,12 @@ class EffectiveRouteListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(EffectiveRouteListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class Error(msrest.serialization.Model):
+class Error(_serialization.Model):
     """Error.
 
     :ivar code:
@@ -2274,11 +2253,11 @@ class Error(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetails]'},
-        'inner_error': {'key': 'innerError', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetails]"},
+        "inner_error": {"key": "innerError", "type": "str"},
     }
 
     def __init__(
@@ -2287,7 +2266,7 @@ class Error(msrest.serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["ErrorDetails"]] = None,
+        details: Optional[List["_models.ErrorDetails"]] = None,
         inner_error: Optional[str] = None,
         **kwargs
     ):
@@ -2303,7 +2282,7 @@ class Error(msrest.serialization.Model):
         :keyword inner_error:
         :paramtype inner_error: str
         """
-        super(Error, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = target
@@ -2311,7 +2290,7 @@ class Error(msrest.serialization.Model):
         self.inner_error = inner_error
 
 
-class ErrorDetails(msrest.serialization.Model):
+class ErrorDetails(_serialization.Model):
     """ErrorDetails.
 
     :ivar code:
@@ -2323,18 +2302,13 @@ class ErrorDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        target: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
+        self, *, code: Optional[str] = None, target: Optional[str] = None, message: Optional[str] = None, **kwargs
     ):
         """
         :keyword code:
@@ -2344,13 +2318,13 @@ class ErrorDetails(msrest.serialization.Model):
         :keyword message:
         :paramtype message: str
         """
-        super(ErrorDetails, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.target = target
         self.message = message
 
 
-class ExpressRouteCircuit(Resource):
+class ExpressRouteCircuit(Resource):  # pylint: disable=too-many-instance-attributes
     """ExpressRouteCircuit resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2363,7 +2337,7 @@ class ExpressRouteCircuit(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: The SKU.
     :vartype sku: ~azure.mgmt.network.v2016_09_01.models.ExpressRouteCircuitSku
@@ -2375,7 +2349,7 @@ class ExpressRouteCircuit(Resource):
     :vartype circuit_provisioning_state: str
     :ivar service_provider_provisioning_state: The ServiceProviderProvisioningState state of the
      resource. Possible values are 'NotProvisioned', 'Provisioning', 'Provisioned', and
-     'Deprovisioning'. Possible values include: "NotProvisioned", "Provisioning", "Provisioned",
+     'Deprovisioning'. Known values are: "NotProvisioned", "Provisioning", "Provisioned", and
      "Deprovisioning".
     :vartype service_provider_provisioning_state: str or
      ~azure.mgmt.network.v2016_09_01.models.ServiceProviderProvisioningState
@@ -2399,46 +2373,49 @@ class ExpressRouteCircuit(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'ExpressRouteCircuitSku'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'allow_classic_operations': {'key': 'properties.allowClassicOperations', 'type': 'bool'},
-        'circuit_provisioning_state': {'key': 'properties.circuitProvisioningState', 'type': 'str'},
-        'service_provider_provisioning_state': {'key': 'properties.serviceProviderProvisioningState', 'type': 'str'},
-        'authorizations': {'key': 'properties.authorizations', 'type': '[ExpressRouteCircuitAuthorization]'},
-        'peerings': {'key': 'properties.peerings', 'type': '[ExpressRouteCircuitPeering]'},
-        'service_key': {'key': 'properties.serviceKey', 'type': 'str'},
-        'service_provider_notes': {'key': 'properties.serviceProviderNotes', 'type': 'str'},
-        'service_provider_properties': {'key': 'properties.serviceProviderProperties', 'type': 'ExpressRouteCircuitServiceProviderProperties'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'gateway_manager_etag': {'key': 'properties.gatewayManagerEtag', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "ExpressRouteCircuitSku"},
+        "etag": {"key": "etag", "type": "str"},
+        "allow_classic_operations": {"key": "properties.allowClassicOperations", "type": "bool"},
+        "circuit_provisioning_state": {"key": "properties.circuitProvisioningState", "type": "str"},
+        "service_provider_provisioning_state": {"key": "properties.serviceProviderProvisioningState", "type": "str"},
+        "authorizations": {"key": "properties.authorizations", "type": "[ExpressRouteCircuitAuthorization]"},
+        "peerings": {"key": "properties.peerings", "type": "[ExpressRouteCircuitPeering]"},
+        "service_key": {"key": "properties.serviceKey", "type": "str"},
+        "service_provider_notes": {"key": "properties.serviceProviderNotes", "type": "str"},
+        "service_provider_properties": {
+            "key": "properties.serviceProviderProperties",
+            "type": "ExpressRouteCircuitServiceProviderProperties",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "gateway_manager_etag": {"key": "properties.gatewayManagerEtag", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["ExpressRouteCircuitSku"] = None,
+        sku: Optional["_models.ExpressRouteCircuitSku"] = None,
         etag: Optional[str] = None,
         allow_classic_operations: Optional[bool] = None,
         circuit_provisioning_state: Optional[str] = None,
-        service_provider_provisioning_state: Optional[Union[str, "ServiceProviderProvisioningState"]] = None,
-        authorizations: Optional[List["ExpressRouteCircuitAuthorization"]] = None,
-        peerings: Optional[List["ExpressRouteCircuitPeering"]] = None,
+        service_provider_provisioning_state: Optional[Union[str, "_models.ServiceProviderProvisioningState"]] = None,
+        authorizations: Optional[List["_models.ExpressRouteCircuitAuthorization"]] = None,
+        peerings: Optional[List["_models.ExpressRouteCircuitPeering"]] = None,
         service_key: Optional[str] = None,
         service_provider_notes: Optional[str] = None,
-        service_provider_properties: Optional["ExpressRouteCircuitServiceProviderProperties"] = None,
+        service_provider_properties: Optional["_models.ExpressRouteCircuitServiceProviderProperties"] = None,
         provisioning_state: Optional[str] = None,
         gateway_manager_etag: Optional[str] = None,
         **kwargs
@@ -2448,7 +2425,7 @@ class ExpressRouteCircuit(Resource):
         :paramtype id: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: The SKU.
         :paramtype sku: ~azure.mgmt.network.v2016_09_01.models.ExpressRouteCircuitSku
@@ -2460,7 +2437,7 @@ class ExpressRouteCircuit(Resource):
         :paramtype circuit_provisioning_state: str
         :keyword service_provider_provisioning_state: The ServiceProviderProvisioningState state of the
          resource. Possible values are 'NotProvisioned', 'Provisioning', 'Provisioned', and
-         'Deprovisioning'. Possible values include: "NotProvisioned", "Provisioning", "Provisioned",
+         'Deprovisioning'. Known values are: "NotProvisioned", "Provisioning", "Provisioned", and
          "Deprovisioning".
         :paramtype service_provider_provisioning_state: str or
          ~azure.mgmt.network.v2016_09_01.models.ServiceProviderProvisioningState
@@ -2482,7 +2459,7 @@ class ExpressRouteCircuit(Resource):
         :keyword gateway_manager_etag: The GatewayManager Etag.
         :paramtype gateway_manager_etag: str
         """
-        super(ExpressRouteCircuit, self).__init__(id=id, location=location, tags=tags, **kwargs)
+        super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.sku = sku
         self.etag = etag
         self.allow_classic_operations = allow_classic_operations
@@ -2497,7 +2474,7 @@ class ExpressRouteCircuit(Resource):
         self.gateway_manager_etag = gateway_manager_etag
 
 
-class ExpressRouteCircuitArpTable(msrest.serialization.Model):
+class ExpressRouteCircuitArpTable(_serialization.Model):
     """The ARP table associated with the ExpressRouteCircuit.
 
     :ivar age: Age.
@@ -2511,10 +2488,10 @@ class ExpressRouteCircuitArpTable(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'age': {'key': 'age', 'type': 'int'},
-        'interface': {'key': 'interface', 'type': 'str'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
-        'mac_address': {'key': 'macAddress', 'type': 'str'},
+        "age": {"key": "age", "type": "int"},
+        "interface": {"key": "interface", "type": "str"},
+        "ip_address": {"key": "ipAddress", "type": "str"},
+        "mac_address": {"key": "macAddress", "type": "str"},
     }
 
     def __init__(
@@ -2536,7 +2513,7 @@ class ExpressRouteCircuitArpTable(msrest.serialization.Model):
         :keyword mac_address: The MAC address.
         :paramtype mac_address: str
         """
-        super(ExpressRouteCircuitArpTable, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.age = age
         self.interface = interface
         self.ip_address = ip_address
@@ -2556,7 +2533,7 @@ class ExpressRouteCircuitAuthorization(SubResource):
     :ivar authorization_key: The authorization key.
     :vartype authorization_key: str
     :ivar authorization_use_status: AuthorizationUseStatus. Possible values are: 'Available' and
-     'InUse'. Possible values include: "Available", "InUse".
+     'InUse'. Known values are: "Available" and "InUse".
     :vartype authorization_use_status: str or
      ~azure.mgmt.network.v2016_09_01.models.AuthorizationUseStatus
     :ivar provisioning_state: Gets the provisioning state of the public IP resource. Possible
@@ -2565,22 +2542,22 @@ class ExpressRouteCircuitAuthorization(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str'},
-        'authorization_use_status': {'key': 'properties.authorizationUseStatus', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "authorization_key": {"key": "properties.authorizationKey", "type": "str"},
+        "authorization_use_status": {"key": "properties.authorizationUseStatus", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
         authorization_key: Optional[str] = None,
-        authorization_use_status: Optional[Union[str, "AuthorizationUseStatus"]] = None,
+        authorization_use_status: Optional[Union[str, "_models.AuthorizationUseStatus"]] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -2595,14 +2572,14 @@ class ExpressRouteCircuitAuthorization(SubResource):
         :keyword authorization_key: The authorization key.
         :paramtype authorization_key: str
         :keyword authorization_use_status: AuthorizationUseStatus. Possible values are: 'Available' and
-         'InUse'. Possible values include: "Available", "InUse".
+         'InUse'. Known values are: "Available" and "InUse".
         :paramtype authorization_use_status: str or
          ~azure.mgmt.network.v2016_09_01.models.AuthorizationUseStatus
         :keyword provisioning_state: Gets the provisioning state of the public IP resource. Possible
          values are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(ExpressRouteCircuitAuthorization, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.authorization_key = authorization_key
@@ -2610,7 +2587,7 @@ class ExpressRouteCircuitAuthorization(SubResource):
         self.provisioning_state = provisioning_state
 
 
-class ExpressRouteCircuitListResult(msrest.serialization.Model):
+class ExpressRouteCircuitListResult(_serialization.Model):
     """Response for ListExpressRouteCircuit API service call.
 
     :ivar value: A list of ExpressRouteCircuits in a resource group.
@@ -2620,16 +2597,12 @@ class ExpressRouteCircuitListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCircuit]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCircuit]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["ExpressRouteCircuit"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.ExpressRouteCircuit"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: A list of ExpressRouteCircuits in a resource group.
@@ -2637,12 +2610,12 @@ class ExpressRouteCircuitListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(ExpressRouteCircuitListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ExpressRouteCircuitPeering(SubResource):
+class ExpressRouteCircuitPeering(SubResource):  # pylint: disable=too-many-instance-attributes
     """Peering in an ExpressRouteCircuit resource.
 
     :ivar id: Resource ID.
@@ -2653,12 +2626,12 @@ class ExpressRouteCircuitPeering(SubResource):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar peering_type: The PeeringType. Possible values are: 'AzurePublicPeering',
-     'AzurePrivatePeering', and 'MicrosoftPeering'. Possible values include: "AzurePublicPeering",
-     "AzurePrivatePeering", "MicrosoftPeering".
+     'AzurePrivatePeering', and 'MicrosoftPeering'. Known values are: "AzurePublicPeering",
+     "AzurePrivatePeering", and "MicrosoftPeering".
     :vartype peering_type: str or
      ~azure.mgmt.network.v2016_09_01.models.ExpressRouteCircuitPeeringType
-    :ivar state: The state of peering. Possible values are: 'Disabled' and 'Enabled'. Possible
-     values include: "Disabled", "Enabled".
+    :ivar state: The state of peering. Possible values are: 'Disabled' and 'Enabled'. Known values
+     are: "Disabled" and "Enabled".
     :vartype state: str or ~azure.mgmt.network.v2016_09_01.models.ExpressRouteCircuitPeeringState
     :ivar azure_asn: The Azure ASN.
     :vartype azure_asn: int
@@ -2691,34 +2664,37 @@ class ExpressRouteCircuitPeering(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'peering_type': {'key': 'properties.peeringType', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'azure_asn': {'key': 'properties.azureASN', 'type': 'int'},
-        'peer_asn': {'key': 'properties.peerASN', 'type': 'int'},
-        'primary_peer_address_prefix': {'key': 'properties.primaryPeerAddressPrefix', 'type': 'str'},
-        'secondary_peer_address_prefix': {'key': 'properties.secondaryPeerAddressPrefix', 'type': 'str'},
-        'primary_azure_port': {'key': 'properties.primaryAzurePort', 'type': 'str'},
-        'secondary_azure_port': {'key': 'properties.secondaryAzurePort', 'type': 'str'},
-        'shared_key': {'key': 'properties.sharedKey', 'type': 'str'},
-        'vlan_id': {'key': 'properties.vlanId', 'type': 'int'},
-        'microsoft_peering_config': {'key': 'properties.microsoftPeeringConfig', 'type': 'ExpressRouteCircuitPeeringConfig'},
-        'stats': {'key': 'properties.stats', 'type': 'ExpressRouteCircuitStats'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'gateway_manager_etag': {'key': 'properties.gatewayManagerEtag', 'type': 'str'},
-        'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "peering_type": {"key": "properties.peeringType", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "azure_asn": {"key": "properties.azureASN", "type": "int"},
+        "peer_asn": {"key": "properties.peerASN", "type": "int"},
+        "primary_peer_address_prefix": {"key": "properties.primaryPeerAddressPrefix", "type": "str"},
+        "secondary_peer_address_prefix": {"key": "properties.secondaryPeerAddressPrefix", "type": "str"},
+        "primary_azure_port": {"key": "properties.primaryAzurePort", "type": "str"},
+        "secondary_azure_port": {"key": "properties.secondaryAzurePort", "type": "str"},
+        "shared_key": {"key": "properties.sharedKey", "type": "str"},
+        "vlan_id": {"key": "properties.vlanId", "type": "int"},
+        "microsoft_peering_config": {
+            "key": "properties.microsoftPeeringConfig",
+            "type": "ExpressRouteCircuitPeeringConfig",
+        },
+        "stats": {"key": "properties.stats", "type": "ExpressRouteCircuitStats"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "gateway_manager_etag": {"key": "properties.gatewayManagerEtag", "type": "str"},
+        "last_modified_by": {"key": "properties.lastModifiedBy", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
-        peering_type: Optional[Union[str, "ExpressRouteCircuitPeeringType"]] = None,
-        state: Optional[Union[str, "ExpressRouteCircuitPeeringState"]] = None,
+        peering_type: Optional[Union[str, "_models.ExpressRouteCircuitPeeringType"]] = None,
+        state: Optional[Union[str, "_models.ExpressRouteCircuitPeeringState"]] = None,
         azure_asn: Optional[int] = None,
         peer_asn: Optional[int] = None,
         primary_peer_address_prefix: Optional[str] = None,
@@ -2727,8 +2703,8 @@ class ExpressRouteCircuitPeering(SubResource):
         secondary_azure_port: Optional[str] = None,
         shared_key: Optional[str] = None,
         vlan_id: Optional[int] = None,
-        microsoft_peering_config: Optional["ExpressRouteCircuitPeeringConfig"] = None,
-        stats: Optional["ExpressRouteCircuitStats"] = None,
+        microsoft_peering_config: Optional["_models.ExpressRouteCircuitPeeringConfig"] = None,
+        stats: Optional["_models.ExpressRouteCircuitStats"] = None,
         provisioning_state: Optional[str] = None,
         gateway_manager_etag: Optional[str] = None,
         last_modified_by: Optional[str] = None,
@@ -2743,12 +2719,12 @@ class ExpressRouteCircuitPeering(SubResource):
         :keyword etag: A unique read-only string that changes whenever the resource is updated.
         :paramtype etag: str
         :keyword peering_type: The PeeringType. Possible values are: 'AzurePublicPeering',
-         'AzurePrivatePeering', and 'MicrosoftPeering'. Possible values include: "AzurePublicPeering",
-         "AzurePrivatePeering", "MicrosoftPeering".
+         'AzurePrivatePeering', and 'MicrosoftPeering'. Known values are: "AzurePublicPeering",
+         "AzurePrivatePeering", and "MicrosoftPeering".
         :paramtype peering_type: str or
          ~azure.mgmt.network.v2016_09_01.models.ExpressRouteCircuitPeeringType
-        :keyword state: The state of peering. Possible values are: 'Disabled' and 'Enabled'. Possible
-         values include: "Disabled", "Enabled".
+        :keyword state: The state of peering. Possible values are: 'Disabled' and 'Enabled'. Known
+         values are: "Disabled" and "Enabled".
         :paramtype state: str or ~azure.mgmt.network.v2016_09_01.models.ExpressRouteCircuitPeeringState
         :keyword azure_asn: The Azure ASN.
         :paramtype azure_asn: int
@@ -2779,7 +2755,7 @@ class ExpressRouteCircuitPeering(SubResource):
         :keyword last_modified_by: Gets whether the provider or the customer last modified the peering.
         :paramtype last_modified_by: str
         """
-        super(ExpressRouteCircuitPeering, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.peering_type = peering_type
@@ -2799,14 +2775,14 @@ class ExpressRouteCircuitPeering(SubResource):
         self.last_modified_by = last_modified_by
 
 
-class ExpressRouteCircuitPeeringConfig(msrest.serialization.Model):
+class ExpressRouteCircuitPeeringConfig(_serialization.Model):
     """Specifies the peering configuration.
 
     :ivar advertised_public_prefixes: The reference of AdvertisedPublicPrefixes.
     :vartype advertised_public_prefixes: list[str]
     :ivar advertised_public_prefixes_state: AdvertisedPublicPrefixState of the Peering resource.
-     Possible values are 'NotConfigured', 'Configuring', 'Configured', and 'ValidationNeeded'.
-     Possible values include: "NotConfigured", "Configuring", "Configured", "ValidationNeeded".
+     Possible values are 'NotConfigured', 'Configuring', 'Configured', and 'ValidationNeeded'. Known
+     values are: "NotConfigured", "Configuring", "Configured", and "ValidationNeeded".
     :vartype advertised_public_prefixes_state: str or
      ~azure.mgmt.network.v2016_09_01.models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState
     :ivar customer_asn: The CustomerASN of the peering.
@@ -2816,17 +2792,19 @@ class ExpressRouteCircuitPeeringConfig(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'advertised_public_prefixes': {'key': 'advertisedPublicPrefixes', 'type': '[str]'},
-        'advertised_public_prefixes_state': {'key': 'advertisedPublicPrefixesState', 'type': 'str'},
-        'customer_asn': {'key': 'customerASN', 'type': 'int'},
-        'routing_registry_name': {'key': 'routingRegistryName', 'type': 'str'},
+        "advertised_public_prefixes": {"key": "advertisedPublicPrefixes", "type": "[str]"},
+        "advertised_public_prefixes_state": {"key": "advertisedPublicPrefixesState", "type": "str"},
+        "customer_asn": {"key": "customerASN", "type": "int"},
+        "routing_registry_name": {"key": "routingRegistryName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         advertised_public_prefixes: Optional[List[str]] = None,
-        advertised_public_prefixes_state: Optional[Union[str, "ExpressRouteCircuitPeeringAdvertisedPublicPrefixState"]] = None,
+        advertised_public_prefixes_state: Optional[
+            Union[str, "_models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState"]
+        ] = None,
         customer_asn: Optional[int] = None,
         routing_registry_name: Optional[str] = None,
         **kwargs
@@ -2835,8 +2813,8 @@ class ExpressRouteCircuitPeeringConfig(msrest.serialization.Model):
         :keyword advertised_public_prefixes: The reference of AdvertisedPublicPrefixes.
         :paramtype advertised_public_prefixes: list[str]
         :keyword advertised_public_prefixes_state: AdvertisedPublicPrefixState of the Peering resource.
-         Possible values are 'NotConfigured', 'Configuring', 'Configured', and 'ValidationNeeded'.
-         Possible values include: "NotConfigured", "Configuring", "Configured", "ValidationNeeded".
+         Possible values are 'NotConfigured', 'Configuring', 'Configured', and 'ValidationNeeded'. Known
+         values are: "NotConfigured", "Configuring", "Configured", and "ValidationNeeded".
         :paramtype advertised_public_prefixes_state: str or
          ~azure.mgmt.network.v2016_09_01.models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState
         :keyword customer_asn: The CustomerASN of the peering.
@@ -2844,14 +2822,14 @@ class ExpressRouteCircuitPeeringConfig(msrest.serialization.Model):
         :keyword routing_registry_name: The RoutingRegistryName of the configuration.
         :paramtype routing_registry_name: str
         """
-        super(ExpressRouteCircuitPeeringConfig, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.advertised_public_prefixes = advertised_public_prefixes
         self.advertised_public_prefixes_state = advertised_public_prefixes_state
         self.customer_asn = customer_asn
         self.routing_registry_name = routing_registry_name
 
 
-class ExpressRouteCircuitPeeringListResult(msrest.serialization.Model):
+class ExpressRouteCircuitPeeringListResult(_serialization.Model):
     """Response for ListPeering API service call retrieves all peerings that belong to an ExpressRouteCircuit.
 
     :ivar value: The peerings in an express route circuit.
@@ -2861,14 +2839,14 @@ class ExpressRouteCircuitPeeringListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCircuitPeering]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCircuitPeering]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["ExpressRouteCircuitPeering"]] = None,
+        value: Optional[List["_models.ExpressRouteCircuitPeering"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -2878,12 +2856,12 @@ class ExpressRouteCircuitPeeringListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(ExpressRouteCircuitPeeringListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ExpressRouteCircuitRoutesTable(msrest.serialization.Model):
+class ExpressRouteCircuitRoutesTable(_serialization.Model):
     """The routes table associated with the ExpressRouteCircuit.
 
     :ivar network: network.
@@ -2899,11 +2877,11 @@ class ExpressRouteCircuitRoutesTable(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'network': {'key': 'network', 'type': 'str'},
-        'next_hop': {'key': 'nextHop', 'type': 'str'},
-        'loc_prf': {'key': 'locPrf', 'type': 'str'},
-        'weight': {'key': 'weight', 'type': 'int'},
-        'path': {'key': 'path', 'type': 'str'},
+        "network": {"key": "network", "type": "str"},
+        "next_hop": {"key": "nextHop", "type": "str"},
+        "loc_prf": {"key": "locPrf", "type": "str"},
+        "weight": {"key": "weight", "type": "int"},
+        "path": {"key": "path", "type": "str"},
     }
 
     def __init__(
@@ -2928,7 +2906,7 @@ class ExpressRouteCircuitRoutesTable(msrest.serialization.Model):
         :keyword path: path.
         :paramtype path: str
         """
-        super(ExpressRouteCircuitRoutesTable, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.network = network
         self.next_hop = next_hop
         self.loc_prf = loc_prf
@@ -2936,7 +2914,7 @@ class ExpressRouteCircuitRoutesTable(msrest.serialization.Model):
         self.path = path
 
 
-class ExpressRouteCircuitRoutesTableSummary(msrest.serialization.Model):
+class ExpressRouteCircuitRoutesTableSummary(_serialization.Model):
     """The routes table associated with the ExpressRouteCircuit.
 
     :ivar neighbor: Neighbor.
@@ -2954,11 +2932,11 @@ class ExpressRouteCircuitRoutesTableSummary(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'neighbor': {'key': 'neighbor', 'type': 'str'},
-        'v': {'key': 'v', 'type': 'int'},
-        'as_property': {'key': 'as', 'type': 'int'},
-        'up_down': {'key': 'upDown', 'type': 'str'},
-        'state_pfx_rcd': {'key': 'statePfxRcd', 'type': 'str'},
+        "neighbor": {"key": "neighbor", "type": "str"},
+        "v": {"key": "v", "type": "int"},
+        "as_property": {"key": "as", "type": "int"},
+        "up_down": {"key": "upDown", "type": "str"},
+        "state_pfx_rcd": {"key": "statePfxRcd", "type": "str"},
     }
 
     def __init__(
@@ -2985,7 +2963,7 @@ class ExpressRouteCircuitRoutesTableSummary(msrest.serialization.Model):
          been received from a neighbor or peer group.
         :paramtype state_pfx_rcd: str
         """
-        super(ExpressRouteCircuitRoutesTableSummary, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.neighbor = neighbor
         self.v = v
         self.as_property = as_property
@@ -2993,7 +2971,7 @@ class ExpressRouteCircuitRoutesTableSummary(msrest.serialization.Model):
         self.state_pfx_rcd = state_pfx_rcd
 
 
-class ExpressRouteCircuitsArpTableListResult(msrest.serialization.Model):
+class ExpressRouteCircuitsArpTableListResult(_serialization.Model):
     """Response for ListArpTable associated with the Express Route Circuits API.
 
     :ivar value: Gets list of the ARP table.
@@ -3003,14 +2981,14 @@ class ExpressRouteCircuitsArpTableListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCircuitArpTable]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCircuitArpTable]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["ExpressRouteCircuitArpTable"]] = None,
+        value: Optional[List["_models.ExpressRouteCircuitArpTable"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -3020,12 +2998,12 @@ class ExpressRouteCircuitsArpTableListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(ExpressRouteCircuitsArpTableListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ExpressRouteCircuitServiceProviderProperties(msrest.serialization.Model):
+class ExpressRouteCircuitServiceProviderProperties(_serialization.Model):
     """Contains ServiceProviderProperties in an ExpressRouteCircuit.
 
     :ivar service_provider_name: The serviceProviderName.
@@ -3037,9 +3015,9 @@ class ExpressRouteCircuitServiceProviderProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'service_provider_name': {'key': 'serviceProviderName', 'type': 'str'},
-        'peering_location': {'key': 'peeringLocation', 'type': 'str'},
-        'bandwidth_in_mbps': {'key': 'bandwidthInMbps', 'type': 'int'},
+        "service_provider_name": {"key": "serviceProviderName", "type": "str"},
+        "peering_location": {"key": "peeringLocation", "type": "str"},
+        "bandwidth_in_mbps": {"key": "bandwidthInMbps", "type": "int"},
     }
 
     def __init__(
@@ -3058,56 +3036,56 @@ class ExpressRouteCircuitServiceProviderProperties(msrest.serialization.Model):
         :keyword bandwidth_in_mbps: The BandwidthInMbps.
         :paramtype bandwidth_in_mbps: int
         """
-        super(ExpressRouteCircuitServiceProviderProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.service_provider_name = service_provider_name
         self.peering_location = peering_location
         self.bandwidth_in_mbps = bandwidth_in_mbps
 
 
-class ExpressRouteCircuitSku(msrest.serialization.Model):
+class ExpressRouteCircuitSku(_serialization.Model):
     """Contains SKU in an ExpressRouteCircuit.
 
     :ivar name: The name of the SKU.
     :vartype name: str
-    :ivar tier: The tier of the SKU. Possible values are 'Standard' and 'Premium'. Possible values
-     include: "Standard", "Premium".
+    :ivar tier: The tier of the SKU. Possible values are 'Standard' and 'Premium'. Known values
+     are: "Standard" and "Premium".
     :vartype tier: str or ~azure.mgmt.network.v2016_09_01.models.ExpressRouteCircuitSkuTier
     :ivar family: The family of the SKU. Possible values are: 'UnlimitedData' and 'MeteredData'.
-     Possible values include: "UnlimitedData", "MeteredData".
+     Known values are: "UnlimitedData" and "MeteredData".
     :vartype family: str or ~azure.mgmt.network.v2016_09_01.models.ExpressRouteCircuitSkuFamily
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "family": {"key": "family", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        tier: Optional[Union[str, "ExpressRouteCircuitSkuTier"]] = None,
-        family: Optional[Union[str, "ExpressRouteCircuitSkuFamily"]] = None,
+        tier: Optional[Union[str, "_models.ExpressRouteCircuitSkuTier"]] = None,
+        family: Optional[Union[str, "_models.ExpressRouteCircuitSkuFamily"]] = None,
         **kwargs
     ):
         """
         :keyword name: The name of the SKU.
         :paramtype name: str
-        :keyword tier: The tier of the SKU. Possible values are 'Standard' and 'Premium'. Possible
-         values include: "Standard", "Premium".
+        :keyword tier: The tier of the SKU. Possible values are 'Standard' and 'Premium'. Known values
+         are: "Standard" and "Premium".
         :paramtype tier: str or ~azure.mgmt.network.v2016_09_01.models.ExpressRouteCircuitSkuTier
         :keyword family: The family of the SKU. Possible values are: 'UnlimitedData' and 'MeteredData'.
-         Possible values include: "UnlimitedData", "MeteredData".
+         Known values are: "UnlimitedData" and "MeteredData".
         :paramtype family: str or ~azure.mgmt.network.v2016_09_01.models.ExpressRouteCircuitSkuFamily
         """
-        super(ExpressRouteCircuitSku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.tier = tier
         self.family = family
 
 
-class ExpressRouteCircuitsRoutesTableListResult(msrest.serialization.Model):
+class ExpressRouteCircuitsRoutesTableListResult(_serialization.Model):
     """Response for ListRoutesTable associated with the Express Route Circuits API.
 
     :ivar value: The list of routes table.
@@ -3117,14 +3095,14 @@ class ExpressRouteCircuitsRoutesTableListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCircuitRoutesTable]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCircuitRoutesTable]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["ExpressRouteCircuitRoutesTable"]] = None,
+        value: Optional[List["_models.ExpressRouteCircuitRoutesTable"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -3134,12 +3112,12 @@ class ExpressRouteCircuitsRoutesTableListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(ExpressRouteCircuitsRoutesTableListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ExpressRouteCircuitsRoutesTableSummaryListResult(msrest.serialization.Model):
+class ExpressRouteCircuitsRoutesTableSummaryListResult(_serialization.Model):
     """Response for ListRoutesTable associated with the Express Route Circuits API.
 
     :ivar value: A list of the routes table.
@@ -3150,14 +3128,14 @@ class ExpressRouteCircuitsRoutesTableSummaryListResult(msrest.serialization.Mode
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCircuitRoutesTableSummary]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCircuitRoutesTableSummary]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["ExpressRouteCircuitRoutesTableSummary"]] = None,
+        value: Optional[List["_models.ExpressRouteCircuitRoutesTableSummary"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -3168,29 +3146,29 @@ class ExpressRouteCircuitsRoutesTableSummaryListResult(msrest.serialization.Mode
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(ExpressRouteCircuitsRoutesTableSummaryListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ExpressRouteCircuitStats(msrest.serialization.Model):
+class ExpressRouteCircuitStats(_serialization.Model):
     """Contains stats associated with the peering.
 
     :ivar primarybytes_in: Gets BytesIn of the peering.
-    :vartype primarybytes_in: long
+    :vartype primarybytes_in: int
     :ivar primarybytes_out: Gets BytesOut of the peering.
-    :vartype primarybytes_out: long
+    :vartype primarybytes_out: int
     :ivar secondarybytes_in: Gets BytesIn of the peering.
-    :vartype secondarybytes_in: long
+    :vartype secondarybytes_in: int
     :ivar secondarybytes_out: Gets BytesOut of the peering.
-    :vartype secondarybytes_out: long
+    :vartype secondarybytes_out: int
     """
 
     _attribute_map = {
-        'primarybytes_in': {'key': 'primarybytesIn', 'type': 'long'},
-        'primarybytes_out': {'key': 'primarybytesOut', 'type': 'long'},
-        'secondarybytes_in': {'key': 'secondarybytesIn', 'type': 'long'},
-        'secondarybytes_out': {'key': 'secondarybytesOut', 'type': 'long'},
+        "primarybytes_in": {"key": "primarybytesIn", "type": "int"},
+        "primarybytes_out": {"key": "primarybytesOut", "type": "int"},
+        "secondarybytes_in": {"key": "secondarybytesIn", "type": "int"},
+        "secondarybytes_out": {"key": "secondarybytesOut", "type": "int"},
     }
 
     def __init__(
@@ -3204,15 +3182,15 @@ class ExpressRouteCircuitStats(msrest.serialization.Model):
     ):
         """
         :keyword primarybytes_in: Gets BytesIn of the peering.
-        :paramtype primarybytes_in: long
+        :paramtype primarybytes_in: int
         :keyword primarybytes_out: Gets BytesOut of the peering.
-        :paramtype primarybytes_out: long
+        :paramtype primarybytes_out: int
         :keyword secondarybytes_in: Gets BytesIn of the peering.
-        :paramtype secondarybytes_in: long
+        :paramtype secondarybytes_in: int
         :keyword secondarybytes_out: Gets BytesOut of the peering.
-        :paramtype secondarybytes_out: long
+        :paramtype secondarybytes_out: int
         """
-        super(ExpressRouteCircuitStats, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.primarybytes_in = primarybytes_in
         self.primarybytes_out = primarybytes_out
         self.secondarybytes_in = secondarybytes_in
@@ -3232,7 +3210,7 @@ class ExpressRouteServiceProvider(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar peering_locations: Get a list of peering locations.
     :vartype peering_locations: list[str]
@@ -3244,29 +3222,32 @@ class ExpressRouteServiceProvider(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'peering_locations': {'key': 'properties.peeringLocations', 'type': '[str]'},
-        'bandwidths_offered': {'key': 'properties.bandwidthsOffered', 'type': '[ExpressRouteServiceProviderBandwidthsOffered]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "peering_locations": {"key": "properties.peeringLocations", "type": "[str]"},
+        "bandwidths_offered": {
+            "key": "properties.bandwidthsOffered",
+            "type": "[ExpressRouteServiceProviderBandwidthsOffered]",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         peering_locations: Optional[List[str]] = None,
-        bandwidths_offered: Optional[List["ExpressRouteServiceProviderBandwidthsOffered"]] = None,
+        bandwidths_offered: Optional[List["_models.ExpressRouteServiceProviderBandwidthsOffered"]] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -3275,7 +3256,7 @@ class ExpressRouteServiceProvider(Resource):
         :paramtype id: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword peering_locations: Get a list of peering locations.
         :paramtype peering_locations: list[str]
@@ -3285,13 +3266,13 @@ class ExpressRouteServiceProvider(Resource):
         :keyword provisioning_state: Gets the provisioning state of the resource.
         :paramtype provisioning_state: str
         """
-        super(ExpressRouteServiceProvider, self).__init__(id=id, location=location, tags=tags, **kwargs)
+        super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.peering_locations = peering_locations
         self.bandwidths_offered = bandwidths_offered
         self.provisioning_state = provisioning_state
 
 
-class ExpressRouteServiceProviderBandwidthsOffered(msrest.serialization.Model):
+class ExpressRouteServiceProviderBandwidthsOffered(_serialization.Model):
     """Contains bandwidths offered in ExpressRouteServiceProvider resources.
 
     :ivar offer_name: The OfferName.
@@ -3301,29 +3282,23 @@ class ExpressRouteServiceProviderBandwidthsOffered(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'offer_name': {'key': 'offerName', 'type': 'str'},
-        'value_in_mbps': {'key': 'valueInMbps', 'type': 'int'},
+        "offer_name": {"key": "offerName", "type": "str"},
+        "value_in_mbps": {"key": "valueInMbps", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        offer_name: Optional[str] = None,
-        value_in_mbps: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, offer_name: Optional[str] = None, value_in_mbps: Optional[int] = None, **kwargs):
         """
         :keyword offer_name: The OfferName.
         :paramtype offer_name: str
         :keyword value_in_mbps: The ValueInMbps.
         :paramtype value_in_mbps: int
         """
-        super(ExpressRouteServiceProviderBandwidthsOffered, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.offer_name = offer_name
         self.value_in_mbps = value_in_mbps
 
 
-class ExpressRouteServiceProviderListResult(msrest.serialization.Model):
+class ExpressRouteServiceProviderListResult(_serialization.Model):
     """Response for the ListExpressRouteServiceProvider API service call.
 
     :ivar value: A list of ExpressRouteResourceProvider resources.
@@ -3333,14 +3308,14 @@ class ExpressRouteServiceProviderListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteServiceProvider]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteServiceProvider]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["ExpressRouteServiceProvider"]] = None,
+        value: Optional[List["_models.ExpressRouteServiceProvider"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -3350,37 +3325,37 @@ class ExpressRouteServiceProviderListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(ExpressRouteServiceProviderListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class FlowLogInformation(msrest.serialization.Model):
+class FlowLogInformation(_serialization.Model):
     """Information on the configuration of flow log.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar target_resource_id: Required. The ID of the resource to configure for flow logging.
+    :ivar target_resource_id: The ID of the resource to configure for flow logging. Required.
     :vartype target_resource_id: str
-    :ivar storage_id: Required. ID of the storage account which is used to store the flow log.
+    :ivar storage_id: ID of the storage account which is used to store the flow log. Required.
     :vartype storage_id: str
-    :ivar enabled: Required. Flag to enable/disable flow logging.
+    :ivar enabled: Flag to enable/disable flow logging. Required.
     :vartype enabled: bool
     :ivar retention_policy: Parameters that define the retention policy for flow log.
     :vartype retention_policy: ~azure.mgmt.network.v2016_09_01.models.RetentionPolicyParameters
     """
 
     _validation = {
-        'target_resource_id': {'required': True},
-        'storage_id': {'required': True},
-        'enabled': {'required': True},
+        "target_resource_id": {"required": True},
+        "storage_id": {"required": True},
+        "enabled": {"required": True},
     }
 
     _attribute_map = {
-        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
-        'storage_id': {'key': 'properties.storageId', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'retention_policy': {'key': 'properties.retentionPolicy', 'type': 'RetentionPolicyParameters'},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
+        "storage_id": {"key": "properties.storageId", "type": "str"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "retention_policy": {"key": "properties.retentionPolicy", "type": "RetentionPolicyParameters"},
     }
 
     def __init__(
@@ -3389,59 +3364,54 @@ class FlowLogInformation(msrest.serialization.Model):
         target_resource_id: str,
         storage_id: str,
         enabled: bool,
-        retention_policy: Optional["RetentionPolicyParameters"] = None,
+        retention_policy: Optional["_models.RetentionPolicyParameters"] = None,
         **kwargs
     ):
         """
-        :keyword target_resource_id: Required. The ID of the resource to configure for flow logging.
+        :keyword target_resource_id: The ID of the resource to configure for flow logging. Required.
         :paramtype target_resource_id: str
-        :keyword storage_id: Required. ID of the storage account which is used to store the flow log.
+        :keyword storage_id: ID of the storage account which is used to store the flow log. Required.
         :paramtype storage_id: str
-        :keyword enabled: Required. Flag to enable/disable flow logging.
+        :keyword enabled: Flag to enable/disable flow logging. Required.
         :paramtype enabled: bool
         :keyword retention_policy: Parameters that define the retention policy for flow log.
         :paramtype retention_policy: ~azure.mgmt.network.v2016_09_01.models.RetentionPolicyParameters
         """
-        super(FlowLogInformation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.target_resource_id = target_resource_id
         self.storage_id = storage_id
         self.enabled = enabled
         self.retention_policy = retention_policy
 
 
-class FlowLogStatusParameters(msrest.serialization.Model):
+class FlowLogStatusParameters(_serialization.Model):
     """Parameters that define a resource to query flow log status.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar target_resource_id: Required. The target resource where getting the flow logging status.
+    :ivar target_resource_id: The target resource where getting the flow logging status. Required.
     :vartype target_resource_id: str
     """
 
     _validation = {
-        'target_resource_id': {'required': True},
+        "target_resource_id": {"required": True},
     }
 
     _attribute_map = {
-        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        target_resource_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, target_resource_id: str, **kwargs):
         """
-        :keyword target_resource_id: Required. The target resource where getting the flow logging
-         status.
+        :keyword target_resource_id: The target resource where getting the flow logging status.
+         Required.
         :paramtype target_resource_id: str
         """
-        super(FlowLogStatusParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.target_resource_id = target_resource_id
 
 
-class FrontendIPConfiguration(SubResource):
+class FrontendIPConfiguration(SubResource):  # pylint: disable=too-many-instance-attributes
     """Frontend IP address of the load balancer.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3464,7 +3434,7 @@ class FrontendIPConfiguration(SubResource):
     :ivar private_ip_address: The private IP address of the IP configuration.
     :vartype private_ip_address: str
     :ivar private_ip_allocation_method: The Private IP allocation method. Possible values are:
-     'Static' and 'Dynamic'. Possible values include: "Static", "Dynamic".
+     'Static' and 'Dynamic'. Known values are: "Static" and "Dynamic".
     :vartype private_ip_allocation_method: str or
      ~azure.mgmt.network.v2016_09_01.models.IPAllocationMethod
     :ivar subnet: The reference of the subnet resource.
@@ -3477,37 +3447,37 @@ class FrontendIPConfiguration(SubResource):
     """
 
     _validation = {
-        'inbound_nat_rules': {'readonly': True},
-        'inbound_nat_pools': {'readonly': True},
-        'outbound_nat_rules': {'readonly': True},
-        'load_balancing_rules': {'readonly': True},
+        "inbound_nat_rules": {"readonly": True},
+        "inbound_nat_pools": {"readonly": True},
+        "outbound_nat_rules": {"readonly": True},
+        "load_balancing_rules": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'inbound_nat_rules': {'key': 'properties.inboundNatRules', 'type': '[SubResource]'},
-        'inbound_nat_pools': {'key': 'properties.inboundNatPools', 'type': '[SubResource]'},
-        'outbound_nat_rules': {'key': 'properties.outboundNatRules', 'type': '[SubResource]'},
-        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
-        'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
-        'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "inbound_nat_rules": {"key": "properties.inboundNatRules", "type": "[SubResource]"},
+        "inbound_nat_pools": {"key": "properties.inboundNatPools", "type": "[SubResource]"},
+        "outbound_nat_rules": {"key": "properties.outboundNatRules", "type": "[SubResource]"},
+        "load_balancing_rules": {"key": "properties.loadBalancingRules", "type": "[SubResource]"},
+        "private_ip_address": {"key": "properties.privateIPAddress", "type": "str"},
+        "private_ip_allocation_method": {"key": "properties.privateIPAllocationMethod", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "Subnet"},
+        "public_ip_address": {"key": "properties.publicIPAddress", "type": "PublicIPAddress"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
         private_ip_address: Optional[str] = None,
-        private_ip_allocation_method: Optional[Union[str, "IPAllocationMethod"]] = None,
-        subnet: Optional["Subnet"] = None,
-        public_ip_address: Optional["PublicIPAddress"] = None,
+        private_ip_allocation_method: Optional[Union[str, "_models.IPAllocationMethod"]] = None,
+        subnet: Optional["_models.Subnet"] = None,
+        public_ip_address: Optional["_models.PublicIPAddress"] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -3522,7 +3492,7 @@ class FrontendIPConfiguration(SubResource):
         :keyword private_ip_address: The private IP address of the IP configuration.
         :paramtype private_ip_address: str
         :keyword private_ip_allocation_method: The Private IP allocation method. Possible values are:
-         'Static' and 'Dynamic'. Possible values include: "Static", "Dynamic".
+         'Static' and 'Dynamic'. Known values are: "Static" and "Dynamic".
         :paramtype private_ip_allocation_method: str or
          ~azure.mgmt.network.v2016_09_01.models.IPAllocationMethod
         :keyword subnet: The reference of the subnet resource.
@@ -3533,7 +3503,7 @@ class FrontendIPConfiguration(SubResource):
          values are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(FrontendIPConfiguration, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.inbound_nat_rules = None
@@ -3547,7 +3517,7 @@ class FrontendIPConfiguration(SubResource):
         self.provisioning_state = provisioning_state
 
 
-class GatewayRoute(msrest.serialization.Model):
+class GatewayRoute(_serialization.Model):
     """GatewayRoute.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3569,32 +3539,28 @@ class GatewayRoute(msrest.serialization.Model):
     """
 
     _validation = {
-        'local_address': {'readonly': True},
-        'network': {'readonly': True},
-        'next_hop': {'readonly': True},
-        'source_peer': {'readonly': True},
-        'origin': {'readonly': True},
-        'as_path': {'readonly': True},
-        'weight': {'readonly': True},
+        "local_address": {"readonly": True},
+        "network": {"readonly": True},
+        "next_hop": {"readonly": True},
+        "source_peer": {"readonly": True},
+        "origin": {"readonly": True},
+        "as_path": {"readonly": True},
+        "weight": {"readonly": True},
     }
 
     _attribute_map = {
-        'local_address': {'key': 'localAddress', 'type': 'str'},
-        'network': {'key': 'network', 'type': 'str'},
-        'next_hop': {'key': 'nextHop', 'type': 'str'},
-        'source_peer': {'key': 'sourcePeer', 'type': 'str'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'as_path': {'key': 'asPath', 'type': 'str'},
-        'weight': {'key': 'weight', 'type': 'int'},
+        "local_address": {"key": "localAddress", "type": "str"},
+        "network": {"key": "network", "type": "str"},
+        "next_hop": {"key": "nextHop", "type": "str"},
+        "source_peer": {"key": "sourcePeer", "type": "str"},
+        "origin": {"key": "origin", "type": "str"},
+        "as_path": {"key": "asPath", "type": "str"},
+        "weight": {"key": "weight", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(GatewayRoute, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.local_address = None
         self.network = None
         self.next_hop = None
@@ -3604,7 +3570,7 @@ class GatewayRoute(msrest.serialization.Model):
         self.weight = None
 
 
-class GatewayRouteListResult(msrest.serialization.Model):
+class GatewayRouteListResult(_serialization.Model):
     """List of virtual network gateway routes.
 
     :ivar value: List of gateway routes.
@@ -3612,20 +3578,15 @@ class GatewayRouteListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[GatewayRoute]'},
+        "value": {"key": "value", "type": "[GatewayRoute]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["GatewayRoute"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.GatewayRoute"]] = None, **kwargs):
         """
         :keyword value: List of gateway routes.
         :paramtype value: list[~azure.mgmt.network.v2016_09_01.models.GatewayRoute]
         """
-        super(GatewayRouteListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
@@ -3642,7 +3603,7 @@ class InboundNatPool(SubResource):
     :ivar frontend_ip_configuration: A reference to frontend IP addresses.
     :vartype frontend_ip_configuration: ~azure.mgmt.network.v2016_09_01.models.SubResource
     :ivar protocol: The transport protocol for the endpoint. Possible values are: 'Udp' or 'Tcp'.
-     Possible values include: "Udp", "Tcp".
+     Known values are: "Udp" and "Tcp".
     :vartype protocol: str or ~azure.mgmt.network.v2016_09_01.models.TransportProtocol
     :ivar frontend_port_range_start: The first port number in the range of external ports that will
      be used to provide Inbound Nat to NICs associated with a load balancer. Acceptable values range
@@ -3661,25 +3622,25 @@ class InboundNatPool(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'frontend_ip_configuration': {'key': 'properties.frontendIPConfiguration', 'type': 'SubResource'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'frontend_port_range_start': {'key': 'properties.frontendPortRangeStart', 'type': 'int'},
-        'frontend_port_range_end': {'key': 'properties.frontendPortRangeEnd', 'type': 'int'},
-        'backend_port': {'key': 'properties.backendPort', 'type': 'int'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "frontend_ip_configuration": {"key": "properties.frontendIPConfiguration", "type": "SubResource"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "frontend_port_range_start": {"key": "properties.frontendPortRangeStart", "type": "int"},
+        "frontend_port_range_end": {"key": "properties.frontendPortRangeEnd", "type": "int"},
+        "backend_port": {"key": "properties.backendPort", "type": "int"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
-        frontend_ip_configuration: Optional["SubResource"] = None,
-        protocol: Optional[Union[str, "TransportProtocol"]] = None,
+        frontend_ip_configuration: Optional["_models.SubResource"] = None,
+        protocol: Optional[Union[str, "_models.TransportProtocol"]] = None,
         frontend_port_range_start: Optional[int] = None,
         frontend_port_range_end: Optional[int] = None,
         backend_port: Optional[int] = None,
@@ -3697,7 +3658,7 @@ class InboundNatPool(SubResource):
         :keyword frontend_ip_configuration: A reference to frontend IP addresses.
         :paramtype frontend_ip_configuration: ~azure.mgmt.network.v2016_09_01.models.SubResource
         :keyword protocol: The transport protocol for the endpoint. Possible values are: 'Udp' or
-         'Tcp'. Possible values include: "Udp", "Tcp".
+         'Tcp'. Known values are: "Udp" and "Tcp".
         :paramtype protocol: str or ~azure.mgmt.network.v2016_09_01.models.TransportProtocol
         :keyword frontend_port_range_start: The first port number in the range of external ports that
          will be used to provide Inbound Nat to NICs associated with a load balancer. Acceptable values
@@ -3714,7 +3675,7 @@ class InboundNatPool(SubResource):
          values are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(InboundNatPool, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.frontend_ip_configuration = frontend_ip_configuration
@@ -3725,7 +3686,7 @@ class InboundNatPool(SubResource):
         self.provisioning_state = provisioning_state
 
 
-class InboundNatRule(SubResource):
+class InboundNatRule(SubResource):  # pylint: disable=too-many-instance-attributes
     """Inbound NAT rule of the load balancer.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3745,7 +3706,7 @@ class InboundNatRule(SubResource):
     :vartype backend_ip_configuration:
      ~azure.mgmt.network.v2016_09_01.models.NetworkInterfaceIPConfiguration
     :ivar protocol: The transport protocol for the endpoint. Possible values are: 'Udp' or 'Tcp'.
-     Possible values include: "Udp", "Tcp".
+     Known values are: "Udp" and "Tcp".
     :vartype protocol: str or ~azure.mgmt.network.v2016_09_01.models.TransportProtocol
     :ivar frontend_port: The port for the external endpoint. Port numbers for each rule must be
      unique within the Load Balancer. Acceptable values range from 1 to 65534.
@@ -3768,31 +3729,34 @@ class InboundNatRule(SubResource):
     """
 
     _validation = {
-        'backend_ip_configuration': {'readonly': True},
+        "backend_ip_configuration": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'frontend_ip_configuration': {'key': 'properties.frontendIPConfiguration', 'type': 'SubResource'},
-        'backend_ip_configuration': {'key': 'properties.backendIPConfiguration', 'type': 'NetworkInterfaceIPConfiguration'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'frontend_port': {'key': 'properties.frontendPort', 'type': 'int'},
-        'backend_port': {'key': 'properties.backendPort', 'type': 'int'},
-        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
-        'enable_floating_ip': {'key': 'properties.enableFloatingIP', 'type': 'bool'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "frontend_ip_configuration": {"key": "properties.frontendIPConfiguration", "type": "SubResource"},
+        "backend_ip_configuration": {
+            "key": "properties.backendIPConfiguration",
+            "type": "NetworkInterfaceIPConfiguration",
+        },
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "frontend_port": {"key": "properties.frontendPort", "type": "int"},
+        "backend_port": {"key": "properties.backendPort", "type": "int"},
+        "idle_timeout_in_minutes": {"key": "properties.idleTimeoutInMinutes", "type": "int"},
+        "enable_floating_ip": {"key": "properties.enableFloatingIP", "type": "bool"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
-        frontend_ip_configuration: Optional["SubResource"] = None,
-        protocol: Optional[Union[str, "TransportProtocol"]] = None,
+        frontend_ip_configuration: Optional["_models.SubResource"] = None,
+        protocol: Optional[Union[str, "_models.TransportProtocol"]] = None,
         frontend_port: Optional[int] = None,
         backend_port: Optional[int] = None,
         idle_timeout_in_minutes: Optional[int] = None,
@@ -3811,7 +3775,7 @@ class InboundNatRule(SubResource):
         :keyword frontend_ip_configuration: A reference to frontend IP addresses.
         :paramtype frontend_ip_configuration: ~azure.mgmt.network.v2016_09_01.models.SubResource
         :keyword protocol: The transport protocol for the endpoint. Possible values are: 'Udp' or
-         'Tcp'. Possible values include: "Udp", "Tcp".
+         'Tcp'. Known values are: "Udp" and "Tcp".
         :paramtype protocol: str or ~azure.mgmt.network.v2016_09_01.models.TransportProtocol
         :keyword frontend_port: The port for the external endpoint. Port numbers for each rule must be
          unique within the Load Balancer. Acceptable values range from 1 to 65534.
@@ -3832,7 +3796,7 @@ class InboundNatRule(SubResource):
          values are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(InboundNatRule, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.frontend_ip_configuration = frontend_ip_configuration
@@ -3845,7 +3809,7 @@ class InboundNatRule(SubResource):
         self.provisioning_state = provisioning_state
 
 
-class IPAddressAvailabilityResult(msrest.serialization.Model):
+class IPAddressAvailabilityResult(_serialization.Model):
     """Response for CheckIPAddressAvailability API service call.
 
     :ivar available: Private IP address availability.
@@ -3856,16 +3820,12 @@ class IPAddressAvailabilityResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'available': {'key': 'available', 'type': 'bool'},
-        'available_ip_addresses': {'key': 'availableIPAddresses', 'type': '[str]'},
+        "available": {"key": "available", "type": "bool"},
+        "available_ip_addresses": {"key": "availableIPAddresses", "type": "[str]"},
     }
 
     def __init__(
-        self,
-        *,
-        available: Optional[bool] = None,
-        available_ip_addresses: Optional[List[str]] = None,
-        **kwargs
+        self, *, available: Optional[bool] = None, available_ip_addresses: Optional[List[str]] = None, **kwargs
     ):
         """
         :keyword available: Private IP address availability.
@@ -3874,7 +3834,7 @@ class IPAddressAvailabilityResult(msrest.serialization.Model):
          address is taken.
         :paramtype available_ip_addresses: list[str]
         """
-        super(IPAddressAvailabilityResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.available = available
         self.available_ip_addresses = available_ip_addresses
 
@@ -3892,7 +3852,7 @@ class IPConfiguration(SubResource):
     :ivar private_ip_address: The private IP address of the IP configuration.
     :vartype private_ip_address: str
     :ivar private_ip_allocation_method: The private IP allocation method. Possible values are
-     'Static' and 'Dynamic'. Possible values include: "Static", "Dynamic".
+     'Static' and 'Dynamic'. Known values are: "Static" and "Dynamic".
     :vartype private_ip_allocation_method: str or
      ~azure.mgmt.network.v2016_09_01.models.IPAllocationMethod
     :ivar subnet: The reference of the subnet resource.
@@ -3905,26 +3865,26 @@ class IPConfiguration(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
-        'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "private_ip_address": {"key": "properties.privateIPAddress", "type": "str"},
+        "private_ip_allocation_method": {"key": "properties.privateIPAllocationMethod", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "Subnet"},
+        "public_ip_address": {"key": "properties.publicIPAddress", "type": "PublicIPAddress"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
         private_ip_address: Optional[str] = None,
-        private_ip_allocation_method: Optional[Union[str, "IPAllocationMethod"]] = None,
-        subnet: Optional["Subnet"] = None,
-        public_ip_address: Optional["PublicIPAddress"] = None,
+        private_ip_allocation_method: Optional[Union[str, "_models.IPAllocationMethod"]] = None,
+        subnet: Optional["_models.Subnet"] = None,
+        public_ip_address: Optional["_models.PublicIPAddress"] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -3939,7 +3899,7 @@ class IPConfiguration(SubResource):
         :keyword private_ip_address: The private IP address of the IP configuration.
         :paramtype private_ip_address: str
         :keyword private_ip_allocation_method: The private IP allocation method. Possible values are
-         'Static' and 'Dynamic'. Possible values include: "Static", "Dynamic".
+         'Static' and 'Dynamic'. Known values are: "Static" and "Dynamic".
         :paramtype private_ip_allocation_method: str or
          ~azure.mgmt.network.v2016_09_01.models.IPAllocationMethod
         :keyword subnet: The reference of the subnet resource.
@@ -3950,7 +3910,7 @@ class IPConfiguration(SubResource):
          values are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(IPConfiguration, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.private_ip_address = private_ip_address
@@ -3960,7 +3920,7 @@ class IPConfiguration(SubResource):
         self.provisioning_state = provisioning_state
 
 
-class LoadBalancer(Resource):
+class LoadBalancer(Resource):  # pylint: disable=too-many-instance-attributes
     """LoadBalancer resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3973,7 +3933,7 @@ class LoadBalancer(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
@@ -4012,42 +3972,45 @@ class LoadBalancer(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'frontend_ip_configurations': {'key': 'properties.frontendIPConfigurations', 'type': '[FrontendIPConfiguration]'},
-        'backend_address_pools': {'key': 'properties.backendAddressPools', 'type': '[BackendAddressPool]'},
-        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[LoadBalancingRule]'},
-        'probes': {'key': 'properties.probes', 'type': '[Probe]'},
-        'inbound_nat_rules': {'key': 'properties.inboundNatRules', 'type': '[InboundNatRule]'},
-        'inbound_nat_pools': {'key': 'properties.inboundNatPools', 'type': '[InboundNatPool]'},
-        'outbound_nat_rules': {'key': 'properties.outboundNatRules', 'type': '[OutboundNatRule]'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "frontend_ip_configurations": {
+            "key": "properties.frontendIPConfigurations",
+            "type": "[FrontendIPConfiguration]",
+        },
+        "backend_address_pools": {"key": "properties.backendAddressPools", "type": "[BackendAddressPool]"},
+        "load_balancing_rules": {"key": "properties.loadBalancingRules", "type": "[LoadBalancingRule]"},
+        "probes": {"key": "properties.probes", "type": "[Probe]"},
+        "inbound_nat_rules": {"key": "properties.inboundNatRules", "type": "[InboundNatRule]"},
+        "inbound_nat_pools": {"key": "properties.inboundNatPools", "type": "[InboundNatPool]"},
+        "outbound_nat_rules": {"key": "properties.outboundNatRules", "type": "[OutboundNatRule]"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        frontend_ip_configurations: Optional[List["FrontendIPConfiguration"]] = None,
-        backend_address_pools: Optional[List["BackendAddressPool"]] = None,
-        load_balancing_rules: Optional[List["LoadBalancingRule"]] = None,
-        probes: Optional[List["Probe"]] = None,
-        inbound_nat_rules: Optional[List["InboundNatRule"]] = None,
-        inbound_nat_pools: Optional[List["InboundNatPool"]] = None,
-        outbound_nat_rules: Optional[List["OutboundNatRule"]] = None,
+        frontend_ip_configurations: Optional[List["_models.FrontendIPConfiguration"]] = None,
+        backend_address_pools: Optional[List["_models.BackendAddressPool"]] = None,
+        load_balancing_rules: Optional[List["_models.LoadBalancingRule"]] = None,
+        probes: Optional[List["_models.Probe"]] = None,
+        inbound_nat_rules: Optional[List["_models.InboundNatRule"]] = None,
+        inbound_nat_pools: Optional[List["_models.InboundNatPool"]] = None,
+        outbound_nat_rules: Optional[List["_models.OutboundNatRule"]] = None,
         resource_guid: Optional[str] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
@@ -4057,7 +4020,7 @@ class LoadBalancer(Resource):
         :paramtype id: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword etag: A unique read-only string that changes whenever the resource is updated.
         :paramtype etag: str
@@ -4095,7 +4058,7 @@ class LoadBalancer(Resource):
          values are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(LoadBalancer, self).__init__(id=id, location=location, tags=tags, **kwargs)
+        super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.etag = etag
         self.frontend_ip_configurations = frontend_ip_configurations
         self.backend_address_pools = backend_address_pools
@@ -4108,7 +4071,7 @@ class LoadBalancer(Resource):
         self.provisioning_state = provisioning_state
 
 
-class LoadBalancerListResult(msrest.serialization.Model):
+class LoadBalancerListResult(_serialization.Model):
     """Response for ListLoadBalancers API service call.
 
     :ivar value: A list of load balancers in a resource group.
@@ -4118,16 +4081,12 @@ class LoadBalancerListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LoadBalancer]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LoadBalancer]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["LoadBalancer"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.LoadBalancer"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: A list of load balancers in a resource group.
@@ -4135,12 +4094,12 @@ class LoadBalancerListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(LoadBalancerListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class LoadBalancingRule(SubResource):
+class LoadBalancingRule(SubResource):  # pylint: disable=too-many-instance-attributes
     """A load balancing rule for a load balancer.
 
     :ivar id: Resource ID.
@@ -4158,10 +4117,10 @@ class LoadBalancingRule(SubResource):
     :ivar probe: The reference of the load balancer probe used by the load balancing rule.
     :vartype probe: ~azure.mgmt.network.v2016_09_01.models.SubResource
     :ivar protocol: The transport protocol for the external endpoint. Possible values are 'Udp' or
-     'Tcp'. Possible values include: "Udp", "Tcp".
+     'Tcp'. Known values are: "Udp" and "Tcp".
     :vartype protocol: str or ~azure.mgmt.network.v2016_09_01.models.TransportProtocol
     :ivar load_distribution: The load distribution policy for this rule. Possible values are
-     'Default', 'SourceIP', and 'SourceIPProtocol'. Possible values include: "Default", "SourceIP",
+     'Default', 'SourceIP', and 'SourceIPProtocol'. Known values are: "Default", "SourceIP", and
      "SourceIPProtocol".
     :vartype load_distribution: str or ~azure.mgmt.network.v2016_09_01.models.LoadDistribution
     :ivar frontend_port: The port for the external endpoint. Port numbers for each rule must be
@@ -4185,32 +4144,32 @@ class LoadBalancingRule(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'frontend_ip_configuration': {'key': 'properties.frontendIPConfiguration', 'type': 'SubResource'},
-        'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource'},
-        'probe': {'key': 'properties.probe', 'type': 'SubResource'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'load_distribution': {'key': 'properties.loadDistribution', 'type': 'str'},
-        'frontend_port': {'key': 'properties.frontendPort', 'type': 'int'},
-        'backend_port': {'key': 'properties.backendPort', 'type': 'int'},
-        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
-        'enable_floating_ip': {'key': 'properties.enableFloatingIP', 'type': 'bool'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "frontend_ip_configuration": {"key": "properties.frontendIPConfiguration", "type": "SubResource"},
+        "backend_address_pool": {"key": "properties.backendAddressPool", "type": "SubResource"},
+        "probe": {"key": "properties.probe", "type": "SubResource"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "load_distribution": {"key": "properties.loadDistribution", "type": "str"},
+        "frontend_port": {"key": "properties.frontendPort", "type": "int"},
+        "backend_port": {"key": "properties.backendPort", "type": "int"},
+        "idle_timeout_in_minutes": {"key": "properties.idleTimeoutInMinutes", "type": "int"},
+        "enable_floating_ip": {"key": "properties.enableFloatingIP", "type": "bool"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
-        frontend_ip_configuration: Optional["SubResource"] = None,
-        backend_address_pool: Optional["SubResource"] = None,
-        probe: Optional["SubResource"] = None,
-        protocol: Optional[Union[str, "TransportProtocol"]] = None,
-        load_distribution: Optional[Union[str, "LoadDistribution"]] = None,
+        frontend_ip_configuration: Optional["_models.SubResource"] = None,
+        backend_address_pool: Optional["_models.SubResource"] = None,
+        probe: Optional["_models.SubResource"] = None,
+        protocol: Optional[Union[str, "_models.TransportProtocol"]] = None,
+        load_distribution: Optional[Union[str, "_models.LoadDistribution"]] = None,
         frontend_port: Optional[int] = None,
         backend_port: Optional[int] = None,
         idle_timeout_in_minutes: Optional[int] = None,
@@ -4234,10 +4193,10 @@ class LoadBalancingRule(SubResource):
         :keyword probe: The reference of the load balancer probe used by the load balancing rule.
         :paramtype probe: ~azure.mgmt.network.v2016_09_01.models.SubResource
         :keyword protocol: The transport protocol for the external endpoint. Possible values are 'Udp'
-         or 'Tcp'. Possible values include: "Udp", "Tcp".
+         or 'Tcp'. Known values are: "Udp" and "Tcp".
         :paramtype protocol: str or ~azure.mgmt.network.v2016_09_01.models.TransportProtocol
         :keyword load_distribution: The load distribution policy for this rule. Possible values are
-         'Default', 'SourceIP', and 'SourceIPProtocol'. Possible values include: "Default", "SourceIP",
+         'Default', 'SourceIP', and 'SourceIPProtocol'. Known values are: "Default", "SourceIP", and
          "SourceIPProtocol".
         :paramtype load_distribution: str or ~azure.mgmt.network.v2016_09_01.models.LoadDistribution
         :keyword frontend_port: The port for the external endpoint. Port numbers for each rule must be
@@ -4259,7 +4218,7 @@ class LoadBalancingRule(SubResource):
          values are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(LoadBalancingRule, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.frontend_ip_configuration = frontend_ip_configuration
@@ -4274,7 +4233,7 @@ class LoadBalancingRule(SubResource):
         self.provisioning_state = provisioning_state
 
 
-class LocalNetworkGateway(Resource):
+class LocalNetworkGateway(Resource):  # pylint: disable=too-many-instance-attributes
     """A common class for general resource information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4289,11 +4248,11 @@ class LocalNetworkGateway(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :ivar local_network_address_space: Required. Local network site address space.
+    :ivar local_network_address_space: Local network site address space. Required.
     :vartype local_network_address_space: ~azure.mgmt.network.v2016_09_01.models.AddressSpace
     :ivar gateway_ip_address: IP address of local network gateway.
     :vartype gateway_ip_address: str
@@ -4307,36 +4266,36 @@ class LocalNetworkGateway(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'local_network_address_space': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "local_network_address_space": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'local_network_address_space': {'key': 'properties.localNetworkAddressSpace', 'type': 'AddressSpace'},
-        'gateway_ip_address': {'key': 'properties.gatewayIpAddress', 'type': 'str'},
-        'bgp_settings': {'key': 'properties.bgpSettings', 'type': 'BgpSettings'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "local_network_address_space": {"key": "properties.localNetworkAddressSpace", "type": "AddressSpace"},
+        "gateway_ip_address": {"key": "properties.gatewayIpAddress", "type": "str"},
+        "bgp_settings": {"key": "properties.bgpSettings", "type": "BgpSettings"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        local_network_address_space: "AddressSpace",
-        id: Optional[str] = None,
+        local_network_address_space: "_models.AddressSpace",
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
         gateway_ip_address: Optional[str] = None,
-        bgp_settings: Optional["BgpSettings"] = None,
+        bgp_settings: Optional["_models.BgpSettings"] = None,
         resource_guid: Optional[str] = None,
         **kwargs
     ):
@@ -4345,11 +4304,11 @@ class LocalNetworkGateway(Resource):
         :paramtype id: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword etag: A unique read-only string that changes whenever the resource is updated.
         :paramtype etag: str
-        :keyword local_network_address_space: Required. Local network site address space.
+        :keyword local_network_address_space: Local network site address space. Required.
         :paramtype local_network_address_space: ~azure.mgmt.network.v2016_09_01.models.AddressSpace
         :keyword gateway_ip_address: IP address of local network gateway.
         :paramtype gateway_ip_address: str
@@ -4358,7 +4317,7 @@ class LocalNetworkGateway(Resource):
         :keyword resource_guid: The resource GUID property of the LocalNetworkGateway resource.
         :paramtype resource_guid: str
         """
-        super(LocalNetworkGateway, self).__init__(id=id, location=location, tags=tags, **kwargs)
+        super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.etag = etag
         self.local_network_address_space = local_network_address_space
         self.gateway_ip_address = gateway_ip_address
@@ -4367,7 +4326,7 @@ class LocalNetworkGateway(Resource):
         self.provisioning_state = None
 
 
-class LocalNetworkGatewayListResult(msrest.serialization.Model):
+class LocalNetworkGatewayListResult(_serialization.Model):
     """Response for ListLocalNetworkGateways API service call.
 
     :ivar value: A list of local network gateways that exists in a resource group.
@@ -4377,16 +4336,12 @@ class LocalNetworkGatewayListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LocalNetworkGateway]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LocalNetworkGateway]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["LocalNetworkGateway"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.LocalNetworkGateway"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: A list of local network gateways that exists in a resource group.
@@ -4394,12 +4349,12 @@ class LocalNetworkGatewayListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(LocalNetworkGatewayListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class NetworkInterface(Resource):
+class NetworkInterface(Resource):  # pylint: disable=too-many-instance-attributes
     """A network interface in a resource group.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4412,7 +4367,7 @@ class NetworkInterface(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
@@ -4443,40 +4398,40 @@ class NetworkInterface(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'virtual_machine': {'key': 'properties.virtualMachine', 'type': 'SubResource'},
-        'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup'},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
-        'dns_settings': {'key': 'properties.dnsSettings', 'type': 'NetworkInterfaceDnsSettings'},
-        'mac_address': {'key': 'properties.macAddress', 'type': 'str'},
-        'primary': {'key': 'properties.primary', 'type': 'bool'},
-        'enable_accelerated_networking': {'key': 'properties.enableAcceleratedNetworking', 'type': 'bool'},
-        'enable_ip_forwarding': {'key': 'properties.enableIPForwarding', 'type': 'bool'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "virtual_machine": {"key": "properties.virtualMachine", "type": "SubResource"},
+        "network_security_group": {"key": "properties.networkSecurityGroup", "type": "NetworkSecurityGroup"},
+        "ip_configurations": {"key": "properties.ipConfigurations", "type": "[NetworkInterfaceIPConfiguration]"},
+        "dns_settings": {"key": "properties.dnsSettings", "type": "NetworkInterfaceDnsSettings"},
+        "mac_address": {"key": "properties.macAddress", "type": "str"},
+        "primary": {"key": "properties.primary", "type": "bool"},
+        "enable_accelerated_networking": {"key": "properties.enableAcceleratedNetworking", "type": "bool"},
+        "enable_ip_forwarding": {"key": "properties.enableIPForwarding", "type": "bool"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        virtual_machine: Optional["SubResource"] = None,
-        network_security_group: Optional["NetworkSecurityGroup"] = None,
-        ip_configurations: Optional[List["NetworkInterfaceIPConfiguration"]] = None,
-        dns_settings: Optional["NetworkInterfaceDnsSettings"] = None,
+        virtual_machine: Optional["_models.SubResource"] = None,
+        network_security_group: Optional["_models.NetworkSecurityGroup"] = None,
+        ip_configurations: Optional[List["_models.NetworkInterfaceIPConfiguration"]] = None,
+        dns_settings: Optional["_models.NetworkInterfaceDnsSettings"] = None,
         mac_address: Optional[str] = None,
         primary: Optional[bool] = None,
         enable_accelerated_networking: Optional[bool] = None,
@@ -4490,7 +4445,7 @@ class NetworkInterface(Resource):
         :paramtype id: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword etag: A unique read-only string that changes whenever the resource is updated.
         :paramtype etag: str
@@ -4519,7 +4474,7 @@ class NetworkInterface(Resource):
          are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(NetworkInterface, self).__init__(id=id, location=location, tags=tags, **kwargs)
+        super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.etag = etag
         self.virtual_machine = virtual_machine
         self.network_security_group = network_security_group
@@ -4533,7 +4488,7 @@ class NetworkInterface(Resource):
         self.provisioning_state = provisioning_state
 
 
-class NetworkInterfaceAssociation(msrest.serialization.Model):
+class NetworkInterfaceAssociation(_serialization.Model):
     """Network interface and its custom security rules.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4545,30 +4500,25 @@ class NetworkInterfaceAssociation(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'security_rules': {'key': 'securityRules', 'type': '[SecurityRule]'},
+        "id": {"key": "id", "type": "str"},
+        "security_rules": {"key": "securityRules", "type": "[SecurityRule]"},
     }
 
-    def __init__(
-        self,
-        *,
-        security_rules: Optional[List["SecurityRule"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, security_rules: Optional[List["_models.SecurityRule"]] = None, **kwargs):
         """
         :keyword security_rules: Collection of custom security rules.
         :paramtype security_rules: list[~azure.mgmt.network.v2016_09_01.models.SecurityRule]
         """
-        super(NetworkInterfaceAssociation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.security_rules = security_rules
 
 
-class NetworkInterfaceDnsSettings(msrest.serialization.Model):
+class NetworkInterfaceDnsSettings(_serialization.Model):
     """DNS settings of a network interface.
 
     :ivar dns_servers: List of DNS servers IP addresses. Use 'AzureProvidedDNS' to switch to azure
@@ -4592,11 +4542,11 @@ class NetworkInterfaceDnsSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
-        'applied_dns_servers': {'key': 'appliedDnsServers', 'type': '[str]'},
-        'internal_dns_name_label': {'key': 'internalDnsNameLabel', 'type': 'str'},
-        'internal_fqdn': {'key': 'internalFqdn', 'type': 'str'},
-        'internal_domain_name_suffix': {'key': 'internalDomainNameSuffix', 'type': 'str'},
+        "dns_servers": {"key": "dnsServers", "type": "[str]"},
+        "applied_dns_servers": {"key": "appliedDnsServers", "type": "[str]"},
+        "internal_dns_name_label": {"key": "internalDnsNameLabel", "type": "str"},
+        "internal_fqdn": {"key": "internalFqdn", "type": "str"},
+        "internal_domain_name_suffix": {"key": "internalDomainNameSuffix", "type": "str"},
     }
 
     def __init__(
@@ -4629,7 +4579,7 @@ class NetworkInterfaceDnsSettings(msrest.serialization.Model):
          concatenating the VM name with the value of internalDomainNameSuffix.
         :paramtype internal_domain_name_suffix: str
         """
-        super(NetworkInterfaceDnsSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.dns_servers = dns_servers
         self.applied_dns_servers = applied_dns_servers
         self.internal_dns_name_label = internal_dns_name_label
@@ -4637,7 +4587,7 @@ class NetworkInterfaceDnsSettings(msrest.serialization.Model):
         self.internal_domain_name_suffix = internal_domain_name_suffix
 
 
-class NetworkInterfaceIPConfiguration(SubResource):
+class NetworkInterfaceIPConfiguration(SubResource):  # pylint: disable=too-many-instance-attributes
     """IPConfiguration in a network interface.
 
     :ivar id: Resource ID.
@@ -4661,12 +4611,12 @@ class NetworkInterfaceIPConfiguration(SubResource):
     :ivar private_ip_address:
     :vartype private_ip_address: str
     :ivar private_ip_allocation_method: Defines how a private IP address is assigned. Possible
-     values are: 'Static' and 'Dynamic'. Possible values include: "Static", "Dynamic".
+     values are: 'Static' and 'Dynamic'. Known values are: "Static" and "Dynamic".
     :vartype private_ip_allocation_method: str or
      ~azure.mgmt.network.v2016_09_01.models.IPAllocationMethod
     :ivar private_ip_address_version: Available from Api-Version 2016-03-30 onwards, it represents
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
-     values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+     values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
     :vartype private_ip_address_version: str or ~azure.mgmt.network.v2016_09_01.models.IPVersion
     :ivar subnet: Subnet in a virtual network resource.
     :vartype subnet: ~azure.mgmt.network.v2016_09_01.models.Subnet
@@ -4679,36 +4629,47 @@ class NetworkInterfaceIPConfiguration(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'application_gateway_backend_address_pools': {'key': 'properties.applicationGatewayBackendAddressPools', 'type': '[ApplicationGatewayBackendAddressPool]'},
-        'load_balancer_backend_address_pools': {'key': 'properties.loadBalancerBackendAddressPools', 'type': '[BackendAddressPool]'},
-        'load_balancer_inbound_nat_rules': {'key': 'properties.loadBalancerInboundNatRules', 'type': '[InboundNatRule]'},
-        'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
-        'private_ip_address_version': {'key': 'properties.privateIPAddressVersion', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
-        'primary': {'key': 'properties.primary', 'type': 'bool'},
-        'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "application_gateway_backend_address_pools": {
+            "key": "properties.applicationGatewayBackendAddressPools",
+            "type": "[ApplicationGatewayBackendAddressPool]",
+        },
+        "load_balancer_backend_address_pools": {
+            "key": "properties.loadBalancerBackendAddressPools",
+            "type": "[BackendAddressPool]",
+        },
+        "load_balancer_inbound_nat_rules": {
+            "key": "properties.loadBalancerInboundNatRules",
+            "type": "[InboundNatRule]",
+        },
+        "private_ip_address": {"key": "properties.privateIPAddress", "type": "str"},
+        "private_ip_allocation_method": {"key": "properties.privateIPAllocationMethod", "type": "str"},
+        "private_ip_address_version": {"key": "properties.privateIPAddressVersion", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "Subnet"},
+        "primary": {"key": "properties.primary", "type": "bool"},
+        "public_ip_address": {"key": "properties.publicIPAddress", "type": "PublicIPAddress"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
-        application_gateway_backend_address_pools: Optional[List["ApplicationGatewayBackendAddressPool"]] = None,
-        load_balancer_backend_address_pools: Optional[List["BackendAddressPool"]] = None,
-        load_balancer_inbound_nat_rules: Optional[List["InboundNatRule"]] = None,
+        application_gateway_backend_address_pools: Optional[
+            List["_models.ApplicationGatewayBackendAddressPool"]
+        ] = None,
+        load_balancer_backend_address_pools: Optional[List["_models.BackendAddressPool"]] = None,
+        load_balancer_inbound_nat_rules: Optional[List["_models.InboundNatRule"]] = None,
         private_ip_address: Optional[str] = None,
-        private_ip_allocation_method: Optional[Union[str, "IPAllocationMethod"]] = None,
-        private_ip_address_version: Optional[Union[str, "IPVersion"]] = None,
-        subnet: Optional["Subnet"] = None,
+        private_ip_allocation_method: Optional[Union[str, "_models.IPAllocationMethod"]] = None,
+        private_ip_address_version: Optional[Union[str, "_models.IPVersion"]] = None,
+        subnet: Optional["_models.Subnet"] = None,
         primary: Optional[bool] = None,
-        public_ip_address: Optional["PublicIPAddress"] = None,
+        public_ip_address: Optional["_models.PublicIPAddress"] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -4734,12 +4695,12 @@ class NetworkInterfaceIPConfiguration(SubResource):
         :keyword private_ip_address:
         :paramtype private_ip_address: str
         :keyword private_ip_allocation_method: Defines how a private IP address is assigned. Possible
-         values are: 'Static' and 'Dynamic'. Possible values include: "Static", "Dynamic".
+         values are: 'Static' and 'Dynamic'. Known values are: "Static" and "Dynamic".
         :paramtype private_ip_allocation_method: str or
          ~azure.mgmt.network.v2016_09_01.models.IPAllocationMethod
         :keyword private_ip_address_version: Available from Api-Version 2016-03-30 onwards, it
          represents whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.
-         Possible values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+         Possible values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
         :paramtype private_ip_address_version: str or ~azure.mgmt.network.v2016_09_01.models.IPVersion
         :keyword subnet: Subnet in a virtual network resource.
         :paramtype subnet: ~azure.mgmt.network.v2016_09_01.models.Subnet
@@ -4750,7 +4711,7 @@ class NetworkInterfaceIPConfiguration(SubResource):
         :keyword provisioning_state:
         :paramtype provisioning_state: str
         """
-        super(NetworkInterfaceIPConfiguration, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.application_gateway_backend_address_pools = application_gateway_backend_address_pools
@@ -4765,7 +4726,7 @@ class NetworkInterfaceIPConfiguration(SubResource):
         self.provisioning_state = provisioning_state
 
 
-class NetworkInterfaceListResult(msrest.serialization.Model):
+class NetworkInterfaceListResult(_serialization.Model):
     """Response for the ListNetworkInterface API service call.
 
     :ivar value: A list of network interfaces in a resource group.
@@ -4775,16 +4736,12 @@ class NetworkInterfaceListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NetworkInterface]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NetworkInterface]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["NetworkInterface"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.NetworkInterface"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: A list of network interfaces in a resource group.
@@ -4792,12 +4749,12 @@ class NetworkInterfaceListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(NetworkInterfaceListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class NetworkSecurityGroup(Resource):
+class NetworkSecurityGroup(Resource):  # pylint: disable=too-many-instance-attributes
     """NetworkSecurityGroup resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4810,7 +4767,7 @@ class NetworkSecurityGroup(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
@@ -4830,36 +4787,36 @@ class NetworkSecurityGroup(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'network_interfaces': {'readonly': True},
-        'subnets': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "network_interfaces": {"readonly": True},
+        "subnets": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'security_rules': {'key': 'properties.securityRules', 'type': '[SecurityRule]'},
-        'default_security_rules': {'key': 'properties.defaultSecurityRules', 'type': '[SecurityRule]'},
-        'network_interfaces': {'key': 'properties.networkInterfaces', 'type': '[NetworkInterface]'},
-        'subnets': {'key': 'properties.subnets', 'type': '[Subnet]'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "security_rules": {"key": "properties.securityRules", "type": "[SecurityRule]"},
+        "default_security_rules": {"key": "properties.defaultSecurityRules", "type": "[SecurityRule]"},
+        "network_interfaces": {"key": "properties.networkInterfaces", "type": "[NetworkInterface]"},
+        "subnets": {"key": "properties.subnets", "type": "[Subnet]"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        security_rules: Optional[List["SecurityRule"]] = None,
-        default_security_rules: Optional[List["SecurityRule"]] = None,
+        security_rules: Optional[List["_models.SecurityRule"]] = None,
+        default_security_rules: Optional[List["_models.SecurityRule"]] = None,
         resource_guid: Optional[str] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
@@ -4869,7 +4826,7 @@ class NetworkSecurityGroup(Resource):
         :paramtype id: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword etag: A unique read-only string that changes whenever the resource is updated.
         :paramtype etag: str
@@ -4883,7 +4840,7 @@ class NetworkSecurityGroup(Resource):
          are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(NetworkSecurityGroup, self).__init__(id=id, location=location, tags=tags, **kwargs)
+        super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.etag = etag
         self.security_rules = security_rules
         self.default_security_rules = default_security_rules
@@ -4893,7 +4850,7 @@ class NetworkSecurityGroup(Resource):
         self.provisioning_state = provisioning_state
 
 
-class NetworkSecurityGroupListResult(msrest.serialization.Model):
+class NetworkSecurityGroupListResult(_serialization.Model):
     """Response for ListNetworkSecurityGroups API service call.
 
     :ivar value: A list of NetworkSecurityGroup resources.
@@ -4903,16 +4860,12 @@ class NetworkSecurityGroupListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NetworkSecurityGroup]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NetworkSecurityGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["NetworkSecurityGroup"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.NetworkSecurityGroup"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: A list of NetworkSecurityGroup resources.
@@ -4920,7 +4873,7 @@ class NetworkSecurityGroupListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(NetworkSecurityGroupListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -4938,35 +4891,35 @@ class NetworkWatcher(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :ivar provisioning_state: The provisioning state of the resource. Possible values include:
-     "Succeeded", "Updating", "Deleting", "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2016_09_01.models.ProvisioningState
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
@@ -4977,17 +4930,17 @@ class NetworkWatcher(Resource):
         :paramtype id: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword etag: A unique read-only string that changes whenever the resource is updated.
         :paramtype etag: str
         """
-        super(NetworkWatcher, self).__init__(id=id, location=location, tags=tags, **kwargs)
+        super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.etag = etag
         self.provisioning_state = None
 
 
-class NetworkWatcherListResult(msrest.serialization.Model):
+class NetworkWatcherListResult(_serialization.Model):
     """List of network watcher resources.
 
     :ivar value:
@@ -4995,34 +4948,29 @@ class NetworkWatcherListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NetworkWatcher]'},
+        "value": {"key": "value", "type": "[NetworkWatcher]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["NetworkWatcher"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.NetworkWatcher"]] = None, **kwargs):
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.network.v2016_09_01.models.NetworkWatcher]
         """
-        super(NetworkWatcherListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class NextHopParameters(msrest.serialization.Model):
+class NextHopParameters(_serialization.Model):
     """Parameters that define the source and destination endpoint.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar target_resource_id: Required. The resource identifier of the target resource against
-     which the action is to be performed.
+    :ivar target_resource_id: The resource identifier of the target resource against which the
+     action is to be performed. Required.
     :vartype target_resource_id: str
-    :ivar source_ip_address: Required. The source IP address.
+    :ivar source_ip_address: The source IP address. Required.
     :vartype source_ip_address: str
-    :ivar destination_ip_address: Required. The destination IP address.
+    :ivar destination_ip_address: The destination IP address. Required.
     :vartype destination_ip_address: str
     :ivar target_nic_resource_id: The NIC ID. (If VM has multiple NICs and IP forwarding is enabled
      on any of the nics, then this parameter must be specified. Otherwise optional).
@@ -5030,16 +4978,16 @@ class NextHopParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'target_resource_id': {'required': True},
-        'source_ip_address': {'required': True},
-        'destination_ip_address': {'required': True},
+        "target_resource_id": {"required": True},
+        "source_ip_address": {"required": True},
+        "destination_ip_address": {"required": True},
     }
 
     _attribute_map = {
-        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
-        'source_ip_address': {'key': 'sourceIPAddress', 'type': 'str'},
-        'destination_ip_address': {'key': 'destinationIPAddress', 'type': 'str'},
-        'target_nic_resource_id': {'key': 'targetNicResourceId', 'type': 'str'},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
+        "source_ip_address": {"key": "sourceIPAddress", "type": "str"},
+        "destination_ip_address": {"key": "destinationIPAddress", "type": "str"},
+        "target_nic_resource_id": {"key": "targetNicResourceId", "type": "str"},
     }
 
     def __init__(
@@ -5052,29 +5000,29 @@ class NextHopParameters(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword target_resource_id: Required. The resource identifier of the target resource against
-         which the action is to be performed.
+        :keyword target_resource_id: The resource identifier of the target resource against which the
+         action is to be performed. Required.
         :paramtype target_resource_id: str
-        :keyword source_ip_address: Required. The source IP address.
+        :keyword source_ip_address: The source IP address. Required.
         :paramtype source_ip_address: str
-        :keyword destination_ip_address: Required. The destination IP address.
+        :keyword destination_ip_address: The destination IP address. Required.
         :paramtype destination_ip_address: str
         :keyword target_nic_resource_id: The NIC ID. (If VM has multiple NICs and IP forwarding is
          enabled on any of the nics, then this parameter must be specified. Otherwise optional).
         :paramtype target_nic_resource_id: str
         """
-        super(NextHopParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.target_resource_id = target_resource_id
         self.source_ip_address = source_ip_address
         self.destination_ip_address = destination_ip_address
         self.target_nic_resource_id = target_nic_resource_id
 
 
-class NextHopResult(msrest.serialization.Model):
+class NextHopResult(_serialization.Model):
     """The information about next hop from the specified VM.
 
-    :ivar next_hop_type: Next hop type. Possible values include: "Internet", "VirtualAppliance",
-     "VirtualNetworkGateway", "VnetLocal", "HyperNetGateway", "None".
+    :ivar next_hop_type: Next hop type. Known values are: "Internet", "VirtualAppliance",
+     "VirtualNetworkGateway", "VnetLocal", "HyperNetGateway", and "None".
     :vartype next_hop_type: str or ~azure.mgmt.network.v2016_09_01.models.NextHopType
     :ivar next_hop_ip_address: Next hop IP Address.
     :vartype next_hop_ip_address: str
@@ -5085,22 +5033,22 @@ class NextHopResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_hop_type': {'key': 'nextHopType', 'type': 'str'},
-        'next_hop_ip_address': {'key': 'nextHopIpAddress', 'type': 'str'},
-        'route_table_id': {'key': 'routeTableId', 'type': 'str'},
+        "next_hop_type": {"key": "nextHopType", "type": "str"},
+        "next_hop_ip_address": {"key": "nextHopIpAddress", "type": "str"},
+        "route_table_id": {"key": "routeTableId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        next_hop_type: Optional[Union[str, "NextHopType"]] = None,
+        next_hop_type: Optional[Union[str, "_models.NextHopType"]] = None,
         next_hop_ip_address: Optional[str] = None,
         route_table_id: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword next_hop_type: Next hop type. Possible values include: "Internet", "VirtualAppliance",
-         "VirtualNetworkGateway", "VnetLocal", "HyperNetGateway", "None".
+        :keyword next_hop_type: Next hop type. Known values are: "Internet", "VirtualAppliance",
+         "VirtualNetworkGateway", "VnetLocal", "HyperNetGateway", and "None".
         :paramtype next_hop_type: str or ~azure.mgmt.network.v2016_09_01.models.NextHopType
         :keyword next_hop_ip_address: Next hop IP Address.
         :paramtype next_hop_ip_address: str
@@ -5109,7 +5057,7 @@ class NextHopResult(msrest.serialization.Model):
          this field will be the string 'System Route'.
         :paramtype route_table_id: str
         """
-        super(NextHopResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.next_hop_type = next_hop_type
         self.next_hop_ip_address = next_hop_ip_address
         self.route_table_id = route_table_id
@@ -5138,24 +5086,24 @@ class OutboundNatRule(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'allocated_outbound_ports': {'key': 'properties.allocatedOutboundPorts', 'type': 'int'},
-        'frontend_ip_configurations': {'key': 'properties.frontendIPConfigurations', 'type': '[SubResource]'},
-        'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "allocated_outbound_ports": {"key": "properties.allocatedOutboundPorts", "type": "int"},
+        "frontend_ip_configurations": {"key": "properties.frontendIPConfigurations", "type": "[SubResource]"},
+        "backend_address_pool": {"key": "properties.backendAddressPool", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
         allocated_outbound_ports: Optional[int] = None,
-        frontend_ip_configurations: Optional[List["SubResource"]] = None,
-        backend_address_pool: Optional["SubResource"] = None,
+        frontend_ip_configurations: Optional[List["_models.SubResource"]] = None,
+        backend_address_pool: Optional["_models.SubResource"] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -5178,7 +5126,7 @@ class OutboundNatRule(SubResource):
          values are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(OutboundNatRule, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.allocated_outbound_ports = allocated_outbound_ports
@@ -5187,12 +5135,12 @@ class OutboundNatRule(SubResource):
         self.provisioning_state = provisioning_state
 
 
-class PacketCapture(msrest.serialization.Model):
+class PacketCapture(_serialization.Model):
     """Parameters that define the create packet capture operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar target: Required. The ID of the targeted resource, only VM is currently supported.
+    :ivar target: The ID of the targeted resource, only VM is currently supported. Required.
     :vartype target: str
     :ivar bytes_to_capture_per_packet: Number of bytes captured per packet, the remaining bytes are
      truncated.
@@ -5201,39 +5149,39 @@ class PacketCapture(msrest.serialization.Model):
     :vartype total_bytes_per_session: int
     :ivar time_limit_in_seconds: Maximum duration of the capture session in seconds.
     :vartype time_limit_in_seconds: int
-    :ivar storage_location: Required. Describes the storage location for a packet capture session.
+    :ivar storage_location: Describes the storage location for a packet capture session. Required.
     :vartype storage_location: ~azure.mgmt.network.v2016_09_01.models.PacketCaptureStorageLocation
     :ivar filters:
     :vartype filters: list[~azure.mgmt.network.v2016_09_01.models.PacketCaptureFilter]
     """
 
     _validation = {
-        'target': {'required': True},
-        'storage_location': {'required': True},
+        "target": {"required": True},
+        "storage_location": {"required": True},
     }
 
     _attribute_map = {
-        'target': {'key': 'properties.target', 'type': 'str'},
-        'bytes_to_capture_per_packet': {'key': 'properties.bytesToCapturePerPacket', 'type': 'int'},
-        'total_bytes_per_session': {'key': 'properties.totalBytesPerSession', 'type': 'int'},
-        'time_limit_in_seconds': {'key': 'properties.timeLimitInSeconds', 'type': 'int'},
-        'storage_location': {'key': 'properties.storageLocation', 'type': 'PacketCaptureStorageLocation'},
-        'filters': {'key': 'properties.filters', 'type': '[PacketCaptureFilter]'},
+        "target": {"key": "properties.target", "type": "str"},
+        "bytes_to_capture_per_packet": {"key": "properties.bytesToCapturePerPacket", "type": "int"},
+        "total_bytes_per_session": {"key": "properties.totalBytesPerSession", "type": "int"},
+        "time_limit_in_seconds": {"key": "properties.timeLimitInSeconds", "type": "int"},
+        "storage_location": {"key": "properties.storageLocation", "type": "PacketCaptureStorageLocation"},
+        "filters": {"key": "properties.filters", "type": "[PacketCaptureFilter]"},
     }
 
     def __init__(
         self,
         *,
         target: str,
-        storage_location: "PacketCaptureStorageLocation",
-        bytes_to_capture_per_packet: Optional[int] = 0,
-        total_bytes_per_session: Optional[int] = 1073741824,
-        time_limit_in_seconds: Optional[int] = 18000,
-        filters: Optional[List["PacketCaptureFilter"]] = None,
+        storage_location: "_models.PacketCaptureStorageLocation",
+        bytes_to_capture_per_packet: int = 0,
+        total_bytes_per_session: int = 1073741824,
+        time_limit_in_seconds: int = 18000,
+        filters: Optional[List["_models.PacketCaptureFilter"]] = None,
         **kwargs
     ):
         """
-        :keyword target: Required. The ID of the targeted resource, only VM is currently supported.
+        :keyword target: The ID of the targeted resource, only VM is currently supported. Required.
         :paramtype target: str
         :keyword bytes_to_capture_per_packet: Number of bytes captured per packet, the remaining bytes
          are truncated.
@@ -5242,14 +5190,14 @@ class PacketCapture(msrest.serialization.Model):
         :paramtype total_bytes_per_session: int
         :keyword time_limit_in_seconds: Maximum duration of the capture session in seconds.
         :paramtype time_limit_in_seconds: int
-        :keyword storage_location: Required. Describes the storage location for a packet capture
-         session.
+        :keyword storage_location: Describes the storage location for a packet capture session.
+         Required.
         :paramtype storage_location:
          ~azure.mgmt.network.v2016_09_01.models.PacketCaptureStorageLocation
         :keyword filters:
         :paramtype filters: list[~azure.mgmt.network.v2016_09_01.models.PacketCaptureFilter]
         """
-        super(PacketCapture, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.target = target
         self.bytes_to_capture_per_packet = bytes_to_capture_per_packet
         self.total_bytes_per_session = total_bytes_per_session
@@ -5258,11 +5206,10 @@ class PacketCapture(msrest.serialization.Model):
         self.filters = filters
 
 
-class PacketCaptureFilter(msrest.serialization.Model):
+class PacketCaptureFilter(_serialization.Model):
     """Filter that is applied to packet capture request. Multiple filters can be applied.
 
-    :ivar protocol: Protocol to be filtered on. Possible values include: "TCP", "UDP", "Any".
-     Default value: "Any".
+    :ivar protocol: Protocol to be filtered on. Known values are: "TCP", "UDP", and "Any".
     :vartype protocol: str or ~azure.mgmt.network.v2016_09_01.models.PcProtocol
     :ivar local_ip_address: Local IP Address to be filtered on. Notation: "127.0.0.1" for single
      address entry. "127.0.0.1-127.0.0.255" for range. "127.0.0.1;127.0.0.5"? for multiple entries.
@@ -5285,17 +5232,17 @@ class PacketCaptureFilter(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'local_ip_address': {'key': 'localIPAddress', 'type': 'str'},
-        'remote_ip_address': {'key': 'remoteIPAddress', 'type': 'str'},
-        'local_port': {'key': 'localPort', 'type': 'str'},
-        'remote_port': {'key': 'remotePort', 'type': 'str'},
+        "protocol": {"key": "protocol", "type": "str"},
+        "local_ip_address": {"key": "localIPAddress", "type": "str"},
+        "remote_ip_address": {"key": "remoteIPAddress", "type": "str"},
+        "local_port": {"key": "localPort", "type": "str"},
+        "remote_port": {"key": "remotePort", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        protocol: Optional[Union[str, "PcProtocol"]] = "Any",
+        protocol: Union[str, "_models.PcProtocol"] = "Any",
         local_ip_address: Optional[str] = None,
         remote_ip_address: Optional[str] = None,
         local_port: Optional[str] = None,
@@ -5303,8 +5250,7 @@ class PacketCaptureFilter(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword protocol: Protocol to be filtered on. Possible values include: "TCP", "UDP", "Any".
-         Default value: "Any".
+        :keyword protocol: Protocol to be filtered on. Known values are: "TCP", "UDP", and "Any".
         :paramtype protocol: str or ~azure.mgmt.network.v2016_09_01.models.PcProtocol
         :keyword local_ip_address: Local IP Address to be filtered on. Notation: "127.0.0.1" for single
          address entry. "127.0.0.1-127.0.0.255" for range. "127.0.0.1;127.0.0.5"? for multiple entries.
@@ -5325,7 +5271,7 @@ class PacketCaptureFilter(msrest.serialization.Model):
          supported. Mixing ranges with multiple entries not currently supported. Default = null.
         :paramtype remote_port: str
         """
-        super(PacketCaptureFilter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.protocol = protocol
         self.local_ip_address = local_ip_address
         self.remote_ip_address = remote_ip_address
@@ -5333,7 +5279,7 @@ class PacketCaptureFilter(msrest.serialization.Model):
         self.remote_port = remote_port
 
 
-class PacketCaptureListResult(msrest.serialization.Model):
+class PacketCaptureListResult(_serialization.Model):
     """List of packet capture sessions.
 
     :ivar value: Information about packet capture sessions.
@@ -5341,29 +5287,24 @@ class PacketCaptureListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PacketCaptureResult]'},
+        "value": {"key": "value", "type": "[PacketCaptureResult]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["PacketCaptureResult"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.PacketCaptureResult"]] = None, **kwargs):
         """
         :keyword value: Information about packet capture sessions.
         :paramtype value: list[~azure.mgmt.network.v2016_09_01.models.PacketCaptureResult]
         """
-        super(PacketCaptureListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class PacketCaptureParameters(msrest.serialization.Model):
+class PacketCaptureParameters(_serialization.Model):
     """Parameters that define the create packet capture operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar target: Required. The ID of the targeted resource, only VM is currently supported.
+    :ivar target: The ID of the targeted resource, only VM is currently supported. Required.
     :vartype target: str
     :ivar bytes_to_capture_per_packet: Number of bytes captured per packet, the remaining bytes are
      truncated.
@@ -5372,39 +5313,39 @@ class PacketCaptureParameters(msrest.serialization.Model):
     :vartype total_bytes_per_session: int
     :ivar time_limit_in_seconds: Maximum duration of the capture session in seconds.
     :vartype time_limit_in_seconds: int
-    :ivar storage_location: Required. Describes the storage location for a packet capture session.
+    :ivar storage_location: Describes the storage location for a packet capture session. Required.
     :vartype storage_location: ~azure.mgmt.network.v2016_09_01.models.PacketCaptureStorageLocation
     :ivar filters:
     :vartype filters: list[~azure.mgmt.network.v2016_09_01.models.PacketCaptureFilter]
     """
 
     _validation = {
-        'target': {'required': True},
-        'storage_location': {'required': True},
+        "target": {"required": True},
+        "storage_location": {"required": True},
     }
 
     _attribute_map = {
-        'target': {'key': 'target', 'type': 'str'},
-        'bytes_to_capture_per_packet': {'key': 'bytesToCapturePerPacket', 'type': 'int'},
-        'total_bytes_per_session': {'key': 'totalBytesPerSession', 'type': 'int'},
-        'time_limit_in_seconds': {'key': 'timeLimitInSeconds', 'type': 'int'},
-        'storage_location': {'key': 'storageLocation', 'type': 'PacketCaptureStorageLocation'},
-        'filters': {'key': 'filters', 'type': '[PacketCaptureFilter]'},
+        "target": {"key": "target", "type": "str"},
+        "bytes_to_capture_per_packet": {"key": "bytesToCapturePerPacket", "type": "int"},
+        "total_bytes_per_session": {"key": "totalBytesPerSession", "type": "int"},
+        "time_limit_in_seconds": {"key": "timeLimitInSeconds", "type": "int"},
+        "storage_location": {"key": "storageLocation", "type": "PacketCaptureStorageLocation"},
+        "filters": {"key": "filters", "type": "[PacketCaptureFilter]"},
     }
 
     def __init__(
         self,
         *,
         target: str,
-        storage_location: "PacketCaptureStorageLocation",
-        bytes_to_capture_per_packet: Optional[int] = 0,
-        total_bytes_per_session: Optional[int] = 1073741824,
-        time_limit_in_seconds: Optional[int] = 18000,
-        filters: Optional[List["PacketCaptureFilter"]] = None,
+        storage_location: "_models.PacketCaptureStorageLocation",
+        bytes_to_capture_per_packet: int = 0,
+        total_bytes_per_session: int = 1073741824,
+        time_limit_in_seconds: int = 18000,
+        filters: Optional[List["_models.PacketCaptureFilter"]] = None,
         **kwargs
     ):
         """
-        :keyword target: Required. The ID of the targeted resource, only VM is currently supported.
+        :keyword target: The ID of the targeted resource, only VM is currently supported. Required.
         :paramtype target: str
         :keyword bytes_to_capture_per_packet: Number of bytes captured per packet, the remaining bytes
          are truncated.
@@ -5413,14 +5354,14 @@ class PacketCaptureParameters(msrest.serialization.Model):
         :paramtype total_bytes_per_session: int
         :keyword time_limit_in_seconds: Maximum duration of the capture session in seconds.
         :paramtype time_limit_in_seconds: int
-        :keyword storage_location: Required. Describes the storage location for a packet capture
-         session.
+        :keyword storage_location: Describes the storage location for a packet capture session.
+         Required.
         :paramtype storage_location:
          ~azure.mgmt.network.v2016_09_01.models.PacketCaptureStorageLocation
         :keyword filters:
         :paramtype filters: list[~azure.mgmt.network.v2016_09_01.models.PacketCaptureFilter]
         """
-        super(PacketCaptureParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.target = target
         self.bytes_to_capture_per_packet = bytes_to_capture_per_packet
         self.total_bytes_per_session = total_bytes_per_session
@@ -5429,7 +5370,7 @@ class PacketCaptureParameters(msrest.serialization.Model):
         self.filters = filters
 
 
-class PacketCaptureQueryStatusResult(msrest.serialization.Model):
+class PacketCaptureQueryStatusResult(_serialization.Model):
     """Status of packet capture session.
 
     :ivar name: The name of the packet capture resource.
@@ -5438,8 +5379,8 @@ class PacketCaptureQueryStatusResult(msrest.serialization.Model):
     :vartype id: str
     :ivar capture_start_time: The start time of the packet capture session.
     :vartype capture_start_time: ~datetime.datetime
-    :ivar packet_capture_status: The status of the packet capture session. Possible values include:
-     "NotStarted", "Running", "Stopped", "Error", "Unknown".
+    :ivar packet_capture_status: The status of the packet capture session. Known values are:
+     "NotStarted", "Running", "Stopped", "Error", and "Unknown".
     :vartype packet_capture_status: str or ~azure.mgmt.network.v2016_09_01.models.PcStatus
     :ivar stop_reason: The reason the current packet capture session was stopped.
     :vartype stop_reason: str
@@ -5448,23 +5389,23 @@ class PacketCaptureQueryStatusResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'capture_start_time': {'key': 'captureStartTime', 'type': 'iso-8601'},
-        'packet_capture_status': {'key': 'packetCaptureStatus', 'type': 'str'},
-        'stop_reason': {'key': 'stopReason', 'type': 'str'},
-        'packet_capture_error': {'key': 'packetCaptureError', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "capture_start_time": {"key": "captureStartTime", "type": "iso-8601"},
+        "packet_capture_status": {"key": "packetCaptureStatus", "type": "str"},
+        "stop_reason": {"key": "stopReason", "type": "str"},
+        "packet_capture_error": {"key": "packetCaptureError", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         capture_start_time: Optional[datetime.datetime] = None,
-        packet_capture_status: Optional[Union[str, "PcStatus"]] = None,
+        packet_capture_status: Optional[Union[str, "_models.PcStatus"]] = None,
         stop_reason: Optional[str] = None,
-        packet_capture_error: Optional[List[Union[str, "PcError"]]] = None,
+        packet_capture_error: Optional[List[Union[str, "_models.PcError"]]] = None,
         **kwargs
     ):
         """
@@ -5474,15 +5415,15 @@ class PacketCaptureQueryStatusResult(msrest.serialization.Model):
         :paramtype id: str
         :keyword capture_start_time: The start time of the packet capture session.
         :paramtype capture_start_time: ~datetime.datetime
-        :keyword packet_capture_status: The status of the packet capture session. Possible values
-         include: "NotStarted", "Running", "Stopped", "Error", "Unknown".
+        :keyword packet_capture_status: The status of the packet capture session. Known values are:
+         "NotStarted", "Running", "Stopped", "Error", and "Unknown".
         :paramtype packet_capture_status: str or ~azure.mgmt.network.v2016_09_01.models.PcStatus
         :keyword stop_reason: The reason the current packet capture session was stopped.
         :paramtype stop_reason: str
         :keyword packet_capture_error: List of errors of packet capture session.
         :paramtype packet_capture_error: list[str or ~azure.mgmt.network.v2016_09_01.models.PcError]
         """
-        super(PacketCaptureQueryStatusResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.id = id
         self.capture_start_time = capture_start_time
@@ -5491,7 +5432,7 @@ class PacketCaptureQueryStatusResult(msrest.serialization.Model):
         self.packet_capture_error = packet_capture_error
 
 
-class PacketCaptureResult(msrest.serialization.Model):
+class PacketCaptureResult(_serialization.Model):
     """Information about packet capture session.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5515,40 +5456,40 @@ class PacketCaptureResult(msrest.serialization.Model):
     :vartype storage_location: ~azure.mgmt.network.v2016_09_01.models.PacketCaptureStorageLocation
     :ivar filters:
     :vartype filters: list[~azure.mgmt.network.v2016_09_01.models.PacketCaptureFilter]
-    :ivar provisioning_state: The provisioning state of the packet capture session. Possible values
-     include: "Succeeded", "Updating", "Deleting", "Failed".
+    :ivar provisioning_state: The provisioning state of the packet capture session. Known values
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2016_09_01.models.ProvisioningState
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'target': {'key': 'properties.target', 'type': 'str'},
-        'bytes_to_capture_per_packet': {'key': 'properties.bytesToCapturePerPacket', 'type': 'int'},
-        'total_bytes_per_session': {'key': 'properties.totalBytesPerSession', 'type': 'int'},
-        'time_limit_in_seconds': {'key': 'properties.timeLimitInSeconds', 'type': 'int'},
-        'storage_location': {'key': 'properties.storageLocation', 'type': 'PacketCaptureStorageLocation'},
-        'filters': {'key': 'properties.filters', 'type': '[PacketCaptureFilter]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "target": {"key": "properties.target", "type": "str"},
+        "bytes_to_capture_per_packet": {"key": "properties.bytesToCapturePerPacket", "type": "int"},
+        "total_bytes_per_session": {"key": "properties.totalBytesPerSession", "type": "int"},
+        "time_limit_in_seconds": {"key": "properties.timeLimitInSeconds", "type": "int"},
+        "storage_location": {"key": "properties.storageLocation", "type": "PacketCaptureStorageLocation"},
+        "filters": {"key": "properties.filters", "type": "[PacketCaptureFilter]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        etag: Optional[str] = "A unique read-only string that changes whenever the resource is updated.",
+        etag: str = "A unique read-only string that changes whenever the resource is updated.",
         target: Optional[str] = None,
-        bytes_to_capture_per_packet: Optional[int] = 0,
-        total_bytes_per_session: Optional[int] = 1073741824,
-        time_limit_in_seconds: Optional[int] = 18000,
-        storage_location: Optional["PacketCaptureStorageLocation"] = None,
-        filters: Optional[List["PacketCaptureFilter"]] = None,
-        provisioning_state: Optional[Union[str, "ProvisioningState"]] = None,
+        bytes_to_capture_per_packet: int = 0,
+        total_bytes_per_session: int = 1073741824,
+        time_limit_in_seconds: int = 18000,
+        storage_location: Optional["_models.PacketCaptureStorageLocation"] = None,
+        filters: Optional[List["_models.PacketCaptureFilter"]] = None,
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         **kwargs
     ):
         """
@@ -5568,11 +5509,11 @@ class PacketCaptureResult(msrest.serialization.Model):
          ~azure.mgmt.network.v2016_09_01.models.PacketCaptureStorageLocation
         :keyword filters:
         :paramtype filters: list[~azure.mgmt.network.v2016_09_01.models.PacketCaptureFilter]
-        :keyword provisioning_state: The provisioning state of the packet capture session. Possible
-         values include: "Succeeded", "Updating", "Deleting", "Failed".
+        :keyword provisioning_state: The provisioning state of the packet capture session. Known values
+         are: "Succeeded", "Updating", "Deleting", and "Failed".
         :paramtype provisioning_state: str or ~azure.mgmt.network.v2016_09_01.models.ProvisioningState
         """
-        super(PacketCaptureResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.id = None
         self.etag = etag
@@ -5590,7 +5531,7 @@ class PacketCaptureResultProperties(PacketCaptureParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar target: Required. The ID of the targeted resource, only VM is currently supported.
+    :ivar target: The ID of the targeted resource, only VM is currently supported. Required.
     :vartype target: str
     :ivar bytes_to_capture_per_packet: Number of bytes captured per packet, the remaining bytes are
      truncated.
@@ -5599,44 +5540,44 @@ class PacketCaptureResultProperties(PacketCaptureParameters):
     :vartype total_bytes_per_session: int
     :ivar time_limit_in_seconds: Maximum duration of the capture session in seconds.
     :vartype time_limit_in_seconds: int
-    :ivar storage_location: Required. Describes the storage location for a packet capture session.
+    :ivar storage_location: Describes the storage location for a packet capture session. Required.
     :vartype storage_location: ~azure.mgmt.network.v2016_09_01.models.PacketCaptureStorageLocation
     :ivar filters:
     :vartype filters: list[~azure.mgmt.network.v2016_09_01.models.PacketCaptureFilter]
-    :ivar provisioning_state: The provisioning state of the packet capture session. Possible values
-     include: "Succeeded", "Updating", "Deleting", "Failed".
+    :ivar provisioning_state: The provisioning state of the packet capture session. Known values
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2016_09_01.models.ProvisioningState
     """
 
     _validation = {
-        'target': {'required': True},
-        'storage_location': {'required': True},
+        "target": {"required": True},
+        "storage_location": {"required": True},
     }
 
     _attribute_map = {
-        'target': {'key': 'target', 'type': 'str'},
-        'bytes_to_capture_per_packet': {'key': 'bytesToCapturePerPacket', 'type': 'int'},
-        'total_bytes_per_session': {'key': 'totalBytesPerSession', 'type': 'int'},
-        'time_limit_in_seconds': {'key': 'timeLimitInSeconds', 'type': 'int'},
-        'storage_location': {'key': 'storageLocation', 'type': 'PacketCaptureStorageLocation'},
-        'filters': {'key': 'filters', 'type': '[PacketCaptureFilter]'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "target": {"key": "target", "type": "str"},
+        "bytes_to_capture_per_packet": {"key": "bytesToCapturePerPacket", "type": "int"},
+        "total_bytes_per_session": {"key": "totalBytesPerSession", "type": "int"},
+        "time_limit_in_seconds": {"key": "timeLimitInSeconds", "type": "int"},
+        "storage_location": {"key": "storageLocation", "type": "PacketCaptureStorageLocation"},
+        "filters": {"key": "filters", "type": "[PacketCaptureFilter]"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         target: str,
-        storage_location: "PacketCaptureStorageLocation",
-        bytes_to_capture_per_packet: Optional[int] = 0,
-        total_bytes_per_session: Optional[int] = 1073741824,
-        time_limit_in_seconds: Optional[int] = 18000,
-        filters: Optional[List["PacketCaptureFilter"]] = None,
-        provisioning_state: Optional[Union[str, "ProvisioningState"]] = None,
+        storage_location: "_models.PacketCaptureStorageLocation",
+        bytes_to_capture_per_packet: int = 0,
+        total_bytes_per_session: int = 1073741824,
+        time_limit_in_seconds: int = 18000,
+        filters: Optional[List["_models.PacketCaptureFilter"]] = None,
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         **kwargs
     ):
         """
-        :keyword target: Required. The ID of the targeted resource, only VM is currently supported.
+        :keyword target: The ID of the targeted resource, only VM is currently supported. Required.
         :paramtype target: str
         :keyword bytes_to_capture_per_packet: Number of bytes captured per packet, the remaining bytes
          are truncated.
@@ -5645,21 +5586,29 @@ class PacketCaptureResultProperties(PacketCaptureParameters):
         :paramtype total_bytes_per_session: int
         :keyword time_limit_in_seconds: Maximum duration of the capture session in seconds.
         :paramtype time_limit_in_seconds: int
-        :keyword storage_location: Required. Describes the storage location for a packet capture
-         session.
+        :keyword storage_location: Describes the storage location for a packet capture session.
+         Required.
         :paramtype storage_location:
          ~azure.mgmt.network.v2016_09_01.models.PacketCaptureStorageLocation
         :keyword filters:
         :paramtype filters: list[~azure.mgmt.network.v2016_09_01.models.PacketCaptureFilter]
-        :keyword provisioning_state: The provisioning state of the packet capture session. Possible
-         values include: "Succeeded", "Updating", "Deleting", "Failed".
+        :keyword provisioning_state: The provisioning state of the packet capture session. Known values
+         are: "Succeeded", "Updating", "Deleting", and "Failed".
         :paramtype provisioning_state: str or ~azure.mgmt.network.v2016_09_01.models.ProvisioningState
         """
-        super(PacketCaptureResultProperties, self).__init__(target=target, bytes_to_capture_per_packet=bytes_to_capture_per_packet, total_bytes_per_session=total_bytes_per_session, time_limit_in_seconds=time_limit_in_seconds, storage_location=storage_location, filters=filters, **kwargs)
+        super().__init__(
+            target=target,
+            bytes_to_capture_per_packet=bytes_to_capture_per_packet,
+            total_bytes_per_session=total_bytes_per_session,
+            time_limit_in_seconds=time_limit_in_seconds,
+            storage_location=storage_location,
+            filters=filters,
+            **kwargs
+        )
         self.provisioning_state = provisioning_state
 
 
-class PacketCaptureStorageLocation(msrest.serialization.Model):
+class PacketCaptureStorageLocation(_serialization.Model):
     """Describes the storage location for a packet capture session.
 
     :ivar storage_id: The ID of the storage account to save the packet capture session. Required if
@@ -5675,9 +5624,9 @@ class PacketCaptureStorageLocation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'storage_id': {'key': 'storageId', 'type': 'str'},
-        'storage_path': {'key': 'storagePath', 'type': 'str'},
-        'file_path': {'key': 'filePath', 'type': 'str'},
+        "storage_id": {"key": "storageId", "type": "str"},
+        "storage_path": {"key": "storagePath", "type": "str"},
+        "file_path": {"key": "filePath", "type": "str"},
     }
 
     def __init__(
@@ -5700,7 +5649,7 @@ class PacketCaptureStorageLocation(msrest.serialization.Model):
          no storage ID is provided, otherwise optional.
         :paramtype file_path: str
         """
-        super(PacketCaptureStorageLocation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.storage_id = storage_id
         self.storage_path = storage_path
         self.file_path = file_path
@@ -5723,7 +5672,7 @@ class Probe(SubResource):
     :ivar protocol: The protocol of the end point. Possible values are: 'Http' or 'Tcp'. If 'Tcp'
      is specified, a received ACK is required for the probe to be successful. If 'Http' is
      specified, a 200 OK response from the specifies URI is required for the probe to be successful.
-     Possible values include: "Http", "Tcp".
+     Known values are: "Http" and "Tcp".
     :vartype protocol: str or ~azure.mgmt.network.v2016_09_01.models.ProbeProtocol
     :ivar port: The port for communicating the probe. Possible values range from 1 to 65535,
      inclusive.
@@ -5746,29 +5695,29 @@ class Probe(SubResource):
     """
 
     _validation = {
-        'load_balancing_rules': {'readonly': True},
+        "load_balancing_rules": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'port': {'key': 'properties.port', 'type': 'int'},
-        'interval_in_seconds': {'key': 'properties.intervalInSeconds', 'type': 'int'},
-        'number_of_probes': {'key': 'properties.numberOfProbes', 'type': 'int'},
-        'request_path': {'key': 'properties.requestPath', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "load_balancing_rules": {"key": "properties.loadBalancingRules", "type": "[SubResource]"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "port": {"key": "properties.port", "type": "int"},
+        "interval_in_seconds": {"key": "properties.intervalInSeconds", "type": "int"},
+        "number_of_probes": {"key": "properties.numberOfProbes", "type": "int"},
+        "request_path": {"key": "properties.requestPath", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
-        protocol: Optional[Union[str, "ProbeProtocol"]] = None,
+        protocol: Optional[Union[str, "_models.ProbeProtocol"]] = None,
         port: Optional[int] = None,
         interval_in_seconds: Optional[int] = None,
         number_of_probes: Optional[int] = None,
@@ -5787,7 +5736,7 @@ class Probe(SubResource):
         :keyword protocol: The protocol of the end point. Possible values are: 'Http' or 'Tcp'. If
          'Tcp' is specified, a received ACK is required for the probe to be successful. If 'Http' is
          specified, a 200 OK response from the specifies URI is required for the probe to be successful.
-         Possible values include: "Http", "Tcp".
+         Known values are: "Http" and "Tcp".
         :paramtype protocol: str or ~azure.mgmt.network.v2016_09_01.models.ProbeProtocol
         :keyword port: The port for communicating the probe. Possible values range from 1 to 65535,
          inclusive.
@@ -5808,7 +5757,7 @@ class Probe(SubResource):
          values are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(Probe, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.load_balancing_rules = None
@@ -5820,7 +5769,7 @@ class Probe(SubResource):
         self.provisioning_state = provisioning_state
 
 
-class PublicIPAddress(Resource):
+class PublicIPAddress(Resource):  # pylint: disable=too-many-instance-attributes
     """Public IP address resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5833,16 +5782,16 @@ class PublicIPAddress(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar public_ip_allocation_method: The public IP allocation method. Possible values are:
-     'Static' and 'Dynamic'. Possible values include: "Static", "Dynamic".
+     'Static' and 'Dynamic'. Known values are: "Static" and "Dynamic".
     :vartype public_ip_allocation_method: str or
      ~azure.mgmt.network.v2016_09_01.models.IPAllocationMethod
     :ivar public_ip_address_version: The public IP address version. Possible values are: 'IPv4' and
-     'IPv6'. Possible values include: "IPv4", "IPv6".
+     'IPv6'. Known values are: "IPv4" and "IPv6".
     :vartype public_ip_address_version: str or ~azure.mgmt.network.v2016_09_01.models.IPVersion
     :ivar ip_configuration: IPConfiguration.
     :vartype ip_configuration: ~azure.mgmt.network.v2016_09_01.models.IPConfiguration
@@ -5860,38 +5809,38 @@ class PublicIPAddress(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'ip_configuration': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "ip_configuration": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'public_ip_allocation_method': {'key': 'properties.publicIPAllocationMethod', 'type': 'str'},
-        'public_ip_address_version': {'key': 'properties.publicIPAddressVersion', 'type': 'str'},
-        'ip_configuration': {'key': 'properties.ipConfiguration', 'type': 'IPConfiguration'},
-        'dns_settings': {'key': 'properties.dnsSettings', 'type': 'PublicIPAddressDnsSettings'},
-        'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
-        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "public_ip_allocation_method": {"key": "properties.publicIPAllocationMethod", "type": "str"},
+        "public_ip_address_version": {"key": "properties.publicIPAddressVersion", "type": "str"},
+        "ip_configuration": {"key": "properties.ipConfiguration", "type": "IPConfiguration"},
+        "dns_settings": {"key": "properties.dnsSettings", "type": "PublicIPAddressDnsSettings"},
+        "ip_address": {"key": "properties.ipAddress", "type": "str"},
+        "idle_timeout_in_minutes": {"key": "properties.idleTimeoutInMinutes", "type": "int"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        public_ip_allocation_method: Optional[Union[str, "IPAllocationMethod"]] = None,
-        public_ip_address_version: Optional[Union[str, "IPVersion"]] = None,
-        dns_settings: Optional["PublicIPAddressDnsSettings"] = None,
+        public_ip_allocation_method: Optional[Union[str, "_models.IPAllocationMethod"]] = None,
+        public_ip_address_version: Optional[Union[str, "_models.IPVersion"]] = None,
+        dns_settings: Optional["_models.PublicIPAddressDnsSettings"] = None,
         ip_address: Optional[str] = None,
         idle_timeout_in_minutes: Optional[int] = None,
         resource_guid: Optional[str] = None,
@@ -5903,16 +5852,16 @@ class PublicIPAddress(Resource):
         :paramtype id: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword etag: A unique read-only string that changes whenever the resource is updated.
         :paramtype etag: str
         :keyword public_ip_allocation_method: The public IP allocation method. Possible values are:
-         'Static' and 'Dynamic'. Possible values include: "Static", "Dynamic".
+         'Static' and 'Dynamic'. Known values are: "Static" and "Dynamic".
         :paramtype public_ip_allocation_method: str or
          ~azure.mgmt.network.v2016_09_01.models.IPAllocationMethod
         :keyword public_ip_address_version: The public IP address version. Possible values are: 'IPv4'
-         and 'IPv6'. Possible values include: "IPv4", "IPv6".
+         and 'IPv6'. Known values are: "IPv4" and "IPv6".
         :paramtype public_ip_address_version: str or ~azure.mgmt.network.v2016_09_01.models.IPVersion
         :keyword dns_settings: The FQDN of the DNS record associated with the public IP address.
         :paramtype dns_settings: ~azure.mgmt.network.v2016_09_01.models.PublicIPAddressDnsSettings
@@ -5926,7 +5875,7 @@ class PublicIPAddress(Resource):
          are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(PublicIPAddress, self).__init__(id=id, location=location, tags=tags, **kwargs)
+        super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.etag = etag
         self.public_ip_allocation_method = public_ip_allocation_method
         self.public_ip_address_version = public_ip_address_version
@@ -5938,7 +5887,7 @@ class PublicIPAddress(Resource):
         self.provisioning_state = provisioning_state
 
 
-class PublicIPAddressDnsSettings(msrest.serialization.Model):
+class PublicIPAddressDnsSettings(_serialization.Model):
     """Contains FQDN of the DNS record associated with the public IP address.
 
     :ivar domain_name_label: Gets or sets the Domain name label.The concatenation of the domain
@@ -5956,9 +5905,9 @@ class PublicIPAddressDnsSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'domain_name_label': {'key': 'domainNameLabel', 'type': 'str'},
-        'fqdn': {'key': 'fqdn', 'type': 'str'},
-        'reverse_fqdn': {'key': 'reverseFqdn', 'type': 'str'},
+        "domain_name_label": {"key": "domainNameLabel", "type": "str"},
+        "fqdn": {"key": "fqdn", "type": "str"},
+        "reverse_fqdn": {"key": "reverseFqdn", "type": "str"},
     }
 
     def __init__(
@@ -5983,13 +5932,13 @@ class PublicIPAddressDnsSettings(msrest.serialization.Model):
          record is created pointing from the IP address in the in-addr.arpa domain to the reverse FQDN.
         :paramtype reverse_fqdn: str
         """
-        super(PublicIPAddressDnsSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.domain_name_label = domain_name_label
         self.fqdn = fqdn
         self.reverse_fqdn = reverse_fqdn
 
 
-class PublicIPAddressListResult(msrest.serialization.Model):
+class PublicIPAddressListResult(_serialization.Model):
     """Response for ListPublicIpAddresses API service call.
 
     :ivar value: A list of public IP addresses that exists in a resource group.
@@ -5999,16 +5948,12 @@ class PublicIPAddressListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PublicIPAddress]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PublicIPAddress]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["PublicIPAddress"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.PublicIPAddress"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: A list of public IP addresses that exists in a resource group.
@@ -6016,40 +5961,35 @@ class PublicIPAddressListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(PublicIPAddressListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class QueryTroubleshootingParameters(msrest.serialization.Model):
+class QueryTroubleshootingParameters(_serialization.Model):
     """Parameters that define the resource to query the troubleshooting result.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar target_resource_id: Required. The target resource ID to query the troubleshooting result.
+    :ivar target_resource_id: The target resource ID to query the troubleshooting result. Required.
     :vartype target_resource_id: str
     """
 
     _validation = {
-        'target_resource_id': {'required': True},
+        "target_resource_id": {"required": True},
     }
 
     _attribute_map = {
-        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        target_resource_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, target_resource_id: str, **kwargs):
         """
-        :keyword target_resource_id: Required. The target resource ID to query the troubleshooting
-         result.
+        :keyword target_resource_id: The target resource ID to query the troubleshooting result.
+         Required.
         :paramtype target_resource_id: str
         """
-        super(QueryTroubleshootingParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.target_resource_id = target_resource_id
 
 
@@ -6074,23 +6014,23 @@ class ResourceNavigationLink(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'linked_resource_type': {'key': 'properties.linkedResourceType', 'type': 'str'},
-        'link': {'key': 'properties.link', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "linked_resource_type": {"key": "properties.linkedResourceType", "type": "str"},
+        "link": {"key": "properties.link", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         linked_resource_type: Optional[str] = None,
         link: Optional[str] = None,
@@ -6107,7 +6047,7 @@ class ResourceNavigationLink(SubResource):
         :keyword link: Link to the external resource.
         :paramtype link: str
         """
-        super(ResourceNavigationLink, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = None
         self.linked_resource_type = linked_resource_type
@@ -6115,7 +6055,7 @@ class ResourceNavigationLink(SubResource):
         self.provisioning_state = None
 
 
-class RetentionPolicyParameters(msrest.serialization.Model):
+class RetentionPolicyParameters(_serialization.Model):
     """Parameters that define the retention policy for flow log.
 
     :ivar days: Number of days to retain flow log records.
@@ -6125,24 +6065,18 @@ class RetentionPolicyParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'days': {'key': 'days', 'type': 'int'},
-        'enabled': {'key': 'enabled', 'type': 'bool'},
+        "days": {"key": "days", "type": "int"},
+        "enabled": {"key": "enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        days: Optional[int] = 0,
-        enabled: Optional[bool] = False,
-        **kwargs
-    ):
+    def __init__(self, *, days: int = 0, enabled: bool = False, **kwargs):
         """
         :keyword days: Number of days to retain flow log records.
         :paramtype days: int
         :keyword enabled: Flag to enable/disable retention.
         :paramtype enabled: bool
         """
-        super(RetentionPolicyParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.days = days
         self.enabled = enabled
 
@@ -6160,8 +6094,8 @@ class Route(SubResource):
     :ivar address_prefix: The destination CIDR to which the route applies.
     :vartype address_prefix: str
     :ivar next_hop_type: The type of Azure hop the packet should be sent to. Possible values are:
-     'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance', and 'None'. Possible
-     values include: "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance", "None".
+     'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance', and 'None'. Known values
+     are: "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance", and "None".
     :vartype next_hop_type: str or ~azure.mgmt.network.v2016_09_01.models.RouteNextHopType
     :ivar next_hop_ip_address: The IP address packets should be forwarded to. Next hop values are
      only allowed in routes where the next hop type is VirtualAppliance.
@@ -6172,23 +6106,23 @@ class Route(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str'},
-        'next_hop_type': {'key': 'properties.nextHopType', 'type': 'str'},
-        'next_hop_ip_address': {'key': 'properties.nextHopIpAddress', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "address_prefix": {"key": "properties.addressPrefix", "type": "str"},
+        "next_hop_type": {"key": "properties.nextHopType", "type": "str"},
+        "next_hop_ip_address": {"key": "properties.nextHopIpAddress", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
         address_prefix: Optional[str] = None,
-        next_hop_type: Optional[Union[str, "RouteNextHopType"]] = None,
+        next_hop_type: Optional[Union[str, "_models.RouteNextHopType"]] = None,
         next_hop_ip_address: Optional[str] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
@@ -6204,8 +6138,8 @@ class Route(SubResource):
         :keyword address_prefix: The destination CIDR to which the route applies.
         :paramtype address_prefix: str
         :keyword next_hop_type: The type of Azure hop the packet should be sent to. Possible values
-         are: 'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance', and 'None'. Possible
-         values include: "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance", "None".
+         are: 'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance', and 'None'. Known
+         values are: "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance", and "None".
         :paramtype next_hop_type: str or ~azure.mgmt.network.v2016_09_01.models.RouteNextHopType
         :keyword next_hop_ip_address: The IP address packets should be forwarded to. Next hop values
          are only allowed in routes where the next hop type is VirtualAppliance.
@@ -6214,7 +6148,7 @@ class Route(SubResource):
          'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(Route, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.address_prefix = address_prefix
@@ -6223,7 +6157,7 @@ class Route(SubResource):
         self.provisioning_state = provisioning_state
 
 
-class RouteListResult(msrest.serialization.Model):
+class RouteListResult(_serialization.Model):
     """Response for the ListRoute API service call.
 
     :ivar value: Gets a list of routes in a resource group.
@@ -6233,24 +6167,18 @@ class RouteListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Route]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Route]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Route"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Route"]] = None, next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: Gets a list of routes in a resource group.
         :paramtype value: list[~azure.mgmt.network.v2016_09_01.models.Route]
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(RouteListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -6268,7 +6196,7 @@ class RouteTable(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar etag: Gets a unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
@@ -6282,31 +6210,31 @@ class RouteTable(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'subnets': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "subnets": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'routes': {'key': 'properties.routes', 'type': '[Route]'},
-        'subnets': {'key': 'properties.subnets', 'type': '[Subnet]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "routes": {"key": "properties.routes", "type": "[Route]"},
+        "subnets": {"key": "properties.subnets", "type": "[Subnet]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        routes: Optional[List["Route"]] = None,
+        routes: Optional[List["_models.Route"]] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -6315,7 +6243,7 @@ class RouteTable(Resource):
         :paramtype id: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword etag: Gets a unique read-only string that changes whenever the resource is updated.
         :paramtype etag: str
@@ -6325,14 +6253,14 @@ class RouteTable(Resource):
          'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(RouteTable, self).__init__(id=id, location=location, tags=tags, **kwargs)
+        super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.etag = etag
         self.routes = routes
         self.subnets = None
         self.provisioning_state = provisioning_state
 
 
-class RouteTableListResult(msrest.serialization.Model):
+class RouteTableListResult(_serialization.Model):
     """Response for the ListRouteTable API service call.
 
     :ivar value: Gets a list of route tables in a resource group.
@@ -6342,16 +6270,12 @@ class RouteTableListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RouteTable]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RouteTable]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["RouteTable"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.RouteTable"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: Gets a list of route tables in a resource group.
@@ -6359,12 +6283,12 @@ class RouteTableListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(RouteTableListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SecurityGroupNetworkInterface(msrest.serialization.Model):
+class SecurityGroupNetworkInterface(_serialization.Model):
     """Network interface and all its associated security rules.
 
     :ivar id: ID of the network interface.
@@ -6375,15 +6299,15 @@ class SecurityGroupNetworkInterface(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'security_rule_associations': {'key': 'securityRuleAssociations', 'type': 'SecurityRuleAssociations'},
+        "id": {"key": "id", "type": "str"},
+        "security_rule_associations": {"key": "securityRuleAssociations", "type": "SecurityRuleAssociations"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
-        security_rule_associations: Optional["SecurityRuleAssociations"] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        security_rule_associations: Optional["_models.SecurityRuleAssociations"] = None,
         **kwargs
     ):
         """
@@ -6393,43 +6317,38 @@ class SecurityGroupNetworkInterface(msrest.serialization.Model):
         :paramtype security_rule_associations:
          ~azure.mgmt.network.v2016_09_01.models.SecurityRuleAssociations
         """
-        super(SecurityGroupNetworkInterface, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.security_rule_associations = security_rule_associations
 
 
-class SecurityGroupViewParameters(msrest.serialization.Model):
+class SecurityGroupViewParameters(_serialization.Model):
     """Parameters that define the VM to check security groups for.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar target_resource_id: Required. ID of the target VM.
+    :ivar target_resource_id: ID of the target VM. Required.
     :vartype target_resource_id: str
     """
 
     _validation = {
-        'target_resource_id': {'required': True},
+        "target_resource_id": {"required": True},
     }
 
     _attribute_map = {
-        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        target_resource_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, target_resource_id: str, **kwargs):
         """
-        :keyword target_resource_id: Required. ID of the target VM.
+        :keyword target_resource_id: ID of the target VM. Required.
         :paramtype target_resource_id: str
         """
-        super(SecurityGroupViewParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.target_resource_id = target_resource_id
 
 
-class SecurityGroupViewResult(msrest.serialization.Model):
+class SecurityGroupViewResult(_serialization.Model):
     """The information about security rules applied to the specified VM.
 
     :ivar network_interfaces: List of network interfaces on the specified VM.
@@ -6438,25 +6357,20 @@ class SecurityGroupViewResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'network_interfaces': {'key': 'networkInterfaces', 'type': '[SecurityGroupNetworkInterface]'},
+        "network_interfaces": {"key": "networkInterfaces", "type": "[SecurityGroupNetworkInterface]"},
     }
 
-    def __init__(
-        self,
-        *,
-        network_interfaces: Optional[List["SecurityGroupNetworkInterface"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, network_interfaces: Optional[List["_models.SecurityGroupNetworkInterface"]] = None, **kwargs):
         """
         :keyword network_interfaces: List of network interfaces on the specified VM.
         :paramtype network_interfaces:
          list[~azure.mgmt.network.v2016_09_01.models.SecurityGroupNetworkInterface]
         """
-        super(SecurityGroupViewResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.network_interfaces = network_interfaces
 
 
-class SecurityRule(SubResource):
+class SecurityRule(SubResource):  # pylint: disable=too-many-instance-attributes
     """Network security rule.
 
     :ivar id: Resource ID.
@@ -6469,7 +6383,7 @@ class SecurityRule(SubResource):
     :ivar description: A description for this rule. Restricted to 140 chars.
     :vartype description: str
     :ivar protocol: Network protocol this rule applies to. Possible values are 'Tcp', 'Udp', and
-     '*'. Possible values include: "Tcp", "Udp", "*".
+     '*'. Known values are: "Tcp", "Udp", and "*".
     :vartype protocol: str or ~azure.mgmt.network.v2016_09_01.models.SecurityRuleProtocol
     :ivar source_port_range: The source port or range. Integer or range between 0 and 65535.
      Asterisk '*' can also be used to match all ports.
@@ -6486,15 +6400,15 @@ class SecurityRule(SubResource):
      'AzureLoadBalancer' and 'Internet' can also be used.
     :vartype destination_address_prefix: str
     :ivar access: The network traffic is allowed or denied. Possible values are: 'Allow' and
-     'Deny'. Possible values include: "Allow", "Deny".
+     'Deny'. Known values are: "Allow" and "Deny".
     :vartype access: str or ~azure.mgmt.network.v2016_09_01.models.SecurityRuleAccess
     :ivar priority: The priority of the rule. The value can be between 100 and 4096. The priority
      number must be unique for each rule in the collection. The lower the priority number, the
      higher the priority of the rule.
     :vartype priority: int
     :ivar direction: The direction of the rule. The direction specifies if rule will be evaluated
-     on incoming or outgoing traffic. Possible values are: 'Inbound' and 'Outbound'. Possible values
-     include: "Inbound", "Outbound".
+     on incoming or outgoing traffic. Possible values are: 'Inbound' and 'Outbound'. Known values
+     are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.network.v2016_09_01.models.SecurityRuleDirection
     :ivar provisioning_state: The provisioning state of the public IP resource. Possible values
      are: 'Updating', 'Deleting', and 'Failed'.
@@ -6502,36 +6416,36 @@ class SecurityRule(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'source_port_range': {'key': 'properties.sourcePortRange', 'type': 'str'},
-        'destination_port_range': {'key': 'properties.destinationPortRange', 'type': 'str'},
-        'source_address_prefix': {'key': 'properties.sourceAddressPrefix', 'type': 'str'},
-        'destination_address_prefix': {'key': 'properties.destinationAddressPrefix', 'type': 'str'},
-        'access': {'key': 'properties.access', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'direction': {'key': 'properties.direction', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "source_port_range": {"key": "properties.sourcePortRange", "type": "str"},
+        "destination_port_range": {"key": "properties.destinationPortRange", "type": "str"},
+        "source_address_prefix": {"key": "properties.sourceAddressPrefix", "type": "str"},
+        "destination_address_prefix": {"key": "properties.destinationAddressPrefix", "type": "str"},
+        "access": {"key": "properties.access", "type": "str"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "direction": {"key": "properties.direction", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
         description: Optional[str] = None,
-        protocol: Optional[Union[str, "SecurityRuleProtocol"]] = None,
+        protocol: Optional[Union[str, "_models.SecurityRuleProtocol"]] = None,
         source_port_range: Optional[str] = None,
         destination_port_range: Optional[str] = None,
         source_address_prefix: Optional[str] = None,
         destination_address_prefix: Optional[str] = None,
-        access: Optional[Union[str, "SecurityRuleAccess"]] = None,
+        access: Optional[Union[str, "_models.SecurityRuleAccess"]] = None,
         priority: Optional[int] = None,
-        direction: Optional[Union[str, "SecurityRuleDirection"]] = None,
+        direction: Optional[Union[str, "_models.SecurityRuleDirection"]] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -6546,7 +6460,7 @@ class SecurityRule(SubResource):
         :keyword description: A description for this rule. Restricted to 140 chars.
         :paramtype description: str
         :keyword protocol: Network protocol this rule applies to. Possible values are 'Tcp', 'Udp', and
-         '*'. Possible values include: "Tcp", "Udp", "*".
+         '*'. Known values are: "Tcp", "Udp", and "*".
         :paramtype protocol: str or ~azure.mgmt.network.v2016_09_01.models.SecurityRuleProtocol
         :keyword source_port_range: The source port or range. Integer or range between 0 and 65535.
          Asterisk '*' can also be used to match all ports.
@@ -6563,21 +6477,21 @@ class SecurityRule(SubResource):
          'AzureLoadBalancer' and 'Internet' can also be used.
         :paramtype destination_address_prefix: str
         :keyword access: The network traffic is allowed or denied. Possible values are: 'Allow' and
-         'Deny'. Possible values include: "Allow", "Deny".
+         'Deny'. Known values are: "Allow" and "Deny".
         :paramtype access: str or ~azure.mgmt.network.v2016_09_01.models.SecurityRuleAccess
         :keyword priority: The priority of the rule. The value can be between 100 and 4096. The
          priority number must be unique for each rule in the collection. The lower the priority number,
          the higher the priority of the rule.
         :paramtype priority: int
         :keyword direction: The direction of the rule. The direction specifies if rule will be
-         evaluated on incoming or outgoing traffic. Possible values are: 'Inbound' and 'Outbound'.
-         Possible values include: "Inbound", "Outbound".
+         evaluated on incoming or outgoing traffic. Possible values are: 'Inbound' and 'Outbound'. Known
+         values are: "Inbound" and "Outbound".
         :paramtype direction: str or ~azure.mgmt.network.v2016_09_01.models.SecurityRuleDirection
         :keyword provisioning_state: The provisioning state of the public IP resource. Possible values
          are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(SecurityRule, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.description = description
@@ -6592,7 +6506,7 @@ class SecurityRule(SubResource):
         self.provisioning_state = provisioning_state
 
 
-class SecurityRuleAssociations(msrest.serialization.Model):
+class SecurityRuleAssociations(_serialization.Model):
     """All security rules associated with the network interface.
 
     :ivar network_interface_association: Network interface and its custom security rules.
@@ -6609,19 +6523,19 @@ class SecurityRuleAssociations(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'network_interface_association': {'key': 'networkInterfaceAssociation', 'type': 'NetworkInterfaceAssociation'},
-        'subnet_association': {'key': 'subnetAssociation', 'type': 'SubnetAssociation'},
-        'default_security_rules': {'key': 'defaultSecurityRules', 'type': '[SecurityRule]'},
-        'effective_security_rules': {'key': 'effectiveSecurityRules', 'type': '[EffectiveNetworkSecurityRule]'},
+        "network_interface_association": {"key": "networkInterfaceAssociation", "type": "NetworkInterfaceAssociation"},
+        "subnet_association": {"key": "subnetAssociation", "type": "SubnetAssociation"},
+        "default_security_rules": {"key": "defaultSecurityRules", "type": "[SecurityRule]"},
+        "effective_security_rules": {"key": "effectiveSecurityRules", "type": "[EffectiveNetworkSecurityRule]"},
     }
 
     def __init__(
         self,
         *,
-        network_interface_association: Optional["NetworkInterfaceAssociation"] = None,
-        subnet_association: Optional["SubnetAssociation"] = None,
-        default_security_rules: Optional[List["SecurityRule"]] = None,
-        effective_security_rules: Optional[List["EffectiveNetworkSecurityRule"]] = None,
+        network_interface_association: Optional["_models.NetworkInterfaceAssociation"] = None,
+        subnet_association: Optional["_models.SubnetAssociation"] = None,
+        default_security_rules: Optional[List["_models.SecurityRule"]] = None,
+        effective_security_rules: Optional[List["_models.EffectiveNetworkSecurityRule"]] = None,
         **kwargs
     ):
         """
@@ -6637,14 +6551,14 @@ class SecurityRuleAssociations(msrest.serialization.Model):
         :paramtype effective_security_rules:
          list[~azure.mgmt.network.v2016_09_01.models.EffectiveNetworkSecurityRule]
         """
-        super(SecurityRuleAssociations, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.network_interface_association = network_interface_association
         self.subnet_association = subnet_association
         self.default_security_rules = default_security_rules
         self.effective_security_rules = effective_security_rules
 
 
-class SecurityRuleListResult(msrest.serialization.Model):
+class SecurityRuleListResult(_serialization.Model):
     """Response for ListSecurityRule API service call. Retrieves all security rules that belongs to a network security group.
 
     :ivar value: The security rules in a network security group.
@@ -6654,16 +6568,12 @@ class SecurityRuleListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SecurityRule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SecurityRule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["SecurityRule"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.SecurityRule"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: The security rules in a network security group.
@@ -6671,7 +6581,7 @@ class SecurityRuleListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(SecurityRuleListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -6706,31 +6616,31 @@ class Subnet(SubResource):
     """
 
     _validation = {
-        'ip_configurations': {'readonly': True},
+        "ip_configurations": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str'},
-        'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup'},
-        'route_table': {'key': 'properties.routeTable', 'type': 'RouteTable'},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[IPConfiguration]'},
-        'resource_navigation_links': {'key': 'properties.resourceNavigationLinks', 'type': '[ResourceNavigationLink]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "address_prefix": {"key": "properties.addressPrefix", "type": "str"},
+        "network_security_group": {"key": "properties.networkSecurityGroup", "type": "NetworkSecurityGroup"},
+        "route_table": {"key": "properties.routeTable", "type": "RouteTable"},
+        "ip_configurations": {"key": "properties.ipConfigurations", "type": "[IPConfiguration]"},
+        "resource_navigation_links": {"key": "properties.resourceNavigationLinks", "type": "[ResourceNavigationLink]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
         address_prefix: Optional[str] = None,
-        network_security_group: Optional["NetworkSecurityGroup"] = None,
-        route_table: Optional["RouteTable"] = None,
-        resource_navigation_links: Optional[List["ResourceNavigationLink"]] = None,
+        network_security_group: Optional["_models.NetworkSecurityGroup"] = None,
+        route_table: Optional["_models.RouteTable"] = None,
+        resource_navigation_links: Optional[List["_models.ResourceNavigationLink"]] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -6755,7 +6665,7 @@ class Subnet(SubResource):
         :keyword provisioning_state: The provisioning state of the resource.
         :paramtype provisioning_state: str
         """
-        super(Subnet, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.address_prefix = address_prefix
@@ -6766,7 +6676,7 @@ class Subnet(SubResource):
         self.provisioning_state = provisioning_state
 
 
-class SubnetAssociation(msrest.serialization.Model):
+class SubnetAssociation(_serialization.Model):
     """Network interface and its custom security rules.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6778,30 +6688,25 @@ class SubnetAssociation(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'security_rules': {'key': 'securityRules', 'type': '[SecurityRule]'},
+        "id": {"key": "id", "type": "str"},
+        "security_rules": {"key": "securityRules", "type": "[SecurityRule]"},
     }
 
-    def __init__(
-        self,
-        *,
-        security_rules: Optional[List["SecurityRule"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, security_rules: Optional[List["_models.SecurityRule"]] = None, **kwargs):
         """
         :keyword security_rules: Collection of custom security rules.
         :paramtype security_rules: list[~azure.mgmt.network.v2016_09_01.models.SecurityRule]
         """
-        super(SubnetAssociation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.security_rules = security_rules
 
 
-class SubnetListResult(msrest.serialization.Model):
+class SubnetListResult(_serialization.Model):
     """Response for ListSubnets API service callRetrieves all subnet that belongs to a virtual network.
 
     :ivar value: The subnets in a virtual network.
@@ -6811,29 +6716,23 @@ class SubnetListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Subnet]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Subnet]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Subnet"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Subnet"]] = None, next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: The subnets in a virtual network.
         :paramtype value: list[~azure.mgmt.network.v2016_09_01.models.Subnet]
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(SubnetListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class Topology(msrest.serialization.Model):
+class Topology(_serialization.Model):
     """Topology of the specified resource group.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6850,36 +6749,31 @@ class Topology(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'created_date_time': {'readonly': True},
-        'last_modified': {'readonly': True},
+        "id": {"readonly": True},
+        "created_date_time": {"readonly": True},
+        "last_modified": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_modified': {'key': 'lastModified', 'type': 'iso-8601'},
-        'resources': {'key': 'resources', 'type': '[TopologyResource]'},
+        "id": {"key": "id", "type": "str"},
+        "created_date_time": {"key": "createdDateTime", "type": "iso-8601"},
+        "last_modified": {"key": "lastModified", "type": "iso-8601"},
+        "resources": {"key": "resources", "type": "[TopologyResource]"},
     }
 
-    def __init__(
-        self,
-        *,
-        resources: Optional[List["TopologyResource"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, resources: Optional[List["_models.TopologyResource"]] = None, **kwargs):
         """
         :keyword resources:
         :paramtype resources: list[~azure.mgmt.network.v2016_09_01.models.TopologyResource]
         """
-        super(Topology, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.created_date_time = None
         self.last_modified = None
         self.resources = resources
 
 
-class TopologyAssociation(msrest.serialization.Model):
+class TopologyAssociation(_serialization.Model):
     """Resources that have an association with the parent resource.
 
     :ivar name: The name of the resource that is associated with the parent resource.
@@ -6887,14 +6781,14 @@ class TopologyAssociation(msrest.serialization.Model):
     :ivar resource_id: The ID of the resource that is associated with the parent resource.
     :vartype resource_id: str
     :ivar association_type: The association type of the child resource to the parent resource.
-     Possible values include: "Associated", "Contains".
+     Known values are: "Associated" and "Contains".
     :vartype association_type: str or ~azure.mgmt.network.v2016_09_01.models.AssociationType
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'association_type': {'key': 'associationType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "association_type": {"key": "associationType", "type": "str"},
     }
 
     def __init__(
@@ -6902,7 +6796,7 @@ class TopologyAssociation(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         resource_id: Optional[str] = None,
-        association_type: Optional[Union[str, "AssociationType"]] = None,
+        association_type: Optional[Union[str, "_models.AssociationType"]] = None,
         **kwargs
     ):
         """
@@ -6911,49 +6805,44 @@ class TopologyAssociation(msrest.serialization.Model):
         :keyword resource_id: The ID of the resource that is associated with the parent resource.
         :paramtype resource_id: str
         :keyword association_type: The association type of the child resource to the parent resource.
-         Possible values include: "Associated", "Contains".
+         Known values are: "Associated" and "Contains".
         :paramtype association_type: str or ~azure.mgmt.network.v2016_09_01.models.AssociationType
         """
-        super(TopologyAssociation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.resource_id = resource_id
         self.association_type = association_type
 
 
-class TopologyParameters(msrest.serialization.Model):
+class TopologyParameters(_serialization.Model):
     """Parameters that define the representation of topology.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar target_resource_group_name: Required. The name of the target resource group to perform
-     topology on.
+    :ivar target_resource_group_name: The name of the target resource group to perform topology on.
+     Required.
     :vartype target_resource_group_name: str
     """
 
     _validation = {
-        'target_resource_group_name': {'required': True},
+        "target_resource_group_name": {"required": True},
     }
 
     _attribute_map = {
-        'target_resource_group_name': {'key': 'targetResourceGroupName', 'type': 'str'},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        target_resource_group_name: str,
-        **kwargs
-    ):
+    def __init__(self, *, target_resource_group_name: str, **kwargs):
         """
-        :keyword target_resource_group_name: Required. The name of the target resource group to perform
-         topology on.
+        :keyword target_resource_group_name: The name of the target resource group to perform topology
+         on. Required.
         :paramtype target_resource_group_name: str
         """
-        super(TopologyParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.target_resource_group_name = target_resource_group_name
 
 
-class TopologyResource(msrest.serialization.Model):
+class TopologyResource(_serialization.Model):
     """The network resource topology information for the given resource group.
 
     :ivar name: Name of the resource.
@@ -6968,19 +6857,19 @@ class TopologyResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'associations': {'key': 'associations', 'type': '[TopologyAssociation]'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "associations": {"key": "associations", "type": "[TopologyAssociation]"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
-        associations: Optional[List["TopologyAssociation"]] = None,
+        associations: Optional[List["_models.TopologyAssociation"]] = None,
         **kwargs
     ):
         """
@@ -6994,14 +6883,14 @@ class TopologyResource(msrest.serialization.Model):
          resource group.
         :paramtype associations: list[~azure.mgmt.network.v2016_09_01.models.TopologyAssociation]
         """
-        super(TopologyResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.id = id
         self.location = location
         self.associations = associations
 
 
-class TroubleshootingDetails(msrest.serialization.Model):
+class TroubleshootingDetails(_serialization.Model):
     """Information gained from troubleshooting of specified resource.
 
     :ivar id: The id of the get troubleshoot operation.
@@ -7018,21 +6907,21 @@ class TroubleshootingDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'reason_type': {'key': 'reasonType', 'type': 'str'},
-        'summary': {'key': 'summary', 'type': 'str'},
-        'detail': {'key': 'detail', 'type': 'str'},
-        'recommended_actions': {'key': 'recommendedActions', 'type': '[TroubleshootingRecommendedActions]'},
+        "id": {"key": "id", "type": "str"},
+        "reason_type": {"key": "reasonType", "type": "str"},
+        "summary": {"key": "summary", "type": "str"},
+        "detail": {"key": "detail", "type": "str"},
+        "recommended_actions": {"key": "recommendedActions", "type": "[TroubleshootingRecommendedActions]"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         reason_type: Optional[str] = None,
         summary: Optional[str] = None,
         detail: Optional[str] = None,
-        recommended_actions: Optional[List["TroubleshootingRecommendedActions"]] = None,
+        recommended_actions: Optional[List["_models.TroubleshootingRecommendedActions"]] = None,
         **kwargs
     ):
         """
@@ -7048,7 +6937,7 @@ class TroubleshootingDetails(msrest.serialization.Model):
         :paramtype recommended_actions:
          list[~azure.mgmt.network.v2016_09_01.models.TroubleshootingRecommendedActions]
         """
-        super(TroubleshootingDetails, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.reason_type = reason_type
         self.summary = summary
@@ -7056,54 +6945,47 @@ class TroubleshootingDetails(msrest.serialization.Model):
         self.recommended_actions = recommended_actions
 
 
-class TroubleshootingParameters(msrest.serialization.Model):
+class TroubleshootingParameters(_serialization.Model):
     """Parameters that define the resource to troubleshoot.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar target_resource_id: Required. The target resource to troubleshoot.
+    :ivar target_resource_id: The target resource to troubleshoot. Required.
     :vartype target_resource_id: str
-    :ivar storage_id: Required. The ID for the storage account to save the troubleshoot result.
+    :ivar storage_id: The ID for the storage account to save the troubleshoot result. Required.
     :vartype storage_id: str
-    :ivar storage_path: Required. The path to the blob to save the troubleshoot result in.
+    :ivar storage_path: The path to the blob to save the troubleshoot result in. Required.
     :vartype storage_path: str
     """
 
     _validation = {
-        'target_resource_id': {'required': True},
-        'storage_id': {'required': True},
-        'storage_path': {'required': True},
+        "target_resource_id": {"required": True},
+        "storage_id": {"required": True},
+        "storage_path": {"required": True},
     }
 
     _attribute_map = {
-        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
-        'storage_id': {'key': 'properties.storageId', 'type': 'str'},
-        'storage_path': {'key': 'properties.storagePath', 'type': 'str'},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
+        "storage_id": {"key": "properties.storageId", "type": "str"},
+        "storage_path": {"key": "properties.storagePath", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        target_resource_id: str,
-        storage_id: str,
-        storage_path: str,
-        **kwargs
-    ):
+    def __init__(self, *, target_resource_id: str, storage_id: str, storage_path: str, **kwargs):
         """
-        :keyword target_resource_id: Required. The target resource to troubleshoot.
+        :keyword target_resource_id: The target resource to troubleshoot. Required.
         :paramtype target_resource_id: str
-        :keyword storage_id: Required. The ID for the storage account to save the troubleshoot result.
+        :keyword storage_id: The ID for the storage account to save the troubleshoot result. Required.
         :paramtype storage_id: str
-        :keyword storage_path: Required. The path to the blob to save the troubleshoot result in.
+        :keyword storage_path: The path to the blob to save the troubleshoot result in. Required.
         :paramtype storage_path: str
         """
-        super(TroubleshootingParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.target_resource_id = target_resource_id
         self.storage_id = storage_id
         self.storage_path = storage_path
 
 
-class TroubleshootingRecommendedActions(msrest.serialization.Model):
+class TroubleshootingRecommendedActions(_serialization.Model):
     """Recommended actions based on discovered issues.
 
     :ivar action_id: ID of the recommended action.
@@ -7119,10 +7001,10 @@ class TroubleshootingRecommendedActions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'action_id': {'key': 'actionId', 'type': 'str'},
-        'action_text': {'key': 'actionText', 'type': 'str'},
-        'action_uri': {'key': 'actionUri', 'type': 'str'},
-        'action_uri_text': {'key': 'actionUriText', 'type': 'str'},
+        "action_id": {"key": "actionId", "type": "str"},
+        "action_text": {"key": "actionText", "type": "str"},
+        "action_uri": {"key": "actionUri", "type": "str"},
+        "action_uri_text": {"key": "actionUriText", "type": "str"},
     }
 
     def __init__(
@@ -7146,14 +7028,14 @@ class TroubleshootingRecommendedActions(msrest.serialization.Model):
          actions.
         :paramtype action_uri_text: str
         """
-        super(TroubleshootingRecommendedActions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.action_id = action_id
         self.action_text = action_text
         self.action_uri = action_uri
         self.action_uri_text = action_uri_text
 
 
-class TroubleshootingResult(msrest.serialization.Model):
+class TroubleshootingResult(_serialization.Model):
     """Troubleshooting information gained from specified resource.
 
     :ivar start_time: The start time of the troubleshooting.
@@ -7167,10 +7049,10 @@ class TroubleshootingResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'code': {'key': 'code', 'type': 'str'},
-        'results': {'key': 'results', 'type': '[TroubleshootingDetails]'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "code": {"key": "code", "type": "str"},
+        "results": {"key": "results", "type": "[TroubleshootingDetails]"},
     }
 
     def __init__(
@@ -7179,7 +7061,7 @@ class TroubleshootingResult(msrest.serialization.Model):
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         code: Optional[str] = None,
-        results: Optional[List["TroubleshootingDetails"]] = None,
+        results: Optional[List["_models.TroubleshootingDetails"]] = None,
         **kwargs
     ):
         """
@@ -7192,56 +7074,52 @@ class TroubleshootingResult(msrest.serialization.Model):
         :keyword results: Information from troubleshooting.
         :paramtype results: list[~azure.mgmt.network.v2016_09_01.models.TroubleshootingDetails]
         """
-        super(TroubleshootingResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
         self.code = code
         self.results = results
 
 
-class TunnelConnectionHealth(msrest.serialization.Model):
+class TunnelConnectionHealth(_serialization.Model):
     """VirtualNetworkGatewayConnection properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar tunnel: Tunnel name.
     :vartype tunnel: str
-    :ivar connection_status: Virtual network Gateway connection status. Possible values include:
-     "Unknown", "Connecting", "Connected", "NotConnected".
+    :ivar connection_status: Virtual network Gateway connection status. Known values are:
+     "Unknown", "Connecting", "Connected", and "NotConnected".
     :vartype connection_status: str or
      ~azure.mgmt.network.v2016_09_01.models.VirtualNetworkGatewayConnectionStatus
     :ivar ingress_bytes_transferred: The Ingress Bytes Transferred in this connection.
-    :vartype ingress_bytes_transferred: long
+    :vartype ingress_bytes_transferred: int
     :ivar egress_bytes_transferred: The Egress Bytes Transferred in this connection.
-    :vartype egress_bytes_transferred: long
+    :vartype egress_bytes_transferred: int
     :ivar last_connection_established_utc_time: The time at which connection was established in Utc
      format.
     :vartype last_connection_established_utc_time: str
     """
 
     _validation = {
-        'tunnel': {'readonly': True},
-        'connection_status': {'readonly': True},
-        'ingress_bytes_transferred': {'readonly': True},
-        'egress_bytes_transferred': {'readonly': True},
-        'last_connection_established_utc_time': {'readonly': True},
+        "tunnel": {"readonly": True},
+        "connection_status": {"readonly": True},
+        "ingress_bytes_transferred": {"readonly": True},
+        "egress_bytes_transferred": {"readonly": True},
+        "last_connection_established_utc_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'tunnel': {'key': 'tunnel', 'type': 'str'},
-        'connection_status': {'key': 'connectionStatus', 'type': 'str'},
-        'ingress_bytes_transferred': {'key': 'ingressBytesTransferred', 'type': 'long'},
-        'egress_bytes_transferred': {'key': 'egressBytesTransferred', 'type': 'long'},
-        'last_connection_established_utc_time': {'key': 'lastConnectionEstablishedUtcTime', 'type': 'str'},
+        "tunnel": {"key": "tunnel", "type": "str"},
+        "connection_status": {"key": "connectionStatus", "type": "str"},
+        "ingress_bytes_transferred": {"key": "ingressBytesTransferred", "type": "int"},
+        "egress_bytes_transferred": {"key": "egressBytesTransferred", "type": "int"},
+        "last_connection_established_utc_time": {"key": "lastConnectionEstablishedUtcTime", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(TunnelConnectionHealth, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.tunnel = None
         self.connection_status = None
         self.ingress_bytes_transferred = None
@@ -7249,64 +7127,62 @@ class TunnelConnectionHealth(msrest.serialization.Model):
         self.last_connection_established_utc_time = None
 
 
-class Usage(msrest.serialization.Model):
+class Usage(_serialization.Model):
     """Describes network resource usage.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar unit: Required. An enum describing the unit of measurement. Possible values include:
-     "Count".
+    :ivar unit: An enum describing the unit of measurement. Required. "Count"
     :vartype unit: str or ~azure.mgmt.network.v2016_09_01.models.UsageUnit
-    :ivar current_value: Required. The current value of the usage.
-    :vartype current_value: long
-    :ivar limit: Required. The limit of usage.
-    :vartype limit: long
-    :ivar name: Required. The name of the type of usage.
+    :ivar current_value: The current value of the usage. Required.
+    :vartype current_value: int
+    :ivar limit: The limit of usage. Required.
+    :vartype limit: int
+    :ivar name: The name of the type of usage. Required.
     :vartype name: ~azure.mgmt.network.v2016_09_01.models.UsageName
     """
 
     _validation = {
-        'unit': {'required': True},
-        'current_value': {'required': True},
-        'limit': {'required': True},
-        'name': {'required': True},
+        "unit": {"required": True},
+        "current_value": {"required": True},
+        "limit": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'unit': {'key': 'unit', 'type': 'str'},
-        'current_value': {'key': 'currentValue', 'type': 'long'},
-        'limit': {'key': 'limit', 'type': 'long'},
-        'name': {'key': 'name', 'type': 'UsageName'},
+        "unit": {"key": "unit", "type": "str"},
+        "current_value": {"key": "currentValue", "type": "int"},
+        "limit": {"key": "limit", "type": "int"},
+        "name": {"key": "name", "type": "UsageName"},
     }
 
     def __init__(
         self,
         *,
-        unit: Union[str, "UsageUnit"],
+        unit: Union[str, "_models.UsageUnit"],
         current_value: int,
         limit: int,
-        name: "UsageName",
+        name: "_models.UsageName",
         **kwargs
     ):
         """
-        :keyword unit: Required. An enum describing the unit of measurement. Possible values include:
-         "Count".
+        :keyword unit: An enum describing the unit of measurement. Required. "Count"
         :paramtype unit: str or ~azure.mgmt.network.v2016_09_01.models.UsageUnit
-        :keyword current_value: Required. The current value of the usage.
-        :paramtype current_value: long
-        :keyword limit: Required. The limit of usage.
-        :paramtype limit: long
-        :keyword name: Required. The name of the type of usage.
+        :keyword current_value: The current value of the usage. Required.
+        :paramtype current_value: int
+        :keyword limit: The limit of usage. Required.
+        :paramtype limit: int
+        :keyword name: The name of the type of usage. Required.
         :paramtype name: ~azure.mgmt.network.v2016_09_01.models.UsageName
         """
-        super(Usage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.unit = unit
         self.current_value = current_value
         self.limit = limit
         self.name = name
 
 
-class UsageName(msrest.serialization.Model):
+class UsageName(_serialization.Model):
     """The usage names.
 
     :ivar value: A string describing the resource name.
@@ -7316,29 +7192,23 @@ class UsageName(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[str] = None,
-        localized_value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs):
         """
         :keyword value: A string describing the resource name.
         :paramtype value: str
         :keyword localized_value: A localized string describing the resource name.
         :paramtype localized_value: str
         """
-        super(UsageName, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
 
 
-class UsagesListResult(msrest.serialization.Model):
+class UsagesListResult(_serialization.Model):
     """The list usages operation response.
 
     :ivar value: The list network resource usages.
@@ -7348,51 +7218,45 @@ class UsagesListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Usage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Usage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Usage"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: The list network resource usages.
         :paramtype value: list[~azure.mgmt.network.v2016_09_01.models.Usage]
         :keyword next_link: URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(UsagesListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class VerificationIPFlowParameters(msrest.serialization.Model):
+class VerificationIPFlowParameters(_serialization.Model):
     """Parameters that define the IP flow to be verified.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar target_resource_id: Required. The ID of the target resource to perform next-hop on.
+    :ivar target_resource_id: The ID of the target resource to perform next-hop on. Required.
     :vartype target_resource_id: str
-    :ivar direction: Required. The direction of the packet represented as a 5-tuple. Possible
-     values include: "Inbound", "Outbound".
+    :ivar direction: The direction of the packet represented as a 5-tuple. Required. Known values
+     are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.network.v2016_09_01.models.Direction
-    :ivar protocol: Required. Protocol to be verified on. Possible values include: "TCP", "UDP".
+    :ivar protocol: Protocol to be verified on. Required. Known values are: "TCP" and "UDP".
     :vartype protocol: str or ~azure.mgmt.network.v2016_09_01.models.Protocol
-    :ivar local_port: Required. The local port. Acceptable values are a single integer in the range
-     (0-65535). Support for * for the source port, which depends on the direction.
+    :ivar local_port: The local port. Acceptable values are a single integer in the range
+     (0-65535). Support for * for the source port, which depends on the direction. Required.
     :vartype local_port: str
-    :ivar remote_port: Required. The remote port. Acceptable values are a single integer in the
-     range (0-65535). Support for * for the source port, which depends on the direction.
+    :ivar remote_port: The remote port. Acceptable values are a single integer in the range
+     (0-65535). Support for * for the source port, which depends on the direction. Required.
     :vartype remote_port: str
-    :ivar local_ip_address: Required. The local IP address. Acceptable values are valid IPv4
-     addresses.
+    :ivar local_ip_address: The local IP address. Acceptable values are valid IPv4 addresses.
+     Required.
     :vartype local_ip_address: str
-    :ivar remote_ip_address: Required. The remote IP address. Acceptable values are valid IPv4
-     addresses.
+    :ivar remote_ip_address: The remote IP address. Acceptable values are valid IPv4 addresses.
+     Required.
     :vartype remote_ip_address: str
     :ivar target_nic_resource_id: The NIC ID. (If VM has multiple NICs and IP forwarding is enabled
      on any of them, then this parameter must be specified. Otherwise optional).
@@ -7400,32 +7264,32 @@ class VerificationIPFlowParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'target_resource_id': {'required': True},
-        'direction': {'required': True},
-        'protocol': {'required': True},
-        'local_port': {'required': True},
-        'remote_port': {'required': True},
-        'local_ip_address': {'required': True},
-        'remote_ip_address': {'required': True},
+        "target_resource_id": {"required": True},
+        "direction": {"required": True},
+        "protocol": {"required": True},
+        "local_port": {"required": True},
+        "remote_port": {"required": True},
+        "local_ip_address": {"required": True},
+        "remote_ip_address": {"required": True},
     }
 
     _attribute_map = {
-        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
-        'direction': {'key': 'direction', 'type': 'str'},
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'local_port': {'key': 'localPort', 'type': 'str'},
-        'remote_port': {'key': 'remotePort', 'type': 'str'},
-        'local_ip_address': {'key': 'localIPAddress', 'type': 'str'},
-        'remote_ip_address': {'key': 'remoteIPAddress', 'type': 'str'},
-        'target_nic_resource_id': {'key': 'targetNicResourceId', 'type': 'str'},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
+        "direction": {"key": "direction", "type": "str"},
+        "protocol": {"key": "protocol", "type": "str"},
+        "local_port": {"key": "localPort", "type": "str"},
+        "remote_port": {"key": "remotePort", "type": "str"},
+        "local_ip_address": {"key": "localIPAddress", "type": "str"},
+        "remote_ip_address": {"key": "remoteIPAddress", "type": "str"},
+        "target_nic_resource_id": {"key": "targetNicResourceId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         target_resource_id: str,
-        direction: Union[str, "Direction"],
-        protocol: Union[str, "Protocol"],
+        direction: Union[str, "_models.Direction"],
+        protocol: Union[str, "_models.Protocol"],
         local_port: str,
         remote_port: str,
         local_ip_address: str,
@@ -7434,30 +7298,30 @@ class VerificationIPFlowParameters(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword target_resource_id: Required. The ID of the target resource to perform next-hop on.
+        :keyword target_resource_id: The ID of the target resource to perform next-hop on. Required.
         :paramtype target_resource_id: str
-        :keyword direction: Required. The direction of the packet represented as a 5-tuple. Possible
-         values include: "Inbound", "Outbound".
+        :keyword direction: The direction of the packet represented as a 5-tuple. Required. Known
+         values are: "Inbound" and "Outbound".
         :paramtype direction: str or ~azure.mgmt.network.v2016_09_01.models.Direction
-        :keyword protocol: Required. Protocol to be verified on. Possible values include: "TCP", "UDP".
+        :keyword protocol: Protocol to be verified on. Required. Known values are: "TCP" and "UDP".
         :paramtype protocol: str or ~azure.mgmt.network.v2016_09_01.models.Protocol
-        :keyword local_port: Required. The local port. Acceptable values are a single integer in the
-         range (0-65535). Support for * for the source port, which depends on the direction.
+        :keyword local_port: The local port. Acceptable values are a single integer in the range
+         (0-65535). Support for * for the source port, which depends on the direction. Required.
         :paramtype local_port: str
-        :keyword remote_port: Required. The remote port. Acceptable values are a single integer in the
-         range (0-65535). Support for * for the source port, which depends on the direction.
+        :keyword remote_port: The remote port. Acceptable values are a single integer in the range
+         (0-65535). Support for * for the source port, which depends on the direction. Required.
         :paramtype remote_port: str
-        :keyword local_ip_address: Required. The local IP address. Acceptable values are valid IPv4
-         addresses.
+        :keyword local_ip_address: The local IP address. Acceptable values are valid IPv4 addresses.
+         Required.
         :paramtype local_ip_address: str
-        :keyword remote_ip_address: Required. The remote IP address. Acceptable values are valid IPv4
-         addresses.
+        :keyword remote_ip_address: The remote IP address. Acceptable values are valid IPv4 addresses.
+         Required.
         :paramtype remote_ip_address: str
         :keyword target_nic_resource_id: The NIC ID. (If VM has multiple NICs and IP forwarding is
          enabled on any of them, then this parameter must be specified. Otherwise optional).
         :paramtype target_nic_resource_id: str
         """
-        super(VerificationIPFlowParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.target_resource_id = target_resource_id
         self.direction = direction
         self.protocol = protocol
@@ -7468,11 +7332,11 @@ class VerificationIPFlowParameters(msrest.serialization.Model):
         self.target_nic_resource_id = target_nic_resource_id
 
 
-class VerificationIPFlowResult(msrest.serialization.Model):
+class VerificationIPFlowResult(_serialization.Model):
     """Results of IP flow verification on the target resource.
 
-    :ivar access: Indicates whether the traffic is allowed or denied. Possible values include:
-     "Allow", "Deny".
+    :ivar access: Indicates whether the traffic is allowed or denied. Known values are: "Allow" and
+     "Deny".
     :vartype access: str or ~azure.mgmt.network.v2016_09_01.models.Access
     :ivar rule_name: Name of the rule. If input is not matched against any security rule, it is not
      displayed.
@@ -7480,31 +7344,27 @@ class VerificationIPFlowResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'access': {'key': 'access', 'type': 'str'},
-        'rule_name': {'key': 'ruleName', 'type': 'str'},
+        "access": {"key": "access", "type": "str"},
+        "rule_name": {"key": "ruleName", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        access: Optional[Union[str, "Access"]] = None,
-        rule_name: Optional[str] = None,
-        **kwargs
+        self, *, access: Optional[Union[str, "_models.Access"]] = None, rule_name: Optional[str] = None, **kwargs
     ):
         """
-        :keyword access: Indicates whether the traffic is allowed or denied. Possible values include:
-         "Allow", "Deny".
+        :keyword access: Indicates whether the traffic is allowed or denied. Known values are: "Allow"
+         and "Deny".
         :paramtype access: str or ~azure.mgmt.network.v2016_09_01.models.Access
         :keyword rule_name: Name of the rule. If input is not matched against any security rule, it is
          not displayed.
         :paramtype rule_name: str
         """
-        super(VerificationIPFlowResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.access = access
         self.rule_name = rule_name
 
 
-class VirtualNetwork(Resource):
+class VirtualNetwork(Resource):  # pylint: disable=too-many-instance-attributes
     """Virtual Network resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7517,7 +7377,7 @@ class VirtualNetwork(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar etag: Gets a unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
@@ -7540,36 +7400,36 @@ class VirtualNetwork(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'address_space': {'key': 'properties.addressSpace', 'type': 'AddressSpace'},
-        'dhcp_options': {'key': 'properties.dhcpOptions', 'type': 'DhcpOptions'},
-        'subnets': {'key': 'properties.subnets', 'type': '[Subnet]'},
-        'virtual_network_peerings': {'key': 'properties.virtualNetworkPeerings', 'type': '[VirtualNetworkPeering]'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "address_space": {"key": "properties.addressSpace", "type": "AddressSpace"},
+        "dhcp_options": {"key": "properties.dhcpOptions", "type": "DhcpOptions"},
+        "subnets": {"key": "properties.subnets", "type": "[Subnet]"},
+        "virtual_network_peerings": {"key": "properties.virtualNetworkPeerings", "type": "[VirtualNetworkPeering]"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        address_space: Optional["AddressSpace"] = None,
-        dhcp_options: Optional["DhcpOptions"] = None,
-        subnets: Optional[List["Subnet"]] = None,
-        virtual_network_peerings: Optional[List["VirtualNetworkPeering"]] = None,
+        address_space: Optional["_models.AddressSpace"] = None,
+        dhcp_options: Optional["_models.DhcpOptions"] = None,
+        subnets: Optional[List["_models.Subnet"]] = None,
+        virtual_network_peerings: Optional[List["_models.VirtualNetworkPeering"]] = None,
         resource_guid: Optional[str] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
@@ -7579,7 +7439,7 @@ class VirtualNetwork(Resource):
         :paramtype id: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword etag: Gets a unique read-only string that changes whenever the resource is updated.
         :paramtype etag: str
@@ -7600,7 +7460,7 @@ class VirtualNetwork(Resource):
          are: 'Updating', 'Deleting', and 'Failed'.
         :paramtype provisioning_state: str
         """
-        super(VirtualNetwork, self).__init__(id=id, location=location, tags=tags, **kwargs)
+        super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.etag = etag
         self.address_space = address_space
         self.dhcp_options = dhcp_options
@@ -7610,7 +7470,7 @@ class VirtualNetwork(Resource):
         self.provisioning_state = provisioning_state
 
 
-class VirtualNetworkGateway(Resource):
+class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attributes
     """A common class for general resource information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7625,18 +7485,18 @@ class VirtualNetworkGateway(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar etag: Gets a unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :ivar ip_configurations: Required. IP configurations for virtual network gateway.
+    :ivar ip_configurations: IP configurations for virtual network gateway. Required.
     :vartype ip_configurations:
      list[~azure.mgmt.network.v2016_09_01.models.VirtualNetworkGatewayIPConfiguration]
-    :ivar gateway_type: Required. The type of this virtual network gateway. Possible values are:
-     'Vpn' and 'ExpressRoute'. Possible values include: "Vpn", "ExpressRoute".
+    :ivar gateway_type: The type of this virtual network gateway. Possible values are: 'Vpn' and
+     'ExpressRoute'. Required. Known values are: "Vpn" and "ExpressRoute".
     :vartype gateway_type: str or ~azure.mgmt.network.v2016_09_01.models.VirtualNetworkGatewayType
-    :ivar vpn_type: Required. The type of this virtual network gateway. Possible values are:
-     'PolicyBased' and 'RouteBased'. Possible values include: "PolicyBased", "RouteBased".
+    :ivar vpn_type: The type of this virtual network gateway. Possible values are: 'PolicyBased'
+     and 'RouteBased'. Required. Known values are: "PolicyBased" and "RouteBased".
     :vartype vpn_type: str or ~azure.mgmt.network.v2016_09_01.models.VpnType
     :ivar enable_bgp: Whether BGP is enabled for this virtual network gateway or not.
     :vartype enable_bgp: bool
@@ -7663,50 +7523,50 @@ class VirtualNetworkGateway(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'ip_configurations': {'required': True},
-        'gateway_type': {'required': True},
-        'vpn_type': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "ip_configurations": {"required": True},
+        "gateway_type": {"required": True},
+        "vpn_type": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[VirtualNetworkGatewayIPConfiguration]'},
-        'gateway_type': {'key': 'properties.gatewayType', 'type': 'str'},
-        'vpn_type': {'key': 'properties.vpnType', 'type': 'str'},
-        'enable_bgp': {'key': 'properties.enableBgp', 'type': 'bool'},
-        'active': {'key': 'properties.activeActive', 'type': 'bool'},
-        'gateway_default_site': {'key': 'properties.gatewayDefaultSite', 'type': 'SubResource'},
-        'sku': {'key': 'properties.sku', 'type': 'VirtualNetworkGatewaySku'},
-        'vpn_client_configuration': {'key': 'properties.vpnClientConfiguration', 'type': 'VpnClientConfiguration'},
-        'bgp_settings': {'key': 'properties.bgpSettings', 'type': 'BgpSettings'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "ip_configurations": {"key": "properties.ipConfigurations", "type": "[VirtualNetworkGatewayIPConfiguration]"},
+        "gateway_type": {"key": "properties.gatewayType", "type": "str"},
+        "vpn_type": {"key": "properties.vpnType", "type": "str"},
+        "enable_bgp": {"key": "properties.enableBgp", "type": "bool"},
+        "active": {"key": "properties.activeActive", "type": "bool"},
+        "gateway_default_site": {"key": "properties.gatewayDefaultSite", "type": "SubResource"},
+        "sku": {"key": "properties.sku", "type": "VirtualNetworkGatewaySku"},
+        "vpn_client_configuration": {"key": "properties.vpnClientConfiguration", "type": "VpnClientConfiguration"},
+        "bgp_settings": {"key": "properties.bgpSettings", "type": "BgpSettings"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        ip_configurations: List["VirtualNetworkGatewayIPConfiguration"],
-        gateway_type: Union[str, "VirtualNetworkGatewayType"],
-        vpn_type: Union[str, "VpnType"],
-        id: Optional[str] = None,
+        ip_configurations: List["_models.VirtualNetworkGatewayIPConfiguration"],
+        gateway_type: Union[str, "_models.VirtualNetworkGatewayType"],
+        vpn_type: Union[str, "_models.VpnType"],
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
         enable_bgp: Optional[bool] = None,
         active: Optional[bool] = None,
-        gateway_default_site: Optional["SubResource"] = None,
-        sku: Optional["VirtualNetworkGatewaySku"] = None,
-        vpn_client_configuration: Optional["VpnClientConfiguration"] = None,
-        bgp_settings: Optional["BgpSettings"] = None,
+        gateway_default_site: Optional["_models.SubResource"] = None,
+        sku: Optional["_models.VirtualNetworkGatewaySku"] = None,
+        vpn_client_configuration: Optional["_models.VpnClientConfiguration"] = None,
+        bgp_settings: Optional["_models.BgpSettings"] = None,
         resource_guid: Optional[str] = None,
         **kwargs
     ):
@@ -7715,19 +7575,19 @@ class VirtualNetworkGateway(Resource):
         :paramtype id: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword etag: Gets a unique read-only string that changes whenever the resource is updated.
         :paramtype etag: str
-        :keyword ip_configurations: Required. IP configurations for virtual network gateway.
+        :keyword ip_configurations: IP configurations for virtual network gateway. Required.
         :paramtype ip_configurations:
          list[~azure.mgmt.network.v2016_09_01.models.VirtualNetworkGatewayIPConfiguration]
-        :keyword gateway_type: Required. The type of this virtual network gateway. Possible values are:
-         'Vpn' and 'ExpressRoute'. Possible values include: "Vpn", "ExpressRoute".
+        :keyword gateway_type: The type of this virtual network gateway. Possible values are: 'Vpn' and
+         'ExpressRoute'. Required. Known values are: "Vpn" and "ExpressRoute".
         :paramtype gateway_type: str or
          ~azure.mgmt.network.v2016_09_01.models.VirtualNetworkGatewayType
-        :keyword vpn_type: Required. The type of this virtual network gateway. Possible values are:
-         'PolicyBased' and 'RouteBased'. Possible values include: "PolicyBased", "RouteBased".
+        :keyword vpn_type: The type of this virtual network gateway. Possible values are: 'PolicyBased'
+         and 'RouteBased'. Required. Known values are: "PolicyBased" and "RouteBased".
         :paramtype vpn_type: str or ~azure.mgmt.network.v2016_09_01.models.VpnType
         :keyword enable_bgp: Whether BGP is enabled for this virtual network gateway or not.
         :paramtype enable_bgp: bool
@@ -7749,7 +7609,7 @@ class VirtualNetworkGateway(Resource):
         :keyword resource_guid: The resource GUID property of the VirtualNetworkGateway resource.
         :paramtype resource_guid: str
         """
-        super(VirtualNetworkGateway, self).__init__(id=id, location=location, tags=tags, **kwargs)
+        super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.etag = etag
         self.ip_configurations = ip_configurations
         self.gateway_type = gateway_type
@@ -7764,7 +7624,7 @@ class VirtualNetworkGateway(Resource):
         self.provisioning_state = None
 
 
-class VirtualNetworkGatewayConnection(Resource):
+class VirtualNetworkGatewayConnection(Resource):  # pylint: disable=too-many-instance-attributes
     """A common class for general resource information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7779,21 +7639,21 @@ class VirtualNetworkGatewayConnection(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar etag: Gets a unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar authorization_key: The authorizationKey.
     :vartype authorization_key: str
-    :ivar virtual_network_gateway1: Required. A common class for general resource information.
+    :ivar virtual_network_gateway1: A common class for general resource information. Required.
     :vartype virtual_network_gateway1: ~azure.mgmt.network.v2016_09_01.models.VirtualNetworkGateway
     :ivar virtual_network_gateway2: A common class for general resource information.
     :vartype virtual_network_gateway2: ~azure.mgmt.network.v2016_09_01.models.VirtualNetworkGateway
     :ivar local_network_gateway2: A common class for general resource information.
     :vartype local_network_gateway2: ~azure.mgmt.network.v2016_09_01.models.LocalNetworkGateway
-    :ivar connection_type: Required. Gateway connection type. Possible values are:
-     'IPsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Possible values include: "IPsec",
-     "Vnet2Vnet", "ExpressRoute", "VPNClient".
+    :ivar connection_type: Gateway connection type. Possible values are:
+     'IPsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Required. Known values are: "IPsec",
+     "Vnet2Vnet", "ExpressRoute", and "VPNClient".
     :vartype connection_type: str or
      ~azure.mgmt.network.v2016_09_01.models.VirtualNetworkGatewayConnectionType
     :ivar routing_weight: The routing weight.
@@ -7801,17 +7661,17 @@ class VirtualNetworkGatewayConnection(Resource):
     :ivar shared_key: The IPSec shared key.
     :vartype shared_key: str
     :ivar connection_status: Virtual network Gateway connection status. Possible values are
-     'Unknown', 'Connecting', 'Connected' and 'NotConnected'. Possible values include: "Unknown",
-     "Connecting", "Connected", "NotConnected".
+     'Unknown', 'Connecting', 'Connected' and 'NotConnected'. Known values are: "Unknown",
+     "Connecting", "Connected", and "NotConnected".
     :vartype connection_status: str or
      ~azure.mgmt.network.v2016_09_01.models.VirtualNetworkGatewayConnectionStatus
     :ivar tunnel_connection_status: Collection of all tunnels' connection health status.
     :vartype tunnel_connection_status:
      list[~azure.mgmt.network.v2016_09_01.models.TunnelConnectionHealth]
     :ivar egress_bytes_transferred: The egress bytes transferred in this connection.
-    :vartype egress_bytes_transferred: long
+    :vartype egress_bytes_transferred: int
     :ivar ingress_bytes_transferred: The ingress bytes transferred in this connection.
-    :vartype ingress_bytes_transferred: long
+    :vartype ingress_bytes_transferred: int
     :ivar peer: The reference to peerings resource.
     :vartype peer: ~azure.mgmt.network.v2016_09_01.models.SubResource
     :ivar enable_bgp: EnableBgp flag.
@@ -7825,56 +7685,56 @@ class VirtualNetworkGatewayConnection(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'virtual_network_gateway1': {'required': True},
-        'connection_type': {'required': True},
-        'connection_status': {'readonly': True},
-        'tunnel_connection_status': {'readonly': True},
-        'egress_bytes_transferred': {'readonly': True},
-        'ingress_bytes_transferred': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "virtual_network_gateway1": {"required": True},
+        "connection_type": {"required": True},
+        "connection_status": {"readonly": True},
+        "tunnel_connection_status": {"readonly": True},
+        "egress_bytes_transferred": {"readonly": True},
+        "ingress_bytes_transferred": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str'},
-        'virtual_network_gateway1': {'key': 'properties.virtualNetworkGateway1', 'type': 'VirtualNetworkGateway'},
-        'virtual_network_gateway2': {'key': 'properties.virtualNetworkGateway2', 'type': 'VirtualNetworkGateway'},
-        'local_network_gateway2': {'key': 'properties.localNetworkGateway2', 'type': 'LocalNetworkGateway'},
-        'connection_type': {'key': 'properties.connectionType', 'type': 'str'},
-        'routing_weight': {'key': 'properties.routingWeight', 'type': 'int'},
-        'shared_key': {'key': 'properties.sharedKey', 'type': 'str'},
-        'connection_status': {'key': 'properties.connectionStatus', 'type': 'str'},
-        'tunnel_connection_status': {'key': 'properties.tunnelConnectionStatus', 'type': '[TunnelConnectionHealth]'},
-        'egress_bytes_transferred': {'key': 'properties.egressBytesTransferred', 'type': 'long'},
-        'ingress_bytes_transferred': {'key': 'properties.ingressBytesTransferred', 'type': 'long'},
-        'peer': {'key': 'properties.peer', 'type': 'SubResource'},
-        'enable_bgp': {'key': 'properties.enableBgp', 'type': 'bool'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "authorization_key": {"key": "properties.authorizationKey", "type": "str"},
+        "virtual_network_gateway1": {"key": "properties.virtualNetworkGateway1", "type": "VirtualNetworkGateway"},
+        "virtual_network_gateway2": {"key": "properties.virtualNetworkGateway2", "type": "VirtualNetworkGateway"},
+        "local_network_gateway2": {"key": "properties.localNetworkGateway2", "type": "LocalNetworkGateway"},
+        "connection_type": {"key": "properties.connectionType", "type": "str"},
+        "routing_weight": {"key": "properties.routingWeight", "type": "int"},
+        "shared_key": {"key": "properties.sharedKey", "type": "str"},
+        "connection_status": {"key": "properties.connectionStatus", "type": "str"},
+        "tunnel_connection_status": {"key": "properties.tunnelConnectionStatus", "type": "[TunnelConnectionHealth]"},
+        "egress_bytes_transferred": {"key": "properties.egressBytesTransferred", "type": "int"},
+        "ingress_bytes_transferred": {"key": "properties.ingressBytesTransferred", "type": "int"},
+        "peer": {"key": "properties.peer", "type": "SubResource"},
+        "enable_bgp": {"key": "properties.enableBgp", "type": "bool"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        virtual_network_gateway1: "VirtualNetworkGateway",
-        connection_type: Union[str, "VirtualNetworkGatewayConnectionType"],
-        id: Optional[str] = None,
+        virtual_network_gateway1: "_models.VirtualNetworkGateway",
+        connection_type: Union[str, "_models.VirtualNetworkGatewayConnectionType"],
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
         authorization_key: Optional[str] = None,
-        virtual_network_gateway2: Optional["VirtualNetworkGateway"] = None,
-        local_network_gateway2: Optional["LocalNetworkGateway"] = None,
+        virtual_network_gateway2: Optional["_models.VirtualNetworkGateway"] = None,
+        local_network_gateway2: Optional["_models.LocalNetworkGateway"] = None,
         routing_weight: Optional[int] = None,
         shared_key: Optional[str] = None,
-        peer: Optional["SubResource"] = None,
+        peer: Optional["_models.SubResource"] = None,
         enable_bgp: Optional[bool] = None,
         resource_guid: Optional[str] = None,
         **kwargs
@@ -7884,13 +7744,13 @@ class VirtualNetworkGatewayConnection(Resource):
         :paramtype id: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword etag: Gets a unique read-only string that changes whenever the resource is updated.
         :paramtype etag: str
         :keyword authorization_key: The authorizationKey.
         :paramtype authorization_key: str
-        :keyword virtual_network_gateway1: Required. A common class for general resource information.
+        :keyword virtual_network_gateway1: A common class for general resource information. Required.
         :paramtype virtual_network_gateway1:
          ~azure.mgmt.network.v2016_09_01.models.VirtualNetworkGateway
         :keyword virtual_network_gateway2: A common class for general resource information.
@@ -7898,9 +7758,9 @@ class VirtualNetworkGatewayConnection(Resource):
          ~azure.mgmt.network.v2016_09_01.models.VirtualNetworkGateway
         :keyword local_network_gateway2: A common class for general resource information.
         :paramtype local_network_gateway2: ~azure.mgmt.network.v2016_09_01.models.LocalNetworkGateway
-        :keyword connection_type: Required. Gateway connection type. Possible values are:
-         'IPsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Possible values include: "IPsec",
-         "Vnet2Vnet", "ExpressRoute", "VPNClient".
+        :keyword connection_type: Gateway connection type. Possible values are:
+         'IPsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Required. Known values are: "IPsec",
+         "Vnet2Vnet", "ExpressRoute", and "VPNClient".
         :paramtype connection_type: str or
          ~azure.mgmt.network.v2016_09_01.models.VirtualNetworkGatewayConnectionType
         :keyword routing_weight: The routing weight.
@@ -7915,7 +7775,7 @@ class VirtualNetworkGatewayConnection(Resource):
          resource.
         :paramtype resource_guid: str
         """
-        super(VirtualNetworkGatewayConnection, self).__init__(id=id, location=location, tags=tags, **kwargs)
+        super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.etag = etag
         self.authorization_key = authorization_key
         self.virtual_network_gateway1 = virtual_network_gateway1
@@ -7934,7 +7794,7 @@ class VirtualNetworkGatewayConnection(Resource):
         self.provisioning_state = None
 
 
-class VirtualNetworkGatewayConnectionListResult(msrest.serialization.Model):
+class VirtualNetworkGatewayConnectionListResult(_serialization.Model):
     """Response for the ListVirtualNetworkGatewayConnections API service call.
 
     :ivar value: Gets a list of VirtualNetworkGatewayConnection resources that exists in a resource
@@ -7945,14 +7805,14 @@ class VirtualNetworkGatewayConnectionListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualNetworkGatewayConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualNetworkGatewayConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["VirtualNetworkGatewayConnection"]] = None,
+        value: Optional[List["_models.VirtualNetworkGatewayConnection"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -7963,7 +7823,7 @@ class VirtualNetworkGatewayConnectionListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(VirtualNetworkGatewayConnectionListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -7981,7 +7841,7 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar private_ip_allocation_method: The private IP allocation method. Possible values are:
-     'Static' and 'Dynamic'. Possible values include: "Static", "Dynamic".
+     'Static' and 'Dynamic'. Known values are: "Static" and "Dynamic".
     :vartype private_ip_allocation_method: str or
      ~azure.mgmt.network.v2016_09_01.models.IPAllocationMethod
     :ivar subnet: The reference of the subnet resource.
@@ -7994,28 +7854,28 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'SubResource'},
-        'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "private_ip_allocation_method": {"key": "properties.privateIPAllocationMethod", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "SubResource"},
+        "public_ip_address": {"key": "properties.publicIPAddress", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
-        private_ip_allocation_method: Optional[Union[str, "IPAllocationMethod"]] = None,
-        subnet: Optional["SubResource"] = None,
-        public_ip_address: Optional["SubResource"] = None,
+        private_ip_allocation_method: Optional[Union[str, "_models.IPAllocationMethod"]] = None,
+        subnet: Optional["_models.SubResource"] = None,
+        public_ip_address: Optional["_models.SubResource"] = None,
         **kwargs
     ):
         """
@@ -8027,7 +7887,7 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
         :keyword etag: A unique read-only string that changes whenever the resource is updated.
         :paramtype etag: str
         :keyword private_ip_allocation_method: The private IP allocation method. Possible values are:
-         'Static' and 'Dynamic'. Possible values include: "Static", "Dynamic".
+         'Static' and 'Dynamic'. Known values are: "Static" and "Dynamic".
         :paramtype private_ip_allocation_method: str or
          ~azure.mgmt.network.v2016_09_01.models.IPAllocationMethod
         :keyword subnet: The reference of the subnet resource.
@@ -8035,7 +7895,7 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
         :keyword public_ip_address: The reference of the public IP resource.
         :paramtype public_ip_address: ~azure.mgmt.network.v2016_09_01.models.SubResource
         """
-        super(VirtualNetworkGatewayIPConfiguration, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.private_ip_allocation_method = private_ip_allocation_method
@@ -8044,7 +7904,7 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
         self.provisioning_state = None
 
 
-class VirtualNetworkGatewayListResult(msrest.serialization.Model):
+class VirtualNetworkGatewayListResult(_serialization.Model):
     """Response for the ListVirtualNetworkGateways API service call.
 
     :ivar value: Gets a list of VirtualNetworkGateway resources that exists in a resource group.
@@ -8054,14 +7914,14 @@ class VirtualNetworkGatewayListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualNetworkGateway]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualNetworkGateway]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["VirtualNetworkGateway"]] = None,
+        value: Optional[List["_models.VirtualNetworkGateway"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -8071,66 +7931,66 @@ class VirtualNetworkGatewayListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(VirtualNetworkGatewayListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class VirtualNetworkGatewaySku(msrest.serialization.Model):
+class VirtualNetworkGatewaySku(_serialization.Model):
     """VirtualNetworkGatewaySku details.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Gateway SKU name. Possible values are: 'Basic',
-     'HighPerformance','Standard', and 'UltraPerformance'. Possible values include: "Basic",
-     "HighPerformance", "Standard", "UltraPerformance".
+    :ivar name: Gateway SKU name. Possible values are: 'Basic', 'HighPerformance','Standard', and
+     'UltraPerformance'. Required. Known values are: "Basic", "HighPerformance", "Standard", and
+     "UltraPerformance".
     :vartype name: str or ~azure.mgmt.network.v2016_09_01.models.VirtualNetworkGatewaySkuName
-    :ivar tier: Required. Gateway SKU tier. Possible values are: 'Basic',
-     'HighPerformance','Standard', and 'UltraPerformance'. Possible values include: "Basic",
-     "HighPerformance", "Standard", "UltraPerformance".
+    :ivar tier: Gateway SKU tier. Possible values are: 'Basic', 'HighPerformance','Standard', and
+     'UltraPerformance'. Required. Known values are: "Basic", "HighPerformance", "Standard", and
+     "UltraPerformance".
     :vartype tier: str or ~azure.mgmt.network.v2016_09_01.models.VirtualNetworkGatewaySkuTier
     :ivar capacity: The capacity.
     :vartype capacity: int
     """
 
     _validation = {
-        'name': {'required': True},
-        'tier': {'required': True},
+        "name": {"required": True},
+        "tier": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        name: Union[str, "VirtualNetworkGatewaySkuName"],
-        tier: Union[str, "VirtualNetworkGatewaySkuTier"],
+        name: Union[str, "_models.VirtualNetworkGatewaySkuName"],
+        tier: Union[str, "_models.VirtualNetworkGatewaySkuTier"],
         capacity: Optional[int] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. Gateway SKU name. Possible values are: 'Basic',
-         'HighPerformance','Standard', and 'UltraPerformance'. Possible values include: "Basic",
-         "HighPerformance", "Standard", "UltraPerformance".
+        :keyword name: Gateway SKU name. Possible values are: 'Basic', 'HighPerformance','Standard',
+         and 'UltraPerformance'. Required. Known values are: "Basic", "HighPerformance", "Standard", and
+         "UltraPerformance".
         :paramtype name: str or ~azure.mgmt.network.v2016_09_01.models.VirtualNetworkGatewaySkuName
-        :keyword tier: Required. Gateway SKU tier. Possible values are: 'Basic',
-         'HighPerformance','Standard', and 'UltraPerformance'. Possible values include: "Basic",
-         "HighPerformance", "Standard", "UltraPerformance".
+        :keyword tier: Gateway SKU tier. Possible values are: 'Basic', 'HighPerformance','Standard',
+         and 'UltraPerformance'. Required. Known values are: "Basic", "HighPerformance", "Standard", and
+         "UltraPerformance".
         :paramtype tier: str or ~azure.mgmt.network.v2016_09_01.models.VirtualNetworkGatewaySkuTier
         :keyword capacity: The capacity.
         :paramtype capacity: int
         """
-        super(VirtualNetworkGatewaySku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.tier = tier
         self.capacity = capacity
 
 
-class VirtualNetworkListResult(msrest.serialization.Model):
+class VirtualNetworkListResult(_serialization.Model):
     """Response for the ListVirtualNetworks API service call.
 
     :ivar value: Gets a list of VirtualNetwork resources in a resource group.
@@ -8140,16 +8000,12 @@ class VirtualNetworkListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualNetwork]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualNetwork]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["VirtualNetwork"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.VirtualNetwork"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: Gets a list of VirtualNetwork resources in a resource group.
@@ -8157,7 +8013,7 @@ class VirtualNetworkListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(VirtualNetworkListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -8189,8 +8045,8 @@ class VirtualNetworkPeering(SubResource):
     :ivar remote_virtual_network: The reference of the remote virtual network.
     :vartype remote_virtual_network: ~azure.mgmt.network.v2016_09_01.models.SubResource
     :ivar peering_state: The status of the virtual network peering. Possible values are
-     'Initiated', 'Connected', and 'Disconnected'. Possible values include: "Initiated",
-     "Connected", "Disconnected".
+     'Initiated', 'Connected', and 'Disconnected'. Known values are: "Initiated", "Connected", and
+     "Disconnected".
     :vartype peering_state: str or
      ~azure.mgmt.network.v2016_09_01.models.VirtualNetworkPeeringState
     :ivar provisioning_state: The provisioning state of the resource.
@@ -8198,30 +8054,30 @@ class VirtualNetworkPeering(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'allow_virtual_network_access': {'key': 'properties.allowVirtualNetworkAccess', 'type': 'bool'},
-        'allow_forwarded_traffic': {'key': 'properties.allowForwardedTraffic', 'type': 'bool'},
-        'allow_gateway_transit': {'key': 'properties.allowGatewayTransit', 'type': 'bool'},
-        'use_remote_gateways': {'key': 'properties.useRemoteGateways', 'type': 'bool'},
-        'remote_virtual_network': {'key': 'properties.remoteVirtualNetwork', 'type': 'SubResource'},
-        'peering_state': {'key': 'properties.peeringState', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "allow_virtual_network_access": {"key": "properties.allowVirtualNetworkAccess", "type": "bool"},
+        "allow_forwarded_traffic": {"key": "properties.allowForwardedTraffic", "type": "bool"},
+        "allow_gateway_transit": {"key": "properties.allowGatewayTransit", "type": "bool"},
+        "use_remote_gateways": {"key": "properties.useRemoteGateways", "type": "bool"},
+        "remote_virtual_network": {"key": "properties.remoteVirtualNetwork", "type": "SubResource"},
+        "peering_state": {"key": "properties.peeringState", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
         allow_virtual_network_access: Optional[bool] = None,
         allow_forwarded_traffic: Optional[bool] = None,
         allow_gateway_transit: Optional[bool] = None,
         use_remote_gateways: Optional[bool] = None,
-        remote_virtual_network: Optional["SubResource"] = None,
-        peering_state: Optional[Union[str, "VirtualNetworkPeeringState"]] = None,
+        remote_virtual_network: Optional["_models.SubResource"] = None,
+        peering_state: Optional[Union[str, "_models.VirtualNetworkPeeringState"]] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -8250,14 +8106,14 @@ class VirtualNetworkPeering(SubResource):
         :keyword remote_virtual_network: The reference of the remote virtual network.
         :paramtype remote_virtual_network: ~azure.mgmt.network.v2016_09_01.models.SubResource
         :keyword peering_state: The status of the virtual network peering. Possible values are
-         'Initiated', 'Connected', and 'Disconnected'. Possible values include: "Initiated",
-         "Connected", "Disconnected".
+         'Initiated', 'Connected', and 'Disconnected'. Known values are: "Initiated", "Connected", and
+         "Disconnected".
         :paramtype peering_state: str or
          ~azure.mgmt.network.v2016_09_01.models.VirtualNetworkPeeringState
         :keyword provisioning_state: The provisioning state of the resource.
         :paramtype provisioning_state: str
         """
-        super(VirtualNetworkPeering, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.allow_virtual_network_access = allow_virtual_network_access
@@ -8269,7 +8125,7 @@ class VirtualNetworkPeering(SubResource):
         self.provisioning_state = provisioning_state
 
 
-class VirtualNetworkPeeringListResult(msrest.serialization.Model):
+class VirtualNetworkPeeringListResult(_serialization.Model):
     """Response for ListSubnets API service call. Retrieves all subnets that belong to a virtual network.
 
     :ivar value: The peerings in a virtual network.
@@ -8279,14 +8135,14 @@ class VirtualNetworkPeeringListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualNetworkPeering]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualNetworkPeering]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["VirtualNetworkPeering"]] = None,
+        value: Optional[List["_models.VirtualNetworkPeering"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -8296,12 +8152,12 @@ class VirtualNetworkPeeringListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(VirtualNetworkPeeringListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class VpnClientConfiguration(msrest.serialization.Model):
+class VpnClientConfiguration(_serialization.Model):
     """VpnClientConfiguration for P2S client.
 
     :ivar vpn_client_address_pool: The reference of the address space resource which represents
@@ -8316,17 +8172,20 @@ class VpnClientConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'vpn_client_address_pool': {'key': 'vpnClientAddressPool', 'type': 'AddressSpace'},
-        'vpn_client_root_certificates': {'key': 'vpnClientRootCertificates', 'type': '[VpnClientRootCertificate]'},
-        'vpn_client_revoked_certificates': {'key': 'vpnClientRevokedCertificates', 'type': '[VpnClientRevokedCertificate]'},
+        "vpn_client_address_pool": {"key": "vpnClientAddressPool", "type": "AddressSpace"},
+        "vpn_client_root_certificates": {"key": "vpnClientRootCertificates", "type": "[VpnClientRootCertificate]"},
+        "vpn_client_revoked_certificates": {
+            "key": "vpnClientRevokedCertificates",
+            "type": "[VpnClientRevokedCertificate]",
+        },
     }
 
     def __init__(
         self,
         *,
-        vpn_client_address_pool: Optional["AddressSpace"] = None,
-        vpn_client_root_certificates: Optional[List["VpnClientRootCertificate"]] = None,
-        vpn_client_revoked_certificates: Optional[List["VpnClientRevokedCertificate"]] = None,
+        vpn_client_address_pool: Optional["_models.AddressSpace"] = None,
+        vpn_client_root_certificates: Optional[List["_models.VpnClientRootCertificate"]] = None,
+        vpn_client_revoked_certificates: Optional[List["_models.VpnClientRevokedCertificate"]] = None,
         **kwargs
     ):
         """
@@ -8341,44 +8200,39 @@ class VpnClientConfiguration(msrest.serialization.Model):
         :paramtype vpn_client_revoked_certificates:
          list[~azure.mgmt.network.v2016_09_01.models.VpnClientRevokedCertificate]
         """
-        super(VpnClientConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.vpn_client_address_pool = vpn_client_address_pool
         self.vpn_client_root_certificates = vpn_client_root_certificates
         self.vpn_client_revoked_certificates = vpn_client_revoked_certificates
 
 
-class VpnClientParameters(msrest.serialization.Model):
+class VpnClientParameters(_serialization.Model):
     """VpnClientParameters.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar processor_architecture: Required. VPN client Processor Architecture. Possible values are:
-     'AMD64' and 'X86'. Possible values include: "Amd64", "X86".
+    :ivar processor_architecture: VPN client Processor Architecture. Possible values are: 'AMD64'
+     and 'X86'. Required. Known values are: "Amd64" and "X86".
     :vartype processor_architecture: str or
      ~azure.mgmt.network.v2016_09_01.models.ProcessorArchitecture
     """
 
     _validation = {
-        'processor_architecture': {'required': True},
+        "processor_architecture": {"required": True},
     }
 
     _attribute_map = {
-        'processor_architecture': {'key': 'ProcessorArchitecture', 'type': 'str'},
+        "processor_architecture": {"key": "ProcessorArchitecture", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        processor_architecture: Union[str, "ProcessorArchitecture"],
-        **kwargs
-    ):
+    def __init__(self, *, processor_architecture: Union[str, "_models.ProcessorArchitecture"], **kwargs):
         """
-        :keyword processor_architecture: Required. VPN client Processor Architecture. Possible values
-         are: 'AMD64' and 'X86'. Possible values include: "Amd64", "X86".
+        :keyword processor_architecture: VPN client Processor Architecture. Possible values are:
+         'AMD64' and 'X86'. Required. Known values are: "Amd64" and "X86".
         :paramtype processor_architecture: str or
          ~azure.mgmt.network.v2016_09_01.models.ProcessorArchitecture
         """
-        super(VpnClientParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.processor_architecture = processor_architecture
 
 
@@ -8402,21 +8256,21 @@ class VpnClientRevokedCertificate(SubResource):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "thumbprint": {"key": "properties.thumbprint", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
         thumbprint: Optional[str] = None,
@@ -8433,7 +8287,7 @@ class VpnClientRevokedCertificate(SubResource):
         :keyword thumbprint: The revoked VPN client certificate thumbprint.
         :paramtype thumbprint: str
         """
-        super(VpnClientRevokedCertificate, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.thumbprint = thumbprint
@@ -8454,7 +8308,7 @@ class VpnClientRootCertificate(SubResource):
     :vartype name: str
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :ivar public_cert_data: Required. The certificate public data.
+    :ivar public_cert_data: The certificate public data. Required.
     :vartype public_cert_data: str
     :ivar provisioning_state: The provisioning state of the VPN client root certificate resource.
      Possible values are: 'Updating', 'Deleting', and 'Failed'.
@@ -8462,23 +8316,23 @@ class VpnClientRootCertificate(SubResource):
     """
 
     _validation = {
-        'public_cert_data': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "public_cert_data": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'public_cert_data': {'key': 'properties.publicCertData', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "public_cert_data": {"key": "properties.publicCertData", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         public_cert_data: str,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         etag: Optional[str] = None,
         **kwargs
@@ -8491,10 +8345,10 @@ class VpnClientRootCertificate(SubResource):
         :paramtype name: str
         :keyword etag: A unique read-only string that changes whenever the resource is updated.
         :paramtype etag: str
-        :keyword public_cert_data: Required. The certificate public data.
+        :keyword public_cert_data: The certificate public data. Required.
         :paramtype public_cert_data: str
         """
-        super(VpnClientRootCertificate, self).__init__(id=id, **kwargs)
+        super().__init__(id=id, **kwargs)
         self.name = name
         self.etag = etag
         self.public_cert_data = public_cert_data
