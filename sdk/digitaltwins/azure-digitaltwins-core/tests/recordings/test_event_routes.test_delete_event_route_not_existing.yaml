@@ -11,23 +11,27 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes/eventRoute-6abd168c?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes/eventRoute-6abd168c?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"EventRouteNotFound","message":"There is no route
         available that matches the provided input. Check for all valid event routes
-        by calling EventRoute_List. See Swagger example (http://aka.ms/RouteSwSmpl)."}}'
+        by calling EventRoute_List. See Swagger example (https://aka.ms/RouteSwSmpl)."}}'
     headers:
       content-length:
-      - '222'
+      - '223'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:08:54 GMT
+      - Thu, 26 May 2022 07:28:19 GMT
+      mise-correlation-id:
+      - 2ac6fcf1-d72b-454c-88df-1adbaf99102a
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-a832e01e9d4bcf42a74e7b6abe9102db-b320e3e73f1b864f-01
     status:
       code: 404
       message: Not Found
