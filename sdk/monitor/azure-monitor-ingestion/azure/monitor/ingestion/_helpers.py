@@ -23,7 +23,7 @@ def _split_chunks(logs):
         else:
             chunks.append(curr_chunk)
             curr_chunk = [log]
-            chunk_size = 0
+            chunk_size = size
     if len(curr_chunk) > 0:
         chunks.append(curr_chunk)
     return chunks

@@ -39,7 +39,7 @@ pip install azure-monitor-ingestion
 
 ### Create the client
 
-An authenticated client is required to upload Logs or Metrics. The library includes both synchronous and asynchronous forms of the clients. To authenticate, create an instance of a token credential. Use that instance when creating a `LogsIngestionClient`. The following examples use `DefaultAzureCredential` from the [azure-identity](https://pypi.org/project/azure-identity/) package.
+An authenticated client is required to upload Logs to Azure Monitor. The library includes both synchronous and asynchronous forms of the clients. To authenticate, create an instance of a token credential. Use that instance when creating a `LogsIngestionClient`. The following examples use `DefaultAzureCredential` from the [azure-identity](https://pypi.org/project/azure-identity/) package.
 
 #### Synchronous clients
 
