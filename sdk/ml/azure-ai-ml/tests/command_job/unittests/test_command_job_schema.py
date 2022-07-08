@@ -224,15 +224,11 @@ class TestCommandJob:
         assert reconstructed_entity.inputs["test_url"].type == AssetTypes.URI_FILE
         assert reconstructed_entity.inputs["test_url"].path == "azureml://fake/url.json"
 
-        # assert original_entity.inputs["test_string_literal"] == "literal string"
         assert rest_representation.properties.inputs["test_string_literal"].job_input_type == JobInputType.LITERAL
         assert rest_representation.properties.inputs["test_string_literal"].value == "literal string"
-        # assert reconstructed_entity.inputs["test_string_literal"] == "literal string"
 
-        # assert original_entity.inputs["test_literal_valued_int"] == 42
         assert rest_representation.properties.inputs["test_literal_valued_int"].job_input_type == JobInputType.LITERAL
         assert rest_representation.properties.inputs["test_literal_valued_int"].value == "42"
-        # assert reconstructed_entity.inputs["test_literal_valued_int"] == "42"
 
     def test_outputs_types_standalone_jobs(self):
         original_entity = load_job(Path("./tests/test_configs/command_job/command_job_output_types.yml"))
@@ -241,7 +237,6 @@ class TestCommandJob:
         rest_representation.properties.outputs["default"] = dummy_default
         reconstructed_entity = Job._from_rest_object(rest_representation)
 
-        # assert original_entity.outputs["test1"] is None
         assert rest_representation.properties.outputs["test1"].job_output_type == JobOutputType.URI_FOLDER
         assert rest_representation.properties.outputs["test1"].mode == OutputDeliveryMode.READ_WRITE_MOUNT
 
