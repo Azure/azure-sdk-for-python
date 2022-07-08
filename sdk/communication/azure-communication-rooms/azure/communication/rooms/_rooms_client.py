@@ -172,8 +172,8 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :param valid_until: The timestamp from when the room can no longer be joined. The timestamp
          is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :type valid_until: ~datetime
-        :keyword room_join_policy: (Optional)The join policy of the room.
-        :paramtype room_join_policy: (Optional)RoomJoinPolicy
+        :param room_join_policy: (Optional)The join policy of the room.
+        :type room_join_policy: (Optional)RoomJoinPolicy
         :param participants: (Optional) Collection of identities invited to the room.
         :type participants: (Optional)list[RoomParticipant]
         :returns: Updated room.

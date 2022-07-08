@@ -107,8 +107,8 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :type valid_until: ~datetime
         :param room_join_policy: (Optional)The join policy of the room.
         :type room_join_policy: (Optional)RoomJoinPolicy
-        :keyword participants: (Optional) Collection of identities invited to the room.
-        :paramtype participants: (Optional)List[RoomParticipant]
+        :param participants: (Optional) Collection of identities invited to the room.
+        :type participants: (Optional)List[RoomParticipant]
         :returns: Created room.
         :rtype: ~azure.communication.rooms.RoomModel
         :raises: ~azure.core.exceptions.HttpResponseError
