@@ -80,7 +80,7 @@ setup(
         'azure-core>=1.24.0,<2.0.0',
         {%- endif %}
         {%- if need_azuremgmtcore %}
-        'azure-mgmt-core>=1.3.2,<2.0.0',
+        'azure-mgmt-core>=1.3.1,<2.0.0',
         {%- endif %}
     ],
     python_requires=">=3.6"
