@@ -6,9 +6,8 @@
 
 import pytest
 
-from devtools_testutils import test_proxy
-
+from devtools_testutils import add_oauth_response_sanitizer, test_proxy
 
 @pytest.fixture(scope="session", autouse=True)
-def start_proxy(test_proxy):
-    return
+def add_sanitizers(test_proxy):
+    add_oauth_response_sanitizer()
