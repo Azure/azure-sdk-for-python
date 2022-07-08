@@ -333,6 +333,26 @@ class FileTest(StorageTestCase):
         self.assertEqual(prop['size'], 3)
 
     @DataLakePreparer()
+    async def test_flush_data_with_bool_async(self, datalake_storage_account_name, datalake_storage_account_key):
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        await file_client.create_file()
+
+        # Act
+        response = await file_client.append_data(b'abc', 0, 3, flush=True)
+
+        # Assert
+        prop = await file_client.get_file_properties()
+        self.assertIsNotNone(response)
+        self.assertEqual(prop['size'], 3)
+
+    @DataLakePreparer()
     async def test_flush_data_with_match_condition_async(self, datalake_storage_account_name, datalake_storage_account_key):
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self._get_directory_reference()
