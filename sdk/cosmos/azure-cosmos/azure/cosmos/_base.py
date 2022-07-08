@@ -678,12 +678,15 @@ def validate_cache_staleness_value(max_integrated_cache_staleness):
     if max_integrated_cache_staleness <= 0:
         raise ValueError("Parameter 'max_integrated_cache_staleness_in_ms' can only be a positive integer.")
 
-def auto_scale_header(offer):
+
+def stringify_auto_scale(offer):
+    auto_scale_params = None
     max_throughput = offer.auto_scale_max_throughput
     increment_percent = offer.auto_scale_increment_percentage
-
-    auto_scale_params = {"maxThroughput": max_throughput, "autoUpgradePolicy":
-        {"throughputPolicy": {"incrementPercent": increment_percent}}}
+    if max_throughput is not None:
+        auto_scale_params = {"maxThroughput": max_throughput}
+        if increment_percent is not None:
+            auto_scale_params["autoUpgradePolicy"] = {"throughputPolicy": {"incrementPercent": increment_percent}}
     auto_scale_settings = json.dumps(auto_scale_params)
 
     return auto_scale_settings
