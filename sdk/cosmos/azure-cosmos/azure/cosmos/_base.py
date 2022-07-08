@@ -34,7 +34,6 @@ from urllib.parse import urlsplit
 
 from azure.core import MatchConditions
 
-from . import offer
 from . import auth
 from . import documents
 from . import partition_key
