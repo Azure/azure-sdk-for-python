@@ -36,58 +36,60 @@ from ._models_py3 import ResourceTypeAliases
 from ._models_py3 import SystemData
 from ._models_py3 import UserAssignedIdentitiesValue
 
-
-from ._policy_client_enums import (
-    AliasPathAttributes,
-    AliasPathTokenType,
-    AliasPatternType,
-    AliasType,
-    CreatedByType,
-    EnforcementMode,
-    ExemptionCategory,
-    ParameterType,
-    PolicyType,
-    ResourceIdentityType,
-)
+from ._policy_client_enums import AliasPathAttributes
+from ._policy_client_enums import AliasPathTokenType
+from ._policy_client_enums import AliasPatternType
+from ._policy_client_enums import AliasType
+from ._policy_client_enums import CreatedByType
+from ._policy_client_enums import EnforcementMode
+from ._policy_client_enums import ExemptionCategory
+from ._policy_client_enums import ParameterType
+from ._policy_client_enums import PolicyType
+from ._policy_client_enums import ResourceIdentityType
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'Alias',
-    'AliasPath',
-    'AliasPathMetadata',
-    'AliasPattern',
-    'DataEffect',
-    'DataManifestCustomResourceFunctionDefinition',
-    'DataPolicyManifest',
-    'DataPolicyManifestListResult',
-    'ErrorAdditionalInfo',
-    'ErrorResponse',
-    'Identity',
-    'NonComplianceMessage',
-    'ParameterDefinitionsValue',
-    'ParameterDefinitionsValueMetadata',
-    'ParameterValuesValue',
-    'PolicyAssignment',
-    'PolicyAssignmentListResult',
-    'PolicyAssignmentUpdate',
-    'PolicyDefinition',
-    'PolicyDefinitionGroup',
-    'PolicyDefinitionListResult',
-    'PolicyDefinitionReference',
-    'PolicyExemption',
-    'PolicyExemptionListResult',
-    'PolicySetDefinition',
-    'PolicySetDefinitionListResult',
-    'ResourceTypeAliases',
-    'SystemData',
-    'UserAssignedIdentitiesValue',
-    'AliasPathAttributes',
-    'AliasPathTokenType',
-    'AliasPatternType',
-    'AliasType',
-    'CreatedByType',
-    'EnforcementMode',
-    'ExemptionCategory',
-    'ParameterType',
-    'PolicyType',
-    'ResourceIdentityType',
+    "Alias",
+    "AliasPath",
+    "AliasPathMetadata",
+    "AliasPattern",
+    "DataEffect",
+    "DataManifestCustomResourceFunctionDefinition",
+    "DataPolicyManifest",
+    "DataPolicyManifestListResult",
+    "ErrorAdditionalInfo",
+    "ErrorResponse",
+    "Identity",
+    "NonComplianceMessage",
+    "ParameterDefinitionsValue",
+    "ParameterDefinitionsValueMetadata",
+    "ParameterValuesValue",
+    "PolicyAssignment",
+    "PolicyAssignmentListResult",
+    "PolicyAssignmentUpdate",
+    "PolicyDefinition",
+    "PolicyDefinitionGroup",
+    "PolicyDefinitionListResult",
+    "PolicyDefinitionReference",
+    "PolicyExemption",
+    "PolicyExemptionListResult",
+    "PolicySetDefinition",
+    "PolicySetDefinitionListResult",
+    "ResourceTypeAliases",
+    "SystemData",
+    "UserAssignedIdentitiesValue",
+    "AliasPathAttributes",
+    "AliasPathTokenType",
+    "AliasPatternType",
+    "AliasType",
+    "CreatedByType",
+    "EnforcementMode",
+    "ExemptionCategory",
+    "ParameterType",
+    "PolicyType",
+    "ResourceIdentityType",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

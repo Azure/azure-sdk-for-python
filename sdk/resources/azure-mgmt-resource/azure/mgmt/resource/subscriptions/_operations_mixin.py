@@ -8,35 +8,35 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-from msrest import Serializer, Deserializer
-from typing import TYPE_CHECKING
+from ._serialization import Serializer, Deserializer
+from typing import Any, IO, Optional, Union
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
+from . import models as _models
 
 
 class SubscriptionClientOperationsMixin(object):
 
     def check_resource_name(
         self,
-        resource_name_definition=None,  # type: Optional["_models.ResourceName"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.CheckResourceNameResult"
+        resource_name_definition: Optional[Union[_models.ResourceName, IO]] = None,
+        **kwargs: Any
+    ) -> _models.CheckResourceNameResult:
         """Checks resource name validity.
 
         A resource name is valid if it is not a reserved word, does not contains a reserved word and
         does not start with a reserved word.
 
         :param resource_name_definition: Resource object with values for resource name and resource
-         type. Default value is None.
+         type. Is either a model type or a IO type. Default value is None.
         :type resource_name_definition:
-         ~azure.mgmt.resource.subscriptions.v2021_01_01.models.ResourceName
+         ~azure.mgmt.resource.subscriptions.v2021_01_01.models.ResourceName or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CheckResourceNameResult, or the result of cls(response)
+        :return: CheckResourceNameResult or the result of cls(response)
         :rtype: ~azure.mgmt.resource.subscriptions.v2021_01_01.models.CheckResourceNameResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('check_resource_name')
         if api_version == '2016-06-01':

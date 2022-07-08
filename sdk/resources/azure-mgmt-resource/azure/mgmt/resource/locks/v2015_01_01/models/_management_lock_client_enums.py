@@ -7,13 +7,11 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class LockLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The lock level of the management lock.
-    """
+class LockLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The lock level of the management lock."""
 
     NOT_SPECIFIED = "NotSpecified"
     CAN_NOT_DELETE = "CanNotDelete"

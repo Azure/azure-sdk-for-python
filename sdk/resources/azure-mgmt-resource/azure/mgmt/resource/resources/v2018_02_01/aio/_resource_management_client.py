@@ -9,20 +9,27 @@
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
 from .. import models
+from ..._serialization import Deserializer, Serializer
 from ._configuration import ResourceManagementClientConfiguration
-from .operations import DeploymentOperationsOperations, DeploymentsOperations, ProvidersOperations, ResourceGroupsOperations, ResourcesOperations, TagsOperations
+from .operations import (
+    DeploymentOperationsOperations,
+    DeploymentsOperations,
+    ProvidersOperations,
+    ResourceGroupsOperations,
+    ResourcesOperations,
+    TagsOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class ResourceManagementClient:
+
+class ResourceManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     """Provides operations for working with resources and resource groups.
 
     :ivar deployments: DeploymentsOperations operations
@@ -42,9 +49,9 @@ class ResourceManagementClient:
     :ivar deployment_operations: DeploymentOperationsOperations operations
     :vartype deployment_operations:
      azure.mgmt.resource.resources.v2018_02_01.aio.operations.DeploymentOperationsOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
@@ -62,7 +69,9 @@ class ResourceManagementClient:
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = ResourceManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = ResourceManagementClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -74,14 +83,11 @@ class ResourceManagementClient:
         self.resources = ResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.resource_groups = ResourceGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.tags = TagsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.deployment_operations = DeploymentOperationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.deployment_operations = DeploymentOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -90,7 +96,7 @@ class ResourceManagementClient:
         >>> response = await client._send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest

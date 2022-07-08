@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CleanupOptions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CleanupOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The clean up preference when the script execution gets in a terminal state. Default setting is
     'Always'.
     """
@@ -20,24 +19,24 @@ class CleanupOptions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ON_SUCCESS = "OnSuccess"
     ON_EXPIRATION = "OnExpiration"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the managed identity.
-    """
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the managed identity."""
 
     USER_ASSIGNED = "UserAssigned"
 
-class ScriptProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """State of the script execution. This only appears in the response.
-    """
+
+class ScriptProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of the script execution. This only appears in the response."""
 
     CREATING = "Creating"
     PROVISIONING_RESOURCES = "ProvisioningResources"
@@ -46,9 +45,9 @@ class ScriptProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class ScriptType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the script.
-    """
+
+class ScriptType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the script."""
 
     AZURE_POWER_SHELL = "AzurePowerShell"
     AZURE_CLI = "AzureCLI"
