@@ -17,6 +17,7 @@ _AUTO_ASK_FOR_CHECK = 'auto-ask-check'
 _BRANCH_ATTENTION = 'base-branch-attention'
 _7_DAY_ATTENTION = '7days attention'
 _MULTI_API = 'MultiAPI'
+_INCONSISTENT_TAG = 'Inconsistent tag'
 # record published issues
 _FILE_OUT = 'published_issues_python.csv'
 
@@ -45,6 +46,11 @@ class IssueProcessPython(IssueProcess):
 
         # get readme_link
         self.get_readme_link(origin_link)
+
+    def check_tag_consistency(self) -> None:
+        super().check_tag_consistency()
+        if self.default_readme_tag != self.target_readme_tag:
+            self.add_label(_INCONSISTENT_TAG)
 
     def multi_api_policy(self) -> None:
         if self.is_multiapi:
@@ -104,6 +110,9 @@ class IssueProcessPython(IssueProcess):
         if _BRANCH_ATTENTION in self.issue_package.labels_name:
             self.bot_advice.append('new version is 0.0.0, please check base branch!')
 
+        if _INCONSISTENT_TAG in self.issue_package.labels_name:
+            self.bot_advice.append('Attention to inconsistent tag')
+
     def remind_policy(self):
         if self.delay_time >= 15 and _7_DAY_ATTENTION in self.issue_package.labels_name and self.date_from_target < 0:
             self.comment(
@@ -121,6 +130,7 @@ class IssueProcessPython(IssueProcess):
         self.multi_api_policy()
         self.attention_policy()
         self.remind_policy()
+
 
     def auto_close(self) -> None:
         if AUTO_CLOSE_LABEL in self.issue_package.labels_name:
