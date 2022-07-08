@@ -200,6 +200,19 @@ async def create_container(db, id):
         except Exception:
             print('Creating container with analytical storage can only happen in synapse link activated accounts, skipping step')
 
+    print("\n2.8 Create Container - With auto scale settings")
+
+    try:
+        container = await db.create_container(
+            id=id+"_container_auto_scale_settings",
+            partition_key=partition_key,
+            offer_throughput=Offer(auto_scale_max_throughput=5000, auto_upgrade_throughput_increment_percent=0)
+        )
+        print('Container with id \'{0}\' created'.format(container.id))
+
+    except exceptions.CosmosResourceExistsError:
+        print('A container with id \'{0}\' already exists'.format(coll['id']))
+
 
 
 async def manage_provisioned_throughput(db, id):
