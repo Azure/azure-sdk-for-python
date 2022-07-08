@@ -8,8 +8,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 
-from ._base_client import RouteClientBase
-from ._generated._route_client import RouteClient as RouteClientGen
+from ._base_client import MapsRouteClientBase
 from ._generated.models import *
 from .models import (
     LatLon
@@ -19,7 +18,7 @@ if TYPE_CHECKING:
     from typing import Any, List, Optional, Object
     from azure.core.credentials import TokenCredential
 
-class RouteClient(RouteClientBase):
+class MapsRouteClient(MapsRouteClientBase):
     """Azure Maps Route REST APIs.
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
@@ -47,7 +46,7 @@ class RouteClient(RouteClientBase):
         routePoints,  # type: List[LatLon]
         **kwargs  # type: Any
     ):
-         # type: (...) -> "_models.RouteDirectionsResponse"
+         # type: (...) -> "RouteDirectionsResponse"
         """**Applies to**\ : S0 and S1 pricing tiers.
 
         Returns  a route between an origin and a destination, passing through waypoints if they are
@@ -121,7 +120,7 @@ class RouteClient(RouteClientBase):
         budget, # type: RouteRangeBudget
         **kwargs  # type: Any
     ):
-         # type: (...) -> "_models.GetRouteRangeResponse"
+         # type: (...) -> "GetRouteRangeResponse"
         """**Route Range (Isochrone) API**
 
         **Applies to**\ : S1 pricing tier.
@@ -171,7 +170,7 @@ class RouteClient(RouteClientBase):
         """
         coordinates = LatLon() if not coordinates else coordinates
         budget = RouteRangeBudget if not budget else budget
-        
+
         return self._route_client.get_route_range(
             query=coordinates+budget,
             **kwargs
@@ -184,8 +183,8 @@ class RouteClient(RouteClientBase):
         requests, #type: RouteDirectionsRequest[]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["_models.RouteDirectionsBatchResponse"]
-          
+        # type: (...) -> Optional["RouteDirectionsBatchResponse"]
+
         poller = self._route_client.post_route_directions_batch_sync(
             requests,
             **kwargs
@@ -203,8 +202,8 @@ class RouteClient(RouteClientBase):
         requests, #type: RouteDirectionsRequest[]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.RouteDirectionsBatchResponse"]
-          
+        # type: (...) -> LROPoller["RouteDirectionsBatchResponse"]
+
         poller = self._route_client.begin_post_route_directions_batch(
             requests=requests,
             **kwargs
@@ -222,7 +221,7 @@ class RouteClient(RouteClientBase):
         batchId, #type: string
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["_models.RouteDirectionsBatchResponse"]
+        # type: (...) -> Optional["RouteDirectionsBatchResponse"]
         poller = self._route_client.begin_get_route_directions_batch(
             requests=batchId,
             **kwargs
@@ -233,14 +232,14 @@ class RouteClient(RouteClientBase):
 
         return poller
 
-        
+
     @distributed_trace
     def request_route_matrix(
         self,
         routeMatrixQuery, #type: RouteMatrixQuery
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.RouteMatrixResponse"
+        # type: (...) -> "RouteMatrixResponse"
         """**Applies to**\ : S1 pricing tier.
 
         The Matrix Routing service allows calculation of a matrix of route summaries for a set of
@@ -265,7 +264,7 @@ class RouteClient(RouteClientBase):
         routeMatrixQuery, #type: RouteMatrixQuery
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.RouteMatrixResponse"]
+        # type: (...) -> LROPoller["RouteMatrixResponse"]
         """**Applies to**\ : S1 pricing tier.
 
         The Matrix Routing service allows calculation of a matrix of route summaries for a set of
@@ -288,7 +287,7 @@ class RouteClient(RouteClientBase):
             raise HttpResponseError(message=result_properties['error']['message'])
 
         return poller
-        
+
 
     @distributed_trace
     def begin_get_route_matrix_result(
@@ -296,11 +295,11 @@ class RouteClient(RouteClientBase):
         matrixId, #type: string
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.RouteMatrixResponse"]
+        # type: (...) -> LROPoller["RouteMatrixResponse"]
         """If the Matrix Route request was accepted successfully, the Location header in the response
         contains the URL to download the results of the request.
         """
-        
+
         poller = self._route_client.begin_get_route_matrix(
             requests=matrixId,
             **kwargs
