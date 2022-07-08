@@ -22,15 +22,12 @@ class AccessPolicy(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'str'},
-        'expiry': {'key': 'Expiry', 'type': 'str'},
-        'permission': {'key': 'Permission', 'type': 'str'},
+        "start": {"key": "Start", "type": "str"},
+        "expiry": {"key": "Expiry", "type": "str"},
+        "permission": {"key": "Permission", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword start: the date-time the policy is active.
         :paramtype start: str
@@ -40,9 +37,9 @@ class AccessPolicy(msrest.serialization.Model):
         :paramtype permission: str
         """
         super(AccessPolicy, self).__init__(**kwargs)
-        self.start = kwargs.get('start', None)
-        self.expiry = kwargs.get('expiry', None)
-        self.permission = kwargs.get('permission', None)
+        self.start = kwargs.get("start", None)
+        self.expiry = kwargs.get("expiry", None)
+        self.permission = kwargs.get("permission", None)
 
 
 class CorsRule(msrest.serialization.Model):
@@ -71,25 +68,22 @@ class CorsRule(msrest.serialization.Model):
     """
 
     _validation = {
-        'allowed_origins': {'required': True},
-        'allowed_methods': {'required': True},
-        'allowed_headers': {'required': True},
-        'exposed_headers': {'required': True},
-        'max_age_in_seconds': {'required': True, 'minimum': 0},
+        "allowed_origins": {"required": True},
+        "allowed_methods": {"required": True},
+        "allowed_headers": {"required": True},
+        "exposed_headers": {"required": True},
+        "max_age_in_seconds": {"required": True, "minimum": 0},
     }
 
     _attribute_map = {
-        'allowed_origins': {'key': 'AllowedOrigins', 'type': 'str'},
-        'allowed_methods': {'key': 'AllowedMethods', 'type': 'str'},
-        'allowed_headers': {'key': 'AllowedHeaders', 'type': 'str'},
-        'exposed_headers': {'key': 'ExposedHeaders', 'type': 'str'},
-        'max_age_in_seconds': {'key': 'MaxAgeInSeconds', 'type': 'int'},
+        "allowed_origins": {"key": "AllowedOrigins", "type": "str"},
+        "allowed_methods": {"key": "AllowedMethods", "type": "str"},
+        "allowed_headers": {"key": "AllowedHeaders", "type": "str"},
+        "exposed_headers": {"key": "ExposedHeaders", "type": "str"},
+        "max_age_in_seconds": {"key": "MaxAgeInSeconds", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword allowed_origins: Required. The origin domains that are permitted to make a request
          against the storage service via CORS. The origin domain is the domain from which the request
@@ -111,11 +105,11 @@ class CorsRule(msrest.serialization.Model):
         :paramtype max_age_in_seconds: int
         """
         super(CorsRule, self).__init__(**kwargs)
-        self.allowed_origins = kwargs['allowed_origins']
-        self.allowed_methods = kwargs['allowed_methods']
-        self.allowed_headers = kwargs['allowed_headers']
-        self.exposed_headers = kwargs['exposed_headers']
-        self.max_age_in_seconds = kwargs['max_age_in_seconds']
+        self.allowed_origins = kwargs["allowed_origins"]
+        self.allowed_methods = kwargs["allowed_methods"]
+        self.allowed_headers = kwargs["allowed_headers"]
+        self.exposed_headers = kwargs["exposed_headers"]
+        self.max_age_in_seconds = kwargs["max_age_in_seconds"]
 
 
 class DequeuedMessageItem(msrest.serialization.Model):
@@ -143,32 +137,27 @@ class DequeuedMessageItem(msrest.serialization.Model):
     """
 
     _validation = {
-        'message_id': {'required': True},
-        'insertion_time': {'required': True},
-        'expiration_time': {'required': True},
-        'pop_receipt': {'required': True},
-        'time_next_visible': {'required': True},
-        'dequeue_count': {'required': True},
-        'message_text': {'required': True},
+        "message_id": {"required": True},
+        "insertion_time": {"required": True},
+        "expiration_time": {"required": True},
+        "pop_receipt": {"required": True},
+        "time_next_visible": {"required": True},
+        "dequeue_count": {"required": True},
+        "message_text": {"required": True},
     }
 
     _attribute_map = {
-        'message_id': {'key': 'MessageId', 'type': 'str'},
-        'insertion_time': {'key': 'InsertionTime', 'type': 'rfc-1123'},
-        'expiration_time': {'key': 'ExpirationTime', 'type': 'rfc-1123'},
-        'pop_receipt': {'key': 'PopReceipt', 'type': 'str'},
-        'time_next_visible': {'key': 'TimeNextVisible', 'type': 'rfc-1123'},
-        'dequeue_count': {'key': 'DequeueCount', 'type': 'long'},
-        'message_text': {'key': 'MessageText', 'type': 'str'},
+        "message_id": {"key": "MessageId", "type": "str"},
+        "insertion_time": {"key": "InsertionTime", "type": "rfc-1123"},
+        "expiration_time": {"key": "ExpirationTime", "type": "rfc-1123"},
+        "pop_receipt": {"key": "PopReceipt", "type": "str"},
+        "time_next_visible": {"key": "TimeNextVisible", "type": "rfc-1123"},
+        "dequeue_count": {"key": "DequeueCount", "type": "long"},
+        "message_text": {"key": "MessageText", "type": "str"},
     }
-    _xml_map = {
-        'name': 'QueueMessage'
-    }
+    _xml_map = {"name": "QueueMessage"}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword message_id: Required. The Id of the Message.
         :paramtype message_id: str
@@ -189,13 +178,13 @@ class DequeuedMessageItem(msrest.serialization.Model):
         :paramtype message_text: str
         """
         super(DequeuedMessageItem, self).__init__(**kwargs)
-        self.message_id = kwargs['message_id']
-        self.insertion_time = kwargs['insertion_time']
-        self.expiration_time = kwargs['expiration_time']
-        self.pop_receipt = kwargs['pop_receipt']
-        self.time_next_visible = kwargs['time_next_visible']
-        self.dequeue_count = kwargs['dequeue_count']
-        self.message_text = kwargs['message_text']
+        self.message_id = kwargs["message_id"]
+        self.insertion_time = kwargs["insertion_time"]
+        self.expiration_time = kwargs["expiration_time"]
+        self.pop_receipt = kwargs["pop_receipt"]
+        self.time_next_visible = kwargs["time_next_visible"]
+        self.dequeue_count = kwargs["dequeue_count"]
+        self.message_text = kwargs["message_text"]
 
 
 class EnqueuedMessage(msrest.serialization.Model):
@@ -219,28 +208,23 @@ class EnqueuedMessage(msrest.serialization.Model):
     """
 
     _validation = {
-        'message_id': {'required': True},
-        'insertion_time': {'required': True},
-        'expiration_time': {'required': True},
-        'pop_receipt': {'required': True},
-        'time_next_visible': {'required': True},
+        "message_id": {"required": True},
+        "insertion_time": {"required": True},
+        "expiration_time": {"required": True},
+        "pop_receipt": {"required": True},
+        "time_next_visible": {"required": True},
     }
 
     _attribute_map = {
-        'message_id': {'key': 'MessageId', 'type': 'str'},
-        'insertion_time': {'key': 'InsertionTime', 'type': 'rfc-1123'},
-        'expiration_time': {'key': 'ExpirationTime', 'type': 'rfc-1123'},
-        'pop_receipt': {'key': 'PopReceipt', 'type': 'str'},
-        'time_next_visible': {'key': 'TimeNextVisible', 'type': 'rfc-1123'},
+        "message_id": {"key": "MessageId", "type": "str"},
+        "insertion_time": {"key": "InsertionTime", "type": "rfc-1123"},
+        "expiration_time": {"key": "ExpirationTime", "type": "rfc-1123"},
+        "pop_receipt": {"key": "PopReceipt", "type": "str"},
+        "time_next_visible": {"key": "TimeNextVisible", "type": "rfc-1123"},
     }
-    _xml_map = {
-        'name': 'QueueMessage'
-    }
+    _xml_map = {"name": "QueueMessage"}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword message_id: Required. The Id of the Message.
         :paramtype message_id: str
@@ -257,11 +241,11 @@ class EnqueuedMessage(msrest.serialization.Model):
         :paramtype time_next_visible: ~datetime.datetime
         """
         super(EnqueuedMessage, self).__init__(**kwargs)
-        self.message_id = kwargs['message_id']
-        self.insertion_time = kwargs['insertion_time']
-        self.expiration_time = kwargs['expiration_time']
-        self.pop_receipt = kwargs['pop_receipt']
-        self.time_next_visible = kwargs['time_next_visible']
+        self.message_id = kwargs["message_id"]
+        self.insertion_time = kwargs["insertion_time"]
+        self.expiration_time = kwargs["expiration_time"]
+        self.pop_receipt = kwargs["pop_receipt"]
+        self.time_next_visible = kwargs["time_next_visible"]
 
 
 class GeoReplication(msrest.serialization.Model):
@@ -279,19 +263,16 @@ class GeoReplication(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'required': True},
-        'last_sync_time': {'required': True},
+        "status": {"required": True},
+        "last_sync_time": {"required": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'Status', 'type': 'str'},
-        'last_sync_time': {'key': 'LastSyncTime', 'type': 'rfc-1123'},
+        "status": {"key": "Status", "type": "str"},
+        "last_sync_time": {"key": "LastSyncTime", "type": "rfc-1123"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword status: Required. The status of the secondary location. Possible values include:
          "live", "bootstrap", "unavailable".
@@ -302,8 +283,8 @@ class GeoReplication(msrest.serialization.Model):
         :paramtype last_sync_time: ~datetime.datetime
         """
         super(GeoReplication, self).__init__(**kwargs)
-        self.status = kwargs['status']
-        self.last_sync_time = kwargs['last_sync_time']
+        self.status = kwargs["status"]
+        self.last_sync_time = kwargs["last_sync_time"]
 
 
 class ListQueuesSegmentResponse(msrest.serialization.Model):
@@ -326,28 +307,27 @@ class ListQueuesSegmentResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'service_endpoint': {'required': True},
-        'prefix': {'required': True},
-        'max_results': {'required': True},
-        'next_marker': {'required': True},
+        "service_endpoint": {"required": True},
+        "prefix": {"required": True},
+        "max_results": {"required": True},
+        "next_marker": {"required": True},
     }
 
     _attribute_map = {
-        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'attr': True}},
-        'prefix': {'key': 'Prefix', 'type': 'str'},
-        'marker': {'key': 'Marker', 'type': 'str'},
-        'max_results': {'key': 'MaxResults', 'type': 'int'},
-        'queue_items': {'key': 'QueueItems', 'type': '[QueueItem]', 'xml': {'name': 'Queues', 'wrapped': True, 'itemsName': 'Queue'}},
-        'next_marker': {'key': 'NextMarker', 'type': 'str'},
+        "service_endpoint": {"key": "ServiceEndpoint", "type": "str", "xml": {"attr": True}},
+        "prefix": {"key": "Prefix", "type": "str"},
+        "marker": {"key": "Marker", "type": "str"},
+        "max_results": {"key": "MaxResults", "type": "int"},
+        "queue_items": {
+            "key": "QueueItems",
+            "type": "[QueueItem]",
+            "xml": {"name": "Queues", "wrapped": True, "itemsName": "Queue"},
+        },
+        "next_marker": {"key": "NextMarker", "type": "str"},
     }
-    _xml_map = {
-        'name': 'EnumerationResults'
-    }
+    _xml_map = {"name": "EnumerationResults"}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword service_endpoint: Required.
         :paramtype service_endpoint: str
@@ -363,12 +343,12 @@ class ListQueuesSegmentResponse(msrest.serialization.Model):
         :paramtype next_marker: str
         """
         super(ListQueuesSegmentResponse, self).__init__(**kwargs)
-        self.service_endpoint = kwargs['service_endpoint']
-        self.prefix = kwargs['prefix']
-        self.marker = kwargs.get('marker', None)
-        self.max_results = kwargs['max_results']
-        self.queue_items = kwargs.get('queue_items', None)
-        self.next_marker = kwargs['next_marker']
+        self.service_endpoint = kwargs["service_endpoint"]
+        self.prefix = kwargs["prefix"]
+        self.marker = kwargs.get("marker", None)
+        self.max_results = kwargs["max_results"]
+        self.queue_items = kwargs.get("queue_items", None)
+        self.next_marker = kwargs["next_marker"]
 
 
 class Logging(msrest.serialization.Model):
@@ -389,25 +369,22 @@ class Logging(msrest.serialization.Model):
     """
 
     _validation = {
-        'version': {'required': True},
-        'delete': {'required': True},
-        'read': {'required': True},
-        'write': {'required': True},
-        'retention_policy': {'required': True},
+        "version": {"required": True},
+        "delete": {"required": True},
+        "read": {"required": True},
+        "write": {"required": True},
+        "retention_policy": {"required": True},
     }
 
     _attribute_map = {
-        'version': {'key': 'Version', 'type': 'str'},
-        'delete': {'key': 'Delete', 'type': 'bool'},
-        'read': {'key': 'Read', 'type': 'bool'},
-        'write': {'key': 'Write', 'type': 'bool'},
-        'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy'},
+        "version": {"key": "Version", "type": "str"},
+        "delete": {"key": "Delete", "type": "bool"},
+        "read": {"key": "Read", "type": "bool"},
+        "write": {"key": "Write", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword version: Required. The version of Storage Analytics to configure.
         :paramtype version: str
@@ -421,11 +398,11 @@ class Logging(msrest.serialization.Model):
         :paramtype retention_policy: ~azure.storage.queue.models.RetentionPolicy
         """
         super(Logging, self).__init__(**kwargs)
-        self.version = kwargs['version']
-        self.delete = kwargs['delete']
-        self.read = kwargs['read']
-        self.write = kwargs['write']
-        self.retention_policy = kwargs['retention_policy']
+        self.version = kwargs["version"]
+        self.delete = kwargs["delete"]
+        self.read = kwargs["read"]
+        self.write = kwargs["write"]
+        self.retention_policy = kwargs["retention_policy"]
 
 
 class Metrics(msrest.serialization.Model):
@@ -445,20 +422,17 @@ class Metrics(msrest.serialization.Model):
     """
 
     _validation = {
-        'enabled': {'required': True},
+        "enabled": {"required": True},
     }
 
     _attribute_map = {
-        'version': {'key': 'Version', 'type': 'str'},
-        'enabled': {'key': 'Enabled', 'type': 'bool'},
-        'include_apis': {'key': 'IncludeAPIs', 'type': 'bool'},
-        'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy'},
+        "version": {"key": "Version", "type": "str"},
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "include_apis": {"key": "IncludeAPIs", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword version: The version of Storage Analytics to configure.
         :paramtype version: str
@@ -471,10 +445,10 @@ class Metrics(msrest.serialization.Model):
         :paramtype retention_policy: ~azure.storage.queue.models.RetentionPolicy
         """
         super(Metrics, self).__init__(**kwargs)
-        self.version = kwargs.get('version', None)
-        self.enabled = kwargs['enabled']
-        self.include_apis = kwargs.get('include_apis', None)
-        self.retention_policy = kwargs.get('retention_policy', None)
+        self.version = kwargs.get("version", None)
+        self.enabled = kwargs["enabled"]
+        self.include_apis = kwargs.get("include_apis", None)
+        self.retention_policy = kwargs.get("retention_policy", None)
 
 
 class PeekedMessageItem(msrest.serialization.Model):
@@ -496,28 +470,23 @@ class PeekedMessageItem(msrest.serialization.Model):
     """
 
     _validation = {
-        'message_id': {'required': True},
-        'insertion_time': {'required': True},
-        'expiration_time': {'required': True},
-        'dequeue_count': {'required': True},
-        'message_text': {'required': True},
+        "message_id": {"required": True},
+        "insertion_time": {"required": True},
+        "expiration_time": {"required": True},
+        "dequeue_count": {"required": True},
+        "message_text": {"required": True},
     }
 
     _attribute_map = {
-        'message_id': {'key': 'MessageId', 'type': 'str'},
-        'insertion_time': {'key': 'InsertionTime', 'type': 'rfc-1123'},
-        'expiration_time': {'key': 'ExpirationTime', 'type': 'rfc-1123'},
-        'dequeue_count': {'key': 'DequeueCount', 'type': 'long'},
-        'message_text': {'key': 'MessageText', 'type': 'str'},
+        "message_id": {"key": "MessageId", "type": "str"},
+        "insertion_time": {"key": "InsertionTime", "type": "rfc-1123"},
+        "expiration_time": {"key": "ExpirationTime", "type": "rfc-1123"},
+        "dequeue_count": {"key": "DequeueCount", "type": "long"},
+        "message_text": {"key": "MessageText", "type": "str"},
     }
-    _xml_map = {
-        'name': 'QueueMessage'
-    }
+    _xml_map = {"name": "QueueMessage"}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword message_id: Required. The Id of the Message.
         :paramtype message_id: str
@@ -532,11 +501,11 @@ class PeekedMessageItem(msrest.serialization.Model):
         :paramtype message_text: str
         """
         super(PeekedMessageItem, self).__init__(**kwargs)
-        self.message_id = kwargs['message_id']
-        self.insertion_time = kwargs['insertion_time']
-        self.expiration_time = kwargs['expiration_time']
-        self.dequeue_count = kwargs['dequeue_count']
-        self.message_text = kwargs['message_text']
+        self.message_id = kwargs["message_id"]
+        self.insertion_time = kwargs["insertion_time"]
+        self.expiration_time = kwargs["expiration_time"]
+        self.dequeue_count = kwargs["dequeue_count"]
+        self.message_text = kwargs["message_text"]
 
 
 class QueueItem(msrest.serialization.Model):
@@ -551,21 +520,16 @@ class QueueItem(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'metadata': {'key': 'Metadata', 'type': '{str}'},
+        "name": {"key": "Name", "type": "str"},
+        "metadata": {"key": "Metadata", "type": "{str}"},
     }
-    _xml_map = {
-        'name': 'Queue'
-    }
+    _xml_map = {"name": "Queue"}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword name: Required. The name of the Queue.
         :paramtype name: str
@@ -573,8 +537,8 @@ class QueueItem(msrest.serialization.Model):
         :paramtype metadata: dict[str, str]
         """
         super(QueueItem, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.metadata = kwargs.get('metadata', None)
+        self.name = kwargs["name"]
+        self.metadata = kwargs.get("metadata", None)
 
 
 class QueueMessage(msrest.serialization.Model):
@@ -587,23 +551,20 @@ class QueueMessage(msrest.serialization.Model):
     """
 
     _validation = {
-        'message_text': {'required': True},
+        "message_text": {"required": True},
     }
 
     _attribute_map = {
-        'message_text': {'key': 'MessageText', 'type': 'str'},
+        "message_text": {"key": "MessageText", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword message_text: Required. The content of the message.
         :paramtype message_text: str
         """
         super(QueueMessage, self).__init__(**kwargs)
-        self.message_text = kwargs['message_text']
+        self.message_text = kwargs["message_text"]
 
 
 class RetentionPolicy(msrest.serialization.Model):
@@ -620,19 +581,16 @@ class RetentionPolicy(msrest.serialization.Model):
     """
 
     _validation = {
-        'enabled': {'required': True},
-        'days': {'minimum': 1},
+        "enabled": {"required": True},
+        "days": {"minimum": 1},
     }
 
     _attribute_map = {
-        'enabled': {'key': 'Enabled', 'type': 'bool'},
-        'days': {'key': 'Days', 'type': 'int'},
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "days": {"key": "Days", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword enabled: Required. Indicates whether a retention policy is enabled for the storage
          service.
@@ -642,8 +600,8 @@ class RetentionPolicy(msrest.serialization.Model):
         :paramtype days: int
         """
         super(RetentionPolicy, self).__init__(**kwargs)
-        self.enabled = kwargs['enabled']
-        self.days = kwargs.get('days', None)
+        self.enabled = kwargs["enabled"]
+        self.days = kwargs.get("days", None)
 
 
 class SignedIdentifier(msrest.serialization.Model):
@@ -658,18 +616,15 @@ class SignedIdentifier(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'access_policy': {'key': 'AccessPolicy', 'type': 'AccessPolicy'},
+        "id": {"key": "Id", "type": "str"},
+        "access_policy": {"key": "AccessPolicy", "type": "AccessPolicy"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword id: Required. a unique id.
         :paramtype id: str
@@ -677,8 +632,8 @@ class SignedIdentifier(msrest.serialization.Model):
         :paramtype access_policy: ~azure.storage.queue.models.AccessPolicy
         """
         super(SignedIdentifier, self).__init__(**kwargs)
-        self.id = kwargs['id']
-        self.access_policy = kwargs.get('access_policy', None)
+        self.id = kwargs["id"]
+        self.access_policy = kwargs.get("access_policy", None)
 
 
 class StorageError(msrest.serialization.Model):
@@ -689,19 +644,16 @@ class StorageError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'message': {'key': 'Message', 'type': 'str'},
+        "message": {"key": "Message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword message:
         :paramtype message: str
         """
         super(StorageError, self).__init__(**kwargs)
-        self.message = kwargs.get('message', None)
+        self.message = kwargs.get("message", None)
 
 
 class StorageServiceProperties(msrest.serialization.Model):
@@ -720,16 +672,13 @@ class StorageServiceProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'logging': {'key': 'Logging', 'type': 'Logging'},
-        'hour_metrics': {'key': 'HourMetrics', 'type': 'Metrics'},
-        'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics'},
-        'cors': {'key': 'Cors', 'type': '[CorsRule]', 'xml': {'wrapped': True}},
+        "logging": {"key": "Logging", "type": "Logging"},
+        "hour_metrics": {"key": "HourMetrics", "type": "Metrics"},
+        "minute_metrics": {"key": "MinuteMetrics", "type": "Metrics"},
+        "cors": {"key": "Cors", "type": "[CorsRule]", "xml": {"wrapped": True}},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword logging: Azure Analytics Logging settings.
         :paramtype logging: ~azure.storage.queue.models.Logging
@@ -743,10 +692,10 @@ class StorageServiceProperties(msrest.serialization.Model):
         :paramtype cors: list[~azure.storage.queue.models.CorsRule]
         """
         super(StorageServiceProperties, self).__init__(**kwargs)
-        self.logging = kwargs.get('logging', None)
-        self.hour_metrics = kwargs.get('hour_metrics', None)
-        self.minute_metrics = kwargs.get('minute_metrics', None)
-        self.cors = kwargs.get('cors', None)
+        self.logging = kwargs.get("logging", None)
+        self.hour_metrics = kwargs.get("hour_metrics", None)
+        self.minute_metrics = kwargs.get("minute_metrics", None)
+        self.cors = kwargs.get("cors", None)
 
 
 class StorageServiceStats(msrest.serialization.Model):
@@ -757,16 +706,13 @@ class StorageServiceStats(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'geo_replication': {'key': 'GeoReplication', 'type': 'GeoReplication'},
+        "geo_replication": {"key": "GeoReplication", "type": "GeoReplication"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword geo_replication: Geo-Replication information for the Secondary Storage Service.
         :paramtype geo_replication: ~azure.storage.queue.models.GeoReplication
         """
         super(StorageServiceStats, self).__init__(**kwargs)
-        self.geo_replication = kwargs.get('geo_replication', None)
+        self.geo_replication = kwargs.get("geo_replication", None)
