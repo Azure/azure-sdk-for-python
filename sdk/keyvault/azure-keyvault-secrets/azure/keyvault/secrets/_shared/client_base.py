@@ -17,8 +17,9 @@ from .._sdk_moniker import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Union
     from azure.core.credentials import TokenCredential
+    from azure.identity import DefaultAzureCredential
 
 
 class ApiVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
@@ -37,7 +38,7 @@ DEFAULT_VERSION = ApiVersion.V7_3
 
 class KeyVaultClientBase(object):
     def __init__(self, vault_url, credential, **kwargs):
-        # type: (str, TokenCredential, **Any) -> None
+        # type: (str, Union[TokenCredential,DefaultAzureCredential], **Any) -> None
         if not credential:
             raise ValueError(
                 "credential should be an object supporting the TokenCredential protocol, "
