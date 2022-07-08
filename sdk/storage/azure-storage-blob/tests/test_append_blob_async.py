@@ -1514,12 +1514,17 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         assert prop.is_append_blob_sealed is None
         await copied_blob3.append_block("abc")
 
-    @pytest.mark.live_test_only  # Can't be recorded due to immutability policy date
     @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_create_append_blob_with_immutability_policy(self, **kwargs):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
         storage_resource_group_name = kwargs.pop("storage_resource_group_name")
+
+        variables = kwargs.pop("variables")
+        if self.is_live:
+            expiry_time = datetime.utcnow() + timedelta(seconds=10)
+            variables = {"expiry_time": expiry_time.isoformat()}
 
         bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key, max_block_size=4 * 1024)
         await self._setup(bsc)
@@ -1537,7 +1542,7 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         blob_name = self.get_resource_name('vlwblob')
         blob = bsc.get_blob_client(container_name, blob_name)
 
-        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
+        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.fromisoformat(variables["expiry_time"]),
                                                  policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         await blob.create_append_blob(immutability_policy=immutability_policy,
                                       legal_hold=True)
@@ -1556,6 +1561,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
             await blob.set_legal_hold(False)
             await blob.delete_blob()
             await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
+
+        return variables
 
     @BlobPreparer()
     @recorded_by_proxy_async
