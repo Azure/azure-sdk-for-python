@@ -6,33 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessPolicyUpdateKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccessPolicyUpdateKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     ADD = "add"
     REPLACE = "replace"
     REMOVE = "remove"
 
-class CertificatePermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CertificatePermissions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     GET = "get"
     LIST = "list"
@@ -49,14 +34,14 @@ class CertificatePermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     RECOVER = "recover"
     PURGE = "purge"
 
-class CreateMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CreateMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The vault's create mode to indicate whether the vault need to be recovered or not.
     """
 
     RECOVER = "recover"
     DEFAULT = "default"
 
-class KeyPermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class KeyPermissions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     ENCRYPT = "encrypt"
     DECRYPT = "decrypt"
@@ -75,7 +60,7 @@ class KeyPermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RECOVER = "recover"
     PURGE = "purge"
 
-class Reason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Reason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The reason that a vault name could not be used. The Reason element is only returned if
     NameAvailable is false.
     """
@@ -83,7 +68,7 @@ class Reason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ACCOUNT_NAME_INVALID = "AccountNameInvalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class SecretPermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SecretPermissions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     GET = "get"
     LIST = "list"
@@ -94,20 +79,20 @@ class SecretPermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RECOVER = "recover"
     PURGE = "purge"
 
-class SkuFamily(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuFamily(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """SKU family name
     """
 
     A = "A"
 
-class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """SKU name to specify whether the key vault is a standard vault or a premium vault.
     """
 
     STANDARD = "standard"
     PREMIUM = "premium"
 
-class StoragePermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StoragePermissions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     GET = "get"
     LIST = "list"

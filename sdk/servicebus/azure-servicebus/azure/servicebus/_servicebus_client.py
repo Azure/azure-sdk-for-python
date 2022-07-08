@@ -76,6 +76,14 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
     :keyword retry_mode: The delay behavior between retry attempts. Supported values are "fixed" or "exponential",
      where default is "exponential".
     :paramtype retry_mode: str
+    :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+     the Service Bus service, allowing network requests to be routed through any application gateways or
+     other paths needed for the host environment. Default is None.
+     The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+     If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
+    :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+     authenticate the identity of the connection endpoint.
+     Default is None in which case `certifi.where()` will be used.
 
     .. admonition:: Example:
 
@@ -123,6 +131,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library
         self._connection_sharing = False
         self._handlers = WeakSet()  # type: WeakSet
+
+        self._custom_endpoint_address = kwargs.get('custom_endpoint_address')
+        self._connection_verify = kwargs.get("connection_verify")
 
     def __enter__(self):
         if self._connection_sharing:
@@ -196,6 +207,14 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
          where default is 'exponential'.
         :paramtype retry_mode: str
+        :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+         the Service Bus service, allowing network requests to be routed through any application gateways or
+         other paths needed for the host environment. Default is None.
+         The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+         If port is not specified in the custom_endpoint_address, by default port 443 will be used.
+        :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+         authenticate the identity of the connection endpoint.
+         Default is None in which case `certifi.where()` will be used.
         :rtype: ~azure.servicebus.ServiceBusClient
 
         .. admonition:: Example:
@@ -231,6 +250,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         """Get ServiceBusSender for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
+        :keyword str client_identifier: A string-based identifier to uniquely identify the sender instance.
+         Service Bus will associate it with some error messages for easier correlation of errors.
+         If not specified, a unique id will be generated.
         :rtype: ~azure.servicebus.ServiceBusSender
 
         .. admonition:: Example:
@@ -264,6 +286,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify,
             **kwargs
         )
         self._handlers.add(handler)
@@ -314,6 +338,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          The default value is 0, meaning messages will be received from the service and processed one at a time.
          In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
          (if provided) within its request to the service.
+        :keyword str client_identifier: A string-based identifier to uniquely identify the receiver instance.
+         Service Bus will associate it with some error messages for easier correlation of errors.
+         If not specified, a unique id will be generated.
         :rtype: ~azure.servicebus.ServiceBusReceiver
 
         .. admonition:: Example:
@@ -373,6 +400,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             max_wait_time=max_wait_time,
             auto_lock_renewer=auto_lock_renewer,
             prefetch_count=prefetch_count,
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify,
             **kwargs
         )
         self._handlers.add(handler)
@@ -383,6 +412,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         """Get ServiceBusSender for the specific topic.
 
         :param str topic_name: The path of specific Service Bus Topic the client connects to.
+        :keyword str client_identifier: A string-based identifier to uniquely identify the sender instance.
+         Service Bus will associate it with some error messages for easier correlation of errors.
+         If not specified, a unique id will be generated.
         :rtype: ~azure.servicebus.ServiceBusSender
 
         .. admonition:: Example:
@@ -415,6 +447,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify,
             **kwargs
         )
         self._handlers.add(handler)
@@ -468,6 +502,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          The default value is 0, meaning messages will be received from the service and processed one at a time.
          In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
          (if provided) within its request to the service.
+        :keyword str client_identifier: A string-based identifier to uniquely identify the receiver instance.
+         Service Bus will associate it with some error messages for easier correlation of errors.
+         If not specified, a unique id will be generated.
         :rtype: ~azure.servicebus.ServiceBusReceiver
 
         .. admonition:: Example:
@@ -523,6 +560,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
                 max_wait_time=max_wait_time,
                 auto_lock_renewer=auto_lock_renewer,
                 prefetch_count=prefetch_count,
+                custom_endpoint_address=self._custom_endpoint_address,
+                connection_verify=self._connection_verify,
                 **kwargs
             )
         except ValueError:
@@ -550,6 +589,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
                 max_wait_time=max_wait_time,
                 auto_lock_renewer=auto_lock_renewer,
                 prefetch_count=prefetch_count,
+                custom_endpoint_address=self._custom_endpoint_address,
+                connection_verify=self._connection_verify,
                 **kwargs
             )
         self._handlers.add(handler)

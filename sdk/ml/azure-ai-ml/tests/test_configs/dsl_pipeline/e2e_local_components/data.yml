@@ -1,0 +1,7 @@
+$schema: https://azuremlsdk2.blob.core.windows.net/latest/asset.schema.json
+name: sampledata1
+version: 3
+description: sample dataset
+datastore: azureml:workspaceblobstore
+local_path: ./data
+path: /sample/data/path

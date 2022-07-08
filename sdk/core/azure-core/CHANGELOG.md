@@ -1,6 +1,6 @@
 # Release History
 
-## 1.24.1 (Unreleased)
+## 1.24.3 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,20 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.24.2 (2022-06-30)
+
+### Bugs Fixed
+
+- Fixed the bug that azure-core could not be imported under Python 3.11.0b3  #24928
+- `ContentDecodePolicy` can now correctly deserialize more JSON bodies with different mime types #22410
+
+## 1.24.1 (2022-06-01)
+
+### Bugs Fixed
+
+- Declare method level span as INTERNAL by default  #24492
+- Fixed type hints for `azure.core.paging.ItemPaged` #24548
 
 ## 1.24.0 (2022-05-06)
 

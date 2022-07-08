@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -6,16 +5,14 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, IO, Union, TYPE_CHECKING
+from typing import Any, IO, Union
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import AsyncLROPoller
 from .._api_versions import DocumentAnalysisApiVersion
 from ._form_base_client_async import FormRecognizerClientBaseAsync
 from .._models import AnalyzeResult
-
-if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
@@ -64,13 +61,13 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
     def __init__(
         self,
         endpoint: str,
-        credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
         **kwargs: Any
     ) -> None:
         api_version = kwargs.pop(
-            "api_version", DocumentAnalysisApiVersion.V2022_01_30_PREVIEW
+            "api_version", DocumentAnalysisApiVersion.V2022_06_30_PREVIEW
         )
-        super(DocumentAnalysisClient, self).__init__(
+        super().__init__(
             endpoint=endpoint,
             credential=credential,
             api_version=api_version,
@@ -133,7 +130,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
 
         return await self._client.begin_analyze_document(  # type: ignore
             model_id=model,
-            analyze_request=document,
+            analyze_request=document,  # type: ignore
             content_type="application/octet-stream",
             string_index_type="unicodeCodePoint",
             continuation_token=continuation_token,
@@ -183,7 +180,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
 
         return await self._client.begin_analyze_document(  # type: ignore
             model_id=model,
-            analyze_request={"url_source": document_url},
+            analyze_request={"urlSource": document_url},  # type: ignore
             string_index_type="unicodeCodePoint",
             continuation_token=continuation_token,
             cls=cls,

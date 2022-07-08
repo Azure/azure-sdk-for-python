@@ -1,0 +1,26 @@
+name: blue
+endpoint_name: myBatchEndpoint
+model:
+  name: model-1
+  version: 5
+  path: ../model-1/model/sklearn_regression_model.pkl
+code_configuration:
+  code: ../endpoint_scoring
+  scoring_script: ./main.py
+environment:
+  conda_file: environment_files/environment.yml
+  image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04
+retry_settings: #optional
+  max_retries: 3
+  timeout: 30
+mini_batch_size: 5
+logging_level: info  #optional, default is info
+error_threshold: 10 #optional, default is -1
+output_action: append_row #optional, Allowed Values: append_row, summary_only
+output_file_name: append_row.txt #optional
+max_concurrency_per_instance: 5
+compute: "azureml:cpu-cluster"
+resources:
+  instance_count: 2
+environment_variables:
+  AZUREML_BE: bla

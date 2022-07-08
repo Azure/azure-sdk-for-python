@@ -102,8 +102,8 @@ class DataLakeDirectoryClient(PathClient):
             an instance of a AzureSasCredential from azure.core.credentials, and account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
-        :return a DataLakeDirectoryClient
-        :rtype ~azure.storage.filedatalake.DataLakeDirectoryClient
+        :return: a DataLakeDirectoryClient
+        :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
         """
         account_url, _, credential = parse_connection_str(conn_str, credential, 'dfs')
         return cls(
@@ -133,6 +133,23 @@ class DataLakeDirectoryClient(PathClient):
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
+        :keyword str owner:
+            The owner of the file or directory.
+        :keyword str group:
+            The owning group of the file or directory.
+        :keyword str acl:
+            Sets POSIX access control rights on files and directories. The value is a
+            comma-separated list of access control entries. Each access control entry (ACE) consists of a
+            scope, a type, a user or group identifier, and permissions in the format
+            "[scope:][type]:[id]:[permissions]".
+        :keyword str lease_id:
+            Proposed lease ID, in a GUID string format. The DataLake service returns
+            400 (Invalid request) if the proposed lease ID is not in the correct format.
+        :keyword int lease_duration:
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change.
         :keyword str permissions:
             Optional and only valid if Hierarchical Namespace
             is enabled for the account. Sets POSIX access permissions for the file
@@ -162,7 +179,8 @@ class DataLakeDirectoryClient(PathClient):
             Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return: response dict (Etag and last modified).
+        :return: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 
@@ -351,10 +369,7 @@ class DataLakeDirectoryClient(PathClient):
         new_directory_client = DataLakeDirectoryClient(
             "{}://{}".format(self.scheme, self.primary_hostname), new_file_system, directory_name=new_path,
             credential=self._raw_credential or new_dir_sas,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline)
         new_directory_client._rename_path(  # pylint: disable=protected-access
             '/{}/{}{}'.format(quote(unquote(self.file_system_name)),
                               quote(unquote(self.path_name)),
@@ -390,6 +405,23 @@ class DataLakeDirectoryClient(PathClient):
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
+        :keyword str owner:
+            The owner of the file or directory.
+        :keyword str group:
+            The owning group of the file or directory.
+        :keyword str acl:
+            Sets POSIX access control rights on files and directories. The value is a
+            comma-separated list of access control entries. Each access control entry (ACE) consists of a
+            scope, a type, a user or group identifier, and permissions in the format
+            "[scope:][type]:[id]:[permissions]".
+        :keyword str lease_id:
+            Proposed lease ID, in a GUID string format. The DataLake service returns
+            400 (Invalid request) if the proposed lease ID is not in the correct format.
+        :keyword int lease_duration:
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change.
         :keyword str permissions:
             Optional and only valid if Hierarchical Namespace
             is enabled for the account. Sets POSIX access permissions for the file
@@ -491,6 +523,31 @@ class DataLakeDirectoryClient(PathClient):
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
+        :keyword str owner:
+            The owner of the file or directory.
+        :keyword str group:
+            The owning group of the file or directory.
+        :keyword str acl:
+            Sets POSIX access control rights on files and directories. The value is a
+            comma-separated list of access control entries. Each access control entry (ACE) consists of a
+            scope, a type, a user or group identifier, and permissions in the format
+            "[scope:][type]:[id]:[permissions]".
+        :keyword str lease_id:
+            Proposed lease ID, in a GUID string format. The DataLake service returns
+            400 (Invalid request) if the proposed lease ID is not in the correct format.
+        :keyword int lease_duration:
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change.
+        :keyword expires_on:
+            The time to set the file to expiry.
+            If the type of expires_on is an int, expiration time will be set
+            as the number of milliseconds elapsed from creation time.
+            If the type of expires_on is datetime, expiration time will be set
+            absolute to the time provided. If no time zone info is provided, this
+            will be interpreted as UTC.
+        :paramtype expires_on: datetime or int
         :keyword str permissions:
             Optional and only valid if Hierarchical Namespace
             is enabled for the account. Sets POSIX access permissions for the file
@@ -552,10 +609,7 @@ class DataLakeDirectoryClient(PathClient):
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
             api_version=self.api_version,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline)
 
     def get_sub_directory_client(self, sub_directory  # type: Union[DirectoryProperties, str]
                                  ):
@@ -583,7 +637,4 @@ class DataLakeDirectoryClient(PathClient):
         return DataLakeDirectoryClient(
             self.url, self.file_system_name, directory_name=subdir_path, credential=self._raw_credential,
             api_version=self.api_version,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline)

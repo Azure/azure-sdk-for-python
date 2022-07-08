@@ -395,35 +395,7 @@ Refer to [IoT Hub Connection String Sample](https://github.com/Azure/azure-sdk-f
 
 ## Troubleshooting
 
-### General
-
-The Event Hubs APIs generate the following exceptions in azure.eventhub.exceptions
-
-- **AuthenticationError:** Failed to authenticate because of wrong address, SAS policy/key pair, SAS token or azure identity.
-- **ConnectError:** Failed to connect to the EventHubs. The AuthenticationError is a type of ConnectError.
-- **ConnectionLostError:** Lose connection after a connection has been built.
-- **EventDataError:** The EventData to be sent fails data validation. For instance, this error is raised if you try to send an EventData that is already sent.
-- **EventDataSendError:** The Eventhubs service responds with an error when an EventData is sent.
-- **OperationTimeoutError:** EventHubConsumer.send() times out.
-- **EventHubError:** All other Eventhubs related errors. It is also the root error class of all the errors described above.
-
-### Logging
-
-- Enable `azure.eventhub` logger to collect traces from the library.
-- Enable `uamqp` logger to collect traces from the underlying uAMQP library.
-- Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
-- There may be cases where you consider the `uamqp` logging to be too verbose. To suppress unnecessary logging, add the following snippet to the top of your code:
-```python
-import logging
-
-# The logging levels below may need to be adjusted based on the logging that you want to suppress.
-uamqp_logger = logging.getLogger('uamqp')
-uamqp_logger.setLevel(logging.ERROR)
-
-# or even further fine-grained control, suppressing the warnings in uamqp.connection module
-uamqp_connection_logger = logging.getLogger('uamqp.connection')
-uamqp_connection_logger.setLevel(logging.ERROR)
-```
+See the `azure-eventhubs` [troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/TROUBLESHOOTING.md) for details on how to diagnose various failure scenarios.
 
 ## Next steps
 

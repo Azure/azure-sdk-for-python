@@ -5,7 +5,7 @@
 
 import json
 import datetime
-from typing import Any, List, Union, TYPE_CHECKING, overload, Optional
+from typing import Any, List, Union, TYPE_CHECKING, overload, Optional, cast
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 from azure.core.credentials import AzureKeyCredential
@@ -110,9 +110,9 @@ class DocumentTranslationClient:
         self,
         source_url: str,
         target_url: str,
-        target_language_code: str,
+        target_language: str,
         *,
-        source_language_code: Optional[str] = None,
+        source_language: Optional[str] = None,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
         storage_type: Optional[Union[str, StorageInputType]] = None,
@@ -124,7 +124,7 @@ class DocumentTranslationClient:
         in the given language. There are two ways to call this method:
 
         1) To perform translation on documents from a single source container to a single target container, pass the
-        `source_url`, `target_url`, and `target_language_code` parameters including any optional keyword arguments.
+        `source_url`, `target_url`, and `target_language` parameters including any optional keyword arguments.
 
         2) To pass multiple inputs for translation (multiple sources or targets), pass the `inputs` parameter
         as a list of :class:`~azure.ai.translation.document.DocumentTranslationInput`.
@@ -138,10 +138,10 @@ class DocumentTranslationClient:
         :param str target_url: The target SAS URL to the Azure Blob container where the translated documents
             should be written. See the service documentation for the supported SAS permissions for accessing
             target storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
-        :param str target_language_code: This is the language you want your documents to be translated to.
+        :param str target_language: This is the language code you want your documents to be translated to.
             See supported language codes here:
             https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
-        :keyword str source_language_code: Language code for the source documents.
+        :keyword str source_language: Language code for the source documents.
             If none is specified, the source language will be auto-detected for each document.
         :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
             translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
@@ -169,7 +169,7 @@ class DocumentTranslationClient:
         in the given language. There are two ways to call this method:
 
         1) To perform translation on documents from a single source container to a single target container, pass the
-        `source_url`, `target_url`, and `target_language_code` parameters including any optional keyword arguments.
+        `source_url`, `target_url`, and `target_language` parameters including any optional keyword arguments.
 
         2) To pass multiple inputs for translation (multiple sources or targets), pass the `inputs` parameter
         as a list of :class:`~azure.ai.translation.document.DocumentTranslationInput`.
@@ -196,7 +196,7 @@ class DocumentTranslationClient:
         in the given language. There are two ways to call this method:
 
         1) To perform translation on documents from a single source container to a single target container, pass the
-        `source_url`, `target_url`, and `target_language_code` parameters including any optional keyword arguments.
+        `source_url`, `target_url`, and `target_language` parameters including any optional keyword arguments.
 
         2) To pass multiple inputs for translation (multiple sources or targets), pass the `inputs` parameter
         as a list of :class:`~azure.ai.translation.document.DocumentTranslationInput`.
@@ -214,14 +214,14 @@ class DocumentTranslationClient:
             for accessing target storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions)
             or a managed identity can be created and used to access documents in your storage account
             (see https://aka.ms/azsdk/documenttranslation/managed-identity).
-        :param str target_language_code: This is the language you want your documents to be translated to.
+        :param str target_language: This is the language code you want your documents to be translated to.
             See supported language codes here:
             https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
         :param inputs: A list of translation inputs. Each individual input has a single
             source URL to documents and can contain multiple TranslationTargets (one for each language)
             for the destination to write translated documents.
         :type inputs: List[~azure.ai.translation.document.DocumentTranslationInput]
-        :keyword str source_language_code: Language code for the source documents.
+        :keyword str source_language: Language code for the source documents.
             If none is specified, the source language will be auto-detected for each document.
         :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
             translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
@@ -273,17 +273,19 @@ class DocumentTranslationClient:
             )
 
         callback = kwargs.pop("cls", deserialization_callback)
-        return self._client.document_translation.begin_start_translation(  # type: ignore
-            inputs=inputs if not continuation_token else None,
-            polling=DocumentTranslationLROPollingMethod(
-                timeout=polling_interval,
-                lro_algorithms=[TranslationPolling()],
-                cont_token_response=pipeline_response,
+        return cast(DocumentTranslationLROPoller[ItemPaged[DocumentStatus]],
+            self._client.document_translation.begin_start_translation(
+                inputs=inputs if not continuation_token else None,
+                polling=DocumentTranslationLROPollingMethod(
+                    timeout=polling_interval,
+                    lro_algorithms=[TranslationPolling()],
+                    cont_token_response=pipeline_response,
+                    **kwargs
+                ),
+                cls=callback,
+                continuation_token=continuation_token,
                 **kwargs
-            ),
-            cls=callback,
-            continuation_token=continuation_token,
-            **kwargs
+            )
         )
 
     @distributed_trace
@@ -328,7 +330,6 @@ class DocumentTranslationClient:
         *,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        results_per_page: Optional[int] = None,
         translation_ids: Optional[List[str]] = None,
         statuses: Optional[List[str]] = None,
         created_after: Optional[Union[str, datetime.datetime]] = None,
@@ -338,19 +339,18 @@ class DocumentTranslationClient:
     ) -> ItemPaged[TranslationStatus]:
         """List all the submitted translation operations under the Document Translation resource.
 
-        :keyword int top: the total number of operations to return (across all pages) from all submitted translations.
-        :keyword int skip: the number of operations to skip (from beginning of all submitted operations).
+        :keyword int top: The total number of operations to return (across all pages) from all submitted translations.
+        :keyword int skip: The number of operations to skip (from beginning of all submitted operations).
             By default, we sort by all submitted operations in descending order by start time.
-        :keyword int results_per_page: is the number of operations returned per page.
-        :keyword list[str] translation_ids: translation operations ids to filter by.
-        :keyword list[str] statuses: translation operation statuses to filter by. Options include
+        :keyword list[str] translation_ids: Translation operations ids to filter by.
+        :keyword list[str] statuses: Translation operation statuses to filter by. Options include
             'NotStarted', 'Running', 'Succeeded', 'Failed', 'Canceled', 'Canceling',
             and 'ValidationFailed'.
-        :keyword created_after: get operations created after certain datetime.
+        :keyword created_after: Get operations created after a certain datetime.
         :paramtype created_after: str or ~datetime.datetime
-        :keyword created_before: get operations created before certain datetime.
+        :keyword created_before: Get operations created before a certain datetime.
         :paramtype created_before: str or ~datetime.datetime
-        :keyword list[str] order_by: the sorting query for the operations returned. Currently only
+        :keyword list[str] order_by: The sorting query for the operations returned. Currently only
             'created_on' supported.
             format: ["param1 asc/desc", "param2 asc/desc", ...]
             (ex: 'created_on asc', 'created_on desc').
@@ -388,17 +388,18 @@ class DocumentTranslationClient:
             ],
         )
 
-        return self._client.document_translation.get_translations_status(  # type: ignore
-            cls=model_conversion_function,
-            maxpagesize=results_per_page,
-            created_date_time_utc_start=created_after,
-            created_date_time_utc_end=created_before,
-            ids=translation_ids,
-            order_by=order_by,
-            statuses=statuses,
-            top=top,
-            skip=skip,
-            **kwargs
+        return cast(ItemPaged[TranslationStatus],
+            self._client.document_translation.get_translations_status(
+                cls=model_conversion_function,
+                created_date_time_utc_start=created_after,
+                created_date_time_utc_end=created_before,
+                ids=translation_ids,
+                order_by=order_by,
+                statuses=statuses,
+                top=top,
+                skip=skip,
+                **kwargs
+            )
         )
 
     @distributed_trace
@@ -408,7 +409,6 @@ class DocumentTranslationClient:
         *,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        results_per_page: Optional[int] = None,
         document_ids: Optional[List[str]] = None,
         statuses: Optional[List[str]] = None,
         created_after: Optional[Union[str, datetime.datetime]] = None,
@@ -419,19 +419,18 @@ class DocumentTranslationClient:
         """List all the document statuses for a given translation operation.
 
         :param str translation_id: ID of translation operation to list documents for.
-        :keyword int top: the total number of documents to return (across all pages).
-        :keyword int skip: the number of documents to skip (from beginning).
+        :keyword int top: The total number of documents to return (across all pages).
+        :keyword int skip: The number of documents to skip (from beginning).
             By default, we sort by all documents in descending order by start time.
-        :keyword int results_per_page: is the number of documents returned per page.
-        :keyword list[str] document_ids: document IDs to filter by.
-        :keyword list[str] statuses: document statuses to filter by. Options include
+        :keyword list[str] document_ids: Document IDs to filter by.
+        :keyword list[str] statuses: Document statuses to filter by. Options include
             'NotStarted', 'Running', 'Succeeded', 'Failed', 'Canceled', 'Canceling',
             and 'ValidationFailed'.
-        :keyword created_after: get document created after certain datetime.
+        :keyword created_after: Get documents created after a certain datetime.
         :paramtype created_after: str or ~datetime.datetime
-        :keyword created_before: get document created before certain datetime.
+        :keyword created_before: Get documents created before a certain datetime.
         :paramtype created_before: str or ~datetime.datetime
-        :keyword list[str] order_by: the sorting query for the documents. Currently only
+        :keyword list[str] order_by: The sorting query for the documents. Currently only
             'created_on' is supported.
             format: ["param1 asc/desc", "param2 asc/desc", ...]
             (ex: 'created_on asc', 'created_on desc').
@@ -471,18 +470,19 @@ class DocumentTranslationClient:
             ],
         )
 
-        return self._client.document_translation.get_documents_status(  # type: ignore
-            id=translation_id,
-            cls=model_conversion_function,
-            maxpagesize=results_per_page,
-            created_date_time_utc_start=created_after,
-            created_date_time_utc_end=created_before,
-            ids=document_ids,
-            order_by=order_by,
-            statuses=statuses,
-            top=top,
-            skip=skip,
-            **kwargs
+        return cast(ItemPaged[DocumentStatus],
+            self._client.document_translation.get_documents_status(
+                id=translation_id,
+                cls=model_conversion_function,
+                created_date_time_utc_start=created_after,
+                created_date_time_utc_end=created_before,
+                ids=document_ids,
+                order_by=order_by,
+                statuses=statuses,
+                top=top,
+                skip=skip,
+                **kwargs
+            )
         )
 
     @distributed_trace

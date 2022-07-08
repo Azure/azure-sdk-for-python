@@ -132,7 +132,6 @@ class CodegenTestPR:
 
     def __init__(self):
         self.issue_link = os.getenv('ISSUE_LINK')
-        self.usr_token = os.getenv('USR_TOKEN')
         self.pipeline_link = os.getenv('PIPELINE_LINK')
         self.bot_token = os.getenv('AZURESDK_BOT_TOKEN')
         self.spec_readme = os.getenv('SPEC_README', '')
@@ -149,6 +148,7 @@ class CodegenTestPR:
         self.pr_number = 0
         self.container_name = ''
         self.private_package_link = []  # List[str]
+        self.tag_is_stable = False
 
     @return_origin_path
     def get_latest_commit_in_swagger_repo(self) -> str:
@@ -178,14 +178,22 @@ class CodegenTestPR:
             'specFolder': self.spec_repo,
             'relatedReadmeMdFiles': [str(self.readme_local_folder())]
         }
+        # if Python tag exists
+        if os.getenv('PYTHON_TAG'):
+            input_data['python_tag'] = os.getenv('PYTHON_TAG')
 
         self.autorest_result = str(Path(os.getenv('TEMP_FOLDER')) / 'temp.json')
         with open(self.autorest_result, 'w') as file:
             json.dump(input_data, file)
 
-        # generate code
+        # generate code(be careful about the order)
         print_exec('python scripts/dev_setup.py -p azure-core')
         print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
+
+        generate_result = self.get_autorest_result()
+        self.tag_is_stable = list(generate_result.values())[0]['tagIsStable']
+        log(f"tag_is_stable is {self.tag_is_stable}")
+        
         print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
 
     def get_package_name_with_autorest_result(self):
@@ -248,15 +256,6 @@ class CodegenTestPR:
 
         modify_file(sdk_readme, edit_sdk_readme)
 
-    def check_sdk_setup(self):
-        def edit_sdk_setup(content: List[str]):
-            for i in range(0, len(content)):
-                content[i] = content[i].replace('msrestazure>=0.4.32,<2.0.0', 'azure-mgmt-core>=1.3.0,<2.0.0')
-                content[i] = content[i].replace('azure-mgmt-core>=1.2.0,<2.0.0', 'azure-mgmt-core>=1.3.0,<2.0.0')
-                content[i] = content[i].replace('msrest>=0.5.0', 'msrest>=0.6.21')
-
-        modify_file(str(Path(self.sdk_code_path()) / 'setup.py'), edit_sdk_setup)
-
     # Use the template to update readme and setup by packaging_tools
     @return_origin_path
     def check_file_with_packaging_tool(self):
@@ -282,36 +281,12 @@ class CodegenTestPR:
         all_files(self.sdk_code_path(), files)
         return files
 
-    def judge_tag(self) -> bool:
-        files = self.get_all_files_under_package_folder()
-        default_api_version = ''  # for multi-api
-        api_version = ''  # for single-api
-        for file in files:
-            if '.py' not in file or '.pyc' in file:
-                continue
-            try:
-                with open(file, 'r') as file_in:
-                    list_in = file_in.readlines()
-            except:
-                _LOG.info(f'can not open {file}')
-                continue
-
-            for line in list_in:
-                if line.find('DEFAULT_API_VERSION = ') > -1:
-                    default_api_version += line.split('=')[-1].strip('\n')  # collect all default api version
-                if default_api_version == '' and line.find('api_version = ') > -1:
-                    api_version += line.split('=')[-1].strip('\n')  # collect all single api version
-        if default_api_version != '':
-            log(f'find default api version:{default_api_version}')
-            return 'preview' in default_api_version
-        log(f'find single api version:{api_version}')
-        return 'preview' in api_version
-
     def calculate_next_version_proc(self, last_version: str):
-        preview_tag = self.judge_tag()
+        preview_tag = not self.tag_is_stable
         changelog = self.get_changelog()
         if changelog == '':
-            return '0.0.0'
+            msg = 'it should be stable' if self.tag_is_stable else 'it should be perview'
+            return f'0.0.0 ({msg})'
         preview_version = 'rc' in last_version or 'b' in last_version
         #                                           |   preview tag                     | stable tag
         # preview version(1.0.0rc1/1.0.0b1)         | 1.0.0rc2(track1)/1.0.0b2(track2)  |  1.0.0
@@ -392,11 +367,28 @@ class CodegenTestPR:
         else:
             self.edit_changelog()
 
+    @staticmethod
+    def get_need_dependency():
+        template_path = Path('tools/azure-sdk-tools/packaging_tools/templates/setup.py')
+        with open(template_path, 'r') as fr:
+            content = fr.readlines()
+            for line in content:
+                if 'msrest>' in line:
+                    target_msrest = line.strip().strip(',').strip('\'')
+                    yield target_msrest
+                if 'azure-mgmt-core' in line:
+                    target_mgmt_core = line.strip().strip(',').strip('\'')
+                    yield target_mgmt_core
+
     def check_ci_file_proc(self, dependency: str):
         def edit_ci_file(content: List[str]):
             new_line = f'#override azure-mgmt-{self.package_name} {dependency}'
+            dependency_name = dependency.split('>')[0]
             for i in range(len(content)):
                 if new_line in content[i]:
+                    return
+                if f'azure-mgmt-{self.package_name} {dependency_name}' in content[i]:
+                    content[i] = new_line + '\n'
                     return
             prefix = '' if '\n' in content[-1] else '\n'
             content.append(prefix + new_line + '\n')
@@ -405,14 +397,15 @@ class CodegenTestPR:
         print_exec('git add shared_requirements.txt')
 
     def check_ci_file(self):
-        self.check_ci_file_proc('msrest>=0.6.21')
-        self.check_ci_file_proc('azure-mgmt-core>=1.3.0,<2.0.0')
+        # eg: target_msrest = 'msrest>=0.6.21', target_mgmt_core = 'azure-mgmt-core>=1.3.0,<2.0.0'
+        target_msrest, target_mgmt_core = list(self.get_need_dependency())
+        self.check_ci_file_proc(target_msrest)
+        self.check_ci_file_proc(target_mgmt_core)
 
     def check_file(self):
         self.check_file_with_packaging_tool()
         self.check_pprint_name()
         self.check_sdk_readme()
-        self.check_sdk_setup()
         self.check_version()
         self.check_changelog_file()
         self.check_ci_file()
@@ -465,7 +458,7 @@ class CodegenTestPR:
         self.run_test_proc()
 
     def create_pr_proc(self):
-        api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=self.usr_token)
+        api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=self.bot_token)
         pr_title = "[AutoRelease] {}(Do not merge)".format(self.new_branch)
         pr_head = "{}:{}".format(os.getenv('USR_NAME'), self.new_branch)
         pr_base = 'main'

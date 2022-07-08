@@ -1,0 +1,35 @@
+#source ../configs/parallel-job/batch-score-ParallelComponent.yaml
+$schema: http://azureml/sdk-2-0/ParallelComponent.json
+name: batch_score
+type: parallel
+version: 1.0.0
+display_name: BatchScore
+description: parallel component for batch score
+
+inputs:
+  component_in_number:
+    description: A number
+    type: number
+    default: 10.99
+    optional: false
+  component_in_path:
+    description: A path
+    type: uri_folder
+
+outputs:
+  results:
+    type: mltable
+
+task:
+  type: function
+  code: ../python
+  entry_script: score.py
+  args: >- # optional
+    --label ${{inputs.label}}
+    --model ${{inputs.model}}
+    --output ${{outputs.scored_result}}
+  append_row_to: ${{outputs.scoring_summary}} # optional, If Null, equals to summary_only mode in v1.
+  environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+
+mini_batch_size: "10mb"
+input_data: ${{inputs.score_input}}

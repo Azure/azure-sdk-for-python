@@ -635,7 +635,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_04_01_PREVIEW})
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy
     def test_default_string_index_type_UnicodeCodePoint_body_param(self, client):
         def callback(response):
@@ -660,7 +660,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_04_01_PREVIEW})
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy
     def test_explicit_set_string_index_type_body_param(self, client):
         def callback(response):
@@ -685,7 +685,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_04_01_PREVIEW})
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy
     def test_disable_service_logs_body_param(self, client):
         def callback(resp):

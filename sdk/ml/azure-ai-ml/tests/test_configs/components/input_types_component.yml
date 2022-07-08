@@ -1,0 +1,48 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: command
+
+name: microsoft_samples_command_component_basic_inputs
+display_name: CommandComponentBasicInputs
+description: This is the basic command component with several input types
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+version: 1
+
+inputs:
+  component_in_string:
+    description: A string
+    type: string
+  component_in_ranged_integer:
+    description: A ranged integer
+    type: integer
+    default: 10
+    min: 1
+    max: 100
+    optional: false
+  component_in_enum:
+    description: An enum
+    type: string
+    default: hello
+    enum: ['hello', 'world']
+  component_in_boolean:
+    description: A boolean
+    type: boolean
+    default: false
+  component_in_ranged_number:
+    description: A ranged number
+    type: number
+    min: 2
+    max: 8
+    default: 10
+
+command: >-
+  echo Hello World &
+  echo ${{inputs.component_in_string}} &
+  echo ${{inputs.component_in_ranged_integer}} &
+  echo ${{inputs.component_in_enum}} &
+  echo ${{inputs.component_in_boolean}} &
+  echo ${{inputs.component_in_ranged_number}} &
+
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1

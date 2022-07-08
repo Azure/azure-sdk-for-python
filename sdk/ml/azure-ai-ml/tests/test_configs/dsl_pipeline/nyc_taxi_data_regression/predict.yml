@@ -1,0 +1,24 @@
+## IMPORTANT: this file and accompanying assets are the source for snippets in https://docs.microsoft.com/azure/machine-learning!
+## Please reach out to the Azure ML docs & samples team before editing for the first time. 
+
+# <component>
+name: predict_taxi_fares
+version: 1
+display_name: PredictTaxiFares
+type: command
+inputs:
+  model_input:
+    type: uri_folder
+  test_data:
+    type: uri_folder
+outputs:
+  predictions:
+    type: uri_folder
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cuda11-gpu:3
+code: ./predict_src
+command: >-
+  python predict.py 
+  --model_input ${{inputs.model_input}}
+  --test_data ${{inputs.test_data}}
+  --predictions ${{outputs.predictions}}
+# </component>

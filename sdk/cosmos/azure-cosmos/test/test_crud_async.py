@@ -39,10 +39,9 @@ import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 import azure.cosmos._base as base
-import azure.cosmos.aio.cosmos_client as cosmos_client
+from azure.cosmos.aio import CosmosClient, _retry_utility_async
 from azure.cosmos.diagnostics import RecordDiagnostics
 from azure.cosmos.partition_key import PartitionKey
-from azure.cosmos.aio import _retry_utility_async
 import requests
 from urllib3.util.retry import Retry
 
@@ -98,7 +97,7 @@ class CRUDTests(unittest.TestCase):
 
     @classmethod
     async def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session", connection_policy=cls.connectionPolicy)
+        cls.client = CosmosClient(cls.host, cls.masterKey, consistency_level="Session", connection_policy=cls.connectionPolicy)
         cls.databaseForTest = await cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
 
     async def test_database_crud(self):
@@ -537,7 +536,7 @@ class CRUDTests(unittest.TestCase):
         resource_tokens["dbs/" + created_db.id + "/colls/" + all_collection.id] = (all_permission.properties['_token'])
         resource_tokens["dbs/" + created_db.id + "/colls/" + read_collection.id] = (read_permission.properties['_token'])
 
-        async with cosmos_client.CosmosClient(
+        async with CosmosClient(
             CRUDTests.host, resource_tokens, consistency_level="Session", connection_policy=CRUDTests.connectionPolicy) as restricted_client:
             print('Async Initialization')
 
@@ -1327,14 +1326,14 @@ class CRUDTests(unittest.TestCase):
             return entities
 
         # Client without any authorization will fail.
-        async with cosmos_client.CosmosClient(CRUDTests.host, {}, consistency_level="Session", connection_policy=CRUDTests.connectionPolicy) as client:
+        async with CosmosClient(CRUDTests.host, {}, consistency_level="Session", connection_policy=CRUDTests.connectionPolicy) as client:
             try:
                 db_list = [db async for db in client.list_databases()]
             except exceptions.CosmosHttpResponseError as e:
                 assert e.status_code == 401
 
         # Client with master key.
-        async with cosmos_client.CosmosClient(CRUDTests.host,
+        async with CosmosClient(CRUDTests.host,
                                             CRUDTests.masterKey,
                                             consistency_level="Session",
                                             connection_policy=CRUDTests.connectionPolicy) as client:
@@ -1343,7 +1342,7 @@ class CRUDTests(unittest.TestCase):
             resource_tokens = {"dbs/" + entities['db'].id + "/colls/" + entities['coll'].id:
                                    entities['permissionOnColl'].properties['_token']}
 
-        async with cosmos_client.CosmosClient(
+        async with CosmosClient(
                 CRUDTests.host, resource_tokens, consistency_level="Session", connection_policy=CRUDTests.connectionPolicy) as col_client:
             db = entities['db']
 
@@ -1383,7 +1382,7 @@ class CRUDTests(unittest.TestCase):
             resource_tokens = {"dbs/" + entities['db'].id + "/colls/" + entities['coll'].id + "/docs/" + docId:
                                    entities['permissionOnDoc'].properties['_token']}
 
-        async with cosmos_client.CosmosClient(
+        async with CosmosClient(
                 CRUDTests.host, resource_tokens, consistency_level="Session", connection_policy=CRUDTests.connectionPolicy) as doc_client:
 
             # 6. Success-- Use Doc permission to read doc
@@ -1873,7 +1872,7 @@ class CRUDTests(unittest.TestCase):
 
             with self.assertRaises(Exception):
                 # client does a getDatabaseAccount on initialization, which will time out
-                async with cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, consistency_level="Session",
+                async with CosmosClient(CRUDTests.host, CRUDTests.masterKey, consistency_level="Session",
                                            connection_policy=connection_policy) as client:
                     print('Async initialization')
 
@@ -1890,7 +1889,7 @@ class CRUDTests(unittest.TestCase):
         )
         with self.assertRaises(AzureError):
             # client does a getDatabaseAccount on initialization, which will time out
-            async with cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, consistency_level="Session",
+            async with CosmosClient(CRUDTests.host, CRUDTests.masterKey, consistency_level="Session",
                                        connection_policy=connection_policy) as client:
                 print('Async Initialization')
 
@@ -1913,7 +1912,7 @@ class CRUDTests(unittest.TestCase):
         )
         start_time = time.time()
         try:
-            async with cosmos_client.CosmosClient(
+            async with CosmosClient(
                 "https://localhost:9999",
                 CRUDTests.masterKey,
                 consistency_level="Session",
@@ -1926,7 +1925,7 @@ class CRUDTests(unittest.TestCase):
     async def initialize_client_with_connection_core_retry_config(self, retries):
         start_time = time.time()
         try:
-            async with cosmos_client.CosmosClient(
+            async with CosmosClient(
                 "https://localhost:9999",
                 CRUDTests.masterKey,
                 consistency_level="Session",
@@ -1941,7 +1940,7 @@ class CRUDTests(unittest.TestCase):
 
     async def test_absolute_client_timeout(self):
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            async with cosmos_client.CosmosClient(
+            async with CosmosClient(
                 "https://localhost:9999",
                 CRUDTests.masterKey,
                 consistency_level="Session",
@@ -1950,7 +1949,7 @@ class CRUDTests(unittest.TestCase):
 
         error_response = ServiceResponseError("Read timeout")
         timeout_transport = TimeoutTransport(error_response)
-        async with cosmos_client.CosmosClient(
+        async with CosmosClient(
             self.host, self.masterKey, consistency_level="Session", transport=timeout_transport, passthrough=True) as client: print('Async initialization')
 
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
@@ -1958,7 +1957,7 @@ class CRUDTests(unittest.TestCase):
 
         status_response = 500  # Users connection level retry
         timeout_transport = TimeoutTransport(status_response)
-        async with cosmos_client.CosmosClient(
+        async with CosmosClient(
                 self.host, self.masterKey, consistency_level="Session", transport=timeout_transport, passthrough=True) as client: print(
             'Async initialization')
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
@@ -1970,7 +1969,7 @@ class CRUDTests(unittest.TestCase):
 
         status_response = 429  # Uses Cosmos custom retry
         timeout_transport = TimeoutTransport(status_response)
-        async with cosmos_client.CosmosClient(
+        async with CosmosClient(
                 self.host, self.masterKey, consistency_level="Session", transport=timeout_transport, passthrough=True) as client: print(
             'Async initialization')
         with self.assertRaises(exceptions.CosmosClientTimeoutError):

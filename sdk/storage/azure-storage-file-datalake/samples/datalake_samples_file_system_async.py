@@ -217,7 +217,6 @@ class FileSystemSamplesAsync(object):
 
             await file_system_client.delete_file_system()
 
-
 async def run():
     sample = FileSystemSamplesAsync()
     await sample.file_system_sample()

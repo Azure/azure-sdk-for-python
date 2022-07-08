@@ -15,7 +15,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/identities?api-version=2021-10-31-preview
+    uri: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
   response:
     body:
       string: '{"identity": {"id": "sanitized"}}'
@@ -33,7 +33,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://smstestapp.communication.azure.com/identities?api-version=2021-10-31-preview
+    url: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
 - request:
     body: '{"id": "sanitized", "routeType": "any", "ttl": 172800}'
     headers:
