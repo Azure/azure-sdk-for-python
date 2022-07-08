@@ -278,7 +278,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -339,7 +340,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         src_md5 = StorageContentValidation.get_content_md5(source_blob_data)
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -383,7 +385,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         source_blob_properties = source_blob_client.get_blob_properties()
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -432,7 +435,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         source_blob_properties = source_blob_client.get_blob_properties()
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -481,7 +485,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         source_blob_properties = source_blob_client.get_blob_properties()
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -530,7 +535,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         source_blob_properties = source_blob_client.get_blob_properties()
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -578,7 +584,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -630,7 +637,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -677,7 +685,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -723,7 +732,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -770,7 +780,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         source_properties = source_blob_client.get_blob_properties()
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -818,7 +829,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         source_properties = source_blob_client.append_block(source_blob_data)
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -1508,8 +1520,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         assert prop.is_append_blob_sealed is None
         copied_blob3.append_block("abc")
 
+    @pytest.mark.live_test_only  # Can't be recorded due to immutability policy date
     @BlobPreparer()
-    @recorded_by_proxy
     def test_create_append_blob_with_immutability_policy(self, **kwargs):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")

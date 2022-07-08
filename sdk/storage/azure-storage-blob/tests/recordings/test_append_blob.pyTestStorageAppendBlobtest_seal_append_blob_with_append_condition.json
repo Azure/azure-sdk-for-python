@@ -9,16 +9,16 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.13.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "x-ms-date": "Fri, 08 Jul 2022 00:03:04 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 07 Jul 2022 22:30:19 GMT",
-        "ETag": "\u00220x8DA6068460CEE86\u0022",
-        "Last-Modified": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "Date": "Fri, 08 Jul 2022 00:03:03 GMT",
+        "ETag": "\u00220x8DA60753B396F2B\u0022",
+        "Last-Modified": "Fri, 08 Jul 2022 00:03:04 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -36,16 +36,16 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.13.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "x-ms-date": "Fri, 08 Jul 2022 00:03:04 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 07 Jul 2022 22:30:19 GMT",
-        "ETag": "\u00220x8DA606846174D42\u0022",
-        "Last-Modified": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "Date": "Fri, 08 Jul 2022 00:03:03 GMT",
+        "ETag": "\u00220x8DA60753B444302\u0022",
+        "Last-Modified": "Fri, 08 Jul 2022 00:03:04 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -64,16 +64,16 @@
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.13.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
         "x-ms-blob-type": "AppendBlob",
-        "x-ms-date": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "x-ms-date": "Fri, 08 Jul 2022 00:03:04 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 07 Jul 2022 22:30:19 GMT",
-        "ETag": "\u00220x8DA606846226EE4\u0022",
-        "Last-Modified": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "Date": "Fri, 08 Jul 2022 00:03:04 GMT",
+        "ETag": "\u00220x8DA60753B5336EE\u0022",
+        "Last-Modified": "Fri, 08 Jul 2022 00:03:04 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -93,7 +93,7 @@
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.13.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
         "x-ms-blob-condition-appendpos": "1",
-        "x-ms-date": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "x-ms-date": "Fri, 08 Jul 2022 00:03:05 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
@@ -101,7 +101,7 @@
       "ResponseHeaders": {
         "Content-Length": "251",
         "Content-Type": "application/xml",
-        "Date": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "Date": "Fri, 08 Jul 2022 00:03:04 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -112,8 +112,8 @@
       "ResponseBody": [
         "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\n",
         "\u003CError\u003E\u003CCode\u003EAppendPositionConditionNotMet\u003C/Code\u003E\u003CMessage\u003EThe append position condition specified was not met.\n",
-        "RequestId:98c4054e-901e-006b-4f51-925d36000000\n",
-        "Time:2022-07-07T22:30:19.6623158Z\u003C/Message\u003E\u003C/Error\u003E"
+        "RequestId:a90e1d99-a01e-002d-595e-9269b1000000\n",
+        "Time:2022-07-08T00:03:05.3922644Z\u003C/Message\u003E\u003C/Error\u003E"
       ]
     },
     {
@@ -126,16 +126,16 @@
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.13.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
         "x-ms-blob-condition-appendpos": "0",
-        "x-ms-date": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "x-ms-date": "Fri, 08 Jul 2022 00:03:05 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 07 Jul 2022 22:30:19 GMT",
-        "ETag": "\u00220x8DA60684637A177\u0022",
-        "Last-Modified": "Thu, 07 Jul 2022 22:30:19 GMT",
+        "Date": "Fri, 08 Jul 2022 00:03:04 GMT",
+        "ETag": "\u00220x8DA60753BA9AEBB\u0022",
+        "Last-Modified": "Fri, 08 Jul 2022 00:03:05 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
