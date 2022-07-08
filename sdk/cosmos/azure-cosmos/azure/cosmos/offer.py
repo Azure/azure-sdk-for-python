@@ -27,7 +27,8 @@ class ThroughputProperties(object):
     To read and update throughput properties use the associated methods on the :class:`Container`.
     """
 
-    def __init__(self, offer_throughput=None, properties=None, auto_scale_max_throughput=None, auto_scale_increment_percentage=None):  # pylint: disable=super-init-not-called
+    def __init__(self, offer_throughput=None, properties=None, auto_scale_max_throughput=None,
+                 auto_scale_increment_percentage=None):  # pylint: disable=super-init-not-called
         # type: (int, Dict[str, Any], int, int) -> None
         self.offer_throughput = offer_throughput
         self.properties = properties
