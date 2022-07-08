@@ -6,7 +6,7 @@
 from typing import Union, TYPE_CHECKING
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
-from .._generated.aio import RouteClient as _RouteClient
+from .._generated.aio import RouteClient as _MapsRouteClient
 from .._version import VERSION
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -26,7 +26,7 @@ def _authentication_policy(credential):
         )
     return authentication_policy
 
-class AsyncRouteClientBase:
+class AsyncMapsRouteClientBase:
     def __init__(
         self,
         credential, #type: Union[AzureKeyCredential, AsyncTokenCredential]
@@ -34,7 +34,7 @@ class AsyncRouteClientBase:
     ):
         # type: (...) -> None
 
-        self._route_client = _RouteClient(
+        self._route_client = _MapsRouteClient(
             credential=credential,  # type: ignore
             api_version=kwargs.pop("api_version", VERSION),
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
