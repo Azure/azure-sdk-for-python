@@ -149,7 +149,7 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         blob = await self._create_blob(bsc)
 
         # Act
-        lease = await blob.acquire_lease()
+        lease = await blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
         create_resp = await blob.create_append_blob(lease=lease)
 
         # Assert

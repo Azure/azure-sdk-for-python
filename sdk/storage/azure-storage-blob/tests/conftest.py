@@ -6,8 +6,13 @@
 
 import pytest
 
-from devtools_testutils import add_oauth_response_sanitizer, test_proxy
+from devtools_testutils import (
+    add_oauth_response_sanitizer,
+    add_remove_header_sanitizer,
+    test_proxy
+)
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     add_oauth_response_sanitizer()
+    add_remove_header_sanitizer(headers='x-ms-copy-source-authorization')

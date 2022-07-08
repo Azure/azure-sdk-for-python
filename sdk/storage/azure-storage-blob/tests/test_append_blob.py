@@ -138,7 +138,7 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         blob = self._create_blob(bsc)
 
         # Act
-        lease = blob.acquire_lease()
+        lease = blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
         create_resp = blob.create_append_blob(lease=lease)
 
         # Assert
