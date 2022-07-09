@@ -19,7 +19,7 @@ from ._download_async import StorageStreamDownloader
 async def upload_blob_to_url(
         blob_url,  # type: str
         data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
-        credential=None,  # type: Any
+        credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         **kwargs):
     # type: (...) -> dict[str, Any]
     """Upload data to a given URL
@@ -78,7 +78,7 @@ async def _download_to_stream(client, handle, **kwargs):
 async def download_blob_from_url(
         blob_url,  # type: str
         output,  # type: str
-        credential=None,  # type: Any
+        credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         **kwargs):
     # type: (...) -> None
     """Download the contents of a blob to a local file or stream.

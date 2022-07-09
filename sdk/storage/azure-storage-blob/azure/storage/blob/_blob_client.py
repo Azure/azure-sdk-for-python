@@ -153,7 +153,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             container_name,  # type: str
             blob_name,  # type: str
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -212,8 +212,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         return '?'.join(result)
 
     @classmethod
-    def from_blob_url(cls, blob_url, credential=None, snapshot=None, **kwargs):
-        # type: (Type[ClassType], str, Optional[Any], Optional[Union[str, Dict[str, Any]]], Any) -> ClassType
+    def from_blob_url(
+            cls,  # type: Type[ClassType]
+            blob_url,  # type: str
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
+            **kwargs  # type: Any
+        ):  # type: (...) -> ClassType
         """Create BlobClient from a blob url. This doesn't support customized blob url with '/' in blob name.
 
         :param str blob_url:
@@ -295,7 +300,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             container_name,  # type: str
             blob_name,  # type: str
             snapshot=None,  # type: Optional[str]
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):  # type: (...) -> ClassType
         """Create BlobClient from a Connection String.

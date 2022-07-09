@@ -120,7 +120,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     def __init__(
             self, account_url,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -150,7 +150,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def from_connection_string(
             cls,  # type: Type[ClassType]
             conn_str,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):  # type: (...) -> ClassType
         """Create BlobServiceClient from a Connection String.

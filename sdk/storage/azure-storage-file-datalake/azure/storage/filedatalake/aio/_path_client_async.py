@@ -53,7 +53,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             self, account_url,  # type: str
             file_system_name,  # type: str
             path_name,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
     ):
         # type: (...) -> None

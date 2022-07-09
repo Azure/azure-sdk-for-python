@@ -84,7 +84,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             self, account_url,  # type: str
             share_name,  # type: str
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -124,7 +124,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
     @classmethod
     def from_share_url(cls, share_url,  # type: str
                        snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-                       credential=None,  # type: Optional[Any]
+                       credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
                        **kwargs  # type: Any
                        ):
         # type: (...) -> ShareClient
@@ -197,7 +197,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             cls, conn_str,  # type: str
             share_name, # type: str
             snapshot=None,  # type: Optional[str]
-            credential=None, # type: Optional[Any]
+            credential=None, # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs # type: Any
         ):
         # type: (...) -> ShareClient

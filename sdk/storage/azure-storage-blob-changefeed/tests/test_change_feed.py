@@ -21,7 +21,6 @@ except ImportError:
 
 from devtools_testutils.storage import StorageTestCase
 from settings.testcase import ChangeFeedPreparer
-from azure.core.credentials import AzureNamedKeyCredential
 
 @pytest.mark.playback_test_only
 class StorageChangeFeedTest(StorageTestCase):

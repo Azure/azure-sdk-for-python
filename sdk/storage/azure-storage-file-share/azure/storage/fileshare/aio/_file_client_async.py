@@ -138,7 +138,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         share_name,  # type: str
         file_path,  # type: str
         snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-        credential=None,  # type: Optional[Any]
+        credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         **kwargs  # type: Any
     ):
         # type: (...) -> None

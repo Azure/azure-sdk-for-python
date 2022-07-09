@@ -134,7 +134,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
     def __init__(
             self, account_url,  # type: str
             container_name,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -170,8 +170,12 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             self._query_str)
 
     @classmethod
-    def from_container_url(cls, container_url, credential=None, **kwargs):
-        # type: (Type[ClassType], str, Optional[Any], Any) -> ClassType
+    def from_container_url(
+            cls,  # type: Type[ClassType]
+            container_url,  # type: str
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+            **kwargs  # type: Any
+        ):  # type: (...) -> ClassType
         """Create ContainerClient from a container url.
 
         :param str container_url:
@@ -219,7 +223,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             cls,  # type: Type[ClassType]
             conn_str,  # type: str
             container_name,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):  # type: (...) -> ClassType
         """Create ContainerClient from a Connection String.

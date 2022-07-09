@@ -119,7 +119,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             container_name,  # type: str
             blob_name,  # type: str
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):
         # type: (...) -> None

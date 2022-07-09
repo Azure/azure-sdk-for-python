@@ -53,7 +53,7 @@ class ChangeFeedClient(object):  # pylint: disable=too-many-public-methods
     """
     def __init__(
             self, account_url,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -62,7 +62,7 @@ class ChangeFeedClient(object):  # pylint: disable=too-many-public-methods
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):  # type: (...) -> ChangeFeedClient
         """Create ChangeFeedClient from a Connection String.

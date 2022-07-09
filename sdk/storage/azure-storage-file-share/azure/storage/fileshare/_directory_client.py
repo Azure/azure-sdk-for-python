@@ -86,7 +86,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             share_name, # type: str
             directory_path, # type: str
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None, # type: Optional[Any]
+            credential=None, # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs # type: Optional[Any]
         ):
         # type: (...) -> None
@@ -127,7 +127,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
     @classmethod
     def from_directory_url(cls, directory_url,  # type: str
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None, # type: Optional[Any]
+            credential=None, # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs # type: Optional[Any]
         ):
         # type: (...) -> ShareDirectoryClient
@@ -193,7 +193,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             cls, conn_str,  # type: str
             share_name,  # type: str
             directory_path,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):
         # type: (...) -> ShareDirectoryClient
