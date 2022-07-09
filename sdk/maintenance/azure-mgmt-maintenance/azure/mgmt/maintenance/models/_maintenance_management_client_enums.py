@@ -6,27 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource.
     """
 
@@ -35,7 +19,7 @@ class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class ImpactType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ImpactType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The impact type
     """
 
@@ -48,13 +32,15 @@ class ImpactType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Pending updates can redeploy resource.
     REDEPLOY = "Redeploy"
 
-class MaintenanceScope(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MaintenanceScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets maintenanceScope of the configuration
     """
 
     #: This maintenance scope controls installation of azure platform updates i.e. services on
     #: physical nodes hosting customer VMs.
     HOST = "Host"
+    #: This maintenance scope controls the default update maintenance of the Azure Resource.
+    RESOURCE = "Resource"
     #: This maintenance scope controls os image installation on VM/VMSS.
     OS_IMAGE = "OSImage"
     #: This maintenance scope controls extension installation on VM/VMSS.
@@ -66,7 +52,7 @@ class MaintenanceScope(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: This maintenance scope controls installation of SQL managed instance platform update.
     SQL_MANAGED_INSTANCE = "SQLManagedInstance"
 
-class RebootOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RebootOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Possible reboot preference as defined by the user based on which it would be decided to reboot
     the machine or not after the patch operation is completed.
     """
@@ -75,14 +61,14 @@ class RebootOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NEVER = "Never"
     ALWAYS = "Always"
 
-class TaskScope(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TaskScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Global Task execute once when schedule trigger. Resource task execute for each VM.
     """
 
     GLOBAL_ENUM = "Global"
     RESOURCE = "Resource"
 
-class UpdateStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class UpdateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status
     """
 
@@ -97,7 +83,7 @@ class UpdateStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Updates installation failed and should be retried later.
     RETRY_LATER = "RetryLater"
 
-class Visibility(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Visibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets the visibility of the configuration. The default value is 'Custom'
     """
 

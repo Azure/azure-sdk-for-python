@@ -6,46 +6,26 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ApplyUpdate
-    from ._models_py3 import ConfigurationAssignment
-    from ._models_py3 import ErrorDetails
-    from ._models_py3 import InputLinuxParameters
-    from ._models_py3 import InputPatchConfiguration
-    from ._models_py3 import InputWindowsParameters
-    from ._models_py3 import ListApplyUpdate
-    from ._models_py3 import ListConfigurationAssignmentsResult
-    from ._models_py3 import ListMaintenanceConfigurationsResult
-    from ._models_py3 import ListUpdatesResult
-    from ._models_py3 import MaintenanceConfiguration
-    from ._models_py3 import MaintenanceError
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationInfo
-    from ._models_py3 import OperationsListResult
-    from ._models_py3 import Resource
-    from ._models_py3 import SystemData
-    from ._models_py3 import TaskProperties
-    from ._models_py3 import Update
-except (SyntaxError, ImportError):
-    from ._models import ApplyUpdate  # type: ignore
-    from ._models import ConfigurationAssignment  # type: ignore
-    from ._models import ErrorDetails  # type: ignore
-    from ._models import InputLinuxParameters  # type: ignore
-    from ._models import InputPatchConfiguration  # type: ignore
-    from ._models import InputWindowsParameters  # type: ignore
-    from ._models import ListApplyUpdate  # type: ignore
-    from ._models import ListConfigurationAssignmentsResult  # type: ignore
-    from ._models import ListMaintenanceConfigurationsResult  # type: ignore
-    from ._models import ListUpdatesResult  # type: ignore
-    from ._models import MaintenanceConfiguration  # type: ignore
-    from ._models import MaintenanceError  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationInfo  # type: ignore
-    from ._models import OperationsListResult  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import TaskProperties  # type: ignore
-    from ._models import Update  # type: ignore
+from ._models_py3 import ApplyUpdate
+from ._models_py3 import ConfigurationAssignment
+from ._models_py3 import ErrorDetails
+from ._models_py3 import InputLinuxParameters
+from ._models_py3 import InputPatchConfiguration
+from ._models_py3 import InputWindowsParameters
+from ._models_py3 import ListApplyUpdate
+from ._models_py3 import ListConfigurationAssignmentsResult
+from ._models_py3 import ListMaintenanceConfigurationsResult
+from ._models_py3 import ListUpdatesResult
+from ._models_py3 import MaintenanceConfiguration
+from ._models_py3 import MaintenanceError
+from ._models_py3 import Operation
+from ._models_py3 import OperationInfo
+from ._models_py3 import OperationsListResult
+from ._models_py3 import Resource
+from ._models_py3 import SystemData
+from ._models_py3 import TaskProperties
+from ._models_py3 import Update
+
 
 from ._maintenance_management_client_enums import (
     CreatedByType,
@@ -56,7 +36,9 @@ from ._maintenance_management_client_enums import (
     UpdateStatus,
     Visibility,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'ApplyUpdate',
     'ConfigurationAssignment',
@@ -85,3 +67,5 @@ __all__ = [
     'UpdateStatus',
     'Visibility',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
