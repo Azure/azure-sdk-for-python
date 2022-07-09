@@ -3,7 +3,7 @@ from packaging.version import Version, parse
 
 import os, sys, platform, glob
 
-from .parsing import ParsedSetup
+from ci_tools.parsing import ParsedSetup
 from typing import List
 
 OMITTED_CI_PACKAGES = [
@@ -79,7 +79,7 @@ def compare_python_version(version_spec):
     return current_sys_version in spec_set
 
 
-def filter_packages_by_compatibility_override(package_set: List[str], resolve_basename: bool =True) -> List[str]:
+def filter_packages_by_compatibility_override(package_set: List[str], resolve_basename: bool = True) -> List[str]:
     return [
         p
         for p in package_set

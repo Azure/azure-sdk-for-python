@@ -1,28 +1,5 @@
-a#!/usr/bin/env python
-
-# --------------------------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for license information.
-# --------------------------------------------------------------------------------------------
-
-# This script can process and update setup.py for e.g. update required version to dev
-
-import argparse
-import sys
-import os
-import logging
-import glob
-from packaging.specifiers import SpecifierSet
-from packaging.version import Version
-from pkg_resources import Requirement
-
-root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
-setup_parser_path = os.path.abspath(os.path.join(root_dir, "eng", "versioning"))
-pypi_tools_path = os.path.join(root_dir, "tools", "azure-sdk-tools", "pypi_tools")
-
-sys.path += [setup_parser_path, pypi_tools_path]
-from setup_parser import get_install_requires, parse_setup
-from pypi import PyPIClient
+from pypi_tools.pypi import PyPIClient
+from ci_tools.parsing import ParsedSetup
 
 DEV_BUILD_IDENTIFIER = "a"
 
@@ -59,13 +36,13 @@ def get_version(pkg_name):
     paths = glob.glob(glob_path)
     if paths:
         setup_py_path = paths[0]
-        _, version, _ = parse_setup(setup_py_path)
+        parsed_setup = ParsedSetup.from_path(setup_py_path)
         # Remove dev build part if version for this package is already updated to dev build
         # When building package with dev build version, version for packages in same service is updated to dev build 
         # and other packages will not have dev build number
         # strip dev build number so we can check if package exists in PyPI and replace
         
-        version_obj = Version(version)
+        version_obj = Version(parsed_setup.version)
         if version_obj.pre:
             if version_obj.pre[0] == DEV_BUILD_IDENTIFIER:
                 version = version_obj.base_version
@@ -82,8 +59,9 @@ def get_base_version(pkg_name):
     paths = glob.glob(glob_path)
     if paths:
         setup_py_path = paths[0]
-        _, version, _ = parse_setup(setup_py_path)
-        version_obj = Version(version)
+        parsed_setup = ParsedSetup.from_path(setup_py_path)
+
+        version_obj = Version(parsed_setup.version)
         return version_obj.base_version
     else:
         logging.error("setup.py is not found for package {} to identify current version".format(pkg_name))
@@ -95,9 +73,10 @@ def process_requires(setup_py_path):
     # If any azure sdk package is not available on PyPI then requirement will be updated to refer dev version
     requires = [
         Requirement.parse(r)
-        for r in get_install_requires(setup_py_path)
+        for r in ParsedSetup.from_path(setup_py_path).requires
         if r.startswith("azure")
     ]
+
     # Find package requirements that are not available on PyPI
     requirement_to_update = {}
     for req in requires:
@@ -120,21 +99,3 @@ def process_requires(setup_py_path):
         update_requires(setup_py_path, requirement_to_update)
         logging.info("Package requirement is updated in setup.py")
 
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Verify and update package requirements in setup.py"
-    )
-
-    parser.add_argument(
-        "-t", "--target", help="The target package directory on disk.", required=True,
-    )
-
-    args = parser.parse_args()
-    # get target package name from target package path
-    setup_py_path = os.path.abspath(os.path.join(args.target, "setup.py"))
-    if not os.path.exists(setup_py_path):
-        logging.error("setup.py is not found in {}".format(args.target))
-        exit(1)
-    else:
-        process_requires(setup_py_path)

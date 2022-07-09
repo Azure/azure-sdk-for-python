@@ -47,6 +47,6 @@ setup(
     },
     extras_require={
         ":python_version>='3.5'": ["pytest-asyncio>=0.9.0"],
-        "build": ["six", "setuptools", "packaging", "pyparsing"]
+        "build": ["six", "setuptools", "packaging", "pyparsing"],
     },
 )

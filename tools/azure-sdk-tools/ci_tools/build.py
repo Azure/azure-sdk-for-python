@@ -1,9 +1,10 @@
 import argparse, sys, os, glob
 from subprocess import check_call
 
-from .functions import discover_targeted_packages, str_to_bool
+from ci_tools.functions import discover_targeted_packages, str_to_bool
 
 DEFAULT_DEST_FOLDER = "./dist"
+
 
 def build(args, repo_root_arg=None) -> None:
     parser = argparse.ArgumentParser(
@@ -61,7 +62,12 @@ def build(args, repo_root_arg=None) -> None:
     )
 
     parser.add_argument(
-        "--repodir", default=None, dest="repo", help=("Where is the start directory that we are building against? If not provided, the current working directory will be used.")
+        "--repodir",
+        default=None,
+        dest="repo",
+        help=(
+            "Where is the start directory that we are building against? If not provided, the current working directory will be used."
+        ),
     )
 
     # We need to support both CI builds of everything and individual service
@@ -74,9 +80,10 @@ def build(args, repo_root_arg=None) -> None:
         target_dir = os.getcwd()
 
     targeted_packages = discover_targeted_packages(args.glob_string, target_dir, args.package_filter_string)
-    
+
     # evaluate dev version
     build_packages(targeted_packages, args.distribution_directory, str_to_bool(args.is_dev_build))
+
 
 def create_package(name, dest_folder=DEFAULT_DEST_FOLDER):
     # a package will exist in either one, or the other folder. this is why we can resolve both at the same time.

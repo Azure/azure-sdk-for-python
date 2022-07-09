@@ -35,9 +35,9 @@ load_dotenv(find_dotenv())
 
 def _sanitize_token(token, fake_token):
     add_general_regex_sanitizer(value=fake_token, regex=token)
-    url_safe_token = token.replace("/", u"%2F")
+    url_safe_token = token.replace("/", "%2F")
     add_general_regex_sanitizer(value=fake_token, regex=url_safe_token)
-    async_token = token.replace(u"%3A", ":")
+    async_token = token.replace("%3A", ":")
     add_general_regex_sanitizer(value=fake_token, regex=async_token)
 
 

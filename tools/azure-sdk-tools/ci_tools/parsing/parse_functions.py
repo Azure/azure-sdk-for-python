@@ -3,7 +3,7 @@ import ast
 import textwrap
 import sys
 import re
-from xmlrpc.client import Boolean
+from typing import Dict, List, Tuple
 
 # Assumes the presence of setuptools
 from pkg_resources import parse_version, parse_requirements, Requirement, WorkingSet, working_set
@@ -12,19 +12,26 @@ from pkg_resources import parse_version, parse_requirements, Requirement, Workin
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 from packaging.version import parse
-from typing import Dict, List, Tuple
 
 
 NEW_REQ_PACKAGES = ["azure-core", "azure-mgmt-core"]
 
 
 class ParsedSetup:
-    def __init__(self, name: str, version: str, python_requires: List[str], requires: List[str], is_new_sdk: bool, setup_filename: str):
+    def __init__(
+        self,
+        name: str,
+        version: str,
+        python_requires: List[str],
+        requires: List[str],
+        is_new_sdk: bool,
+        setup_filename: str,
+    ):
         self.name = name
         self.version = version
         self.python_requires = python_requires
         self.requires = requires
-        self.is_new_sdk = is_new_sdk,
+        self.is_new_sdk = (is_new_sdk,)
         self.setup_filename = setup_filename
 
     @classmethod

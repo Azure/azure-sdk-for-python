@@ -100,11 +100,11 @@ class StorageTestCase(AzureTestCase):
         chunking blob upload."""
         checksum = zlib.adler32(self.qualified_test_name.encode()) & 0xFFFFFFFF
         rand = random.Random(checksum)
-        text = u""
-        words = [u"hello", u"world", u"python", u"啊齄丂狛狜"]
+        text = ""
+        words = ["hello", "world", "python", "啊齄丂狛狜"]
         while len(text) < size:
             index = int(rand.random() * (len(words) - 1))
-            text = text + u" " + words[index]
+            text = text + " " + words[index]
 
         return text
 
