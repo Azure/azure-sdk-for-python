@@ -28,7 +28,6 @@ def recorded_by_proxy_async(test_func):
     """
 
     async def record_wrap(*args, **kwargs):
-
         def transform_args(*args, **kwargs):
             copied_positional_args = list(args)
             request = copied_positional_args[1]

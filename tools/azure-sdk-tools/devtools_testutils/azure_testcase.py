@@ -274,7 +274,7 @@ class AzureTestCase(ReplayableTest):
         return client
 
     def create_basic_client(self, client_class, **kwargs):
-        """ DO NOT USE ME ANYMORE."""
+        """DO NOT USE ME ANYMORE."""
         logger = logging.getLogger()
         logger.warning(
             "'create_basic_client' will be deprecated in the future. It is recommended that you use \

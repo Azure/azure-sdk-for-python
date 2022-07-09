@@ -14,9 +14,7 @@ DEPENDENCIES = [
     # Tests
     "pytest-cov",
     "pytest>=3.5.1",
-    # 'azure-devtools>=0.4.1' override by packaging needs
     "readme_renderer",
-    # 'azure-storage-file<2.0',
     "azure-storage-common<1.4.1",
     "pyopenssl",
     "azure-mgmt-resource",
@@ -32,7 +30,7 @@ setup(
     author_email="azpysdkhelp@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python",
     packages=find_packages(),
-    long_description="",
+    long_description="Build and test tooling for the Azure SDK for Python",
     install_requires=DEPENDENCIES,
     entry_points={
         "console_scripts": [
@@ -42,12 +40,13 @@ setup(
             "auto_package=packaging_tools.auto_package:generate_main",
             "sdk_generator=packaging_tools.sdk_generator:generate_main",
             "sdk_package=packaging_tools.sdk_package:generate_main",
-            "azci=azci:main"
+            # "sdk_build=ci_tools:main",
+            # "sdk_set_dev_version=ci_tools:",
+            # "sdk_increment_version=ci_tools:",
         ],
     },
     extras_require={
-        ":python_version>='3.5'": ["pytest-asyncio>=0.9.0"]
-        "build": []
-        "test": []
+        ":python_version>='3.5'": ["pytest-asyncio>=0.9.0"],
+        "build": ["six", "setuptools", "packaging", "pyparsing"]
     },
 )

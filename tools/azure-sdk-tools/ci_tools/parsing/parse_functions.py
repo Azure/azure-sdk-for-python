@@ -2,6 +2,8 @@ import os
 import ast
 import textwrap
 import sys
+import re
+from xmlrpc.client import Boolean
 
 # Assumes the presence of setuptools
 from pkg_resources import parse_version, parse_requirements, Requirement, WorkingSet, working_set
@@ -10,14 +12,35 @@ from pkg_resources import parse_version, parse_requirements, Requirement, Workin
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 from packaging.version import parse
-from typing import Dict
+from typing import Dict, List, Tuple
 
 
 NEW_REQ_PACKAGES = ["azure-core", "azure-mgmt-core"]
 
-def parse_setup(setup_filename: str) -> (str, str, list[str], ):
-    if not setup_filename.endswith("setup.py")
-        setup_filename = os.path.join(setup_path, "setup.py")
+
+class ParsedSetup:
+    def __init__(self, name: str, version: str, python_requires: List[str], requires: List[str], is_new_sdk: bool, setup_filename: str):
+        self.name = name
+        self.version = version
+        self.python_requires = python_requires
+        self.requires = requires
+        self.is_new_sdk = is_new_sdk,
+        self.setup_filename = setup_filename
+
+    @classmethod
+    def from_path(cls, parse_directory_or_file: str):
+        name, version, python_requires, requires, is_new_sdk, setup_filename = parse_setup(parse_directory_or_file)
+
+        return cls(name, version, python_requires, requires, is_new_sdk, setup_filename)
+
+
+def parse_setup(setup_filename: str) -> ParsedSetup:
+    """
+    Used to evaluate a setup.py (or a directory containing a setup.py) and return a tuple containing:
+    (<package-name>, <package_version>, <python_requires>, <requires>, <boolean indicating track1 vs track2>, <parsed setup.py location>)
+    """
+    if not setup_filename.endswith("setup.py"):
+        setup_filename = os.path.join(setup_filename, "setup.py")
     mock_setup = textwrap.dedent(
         """\
     def setup(*args, **kwargs):
@@ -25,7 +48,7 @@ def parse_setup(setup_filename: str) -> (str, str, list[str], ):
     """
     )
     parsed_mock_setup = ast.parse(mock_setup, filename=setup_filename)
-    with io.open(setup_filename, "r", encoding="utf-8-sig") as setup_file:
+    with open(setup_filename, "r", encoding="utf-8-sig") as setup_file:
         parsed = ast.parse(setup_file.read())
         for index, node in enumerate(parsed.body[:]):
             if (
@@ -88,11 +111,6 @@ def parse_requirements_file(file_location: str) -> Dict[str, str]:
 
     return dict((req.name, req) for req in parse_requirements(reqs))
 
-# TODO: delete after I understand who uses this function
-# def parse_setup_requires(setup_path):
-#     _, _, python_requires, _ = parse_setup(setup_path)
-
-#     return python_requires
 
 def get_name_from_specifier(version: str) -> str:
     """

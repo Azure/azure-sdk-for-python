@@ -47,7 +47,7 @@ def add_body_key_sanitizer(**kwargs):
 def add_body_regex_sanitizer(**kwargs):
     # type: (**Any) -> None
     """Registers a sanitizer that offers regex replace within a returned body.
-    
+
     Specifically, this means regex applying to the raw JSON. If you are attempting to simply replace a specific key, the
     BodyKeySanitizer is probably the way to go.
 
@@ -228,5 +228,5 @@ def _send_sanitizer_request(sanitizer, parameters):
     requests.post(
         "{}/Admin/AddSanitizer".format(PROXY_URL),
         headers={"x-abstraction-identifier": sanitizer, "Content-Type": "application/json"},
-        json=parameters
+        json=parameters,
     )

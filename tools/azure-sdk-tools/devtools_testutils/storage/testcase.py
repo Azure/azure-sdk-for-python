@@ -22,7 +22,7 @@ from . import ApiVersionAssertPolicy, service_version_map
 from .. import FakeTokenCredential
 
 try:
-    from cStringIO import StringIO      # Python 2
+    from cStringIO import StringIO  # Python 2
 except ImportError:
     from io import StringIO
 
@@ -61,8 +61,12 @@ class StorageTestCase(AzureTestCase):
         :param str storage_account: Storage account name
         :param str storage_type: The Storage type part of the URL. Should be "blob", or "queue", etc.
         """
-        return "{}://{}.{}.{}".format(os.environ.get("PROTOCOL", "https"), storage_account, storage_type,
-                                      os.environ.get("ACCOUNT_URL_SUFFIX", "core.windows.net"))
+        return "{}://{}.{}.{}".format(
+            os.environ.get("PROTOCOL", "https"),
+            storage_account,
+            storage_type,
+            os.environ.get("ACCOUNT_URL_SUFFIX", "core.windows.net"),
+        )
 
     def configure_logging(self):
         enable_logging = ENABLE_LOGGING
@@ -227,7 +231,7 @@ class LogCaptured(object):
         self.handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
 
         # get and enable the logger to send the outputs to the string stream
-        self.logger = logging.getLogger('azure.storage')
+        self.logger = logging.getLogger("azure.storage")
         self.logger.level = logging.DEBUG
         self.logger.addHandler(self.handler)
 

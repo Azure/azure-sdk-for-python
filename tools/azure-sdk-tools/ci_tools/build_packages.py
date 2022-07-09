@@ -12,7 +12,7 @@ import argparse
 import sys
 import os
 
-from common_tasks import process_glob_string, run_check_call, str_to_bool
+from ci_tools.build import process_glob_string, run_check_call, str_to_bool
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 build_packing_script_location = os.path.join(root_dir, "build_package.py")
@@ -21,6 +21,7 @@ build_packing_script_location = os.path.join(root_dir, "build_package.py")
 tox_path = os.path.abspath(os.path.join(root_dir, "eng", "tox"))
 sys.path.append(tox_path)
 from sanitize_setup import process_requires
+
 
 def build_packages(targeted_packages, distribution_directory, is_dev_build=False):
     # run the build and distribution
@@ -47,9 +48,7 @@ def verify_update_package_requirement(pkg_root):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Build Azure Packages, Called from DevOps YAML Pipeline"
-    )
+    parser = argparse.ArgumentParser(description="Build Azure Packages, Called from DevOps YAML Pipeline")
     parser.add_argument(
         "-d",
         "--distribution-directory",
@@ -69,10 +68,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--service",
-        help=(
-            "Name of service directory (under sdk/) to build."
-            "Example: --service applicationinsights"
-        ),
+        help=("Name of service directory (under sdk/) to build." "Example: --service applicationinsights"),
     )
 
     parser.add_argument(
@@ -103,9 +99,5 @@ if __name__ == "__main__":
     else:
         target_dir = root_dir
 
-    targeted_packages = process_glob_string(
-        args.glob_string, target_dir, args.package_filter_string
-    )
-    build_packages(
-        targeted_packages, args.distribution_directory, str_to_bool(args.is_dev_build)
-    )
+    targeted_packages = process_glob_string(args.glob_string, target_dir, args.package_filter_string)
+    build_packages(targeted_packages, args.distribution_directory, str_to_bool(args.is_dev_build))

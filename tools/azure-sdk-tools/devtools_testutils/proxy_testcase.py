@@ -22,6 +22,7 @@ import subprocess
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline.policies import ContentDecodePolicy
+
 # the functions we patch
 from azure.core.pipeline.transport import RequestsTransport
 
@@ -83,7 +84,7 @@ def get_test_id():
 def start_record_or_playback(test_id):
     # type: (str) -> Tuple(str, dict)
     """Sends a request to begin recording or playing back the provided test.
-    
+
     This returns a tuple, (a, b), where a is the recording ID of the test and b is the `variables` dictionary that maps
     test variables to values. If no variable dictionary was stored when the test was recorded, b is an empty dictionary.
     """
@@ -134,9 +135,9 @@ def stop_record_or_playback(test_id, recording_id, test_output):
                 "x-recording-file": test_id,
                 "x-recording-id": recording_id,
                 "x-recording-save": "true",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             },
-            json=test_output or {}  # tests don't record successfully unless test_output is a dictionary
+            json=test_output or {},  # tests don't record successfully unless test_output is a dictionary
         )
     else:
         requests.post(
