@@ -6,8 +6,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-azure-containerregistry/1.0.0b8 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "12084b64-5da2-11ec-a546-5cf37093a909"
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 401,
@@ -21,7 +20,7 @@
         "Connection": "keep-alive",
         "Content-Length": "222",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Dec 2021 12:25:21 GMT",
+        "Date": "Fri, 08 Jul 2022 22:44:02 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -30,11 +29,23 @@
         ],
         "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtestsanon.azurecr.io\u0022,scope=\u0022repository:library/hello-world:metadata_read\u0022",
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "b5c90007-75b9-4d7a-83b3-bac78daa54f9"
+        "X-Ms-Correlation-Request-Id": "4b829afc-255d-4d06-a9e0-2a1c153da8b0"
       },
-      "ResponseBody": [
-        "{\u0022errors\u0022:[{\u0022code\u0022:\u0022UNAUTHORIZED\u0022,\u0022message\u0022:\u0022authentication required, visit https://aka.ms/acr/authorization for more information.\u0022,\u0022detail\u0022:[{\u0022Type\u0022:\u0022repository\u0022,\u0022Name\u0022:\u0022library/hello-world\u0022,\u0022Action\u0022:\u0022metadata_read\u0022}]}]}\n"
-      ]
+      "ResponseBody": {
+        "errors": [
+          {
+            "code": "UNAUTHORIZED",
+            "message": "authentication required, visit https://aka.ms/acr/authorization for more information.",
+            "detail": [
+              {
+                "Type": "repository",
+                "Name": "library/hello-world",
+                "Action": "metadata_read"
+              }
+            ]
+          }
+        ]
+      }
     },
     {
       "RequestUri": "https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01",
@@ -44,23 +55,22 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "112",
         "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "azsdk-python-azure-containerregistry/1.0.0b8 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "120ccb5e-5da2-11ec-b85e-5cf37093a909"
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": "service=yallacrtestsanon.azurecr.io\u0026scope=repository%3Alibrary%2Fhello-world%3Ametadata_read\u0026grant_type=password",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Dec 2021 12:25:21 GMT",
+        "Date": "Fri, 08 Jul 2022 22:44:02 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "a3d64c1c-a3e2-49e5-9f9a-33039a29c5c2",
-        "x-ms-ratelimit-remaining-calls-per-second": "166.35"
+        "X-Ms-Correlation-Request-Id": "bbd46242-f593-4a20-a0b7-a13ce6c35cb9",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.033333"
       },
       "ResponseBody": {
-        "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlVWVzc6T1JDQjozVkNIOjY2UEI6R1kyWjpOU01KOldIVVE6Qjc3WDpLWTdaOlRaU1A6UkZZWDpIVTdRIn0.eyJqdGkiOiI4MmUxMWEzZC0zYTgyLTQ4YzctOWE0My0xOGI4NDU0NmJjYmIiLCJzdWIiOiJhY3JfYW5vbl9wdWxsIiwibmJmIjoxNjM5NTcwMjE4LCJleHAiOjE2Mzk1NzE0MTgsImlhdCI6MTYzOTU3MDIxOCwiaXNzIjoiQXp1cmUgQ29udGFpbmVyIFJlZ2lzdHJ5IiwiYXVkIjoieWFsbGFjcnRlc3RzYW5vbi5henVyZWNyLmlvIiwidmVyc2lvbiI6IjEuMCIsInJpZCI6ImQ0ZTY3ZmZkZjc4YzQ4OGU5M2RlOWVkZWE2YjQ1ZDdjIiwiYWNjZXNzIjpbeyJUeXBlIjoicmVwb3NpdG9yeSIsIk5hbWUiOiIqIiwiQWN0aW9ucyI6WyJwdWxsIl19XSwicm9sZXMiOltdLCJncmFudF90eXBlIjoiYWNjZXNzX3Rva2VuIn0.T0lw6DYc4RRmptNnNKmi_OvesAxkYW4N3aVaxunOgIHRxK_YCj-n41qrDlAI0fLkMLyFUw3daHEAB4lRjq8bmRU_HGy--jLWscsOZtTzyUnlaDhY7lJbuPTf0S4zjG-sP8gqOhv6PaK5jHnBD8E7aneO6ffrzrAok5zyAEGTxNAZn0eMRp1Zjoi3Zh1nK7xnQsmaZbfUT4AEqQg6dYij-6kd4Q6eyyp9S2rj4wrVYJ0mJZpQM05bFR3Qj_QrAVD1JbMUGuF_zVOpIsOXbqJWKHU-fDrJo1d1cUHHfVz73Q2Sev5e9-cfBYHEsvJxf7O069c1ojGRZhY8D50cEZVEoA"
+        "access_token": "access_token"
       }
     },
     {
@@ -69,9 +79,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
-        "User-Agent": "azsdk-python-azure-containerregistry/1.0.0b8 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "12084b64-5da2-11ec-a546-5cf37093a909"
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -85,7 +93,7 @@
         "Connection": "keep-alive",
         "Content-Length": "396",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Dec 2021 12:25:21 GMT",
+        "Date": "Fri, 08 Jul 2022 22:44:02 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -93,21 +101,34 @@
           "max-age=31536000; includeSubDomains"
         ],
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "b6856e1f-f2c7-4b9d-9a91-572bd1548db9"
+        "X-Ms-Correlation-Request-Id": "ecb59c15-293e-449e-8900-6205621d4000"
       },
-      "ResponseBody": [
-        "{\u0022registry\u0022:\u0022yallacrtestsanon.azurecr.io\u0022,\u0022imageName\u0022:\u0022library/hello-world\u0022,\u0022tag\u0022:{\u0022name\u0022:\u0022latest\u0022,\u0022digest\u0022:\u0022sha256:cc15c5b292d8525effc0f89cb299f1804f3a725c8d05e158653a563f15e4f685\u0022,\u0022createdTime\u0022:\u00222021-12-15T12:04:37.8215105Z\u0022,\u0022lastUpdateTime\u0022:\u00222021-12-15T12:04:37.8215105Z\u0022,\u0022signed\u0022:false,\u0022changeableAttributes\u0022:{\u0022deleteEnabled\u0022:true,\u0022writeEnabled\u0022:true,\u0022readEnabled\u0022:true,\u0022listEnabled\u0022:true}}}\n"
-      ]
+      "ResponseBody": {
+        "registry": "yallacrtestsanon.azurecr.io",
+        "imageName": "library/hello-world",
+        "tag": {
+          "name": "latest",
+          "digest": "sha256:13e367d31ae85359f42d637adf6da428f76d75dc9afeb3c21faea0d976f5c651",
+          "createdTime": "2022-07-08T21:52:31.3066134Z",
+          "lastUpdateTime": "2022-07-08T21:52:31.3066134Z",
+          "signed": false,
+          "changeableAttributes": {
+            "deleteEnabled": true,
+            "writeEnabled": true,
+            "readEnabled": true,
+            "listEnabled": true
+          }
+        }
+      }
     },
     {
-      "RequestUri": "https://fake_url.azurecr.io/v2/library%2Fhello-world/manifests/sha256:cc15c5b292d8525effc0f89cb299f1804f3a725c8d05e158653a563f15e4f685",
+      "RequestUri": "https://fake_url.azurecr.io/v2/library%2Fhello-world/manifests/sha256:13e367d31ae85359f42d637adf6da428f76d75dc9afeb3c21faea0d976f5c651",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-azure-containerregistry/1.0.0b8 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "121f5e2d-5da2-11ec-a6f8-5cf37093a909"
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 401,
@@ -121,7 +142,7 @@
         "Connection": "keep-alive",
         "Content-Length": "215",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Dec 2021 12:25:21 GMT",
+        "Date": "Fri, 08 Jul 2022 22:44:02 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -130,11 +151,23 @@
         ],
         "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtestsanon.azurecr.io\u0022,scope=\u0022repository:library/hello-world:delete\u0022",
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "695965bd-4baf-49cd-a7ae-e172224a5509"
+        "X-Ms-Correlation-Request-Id": "c064ea1e-9747-45d2-ac4d-1e7f19908658"
       },
-      "ResponseBody": [
-        "{\u0022errors\u0022:[{\u0022code\u0022:\u0022UNAUTHORIZED\u0022,\u0022message\u0022:\u0022authentication required, visit https://aka.ms/acr/authorization for more information.\u0022,\u0022detail\u0022:[{\u0022Type\u0022:\u0022repository\u0022,\u0022Name\u0022:\u0022library/hello-world\u0022,\u0022Action\u0022:\u0022delete\u0022}]}]}\n"
-      ]
+      "ResponseBody": {
+        "errors": [
+          {
+            "code": "UNAUTHORIZED",
+            "message": "authentication required, visit https://aka.ms/acr/authorization for more information.",
+            "detail": [
+              {
+                "Type": "repository",
+                "Name": "library/hello-world",
+                "Action": "delete"
+              }
+            ]
+          }
+        ]
+      }
     },
     {
       "RequestUri": "https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01",
@@ -144,35 +177,32 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "105",
         "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "azsdk-python-azure-containerregistry/1.0.0b8 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "12237ad3-5da2-11ec-8571-5cf37093a909"
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": "service=yallacrtestsanon.azurecr.io\u0026scope=repository%3Alibrary%2Fhello-world%3Adelete\u0026grant_type=password",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Dec 2021 12:25:21 GMT",
+        "Date": "Fri, 08 Jul 2022 22:44:02 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "d93ac72d-4ea7-4468-8650-12f60f59a958",
-        "x-ms-ratelimit-remaining-calls-per-second": "166.333333"
+        "X-Ms-Correlation-Request-Id": "e4dc9481-f309-45bc-ba30-53b2f0e7014b",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.016667"
       },
       "ResponseBody": {
-        "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlVWVzc6T1JDQjozVkNIOjY2UEI6R1kyWjpOU01KOldIVVE6Qjc3WDpLWTdaOlRaU1A6UkZZWDpIVTdRIn0.eyJqdGkiOiI4MmUxMWEzZC0zYTgyLTQ4YzctOWE0My0xOGI4NDU0NmJjYmIiLCJzdWIiOiJhY3JfYW5vbl9wdWxsIiwibmJmIjoxNjM5NTcwMjE4LCJleHAiOjE2Mzk1NzE0MTgsImlhdCI6MTYzOTU3MDIxOCwiaXNzIjoiQXp1cmUgQ29udGFpbmVyIFJlZ2lzdHJ5IiwiYXVkIjoieWFsbGFjcnRlc3RzYW5vbi5henVyZWNyLmlvIiwidmVyc2lvbiI6IjEuMCIsInJpZCI6ImQ0ZTY3ZmZkZjc4YzQ4OGU5M2RlOWVkZWE2YjQ1ZDdjIiwiYWNjZXNzIjpbeyJUeXBlIjoicmVwb3NpdG9yeSIsIk5hbWUiOiIqIiwiQWN0aW9ucyI6WyJwdWxsIl19XSwicm9sZXMiOltdLCJncmFudF90eXBlIjoiYWNjZXNzX3Rva2VuIn0.T0lw6DYc4RRmptNnNKmi_OvesAxkYW4N3aVaxunOgIHRxK_YCj-n41qrDlAI0fLkMLyFUw3daHEAB4lRjq8bmRU_HGy--jLWscsOZtTzyUnlaDhY7lJbuPTf0S4zjG-sP8gqOhv6PaK5jHnBD8E7aneO6ffrzrAok5zyAEGTxNAZn0eMRp1Zjoi3Zh1nK7xnQsmaZbfUT4AEqQg6dYij-6kd4Q6eyyp9S2rj4wrVYJ0mJZpQM05bFR3Qj_QrAVD1JbMUGuF_zVOpIsOXbqJWKHU-fDrJo1d1cUHHfVz73Q2Sev5e9-cfBYHEsvJxf7O069c1ojGRZhY8D50cEZVEoA"
+        "access_token": "access_token"
       }
     },
     {
-      "RequestUri": "https://fake_url.azurecr.io/v2/library%2Fhello-world/manifests/sha256:cc15c5b292d8525effc0f89cb299f1804f3a725c8d05e158653a563f15e4f685",
+      "RequestUri": "https://fake_url.azurecr.io/v2/library%2Fhello-world/manifests/sha256:13e367d31ae85359f42d637adf6da428f76d75dc9afeb3c21faea0d976f5c651",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-azure-containerregistry/1.0.0b8 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "121f5e2d-5da2-11ec-a6f8-5cf37093a909"
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 401,
@@ -186,7 +216,7 @@
         "Connection": "keep-alive",
         "Content-Length": "215",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Dec 2021 12:25:21 GMT",
+        "Date": "Fri, 08 Jul 2022 22:44:02 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -195,11 +225,23 @@
         ],
         "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtestsanon.azurecr.io\u0022,scope=\u0022repository:library/hello-world:delete\u0022,error=\u0022insufficient_scope\u0022",
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "1b7e7487-8ec5-41c3-9114-476af47eaa12"
+        "X-Ms-Correlation-Request-Id": "9c902b27-2842-4fb1-a0db-17f2dbae0aca"
       },
-      "ResponseBody": [
-        "{\u0022errors\u0022:[{\u0022code\u0022:\u0022UNAUTHORIZED\u0022,\u0022message\u0022:\u0022authentication required, visit https://aka.ms/acr/authorization for more information.\u0022,\u0022detail\u0022:[{\u0022Type\u0022:\u0022repository\u0022,\u0022Name\u0022:\u0022library/hello-world\u0022,\u0022Action\u0022:\u0022delete\u0022}]}]}\n"
-      ]
+      "ResponseBody": {
+        "errors": [
+          {
+            "code": "UNAUTHORIZED",
+            "message": "authentication required, visit https://aka.ms/acr/authorization for more information.",
+            "detail": [
+              {
+                "Type": "repository",
+                "Name": "library/hello-world",
+                "Action": "delete"
+              }
+            ]
+          }
+        ]
+      }
     }
   ],
   "Variables": {}

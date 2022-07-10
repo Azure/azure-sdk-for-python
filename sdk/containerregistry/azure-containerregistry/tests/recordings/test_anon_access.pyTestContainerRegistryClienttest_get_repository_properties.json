@@ -7,8 +7,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-containerregistry/1.0.0b8 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "8aa80cf3-5d9f-11ec-948f-5cf37093a909"
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 401,
@@ -22,7 +21,7 @@
         "Connection": "keep-alive",
         "Content-Length": "222",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Dec 2021 12:07:14 GMT",
+        "Date": "Fri, 08 Jul 2022 22:43:53 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -31,11 +30,23 @@
         ],
         "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtestsanon.azurecr.io\u0022,scope=\u0022repository:library/hello-world:metadata_read\u0022",
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "a48f42c4-e2c8-424c-abe5-dca2073692e1"
+        "X-Ms-Correlation-Request-Id": "022bfb97-1f1d-4c25-9abb-f79adf54850c"
       },
-      "ResponseBody": [
-        "{\u0022errors\u0022:[{\u0022code\u0022:\u0022UNAUTHORIZED\u0022,\u0022message\u0022:\u0022authentication required, visit https://aka.ms/acr/authorization for more information.\u0022,\u0022detail\u0022:[{\u0022Type\u0022:\u0022repository\u0022,\u0022Name\u0022:\u0022library/hello-world\u0022,\u0022Action\u0022:\u0022metadata_read\u0022}]}]}\n"
-      ]
+      "ResponseBody": {
+        "errors": [
+          {
+            "code": "UNAUTHORIZED",
+            "message": "authentication required, visit https://aka.ms/acr/authorization for more information.",
+            "detail": [
+              {
+                "Type": "repository",
+                "Name": "library/hello-world",
+                "Action": "metadata_read"
+              }
+            ]
+          }
+        ]
+      }
     },
     {
       "RequestUri": "https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01",
@@ -46,23 +57,22 @@
         "Connection": "keep-alive",
         "Content-Length": "112",
         "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "azsdk-python-azure-containerregistry/1.0.0b8 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "8aaec8df-5d9f-11ec-960d-5cf37093a909"
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": "service=yallacrtestsanon.azurecr.io\u0026scope=repository%3Alibrary%2Fhello-world%3Ametadata_read\u0026grant_type=password",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Dec 2021 12:07:14 GMT",
+        "Date": "Fri, 08 Jul 2022 22:43:53 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "289d082b-fb48-4ff1-aa3f-192ba286cbea",
-        "x-ms-ratelimit-remaining-calls-per-second": "166.133333"
+        "X-Ms-Correlation-Request-Id": "db4a6ff3-02d8-4b39-9b5b-caa2418febad",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.35"
       },
       "ResponseBody": {
-        "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlVWVzc6T1JDQjozVkNIOjY2UEI6R1kyWjpOU01KOldIVVE6Qjc3WDpLWTdaOlRaU1A6UkZZWDpIVTdRIn0.eyJqdGkiOiJlZmJjY2YxZi01NDU4LTQzNTYtOWJhYi01YTllYWFlNTFkMGYiLCJzdWIiOiJhY3JfYW5vbl9wdWxsIiwibmJmIjoxNjM5NTY5MTM0LCJleHAiOjE2Mzk1NzAzMzQsImlhdCI6MTYzOTU2OTEzNCwiaXNzIjoiQXp1cmUgQ29udGFpbmVyIFJlZ2lzdHJ5IiwiYXVkIjoieWFsbGFjcnRlc3RzYW5vbi5henVyZWNyLmlvIiwidmVyc2lvbiI6IjEuMCIsInJpZCI6ImQ0ZTY3ZmZkZjc4YzQ4OGU5M2RlOWVkZWE2YjQ1ZDdjIiwiYWNjZXNzIjpbeyJUeXBlIjoicmVwb3NpdG9yeSIsIk5hbWUiOiIqIiwiQWN0aW9ucyI6WyJwdWxsIl19XSwicm9sZXMiOltdLCJncmFudF90eXBlIjoiYWNjZXNzX3Rva2VuIn0.Pow6CWmiMiBzUtlApTn7nD6B4bQmdR5-wJR-9q5XV53gIRD291C66Z9IRSQsMxxGeb-GXLLGwor7ZPjiGDP86W4jbbrUmJH1lt9VOJA6TK7x_V_JrQtQ0b0YAjagWtMRjULW7XnXw1A_Y-SiiiePd4M4_ddaGQD-fU1z4S1EJ6YdeL4ua6MFGtmugoUS-OyFesR-oN2oL5jYfCaJu2ny0n7HsAW2jKQqIsLkVnAzFVWqWqd3pNVxdljiXO1oXF-dZF_iXj3S1gddgd_zUagqhMl-QjExraNqNArz2Up6OKZ-_aGKC6SbSqrNkmmT8zaPS7X-Km_ep3pdYlLmnu6odg"
+        "access_token": "access_token"
       }
     },
     {
@@ -71,10 +81,8 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-containerregistry/1.0.0b8 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "8aa80cf3-5d9f-11ec-948f-5cf37093a909"
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -88,7 +96,7 @@
         "Connection": "keep-alive",
         "Content-Length": "306",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Dec 2021 12:07:15 GMT",
+        "Date": "Fri, 08 Jul 2022 22:43:53 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -96,11 +104,22 @@
           "max-age=31536000; includeSubDomains"
         ],
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "a46d858d-eede-424c-a936-acac2f99ae67"
+        "X-Ms-Correlation-Request-Id": "3b7f6fc6-7a8a-46f2-9c87-ef806b3ea5a4"
       },
-      "ResponseBody": [
-        "{\u0022registry\u0022:\u0022yallacrtestsanon.azurecr.io\u0022,\u0022imageName\u0022:\u0022library/hello-world\u0022,\u0022createdTime\u0022:\u00222021-12-15T12:04:37.6987209Z\u0022,\u0022lastUpdateTime\u0022:\u00222021-12-15T12:04:35.7857782Z\u0022,\u0022manifestCount\u0022:12,\u0022tagCount\u0022:5,\u0022changeableAttributes\u0022:{\u0022deleteEnabled\u0022:true,\u0022writeEnabled\u0022:true,\u0022readEnabled\u0022:true,\u0022listEnabled\u0022:true}}\n"
-      ]
+      "ResponseBody": {
+        "registry": "yallacrtestsanon.azurecr.io",
+        "imageName": "library/hello-world",
+        "createdTime": "2022-07-08T21:52:31.1999242Z",
+        "lastUpdateTime": "2022-07-08T21:52:28.9476933Z",
+        "manifestCount": 12,
+        "tagCount": 5,
+        "changeableAttributes": {
+          "deleteEnabled": true,
+          "writeEnabled": true,
+          "readEnabled": true,
+          "listEnabled": true
+        }
+      }
     }
   ],
   "Variables": {}

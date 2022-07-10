@@ -1,13 +1,12 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fake_url.azurecr.io/acr/v1/does_not_exist/_tags/does_not_exist?api-version=2021-07-01",
-      "RequestMethod": "DELETE",
+      "RequestUri": "https://fake_url.azurecr.io/acr/v1/library%2Falpine?api-version=2021-07-01",
+      "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "0",
         "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -20,18 +19,18 @@
           "X-Ms-Correlation-Request-Id"
         ],
         "Connection": "keep-alive",
-        "Content-Length": "210",
+        "Content-Length": "217",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 08 Jul 2022 22:49:40 GMT",
+        "Date": "Fri, 08 Jul 2022 22:50:38 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
           "max-age=31536000; includeSubDomains",
           "max-age=31536000; includeSubDomains"
         ],
-        "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:does_not_exist:delete\u0022",
+        "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:library/alpine:metadata_read\u0022",
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "8698d92c-18af-4d62-813e-523a33eed30a"
+        "X-Ms-Correlation-Request-Id": "1c05e035-58a2-47d2-9ecb-cd8846b15e84"
       },
       "ResponseBody": {
         "errors": [
@@ -41,8 +40,8 @@
             "detail": [
               {
                 "Type": "repository",
-                "Name": "does_not_exist",
-                "Action": "delete"
+                "Name": "library/alpine",
+                "Action": "metadata_read"
               }
             ]
           }
@@ -66,10 +65,10 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 08 Jul 2022 22:49:40 GMT",
+        "Date": "Fri, 08 Jul 2022 22:50:37 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AoDheS4d7wlHn0IL5W86GMsfgndZEQAAAGCrWtoOAAAAjvjTdAkAAABkq1raDgAAAA; expires=Sun, 07-Aug-2022 22:49:40 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AoDheS4d7wlHn0IL5W86GMsfgndZFAAAAGCrWtoOAAAAjvjTdAsAAABkq1raDgAAAHh1SNABAAAAvata2g4AAAA; expires=Sun, 07-Aug-2022 22:50:38 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
@@ -153,7 +152,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AoDheS4d7wlHn0IL5W86GMsfgndZEQAAAGCrWtoOAAAAjvjTdAkAAABkq1raDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AoDheS4d7wlHn0IL5W86GMsfgndZFAAAAGCrWtoOAAAAjvjTdAsAAABkq1raDgAAAHh1SNABAAAAvata2g4AAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.10.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -164,10 +163,10 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 08 Jul 2022 22:49:40 GMT",
+        "Date": "Fri, 08 Jul 2022 22:50:37 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AoDheS4d7wlHn0IL5W86GMsfgndZEQAAAGCrWtoOAAAAjvjTdAkAAABkq1raDgAAAA; expires=Sun, 07-Aug-2022 22:49:40 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AoDheS4d7wlHn0IL5W86GMsfgndZFAAAAGCrWtoOAAAAjvjTdAsAAABkq1raDgAAAHh1SNABAAAAvata2g4AAAA; expires=Sun, 07-Aug-2022 22:50:38 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
@@ -229,11 +228,11 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "688f09cd-7caf-4410-86d7-98540675439d",
+        "client-request-id": "ee689725-16ba-4900-abb3-6a72726d385f",
         "Connection": "keep-alive",
         "Content-Length": "238",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "fpc=AoDheS4d7wlHn0IL5W86GMsfgndZEQAAAGCrWtoOAAAAjvjTdAkAAABkq1raDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AoDheS4d7wlHn0IL5W86GMsfgndZFAAAAGCrWtoOAAAAjvjTdAsAAABkq1raDgAAAHh1SNABAAAAvata2g4AAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.10.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
@@ -247,15 +246,15 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "688f09cd-7caf-4410-86d7-98540675439d",
+        "client-request-id": "ee689725-16ba-4900-abb3-6a72726d385f",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 08 Jul 2022 22:49:40 GMT",
+        "Date": "Fri, 08 Jul 2022 22:50:37 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=AoDheS4d7wlHn0IL5W86GMsfgndZEgAAAGCrWtoOAAAAjvjTdAkAAABkq1raDgAAAA; expires=Sun, 07-Aug-2022 22:49:40 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AoDheS4d7wlHn0IL5W86GMsfgndZFAAAAGCrWtoOAAAAjvjTdAsAAABkq1raDgAAAHh1SNABAAAAvata2g4AAAA; expires=Sun, 07-Aug-2022 22:50:38 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
@@ -289,12 +288,12 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 08 Jul 2022 22:49:41 GMT",
+        "Date": "Fri, 08 Jul 2022 22:50:38 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "8c4b59a4-c044-419c-b5bb-411cba30359f",
-        "x-ms-ratelimit-remaining-calls-per-second": "166.416667"
+        "X-Ms-Correlation-Request-Id": "c0661e3f-56d3-4a8f-b133-e7bd2f98a5c2",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.383333"
       },
       "ResponseBody": {
         "refresh_token": "refresh_token"
@@ -307,38 +306,37 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "127",
+        "Content-Length": "136",
         "Content-Type": "application/x-www-form-urlencoded",
         "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "service=yallacrtests.azurecr.io\u0026scope=repository%3Adoes_not_exist%3Adelete\u0026refresh_token=refresh_token\u0026grant_type=refresh_token",
+      "RequestBody": "service=yallacrtests.azurecr.io\u0026scope=repository%3Alibrary%2Falpine%3Ametadata_read\u0026refresh_token=refresh_token\u0026grant_type=refresh_token",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 08 Jul 2022 22:49:41 GMT",
+        "Date": "Fri, 08 Jul 2022 22:50:38 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "2a623c51-6543-40dd-a5da-3079f7fc3e61",
-        "x-ms-ratelimit-remaining-calls-per-second": "166.4"
+        "X-Ms-Correlation-Request-Id": "124c42eb-c6ed-4019-b320-b18e78c659e5",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.366667"
       },
       "ResponseBody": {
         "access_token": "access_token"
       }
     },
     {
-      "RequestUri": "https://fake_url.azurecr.io/acr/v1/does_not_exist/_tags/does_not_exist?api-version=2021-07-01",
-      "RequestMethod": "DELETE",
+      "RequestUri": "https://fake_url.azurecr.io/acr/v1/library%2Falpine?api-version=2021-07-01",
+      "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "0",
         "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
-      "StatusCode": 404,
+      "StatusCode": 200,
       "ResponseHeaders": {
         "Access-Control-Expose-Headers": [
           "Docker-Content-Digest",
@@ -347,9 +345,9 @@
           "X-Ms-Correlation-Request-Id"
         ],
         "Connection": "keep-alive",
-        "Content-Length": "81",
+        "Content-Length": "296",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 08 Jul 2022 22:49:41 GMT",
+        "Date": "Fri, 08 Jul 2022 22:50:38 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -357,16 +355,21 @@
           "max-age=31536000; includeSubDomains"
         ],
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "97a1a7dc-07b8-4f04-a4ec-aa17717c578c",
-        "X-Ms-Ratelimit-Remaining-Calls-Per-Second": "8.000000"
+        "X-Ms-Correlation-Request-Id": "a6e2aab1-1abd-4f75-87da-7fd7b45daf69"
       },
       "ResponseBody": {
-        "errors": [
-          {
-            "code": "TAG_UNKNOWN",
-            "message": "the specified tag does not exist"
-          }
-        ]
+        "registry": "yallacrtests.azurecr.io",
+        "imageName": "library/alpine",
+        "createdTime": "2022-07-08T21:52:42.4733653Z",
+        "lastUpdateTime": "2022-07-08T21:52:40.7511312Z",
+        "manifestCount": 8,
+        "tagCount": 1,
+        "changeableAttributes": {
+          "deleteEnabled": true,
+          "writeEnabled": true,
+          "readEnabled": true,
+          "listEnabled": true
+        }
       }
     }
   ],

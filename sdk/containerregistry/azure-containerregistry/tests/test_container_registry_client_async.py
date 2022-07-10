@@ -603,6 +603,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             client = ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential)
 
     @acr_preparer()
+    @recorded_by_proxy_async
     async def test_get_misspell_property(self, containerregistry_endpoint):
         client = self.create_registry_client(containerregistry_endpoint)
         properties = await client.get_repository_properties(ALPINE)

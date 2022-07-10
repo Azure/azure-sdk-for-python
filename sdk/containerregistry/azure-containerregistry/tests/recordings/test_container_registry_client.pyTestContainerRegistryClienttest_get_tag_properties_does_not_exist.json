@@ -7,8 +7,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-containerregistry/1.0.0b8 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "cd5d72e6-69cf-11ec-9c57-5cf37093a909"
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 404,
@@ -16,7 +15,7 @@
         "Connection": "keep-alive",
         "Content-Length": "19",
         "Content-Type": "text/plain; charset=utf-8",
-        "Date": "Fri, 31 Dec 2021 00:22:56 GMT",
+        "Date": "Fri, 08 Jul 2022 22:47:25 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -24,7 +23,7 @@
           "max-age=31536000; includeSubDomains"
         ],
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "852e83db-d099-4c9e-9836-81e4308725e2"
+        "X-Ms-Correlation-Request-Id": "a3f4c3b6-d7ee-4694-a46d-92a944c3fc8b"
       },
       "ResponseBody": [
         "404 page not found\n"
