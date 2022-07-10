@@ -4,14 +4,10 @@
 
 import logging
 import os
-from typing import Optional, Dict, TypeVar, Union, Tuple
+from typing import List, Optional, Dict, TypeVar, Union, Tuple
 from pathlib import Path
-from datetime import datetime, timedelta
 import uuid
 from azure.ai.ml._azure_environments import ENDPOINT_URLS, _get_cloud_details
-
-from azure.storage.blob import generate_blob_sas, BlobSasPermissions
-from azure.storage.filedatalake import generate_file_sas, FileSasPermissions
 from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml.operations import DatastoreOperations
 from azure.ai.ml._utils._storage_utils import get_storage_client
@@ -40,8 +36,6 @@ from azure.ai.ml._utils.utils import is_url, is_mlflow_uri
 from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId
 from azure.ai.ml.constants import SHORT_URI_FORMAT, STORAGE_ACCOUNT_URLS
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
-from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
-from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
 
 module_logger = logging.getLogger(__name__)
 
@@ -58,16 +52,11 @@ def _get_datastore_name(*, datastore_name: Optional[str] = WORKSPACE_BLOB_STORE)
     return datastore_name
 
 
-def get_datastore_info(operations: DatastoreOperations, name: str) -> Dict[str, str]:
+def _build_datastore_info(datastore, operations) -> Dict[str, str]:
     """
     Get datastore account, type, and auth information
     """
     datastore_info = {}
-    if name:
-        datastore = operations.get(name, include_secrets=True)
-    else:
-        datastore = operations.get_default(include_secrets=True)
-
     cloud_details = _get_cloud_details()
     storage_endpoint = cloud_details.get(ENDPOINT_URLS.STORAGE_ENDPOINT)
     credentials = datastore.credentials
@@ -96,8 +85,43 @@ def get_datastore_info(operations: DatastoreOperations, name: str) -> Dict[str, 
     else:
         datastore_info["container_name"] = ""
         module_logger.warning(f"Warning: datastore type {datastore.type} may not be supported for uploads.")
-
     return datastore_info
+
+
+def get_datastore_info(operations: DatastoreOperations, name: str) -> Dict[str, str]:
+    """
+    Get datastore account, type, and auth information
+    """
+    if name:
+        datastore = operations.get(name, include_secrets=True)
+    else:
+        datastore = operations.get_default(include_secrets=True)
+    return _build_datastore_info(datastore, operations)
+
+
+async def get_datastore_info_async(operations: DatastoreOperations, name: str) -> Dict[str, str]:
+    """
+    Get datastore account, type, and auth information
+    """
+    if name:
+        datastore = await operations.get(name, include_secrets=True)
+    else:
+        datastore = await operations.get_default(include_secrets=True)
+    return _build_datastore_info(datastore, operations)
+
+
+def _build_logs(ds_info: Dict[str, str], items: List[str], prefix: str, storage_client) -> Dict[str, str]:
+    log_dict = {}
+    for item_name in items:
+        sub_name = item_name.split(prefix + "/")[1]
+        token = storage_client.generate_sas(
+            account_name=ds_info["storage_account"],
+            account_key=ds_info["credential"],
+            item_path=ds_info["container_name"],
+            item_name=item_name
+        )
+        log_dict[sub_name] = "{}/{}/{}?{}".format(ds_info["account_url"], ds_info["container_name"], item_name, token)
+    return log_dict
 
 
 def list_logs_in_datastore(ds_info: Dict[str, str], prefix: str, legacy_log_folder_name: str) -> Dict[str, str]:
@@ -121,31 +145,32 @@ def list_logs_in_datastore(ds_info: Dict[str, str], prefix: str, legacy_log_fold
     items = storage_client.list(starts_with=prefix + "/user_logs/")
     # Append legacy log files if present
     items.extend(storage_client.list(starts_with=prefix + legacy_log_folder_name))
+    return _build_logs(ds_info, items, prefix, storage_client)
 
-    log_dict = {}
-    for item_name in items:
-        sub_name = item_name.split(prefix + "/")[1]
-        if isinstance(storage_client, BlobStorageClient):
-            token = generate_blob_sas(
-                account_name=ds_info["storage_account"],
-                container_name=ds_info["container_name"],
-                blob_name=item_name,
-                account_key=ds_info["credential"],
-                permission=BlobSasPermissions(read=True),
-                expiry=datetime.utcnow() + timedelta(minutes=30),
-            )
-        elif isinstance(storage_client, Gen2StorageClient):
-            token = generate_file_sas(
-                account_name=ds_info["storage_account"],
-                file_system_name=ds_info["container_name"],
-                file_name=item_name,
-                credential=ds_info["credential"],
-                permission=FileSasPermissions(read=True),
-                expiry=datetime.utcnow() + timedelta(minutes=30),
-            )
 
-        log_dict[sub_name] = "{}/{}/{}?{}".format(ds_info["account_url"], ds_info["container_name"], item_name, token)
-    return log_dict
+async def list_logs_in_datastore_async(ds_info: Dict[str, str], prefix: str, legacy_log_folder_name: str) -> Dict[str, str]:
+    """
+    Returns a dictionary of file name to blob or data lake uri with SAS token, matching the structure of RunDetails.logFiles
+
+    legacy_log_folder_name: the name of the folder in the datastore that contains the logs
+        /azureml-logs/*.txt is the legacy log structure for commandJob and sweepJob
+        /logs/azureml/*.txt is the legacy log structure for pipeline parent Job
+    """
+    if ds_info["storage_type"] not in [DatastoreType.AZURE_BLOB, DatastoreType.AZURE_DATA_LAKE_GEN2]:
+        raise Exception("Only Blob and Azure DataLake Storage Gen2 datastores are supported.")
+
+    storage_client = get_storage_client(
+        credential=ds_info["credential"],
+        container_name=ds_info["container_name"],
+        storage_account=ds_info["storage_account"],
+        storage_type=ds_info["storage_type"],
+        use_async=True
+    )
+
+    items = await storage_client.list(starts_with=prefix + "/user_logs/")
+    # Append legacy log files if present
+    items.extend(await storage_client.list(starts_with=prefix + legacy_log_folder_name))
+    return _build_logs(ds_info, items, prefix, storage_client)
 
 
 def _get_default_datastore_info(datastore_operation):
@@ -188,9 +213,7 @@ def upload_artifact(
         version=artifact_info["version"],
         relative_path=artifact_info["remote path"],
         datastore_arm_id=get_datastore_arm_id(datastore_name, operation_scope) if not sas_uri else None,
-        container_name=(
-            storage_client.container if isinstance(storage_client, BlobStorageClient) else storage_client.file_system
-        ),
+        container_name=storage_client.item_path,
         storage_account_url=datastore_info.get("account_url") if not sas_uri else sas_uri,
         indicator_file=artifact_info["indicator file"],
         is_file=Path(local_path).is_file(),
@@ -330,26 +353,9 @@ def _upload_and_generate_remote_uri(
     return SHORT_URI_FORMAT.format(datastore, path)
 
 
-def _update_metadata(name, version, indicator_file, datastore_info) -> None:
+def _update_metadata(name: str, version: str, indicator_file: str, datastore_info) -> None:
     storage_client = get_storage_client(**datastore_info)
-
-    if isinstance(storage_client, BlobStorageClient):
-        _update_blob_metadata(name, version, indicator_file, storage_client)
-    elif isinstance(storage_client, Gen2StorageClient):
-        _update_gen2_metadata(name, version, indicator_file, storage_client)
-
-
-def _update_blob_metadata(name, version, indicator_file, storage_client) -> None:
-    container_client = storage_client.container_client
-    if indicator_file.startswith(storage_client.container):
-        indicator_file = indicator_file.split(storage_client.container)[1]
-    blob = container_client.get_blob_client(blob=indicator_file)
-    blob.set_blob_metadata(_build_metadata_dict(name=name, version=version))
-
-
-def _update_gen2_metadata(name, version, indicator_file, storage_client) -> None:
-    artifact_directory_client = storage_client.file_system_client.get_directory_client(indicator_file)
-    artifact_directory_client.set_metadata(_build_metadata_dict(name=name, version=version))
+    storage_client.update_metadata(name, version, indicator_file)
 
 
 T = TypeVar("T", bound=Artifact)

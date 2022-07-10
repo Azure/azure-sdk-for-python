@@ -19,7 +19,11 @@ from platform import system
 import sys
 
 from azure.ai.ml._utils._exception_utils import EmptyDirectoryError
-from azure.storage.filedatalake import DataLakeServiceClient
+from azure.storage.filedatalake import (
+    DataLakeServiceClient,
+    generate_file_sas,
+    FileSasPermissions
+)
 from azure.core.exceptions import ResourceExistsError
 from azure.ai.ml._utils._asset_utils import (
     generate_asset_id,
@@ -59,6 +63,10 @@ class Gen2StorageClient:
         self.uploaded_file_count = 0
         self.name = None
         self.version = None
+
+    @property
+    def item_path(self):
+        return self.file_system
 
     def upload(
         self,
@@ -281,3 +289,24 @@ class Gen2StorageClient:
         """
         file_client = self.file_system_client.get_file_client(path)
         return file_client.exists()
+
+    def generate_sas(
+            self,
+            *,
+            account_name: str,
+            account_key: str,
+            item_path: str,
+            item_name: str,
+        ):
+        return generate_blob_sas(
+            account_name=account_name,
+            container_name=item_path,
+            blob_name=item_name,
+            account_key=account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(minutes=30),
+        )
+
+    def update_metadata(self, name: str, version: str, indicator_file: str) -> None:
+        artifact_directory_client = self.file_system_client.get_directory_client(indicator_file)
+        artifact_directory_client.set_metadata(_build_metadata_dict(name=name, version=version))

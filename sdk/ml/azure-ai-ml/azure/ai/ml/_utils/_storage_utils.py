@@ -4,9 +4,9 @@
 
 import logging
 import re
-from typing import Tuple, Union
+from typing import Any, Optional, Tuple, Union
 
-from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
+from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient, AsyncBlobStorageClient
 from azure.ai.ml._artifacts._fileshare_storage_helper import FileStorageClient
 from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
 from azure.ai.ml._restclient.v2021_10_01.models import (
@@ -120,15 +120,32 @@ class AzureMLDatastorePathUri:
 
 
 def get_storage_client(
-    credential: str,
-    storage_account: str,
+    *,
+    credential: Optional[str] = None,
+    storage_account: Optional[str] = None,
+    storage_client: Optional[Any] = None,  # TODO: support user passing in own storage client.
     storage_type: Union[DatastoreType, str] = DatastoreType.AZURE_BLOB,
     account_url: str = None,
     container_name: str = None,
+    use_async: bool = False
 ) -> Union[BlobStorageClient, FileStorageClient, Gen2StorageClient]:
     """
     Return a storage client class instance based on the storage account type
     """
+    # TODO: This module could be more thorougly refactored to remove the DatastoreType enum
+    # altogether and simply have a unified protol between all of the Storage APIs that is implemented
+    # according to the endpoint used (or in the case of FileShare, raise some kind of NotImplemented error).
+    if storage_client:
+        if storage_type == DatastoreType.AZURE_BLOB:
+            if use_async:
+                return AsyncBlobStorageClient(None, None, container_name=container_name, client=storage_client)
+            return BlobStorageClient(None, None, container_name=container_name, client=storage_client)
+        elif storage_type == DatastoreType.AZURE_DATA_LAKE_GEN2:
+            return Gen2StorageClient(None, None, file_system=container_name, client=storage_client)
+        elif storage_type == DatastoreType.AZURE_FILE:
+            return FileStorageClient(None, None, file_share_name=container_name, client=storage_client)
+
+
     if storage_type not in SUPPORTED_STORAGE_TYPES:
         msg = f"Datastore type {storage_type} is not supported. Supported storage"
         f"types for artifact upload include: {*SUPPORTED_STORAGE_TYPES,}"
@@ -140,6 +157,8 @@ def get_storage_client(
         account_url = STORAGE_ACCOUNT_URLS[storage_type].format(storage_account, storage_endpoint)
 
     if storage_type == DatastoreType.AZURE_BLOB:
+        if use_async:
+            return AsyncBlobStorageClient(credential=credential, container_name=container_name, account_url=account_url)
         return BlobStorageClient(credential=credential, container_name=container_name, account_url=account_url)
     elif storage_type == DatastoreType.AZURE_DATA_LAKE_GEN2:
         return Gen2StorageClient(credential=credential, file_system=container_name, account_url=account_url)

@@ -59,6 +59,10 @@ class FileStorageClient:
 
         self.subdirectory_client = None
 
+    @property
+    def item_path(self):
+        return self.file_share
+
     def upload(
         self,
         source: str,
@@ -318,3 +322,11 @@ def recursive_download(
             target=ErrorTarget.ARTIFACT,
             error_category=ErrorCategory.SYSTEM_ERROR,
         )
+
+    def generate_sas(self, **kwargs):
+        """Not supported by file share."""
+        raise NotImplementedError("SAS generation not supported by FileShare storage.")
+
+    def update_metadata(self, *args) -> None:
+        """Not supported by file share"""
+        raise NotImplementedError("Metadata not supported by FileShare storage.")
