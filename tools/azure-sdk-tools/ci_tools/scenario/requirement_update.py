@@ -3,6 +3,7 @@ from ci_tools.parsing import ParsedSetup
 
 DEV_BUILD_IDENTIFIER = "a"
 
+
 def update_requires(setup_py_path, requires_dict):
     # This method changes package requirement by overriding the specifier
     contents = []
@@ -38,10 +39,10 @@ def get_version(pkg_name):
         setup_py_path = paths[0]
         parsed_setup = ParsedSetup.from_path(setup_py_path)
         # Remove dev build part if version for this package is already updated to dev build
-        # When building package with dev build version, version for packages in same service is updated to dev build 
+        # When building package with dev build version, version for packages in same service is updated to dev build
         # and other packages will not have dev build number
         # strip dev build number so we can check if package exists in PyPI and replace
-        
+
         version_obj = Version(parsed_setup.version)
         if version_obj.pre:
             if version_obj.pre[0] == DEV_BUILD_IDENTIFIER:
@@ -71,11 +72,7 @@ def get_base_version(pkg_name):
 def process_requires(setup_py_path):
     # This method process package requirement to verify if all required packages are available on PyPI
     # If any azure sdk package is not available on PyPI then requirement will be updated to refer dev version
-    requires = [
-        Requirement.parse(r)
-        for r in ParsedSetup.from_path(setup_py_path).requires
-        if r.startswith("azure")
-    ]
+    requires = [Requirement.parse(r) for r in ParsedSetup.from_path(setup_py_path).requires if r.startswith("azure")]
 
     # Find package requirements that are not available on PyPI
     requirement_to_update = {}
@@ -98,4 +95,3 @@ def process_requires(setup_py_path):
         logging.info("Packages not available on PyPI:{}".format(requirement_to_update))
         update_requires(setup_py_path, requirement_to_update)
         logging.info("Package requirement is updated in setup.py")
-

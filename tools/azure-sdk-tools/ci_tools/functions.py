@@ -1,3 +1,5 @@
+from ast import Not
+from click import BadArgumentUsage
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse
 
@@ -5,6 +7,7 @@ import os, sys, platform, glob
 
 from ci_tools.parsing import ParsedSetup
 from typing import List
+
 
 OMITTED_CI_PACKAGES = [
     "azure-mgmt-documentdb",
@@ -99,6 +102,24 @@ def str_to_bool(input_string: str) -> bool:
         return False
     else:
         return False
+
+
+def discover_repo_root():
+    """
+    Resolves the root of the repository given a current working directory. This function should be used if a target repo argument is not provided.
+    """
+
+    current_dir: str = os.getcwd()
+
+    while current_dir is not None and not (os.path.dirname(current_dir) == current_dir):
+        if os.path.exists(os.path.join(current_dir, ".git")):
+            return current_dir
+        else:
+            current_dir = os.path.dirname(current_dir)
+
+    raise BadArgumentUsage(
+        "Commands invoked against azure-sdk-tooling should either be run from within the repo directory or provide --repo_root argument that directs at one."
+    )
 
 
 def discover_targeted_packages(

@@ -12,7 +12,7 @@ import re
 from os import path
 import sys
 
-from version_shared import get_packages, get_version_py
+from ci_tools.versioning.version_shared import get_packages, get_version_py
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="")

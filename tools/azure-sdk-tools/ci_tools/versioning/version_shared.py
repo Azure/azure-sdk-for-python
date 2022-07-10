@@ -16,12 +16,9 @@ import logging
 from packaging.version import parse
 
 from datetime import date
-from setup_parser import parse_setup
+from ci_tools.versioning.setup_parser import parse_setup
 
-root_dir = path.abspath(path.join(path.abspath(__file__), "..", "..", ".."))
-common_task_path = path.abspath(path.join(root_dir, "scripts", "devops_tasks"))
-sys.path.append(common_task_path)
-from common_tasks import process_glob_string, run_check_call
+from ci_tools.functions import discover_targeted_packages
 
 VERSION_PY = "_version.py"
 # Auto generated code has version maintained in version.py.

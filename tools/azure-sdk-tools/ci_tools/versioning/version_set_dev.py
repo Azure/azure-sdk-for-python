@@ -12,7 +12,7 @@ import argparse
 from os import path
 from packaging.version import parse
 
-from version_shared import get_packages, set_version_py, set_dev_classifier
+from ci_tools.versioning.version_shared import get_packages, set_version_py, set_dev_classifier
 
 MAX_R_DIGITS = 3
 

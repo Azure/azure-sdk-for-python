@@ -1,5 +1,5 @@
 import argparse, sys, os, glob
-from subprocess import check_call
+from subprocess import run
 
 from ci_tools.functions import discover_targeted_packages, str_to_bool
 
@@ -99,21 +99,22 @@ def create_package(name, dest_folder=DEFAULT_DEST_FOLDER):
 
 def build_packages(targeted_packages, distribution_directory, is_dev_build=False):
     # run the build and distribution
-    for package_root in targeted_packages:
-        service_hierarchy = os.path.join(os.path.basename(package_root))
-        if is_dev_build:
-            verify_update_package_requirement(package_root)
-        print("Generating Package Using Python {}".format(sys.version))
-        run_check_call(
-            [
-                sys.executable,
-                build_packing_script_location,
-                "--dest",
-                os.path.join(distribution_directory, service_hierarchy),
-                package_root,
-            ],
-            root_dir,
-        )
+    # TODO: function updates requirements 
+    # for package_root in targeted_packages:
+    #     service_hierarchy = os.path.join(os.path.basename(package_root))
+    #     if is_dev_build:
+    #         verify_update_package_requirement(package_root)
+    #     print("Generating Package Using Python {}".format(sys.version))
+    #     run(
+    #         [
+    #             sys.executable,
+    #             build_packing_script_location,
+    #             "--dest",
+    #             os.path.join(distribution_directory, service_hierarchy),
+    #             package_root,
+    #         ],
+    #         cwd=root_dir,
+    #     )
 
 
 def verify_update_package_requirement(pkg_root):

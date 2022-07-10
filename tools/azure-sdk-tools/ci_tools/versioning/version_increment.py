@@ -12,7 +12,7 @@ import argparse
 from packaging.version import parse
 import logging
 
-from version_shared import get_packages, set_version_py, set_dev_classifier, update_change_log
+from ci_tools.versioning.version_shared import get_packages, set_version_py, set_dev_classifier, update_change_log
 
 logging.getLogger().setLevel(logging.INFO)
 

@@ -18,6 +18,10 @@ NEW_REQ_PACKAGES = ["azure-core", "azure-mgmt-core"]
 
 
 class ParsedSetup:
+    """
+    Python version
+    """
+
     def __init__(
         self,
         name: str,
@@ -27,12 +31,12 @@ class ParsedSetup:
         is_new_sdk: bool,
         setup_filename: str,
     ):
-        self.name = name
-        self.version = version
-        self.python_requires = python_requires
-        self.requires = requires
-        self.is_new_sdk = (is_new_sdk,)
-        self.setup_filename = setup_filename
+        self.name: str = name
+        self.version: str = version
+        self.python_requires: List[str] = python_requires
+        self.requires: List[str] = requires
+        self.is_new_sdk: bool = is_new_sdk
+        self.setup_filename: str = setup_filename
 
     @classmethod
     def from_path(cls, parse_directory_or_file: str):
@@ -113,6 +117,9 @@ def parse_require(req: str) -> Tuple[str, str]:
 
 
 def parse_requirements_file(file_location: str) -> Dict[str, str]:
+    """
+    Takes a python requirements file and returns a dictionary representing the contents.
+    """
     with open(file_location, "r") as f:
         reqs = f.read()
 

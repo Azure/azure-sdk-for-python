@@ -2,7 +2,7 @@ import os
 import argparse
 import logging
 
-from version_shared import get_packages, set_version_py, set_dev_classifier, update_change_log
+from ci_tools.versioning.version_shared import get_packages, set_version_py, set_dev_classifier, update_change_log
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
