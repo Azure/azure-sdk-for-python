@@ -154,6 +154,46 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
                           tsc.set_service_properties,
                           minute_metrics=minute_metrics)
 
+    @tables_decorator
+    @recorded_by_proxy
+    def test_client_with_url_ends_with_table_name(self, tables_storage_account_name, tables_primary_storage_account_key):
+        url = self.account_url(tables_storage_account_name, "table")
+        invalid_url = url+"/" + "tableName"
+        tsc = TableServiceClient(invalid_url, credential=tables_primary_storage_account_key)
+        with pytest.raises(ValueError) as excinfo:
+            tsc.create_table("tableName")
+            assert ("values are not specified") in str(excinfo)
+            assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(excinfo)
+        with pytest.raises(ValueError) as excinfo:
+            tsc.create_table_if_not_exists("tableName")
+            assert ("values are not specified") in str(excinfo)
+            assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(excinfo)
+        with pytest.raises(ValueError) as excinfo:
+            tsc.set_service_properties(analytics_logging=TableAnalyticsLogging(write=True))
+            assert ("URI is invalid") in str(excinfo)
+            assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(excinfo)
+        with pytest.raises(ValueError) as excinfo:
+            tsc.get_service_properties()
+            assert ("URI is invalid") in str(excinfo)
+            assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(excinfo)
+        with pytest.raises(ValueError) as excinfo:
+            for _ in  tsc.query_tables("TableName eq 'tableName'"):
+                pass
+            assert ("operation is not implemented") in str(excinfo)
+            assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(excinfo)
+        with pytest.raises(ValueError) as excinfo:
+            for _ in  tsc.list_tables():
+                pass
+            assert ("operation is not implemented") in str(excinfo)
+            assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(excinfo)
+        valid_tsc = TableServiceClient(url, credential=tables_primary_storage_account_key)
+        valid_tsc.create_table("tableName")
+        with pytest.raises(ValueError) as excinfo:
+            tsc.delete_table("tableName")
+            assert ("URI does not match number of key properties for the resource") in str(excinfo)
+            assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(excinfo)
+        valid_tsc.delete_table("tableName")
+
 
 class TestTableUnitTest(TableTestCase):
     def test_retention_no_days(self):

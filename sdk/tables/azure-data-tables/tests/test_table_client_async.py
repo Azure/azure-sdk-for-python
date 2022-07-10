@@ -137,6 +137,34 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
                     await client.submit_transaction(batch)
                 assert 'Storage table names must be alphanumeric' in str(error.value)
+    
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_client_with_url_ends_with_table_name(self, tables_storage_account_name, tables_primary_storage_account_key):
+        url = self.account_url(tables_storage_account_name, "table")
+        invalid_url = url+"/"+"tableName"
+        # test table client has the same table name as in url
+        tc = TableClient(invalid_url, "tableName", credential=tables_primary_storage_account_key)
+        with pytest.raises(ValueError) as excinfo:
+            await tc.create_table()
+            assert ("table specified does not exist") in str(excinfo)
+            assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(excinfo)
+        # test table client has a different table name as in url
+        tc2 = TableClient(invalid_url, "tableName2", credential=tables_primary_storage_account_key)
+        with pytest.raises(ValueError) as excinfo:
+            await tc2.create_table()
+            assert ("table specified does not exist") in str(excinfo)
+            assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(excinfo)
+
+        valid_tc = TableClient(url, "tableName", credential=tables_primary_storage_account_key)
+        valid_tc.create_table()
+        # test creating a table when it already exists
+        with pytest.raises(ValueError) as excinfo:
+            await tc.create_table()
+            assert ("values are not specified") in str(excinfo)
+            assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(excinfo)
+        # Note: delete_table() works well in async client.
+
 
 
 class TestTableClientUnit(AsyncTableTestCase):

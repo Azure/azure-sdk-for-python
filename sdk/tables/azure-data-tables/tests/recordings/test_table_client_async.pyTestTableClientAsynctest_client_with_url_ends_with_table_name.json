@@ -1,0 +1,122 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/tableName/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "26",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Sun, 10 Jul 2022 02:33:58 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.4.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Sun, 10 Jul 2022 02:33:58 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "tableName"
+      },
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
+        "Date": "Sun, 10 Jul 2022 02:33:57 GMT",
+        "Server": [
+          "Windows-Azure-Table/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-version": "2019-02-02"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "TableNotFound",
+          "message": {
+            "lang": "en-US",
+            "value": "The table specified does not exist.\nRequestId:798538c8-6002-0044-4e05-94f859000000\nTime:2022-07-10T02:33:57.7427915Z"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/tableName/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "27",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Sun, 10 Jul 2022 02:33:58 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.4.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Sun, 10 Jul 2022 02:33:58 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "tableName2"
+      },
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
+        "Date": "Sun, 10 Jul 2022 02:33:57 GMT",
+        "Server": [
+          "Windows-Azure-Table/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-version": "2019-02-02"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "TableNotFound",
+          "message": {
+            "lang": "en-US",
+            "value": "The table specified does not exist.\nRequestId:798538db-6002-0044-5f05-94f859000000\nTime:2022-07-10T02:33:57.7857661Z"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/tableName/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "26",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Sun, 10 Jul 2022 02:33:58 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.4.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Sun, 10 Jul 2022 02:33:58 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "tableName"
+      },
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
+        "Date": "Sun, 10 Jul 2022 02:33:57 GMT",
+        "Server": [
+          "Windows-Azure-Table/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-version": "2019-02-02"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "TableNotFound",
+          "message": {
+            "lang": "en-US",
+            "value": "The table specified does not exist.\nRequestId:798538e5-6002-0044-6805-94f859000000\nTime:2022-07-10T02:33:57.8107533Z"
+          }
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
