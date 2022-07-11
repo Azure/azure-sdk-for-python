@@ -20,6 +20,7 @@ Minutae
 - [ ] Move `sanitize_setup` functions into `functions.py`
 - [ ] Make a pass over all moved entry scripts. Ensure standardized arguments are present and working.
 - [ ] Document new environment variables
+- [ ] Update the usings in tox_harness. Ton of dependencies that need to be cleaned up.
 
 ## Refactoring how we install required packages for `regression`, `min/latestdependency` and any of our test scenarios
 

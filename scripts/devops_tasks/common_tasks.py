@@ -30,6 +30,9 @@ from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 from packaging.version import parse
 
+from ci_tools.functions import MANAGEMENT_PACKAGE_IDENTIFIERS, lambda_filter_azure_pkg
+from ci_tools.parsing import parse_require, ParsedSetup
+
 DEV_REQ_FILE = "dev_requirements.txt"
 NEW_DEV_REQ_FILE = "new_dev_requirements.txt"
 
@@ -245,7 +248,7 @@ def find_packages_missing_on_pypi(path):
     if path.endswith(".whl"):
         requires = list(filter(lambda_filter_azure_pkg, pkginfo.get_metadata(path).requires_dist))
     else:
-        _, _, _, requires = parse_setup(path)
+        requires = ParsedSetup.from_path(path).requires
 
     # parse pkg name and spec
     pkg_spec_dict = dict(parse_require(req) for req in requires)

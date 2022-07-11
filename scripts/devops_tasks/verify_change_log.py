@@ -14,7 +14,7 @@ import os
 import logging
 
 from common_tasks import process_glob_string, parse_setup, run_check_call
-
+from ci_tools.functions import discover_packages
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -119,7 +119,7 @@ if __name__ == "__main__":
     # Skip nspkg and metapackage from version check.
     # Change log file may be missing for these two types
     # process glob helper methods filter nspkg and metapackages with filter type "Docs"
-    targeted_packages = process_glob_string(
+    targeted_packages = discover_targeted_packages(
         args.glob_string, target_dir, args.package_filter_string, "Docs"
     )
     change_missing = verify_packages(targeted_packages)
