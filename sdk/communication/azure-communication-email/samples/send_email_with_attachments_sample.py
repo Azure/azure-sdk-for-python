@@ -55,10 +55,10 @@ class EmailWithAttachmentSample(object):
             to=[EmailAddress(email=self.recipient_address, display_name="Customer Name")]
         )
 
-        with open("./attachment.txt", "r") as file:
-            file_contents = file.read()
+        with open("./attachment.txt", "rb") as file:
+            file_bytes = file.read()
 
-        file_bytes_b64 = base64.b64encode(bytes(file_contents, 'utf-8'))
+        file_bytes_b64 = base64.b64encode(file_bytes)
 
         attachment = EmailAttachment(
             name="attachment.txt",

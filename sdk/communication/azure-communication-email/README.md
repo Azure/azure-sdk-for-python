@@ -39,6 +39,17 @@ connection_string = "endpoint=https://<resource-name>.communication.azure.com/;a
 client = EmailClient.from_connection_string(connection_string);
 ```
 
+Email clients can also be authenticated using an [AzureKeyCredential][azure-key-credential].
+
+```python
+from azure.communication.email import EmailClient
+from azure.core.credentials import AzureKeyCredential
+
+credential = AzureKeyCredential("<api_key>")
+endpoint = "https://<resource-name>.communication.azure.com/"
+client = EmailClient(endpoint, credential);
+```
+
 ### Send an Email Message
 
 To send an email message, call the `send` function from the `EmailClient`.
@@ -164,6 +175,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][coc]. For m
 
 [azure_sub]: https://azure.microsoft.com/free/dotnet/
 [azure_portal]: https://portal.azure.com
+[azure-key-credential]: https://aka.ms/azsdk-python-core-azurekeycredential
 [cla]: https://cla.microsoft.com
 [coc]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/

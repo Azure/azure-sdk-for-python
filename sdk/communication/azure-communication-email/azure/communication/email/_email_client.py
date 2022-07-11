@@ -5,7 +5,10 @@
 # --------------------------------------------------------------------------
 
 from uuid import uuid4
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import TokenCredential
 from azure.core.tracing.decorator import distributed_trace
+from typing import Union
 from ._shared.utils import parse_connection_str, get_current_utc_time
 from ._shared.policy import HMACCredentialsPolicy
 from ._generated._azure_communication_email_service import AzureCommunicationEmailService
@@ -19,16 +22,18 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
 
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
-    :param TokenCredential credential:
-        The TokenCredential we use to authenticate against the service.
+    :param Union[TokenCredential, AzureKeyCredential] credential:
+        The credential we use to authenticate against the service.
     """
     def __init__(
             self,
-            endpoint, # type: str
-            credential, # type: TokenCredential
-            **kwargs # type: Any
-        ):
-        # type: (...) -> None
+            endpoint: str,
+            credential: Union[TokenCredential, AzureKeyCredential],
+            **kwargs
+        ) -> None:
+        if endpoint.endswith("/"):
+            endpoint = endpoint[:-1]
+
         authentication_policy = HMACCredentialsPolicy(endpoint, credential)
 
         self._generated_client = AzureCommunicationEmailService(
@@ -41,9 +46,9 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
     @classmethod
     def from_connection_string(
         cls,
-        conn_str, # type: str
-        **kwargs # type: Any
-    ): # type: (...) -> EmailClient
+        conn_str: str,
+        **kwargs
+    ) -> 'EmailClient':
         """Create EmailClient from a Connection String.
 
         :param str conn_str:
@@ -53,14 +58,14 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
-        return cls(endpoint, access_key, **kwargs)
+        return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
 
     @distributed_trace
     def send(
         self,
-        email_message, # type: EmailMessage
-        **kwargs # type: Any
-    ): # type: (...) -> SendEmailResult
+        email_message: EmailMessage,
+        **kwargs
+    ) -> SendEmailResult:
         """Queues an email message to be sent to one or more recipients.
 
         :param email_message: The message payload for sending an email.
@@ -79,9 +84,9 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace
     def get_send_status(
         self,
-        message_id, #type: str
-        **kwargs # type: Any
-    ): # type: (...) -> SendStatusResult
+        message_id: str,
+        **kwargs
+    ) -> SendStatusResult:
         """Gets the status of a message sent previously.
 
         :param message_id: System generated message id (GUID) returned from a previous call to send email
@@ -95,9 +100,9 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
             **kwargs
         )
 
-    async def __enter__(self) -> "EmailClient":
-        await self._generated_client.__enter__()
+    def __enter__(self) -> "EmailClient":
+        self._generated_client.__enter__()
         return self
 
-    async def __exit__(self, *args) -> None:
-        await self._generated_client.__exit__(*args)
+    def __exit__(self, *args) -> None:
+        self._generated_client.__exit__(*args)
