@@ -3,11 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-
-import os
-import sys
-import pytest
-
 from azure.eventhub._pyamqp.message import Message
 from azure.eventhub._pyamqp.utils import AMQPTypes
 from azure.eventhub._pyamqp._encode import encode_payload
