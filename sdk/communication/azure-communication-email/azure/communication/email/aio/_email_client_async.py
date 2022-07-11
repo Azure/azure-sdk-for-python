@@ -25,7 +25,6 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
     :param Union[AsyncTokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
     """
-    """
     def __init__(
             self,
             endpoint: str,
