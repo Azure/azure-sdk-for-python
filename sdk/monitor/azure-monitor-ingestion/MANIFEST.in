@@ -4,3 +4,4 @@ include *.md
 include LICENSE
 include azure/__init__.py
 include azure/monitor/__init__.py
+include azure/monitor/ingestion/py.typed
