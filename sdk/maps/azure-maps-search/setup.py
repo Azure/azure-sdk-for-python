@@ -13,7 +13,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-maps-search"
-PACKAGE_PPRINT_NAME = "MyService Management"
+PACKAGE_PPRINT_NAME = "Azure Maps Search"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -59,13 +59,12 @@ setup(
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-search',
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
+        "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
@@ -76,7 +75,6 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=[
         'tests',
-        # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
         'azure.maps',
     ]),

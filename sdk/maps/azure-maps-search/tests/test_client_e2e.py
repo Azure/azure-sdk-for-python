@@ -5,7 +5,6 @@ import pytest
 from devtools_testutils import AzureTestCase
 from azure_devtools.scenario_tests import RecordingProcessor
 from azure.core.credentials import AzureKeyCredential
-from _shared.utils import AzureKeyInQueryCredentialPolicy
 from azure.maps.search import MapsSearchClient
 from azure.maps.search.models import LatLon, StructuredAddress
 

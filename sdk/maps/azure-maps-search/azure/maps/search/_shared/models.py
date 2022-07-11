@@ -20,8 +20,6 @@ class LatLon(object):
 
     @lat.setter
     def lat(self, value: float) -> None:
-        if not isinstance(value, float):
-            raise TypeError(f'lat.setter(): got {type(value).__name__} but expected type is float')
         self._lat = value
 
     @property
@@ -30,8 +28,6 @@ class LatLon(object):
 
     @lon.setter
     def lon(self, value: float) -> None:
-        if not isinstance(value, float):
-            raise TypeError(f'lon.setter(): got {type(value).__name__} but expected type is float')
         self._lon = value
 
 class BoundingBox(object):

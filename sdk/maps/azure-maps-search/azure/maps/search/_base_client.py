@@ -35,16 +35,17 @@ class MapsSearchClientBase:
     ):
         # type: (...) -> None
 
-        self._search_client = _MapsSearchClient(
+        self._maps_client = _MapsSearchClient(
             credential=credential,  # type: ignore
             api_version=kwargs.pop("api_version", VERSION),
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
             **kwargs
-        ).search
+        )
+        self._search_client = self._maps_client.search
 
     def __enter__(self):
-        self._search_client.__enter__()  # pylint:disable=no-member
+        self._maps_client.__enter__()  # pylint:disable=no-member
         return self
 
     def __exit__(self, *args):
-        self._search_client.__exit__(*args)  # pylint:disable=no-member
+        self._maps_client.__exit__(*args)  # pylint:disable=no-member

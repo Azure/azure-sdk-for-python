@@ -1,14 +1,13 @@
-# -------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
-# license information.
-# --------------------------------------------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 
-# pylint: disable=unused-import,ungrouped-imports
+# pylint: disable=unused-import,ungrouped-imports, R0904, C0302
 from typing import TYPE_CHECKING, overload, Union, Any, List, Optional
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
-from azure.core.polling import LROPoller
 
 from ._base_client import MapsSearchClientBase
 from ._generated.models import (
@@ -16,7 +15,6 @@ from ._generated.models import (
     ReverseSearchCrossStreetAddressResult,
     SearchAlongRouteRequest,
     GeoJsonObject,
-    BatchRequest,
     SearchAddressBatchResult,
     Polygon,
 )
@@ -29,13 +27,15 @@ from .models import (
 )
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+    from azure.core.polling import LROPoller
 
 
 # By default, use the latest supported API version
 class MapsSearchClient(MapsSearchClientBase):
     """Azure Maps Search REST APIs.
+
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureKeyCredential
     :keyword api_version:
             The API version of the service to use for requests. It defaults to the latest service version.
             Setting to an older version may result in reduced feature compatibility.
@@ -60,13 +60,16 @@ class MapsSearchClient(MapsSearchClientBase):
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Polygon]
-        """**Get Polygon**
-        `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-polygon>`_.
+        """**Get Geometries**
+        The Get Geometries service allows you to request the geometry data such as a city or country
+        outline for a set of entities, previously retrieved from an Online Search request in GeoJSON
+        format. The geometry ID is returned in the sourceGeometry object under "geometry" and "id" in
+        either a Search Address or Search Fuzzy call.
 
-        :param geometry_ids: Comma separated list of geometry UUIDs, previously retrieved from an
-         Online Search request.
+        :param geometry_ids: list of geometry UUIDs string, previously retrieved from an Online Search request.
         :type geometry_ids: list[str]
-        :return: List[Polygon], or the result of cls(response)
+        :return: The result list of Polygon/Geometries.
+        :rtype: List[~azure.maps.search.models.Polygon]
         """
         polygon_result = self._search_client.list_polygons(
             geometry_ids,
@@ -79,12 +82,12 @@ class MapsSearchClient(MapsSearchClientBase):
     def fuzzy_search(
         self,
         query,  # type: str
-        *,
         coordinates,  # type: Union[str, LatLon]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
-        """
+        """**Free Form Search**
+
         :param query: The applicable query string (e.g., "seattle", "pizza"). Can *also* be specified
          as a comma separated string composed by latitude followed by longitude (e.g., "47.641268,
          -122.125679"). Must be properly URL encoded.
@@ -97,17 +100,17 @@ class MapsSearchClient(MapsSearchClientBase):
     def fuzzy_search(
         self,
         query,  # type: str
-        *,
         country_filter,  # type list[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
-        """
+        """**Free Form Search**
+
         :param query: The applicable query string (e.g., "seattle", "pizza"). Can *also* be specified
          as a comma separated string composed by latitude followed by longitude (e.g., "47.641268,
          -122.125679"). Must be properly URL encoded.
         :type query: str
-         :param country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
+        :param country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
          search to the specified countries.
         :type country_filter: list[str]
         """
@@ -116,13 +119,22 @@ class MapsSearchClient(MapsSearchClientBase):
     def fuzzy_search(
         self,
         query,  # type: str
+        *,
         coordinates=None, # type: Optional[Union[str, LatLon]]
         country_filter=None, # Optional[type list[str]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
         """**Free Form Search**
-        `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-fuzzy>`_.
+
+        The basic default API is Free Form Search which handles the most fuzzy of inputs handling any
+        combination of address or POI tokens. This search API is the canonical 'single line search'.
+        The Free Form Search API is a seamless combination of POI search and geocoding. The API can
+        also be weighted with a contextual position (lat./lon. pair), or fully constrained by a
+        coordinate and radius, or it can be executed more generally without any geo biasing anchor
+        point. We strongly advise you to use the 'country_filter' parameter to
+        specify only the countries for which your application needs coverage, as the default behavior
+        will be to search the entire world, potentially returning unnecessary results.
 
         :param query: The applicable query string (e.g., "seattle", "pizza"). Can *also* be specified
          as a comma separated string composed by latitude followed by longitude (e.g., "47.641268,
@@ -138,7 +150,7 @@ class MapsSearchClient(MapsSearchClientBase):
          restrict the result to specific Points of Interest categories. ID order does not matter. When
          multiple category identifiers are provided, only POIs that belong to (at least) one of the
          categories from the provided list will be returned. The list of supported categories can be
-         discovered using  `POI Categories API <https://aka.ms/AzureMapsPOICategoryTree>`_.
+         discovered using  `POI Categories API`.
         :param country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
          search to the specified countries.
         :type country_filter: list[str]
@@ -156,10 +168,8 @@ class MapsSearchClient(MapsSearchClientBase):
         :keyword  extended_postal_codes_for: Indexes for which extended postal codes should be included in
          the results.
         :paramtype extended_postal_codes_for: list[str or ~azure.maps.search.models.SearchIndexes]
-        :keyword int min_fuzzy_level: Minimum fuzziness level to be used. Default: 1, minimum: 1 and maximum:
-         4
-        :keyword int max_fuzzy_level: Maximum fuzziness level to be used. Default: 2, minimum: 1 and maximum:
-         4
+        :keyword int min_fuzzy_level: Minimum fuzziness level to be used.
+        :keyword int max_fuzzy_level: Maximum fuzziness level to be used.
         :keyword index_filter: A comma separated list of indexes which should be utilized for the search.
          Item order does not matter.
         :paramtype index_filter: list[str or ~azure.maps.search.models.SearchIndexes]
@@ -192,7 +202,8 @@ class MapsSearchClient(MapsSearchClientBase):
          information will be returned.
          Supported value: nextSevenDays.
         :paramtype operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
-        :return: SearchAddressResult, or the result of cls(response)
+        :return: The results of the search.
+        :rtype: ~azure.maps.search.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
@@ -213,14 +224,17 @@ class MapsSearchClient(MapsSearchClientBase):
     ):
         # type: (...) -> List[PointOfInterestCategory]
         """**Get POI Category Tree**
-        `Reference Document
-         <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-poi-category-tree-preview>`_.
+
+        POI Category API provides a full list of supported Points of Interest (POI) categories and
+        subcategories together with their translations and synonyms. The returned content can be used
+        to provide more meaningful results through other Search Service APIs,
 
         :keyword str language: Language in which search results should be returned. Should be one of
          supported IETF language tags, except NGT and NGT-Latn. Language tag is case insensitive. When
          data in specified language is not available for a specific field, default language is used
          (English).
-        :return: List[PointOfInterestCategory], or the result of cls(response)
+        :return: The result as list of point of interest categories.
+        :rtype: List[~azure.maps.search.models.PointOfInterestCategory]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         result = self._search_client.get_point_of_interest_category_tree(
@@ -236,8 +250,11 @@ class MapsSearchClient(MapsSearchClientBase):
     ):
         # type: (...) -> "ReverseSearchAddressResult"
         """**Search Address Reverse Batch API**
-        `Reference Document
-         <https://docs.microsoft.com/en-us/rest/api/maps/search/post-search-address-reverse-batch>`_.
+
+        There may be times when you need to translate a  coordinate (example: 37.786505, -122.3862)
+        into a human understandable street address. Most often  this is needed in tracking applications
+        where you receive a GPS feed from the device or asset and  wish to know what address where the
+        coordinate is located. This endpoint will return address information for a given coordinate.
 
         :param coordinates: The applicable coordinates
         :type coordinates: ~azure.maps.search._models.LatLon
@@ -262,7 +279,8 @@ class MapsSearchClient(MapsSearchClientBase):
         :keyword localized_map_view: The View parameter (also called the "user region" parameter) allows
          you to show the correct maps for a certain country/region for geopolitically disputed regions.
         :paramtype localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
-        :return: ReverseSearchAddressResult, or the result of cls(response)
+        :return: The results of the search
+        :rtype: ~azure.maps.search.models.ReverseSearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         result = self._search_client.reverse_search_address(
@@ -279,8 +297,13 @@ class MapsSearchClient(MapsSearchClientBase):
     ):
         # type: (...) -> "ReverseSearchCrossStreetAddressResult"
         """**Reverse Geocode to a Cross Street**
-        `Reference Document
-         <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-address-reverse-cross-street>`_.
+
+        There may be times when you need to translate a  coordinate (example: 37.786505, -122.3862)
+        into a human understandable cross street. Most often this  is needed in tracking applications
+        where you  receive a GPS feed from the device or asset and wish to know what address where the
+        coordinate is  located.
+        This endpoint will return cross street information  for a given coordinate.
+
 
         :param coordinates: The applicable coordinates
         :type coordinates: ~azure.maps.search._models.LatLon
@@ -303,7 +326,8 @@ class MapsSearchClient(MapsSearchClientBase):
          View parameter correctly for that location. Alternatively, you have the option to set
          ‘View=Auto’, which will return the map data based on the IP  address of the request.
         :paramtype localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
-        :return: ReverseSearchCrossStreetAddressResult, or the result of cls(response)
+        :return: The results of the reverse search.
+        :rtype: ~azure.maps.search.models.ReverseSearchCrossStreetAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.reverse_search_cross_street_address(
@@ -323,7 +347,6 @@ class MapsSearchClient(MapsSearchClientBase):
         """
         The Search Along Route endpoint allows you to perform a fuzzy search for POIs along a specified
         route.
-        `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/post-search-along-route>`_
 
         :param query: The POI name to search for (e.g., "statue of liberty", "starbucks", "pizza").
          Must be properly URL encoded.
@@ -332,8 +355,7 @@ class MapsSearchClient(MapsSearchClientBase):
          3600 seconds.
         :type max_detour_time: int
         :param route: This represents the route to search along and should be a valid ``GeoJSON
-         LineString`` type. Please refer to `RFC 7946
-         <https://tools.ietf.org/html/rfc7946#section-3.1.4>`_ for details.
+         LineString`` type.
         :type route: ~azure.maps.search.models.SearchAlongRouteRequest
         :keyword int top: Maximum number of responses that will be returned. Default value is 10. Max value
          is 20.
@@ -341,11 +363,8 @@ class MapsSearchClient(MapsSearchClientBase):
          result to specific brands. Item order does not matter. When multiple brands are provided, only
          results that belong to (at least) one of the provided list will be returned. Brands that
          contain a "," in their name should be put into quotes.
-        :keyword list[int] category_filter: A comma-separated list of category set IDs which could be used to
-         restrict the result to specific Points of Interest categories. ID order does not matter. When
-         multiple category identifiers are provided, only POIs that belong to (at least) one of the
-         categories from the provided list will be returned. The list of supported categories can be
-         discovered using  `POI Categories API <https://aka.ms/AzureMapsPOICategoryTree>`_.
+        :keyword list[int] category_filter: A comma-separated list of category set IDs
+         which could be used to restrict the result to specific Points of Interest categories. ID order does not matter.
         :keyword electric_vehicle_connector_filter: A comma-separated list of connector types which could
          be used to restrict the result to Electric Vehicle Station supporting specific connector types.
          Item order does not matter. When multiple connector types are provided, only results that
@@ -368,7 +387,8 @@ class MapsSearchClient(MapsSearchClientBase):
          information will be returned.
          Supported value: nextSevenDays.
         :paramtype operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
-        :return: SearchAddressResult, or the result of cls(response)
+        :return: The results of the search.
+        :rtype: ~azure.maps.search.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         result = self._search_client.search_along_route(
@@ -390,25 +410,20 @@ class MapsSearchClient(MapsSearchClientBase):
         """
         The Search Geometry endpoint allows you to perform a free form search inside a single geometry
         or many of them.
-        `Reference Document <>`_
 
         :param query: The POI name to search for (e.g., "statue of liberty", "starbucks", "pizza").
          Must be properly URL encoded.
         :type query: str
         :param geometry: This represents the geometry for one or more geographical features (parks,
-         state boundary etc.) to search in and should be a GeoJSON compliant type. Please refer to `RFC
-         7946 <https://tools.ietf.org/html/rfc7946>`_ for details.
+         state boundary etc.) to search in and should be a GeoJSON compliant type.
         :type geometry: ~azure.maps.search.models.SearchInsideGeometryRequest
         :keyword int top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
          maximum: 100.
         :keyword str language: Language in which search results should be returned. Should be one of
          supported IETF language tags, case insensitive. When data in specified language is not
          available for a specific field, default language is used.
-        :keyword list[int] category_filter: A comma-separated list of category set IDs which could be used to
-         restrict the result to specific Points of Interest categories. ID order does not matter. When
-         multiple category identifiers are provided, only POIs that belong to (at least) one of the
-         categories from the provided list will be returned. The list of supported categories can be
-         discovered using  `POI Categories API <https://aka.ms/AzureMapsPOICategoryTree>`_.
+        :keyword list[int] category_filter: A comma-separated list of category set IDs
+         which could be used to restrict the result to specific Points of Interest categories. ID order does not matter.
         :keyword extended_postal_codes_for: Indexes for which extended postal codes should be included in
          the results.
         :paramtype extended_postal_codes_for: list[str or ~azure.maps.search.models.SearchIndexes]
@@ -432,7 +447,8 @@ class MapsSearchClient(MapsSearchClientBase):
          information will be returned.
          Supported value: nextSevenDays.
         :paramtype operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
-        :return: SearchAddressResult, or the result of cls(response)
+        :return: The results of search.
+        :rtype: ~azure.maps.search.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         result = self._search_client.search_inside_geometry(
@@ -451,7 +467,6 @@ class MapsSearchClient(MapsSearchClientBase):
     ):
         # type: (...) -> "SearchAddressResult"
         """**Get POI by Name**
-        `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-poi-category>`_
 
         Points of Interest (POI) Search allows you to request POI results by name.  Search supports
         additional query parameters such as language and filtering results by area of interest driven
@@ -463,7 +478,8 @@ class MapsSearchClient(MapsSearchClientBase):
         :type query: str
         :param coordinates: coordinates
         :type coordinates: ~azure.maps.search._models.LatLon
-        :return: SearchAddressResult, or the result of cls(response)
+        :return: The results of search.
+        :rtype: ~azure.maps.search.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         coordinates = LatLon() if not coordinates else coordinates
@@ -485,7 +501,11 @@ class MapsSearchClient(MapsSearchClientBase):
     ):
         # type: (...) -> "SearchAddressResult"
         """**Get POI by Name**
-        `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-poi-category>`_
+
+        Points of Interest (POI) Search allows you to request POI results by name.  Search supports
+        additional query parameters such as language and filtering results by area of interest driven
+        by country or bounding box.  Endpoint will return only POI results matching the query string.
+        Response includes POI details such as address, coordinate location and category.`
 
         Points of Interest (POI) Search allows you to request POI results by name.  Search supports
         additional query parameters such as language and filtering results by area of interest driven
@@ -498,7 +518,8 @@ class MapsSearchClient(MapsSearchClientBase):
         :keyword list[int] category_filter: A comma-separated list of category set IDs which could be used to
          restrict the result to specific Points of Interest categories.
         :keyword list[int] country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
-        :return: SearchAddressResult, or the result of cls(response)
+        :return: The results of search.
+        :rtype: ~azure.maps.search.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
@@ -517,7 +538,6 @@ class MapsSearchClient(MapsSearchClientBase):
     ):
         # type: (...) -> "SearchAddressResult"
         """**Get POI by Name**
-        `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-poi-category>`_
 
         Points of Interest (POI) Search allows you to request POI results by name.  Search supports
         additional query parameters such as language and filtering results by area of interest driven
@@ -559,7 +579,8 @@ class MapsSearchClient(MapsSearchClientBase):
         :paramtype localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
         :keyword operating_hours: Hours of operation for a POI (Points of Interest).
         :paramtype operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
-        :return: SearchAddressResult, or the result of cls(response)
+        :return: The results of search.
+        :rtype: ~azure.maps.search.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         coordinates = kwargs.get("coordinates", LatLon())
@@ -582,8 +603,10 @@ class MapsSearchClient(MapsSearchClientBase):
     ):
         # type: (...) -> "SearchAddressResult"
         """**Search Nearby Point of Interest **
-        Please refer to
-         `Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-nearby>`_ for details.
+
+         If you have a use case for only retrieving POI results around a specific location, the nearby
+        search method may be the right choice. This endpoint will only return POI results, and does not
+        take in a search query parameter.
 
         :keyword int top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
          maximum: 100.
@@ -610,7 +633,8 @@ class MapsSearchClient(MapsSearchClientBase):
         :keyword localized_map_view: The View parameter (also called the "user region" parameter) allows
          you to show the correct maps for a certain country/region for geopolitically disputed regions.
         :paramtype localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
-        :return: SearchAddressResult, or the result of cls(response)
+        :return: The results of search.
+        :rtype: ~azure.maps.search.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         coordinates = LatLon() if not coordinates else coordinates
@@ -714,7 +738,8 @@ class MapsSearchClient(MapsSearchClientBase):
          information will be returned.
          Supported value: nextSevenDays.
         :paramtype operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
-        :return: SearchAddressResult, or the result of cls(response)
+        :return: The results of search.
+        :rtype: ~azure.maps.search.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
@@ -775,7 +800,8 @@ class MapsSearchClient(MapsSearchClientBase):
         :keyword localized_map_view: The View parameter (also called the "user region" parameter) allows
          you to show the correct maps for a certain country/region for geopolitically disputed regions.
         :paramtype localized_map_view: str or ~azure.maps.search._generated.models.LocalizedMapView
-        :return: SearchAddressResult, or the result of cls(response)
+        :return: The results of search.
+        :rtype: ~azure.maps.search.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         coordinates = LatLon() if not coordinates else coordinates
@@ -802,6 +828,7 @@ class MapsSearchClient(MapsSearchClientBase):
         will be returned. Note that the geocoder is very tolerant of typos and incomplete  addresses.
         It will also handle everything from exact  street addresses or street or intersections as well
         as higher level geographies such as city centers,  counties, states etc.
+
         :param structured_address: structured address type
         :type structured_address: ~azure.maps.search._models.StructuredAddress
         :type top: int
@@ -815,7 +842,8 @@ class MapsSearchClient(MapsSearchClientBase):
         :keyword localized_map_view: The View parameter (also called the "user region" parameter) allows
          you to show the correct maps for a certain country/region for geopolitically disputed regions.
         :paramtype localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
-        :return: SearchAddressResult, or the result of cls(response)
+        :return: The results of search.
+        :rtype: ~azure.maps.search.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         result = self._search_client.search_structured_address(
@@ -835,77 +863,306 @@ class MapsSearchClient(MapsSearchClientBase):
     @distributed_trace
     def fuzzy_search_batch_sync(
         self,
-        batch_request,  # type: "BatchRequest"
+        search_query_list,  # type: List[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressBatchResult"
         """**Search Fuzzy Batch API**
 
-        The Search Address Batch API sends batches of queries to `Search Fuzzy API
-        <https://docs.microsoft.com/rest/api/maps/search/getsearchfuzzy>`_ using just a single API
-        call. You can call Search Address Fuzzy Batch API to run either asynchronously (async) or
+        The Search Address Batch API sends batches of queries to `Search Fuzzy API`.
+        You can call Search Address Fuzzy Batch API to run either asynchronously (async) or
         synchronously (sync). The async API allows caller to batch up to **10,000** queries and sync
         API up to **100** queries.
 
-        :param batch_request: The list of search fuzzy queries/requests to process. The list can
+        :param search_query_list: The list of search fuzzy queries/requests to process. The list can
          contain  a max of 10,000 queries and must contain at least 1 query.
-        :type batch_request: ~azure.maps.search._generated.models.BatchRequest
-        :return: SearchAddressBatchResult, or the result of cls(response)
+        :type search_query_list: List[str]
+        :return: The results of search batch request.
+        :rtype: ~azure.maps.search.models.SearchAddressBatchResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        batch_items = [{"query": f"?query={query}"} for query in search_query_list] if search_query_list else []
+
         return self._search_client.fuzzy_search_batch_sync(
-            batch_request,
+            batch_request=batch_items,
             **kwargs
         )
 
     @distributed_trace
+    def begin_fuzzy_search_batch(
+        self,
+        search_query_list,  # type: List[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller["SearchAddressBatchResult"]
+        """**Begin Search Fuzzy Batch API Request**
+
+        Sends batches of fuzzy search requests.
+        The method returns a poller for retrieving the result later.
+
+        The Search Address Batch API sends batches of queries to `Search Fuzzy API` using just a single API
+        call. You can call Search Address Fuzzy Batch API to run either asynchronously (async) or
+        synchronously (sync). The async API allows caller to batch up to **10,000** queries and sync
+        API up to **100** queries.
+
+        :param search_query_list: The list of search fuzzy queries/requests to process.
+        The list can contain a max of 10,000 queries and must contain at least 1 query.
+        :type search_query_list: List[str]
+        :return: The results of search batch request.
+        :rtype: ~azure.core.polling.LROPoller[~azure.maps.search.models.SearchAddressBatchResult]
+        :raises ~azure.core.exceptions.HttpResponseError
+        """
+        batch_items = [{"query": f"?query={query}"} for query in search_query_list] if search_query_list else []
+
+        poller = self._search_client.begin_fuzzy_search_batch(
+            batch_request=batch_items,
+            **kwargs
+        )
+        result_properties = poller.result().additional_properties
+        if 'status' in result_properties and result_properties['status'].lower() == 'failed':
+            raise HttpResponseError(
+                message=result_properties['error']['message']
+            )
+
+        return poller
+
+    @distributed_trace
+    def begin_get_fuzzy_search_batch_result(
+        self,
+        batch_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller["SearchAddressBatchResult"]
+        """** Get Fuzzy Search Batch API Result**
+
+        Retrieves the result of a previous fuzzy search batch request.
+        The method returns a poller for retrieving the result.
+
+        The Search Address Batch API sends batches of queries to `Fuzzy Search API` using just a single API
+        call. You can call Search Address Batch API to run either asynchronously (async) or
+        synchronously (sync). The async API allows caller to batch up to **10,000** queries and sync
+        API up to **100** queries.
+
+        :param batch_id: Batch id for querying the operation.
+        :type batch_id: str
+        :return: An instance of LROPoller that returns SearchAddressBatchResult
+        :rtype: ~azure.core.polling.LROPoller[~azure.maps.search.models.SearchAddressBatchResult]
+        :raises ~azure.core.exceptions.HttpResponseError
+        """
+        poller = self._search_client.begin_get_fuzzy_search_batch(
+            batch_id,
+            **kwargs
+        )
+
+        result_properties = poller.result().additional_properties
+        if 'status' in result_properties and result_properties['status'].lower() == 'failed':
+            raise HttpResponseError(
+                message=result_properties['error']['message']
+            )
+        return poller
+
+    @distributed_trace
     def search_address_batch_sync(
         self,
-        batch_request,  # type: "BatchRequest"
+        search_query_list,  # type: List[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressBatchResult"
         """**Search Address Batch API**
 
-        :param batch_request: The list of address geocoding queries/requests to process. The list can
+        :param search_query_list: The list of search fuzzy queries/requests to process. The list can
          contain  a max of 10,000 queries and must contain at least 1 query.
-        :type batch_request: ~azure.maps.search._generated.models.BatchRequest
-        :return: SearchAddressBatchResult, or the result of cls(response)
+        :type search_query_list: List[str]
+        :return: The results of search batch request.
+        :rtype: ~azure.maps.search.models.SearchAddressBatchResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        batch_items = [{"query": f"?query={query}"} for query in search_query_list] if search_query_list else []
+
         return self._search_client.search_address_batch_sync(
-            batch_request,
+            batch_request=batch_items,
             **kwargs
         )
 
     @distributed_trace
+    def begin_search_address_batch(
+        self,
+        search_query_list,  # type: List[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller["SearchAddressBatchResult"]
+        """**Begin Search Address Batch API**
+
+        Sends batches of geocoding requests.
+        The method returns a poller for retrieving the result later.
+
+        The Search Address Batch API sends batches of queries to `Search Address API` using just a single API
+        call. You can call Search Address Batch API to run either asynchronously (async) or
+        synchronously (sync). The async API allows caller to batch up to **10,000** queries and sync
+        API up to **100** queries.
+
+        :param search_query_list: The list of search fuzzy queries/requests to process.
+        The list can contain a max of 10,000 queries and must contain at least 1 query.
+        :type search_query_list: List[str]
+        :return: The results of search batch request.
+        :rtype: ~azure.core.polling.LROPoller[~azure.maps.search.models.SearchAddressBatchResult]
+        :raises ~azure.core.exceptions.HttpResponseError
+        """
+        batch_items = [{"query": f"?query={query}"} for query in search_query_list] if search_query_list else []
+
+        poller = self._search_client.begin_search_address_batch(
+            batch_request=batch_items,
+            **kwargs
+        )
+
+        result_properties = poller.result().additional_properties
+        if 'status' in result_properties and result_properties['status'].lower() == 'failed':
+            raise HttpResponseError(
+                message=result_properties['error']['message']
+            )
+
+        return poller
+
+    @distributed_trace
+    def begin_get_search_address_batch_result(
+        self,
+        batch_id, #type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller["SearchAddressBatchResult"]
+        """** Get Search Address Batch API Result**
+
+        Retrieves the result of a previous search address batch request.
+        The method returns a poller for retrieving the result.
+
+        The Search Address Batch API sends batches of queries to `Search Address API` using just a single API
+        call. You can call Search Address Batch API to run either asynchronously (async) or
+        synchronously (sync). The async API allows caller to batch up to **10,000** queries and sync
+        API up to **100** queries.
+
+        :param batch_id: Batch id for querying the operation.
+        :type batch_id: str
+        :return: An instance of LROPoller that returns SearchAddressBatchResult
+        :rtype: ~azure.core.polling.LROPoller[~azure.maps.search.models.SearchAddressBatchResult]
+        :raises ~azure.core.exceptions.HttpResponseError
+        """
+        poller = self._search_client.begin_get_search_address_batch(
+            batch_id=batch_id,
+            **kwargs
+        )
+
+        result_properties = poller.result().additional_properties
+        if 'status' in result_properties and result_properties['status'].lower() == 'failed':
+            raise HttpResponseError(
+                message=result_properties['error']['message']
+            )
+
+        return poller
+
+    @distributed_trace
     def reverse_search_address_batch_sync(
         self,
-        batch_request,  # type: "BatchRequest"
+        search_query_list,  # type: List[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "ReverseSearchAddressBatchProcessResult"
         """**Search Address Reverse Batch API**
 
-        **Applies to**\\ : S1 pricing tier.
-
-        The Search Address Batch API sends batches of queries to `Search Address Reverse API
-        <https://docs.microsoft.com/rest/api/maps/search/getsearchaddressreverse>`_ using just a single
-        API call. You can call Search Address Reverse Batch API to run either asynchronously (async) or
+        The Search Address Batch API sends batches of queries to `Search Address Reverse API`.
+        You can call Search Address Reverse Batch API to run either asynchronously (async) or
         synchronously (sync). The async API allows caller to batch up to **10,000** queries and sync
         API up to **100** queries.
-        :param batch_request: The list of reverse geocoding queries/requests to process. The list can
-         contain  a max of 10,000 queries and must contain at least 1 query.
-        :type batch_request: ~azure.maps.search._generated.models.BatchRequest
-        :return: ReverseSearchAddressBatchProcessResult, or the result of cls(response)
+
+        :param search_query_list: The list of search fuzzy queries/requests to process.
+        The list can contain a max of 10,000 queries and must contain at least 1 query.
+        :type search_query_list: List[str]
+        :return: The results of search batch request.
+        :rtype: ~azure.maps.search.models.ReverseSearchAddressBatchProcessResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        batch_items = [{"query": f"?query={query}"} for query in search_query_list] if search_query_list else []
 
         batch_result = self._search_client.reverse_search_address_batch_sync(
-            batch_request,
+            batch_request=batch_items,
             **kwargs
         )
         result = ReverseSearchAddressBatchProcessResult(
             batch_result.batch_summary, batch_result.batch_items
         )
         return result
+
+    @distributed_trace
+    def begin_reverse_search_address_batch(
+        self,
+        search_query_list,  # type: List[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller["ReverseSearchAddressBatchProcessResult"]
+        """*Begin Search Address Reverse Batch API Request**
+
+        Sends batches of reverse geocoding requests.
+        The method returns a poller for retrieving the result later.
+
+        The Search Address Batch API sends batches of queries to `Search Address Reverse API`.
+        You can call Search Address Reverse Batch API to run either asynchronously (async) or
+        synchronously (sync). The async API allows caller to batch up to **10,000** queries and sync
+        API up to **100** queries.
+
+        :param search_query_list: The list of search fuzzy queries/requests to process.
+        The list can contain a max of 10,000 queries and must contain at least 1 query.
+        :type search_query_list: List[str]
+        :return: The results of reverse search batch request.
+        :paramtype:
+         ~azure.core.polling.LROPoller[~azure.maps.search.models.ReverseSearchAddressBatchProcessResult]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        batch_items = [{"query": f"?query={query}"} for query in search_query_list] if search_query_list else []
+
+        poller = self._search_client.begin_reverse_search_address_batch(
+            batch_request=batch_items,
+            **kwargs
+        )
+        result_properties = poller.result().additional_properties
+        if 'status' in result_properties and result_properties['status'].lower() == 'failed':
+            raise HttpResponseError(
+                message=result_properties['error']['message']
+            )
+
+        return poller
+
+    @distributed_trace
+    def begin_get_reverse_search_address_batch_result(
+        self,
+        batch_id, #type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller["ReverseSearchAddressBatchProcessResult"]
+        """**Get Search Address Reverse Batch API Result**
+
+        Retrieves the result of a previous reverse search address batch request.
+        The method returns a poller for retrieving the result.
+
+        The Search Address Batch API sends batches of queries to `Search Address Reverse API`.
+        You can call Search Address Reverse Batch API to run either asynchronously (async) or
+        synchronously (sync). The async API allows caller to batch up to **10,000** queries and sync
+        API up to **100** queries.
+
+        :param batch_id: Batch id for querying the operation.
+        :type batch_id: str
+        :return: An instance of LROPoller that returns ReverseSearchAddressBatchProcessResult
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.maps.search.models.ReverseSearchAddressBatchProcessResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        poller = self._search_client.begin_get_reverse_search_address_batch(
+            batch_id=batch_id,
+            **kwargs
+        )
+
+        result_properties = poller.result().additional_properties
+        if 'status' in result_properties and result_properties['status'].lower() == 'failed':
+            raise HttpResponseError(
+                message=result_properties['error']['message']
+            )
+
+        return poller
