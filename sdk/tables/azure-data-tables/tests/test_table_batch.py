@@ -6,7 +6,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from multiprocessing.sharedctypes import Value
 import pytest
 
 from datetime import datetime, timedelta
@@ -46,8 +45,9 @@ TEST_TABLE_PREFIX = 'table'
 
 class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_batch_single_insert(self, recorded_test, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_batch_single_insert(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -82,8 +82,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_batch_single_update(self, recorded_test, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_batch_single_update(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -122,8 +123,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_batch_update(self, variable_recorder, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_batch_update(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -164,8 +166,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_batch_merge(self, recorded_test, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_batch_merge(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -208,8 +211,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_batch_update_if_match(self, variable_recorder, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_batch_update_if_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -241,8 +245,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_batch_update_if_doesnt_match(self, recorded_test, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_batch_update_if_doesnt_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -281,11 +286,17 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         #     compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
         # )
 
-        # Above section is intentionally commented to trigger a playback error
-        variables = variable_recorder.variables if self.is_live else {"variable_name": "value"}
-        particular_variable = variable_recorder.get("variable_name")
-        ...
-        variable_recorder.record(variables)
+        # Above section is intentionally commented to trigger a playback error, to show how error raising is handled
+
+        # variable_recorder directly returns the dictionary containing recorded variables. In live mode, this is an
+        # empty dictionary; in playback mode, this is populated with any variables that were recorded previously.
+        # Because the variable_recorder fixture is a function, we unfortunately don't get any autocomplete with the
+        # parameter whether it's a dictionary or custom type.
+
+        # A custom type could allow for future APIs, but the `setdefault` method is thoroughly sufficient for now.
+        # Using `setdefault` will either fetch the recorded value for the variable, or record a new value in live mode,
+        # without having to check the live status of the test or contents of `variable_recorder`.
+        variable_value = variable_recorder.setdefault("variable_name", "live_generated_value")
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -329,8 +340,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_batch_insert_replace(self, recorded_test, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_batch_insert_replace(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -364,8 +376,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_batch_insert_merge(self, recorded_test, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_batch_insert_merge(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -399,8 +412,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_batch_delete(self, variable_recorder, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_batch_delete(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -436,8 +450,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_batch_inserts(self, variable_recorder, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_batch_inserts(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -476,8 +491,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_batch_all_operations_together(self, variable_recorder, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_batch_all_operations_together(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -551,8 +567,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_batch_reuse(self, variable_recorder, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_batch_reuse(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -595,8 +612,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_batch_same_row_operations_fail(self, variable_recorder, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_batch_same_row_operations_fail(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -628,8 +646,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_batch_different_partition_operations_fail(self, variable_recorder, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_batch_different_partition_operations_fail(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -658,8 +677,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_batch_too_many_ops(self, variable_recorder, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_batch_too_many_ops(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -686,8 +706,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_batch_different_partition_keys(self, variable_recorder, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_batch_different_partition_keys(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -708,8 +729,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_new_non_existent_table(self, variable_recorder, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_new_non_existent_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -731,8 +753,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_new_invalid_key(self, variable_recorder, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_new_invalid_key(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -753,8 +776,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             resp = self.table.submit_transaction(batch)
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_new_delete_nonexistent_entity(self, variable_recorder, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_new_delete_nonexistent_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -774,8 +798,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_delete_batch_with_bad_kwarg(self, variable_recorder, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_delete_batch_with_bad_kwarg(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -808,8 +833,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @pytest.mark.live_test_only
-    @tables_decorator_with_wraps
-    def test_batch_sas_auth(self, variable_recorder, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_batch_sas_auth(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -863,8 +889,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @pytest.mark.live_test_only  # Request bodies are very large
-    @tables_decorator_with_wraps
-    def test_batch_request_too_large(self, variable_recorder, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_batch_request_too_large(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -892,8 +919,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_batch_with_mode(self, variable_recorder, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_batch_with_mode(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
@@ -941,8 +969,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_batch_with_specialchar_partitionkey(self, variable_recorder, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_batch_with_specialchar_partitionkey(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"

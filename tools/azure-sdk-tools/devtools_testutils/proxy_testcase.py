@@ -6,19 +6,14 @@
 import logging
 import requests
 import six
-import sys
-
-try:
-    # py3
-    import urllib.parse as url_parse
-except:
-    # py2
-    import urlparse as url_parse
+from typing import TYPE_CHECKING
+import urllib.parse as url_parse
 
 import pytest
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline.policies import ContentDecodePolicy
+
 # the functions we patch
 from azure.core.pipeline.transport import RequestsTransport
 
@@ -26,7 +21,10 @@ from azure.core.pipeline.transport import RequestsTransport
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from .config import PROXY_URL
 from .helpers import get_test_id, is_live, is_live_and_not_recording, set_recording_id
-from .sanitizers import add_remove_header_sanitizer, set_custom_default_matcher
+
+if TYPE_CHECKING:
+    from typing import Any, Dict, Optional, Tuple
+    from azure.core.pipeline.transport import HttpRequest
 
 # To learn about how to migrate SDK tests to the test proxy, please refer to the migration guide at
 # https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
@@ -39,9 +37,9 @@ PLAYBACK_START_URL = "{}/playback/start".format(PROXY_URL)
 PLAYBACK_STOP_URL = "{}/playback/stop".format(PROXY_URL)
 
 
-def start_record_or_playback(test_id: str) -> tuple[str, dict]:
+def start_record_or_playback(test_id: str) -> "Tuple[str, Dict[str, str]]":
     """Sends a request to begin recording or playing back the provided test.
-    
+
     This returns a tuple, (a, b), where a is the recording ID of the test and b is the `variables` dictionary that maps
     test variables to values. If no variable dictionary was stored when the test was recorded, b is an empty dictionary.
     """
@@ -83,32 +81,38 @@ def start_record_or_playback(test_id: str) -> tuple[str, dict]:
     return (recording_id, variables)
 
 
-def stop_record_or_playback(test_id, recording_id, test_output):
-    # type: (str, str, dict) -> None
+def stop_record_or_playback(test_id: str, recording_id: str, test_variables: "Dict[str, str]") -> None:
     if is_live():
-        requests.post(
+        response = requests.post(
             RECORDING_STOP_URL,
             headers={
                 "x-recording-file": test_id,
                 "x-recording-id": recording_id,
                 "x-recording-save": "true",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             },
-            json=test_output or {}  # tests don't record successfully unless test_output is a dictionary
+            json=test_variables or {},  # tests don't record successfully unless test_variables is a dictionary
         )
     else:
-        requests.post(
+        response = requests.post(
             PLAYBACK_STOP_URL,
             headers={"x-recording-id": recording_id},
         )
+    try:
+        response.raise_for_status()
+    except requests.HTTPError as e:
+        raise HttpResponseError(
+            "The test proxy ran into an error while ending the session. Make sure any test variables you record have "
+            "string values."
+        ) from e
 
 
-def get_proxy_netloc():
+def get_proxy_netloc() -> "Dict[str, str]":
     parsed_result = url_parse.urlparse(PROXY_URL)
     return {"scheme": parsed_result.scheme, "netloc": parsed_result.netloc}
 
 
-def transform_request(request, recording_id):
+def transform_request(request: "HttpRequest", recording_id: str) -> None:
     """Redirect the request to the test proxy, and store the original request URI in a header"""
     headers = request.headers
 
@@ -121,7 +125,7 @@ def transform_request(request, recording_id):
     request.url = updated_target
 
 
-def recorded_by_proxy(test_func):
+def recorded_by_proxy(test_func) -> None:
     """Decorator that redirects network requests to target the azure-sdk-tools test proxy. Use with recorded tests.
 
     For more details and usage examples, refer to
@@ -129,9 +133,6 @@ def recorded_by_proxy(test_func):
     """
 
     def record_wrap(*args, **kwargs):
-        if sys.version_info.major == 2 and not is_live():
-            pytest.skip("Playback testing is incompatible with the azure-sdk-tools test proxy on Python 2")
-
         def transform_args(*args, **kwargs):
             copied_positional_args = list(args)
             request = copied_positional_args[1]
@@ -168,18 +169,18 @@ def recorded_by_proxy(test_func):
         RequestsTransport.send = combined_call
 
         # call the modified function
-        # we define test_output before invoking the test so the variable is defined in case of an exception
-        test_output = None
+        # we define test_variables before invoking the test so the variable is defined in case of an exception
+        test_variables = None
         try:
             try:
-                test_output = test_func(*args, variables=variables, **trimmed_kwargs)
+                test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
             except TypeError:
                 logger = logging.getLogger()
                 logger.info(
                     "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
                     "`variables` parameter to make use of recorded test variables."
                 )
-                test_output = test_func(*args, **trimmed_kwargs)
+                test_variables = test_func(*args, **trimmed_kwargs)
         except ResourceNotFoundError as error:
             error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
             message = error_body.get("message") or error_body.get("Message")
@@ -187,8 +188,102 @@ def recorded_by_proxy(test_func):
             six.raise_from(error_with_message, error)
         finally:
             RequestsTransport.send = original_transport_func
-            stop_record_or_playback(test_id, recording_id, test_output)
+            stop_record_or_playback(test_id, recording_id, test_variables)
 
-        return test_output
+        return test_variables
 
     return record_wrap
+
+
+@pytest.fixture
+def start_proxy_session() -> "Optional[Tuple[str, str, Dict[str, str]]]":
+    """Begins a playback or recording session and returns the current test ID, recording ID, and recorded variables.
+
+    :returns: A tuple, (a, b, c), where a is the test ID, b is the recording ID, and c is the `variables` dictionary
+        that maps test variables to string values. If no variable dictionary was stored when the test was recorded, c is
+        an empty dictionary. If the current test session is live but recording is disabled, this returns None.
+    """
+    if is_live_and_not_recording():
+        return
+
+    test_id = get_test_id()
+    recording_id, variables = start_record_or_playback(test_id)
+    return (test_id, recording_id, variables)
+
+
+@pytest.fixture
+def recorded_test(test_proxy, start_proxy_session, request) -> "Dict[str, Any]":
+    """Fixture that redirects network requests to target the azure-sdk-tools test proxy. Use with recorded tests.
+
+    For more details and usage examples, refer to
+    https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md.
+
+    :param function test_proxy: The fixture responsible for starting up the test proxy server.
+    :param function start_proxy_session: The fixture responsible for starting a recording or playback session. This
+        should yield a tuple with a test ID, recording ID, and dictionary of recorded test variables.
+    :param function request: The built-in `request` fixture.
+
+    :yields: A dictionary containing information relevant to the currently executing test.
+    """
+    test_id, recording_id, variables = start_proxy_session
+    original_transport_func = RequestsTransport.send
+
+    def transform_args(*args, **kwargs):
+        copied_positional_args = list(args)
+        http_request = copied_positional_args[1]
+
+        transform_request(http_request, recording_id)
+
+        return tuple(copied_positional_args), kwargs
+
+    def combined_call(*args, **kwargs):
+        adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
+        result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+
+        # make the x-recording-upstream-base-uri the URL of the request
+        # this makes the request look like it was made to the original endpoint instead of to the proxy
+        # without this, things like LROPollers can get broken by polling the wrong endpoint
+        parsed_result = url_parse.urlparse(result.request.url)
+        upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+        upstream_uri_dict = {"scheme": upstream_uri.scheme, "netloc": upstream_uri.netloc}
+        original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+
+        result.request.url = original_target
+        return result
+
+    RequestsTransport.send = combined_call
+
+    # store info pertinent to the test in a dictionary that other fixtures can access
+    test_info = {"variables": variables}
+    yield test_info  # yield and allow test to run
+
+    RequestsTransport.send = original_transport_func  # test finished running -- tear down
+
+    if hasattr(request.node, "test_error"):
+        # Exceptions are logged here instead of being raised because of how pytest handles error raising from inside
+        # fixtures and hooks. Raising from a fixture raises an error in addition to the test failure report, and the
+        # test proxy error is logged before the test failure output (making it difficult to find in pytest output).
+        # Raising from a hook isn't allowed, and produces an internal error that disrupts test execution.
+        # ResourceNotFoundErrors during playback indicate a recording mismatch
+        error = request.node.test_error
+        if isinstance(error, ResourceNotFoundError):
+            error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
+            message = error_body.get("message") or error_body.get("Message")
+            logger = logging.getLogger()
+            logger.error(f"\n\n-----Test proxy playback error:-----\n\n{message}")
+
+    stop_record_or_playback(test_id, recording_id, variables)
+
+
+@pytest.fixture
+def variable_recorder(recorded_test) -> "Dict[str, str]":
+    """Fixture that invokes the `recorded_test` fixture and returns a dictionary of recorded test variables.
+
+    :param function recorded_test: The fixture responsible for redirecting network traffic to target the test proxy.
+        This should return a dictionary containing information about the current test -- in particular, the variables
+        that were recorded with the test.
+
+    :returns: A dictionary that maps test variables to string values. If no variable dictionary was stored when the test
+        was recorded, this returns an empty dictionary.
+    """
+    return recorded_test["variables"]
