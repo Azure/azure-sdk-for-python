@@ -10,13 +10,16 @@ While this is happening:
 Goals for the refactor:
 
 - [ ] Refactor `build` of packages (including conda packages) into command `sdk_build` accessible from `azure-sdk-tools`
-- [ ] Move necessary functions to support versioning (both requirement and package version updates) and build into `azure-sdk-tools`. Where a function has been moved out of `sanitize_setup.py` or `common_tasks.py`, call sites on _existing_ checks should be updated in place.
+- [ ] Move necessary functions to support versioning (both requirement and package version updates) and build into `azure-sdk-tools`. Where a function has been moved out of `sanitize_setup.py` or `common_tasks.py`, call sites on _existing_ checks should be updated in place. So this means the current update takes care of updating versions and requirements + build. That's it. 
+  - [ ] We will leave the current implementation of set_dev_version which simply updates package versions to daily alpha. That will be named sdk_build_version
 - [ ] Make `versioning` commands available in commands `sdk_version_X`
-- [ ] All functions should use CWD to establish where the root of the repository is or accept `--repo_root` as an argument which overrides that default. 
+- [ ] All functions should use CWD to establish where the root of the repository is or accept `--repo` as an argument which overrides that default.
 - [ ] Introduce --buildURL cli command that will _reproduce_ an error or build or scenario from a devops build URL.
 
 Minutae
-- [ ] Move `sanitize_setup` functions into 
+- [ ] Move `sanitize_setup` functions into `functions.py`
+- [ ] Make a pass over all moved entry scripts. Ensure standardized arguments are present and working.
+- [ ] Document new environment variables
 
 ## Refactoring how we install required packages for `regression`, `min/latestdependency` and any of our test scenarios
 
