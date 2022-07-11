@@ -274,7 +274,12 @@ def find_autorest_generated_folder(module_prefix="azure"):
     _LOGGER.info(f"Looking for Autorest generated package in {module_prefix}")
 
     # Manually skip some namespaces for now
-    if module_prefix in ["azure.cli", "azure.storage", "azure.servicemanagement", "azure.servicebus"]:
+    if module_prefix in [
+        "azure.cli",
+        "azure.storage",
+        "azure.servicemanagement",
+        "azure.servicebus",
+    ]:
         _LOGGER.info(f"Skip {module_prefix}")
         return []
 
@@ -342,10 +347,20 @@ if __name__ == "__main__":
     parser.add_argument("--debug", dest="debug", action="store_true", help="Verbosity in DEBUG mode")
     parser.add_argument("--output", dest="output", help="Override output path.")
     parser.add_argument(
-        "--metadata-path", dest="metadata", help="Write a metadata file about what happen. Mostly used for automation."
+        "--metadata-path",
+        dest="metadata",
+        help="Write a metadata file about what happen. Mostly used for automation.",
     )
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO)
 
-    main(args.package_name, args.version, args.no_venv, args.pypi, args.last_pypi, args.output, args.metadata)
+    main(
+        args.package_name,
+        args.version,
+        args.no_venv,
+        args.pypi,
+        args.last_pypi,
+        args.output,
+        args.metadata,
+    )

@@ -7,7 +7,10 @@ import tempfile
 
 from github import Github
 
-from azure_devtools.ci_tools.github_tools import manage_git_folder, DashboardCommentableObject
+from azure_devtools.ci_tools.github_tools import (
+    manage_git_folder,
+    DashboardCommentableObject,
+)
 
 _LOGGER = logging.getLogger(__name__)
 _SDK_FOLDER_RE = re.compile(r"^(sdk/[\w-]+)/(azure[\w-]+)/", re.ASCII)
@@ -71,7 +74,14 @@ def build_package_from_pr_number(gh_token, sdk_id, pr_number, output_folder, *, 
         for _, package_name in package_names:
             _LOGGER.debug("Build {}".format(package_name))
             execute_simple_command(
-                ["python", "./build_package.py", "--dest", str(absolute_output_folder), package_name], cwd=sdk_repo_root
+                [
+                    "python",
+                    "./build_package.py",
+                    "--dest",
+                    str(absolute_output_folder),
+                    package_name,
+                ],
+                cwd=sdk_repo_root,
             )
             _LOGGER.debug("Build finished: {}".format(package_name))
 

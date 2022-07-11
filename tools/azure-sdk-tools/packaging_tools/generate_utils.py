@@ -25,7 +25,10 @@ def get_package_names(sdk_folder):
 def init_new_service(package_name, folder_name):
     setup = Path(folder_name, package_name, "setup.py")
     if not setup.exists():
-        check_call(f"python -m packaging_tools --build-conf {package_name} -o {folder_name}", shell=True)
+        check_call(
+            f"python -m packaging_tools --build-conf {package_name} -o {folder_name}",
+            shell=True,
+        )
         ci = Path(folder_name, "ci.yml")
         if not ci.exists():
             with open("ci_template.yml", "r") as file_in:

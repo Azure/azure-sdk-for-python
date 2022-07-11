@@ -173,7 +173,9 @@ def get_report_from_parameter(input_parameter):
         from .code_report import main
 
         result = main(
-            package_name, version=version if version not in ["pypi", "latest"] else None, last_pypi=version == "pypi"
+            package_name,
+            version=version if version not in ["pypi", "latest"] else None,
+            last_pypi=version == "pypi",
         )
         if not result:
             raise ValueError("Was not able to build a report")

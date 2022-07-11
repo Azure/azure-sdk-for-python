@@ -191,7 +191,11 @@ def extract_conf_from_readmes(swagger_files_in_pr, restapi_git_folder, sdk_git_i
     }
     for readme_file in readme_files_in_pr:
         build_swaggertosdk_conf_from_json_readme(
-            readme_file, sdk_git_id, config, base_folder=restapi_git_folder, force_generation=force_generation
+            readme_file,
+            sdk_git_id,
+            config,
+            base_folder=restapi_git_folder,
+            force_generation=force_generation,
         )
 
 

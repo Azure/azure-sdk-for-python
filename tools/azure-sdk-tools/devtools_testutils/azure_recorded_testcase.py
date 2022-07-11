@@ -16,7 +16,11 @@ from dotenv import load_dotenv, find_dotenv
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
 from . import mgmt_settings_fake as fake_settings
-from .azure_testcase import _is_autorest_v3, get_resource_name, get_qualified_method_name
+from .azure_testcase import (
+    _is_autorest_v3,
+    get_resource_name,
+    get_qualified_method_name,
+)
 from .helpers import is_live
 from .sanitizers import add_general_regex_sanitizer
 

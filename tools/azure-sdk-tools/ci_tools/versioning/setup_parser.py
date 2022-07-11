@@ -55,7 +55,8 @@ def parse_kwargs(setup_filename):
     return kwargs
 
 
-def get_install_requires(setup_filename):
+# todo what is the type of this?
+def get_install_requires(setup_filename: str):
     kwargs = parse_kwargs(setup_filename)
     requires = []
     if "install_requires" in kwargs:

@@ -40,7 +40,7 @@ setup(
             "auto_package=packaging_tools.auto_package:generate_main",
             "sdk_generator=packaging_tools.sdk_generator:generate_main",
             "sdk_package=packaging_tools.sdk_package:generate_main",
-            # "sdk_build=ci_tools:main",
+            "sdk_build=ci_tools.build:build",
             # "sdk_set_dev_version=ci_tools:",
             # "sdk_increment_version=ci_tools:",
         ],

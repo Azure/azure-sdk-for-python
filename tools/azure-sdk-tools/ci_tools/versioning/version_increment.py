@@ -12,7 +12,12 @@ import argparse
 from packaging.version import parse
 import logging
 
-from ci_tools.versioning.version_shared import get_packages, set_version_py, set_dev_classifier, update_change_log
+from ci_tools.versioning.version_shared import (
+    get_packages,
+    set_version_py,
+    set_dev_classifier,
+    update_change_log,
+)
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -46,7 +51,9 @@ if __name__ == "__main__":
         ),
     )
     parser.add_argument(
-        "--service", required=True, help="name of the service for which to set the dev build id (e.g. keyvault)"
+        "--service",
+        required=True,
+        help="name of the service for which to set the dev build id (e.g. keyvault)",
     )
     args = parser.parse_args()
 

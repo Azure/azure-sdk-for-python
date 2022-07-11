@@ -227,6 +227,9 @@ def _send_sanitizer_request(sanitizer, parameters):
 
     requests.post(
         "{}/Admin/AddSanitizer".format(PROXY_URL),
-        headers={"x-abstraction-identifier": sanitizer, "Content-Type": "application/json"},
+        headers={
+            "x-abstraction-identifier": sanitizer,
+            "Content-Type": "application/json",
+        },
         json=parameters,
     )

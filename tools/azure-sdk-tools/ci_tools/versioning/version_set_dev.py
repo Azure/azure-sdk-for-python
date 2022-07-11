@@ -12,7 +12,11 @@ import argparse
 from os import path
 from packaging.version import parse
 
-from ci_tools.versioning.version_shared import get_packages, set_version_py, set_dev_classifier
+from ci_tools.versioning.version_shared import (
+    get_packages,
+    set_version_py,
+    set_dev_classifier,
+)
 
 MAX_R_DIGITS = 3
 
@@ -51,7 +55,10 @@ if __name__ == "__main__":
         ),
     )
 
-    parser.add_argument("--service", help="name of the service for which to set the dev build id (e.g. keyvault)")
+    parser.add_argument(
+        "--service",
+        help="name of the service for which to set the dev build id (e.g. keyvault)",
+    )
     parser.add_argument(
         "-b",
         "--build-id",

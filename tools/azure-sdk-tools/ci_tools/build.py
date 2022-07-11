@@ -1,30 +1,32 @@
 import argparse, sys, os, glob
 from subprocess import run
 
+from typing import List
 from ci_tools.functions import discover_targeted_packages, str_to_bool
-
-DEFAULT_DEST_FOLDER = "./dist"
+from ci_tools.variables import discover_repo_root, get_artifact_directory
 
 
 def build(args, repo_root_arg=None) -> None:
     parser = argparse.ArgumentParser(
         description="""This is the primary entrypoint for the "build" action. This command is used to build any package within the sdk-for-python repository.""",
     )
-    parser.add_argument(
-        "-d",
-        "--distribution-directory",
-        dest="distribution_directory",
-        help="The path to the distribution directory. Should be passed $(Build.ArtifactStagingDirectory) from the devops yaml definition.",
-        required=True,
-    )
 
     parser.add_argument(
         "glob_string",
         nargs="?",
+        default="azure*",
         help=(
             "A comma separated list of glob strings that will target the top level directories that contain packages. "
             'Examples: All == "azure-*", Single = "azure-keyvault"'
         ),
+    )
+
+    parser.add_argument(
+        "-d",
+        "--distribution-directory",
+        dest="distribution_directory",
+        help="The path to the distribution directory. Should be passed $(Build.ArtifactStagingDirectory) from the devops yaml definition."
+        + "If that is not provided, will default to env variable SDK_ARTIFACT_DIRECTORY -> <calculated_repo_root>/.artifacts.",
     )
 
     parser.add_argument(
@@ -62,13 +64,17 @@ def build(args, repo_root_arg=None) -> None:
     )
 
     parser.add_argument(
-        "--repodir",
+        "--repo",
         default=None,
         dest="repo",
         help=(
             "Where is the start directory that we are building against? If not provided, the current working directory will be used."
         ),
     )
+
+    args = parser.parse_args()
+
+    repo_root = discover_repo_root(args.repo)
 
     # We need to support both CI builds of everything and individual service
     # folders. This logic allows us to do both.
@@ -85,21 +91,34 @@ def build(args, repo_root_arg=None) -> None:
     build_packages(targeted_packages, args.distribution_directory, str_to_bool(args.is_dev_build))
 
 
-def create_package(name, dest_folder=DEFAULT_DEST_FOLDER):
-    # a package will exist in either one, or the other folder. this is why we can resolve both at the same time.
-    absdirs = [
-        os.path.dirname(package)
-        for package in (glob.glob("{}/setup.py".format(name)) + glob.glob("sdk/*/{}/setup.py".format(name)))
-    ]
+def create_package(setup_directory_or_file: str, dest_folder: str = None):
+    """
+    Uses the invoking python executable to build a wheel and sdist file given a setup.py or setup.py directory. Outputs
+    into a distribution directory and defaults to the value of get_artifiact_directory().
+    """
 
-    absdirpath = os.path.abspath(absdirs[0])
-    check_call([sys.executable, "setup.py", "bdist_wheel", "-d", dest_folder], cwd=absdirpath)
-    check_call([sys.executable, "setup.py", "sdist", "--format", "zip", "-d", dest_folder], cwd=absdirpath)
+    dist = get_artifact_directory(dest_folder)
+
+    if not os.path.isdir(setup_directory_or_file):
+        setup_directory_or_file = os.path.dirname(setup_directory_or_file)
+
+    run([sys.executable, "setup.py", "bdist_wheel", "-d", dist], cwd=setup_directory_or_file)
+    run([sys.executable, "setup.py", "sdist", "--format", "zip", "-d", dist], cwd=setup_directory_or_file)
 
 
-def build_packages(targeted_packages, distribution_directory, is_dev_build=False):
+# TODO: pull in build_conda_artifacts here
+# TODO: pull build_alpha_version into here
+# TODO: pull build_apiview_artifactzip into here
+def build_packages(
+    targeted_packages: List[str],
+    distribution_directory: str = None,
+    is_dev_build: bool = False,
+    build_apiview_artifact: bool = False,
+):
+
+    pass
     # run the build and distribution
-    # TODO: function updates requirements 
+    # TODO: function updates requirements
     # for package_root in targeted_packages:
     #     service_hierarchy = os.path.join(os.path.basename(package_root))
     #     if is_dev_build:

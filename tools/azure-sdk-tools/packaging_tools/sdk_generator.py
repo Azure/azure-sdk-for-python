@@ -28,7 +28,14 @@ def main(generate_input, generate_output):
         return
     relative_path_readme = str(Path(spec_folder, input_readme))
     _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
-    config = generate(CONFIG_FILE, sdk_folder, [], relative_path_readme, spec_folder, force_generation=True)
+    config = generate(
+        CONFIG_FILE,
+        sdk_folder,
+        [],
+        relative_path_readme,
+        spec_folder,
+        force_generation=True,
+    )
     package_names = get_package_names(sdk_folder)
     _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 
@@ -50,7 +57,15 @@ def main(generate_input, generate_output):
 
         # Update metadata
         try:
-            update_servicemetadata(sdk_folder, data, config, folder_name, package_name, spec_folder, input_readme)
+            update_servicemetadata(
+                sdk_folder,
+                data,
+                config,
+                folder_name,
+                package_name,
+                spec_folder,
+                input_readme,
+            )
         except Exception as e:
             _LOGGER.info(str(e))
 
@@ -72,13 +87,26 @@ def generate_main():
     """Main method"""
 
     parser = argparse.ArgumentParser(
-        description="Build SDK using Autorest, offline version.", formatter_class=argparse.RawTextHelpFormatter
+        description="Build SDK using Autorest, offline version.",
+        formatter_class=argparse.RawTextHelpFormatter,
     )
     parser.add_argument("generate_input", help="Generate input file path")
     parser.add_argument("generate_output", help="Generate output file path")
-    parser.add_argument("-v", "--verbose", dest="verbose", action="store_true", help="Verbosity in INFO mode")
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        dest="verbose",
+        action="store_true",
+        help="Verbosity in INFO mode",
+    )
     parser.add_argument("--debug", dest="debug", action="store_true", help="Verbosity in DEBUG mode")
-    parser.add_argument("-c", "--codegen", dest="debug", action="store_true", help="Verbosity in DEBUG mode")
+    parser.add_argument(
+        "-c",
+        "--codegen",
+        dest="debug",
+        action="store_true",
+        help="Verbosity in DEBUG mode",
+    )
 
     args = parser.parse_args()
     main_logger = logging.getLogger()

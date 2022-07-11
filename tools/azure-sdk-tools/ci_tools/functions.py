@@ -2,11 +2,17 @@ from ast import Not
 from click import BadArgumentUsage
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse
+from pkg_resources import Requirement
 
+from ci_tools.variables import discover_repo_root, get_artifact_directory, DEV_BUILD_IDENTIFIER
 import os, sys, platform, glob
 
 from ci_tools.parsing import ParsedSetup
+from pypi_tools.pypi import PyPIClient
+
+
 from typing import List
+import logging
 
 
 OMITTED_CI_PACKAGES = [
@@ -75,7 +81,8 @@ def filter_for_compatibility(package_set):
     return collected_packages
 
 
-def compare_python_version(version_spec):
+# TODO: what is the version spec here?
+def compare_python_version(version_spec: str):
     current_sys_version = parse(platform.python_version())
     spec_set = SpecifierSet(version_spec)
 
@@ -104,30 +111,12 @@ def str_to_bool(input_string: str) -> bool:
         return False
 
 
-def discover_repo_root():
-    """
-    Resolves the root of the repository given a current working directory. This function should be used if a target repo argument is not provided.
-    """
-
-    current_dir: str = os.getcwd()
-
-    while current_dir is not None and not (os.path.dirname(current_dir) == current_dir):
-        if os.path.exists(os.path.join(current_dir, ".git")):
-            return current_dir
-        else:
-            current_dir = os.path.dirname(current_dir)
-
-    raise BadArgumentUsage(
-        "Commands invoked against azure-sdk-tooling should either be run from within the repo directory or provide --repo_root argument that directs at one."
-    )
-
-
 def discover_targeted_packages(
-    glob_string,
-    target_root_dir,
-    additional_contains_filter="",
-    filter_type="Build",
-) -> list[str]:
+    glob_string: str,
+    target_root_dir: str,
+    additional_contains_filter: str = "",
+    filter_type: str = "Build",
+) -> List[str]:
     """
     During build and test, the set of targeted packages may expand or contract depending on the needs of the invocation.
     This function centralizes business and material requirements and outputs the set of packages that should be targeted.
@@ -159,10 +148,10 @@ def discover_targeted_packages(
 
     # Apply filter based on filter type. for e.g. Docs, Regression, Management
     pkg_set_ci_filtered = list(filter(omit_funct_dict.get(filter_type, omit_build), pkg_set_ci_filtered))
-    # logging.info("Target packages after filtering by CI: {}".format(pkg_set_ci_filtered))
-    # logging.info(
-    #     "Package(s) omitted by CI filter: {}".format(list(set(collected_directories) - set(pkg_set_ci_filtered)))
-    # )
+    logging.info("Target packages after filtering by CI Type: {}".format(pkg_set_ci_filtered))
+    logging.info(
+        "Package(s) omitted by CI filter: {}".format(list(set(collected_directories) - set(pkg_set_ci_filtered)))
+    )
     return sorted(pkg_set_ci_filtered)
 
 
@@ -172,3 +161,112 @@ def remove_omitted_packages(collected_directories):
     ]
 
     return packages
+
+
+# TODO: what is the type of requires_dict?
+def update_requires(setup_py_path, requires_dict):
+    # This method changes package requirement by overriding the specifier
+    contents = []
+    with open(setup_py_path, "r") as setup_file:
+        contents = setup_file.readlines()
+
+    # find and replace all existing package requirement with new requirement
+    for i in range(0, len(contents) - 1):
+        keys = [k for k in requires_dict.keys() if k in contents[i]]
+        for key in keys:
+            contents[i] = contents[i].replace(key, requires_dict[key])
+
+    with open(setup_py_path, "w") as setup_file:
+        setup_file.writelines(contents)
+
+
+# TODO mock pypi_tools.pypi.PyPiClient.get_ordered_versions to test different scenarios
+# TODO: what is the type of spec?
+def is_required_version_on_pypi(package_name, spec):
+    client = PyPIClient()
+    try:
+        pypi_results = client.get_ordered_versions(package_name)
+    except:
+        pypi_results = []
+
+    versions = [str(v) for v in pypi_results if str(v) in spec]
+    return versions
+
+
+def get_version_from_repo(pkg_name: str, repo_root: str = None):
+    root_dir = discover_repo_root(repo_root)
+
+    # find version for the package from source. This logic should be revisited to find version from devops feed
+    glob_path = os.path.join(root_dir, "sdk", "*", pkg_name, "setup.py")
+    paths = glob.glob(glob_path)
+    if paths:
+        setup_py_path = paths[0]
+        parsed_setup = ParsedSetup.from_path(setup_py_path)
+
+        # Remove dev build part if version for this package is already updated to dev build
+        # When building package with dev build version, version for packages in same service is updated to dev build
+        # and other packages will not have dev build number
+        # strip dev build number so we can check if package exists in PyPI and replace
+
+        version_obj = Version(parsed_setup.version)
+        if version_obj.pre:
+            if version_obj.pre[0] == DEV_BUILD_IDENTIFIER:
+                version = version_obj.base_version
+
+        return version
+    else:
+        logging.error("setup.py is not found for package {} to identify current version".format(pkg_name))
+        exit(1)
+
+
+# TODO: pull this away from the strict sdk/*/package_name/setup.py
+def get_base_version(pkg_name):
+    root_dir = discover_repo_root()
+    # find version for the package from source. This logic should be revisited to find version from devops feed
+    glob_path = os.path.join(root_dir, "sdk", "*", pkg_name, "setup.py")
+    paths = glob.glob(glob_path)
+    if paths:
+        setup_py_path = paths[0]
+        parsed_setup = ParsedSetup.from_path(setup_py_path)
+        version_obj = Version(parsed_setup.version)
+        return version_obj.base_version
+    else:
+        logging.error("setup.py is not found for package {} to identify current version".format(pkg_name))
+        exit(1)
+
+
+def process_requires(setup_py_path: str):
+    """
+    This method processes a setup.py's package requirements to verify if all required packages are available on PyPI.
+    If any azure sdk package is not available on PyPI then requirement will be updated to refer to the sdk "dev_identifier".
+
+    Examples:
+    azure-storage-blob >= 1.0.1b1
+    <there is no azure-storage-blob with any 1.0.1 patch version>
+    update to require 1.0.1a to allow previously published dev versions to be allowed.
+    """
+
+    pkg_details = ParsedSetup.from_path(setup_py_path)
+    azure_requirements = [Requirement.parse(r) for r in pkg_details.requires if r.startswith("azure")]
+
+    # Find package requirements that are not available on PyPI
+    requirement_to_update = {}
+    for req in azure_requirements:
+        pkg_name = req.key
+        spec = SpecifierSet(str(req).replace(pkg_name, ""))
+
+        if not is_required_version_on_pypi(pkg_name, spec):
+            old_req = str(req)
+            version = get_version_from_repo(pkg_name)
+            base_version = get_base_version(pkg_name)
+            logging.info("Updating version {0} in requirement {1} to dev build version".format(version, old_req))
+            new_req = old_req.replace(version, "{}{}".format(base_version, DEV_BUILD_IDENTIFIER))
+            logging.info("New requirement for package {0}: {1}".format(pkg_name, new_req))
+            requirement_to_update[old_req] = new_req
+
+    if not requirement_to_update:
+        logging.info("All required packages are available on PyPI")
+    else:
+        logging.info("Packages not available on PyPI:{}".format(requirement_to_update))
+        update_requires(setup_py_path, requirement_to_update)
+        logging.info("Package requirement is updated in setup.py")

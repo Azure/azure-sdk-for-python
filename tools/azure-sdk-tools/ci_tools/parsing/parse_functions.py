@@ -6,12 +6,17 @@ import re
 from typing import Dict, List, Tuple
 
 # Assumes the presence of setuptools
-from pkg_resources import parse_version, parse_requirements, Requirement, WorkingSet, working_set
+from pkg_resources import (
+    parse_version,
+    parse_requirements,
+    Requirement,
+    WorkingSet,
+    working_set,
+)
 
 # this assumes the presence of "packaging"
 from packaging.specifiers import SpecifierSet
-from packaging.version import Version
-from packaging.version import parse
+from packaging.version import Version, parse
 
 
 NEW_REQ_PACKAGES = ["azure-core", "azure-mgmt-core"]
@@ -40,9 +45,25 @@ class ParsedSetup:
 
     @classmethod
     def from_path(cls, parse_directory_or_file: str):
-        name, version, python_requires, requires, is_new_sdk, setup_filename = parse_setup(parse_directory_or_file)
+        (
+            name,
+            version,
+            python_requires,
+            requires,
+            is_new_sdk,
+            setup_filename,
+        ) = parse_setup(parse_directory_or_file)
 
         return cls(name, version, python_requires, requires, is_new_sdk, setup_filename)
+
+
+def read_setup_py_content(setup_filename: str) -> str:
+    """
+    Get setup.py content, returns a string.
+    """
+    with open(setup_filename, "r", encoding="utf-8-sig") as setup_file:
+        content = setup_file.read()
+        return content
 
 
 def parse_setup(setup_filename: str) -> ParsedSetup:
@@ -59,18 +80,19 @@ def parse_setup(setup_filename: str) -> ParsedSetup:
     """
     )
     parsed_mock_setup = ast.parse(mock_setup, filename=setup_filename)
-    with open(setup_filename, "r", encoding="utf-8-sig") as setup_file:
-        parsed = ast.parse(setup_file.read())
-        for index, node in enumerate(parsed.body[:]):
-            if (
-                not isinstance(node, ast.Expr)
-                or not isinstance(node.value, ast.Call)
-                or not hasattr(node.value.func, "id")
-                or node.value.func.id != "setup"
-            ):
-                continue
-            parsed.body[index:index] = parsed_mock_setup.body
-            break
+    content = read_setup_py_content(setup_filename)
+    parsed = ast.parse(content)
+
+    for index, node in enumerate(parsed.body[:]):
+        if (
+            not isinstance(node, ast.Expr)
+            or not isinstance(node.value, ast.Call)
+            or not hasattr(node.value.func, "id")
+            or node.value.func.id != "setup"
+        ):
+            continue
+        parsed.body[index:index] = parsed_mock_setup.body
+        break
 
     fixed = ast.fix_missing_locations(parsed)
     codeobj = compile(fixed, setup_filename, "exec")

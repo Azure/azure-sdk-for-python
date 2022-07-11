@@ -267,11 +267,19 @@ class ReleaseStats:
             last_row, last_col = last_row + 1, last_col + 1
             ws.cell(1, last_col, value="Sum")
             for r in range(2, last_row):
-                ws.cell(r, last_col, value="=sum(B{row}:{col}{row})".format(row=r, col=get_column_letter(last_col - 1)))
+                ws.cell(
+                    r,
+                    last_col,
+                    value="=sum(B{row}:{col}{row})".format(row=r, col=get_column_letter(last_col - 1)),
+                )
 
             ws.cell(last_row, 1, value="Total")
             for c in range(2, last_col + 1):
-                ws.cell(last_row, c, value="=sum({col}2:{col}{row})".format(row=last_row - 1, col=get_column_letter(c)))
+                ws.cell(
+                    last_row,
+                    c,
+                    value="=sum({col}2:{col}{row})".format(row=last_row - 1, col=get_column_letter(c)),
+                )
 
 
 def build_release_stats(xls_file, threshold, start_date):
@@ -300,7 +308,10 @@ if __name__ == "__main__":
     parser.add_argument("--debug", help="Verbosity in DEBUG mode")
     parser.add_argument("--xlsx", default="release-stats.xlsx", help="Output xlsx filename")
     parser.add_argument(
-        "--threshold", default=3, type=int, help="Only stats RPs has breakings above this number recently"
+        "--threshold",
+        default=3,
+        type=int,
+        help="Only stats RPs has breakings above this number recently",
     )
     parser.add_argument(
         "--start-date",

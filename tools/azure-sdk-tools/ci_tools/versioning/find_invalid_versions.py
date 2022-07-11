@@ -17,7 +17,9 @@ from ci_tools.versioning.version_shared import get_packages, get_version_py
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="")
     parser.add_argument(
-        "--always-succeed", action="store_true", help="return exit code 0 even if incorrect versions are detected"
+        "--always-succeed",
+        action="store_true",
+        help="return exit code 0 even if incorrect versions are detected",
     )
     parser.add_argument("--service", help="name of a service directory to target packages")
     parser.add_argument(
@@ -57,7 +59,10 @@ if __name__ == "__main__":
 
                 if version != package[1][1]:
                     invalid_packages.append(
-                        (package_name, f"Version evaluation mismatch: setup.py: {package[1][1]} _version.py: {version}")
+                        (
+                            package_name,
+                            f"Version evaluation mismatch: setup.py: {package[1][1]} _version.py: {version}",
+                        )
                     )
                     continue
 
@@ -65,11 +70,18 @@ if __name__ == "__main__":
             package_dunder_init = path.join(version_py_folder, "__init__.py")
 
             with open(package_dunder_init, "r") as package_dunder_init_file:
-                version = re.search(r"^__version__\s*=\s*VERSION", package_dunder_init_file.read(), re.MULTILINE)
+                version = re.search(
+                    r"^__version__\s*=\s*VERSION",
+                    package_dunder_init_file.read(),
+                    re.MULTILINE,
+                )
 
                 if not bool(version):
                     invalid_packages.append(
-                        (package_name, "Could not find __version__ = VERSION in package __init__.py")
+                        (
+                            package_name,
+                            "Could not find __version__ = VERSION in package __init__.py",
+                        )
                     )
                     continue
 

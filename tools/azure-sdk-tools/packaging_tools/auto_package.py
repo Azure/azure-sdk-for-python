@@ -54,13 +54,26 @@ def generate_main():
     """Main method"""
 
     parser = argparse.ArgumentParser(
-        description="Build SDK using Autorest, offline version.", formatter_class=argparse.RawTextHelpFormatter
+        description="Build SDK using Autorest, offline version.",
+        formatter_class=argparse.RawTextHelpFormatter,
     )
     parser.add_argument("generate_input", help="Generate input file path")
     parser.add_argument("generate_output", help="Generate output file path")
-    parser.add_argument("-v", "--verbose", dest="verbose", action="store_true", help="Verbosity in INFO mode")
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        dest="verbose",
+        action="store_true",
+        help="Verbosity in INFO mode",
+    )
     parser.add_argument("--debug", dest="debug", action="store_true", help="Verbosity in DEBUG mode")
-    parser.add_argument("-c", "--codegen", dest="debug", action="store_true", help="Verbosity in DEBUG mode")
+    parser.add_argument(
+        "-c",
+        "--codegen",
+        dest="debug",
+        action="store_true",
+        help="Verbosity in DEBUG mode",
+    )
 
     args = parser.parse_args()
     main_logger = logging.getLogger()

@@ -12,7 +12,12 @@ def patch_play_responses(unit_test):
     """Fixes a bug affecting blob tests by applying https://github.com/kevin1024/vcrpy/pull/511 to vcrpy 3.0.0"""
 
     try:
-        from vcr.stubs.aiohttp_stubs import _serialize_headers, build_response, Request, URL
+        from vcr.stubs.aiohttp_stubs import (
+            _serialize_headers,
+            build_response,
+            Request,
+            URL,
+        )
     except ImportError:
         # return a do-nothing patch when importing from vcr fails
         return lambda _: None
@@ -25,7 +30,12 @@ def patch_play_responses(unit_test):
             if "location" not in response.headers:
                 break
             next_url = URL(response.url).with_path(response.headers["location"])
-            vcr_request = Request("GET", str(next_url), None, _serialize_headers(response.request_info.headers))
+            vcr_request = Request(
+                "GET",
+                str(next_url),
+                None,
+                _serialize_headers(response.request_info.headers),
+            )
             vcr_request = cassette.find_requests_with_most_matches(vcr_request)[0][0]
             history.append(response)
             vcr_response = cassette.play_response(vcr_request)

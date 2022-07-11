@@ -99,7 +99,10 @@ def set_version_py(setup_py_location, new_version):
 
     with open(version_py_location, "w") as version_py_file:
         replaced_version_contents = re.sub(
-            VERSION_REGEX, VERSION_STRING % new_version, version_contents, flags=re.MULTILINE
+            VERSION_REGEX,
+            VERSION_STRING % new_version,
+            version_contents,
+            flags=re.MULTILINE,
         )
 
         version_py_file.write(replaced_version_contents)
@@ -131,7 +134,13 @@ def set_dev_classifier(setup_py_location, version):
 
 
 def update_change_log(
-    setup_py_location, version, service, package, is_unreleased, replace_latest_entry_title, release_date=None
+    setup_py_location,
+    version,
+    service,
+    package,
+    is_unreleased,
+    replace_latest_entry_title,
+    release_date=None,
 ):
     script = os.path.join(root_dir, "eng", "common", "scripts", "Update-ChangeLog.ps1")
     pkg_root = os.path.abspath(os.path.join(setup_py_location, ".."))

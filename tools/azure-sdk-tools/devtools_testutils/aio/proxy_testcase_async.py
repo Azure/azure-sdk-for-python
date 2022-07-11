@@ -55,7 +55,10 @@ def recorded_by_proxy_async(test_func):
             # without this, things like LROPollers can get broken by polling the wrong endpoint
             parsed_result = url_parse.urlparse(result.request.url)
             upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
-            upstream_uri_dict = {"scheme": upstream_uri.scheme, "netloc": upstream_uri.netloc}
+            upstream_uri_dict = {
+                "scheme": upstream_uri.scheme,
+                "netloc": upstream_uri.netloc,
+            }
             original_target = parsed_result._replace(**upstream_uri_dict).geturl()
 
             result.request.url = original_target
