@@ -7,37 +7,42 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import MySQLManagementClientConfiguration
-from .operations import BackupsOperations, CheckNameAvailabilityOperations, CheckVirtualNetworkSubnetUsageOperations, ConfigurationsOperations, DatabasesOperations, FirewallRulesOperations, GetPrivateDnsZoneSuffixOperations, LocationBasedCapabilitiesOperations, Operations, ReplicasOperations, ServersOperations
+from .operations import BackupsOperations, CheckNameAvailabilityOperations, CheckVirtualNetworkSubnetUsageOperations, ConfigurationsOperations, DatabasesOperations, FirewallRulesOperations, GetPrivateDnsZoneSuffixOperations, LocationBasedCapabilitiesOperations, LogFilesOperations, Operations, ReplicasOperations, ServersOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class MySQLManagementClient:
-    """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure MySQL resources including servers, databases, firewall rules, VNET rules, log files and configurations with new business model.
+class MySQLManagementClient:    # pylint: disable=too-many-instance-attributes
+    """The Microsoft Azure management API provides create, read, update, and delete functionality for
+    Azure MySQL resources including servers, databases, firewall rules, VNET rules, log files and
+    configurations with new business model.
 
+    :ivar backups: BackupsOperations operations
+    :vartype backups: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.BackupsOperations
+    :ivar configurations: ConfigurationsOperations operations
+    :vartype configurations:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.ConfigurationsOperations
+    :ivar databases: DatabasesOperations operations
+    :vartype databases: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.DatabasesOperations
+    :ivar firewall_rules: FirewallRulesOperations operations
+    :vartype firewall_rules:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.FirewallRulesOperations
     :ivar servers: ServersOperations operations
     :vartype servers: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.ServersOperations
     :ivar replicas: ReplicasOperations operations
     :vartype replicas: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.ReplicasOperations
-    :ivar backups: BackupsOperations operations
-    :vartype backups: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.BackupsOperations
-    :ivar firewall_rules: FirewallRulesOperations operations
-    :vartype firewall_rules:
-     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.FirewallRulesOperations
-    :ivar databases: DatabasesOperations operations
-    :vartype databases: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.DatabasesOperations
-    :ivar configurations: ConfigurationsOperations operations
-    :vartype configurations:
-     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.ConfigurationsOperations
+    :ivar log_files: LogFilesOperations operations
+    :vartype log_files: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.LogFilesOperations
     :ivar location_based_capabilities: LocationBasedCapabilitiesOperations operations
     :vartype location_based_capabilities:
      azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.LocationBasedCapabilitiesOperations
@@ -56,8 +61,11 @@ class MySQLManagementClient:
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2021-12-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -76,17 +84,42 @@ class MySQLManagementClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.replicas = ReplicasOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backups = BackupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.firewall_rules = FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.databases = DatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.configurations = ConfigurationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.location_based_capabilities = LocationBasedCapabilitiesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.check_virtual_network_subnet_usage = CheckVirtualNetworkSubnetUsageOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.check_name_availability = CheckNameAvailabilityOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.get_private_dns_zone_suffix = GetPrivateDnsZoneSuffixOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.backups = BackupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.configurations = ConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.databases = DatabasesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.firewall_rules = FirewallRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.servers = ServersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.replicas = ReplicasOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.log_files = LogFilesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.location_based_capabilities = LocationBasedCapabilitiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.check_virtual_network_subnet_usage = CheckVirtualNetworkSubnetUsageOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.check_name_availability = CheckNameAvailabilityOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.get_private_dns_zone_suffix = GetPrivateDnsZoneSuffixOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(
