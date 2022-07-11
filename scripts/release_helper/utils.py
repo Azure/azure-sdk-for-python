@@ -71,7 +71,7 @@ def get_python_release_pipeline(output_folder):
 
 
 # Run sdk-auto-release(main) to generate SDK
-def run_pipeline(issue_link, pipeline_url, spec_readme):
+def run_pipeline(issue_link, pipeline_url, spec_readme, python_tag=""):
     paramaters = {
         "stages_to_skip": [],
         "resources": {
@@ -96,6 +96,10 @@ def run_pipeline(issue_link, pipeline_url, spec_readme):
             },
             "SPEC_README": {
                 "value": spec_readme,
+                "isSecret": False
+            },
+            "PYTHON_TAG": {
+                "value": python_tag,
                 "isSecret": False
             }
         }

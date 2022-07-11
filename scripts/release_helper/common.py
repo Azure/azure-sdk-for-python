@@ -174,7 +174,8 @@ class IssueProcess:
         issue_body_list = self.get_issue_body()
 
         # Get the origin link and readme tag in issue body
-        origin_link, self.target_readme_tag = get_origin_link_and_tag(issue_body_list)
+        origin_link, target_readme_tag = get_origin_link_and_tag(issue_body_list)
+        self.target_readme_tag = target_readme_tag if not self.target_readme_tag else self.target_readme_tag
 
         # get readme_link
         self.get_readme_link(origin_link)

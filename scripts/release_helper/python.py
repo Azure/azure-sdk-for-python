@@ -31,6 +31,7 @@ class IssueProcessPython(IssueProcess):
         self.is_multiapi = False
         self.pattern_resource_manager = re.compile(r'/specification/([\w-]+/)+resource-manager')
         self.delay_time = self.get_delay_time()
+        self.is_specified_tag = False
 
     def get_delay_time(self):
         q = [comment.updated_at
@@ -43,11 +44,13 @@ class IssueProcessPython(IssueProcess):
 
         # Get the origin link and readme tag in issue body
         origin_link, self.target_readme_tag = get_origin_link_and_tag(issue_body_list)
+        self.is_specified_tag = any('->Readme Tag:' in line for line in issue_body_list)
 
         # get readme_link
         self.get_readme_link(origin_link)
 
     def check_tag_consistency(self) -> None:
+        self.target_readme_tag = self.target_readme_tag.replace('tag-', '')
         super().check_tag_consistency()
         if self.default_readme_tag != self.target_readme_tag:
             self.add_label(_INCONSISTENT_TAG)
@@ -69,7 +72,8 @@ class IssueProcessPython(IssueProcess):
         self.is_multiapi = (_MULTI_API in self.issue_package.labels_name) or ('multi-api' in contents)
 
     def get_edit_content(self) -> None:
-        self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}\n{self.package_name}'
+        self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}\n{self.package_name}' \
+                            f'\nReadme Tag: {self.target_readme_tag}'
 
     @property
     def readme_comparison(self) -> bool:
@@ -92,9 +96,11 @@ class IssueProcessPython(IssueProcess):
             if not self.readme_comparison:
                 issue_link = self.issue_package.issue.html_url
                 release_pipeline_url = get_python_release_pipeline(self.output_folder)
+                python_tag = self.target_readme_tag if self.is_specified_tag else ""
                 res_run = run_pipeline(issue_link=issue_link,
                                        pipeline_url=release_pipeline_url,
-                                       spec_readme=self.readme_link + '/readme.md'
+                                       spec_readme=self.readme_link + '/readme.md',
+                                       python_tag=python_tag
                                        )
                 if res_run:
                     self.log(f'{issue_number} run pipeline successfully')
