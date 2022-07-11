@@ -1542,8 +1542,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         blob_name = self.get_resource_name('vlwblob')
         blob = bsc.get_blob_client(container_name, blob_name)
 
-        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.fromisoformat(variables["expiry_time"]),
-                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
+        expires = datetime.strptime(variables["expiry_time"], "%Y-%m-%dT%H:%M:%S.%f")
+        immutability_policy = ImmutabilityPolicy(expiry_time=expires, policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         await blob.create_append_blob(immutability_policy=immutability_policy,
                                       legal_hold=True)
 
