@@ -322,7 +322,7 @@ class DataLakeFileClient(PathClient):
             .set_expiry(expiry_options, expires_on=expires_on, **kwargs)  # pylint: disable=protected-access
 
     def _upload_options(  # pylint:disable=too-many-statements
-            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
             **kwargs
         ):
@@ -367,7 +367,7 @@ class DataLakeFileClient(PathClient):
 
         return kwargs
 
-    def upload_data(self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+    def upload_data(self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
                     length=None,  # type: Optional[int]
                     overwrite=False,  # type: Optional[bool]
                     **kwargs):
@@ -444,7 +444,7 @@ class DataLakeFileClient(PathClient):
 
     @staticmethod
     def _append_data_options(
-            data, # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+            data, # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
             offset, # type: int
             scheme, # type: str
             length=None, # type: Optional[int]
