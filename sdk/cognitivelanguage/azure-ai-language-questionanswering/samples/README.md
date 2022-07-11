@@ -5,7 +5,7 @@ languages:
 products:
 - azure
 - azure-cognitive-services
-- azure-qna-maker
+- language-service
 urlFragment: languagequestionanswering-samples
 ---
 
