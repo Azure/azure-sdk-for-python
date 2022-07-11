@@ -487,7 +487,7 @@ class DataLakeFileClient(PathClient):
         :param offset: start position of the data to be appended to.
         :param length: Size of the data in bytes.
         :keyword bool flush:
-            If file should be flushed after the append. Default value is None.
+            If true, will commit the data after it is appended.
         :keyword bool validate_content:
             If true, calculates an MD5 hash of the block content. The storage
             service checks the hash of the content that has arrived
