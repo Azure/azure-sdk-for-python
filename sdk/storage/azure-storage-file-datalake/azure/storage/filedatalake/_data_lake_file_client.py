@@ -476,7 +476,7 @@ class DataLakeFileClient(PathClient):
         options.update(kwargs)
         return options
 
-    def append_data(self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+    def append_data(self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
                     offset,  # type: int
                     length=None,  # type: Optional[int]
                     **kwargs):
