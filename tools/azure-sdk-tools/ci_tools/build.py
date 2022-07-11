@@ -1,14 +1,16 @@
-import argparse, sys, os, glob
+import argparse, sys, os, glob, logging
+
 from subprocess import run
 
 from typing import List
-from ci_tools.functions import discover_targeted_packages, str_to_bool
+from ci_tools.functions import discover_targeted_packages, str_to_bool, process_requires
 from ci_tools.variables import discover_repo_root, get_artifact_directory
+from ci_tools.versioning.version_set_dev import se
 
 
 def build(args, repo_root_arg=None) -> None:
     parser = argparse.ArgumentParser(
-        description="""This is the primary entrypoint for the "build" action. This command is used to build any package within the sdk-for-python repository.""",
+        description="""This is the primary entrypoint for the "build" action. This command is used to build any package within the azure-sdk-for-python repository.""",
     )
 
     parser.add_argument(
@@ -68,8 +70,15 @@ def build(args, repo_root_arg=None) -> None:
         default=None,
         dest="repo",
         help=(
-            "Where is the start directory that we are building against? If not provided, the current working directory will be used."
+            "Where is the start directory that we are building against? If not provided, the current working directory will be used. Please ensure you are within the azure-sdk-for-python repository."
         ),
+    ),
+
+    parser.add_argument(
+        "--build_id",
+        default=None,
+        dest="build_id",
+        help="The current build id. It not provided, will default through environment variables in the following order: GITHUB_RUN_ID -> BUILD_BUILDID -> SDK_BUILD_ID -> default value.",
     )
 
     args = parser.parse_args()
@@ -81,14 +90,43 @@ def build(args, repo_root_arg=None) -> None:
     # todo, do we want to ascend to repo root if we can?
     if args.service:
         service_dir = os.path.join("sdk", args.service)
-        target_dir = os.path.join(os.getcwd(), service_dir)
+        target_dir = os.path.join(repo_root, service_dir)
     else:
-        target_dir = os.getcwd()
+        target_dir = repo_root
 
     targeted_packages = discover_targeted_packages(args.glob_string, target_dir, args.package_filter_string)
+    artifact_directory = get_artifact_directory(args.distribution_directory)
 
-    # evaluate dev version
-    build_packages(targeted_packages, args.distribution_directory, str_to_bool(args.is_dev_build))
+    build_packages(
+        targeted_packages, artifact_directory, str_to_bool(args.is_dev_build), str_to_bool(args.apiview_closure)
+    )
+
+
+# TODO: pull in build_conda_artifacts here
+# TODO: pull build_alpha_version into here
+# TODO: pull build_apiview_artifactzip into here
+def build_packages(
+    targeted_packages: List[str],
+    distribution_directory: str = None,
+    is_dev_build: bool = False,
+    build_apiview_artifact: bool = False,
+):
+    # TODO: function updates requirements
+    logging.info("Generating Package Using Python {}".format(sys.version))
+
+    for package_root in targeted_packages:
+        package_name_in_artifacts = os.path.join(os.path.basename(package_root))
+        dist_dir = os.path.join(distribution_directory, package_name_in_artifacts)
+        if is_dev_build:
+            # TODO: shouldn't we just make this _always_ make things alpha version during daily build?
+            # update the requirements to alpha version if the required version is not on pypi
+            process_requires(package_root)
+
+            # set the dev version
+
+            # set the dev classifier
+
+        create_package(package_root, dist_dir)
 
 
 def create_package(setup_directory_or_file: str, dest_folder: str = None):
@@ -102,40 +140,7 @@ def create_package(setup_directory_or_file: str, dest_folder: str = None):
     if not os.path.isdir(setup_directory_or_file):
         setup_directory_or_file = os.path.dirname(setup_directory_or_file)
 
+    # TODO: prime candidates for logging updates here. should pipe off to a file that is uploaded to alongside build available in
+    # your local artifacts folder
     run([sys.executable, "setup.py", "bdist_wheel", "-d", dist], cwd=setup_directory_or_file)
     run([sys.executable, "setup.py", "sdist", "--format", "zip", "-d", dist], cwd=setup_directory_or_file)
-
-
-# TODO: pull in build_conda_artifacts here
-# TODO: pull build_alpha_version into here
-# TODO: pull build_apiview_artifactzip into here
-def build_packages(
-    targeted_packages: List[str],
-    distribution_directory: str = None,
-    is_dev_build: bool = False,
-    build_apiview_artifact: bool = False,
-):
-
-    pass
-    # run the build and distribution
-    # TODO: function updates requirements
-    # for package_root in targeted_packages:
-    #     service_hierarchy = os.path.join(os.path.basename(package_root))
-    #     if is_dev_build:
-    #         verify_update_package_requirement(package_root)
-    #     print("Generating Package Using Python {}".format(sys.version))
-    #     run(
-    #         [
-    #             sys.executable,
-    #             build_packing_script_location,
-    #             "--dest",
-    #             os.path.join(distribution_directory, service_hierarchy),
-    #             package_root,
-    #         ],
-    #         cwd=root_dir,
-    #     )
-
-
-def verify_update_package_requirement(pkg_root):
-    setup_py_path = os.path.abspath(os.path.join(pkg_root, "setup.py"))
-    process_requires(setup_py_path)
