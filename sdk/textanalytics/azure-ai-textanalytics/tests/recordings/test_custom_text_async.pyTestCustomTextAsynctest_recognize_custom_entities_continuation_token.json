@@ -6,7 +6,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "1015",
+        "Content-Length": "954",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
@@ -20,7 +20,12 @@
             },
             {
               "id": "2",
-              "text": "",
+              "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component.",
+              "language": "en"
+            },
+            {
+              "id": "3",
+              "text": "I need a reservation for an indoor restaurant in China. Please don\u0027t stop the music. Play music and add it to my playlist",
               "language": "en"
             }
           ]
@@ -28,22 +33,6 @@
         "tasks": [
           {
             "taskName": "0",
-            "kind": "CustomSingleLabelClassification",
-            "parameters": {
-              "projectName": "single_category_classify_project_name",
-              "deploymentName": "single_category_classify_project_name"
-            }
-          },
-          {
-            "taskName": "1",
-            "kind": "CustomMultiLabelClassification",
-            "parameters": {
-              "projectName": "multi_category_classify_project_name",
-              "deploymentName": "multi_category_classify_project_name"
-            }
-          },
-          {
-            "taskName": "2",
             "kind": "CustomEntityRecognition",
             "parameters": {
               "projectName": "custom_entities_project_name",
@@ -55,18 +44,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "761b0e43-83cf-483b-a221-63c30f82ad51",
+        "apim-request-id": "24ff7244-b200-44dd-aee7-e648bc387f08",
         "Content-Length": "0",
-        "Date": "Thu, 23 Jun 2022 02:14:18 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/6e1fd1a6-f7f2-440d-aba2-d57a93c45173?api-version=2022-05-01",
+        "Date": "Thu, 23 Jun 2022 02:09:10 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/685362d8-a64f-463c-a2a1-74cf939cbee6?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "193"
+        "x-envoy-upstream-service-time": "181"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/6e1fd1a6-f7f2-440d-aba2-d57a93c45173?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/685362d8-a64f-463c-a2a1-74cf939cbee6?api-version=2022-05-01\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -76,123 +65,38 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "cbc7e582-e063-48d4-ba0f-e2dab6e548c9",
-        "Content-Length": "3705",
+        "apim-request-id": "18ed2991-4ee6-495d-b6ee-0c307d645d08",
+        "Content-Length": "3488",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 23 Jun 2022 02:14:23 GMT",
+        "Date": "Thu, 23 Jun 2022 02:09:34 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "95"
+        "x-envoy-upstream-service-time": "38"
       },
       "ResponseBody": {
-        "jobId": "6e1fd1a6-f7f2-440d-aba2-d57a93c45173",
-        "lastUpdatedDateTime": "2022-06-23T02:14:20Z",
-        "createdDateTime": "2022-06-23T02:14:18Z",
-        "expirationDateTime": "2022-06-24T02:14:18Z",
+        "jobId": "685362d8-a64f-463c-a2a1-74cf939cbee6",
+        "lastUpdatedDateTime": "2022-06-23T02:09:11Z",
+        "createdDateTime": "2022-06-23T02:09:10Z",
+        "expirationDateTime": "2022-06-24T02:09:10Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
-          "completed": 3,
+          "completed": 1,
           "failed": 0,
           "inProgress": 0,
-          "total": 3,
+          "total": 1,
           "items": [
             {
-              "kind": "CustomSingleLabelClassificationLROResults",
-              "taskName": "0",
-              "lastUpdateDateTime": "2022-06-23T02:14:19.3208436Z",
-              "status": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 2,
-                  "validDocumentsCount": 1,
-                  "erroneousDocumentsCount": 1,
-                  "transactionsCount": 1
-                },
-                "documents": [
-                  {
-                    "id": "1",
-                    "class": [
-                      {
-                        "category": "RateBook",
-                        "confidenceScore": 0.76
-                      }
-                    ],
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  }
-                ],
-                "errors": [
-                  {
-                    "id": "2",
-                    "error": {
-                      "code": "InvalidArgument",
-                      "message": "Invalid Document in request.",
-                      "innererror": {
-                        "code": "InvalidDocument",
-                        "message": "Document text is empty."
-                      }
-                    }
-                  }
-                ],
-                "projectName": "single_category_classify_project_name",
-                "deploymentName": "single_category_classify_project_name"
-              }
-            },
-            {
-              "kind": "CustomMultiLabelClassificationLROResults",
-              "taskName": "1",
-              "lastUpdateDateTime": "2022-06-23T02:14:19.4132374Z",
-              "status": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 2,
-                  "validDocumentsCount": 1,
-                  "erroneousDocumentsCount": 1,
-                  "transactionsCount": 1
-                },
-                "documents": [
-                  {
-                    "id": "1",
-                    "class": [],
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  }
-                ],
-                "errors": [
-                  {
-                    "id": "2",
-                    "error": {
-                      "code": "InvalidArgument",
-                      "message": "Invalid Document in request.",
-                      "innererror": {
-                        "code": "InvalidDocument",
-                        "message": "Document text is empty."
-                      }
-                    }
-                  }
-                ],
-                "projectName": "multi_category_classify_project_name",
-                "deploymentName": "multi_category_classify_project_name"
-              }
-            },
-            {
               "kind": "CustomEntityRecognitionLROResults",
-              "taskName": "2",
-              "lastUpdateDateTime": "2022-06-23T02:14:20.0882905Z",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-06-23T02:09:11.1587289Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
-                  "documentsCount": 2,
-                  "validDocumentsCount": 1,
-                  "erroneousDocumentsCount": 1,
-                  "transactionsCount": 1
+                  "documentsCount": 3,
+                  "validDocumentsCount": 3,
+                  "erroneousDocumentsCount": 0,
+                  "transactionsCount": 3
                 },
                 "documents": [
                   {
@@ -316,21 +220,113 @@
                       }
                     ],
                     "warnings": []
-                  }
-                ],
-                "errors": [
+                  },
                   {
                     "id": "2",
-                    "error": {
-                      "code": "InvalidArgument",
-                      "message": "Invalid Document in request.",
-                      "innererror": {
-                        "code": "InvalidDocument",
-                        "message": "Document text is empty."
+                    "statistics": {
+                      "charactersCount": 158,
+                      "transactionsCount": 1
+                    },
+                    "entities": [
+                      {
+                        "text": "David Schmidt",
+                        "category": "artist",
+                        "offset": 0,
+                        "length": 13,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "Food",
+                        "category": "service",
+                        "offset": 38,
+                        "length": 4,
+                        "confidenceScore": 0.03
+                      },
+                      {
+                        "text": "Safety",
+                        "category": "geographic_poi",
+                        "offset": 43,
+                        "length": 6,
+                        "confidenceScore": 0.06
+                      },
+                      {
+                        "text": "International Food",
+                        "category": "geographic_poi",
+                        "offset": 51,
+                        "length": 18,
+                        "confidenceScore": 0.07
+                      },
+                      {
+                        "text": "IFIC",
+                        "category": "geographic_poi",
+                        "offset": 91,
+                        "length": 4,
+                        "confidenceScore": 0.05
+                      },
+                      {
+                        "text": "Information Council",
+                        "category": "restaurant_name",
+                        "offset": 70,
+                        "length": 19,
+                        "confidenceScore": 0.1
+                      },
+                      {
+                        "text": "Washington, D.C.",
+                        "category": "state",
+                        "offset": 98,
+                        "length": 16,
+                        "confidenceScore": 0.49
                       }
-                    }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "3",
+                    "statistics": {
+                      "charactersCount": 121,
+                      "transactionsCount": 1
+                    },
+                    "entities": [
+                      {
+                        "text": "indoor",
+                        "category": "facility",
+                        "offset": 28,
+                        "length": 6,
+                        "confidenceScore": 0.57
+                      },
+                      {
+                        "text": "restaurant",
+                        "category": "restaurant_type",
+                        "offset": 35,
+                        "length": 10,
+                        "confidenceScore": 0.95
+                      },
+                      {
+                        "text": "China",
+                        "category": "country",
+                        "offset": 49,
+                        "length": 5,
+                        "confidenceScore": 0.48
+                      },
+                      {
+                        "text": "music",
+                        "category": "music_item",
+                        "offset": 78,
+                        "length": 5,
+                        "confidenceScore": 0.63
+                      },
+                      {
+                        "text": "my",
+                        "category": "playlist_owner",
+                        "offset": 110,
+                        "length": 2,
+                        "confidenceScore": 0.84
+                      }
+                    ],
+                    "warnings": []
                   }
                 ],
+                "errors": [],
                 "projectName": "custom_entities_project_name",
                 "deploymentName": "custom_entities_project_name"
               }
