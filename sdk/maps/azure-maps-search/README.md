@@ -209,7 +209,7 @@ python samples/sample_authentication.py
 python sample/sample_fuzzy_search.py
 python samples/sample_get_point_of_interest_categories.py
 python samples/sample_reverse_search_address.py
-python samples/sample_reverse_search_cross_street_addres.py
+python samples/sample_reverse_search_cross_street_address.py
 python samples/sample_search_nearby_point_of_interest.py
 python samples/sample_search_point_of_interest_category.py
 python samples/sample_search_point_of_interest.py

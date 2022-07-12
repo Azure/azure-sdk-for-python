@@ -30,13 +30,13 @@ We automatically hardcode in that this is `python`.
 
 ```yaml
 tag: 1.0-preview
-require: https://raw.githubusercontent.com/alextts627/azure-rest-api-specs/main/specification/maps/data-plane/Search/readme.md
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/maps/data-plane/Search/readme.md
 output-folder: ../azure/maps/search/_generated
 namespace: azure.maps.search
 package-name: azure-maps-search
 no-namespace-folders: true
 license-header: MICROSOFT_MIT_NO_VERSION
-credential-scopes: https://cognitiveservices.azure.com/.default
+credential-scopes: https://atlas.microsoft.com/.default
 clear-output-folder: true
 python: true
 no-async: false

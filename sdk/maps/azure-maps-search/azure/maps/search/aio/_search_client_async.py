@@ -42,7 +42,7 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
     :keyword api_version:
             The API version of the service to use for requests. It defaults to the latest service version.
             Setting to an older version may result in reduced feature compatibility.
-    :paramtype api_version: str or ~azure.ai.translation.document.MapsSearchApiVersion
+    :paramtype api_version: str
     """
     def __init__(
         self,
