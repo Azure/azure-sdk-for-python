@@ -21,6 +21,7 @@ from azure.core.pipeline.transport import RequestsTransport
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from .config import PROXY_URL
 from .helpers import get_test_id, is_live, is_live_and_not_recording, set_recording_id
+from .proxy_startup import test_proxy
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Optional, Tuple
@@ -195,7 +196,6 @@ def recorded_by_proxy(test_func) -> None:
     return record_wrap
 
 
-@pytest.fixture
 def start_proxy_session() -> "Optional[Tuple[str, str, Dict[str, str]]]":
     """Begins a playback or recording session and returns the current test ID, recording ID, and recorded variables.
 
@@ -212,20 +212,18 @@ def start_proxy_session() -> "Optional[Tuple[str, str, Dict[str, str]]]":
 
 
 @pytest.fixture
-def recorded_test(test_proxy, start_proxy_session, request) -> "Dict[str, Any]":
+def recorded_test(test_proxy, request) -> "Dict[str, Any]":
     """Fixture that redirects network requests to target the azure-sdk-tools test proxy. Use with recorded tests.
 
     For more details and usage examples, refer to
     https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md.
 
     :param function test_proxy: The fixture responsible for starting up the test proxy server.
-    :param function start_proxy_session: The fixture responsible for starting a recording or playback session. This
-        should yield a tuple with a test ID, recording ID, and dictionary of recorded test variables.
     :param function request: The built-in `request` fixture.
 
     :yields: A dictionary containing information relevant to the currently executing test.
     """
-    test_id, recording_id, variables = start_proxy_session
+    test_id, recording_id, variables = start_proxy_session()
     original_transport_func = RequestsTransport.send
 
     def transform_args(*args, **kwargs):

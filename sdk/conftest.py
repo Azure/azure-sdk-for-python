@@ -26,7 +26,7 @@
 import os
 import pytest
 
-from devtools_testutils.proxy_testcase import recorded_test, start_proxy_session, variable_recorder
+from devtools_testutils import recorded_test, test_proxy, variable_recorder
 
 
 def pytest_configure(config):
