@@ -30,6 +30,7 @@ from .._generated.aio import AzureBlobStorage
 from .._generated.models import SignedIdentifier
 from .._container_client import ContainerClient as ContainerClientBase, _get_blob_name
 from .._deserialize import deserialize_container_properties
+from ._download_async import StorageStreamDownloader
 from .._encryption import StorageEncryptionMixin
 from .._models import ContainerProperties, BlobType, BlobProperties, FilteredBlob
 from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
@@ -40,7 +41,6 @@ from ._models import FilteredBlobPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from ._download_async import StorageStreamDownloader
     from .._models import ( # pylint: disable=unused-import
         AccessPolicy,
         StandardBlobTier,
@@ -955,7 +955,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             length: int = None,
             *,
             encoding: Optional[str] = None,
-            **kwargs) -> StorageStreamDownloader[bytes | str]:
+            **kwargs) -> StorageStreamDownloader:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.
@@ -1032,13 +1032,14 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
         :returns: A streaming object. (StorageStreamDownloader)
-        :rtype: ~azure.storage.blob.aio.StorageStreamDownloader[bytes | str]
+        :rtype: ~azure.storage.blob.aio.StorageStreamDownloader
         """
         blob_client = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)
         return await blob_client.download_blob(
             offset=offset,
             length=length,
+            encoding=encoding,
             **kwargs)
 
     @distributed_trace_async

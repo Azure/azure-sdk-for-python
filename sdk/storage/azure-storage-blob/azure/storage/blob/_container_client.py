@@ -31,6 +31,7 @@ from ._generated import AzureBlobStorage
 from ._generated.models import SignedIdentifier
 from ._blob_client import BlobClient
 from ._deserialize import deserialize_container_properties
+from ._download import StorageStreamDownloader
 from ._encryption import StorageEncryptionMixin
 from ._lease import BlobLeaseClient
 from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged, FilteredBlobPaged
@@ -45,7 +46,6 @@ from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpResponse  # pylint: disable=ungrouped-imports
     from datetime import datetime
-    from ._download import StorageStreamDownloader
     from ._models import (  # pylint: disable=unused-import
         PublicAccess,
         AccessPolicy,
@@ -1088,7 +1088,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             length: int = None,
             *,
             encoding: Optional[str] = None,
-            **kwargs) -> StorageStreamDownloader[bytes | str]:
+            **kwargs) -> StorageStreamDownloader:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
@@ -1165,11 +1165,15 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
         :returns: A streaming object (StorageStreamDownloader)
-        :rtype: ~azure.storage.blob.StorageStreamDownloader[bytes | str]
+        :rtype: ~azure.storage.blob.StorageStreamDownloader
         """
         blob_client = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)
-        return blob_client.download_blob(offset=offset, length=length, **kwargs)
+        return blob_client.download_blob(
+            offset=offset,
+            length=length,
+            encoding=encoding,
+            **kwargs)
 
     def _generate_delete_blobs_subrequest_options(
         self, snapshot=None,
