@@ -28,23 +28,23 @@ Integrate the logic in your application code to fetch an Azure AD access token v
 
 ```py
 import redis
-from azure.identity import ClientSecretCredential
-tenant_id = ""
-client_id = ""
-client_secret = ""
-scope = "https://*.cacheinfra.windows.net:10225/appid/.default"
-host = ""
-port = 6379
-user_name = ""
+from azure.identity import DefaultAzureCredential
+
+scope = "https://*.cacheinfra.windows.net:10225/appid/.default"  # The scope will be changed for AAD Public Preview
+host = ""  # Required
+port = 6379  # Required
+user_name = ""  # Required
+
 
 def hello_world():
-    cred = ClientSecretCredential(
-        tenant_id=tenant_id,
-        client_id=client_id,
-        client_secret=client_secret
-    )
+    cred = DefaultAzureCredential()
     token = cred.get_token(scope)
-    r = redis.Redis(host=host, port=port, username=user_name, password=token.token, decode_responses=True)
+    r = redis.Redis(host=host,
+                    port=port,
+                    ssl=True,
+                    username=user_name,
+                    password=token.token,
+                    decode_responses=True)
     r.set("Az:key1", "value1")
     t = r.get("Az:key1")
     print(t)
@@ -63,14 +63,25 @@ When migrating your existing application code, you need to replace the password 
 Integrate the logic in your application code to fetch an Azure AD access token via the azure-identity library as shown below and replace it with the password configuring/retrieving logic in your application code.
 
 ```py
+import logging
+import redis
+from azure.identity import DefaultAzureCredential
+
+scope = "https://*.cacheinfra.windows.net:10225/appid/.default"  # The scope will be changed for AAD Public Preview
+host = ""  # Required
+port = 6379  # Required
+user_name = ""  # Required
+
 def re_authentication():
-    cred = ClientSecretCredential(
-        tenant_id=tenant_id,
-        client_id=client_id,
-        client_secret=client_secret
-    )
+    _LOGGER = logging.getLogger(__name__)
+    cred = DefaultAzureCredential()
     token = cred.get_token(scope)
-    r = redis.Redis(host=host, port=port, username=user_name, password=token.token, decode_responses=True)
+    r = redis.Redis(host=host,
+                    port=port,
+                    ssl=True,
+                    username=user_name,
+                    password=token.token,
+                    decode_responses=True)
     max_retry = 3
     for index in range(max_retry):
         try:
@@ -78,9 +89,18 @@ def re_authentication():
             t = r.get("Az:key1")
             print(t)
             break
-        except redis.RedisError as ex:
+        except redis.ConnectionError as ex:
+            _LOGGER.info("Connection lost. Reconnecting.")
             token = cred.get_token(scope)
-            r = redis.Redis(host=host, port=port, username=user_name, password=token.token, decode_responses=True)
+            r = redis.Redis(host=host,
+                            port=port,
+                            ssl=True,
+                            username=user_name,
+                            password=token.token,
+                            decode_responses=True)
+        except Exception:
+            _LOGGER.info("Unknown failures.")
+            break
 
 if __name__ == '__main__':
     re_authentication()
