@@ -38,7 +38,7 @@ class CreateClients(object):
         )
 
     def create_table_client(self):
-        # Instantiate a TableServiceClient using a connection string
+        # Instantiate a TableClient using a connection string
         # [START create_table_client]
         from azure.data.tables import TableClient
 

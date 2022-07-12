@@ -17,10 +17,9 @@ USAGE:
     python sample_create_client_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
-    2) AZURE_STORAGE_ENDPOINT_SUFFIX - the Table service account URL
-    3) AZURE_STORAGE_ACCOUNT_NAME - the name of the storage account
-    4) AZURE_STORAGE_ACCESS_KEY - the storage account access key
+    1) TABLES_STORAGE_ENDPOINT_SUFFIX - the Table service account URL suffix
+    2) TABLES_STORAGE_ACCOUNT_NAME - the name of the storage account
+    3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
 import os

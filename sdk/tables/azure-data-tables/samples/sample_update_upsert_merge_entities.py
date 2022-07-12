@@ -16,7 +16,9 @@ USAGE:
     python sample_update_upsert_merge_entities.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) TABLES_STORAGE_ENDPOINT_SUFFIX - the Table service account URL suffix
+    2) TABLES_STORAGE_ACCOUNT_NAME - the name of the storage account
+    3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
 
@@ -39,7 +41,7 @@ class TableEntitySamples(object):
         self.table_name = "SampleUpdateUpsertMerge"
 
     def create_and_get_entities(self):
-        # Instantiate a table service client
+        # Instantiate a table client
         from azure.data.tables import TableClient
 
         with TableClient.from_connection_string(self.connection_string, table_name="mytable3") as table:
@@ -75,7 +77,7 @@ class TableEntitySamples(object):
                 table.delete_table()
 
     def list_all_entities(self):
-        # Instantiate a table service client
+        # Instantiate a table client
         from azure.data.tables import TableClient
 
         with TableClient.from_connection_string(self.connection_string, table_name="mytable4") as table:
@@ -109,9 +111,10 @@ class TableEntitySamples(object):
                 # [START list_entities]
                 # Query the entities in the table
                 entities = list(table.list_entities())
-
+                i = 0
                 for i, entity in enumerate(entities):
                     print("Entity #{}: {}".format(entity, i))
+                    i += 1
                 # [END list_entities]
 
             finally:
@@ -119,7 +122,7 @@ class TableEntitySamples(object):
                 table.delete_table()
 
     def update_entities(self):
-        # Instantiate a table service client
+        # Instantiate a table client
         from azure.data.tables import TableClient
         from azure.data.tables import UpdateMode
 

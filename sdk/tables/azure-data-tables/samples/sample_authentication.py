@@ -20,10 +20,9 @@ USAGE:
     python sample_authentication.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
-    2) AZURE_STORAGE_ENDPOINT_SUFFIX - the Table service account URL suffix
-    3) AZURE_STORAGE_ACCOUNT_NAME - the name of the storage account
-    4) AZURE_STORAGE_ACCESS_KEY - the storage account access key
+    1) TABLES_STORAGE_ENDPOINT_SUFFIX - the Table service account URL suffix
+    2) TABLES_STORAGE_ACCOUNT_NAME - the name of the storage account
+    3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
 
@@ -43,7 +42,7 @@ class TableAuthSamples(object):
             self.account_name, self.access_key, self.endpoint_suffix
         )
 
-    def authentication_by_connection_string(self):
+    def copy_table_from_table_to_blob(self):
         # Instantiate a TableServiceClient using a connection string
         # [START auth_from_connection_string]
         from azure.data.tables import TableServiceClient
@@ -53,7 +52,7 @@ class TableAuthSamples(object):
             print("Connection String: {}".format(properties))
         # [END auth_from_connection_string]
 
-    def authentication_by_shared_key(self):
+    def copy_table_from_blob_to_table(self):
         # Instantiate a TableServiceClient using a shared access key
         # [START auth_from_shared_key]
         from azure.data.tables import TableServiceClient
@@ -66,7 +65,7 @@ class TableAuthSamples(object):
         # [END auth_from_shared_key]
 
     def authentication_by_shared_access_signature(self):
-        # Instantiate a TableServiceClient using a connection string
+        # Instantiate a TableServiceClient using a shared access signature
 
         # [START auth_from_sas]
         from azure.data.tables import TableServiceClient

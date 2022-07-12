@@ -16,7 +16,9 @@ USAGE:
     python sample_create_delete_table.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) TABLES_STORAGE_ENDPOINT_SUFFIX - the Table service account URL suffix
+    2) TABLES_STORAGE_ACCOUNT_NAME - the name of the storage account
+    3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
 import os
@@ -79,7 +81,7 @@ class CreateDeleteTable(object):
         # [END create_table_from_table_client]
 
     def delete_from_table_client(self):
-        from azure.data.table import TableClient
+        from azure.data.tables import TableClient
 
         # [START delete_table_from_table_client]
         with TableClient.from_connection_string(conn_str=self.connection_string, table_name="myTable") as table_client:
