@@ -379,6 +379,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-nginx azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-netapp azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-consumption azure-mgmt-core>=1.3.1,<2.0.0
+#override azure-mgmt-extendedlocation msrest>=0.6.21
+#override azure-mgmt-extendedlocation azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-education msrest>=0.6.21
 #override azure-mgmt-education azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-web azure-mgmt-core>=1.3.1,<2.0.0

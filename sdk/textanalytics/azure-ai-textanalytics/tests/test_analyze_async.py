@@ -20,6 +20,7 @@ from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from testcase import TextAnalyticsTest
+from azure.ai.textanalytics.aio._lro_async import AsyncAnalyzeActionsLROPoller
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     TextDocumentInput,
@@ -556,7 +557,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     assert document_result.statistics.character_count
                     assert document_result.statistics.transaction_count
 
-    @pytest.mark.skip("code changes needed before we can run test")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -575,6 +575,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
 
             response = await poller.result()
 
+            assert isinstance(poller, AsyncAnalyzeActionsLROPoller)
             assert isinstance(poller.created_on, datetime.datetime)
             assert not poller.display_name
             assert isinstance(poller.expires_on, datetime.datetime)
@@ -985,7 +986,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         assert action_results[1][1].is_error
         assert action_results[1][2].is_error
 
-    @pytest.mark.skip("code changes needed before we can run test")
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy_async
@@ -1123,7 +1123,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     assert entity.length is not None
                     assert entity.confidence_score is not None
 
-    @pytest.mark.skip("code changes needed before we can run test")
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy_async
@@ -1211,7 +1210,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 polling_interval=self._interval(),
             )
             response = await poller.result()
-
+            assert isinstance(poller, AsyncAnalyzeActionsLROPoller)
             action_results = []
             async for action_result in response:
                 action_results.append(action_result)
@@ -1335,7 +1334,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 client._client.analyze_text_job_status,
                 response,
                 deserialized,
-                headers,
                 show_stats=True,
             )
 
@@ -1487,7 +1485,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 client._client.analyze_text_job_status,
                 response,
                 deserialized,
-                headers,
                 show_stats=True,
             )
 
@@ -1631,7 +1628,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 client._client.analyze_text_job_status,
                 response,
                 deserialized,
-                headers,
                 show_stats=True,
             )
         async with client:
@@ -1762,7 +1758,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                                f"only available for API version {version_supported} and up.\n'AnalyzeHealthcareEntitiesAction' is " \
                                f"only available for API version {version_supported} and up.\n"
 
-    @pytest.mark.skip("code changes needed before we can run test")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async

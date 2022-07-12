@@ -7,7 +7,7 @@ import base64
 import functools
 import json
 import datetime
-from typing import Any, Optional
+from typing import Any, Optional, MutableMapping
 from urllib.parse import urlencode
 from azure.core.polling._poller import PollingReturnType
 from azure.core.exceptions import HttpResponseError
@@ -228,6 +228,9 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType]):
         continuation_token: str,
         **kwargs: Any
     ) -> "AnalyzeHealthcareEntitiesLROPoller":  # type: ignore
+        """
+        :meta private:
+        """
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
             continuation_token, **kwargs
         )
@@ -458,6 +461,50 @@ class AnalyzeActionsLROPoller(LROPoller[PollingReturnType]):
         continuation_token: str,
         **kwargs: Any
     ) -> "AnalyzeActionsLROPoller":  # type: ignore
+        """
+        :meta private:
+        """
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        polling_method._lro_algorithms = [  # pylint: disable=protected-access
+            TextAnalyticsOperationResourcePolling(
+                show_stats=initial_response.context.options["show_stats"]
+            )
+        ]
+        return cls(
+            client,
+            initial_response,
+            functools.partial(deserialization_callback, initial_response),
+            polling_method
+        )
+
+
+class TextAnalyticsLROPoller(LROPoller[PollingReturnType]):
+    def polling_method(self) -> AnalyzeActionsLROPollingMethod:
+        """Return the polling method associated to this poller."""
+        return self._polling_method  # type: ignore
+
+    @property
+    def details(self) -> MutableMapping[str, Any]:
+        return {
+            "id": self.polling_method().id,
+            "created_on": self.polling_method().created_on,
+            "expires_on": self.polling_method().expires_on,
+            "display_name": self.polling_method().display_name,
+            "last_modified_on": self.polling_method().last_modified_on,
+        }
+
+    @classmethod
+    def from_continuation_token(  # type: ignore
+        cls,
+        polling_method: AnalyzeActionsLROPollingMethod,
+        continuation_token: str,
+        **kwargs: Any
+    ) -> "TextAnalyticsLROPoller":  # type: ignore
+        """
+        :meta private:
+        """
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
             continuation_token, **kwargs
         )

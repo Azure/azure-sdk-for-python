@@ -16,6 +16,7 @@ from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer, is_public_cloud
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
+from azure.ai.textanalytics._lro import AnalyzeActionsLROPoller
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
     RecognizeEntitiesAction,
@@ -491,7 +492,6 @@ class TestAnalyze(TextAnalyticsTest):
                 assert document_result.statistics.character_count
                 assert document_result.statistics.transaction_count
 
-    @pytest.mark.skip("code changes needed before we can run test")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
@@ -509,6 +509,7 @@ class TestAnalyze(TextAnalyticsTest):
 
         poller.result()
 
+        assert isinstance(poller, AnalyzeActionsLROPoller)
         assert isinstance(poller.created_on, datetime.datetime)
         assert not poller.display_name
         assert isinstance(poller.expires_on, datetime.datetime)
@@ -922,7 +923,6 @@ class TestAnalyze(TextAnalyticsTest):
         assert action_results[1][1].is_error
         assert action_results[1][2].is_error
 
-    @pytest.mark.skip("code changes needed before we can run test")
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy
@@ -1049,7 +1049,6 @@ class TestAnalyze(TextAnalyticsTest):
                     assert entity.length is not None
                     assert entity.confidence_score is not None
 
-    @pytest.mark.skip("code changes needed before we can run test")
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy
@@ -1135,6 +1134,7 @@ class TestAnalyze(TextAnalyticsTest):
         )
         response = poller.result()
 
+        assert isinstance(poller, AnalyzeActionsLROPoller)
         action_results = list(response)
         assert len(action_results) == len(docs)
         action_order = [
@@ -1253,7 +1253,6 @@ class TestAnalyze(TextAnalyticsTest):
                 client._client.analyze_text_job_status,
                 response,
                 deserialized,
-                headers,
                 show_stats=True,
             )
 
@@ -1395,7 +1394,6 @@ class TestAnalyze(TextAnalyticsTest):
                 client._client.analyze_text_job_status,
                 response,
                 deserialized,
-                headers,
                 show_stats=True,
             )
 
@@ -1531,7 +1529,6 @@ class TestAnalyze(TextAnalyticsTest):
                 client._client.analyze_text_job_status,
                 response,
                 deserialized,
-                headers,
                 show_stats=True,
             )
 
@@ -1656,7 +1653,6 @@ class TestAnalyze(TextAnalyticsTest):
                                f"only available for API version {version_supported} and up.\n'AnalyzeHealthcareEntitiesAction' is " \
                                f"only available for API version {version_supported} and up.\n"
 
-    @pytest.mark.skip("code changes needed before we can run test")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
