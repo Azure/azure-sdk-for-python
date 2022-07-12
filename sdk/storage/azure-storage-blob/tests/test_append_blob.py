@@ -1534,7 +1534,7 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
-    
+
         container_name = self.get_resource_name('vlwcontainer')
         if self.is_live:
             token_credential = self.generate_oauth_token()
@@ -1552,16 +1552,16 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         immutability_policy = ImmutabilityPolicy(expiry_time=expires, policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         blob.create_append_blob(immutability_policy=immutability_policy,
                                 legal_hold=True)
-    
+
         props = blob.get_blob_properties()
-    
+
         with pytest.raises(HttpResponseError):
             blob.delete_blob()
-    
+
         assert props['has_legal_hold']
         assert props['immutability_policy']['expiry_time'] is not None
         assert props['immutability_policy']['policy_mode'] is not None
-    
+
         if self.is_live:
             blob.delete_immutability_policy()
             blob.set_legal_hold(False)
