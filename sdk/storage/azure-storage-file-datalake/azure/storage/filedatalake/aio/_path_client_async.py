@@ -22,12 +22,7 @@ from .._deserialize import process_storage_error
 from .._shared.policies_async import ExponentialRetry
 
 if TYPE_CHECKING:
-    from .._models import ContentSettings
-    from .._models import FileProperties
-
-_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
-    'The require_encryption flag is set, but encryption is not supported'
-    ' for this method.')
+    from .._models import ContentSettings, FileProperties
 
 
 class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
@@ -229,8 +224,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return: A dictionary of response headers.
-        :rtype: Dict[str, Union[str, datetime]]
+        :return: None
         """
         options = self._delete_path_options(**kwargs)
         try:

@@ -32,7 +32,6 @@ class TestManagement(FormRecognizerTest):
         assert properties.custom_model_limit
         assert properties.custom_model_count
 
-    @pytest.mark.skip("service is returning null for some models")
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy
@@ -70,7 +69,6 @@ class TestManagement(FormRecognizerTest):
         with pytest.raises(ResourceNotFoundError):
             client.get_custom_model(labeled_model_from_train.model_id)
 
-    @pytest.mark.skip("service is returning null for some models")
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy

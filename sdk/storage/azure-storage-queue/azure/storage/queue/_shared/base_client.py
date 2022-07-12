@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 import logging
 import uuid
-import warnings
 from typing import (  # pylint: disable=unused-import
     Optional,
     Any,
@@ -103,16 +102,6 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                 secondary_hostname = kwargs["secondary_hostname"]
             primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip('/')
             self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
-
-        self.require_encryption = kwargs.get("require_encryption", False)
-        self.encryption_version = kwargs.get("encryption_version", "1.0")
-        self.key_encryption_key = kwargs.get("key_encryption_key")
-        self.key_resolver_function = kwargs.get("key_resolver_function")
-        if self.key_encryption_key and self.encryption_version == '1.0':
-            warnings.warn("This client has been configured to use encryption with version 1.0. \
-                           Version 1.0 is deprecated and no longer considered secure. It is highly \
-                           recommended that you switch to using version 2.0. The version can be \
-                           specified using the 'encryption_version' keyword.")
 
         self._config, self._pipeline = self._create_pipeline(self.credential, storage_sdk=service, **kwargs)
 

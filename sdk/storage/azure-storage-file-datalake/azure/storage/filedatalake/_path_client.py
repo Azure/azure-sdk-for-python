@@ -30,12 +30,7 @@ from ._shared.base_client import StorageAccountHostsMixin, parse_query
 from ._shared.response_handlers import return_response_headers, return_headers_and_deserialized
 
 if TYPE_CHECKING:
-    from ._models import ContentSettings
-    from ._models import FileProperties
-
-_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
-    'The require_encryption flag is set, but encryption is not supported'
-    ' for this method.')
+    from ._models import ContentSettings, FileProperties
 
 
 class PathClient(StorageAccountHostsMixin):
@@ -151,9 +146,6 @@ class PathClient(StorageAccountHostsMixin):
                              metadata=None,  # type: Optional[Dict[str, str]]
                              **kwargs):
         # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_mod_conditions(kwargs)
 
@@ -337,8 +329,7 @@ class PathClient(StorageAccountHostsMixin):
             The match condition to use upon the etag.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :return: A dictionary of response headers.
-        :rtype: Dict[str, Union[str, datetime]]
+        :return: None
         """
         options = self._delete_path_options(**kwargs)
         try:
@@ -722,13 +713,12 @@ class PathClient(StorageAccountHostsMixin):
             error.continuation_token = last_continuation_token
             raise error
 
-    def _rename_path_options(self, rename_source,
+    def _rename_path_options(self,  # pylint: disable=no-self-use
+                             rename_source,  # type: str
                              content_settings=None,  # type: Optional[ContentSettings]
                              metadata=None,  # type: Optional[Dict[str, str]]
                              **kwargs):
         # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if metadata or kwargs.pop('permissions', None) or kwargs.pop('umask', None):
             raise ValueError("metadata, permissions, umask is not supported for this operation")
 

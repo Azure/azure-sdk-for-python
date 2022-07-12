@@ -380,7 +380,7 @@ def doc_type_info():
 
 @pytest.fixture
 def document_model(doc_type_info):
-    model = _models.DocumentModel(
+    model = _models.DocumentModelInfo(
             api_version="2022-06-30-preview",
             tags={"awesome": "tag"},
             description="my description",
@@ -388,7 +388,7 @@ def document_model(doc_type_info):
             model_id="prebuilt-invoice",
             doc_types={"prebuilt-invoice": doc_type_info[0]}
     )
-    model_repr = "DocumentModel(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={{'prebuilt-invoice': {}}})".format(
+    model_repr = "DocumentModelInfo(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={{'prebuilt-invoice': {}}})".format(
                 "prebuilt-invoice",
                 "my description",
                 datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
@@ -565,7 +565,7 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_document_model(self, doc_type_info):
-        model = _models.DocumentModel(
+        model = _models.DocumentModelInfo(
             description="my description",
             created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
             model_id="prebuilt-invoice",
@@ -575,7 +575,7 @@ class TestRepr():
                 "prebuilt-invoice": doc_type_info[0],
             }
         )
-        model_repr = "DocumentModel(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={{'prebuilt-invoice': {}}})".format(
+        model_repr = "DocumentModelInfo(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={{'prebuilt-invoice': {}}})".format(
             "prebuilt-invoice",
             "my description",
             datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
@@ -586,14 +586,14 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_document_model_info(self):
-        model = _models.DocumentModelInfo(
+        model = _models.DocumentModelSummary(
             description="my description",
             created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
             model_id="prebuilt-invoice",
             api_version="2022-06-30-preview",
             tags={"test": "value"},
         )
-        model_repr = "DocumentModelInfo(model_id={}, description={}, created_on={}, api_version={}, tags={})".format(
+        model_repr = "DocumentModelSummary(model_id={}, description={}, created_on={}, api_version={}, tags={})".format(
             "prebuilt-invoice",
             "my description",
             datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
@@ -603,10 +603,10 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_account_info(self):
-        model = _models.AccountInfo(
+        model = _models.ResourceInfo(
             document_model_limit=5000, document_model_count=10
         )
-        model_repr = "AccountInfo(document_model_count={}, document_model_limit={})".format(
+        model_repr = "ResourceInfo(document_model_count={}, document_model_limit={})".format(
             10, 5000
         )
         assert repr(model) == model_repr

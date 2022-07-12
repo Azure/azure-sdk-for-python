@@ -12,21 +12,21 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '326'
+      - '334'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-conversations/1.0GA Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-conversations/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?api-version=2022-05-01
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?api-version=2022-05-15-preview
   response:
     body:
       string: '{"kind":"ConversationResult","result":{"query":"Send an email to Carol
-        about the tomorrow''s demo","prediction":{"topIntent":"EmailIntent","projectKind":"Orchestration","intents":{"EmailIntent":{"confidenceScore":0.7871714,"targetProjectKind":"Conversation","result":{"query":"Send
-        an email to Carol about the tomorrow''s demo","prediction":{"topIntent":"Setup","projectKind":"Conversation","intents":[{"category":"Setup","confidenceScore":0.6254007},{"category":"Play","confidenceScore":0.20336723},{"category":"Send","confidenceScore":0.13618475},{"category":"Read","confidenceScore":0.01904324},{"category":"Call","confidenceScore":0.00859508},{"category":"Set","confidenceScore":0.0033787973},{"category":"Find","confidenceScore":0.0028723886},{"category":"Open","confidenceScore":0.0010411387},{"category":"None","confidenceScore":0.00011662581}],"entities":[{"category":"Contact","text":"Carol","offset":17,"length":5,"confidenceScore":1,"extraInformation":[{"extraInformationKind":"EntitySubtype","value":"person.name"}]},{"category":"MeetingDate","text":"tomorrow","offset":33,"length":8,"confidenceScore":1,"resolutions":[{"resolutionKind":"DateTimeResolution","dateTimeSubKind":"Date","timex":"2022-06-01","value":"2022-06-01"}],"extraInformation":[{"extraInformationKind":"EntitySubtype","value":"datetime.date"}]}]}}},"RestaurantIntent":{"confidenceScore":0.6350032,"targetProjectKind":"Luis"},"ChitChat-QnA":{"confidenceScore":0.6044451,"targetProjectKind":"QuestionAnswering"},"None":{"confidenceScore":0.15003002,"targetProjectKind":"NonLinked"}}}}}'
+        about the tomorrow''s demo","prediction":{"topIntent":"EmailIntent","projectKind":"Orchestration","intents":{"EmailIntent":{"confidenceScore":0.7871725,"targetProjectKind":"Conversation","result":{"query":"Send
+        an email to Carol about the tomorrow''s demo","prediction":{"topIntent":"Send","projectKind":"Conversation","intents":[{"category":"Send","confidenceScore":0.9053172},{"category":"Read","confidenceScore":0.44011447},{"category":"Setup","confidenceScore":0.41303915},{"category":"Set","confidenceScore":0.21186642},{"category":"None","confidenceScore":0.20198277},{"category":"Find","confidenceScore":0.19216746},{"category":"Call","confidenceScore":0.16446844},{"category":"Play","confidenceScore":0.15655291},{"category":"Open","confidenceScore":0.08699014}],"entities":[{"category":"Contact","text":"Carol","offset":17,"length":5,"confidenceScore":1,"extraInformation":[{"extraInformationKind":"EntitySubtype","value":"person.name"}]},{"category":"MeetingDate","text":"tomorrow","offset":33,"length":8,"confidenceScore":1,"resolutions":[{"resolutionKind":"DateTimeResolution","dateTimeSubKind":"Date","timex":"2022-06-29","value":"2022-06-29"}],"extraInformation":[{"extraInformationKind":"EntitySubtype","value":"datetime.date"}]}]}}},"ChitChat-QnA":{"confidenceScore":0.65083516,"targetProjectKind":"QuestionAnswering"},"None":{"confidenceScore":0.15003009,"targetProjectKind":"NonLinked"}}}}}'
     headers:
       apim-request-id:
-      - 159870fd-db6c-40e5-945d-fe23d2d6b842
+      - 736819a2-f90c-4b35-8d46-94332e251e80
       cache-control:
       - no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type:
@@ -34,11 +34,11 @@ interactions:
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.Language.OrchestrationWorkflow.Prediction=1
       date:
-      - Tue, 31 May 2022 14:25:17 GMT
+      - Tue, 28 Jun 2022 21:16:39 GMT
       pragma:
       - no-cache
       request-id:
-      - 159870fd-db6c-40e5-945d-fe23d2d6b842
+      - 736819a2-f90c-4b35-8d46-94332e251e80
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -46,7 +46,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '146'
+      - '3622'
     status:
       code: 200
       message: OK

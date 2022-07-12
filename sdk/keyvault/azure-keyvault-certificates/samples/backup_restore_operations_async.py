@@ -43,7 +43,7 @@ async def run_sample():
     client = CertificateClient(vault_url=vault_url, credential=credential)
 
     print("\n.. Create Certificate")
-    cert_name = "BackupRestoreCertificate"
+    cert_name = "BackupRestoreCertificateAsync"
 
     # Let's create a certificate for your key vault.
     # if the certificate already exists in the Key Vault, then a new version of the certificate is created.

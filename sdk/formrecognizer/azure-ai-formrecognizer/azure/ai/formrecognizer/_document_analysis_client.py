@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -6,15 +5,13 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, Union, IO, TYPE_CHECKING
+from typing import Any, Union, IO
+from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from ._api_versions import DocumentAnalysisApiVersion
 from ._form_base_client import FormRecognizerClientBase
 from ._models import AnalyzeResult
-
-if TYPE_CHECKING:
-    from azure.core.polling import LROPoller
-    from azure.core.credentials import AzureKeyCredential, TokenCredential
 
 
 class DocumentAnalysisClient(FormRecognizerClientBase):
@@ -60,12 +57,11 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
             :caption: Creating the DocumentAnalysisClient with a token credential.
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
         api_version = kwargs.pop(
             "api_version", DocumentAnalysisApiVersion.V2022_06_30_PREVIEW
         )
-        super(DocumentAnalysisClient, self).__init__(
+        super().__init__(
             endpoint=endpoint,
             credential=credential,
             api_version=api_version,
@@ -82,8 +78,9 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         return AnalyzeResult._from_generated(analyze_operation_result.analyze_result)
 
     @distributed_trace
-    def begin_analyze_document(self, model, document, **kwargs):
-        # type: (str, Union[bytes, IO[bytes]], Any) -> LROPoller[AnalyzeResult]
+    def begin_analyze_document(
+        self, model: str, document: Union[bytes, IO[bytes]], **kwargs: Any
+    ) -> LROPoller[AnalyzeResult]:
         """Analyze field text and semantic values from a given document.
 
         :param str model: A unique model identifier can be passed in as a string.
@@ -136,8 +133,7 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_analyze_document_from_url(self, model, document_url, **kwargs):
-        # type: (str, str, Any) -> LROPoller[AnalyzeResult]
+    def begin_analyze_document_from_url(self, model: str, document_url: str, **kwargs: Any) -> LROPoller[AnalyzeResult]:
         """Analyze field text and semantic values from a given document.
         The input must be the location (URL) of the document to be analyzed.
 
@@ -183,16 +179,13 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
             **kwargs
         )
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close the :class:`~azure.ai.formrecognizer.DocumentAnalysisClient` session."""
         return self._client.close()
 
-    def __enter__(self):
-        # type: () -> DocumentAnalysisClient
+    def __enter__(self) -> "DocumentAnalysisClient":
         self._client.__enter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args):
-        # type: (*Any) -> None
+    def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)  # pylint:disable=no-member

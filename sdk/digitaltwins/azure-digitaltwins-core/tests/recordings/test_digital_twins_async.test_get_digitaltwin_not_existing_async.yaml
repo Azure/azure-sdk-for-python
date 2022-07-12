@@ -5,22 +5,23 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-5d4b1a92?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-5d4b1a92?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
         twin instance that exists with the ID digitalTwin-5d4b1a92. Please verify
         that the twin id is valid and ensure that the twin is not deleted. See section
-        on querying the twins http://aka.ms/adtv2query."}}'
+        on querying the twins https://aka.ms/adtv2query."}}'
     headers:
-      content-length: '273'
+      content-length: '274'
       content-type: application/json; charset=utf-8
-      date: Tue, 24 Nov 2020 21:07:30 GMT
+      date: Thu, 26 May 2022 07:28:09 GMT
       strict-transport-security: max-age=2592000
+      traceresponse: 00-97de4eac2b86814da719a8d02dd9e1a9-7fea9ffafe5a9849-01
     status:
       code: 404
       message: Not Found
-    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-5d4b1a92?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-5d4b1a92?api-version=2022-05-31
 version: 1
