@@ -40,7 +40,7 @@ def build_list_by_server_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/flexibleServers/{serverName}/replicas")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/flexibleServers/{serverName}/logFiles")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
@@ -63,14 +63,14 @@ def build_list_by_server_request(
         **kwargs
     )
 
-class ReplicasOperations:
+class LogFilesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.rdbms.mysql_flexibleservers.MySQLManagementClient`'s
-        :attr:`replicas` attribute.
+        :attr:`log_files` attribute.
     """
 
     models = _models
@@ -89,24 +89,24 @@ class ReplicasOperations:
         resource_group_name: str,
         server_name: str,
         **kwargs: Any
-    ) -> Iterable[_models.ServerListResult]:
-        """List all the replicas for a given server.
+    ) -> Iterable[_models.LogFileListResult]:
+        """List all the server log files in a given server.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ServerListResult or the result of cls(response)
+        :return: An iterator like instance of either LogFileListResult or the result of cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.rdbms.mysql_flexibleservers.models.ServerListResult]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.rdbms.mysql_flexibleservers.models.LogFileListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-12-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ServerListResult]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.LogFileListResult]
 
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -144,7 +144,7 @@ class ReplicasOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("ServerListResult", pipeline_response)
+            deserialized = self._deserialize("LogFileListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -170,4 +170,4 @@ class ReplicasOperations:
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_server.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/flexibleServers/{serverName}/replicas"}  # type: ignore
+    list_by_server.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/flexibleServers/{serverName}/logFiles"}  # type: ignore
