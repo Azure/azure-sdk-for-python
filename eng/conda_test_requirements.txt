@@ -1,15 +1,14 @@
 # install from root of repo
-aiohttp>=3.0; python_version >= '3.5'
+aiohttp>=3.0
 tools/azure-devtools
 tools/azure-sdk-tools
 mock;
-aiodns>=2.0; python_version >= '3.5'
-parameterized>=0.7.3; python_version >= '3.0'
-trio; python_version >= '3.5'
+aiodns>=2.0
+parameterized>=0.7.3
+trio
 typing_extensions>=3.7.2
-futures==3.3.0; python_version <= '2.7'
 cryptography
 adal
 setuptools==46.4.0
-pytest-asyncio==0.12.0; python_version >= '3.5'
+pytest-asyncio==0.12.0
 -e sdk/core/azure-core/tests/testserver_tests/coretestserver
