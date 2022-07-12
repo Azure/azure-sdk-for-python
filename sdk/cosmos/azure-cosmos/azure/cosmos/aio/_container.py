@@ -22,7 +22,7 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Optional, Union, cast, Awaitable
+from typing import Any, Dict, Optional, Union, cast, Awaitable, overload
 from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator import distributed_trace
@@ -41,6 +41,7 @@ __all__ = ("ContainerProxy",)
 
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+
 
 class ContainerProxy(object):
     """An interface to interact with a specific DB Container.
@@ -62,13 +63,13 @@ class ContainerProxy(object):
         client_connection: CosmosClientConnection,
         database_link: str,
         id: str,  # pylint: disable=redefined-builtin
-        properties: Dict[str, Any] = None
+        properties: Dict[str, Any] = None,
     ) -> None:
         self.client_connection = client_connection
         self.id = id
         self._properties = properties
         self.database_link = database_link
-        self.container_link = u"{}/colls/{}".format(database_link, self.id)
+        self.container_link = "{}/colls/{}".format(database_link, self.id)
         self._is_system_key = None
         self._scripts: Optional[ScriptsProxy] = None
 
@@ -85,37 +86,49 @@ class ContainerProxy(object):
         if self._is_system_key is None:
             properties = await self._get_properties()
             self._is_system_key = (
-                properties["partitionKey"]["systemKey"] if "systemKey" in properties["partitionKey"] else False
+                properties["partitionKey"]["systemKey"]
+                if "systemKey" in properties["partitionKey"]
+                else False
             )
-        return cast('bool', self._is_system_key)
+        return cast("bool", self._is_system_key)
 
     @property
     def scripts(self) -> ScriptsProxy:
         if self._scripts is None:
-            self._scripts = ScriptsProxy(self, self.client_connection, self.container_link)
-        return cast('ScriptsProxy', self._scripts)
+            self._scripts = ScriptsProxy(
+                self, self.client_connection, self.container_link
+            )
+        return cast("ScriptsProxy", self._scripts)
 
     def _get_document_link(self, item_or_link: Union[Dict[str, Any], str]) -> str:
         if isinstance(item_or_link, str):
-            return u"{}/docs/{}".format(self.container_link, item_or_link)
+            return "{}/docs/{}".format(self.container_link, item_or_link)
         return item_or_link["_self"]
 
     def _get_conflict_link(self, conflict_or_link: Union[Dict[str, Any], str]) -> str:
         if isinstance(conflict_or_link, str):
-            return u"{}/conflicts/{}".format(self.container_link, conflict_or_link)
+            return "{}/conflicts/{}".format(self.container_link, conflict_or_link)
         return conflict_or_link["_self"]
 
     def _set_partition_key(self, partition_key) -> Union[str, Awaitable]:
         if partition_key == NonePartitionKeyValue:
-            return CosmosClientConnection._return_undefined_or_empty_partition_key(self.is_system_key)
+            return CosmosClientConnection._return_undefined_or_empty_partition_key(
+                self.is_system_key
+            )
         return partition_key
 
-
-    @distributed_trace_async
+    @overload
     async def read(
         self,
-        **kwargs: Any
+        *,
+        populate_partition_key_range_statistics: Optional[bool] = None,
+        populate_quota_info: Optional[bool] = None,
+        **kwargs,
     ) -> Dict[str, Any]:
+        ...
+
+    @distributed_trace_async
+    async def read(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:
         """Read the container properties.
 
         :keyword bool populate_partition_key_range_statistics: Enable returning partition key
@@ -131,11 +144,21 @@ class ContainerProxy(object):
         :rtype: Dict[str, Any]
         """
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-        populate_partition_key_range_statistics = kwargs.pop('populate_partition_key_range_statistics', None)
+        response_hook = kwargs.pop("response_hook", None)
+        populate_partition_key_range_statistics = (
+            args[1]
+            if args
+            else kwargs.pop("populate_partition_key_range_statistics", None)
+        )
         if populate_partition_key_range_statistics is not None:
-            request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
-        populate_quota_info = kwargs.pop('populate_quota_info', None)
+            request_options[
+                "populatePartitionKeyRangeStatistics"
+            ] = populate_partition_key_range_statistics
+        populate_quota_info = (
+            args[2]
+            if args and len(args) > 2
+            else kwargs.pop("populate_quota_info", None)
+        )
         if populate_quota_info is not None:
             request_options["populateQuotaInfo"] = populate_quota_info
 
@@ -145,15 +168,20 @@ class ContainerProxy(object):
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, self._properties)
+            response_hook(
+                self.client_connection.last_response_headers, self._properties
+            )
 
-        return cast('Dict[str, Any]', self._properties)
+        return cast("Dict[str, Any]", self._properties)
 
     @distributed_trace_async
     async def create_item(
         self,
         body: Dict[str, Any],
-        **kwargs: Any
+        pre_trigger_include: Optional[str] = None,
+        post_trigger_include: Optional[str] = None,
+        indexing_directive: Optional[Any] = None,
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """Create an item in the container.
 
@@ -180,12 +208,11 @@ class ContainerProxy(object):
         :rtype: Dict[str, Any]
         """
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-        pre_trigger_include = kwargs.pop('pre_trigger_include', None)
-        post_trigger_include = kwargs.pop('post_trigger_include', None)
-        indexing_directive = kwargs.pop('indexing_directive', None)
+        response_hook = kwargs.pop("response_hook", None)
 
-        request_options["disableAutomaticIdGeneration"] = not kwargs.pop('enable_automatic_id_generation', False)
+        request_options["disableAutomaticIdGeneration"] = not kwargs.pop(
+            "enable_automatic_id_generation", False
+        )
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
@@ -194,7 +221,10 @@ class ContainerProxy(object):
             request_options["indexingDirective"] = indexing_directive
 
         result = await self.client_connection.CreateItem(
-            database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
+            database_or_container_link=self.container_link,
+            document=body,
+            options=request_options,
+            **kwargs,
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
@@ -205,7 +235,8 @@ class ContainerProxy(object):
         self,
         item: Union[str, Dict[str, Any]],
         partition_key: Union[str, int, float, bool],
-        **kwargs: Any
+        post_trigger_include: Optional[str] = None,
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """Get the item identified by `item`.
 
@@ -238,17 +269,23 @@ class ContainerProxy(object):
         """
         doc_link = self._get_document_link(item)
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
+        response_hook = kwargs.pop("response_hook", None)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
-        post_trigger_include = kwargs.pop('post_trigger_include', None)
+
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
-        max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
+        max_integrated_cache_staleness_in_ms = kwargs.pop(
+            "max_integrated_cache_staleness_in_ms", None
+        )
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
+            request_options[
+                "maxIntegratedCacheStaleness"
+            ] = max_integrated_cache_staleness_in_ms
 
-        result = await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
+        result = await self.client_connection.ReadItem(
+            document_link=doc_link, options=request_options, **kwargs
+        )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
@@ -256,7 +293,8 @@ class ContainerProxy(object):
     @distributed_trace
     def read_all_items(
         self,
-        **kwargs: Any
+        max_item_count: Optional[int] = None,
+        **kwargs: Any,
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List all the items in the container.
 
@@ -273,20 +311,26 @@ class ContainerProxy(object):
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
         feed_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-        max_item_count = kwargs.pop('max_item_count', None)
+        response_hook = kwargs.pop("response_hook", None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
+        max_integrated_cache_staleness_in_ms = kwargs.pop(
+            "max_integrated_cache_staleness_in_ms", None
+        )
         if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
+            feed_options[
+                "maxIntegratedCacheStaleness"
+            ] = max_integrated_cache_staleness_in_ms
 
         if hasattr(response_hook, "clear"):
             response_hook.clear()
 
         items = self.client_connection.ReadItems(
-            collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs
+            collection_link=self.container_link,
+            feed_options=feed_options,
+            response_hook=response_hook,
+            **kwargs,
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, items)
@@ -298,11 +342,11 @@ class ContainerProxy(object):
         query: Union[str, Dict[str, Any]],
         parameters: Optional[List[Dict[str, object]]] = None,
         partition_key: Optional[Any] = None,
-        enable_cross_partition_query: Optional[bool] = None,  
-        max_item_count: Optional[int] = None, 
-        enable_scan_in_query: Optional[bool] = None, 
+        enable_cross_partition_query: Optional[bool] = None,
+        max_item_count: Optional[int] = None,
+        enable_scan_in_query: Optional[bool] = None,
         populate_query_metrics: Optional[bool] = None,
-        **kwargs  # type: Any
+        **kwargs,  # type: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all results matching the given `query`.
 
@@ -353,7 +397,7 @@ class ContainerProxy(object):
                 :name: query_items_param
         """
         feed_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
+        response_hook = kwargs.pop("response_hook", None)
         if enable_cross_partition_query is not None:
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
         if max_item_count is not None:
@@ -364,22 +408,28 @@ class ContainerProxy(object):
             feed_options["enableScanInQuery"] = enable_scan_in_query
         if partition_key is not None:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
-        max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
+        max_integrated_cache_staleness_in_ms = kwargs.pop(
+            "max_integrated_cache_staleness_in_ms", None
+        )
         if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
+            feed_options[
+                "maxIntegratedCacheStaleness"
+            ] = max_integrated_cache_staleness_in_ms
 
         if hasattr(response_hook, "clear"):
             response_hook.clear()
 
-        parameters = kwargs.pop('parameters', None)
+        parameters = kwargs.pop("parameters", None)
         items = self.client_connection.QueryItems(
             database_or_container_link=self.container_link,
-            query=query if parameters is None else dict(query=query, parameters=parameters),
+            query=query
+            if parameters is None
+            else dict(query=query, parameters=parameters),
             options=feed_options,
             partition_key=partition_key,
             response_hook=response_hook,
-            **kwargs
+            **kwargs,
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, items)
@@ -388,7 +438,11 @@ class ContainerProxy(object):
     @distributed_trace
     def query_items_change_feed(
         self,
-        **kwargs: Any
+        partition_key: Optional[Str] = None,
+        partition_key_range_id: Optional[str] = None,
+        continuation: Optional[str] = None,
+        max_item_count: Optional[str] = None,
+        **kwargs: Any,
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
@@ -406,27 +460,26 @@ class ContainerProxy(object):
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
         feed_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-        partition_key = kwargs.pop("partition_key", None)
-        partition_key_range_id = kwargs.pop("partition_key_range_id", None)
-        is_start_from_beginning = kwargs.pop("is_start_from_beginning", False)
-        feed_options["isStartFromBeginning"] = is_start_from_beginning
+        response_hook = kwargs.pop("response_hook", None)
         if partition_key_range_id is not None:
             feed_options["partitionKeyRangeId"] = partition_key_range_id
         if partition_key is not None:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
-        max_item_count = kwargs.pop('max_item_count', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        continuation = kwargs.pop('continuation', None)
         if continuation is not None:
             feed_options["continuation"] = continuation
+        if "isStartFromBeginning" not in feed_options:
+            feed_options["isStartFromBeginning"] = False
 
         if hasattr(response_hook, "clear"):
             response_hook.clear()
 
         result = self.client_connection.QueryItemsChangeFeed(
-            self.container_link, options=feed_options, response_hook=response_hook, **kwargs
+            self.container_link,
+            options=feed_options,
+            response_hook=response_hook,
+            **kwargs,
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
@@ -436,7 +489,9 @@ class ContainerProxy(object):
     async def upsert_item(
         self,
         body: Dict[str, Any],
-        **kwargs: Any
+        pre_trigger_include: Optional[str] = None,
+        post_trigger_include: Optional[str] = None,
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """Insert or update the specified item.
 
@@ -459,12 +514,10 @@ class ContainerProxy(object):
         :rtype: Dict[str, Any]
         """
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
+        response_hook = kwargs.pop("response_hook", None)
         request_options["disableAutomaticIdGeneration"] = True
-        pre_trigger_include = kwargs.pop('pre_trigger_include', None)
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
-        post_trigger_include = kwargs.pop('post_trigger_include', None)
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
 
@@ -472,7 +525,7 @@ class ContainerProxy(object):
             database_or_container_link=self.container_link,
             document=body,
             options=request_options,
-            **kwargs
+            **kwargs,
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
@@ -483,7 +536,9 @@ class ContainerProxy(object):
         self,
         item: Union[str, Dict[str, Any]],
         body: Dict[str, Any],
-        **kwargs: Any
+        pre_trigger_include: Optional[str] = None,
+        post_trigger_include: Optional[str] = None,
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """Replaces the specified item if it exists in the container.
 
@@ -509,17 +564,18 @@ class ContainerProxy(object):
         """
         item_link = self._get_document_link(item)
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
+        response_hook = kwargs.pop("response_hook", None)
         request_options["disableAutomaticIdGeneration"] = True
-        pre_trigger_include = kwargs.pop('pre_trigger_include', None)
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
-        post_trigger_include = kwargs.pop('post_trigger_include', None)
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
 
         result = await self.client_connection.ReplaceItem(
-            document_link=item_link, new_document=body, options=request_options, **kwargs
+            document_link=item_link,
+            new_document=body,
+            options=request_options,
+            **kwargs,
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
@@ -530,7 +586,9 @@ class ContainerProxy(object):
         self,
         item: Union[str, Dict[str, Any]],
         partition_key: Union[str, int, float, bool],
-        **kwargs: Any
+        pre_trigger_include: Optional[str] = None,
+        post_trigger_include: Optional[str] = None,
+        **kwargs: Any,
     ) -> None:
         """Delete the specified item from the container.
 
@@ -555,17 +613,17 @@ class ContainerProxy(object):
         :rtype: None
         """
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
+        response_hook = kwargs.pop("response_hook", None)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
-        pre_trigger_include = kwargs.pop('pre_trigger_include', None)
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
-        post_trigger_include = kwargs.pop('post_trigger_include', None)
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
 
         document_link = self._get_document_link(item)
-        result = await self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
+        result = await self.client_connection.DeleteItem(
+            document_link=document_link, options=request_options, **kwargs
+        )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
 
@@ -582,28 +640,40 @@ class ContainerProxy(object):
         :returns: ThroughputProperties for the container.
         :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
-        response_hook = kwargs.pop('response_hook', None)
+        response_hook = kwargs.pop("response_hook", None)
         properties = await self._get_properties()
         link = properties["_self"]
         query_spec = {
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        throughput_properties = [throughput async for throughput in
-                                 self.client_connection.QueryOffers(query_spec, **kwargs)]
+        throughput_properties = [
+            throughput
+            async for throughput in self.client_connection.QueryOffers(
+                query_spec, **kwargs
+            )
+        ]
         if len(throughput_properties) == 0:
             raise CosmosResourceNotFoundError(
                 status_code=StatusCodes.NOT_FOUND,
-                message="Could not find ThroughputProperties for container " + self.container_link)
+                message="Could not find ThroughputProperties for container "
+                + self.container_link,
+            )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, throughput_properties)
+            response_hook(
+                self.client_connection.last_response_headers, throughput_properties
+            )
 
-        return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
-                                    properties=throughput_properties[0])
+        return ThroughputProperties(
+            offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
+            properties=throughput_properties[0],
+        )
 
     @distributed_trace_async
-    async def replace_throughput(self, throughput: int, **kwargs: Any) -> ThroughputProperties:
+    async def replace_throughput(
+        self, throughput: int, **kwargs: Any
+    ) -> ThroughputProperties:
         """Replace the container's throughput.
 
         If no ThroughputProperties already exist for the container, an exception is raised.
@@ -616,31 +686,43 @@ class ContainerProxy(object):
         :returns: ThroughputProperties for the container, updated with new throughput.
         :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
-        response_hook = kwargs.pop('response_hook', None)
+        response_hook = kwargs.pop("response_hook", None)
         properties = await self._get_properties()
         link = properties["_self"]
         query_spec = {
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        throughput_properties = [throughput async for throughput in
-                                 self.client_connection.QueryOffers(query_spec, **kwargs)]
+        throughput_properties = [
+            throughput
+            async for throughput in self.client_connection.QueryOffers(
+                query_spec, **kwargs
+            )
+        ]
         if len(throughput_properties) == 0:
             raise CosmosResourceNotFoundError(
                 status_code=StatusCodes.NOT_FOUND,
-                message="Could not find Offer for container " + self.container_link)
+                message="Could not find Offer for container " + self.container_link,
+            )
 
         new_offer = throughput_properties[0].copy()
         new_offer["content"]["offerThroughput"] = throughput
-        data = await self.client_connection.ReplaceOffer(offer_link=throughput_properties[0]["_self"],
-                                                         offer=throughput_properties[0], **kwargs)
+        data = await self.client_connection.ReplaceOffer(
+            offer_link=throughput_properties[0]["_self"],
+            offer=throughput_properties[0],
+            **kwargs,
+        )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
 
-        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
+        return ThroughputProperties(
+            offer_throughput=data["content"]["offerThroughput"], properties=data
+        )
 
     @distributed_trace
-    def list_conflicts(self, **kwargs: Any) -> AsyncItemPaged[Dict[str, Any]]:
+    def list_conflicts(
+        self, max_item_count: Optional[int] = None, **kwargs: Any
+    ) -> AsyncItemPaged[Dict[str, Any]]:
         """List all the conflicts in the container.
 
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -650,8 +732,7 @@ class ContainerProxy(object):
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
         feed_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-        max_item_count = kwargs.pop('max_item_count', None)
+        response_hook = kwargs.pop("response_hook", None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -664,9 +745,13 @@ class ContainerProxy(object):
 
     @distributed_trace
     def query_conflicts(
-            self,
-            query: Union[str, Dict[str, Any]],
-            **kwargs: Any
+        self,
+        query: Union[str, Dict[str, Any]],
+        parameters: Optional[List[str]] = None,
+        enable_cross_partition_query: Optional[bool] = None,
+        partition_key: Optional[Any] = None,
+        max_item_count: Optional[int] = None,
+        **kwargs: Any,
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all conflicts matching a given `query`.
 
@@ -683,22 +768,23 @@ class ContainerProxy(object):
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
         feed_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-        max_item_count = kwargs.pop('max_item_count', None)
+        response_hook = kwargs.pop("response_hook", None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        partition_key = kwargs.pop("partition_key", None)
         if partition_key is not None:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
         else:
             feed_options["enableCrossPartitionQuery"] = True
+        if enable_cross_partition_query is not None:
+            feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
 
-        parameters = kwargs.pop('parameters', None)
         result = self.client_connection.QueryConflicts(
             collection_link=self.container_link,
-            query=query if parameters is None else dict(query=query, parameters=parameters),
+            query=query
+            if parameters is None
+            else dict(query=query, parameters=parameters),
             options=feed_options,
-            **kwargs
+            **kwargs,
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
@@ -706,10 +792,10 @@ class ContainerProxy(object):
 
     @distributed_trace_async
     async def get_conflict(
-            self,
-            conflict: Union[str, Dict[str, Any]],
-            partition_key: Union[str, int, float, bool],
-            **kwargs: Any,
+        self,
+        conflict: Union[str, Dict[str, Any]],
+        partition_key: Union[str, int, float, bool],
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """Get the conflict identified by `conflict`.
 
@@ -724,10 +810,12 @@ class ContainerProxy(object):
         :rtype: Dict[str, Any]
         """
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
+        response_hook = kwargs.pop("response_hook", None)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
         result = await self.client_connection.ReadConflict(
-            conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
+            conflict_link=self._get_conflict_link(conflict),
+            options=request_options,
+            **kwargs,
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
@@ -735,10 +823,10 @@ class ContainerProxy(object):
 
     @distributed_trace_async
     async def delete_conflict(
-            self,
-            conflict: Union[str, Dict[str, Any]],
-            partition_key: Union[str, int, float, bool],
-            **kwargs: Any,
+        self,
+        conflict: Union[str, Dict[str, Any]],
+        partition_key: Union[str, int, float, bool],
+        **kwargs: Any,
     ) -> None:
         """Delete a specified conflict from the container.
 
@@ -755,10 +843,12 @@ class ContainerProxy(object):
         :rtype: None
         """
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
+        response_hook = kwargs.pop("response_hook", None)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
         result = await self.client_connection.DeleteConflict(
-            conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
+            conflict_link=self._get_conflict_link(conflict),
+            options=request_options,
+            **kwargs,
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
