@@ -1175,6 +1175,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 AsyncAnalyzeActionsResponse,
                 AsyncAnalyzeActionsLROPoller.from_continuation_token(
                     polling_method=AsyncAnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
                         timeout=polling_interval,
                         **kwargs
                     ),
@@ -1221,6 +1222,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                             ),
                         ),
                         polling=AsyncAnalyzeActionsLROPollingMethod(
+                            text_analytics_client=self._client,
                             timeout=polling_interval,
                             show_stats=show_stats,
                             doc_id_order=doc_id_order,
@@ -1277,6 +1279,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         ),
                     ),
                     polling=AsyncAnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
                         timeout=polling_interval,
                         show_stats=show_stats,
                         doc_id_order=doc_id_order,
