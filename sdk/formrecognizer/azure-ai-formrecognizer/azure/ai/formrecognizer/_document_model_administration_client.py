@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -12,8 +11,8 @@ from typing import (
     Union,
     List,
     Dict,
-    TYPE_CHECKING,
 )
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.pipeline import Pipeline
@@ -34,9 +33,6 @@ from ._models import (
     ModelOperationInfo,
     ResourceInfo,
 )
-
-if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential, TokenCredential
 
 
 class DocumentModelAdministrationClient(FormRecognizerClientBase):
@@ -83,12 +79,11 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
             :caption: Creating the DocumentModelAdministrationClient with a token credential.
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
         api_version = kwargs.pop(
             "api_version", DocumentAnalysisApiVersion.V2022_06_30_PREVIEW
         )
-        super(DocumentModelAdministrationClient, self).__init__(
+        super().__init__(
             endpoint=endpoint,
             credential=credential,
             api_version=api_version,
@@ -97,8 +92,9 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_build_model(self, source, build_mode, **kwargs):
-        # type: (str, Union[str, DocumentBuildMode], Any) -> DocumentModelAdministrationLROPoller[DocumentModelInfo]
+    def begin_build_model(
+        self, source: str, build_mode: Union[str, DocumentBuildMode], **kwargs: Any
+    ) -> DocumentModelAdministrationLROPoller[DocumentModelInfo]:
         """Build a custom model.
 
         The request must include a `source` parameter that is an
@@ -184,8 +180,9 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_compose_model(self, component_model_ids, **kwargs):
-        # type: (List[str], Any) -> DocumentModelAdministrationLROPoller[DocumentModelInfo]
+    def begin_compose_model(
+        self, component_model_ids: List[str], **kwargs: Any
+    ) -> DocumentModelAdministrationLROPoller[DocumentModelInfo]:
         """Creates a composed model from a collection of existing models.
 
         A composed model allows multiple models to be called with a single model ID. When a document is
@@ -262,8 +259,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def get_copy_authorization(self, **kwargs):
-        # type: (Any) -> Dict[str, str]
+    def get_copy_authorization(self, **kwargs: Any) -> Dict[str, str]:
         """Generate authorization for copying a custom model into the target Form Recognizer resource.
 
         This should be called by the target resource (where the model will be copied to)
@@ -301,11 +297,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
     @distributed_trace
     def begin_copy_model_to(
         self,
-        model_id,  # type: str
-        target,  # type: Dict
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> DocumentModelAdministrationLROPoller[DocumentModelInfo]
+        model_id: str,
+        target: Dict[str, str],
+        **kwargs: Any
+    ) -> DocumentModelAdministrationLROPoller[DocumentModelInfo]:
         """Copy a model stored in this resource (the source) to the user specified
         target Form Recognizer resource.
 
@@ -314,7 +309,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         target resource's output from calling the :func:`~get_copy_authorization()` method.
 
         :param str model_id: Model identifier of the model to copy to target resource.
-        :param dict target:
+        :param Dict[str, str] target:
             The copy authorization generated from the target resource's call to
             :func:`~get_copy_authorization()`.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -373,8 +368,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def delete_model(self, model_id, **kwargs):
-        # type: (str, Any) -> None
+    def delete_model(self, model_id: str, **kwargs: Any) -> None:
         """Delete a custom model.
 
         :param model_id: Model identifier.
@@ -398,8 +392,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         return self._client.delete_model(model_id=model_id, **kwargs)
 
     @distributed_trace
-    def list_models(self, **kwargs):
-        # type: (Any) -> ItemPaged[DocumentModelSummary]
+    def list_models(self, **kwargs: Any) -> ItemPaged[DocumentModelSummary]:
         """List information for each model, including its model ID,
         description, and when it was created.
 
@@ -426,8 +419,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def get_resource_info(self, **kwargs):
-        # type: (Any) -> ResourceInfo
+    def get_resource_info(self, **kwargs: Any) -> ResourceInfo:
         """Get information about the models under the Form Recognizer resource.
 
         :return: Summary of models under the resource - model count and limit.
@@ -448,8 +440,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         return ResourceInfo._from_generated(response.custom_document_models)
 
     @distributed_trace
-    def get_model(self, model_id, **kwargs):
-        # type: (str, Any) -> DocumentModelInfo
+    def get_model(self, model_id: str, **kwargs: Any) -> DocumentModelInfo:
         """Get a model by its ID.
 
         :param str model_id: Model identifier.
@@ -474,8 +465,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         return DocumentModelInfo._from_generated(response)
 
     @distributed_trace
-    def list_operations(self, **kwargs):
-        # type: (Any) -> ItemPaged[ModelOperationInfo]
+    def list_operations(self, **kwargs: Any) -> ItemPaged[ModelOperationInfo]:
         """List information for each document model operation.
 
         Lists all document model operations associated with the Form Recognizer resource.
@@ -505,8 +495,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def get_operation(self, operation_id, **kwargs):
-        # type: (str, Any) -> ModelOperation
+    def get_operation(self, operation_id: str, **kwargs: Any) -> ModelOperation:
         """Get a document model operation by its ID.
 
         Get a document model operation associated with the Form Recognizer resource.
@@ -536,8 +525,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
             api_version=self._api_version,
         )
 
-    def get_document_analysis_client(self, **kwargs):
-        # type: (Any) -> DocumentAnalysisClient
+    def get_document_analysis_client(self, **kwargs: Any) -> DocumentAnalysisClient:
         """Get an instance of a DocumentAnalysisClient from DocumentModelAdministrationClient.
 
         :rtype: ~azure.ai.formrecognizer.DocumentAnalysisClient
@@ -559,16 +547,13 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         client._client._config = self._client._client._config
         return client
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close the :class:`~azure.ai.formrecognizer.DocumentModelAdministrationClient` session."""
         return self._client.close()
 
-    def __enter__(self):
-        # type: () -> DocumentModelAdministrationClient
+    def __enter__(self) -> "DocumentModelAdministrationClient":
         self._client.__enter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args):
-        # type: (*Any) -> None
+    def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)  # pylint:disable=no-member

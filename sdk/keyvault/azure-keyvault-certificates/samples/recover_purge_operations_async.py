@@ -43,8 +43,8 @@ async def run_sample():
     # Let's create certificates holding storage and bank accounts credentials. If the certificate
     # already exists in the Key Vault, then a new version of the certificate is created.
     print("\n.. Create Certificates")
-    bank_cert_name = "BankRecoverCertificate"
-    storage_cert_name = "ServerRecoverCertificate"
+    bank_cert_name = "BankRecoverCertificateAsync"
+    storage_cert_name = "ServerRecoverCertificateAsync"
 
     bank_certificate = await client.create_certificate(
         certificate_name=bank_cert_name, policy=CertificatePolicy.get_default()

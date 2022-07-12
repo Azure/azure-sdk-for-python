@@ -125,6 +125,7 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
         kwargs.setdefault("top", kwargs.pop("max_results", None))
         kwargs.setdefault("interval", kwargs.pop("granularity", None))
         kwargs.setdefault("orderby", kwargs.pop("order_by", None))
+        kwargs.setdefault("metricnamespace", kwargs.pop("metric_namespace", None))
         generated = self._metrics_op.list(
             resource_uri, connection_verify=False, **kwargs
         )

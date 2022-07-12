@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json-patch+json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PATCH
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3ANonExistingModel%3B1?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3ANonExistingModel%3B1?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
@@ -27,9 +27,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:09:36 GMT
+      - Thu, 26 May 2022 07:28:27 GMT
+      mise-correlation-id:
+      - dad2abf9-85cc-423b-a3b0-4ec03b5b91f5
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-3969819616e6f64094fd27c216aa0eac-ff1394eb53944c4a-01
     status:
       code: 404
       message: Not Found

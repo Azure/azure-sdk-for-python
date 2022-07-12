@@ -1,10 +1,10 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Any, Union, TYPE_CHECKING
+from typing import Any, Union
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import HttpLoggingPolicy
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._api_versions import validate_api_version
@@ -16,13 +16,9 @@ from ._helpers import (
 )
 from ._user_agent import USER_AGENT
 
-if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential, TokenCredential
 
-
-class FormRecognizerClientBase(object):
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
+class FormRecognizerClientBase:
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
         try:
             endpoint = endpoint.rstrip("/")
         except AttributeError:

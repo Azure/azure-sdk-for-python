@@ -44,7 +44,7 @@ async def run_sample():
     client = KeyClient(vault_url=VAULT_URL, credential=credential)
 
     # First, create a key
-    key_name = "rotation-sample-key"
+    key_name = "rotation-sample-key-async"
     key = await client.create_rsa_key(key_name)
     print("\nCreated a key; new version is {}".format(key.properties.version))
 

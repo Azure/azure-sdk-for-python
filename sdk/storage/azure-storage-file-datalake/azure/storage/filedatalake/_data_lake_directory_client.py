@@ -194,7 +194,7 @@ class DataLakeDirectoryClient(PathClient):
         return self._create('directory', metadata=metadata, **kwargs)
 
     def delete_directory(self, **kwargs):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+        # type: (...) -> None
         """
         Marks the specified directory for deletion.
 
@@ -221,8 +221,7 @@ class DataLakeDirectoryClient(PathClient):
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return: A dictionary of response headers.
-        :rtype: Dict[str, Union[str, datetime]]
+        :return: None
 
         .. admonition:: Example:
 
