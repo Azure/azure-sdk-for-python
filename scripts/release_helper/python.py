@@ -50,7 +50,8 @@ class IssueProcessPython(IssueProcess):
 
     def multi_api_policy(self) -> None:
         if self.is_multiapi:
-            self.bot_advice.append('MultiAPI')
+            if _AUTO_ASK_FOR_CHECK not in self.issue_package.labels_name:
+                self.bot_advice.append(_MultiAPI)
             if _MultiAPI not in self.issue_package.labels_name:
                 self.add_label(_MultiAPI)
 
