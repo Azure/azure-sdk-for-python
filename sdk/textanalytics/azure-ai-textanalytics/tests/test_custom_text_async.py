@@ -7,7 +7,9 @@
 import pytest
 import functools
 import datetime
+import itertools
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import HttpResponseError
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer, is_public_cloud
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from devtools_testutils import set_bodiless_matcher
@@ -153,3 +155,57 @@ class TestCustomTextAsync(TextAnalyticsTest):
                     assert entity.offset is not None
                     assert entity.length is not None
                     assert entity.confidence_score is not None
+
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsCustomPreparer()
+    @recorded_by_proxy_async
+    async def test_cancel(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_custom_entities_project_name,
+            textanalytics_custom_entities_deployment_name
+    ):
+        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        single_doc = "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
+        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 25)))]
+        
+        async with client:
+            poller = await client.begin_recognize_custom_entities(
+                docs,
+                project_name=textanalytics_custom_entities_project_name,
+                deployment_name=textanalytics_custom_entities_deployment_name,
+                show_stats=True,
+                polling_interval=self._interval(),
+            )
+
+            await poller.cancel()
+
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsCustomPreparer()
+    @recorded_by_proxy_async
+    async def test_cancel_fail_terminal_state(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_custom_entities_project_name,
+            textanalytics_custom_entities_deployment_name
+    ):
+        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        single_doc = "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
+        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 5)))]
+
+        async with client:
+            poller = await client.begin_recognize_custom_entities(
+                docs,
+                project_name=textanalytics_custom_entities_project_name,
+                deployment_name=textanalytics_custom_entities_deployment_name,
+                show_stats=True,
+                polling_interval=self._interval(),
+            )
+            await poller.result()
+            assert poller.status() == "succeeded"
+            with pytest.raises(HttpResponseError):
+                await poller.cancel()  # can't cancel when already in terminal state

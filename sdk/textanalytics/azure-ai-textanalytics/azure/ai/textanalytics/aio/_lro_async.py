@@ -448,6 +448,26 @@ class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
             polling_method  # type: ignore
         )
 
+    async def cancel(self, **kwargs: Any) -> None: # pylint: disable=unused-argument
+        """Cancel the operation currently being polled.
+
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError: When the operation has already reached a terminal state.
+        """
+
+        client = getattr(
+            self._polling_method, "_text_analytics_client"
+        )
+
+        # Get a final status update.
+        await getattr(self._polling_method, "update_status")()
+
+        try:
+            await client.begin_analyze_text_cancel_job(self.id, polling=False)
+        except ValueError:
+            raise ValueError("Cancellation not supported by API versions v3.0, v3.1.")
+
 
 class AsyncTextAnalyticsLROPoller(AsyncLROPoller[PollingReturnType]):
     def polling_method(self) -> AsyncAnalyzeActionsLROPollingMethod:  # type: ignore
@@ -505,6 +525,6 @@ class AsyncTextAnalyticsLROPoller(AsyncLROPoller[PollingReturnType]):
         await getattr(self._polling_method, "update_status")()
 
         try:
-            await client.begin_analyze_text_cancel_job(self.id, polling=False)
+            await client.begin_analyze_text_cancel_job(self.polling_method().id, polling=False)
         except ValueError:
             raise ValueError("Cancellation not supported by API versions v3.0, v3.1.")
