@@ -23,7 +23,7 @@
 - Reintroduced support for symlinks when uploading.
 - Hard coded registry base URL to eastus region to support preview.
 
-## 0.1.0b4 (unreleased)
+## 0.1.0b4 (2022-06-16)
 
 ## 0.1.0b3 (2022-05-24)
 
