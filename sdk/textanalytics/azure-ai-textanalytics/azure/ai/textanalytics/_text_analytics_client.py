@@ -1180,6 +1180,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 AnalyzeActionsResponse,
                 AnalyzeActionsLROPoller.from_continuation_token(
                     polling_method=AnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
                         timeout=polling_interval,
                         **kwargs
                     ),
@@ -1226,6 +1227,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                             ),
                         ),
                         polling=AnalyzeActionsLROPollingMethod(
+                            text_analytics_client=self._client,
                             timeout=polling_interval,
                             show_stats=show_stats,
                             doc_id_order=doc_id_order,
