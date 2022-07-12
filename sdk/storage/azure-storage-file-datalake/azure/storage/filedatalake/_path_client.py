@@ -331,8 +331,7 @@ class PathClient(StorageAccountHostsMixin):
             The match condition to use upon the etag.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :return: A dictionary of response headers.
-        :rtype: Dict[str, Union[str, datetime]]
+        :return: None
         """
         options = self._delete_path_options(**kwargs)
         try:

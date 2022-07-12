@@ -46,8 +46,8 @@ class ConversationAuthoringClient(GeneratedConversationAuthoringClient): # pylin
         This can be the an instance of AzureKeyCredential if using a Language API key
         or a token credential from :mod:`azure.identity`.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. Default value is "2022-05-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Available values are "2022-05-15-preview" and "2022-05-01". Default
+     value is "2022-05-15-preview". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.

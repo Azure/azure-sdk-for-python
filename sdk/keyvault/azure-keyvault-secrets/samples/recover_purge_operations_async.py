@@ -42,8 +42,8 @@ async def run_sample():
     # Let's create secrets holding storage and bank accounts credentials. If the secret
     # already exists in the Key Vault, then a new version of the secret is created.
     print("\n.. Create Secret")
-    bank_secret = await client.set_secret("recoverPurgeBankSecretName", "recoverPurgeSecretValue1")
-    storage_secret = await client.set_secret("recoverPurgeStorageSecretName", "recoverPurgeSecretValue2")
+    bank_secret = await client.set_secret("recoverPurgeBankSecretNameAsync", "recoverPurgeSecretValue1")
+    storage_secret = await client.set_secret("recoverPurgeStorageSecretNameAsync", "recoverPurgeSecretValue2")
     print("Secret with name '{0}' was created.".format(bank_secret.name))
     print("Secret with name '{0}' was created.".format(storage_secret.name))
 

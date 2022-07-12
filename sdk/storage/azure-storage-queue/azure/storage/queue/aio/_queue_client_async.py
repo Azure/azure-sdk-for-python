@@ -100,7 +100,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
                                          pipeline=self._pipeline, loop=loop)  # type: ignore
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._loop = loop
-        self.configure_encryption(kwargs)
+        self._configure_encryption(kwargs)
 
     @distributed_trace_async
     async def create_queue(self, **kwargs):

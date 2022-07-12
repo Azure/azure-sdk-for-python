@@ -187,7 +187,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
-        self.configure_encryption(kwargs)
+        self._configure_encryption(kwargs)
 
     def _format_url(self, hostname):
         container_name = self.container_name
@@ -360,7 +360,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     def _upload_blob_options(  # pylint:disable=too-many-statements
-            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -592,7 +592,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     @distributed_trace
     def upload_blob(  # pylint: disable=too-many-locals
-            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -3732,7 +3732,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     def _append_block_options( # type: ignore
-            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
             **kwargs
         ):
@@ -3787,7 +3787,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     @distributed_trace
     def append_block( # type: ignore
-            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
             **kwargs
         ):

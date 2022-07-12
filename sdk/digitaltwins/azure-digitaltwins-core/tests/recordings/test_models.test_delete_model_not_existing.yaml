@@ -11,9 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3ANonExistingModel%3B1?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3ANonExistingModel%3B1?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
@@ -25,9 +25,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:09:47 GMT
+      - Thu, 26 May 2022 07:28:29 GMT
+      mise-correlation-id:
+      - a3cb8d36-82fe-48c7-888f-0e29b4d872b4
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-733a6edb9453b848850ab26b3dc79dfd-55993954f09e334a-01
     status:
       code: 404
       message: Not Found

@@ -123,7 +123,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
-        self.configure_encryption(kwargs)
+        self._configure_encryption(kwargs)
 
     @distributed_trace_async
     async def create_container(self, metadata=None, public_access=None, **kwargs):

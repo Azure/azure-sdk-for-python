@@ -173,7 +173,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         return await self._exists(**kwargs)
 
     async def delete_directory(self, **kwargs):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+        # type: (...) -> None
         """
         Marks the specified directory for deletion.
 
@@ -200,8 +200,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return: A dictionary of response headers.
-        :rtype: Dict[str, Union[str, datetime]]
+        :return: None
 
         .. admonition:: Example:
 
@@ -510,14 +509,13 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             (-1) for a lease that never expires. A non-infinite lease can be
             between 15 and 60 seconds. A lease duration cannot be changed
             using renew or change.
-        :keyword expiry_options:
-            Indicates mode of the expiry time.
-            Possible values include: 'NeverExpire', 'RelativeToNow', 'Absolute'"
-        :paramtype expiry_options: Literal["NeverExpire", "RelativeToNow", "Absolute"]
         :keyword expires_on:
             The time to set the file to expiry.
-            When expiry_options is RelativeTo*, expires_on should be an int in milliseconds.
-            If the type of expires_on is datetime, it should be in UTC time.
+            If the type of expires_on is an int, expiration time will be set
+            as the number of milliseconds elapsed from creation time.
+            If the type of expires_on is datetime, expiration time will be set
+            absolute to the time provided. If no time zone info is provided, this
+            will be interpreted as UTC.
         :paramtype expires_on: datetime or int
         :keyword str permissions:
             Optional and only valid if Hierarchical Namespace

@@ -138,7 +138,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
-        self.configure_encryption(kwargs)
+        self._configure_encryption(kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
