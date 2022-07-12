@@ -296,7 +296,13 @@ class ContainerProxy(object):
     def query_items(
         self,
         query: Union[str, Dict[str, Any]],
-        **kwargs: Any
+        parameters: Optional[List[Dict[str, object]]] = None,
+        partition_key: Optional[Any] = None,
+        enable_cross_partition_query: Optional[bool] = None,  
+        max_item_count: Optional[int] = None, 
+        enable_scan_in_query: Optional[bool] = None, 
+        populate_query_metrics: Optional[bool] = None,
+        **kwargs  # type: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all results matching the given `query`.
 
@@ -348,20 +354,16 @@ class ContainerProxy(object):
         """
         feed_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        max_item_count = kwargs.pop('max_item_count', None)
+        if enable_cross_partition_query is not None:
+            feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        populate_query_metrics = kwargs.pop('populate_query_metrics', None)
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
-        enable_scan_in_query = kwargs.pop('enable_scan_in_query', None)
         if enable_scan_in_query is not None:
             feed_options["enableScanInQuery"] = enable_scan_in_query
-        partition_key = kwargs.pop('partition_key', None)
         if partition_key is not None:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
-        else:
-            feed_options["enableCrossPartitionQuery"] = True
         max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
         if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
