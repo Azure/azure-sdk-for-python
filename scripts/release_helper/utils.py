@@ -18,6 +18,7 @@ AUTO_ASSIGN_LABEL = 'assigned'
 AUTO_PARSE_LABEL = 'auto-link'
 AUTO_CLOSE_LABEL = 'auto-close'
 MULTI_LINK_LABEL = 'MultiLink'
+INCONSISTENT_TAG = 'Inconsistent tag'
 
 _LOG = logging.getLogger(__name__)
 

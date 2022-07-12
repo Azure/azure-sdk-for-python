@@ -16,8 +16,7 @@ _CONFIGURED = 'Configured'
 _AUTO_ASK_FOR_CHECK = 'auto-ask-check'
 _BRANCH_ATTENTION = 'base-branch-attention'
 _7_DAY_ATTENTION = '7days attention'
-_MULTI_API = 'MultiAPI'
-_INCONSISTENT_TAG = 'Inconsistent tag'
+_MultiAPI = 'MultiAPI'
 # record published issues
 _FILE_OUT = 'published_issues_python.csv'
 
@@ -49,17 +48,11 @@ class IssueProcessPython(IssueProcess):
         # get readme_link
         self.get_readme_link(origin_link)
 
-    def check_tag_consistency(self) -> None:
-        self.target_readme_tag = self.target_readme_tag.replace('tag-', '')
-        super().check_tag_consistency()
-        if self.default_readme_tag != self.target_readme_tag:
-            self.add_label(_INCONSISTENT_TAG)
-
     def multi_api_policy(self) -> None:
         if self.is_multiapi:
             self.bot_advice.append('MultiAPI')
-            if _MULTI_API not in self.issue_package.labels_name:
-                self.add_label(_MULTI_API)
+            if _MultiAPI not in self.issue_package.labels_name:
+                self.add_label(_MultiAPI)
 
     def get_package_and_output(self) -> None:
         self.init_readme_link()
@@ -69,7 +62,7 @@ class IssueProcessPython(IssueProcess):
         pattern_output = re.compile(r'\$\(python-sdks-folder\)/(.*?)/azure-')
         self.package_name = pattern_package.search(contents).group().split(':')[-1].strip()
         self.output_folder = pattern_output.search(contents).group().split('/')[1]
-        self.is_multiapi = (_MULTI_API in self.issue_package.labels_name) or ('multi-api' in contents)
+        self.is_multiapi = (_MultiAPI in self.issue_package.labels_name) or ('multi-api' in contents)
 
     def get_edit_content(self) -> None:
         self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}\n{self.package_name}' \
@@ -115,9 +108,6 @@ class IssueProcessPython(IssueProcess):
     def attention_policy(self):
         if _BRANCH_ATTENTION in self.issue_package.labels_name:
             self.bot_advice.append('new version is 0.0.0, please check base branch!')
-
-        if _INCONSISTENT_TAG in self.issue_package.labels_name:
-            self.bot_advice.append('Attention to inconsistent tag')
 
     def remind_policy(self):
         if self.delay_time >= 15 and _7_DAY_ATTENTION in self.issue_package.labels_name and self.date_from_target < 0:
