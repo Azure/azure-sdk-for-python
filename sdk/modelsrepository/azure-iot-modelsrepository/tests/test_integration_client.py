@@ -4,8 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
-from parameterized import parameterized
-from devtools_testutils import AzureTestCase
+import pytest
+import functools
+from devtools_testutils import AzureRecordedTestCase
 from azure.core.exceptions import ResourceNotFoundError
 from azure.iot.modelsrepository import (
     ModelsRepositoryClient,
@@ -14,114 +15,113 @@ from azure.iot.modelsrepository import (
     DEPENDENCY_MODE_TRY_FROM_EXPANDED,
     ModelError,
 )
+from azure.iot.modelsrepository._resolver import HttpFetcher
 
-LOCAL_REPO = "local repo"
-REMOTE_REPO = "remote_repo"
-
-
-################################
-# Client Fixture Mixin Classes #
-################################
+LOCAL_REPO = "Local Repository"
+REMOTE_REPO = "Remote Repository"
 
 
-class RemoteRepositoryMixin(object):
-    def setUp(self):
-        self.client = ModelsRepositoryClient()
-        self.client_type = REMOTE_REPO
-        super(RemoteRepositoryMixin, self).setUp()
-
-    def tearDown(self):
-        self.client.close()
-        super(RemoteRepositoryMixin, self).tearDown()
+@pytest.fixture(params=[REMOTE_REPO, LOCAL_REPO], autouse=True)
+def client_type(request):
+    return request.param
 
 
-class LocalRepositoryMixin(object):
-    def setUp(self):
+@pytest.fixture
+def client(client_type):
+    if client_type == REMOTE_REPO:
+        client = ModelsRepositoryClient()
+    elif client_type == LOCAL_REPO:
         test_dir = os.path.dirname(os.path.abspath(__file__))
         local_repo = os.path.join(test_dir, "local_repository")
-        self.client = ModelsRepositoryClient(repository_location=local_repo)
-        self.client_type = LOCAL_REPO
-        super(LocalRepositoryMixin, self).setUp()
-
-    def tearDown(self):
-        self.client.close()
-        super(LocalRepositoryMixin, self).tearDown()
+        client = ModelsRepositoryClient(repository_location=local_repo)
+    else:
+        raise Exception("Bad fixture")
+    yield client
+    client.close()
 
 
-###########################
-# Test Case Mixin Classes #
-###########################
+def skip_remote(test_fn):
+    """This decorator can be added to a test function to skip it for remote clients if
+    insufficent data exists on the remote test repository"""
+    @functools.wraps(test_fn)
+    def wrapper(*args, **kwargs):
+        # A bit of a hack - since we can't easily access the client_type fixture here,
+        # instead check the type of the client's fetcher. HttpFetcher means remote.
+        client = kwargs["client"]
+        if type(client.fetcher) is HttpFetcher:
+            return pytest.skip("Insufficient test data")
+        else:
+            return test_fn(*args, **kwargs)
+    return wrapper
 
 
-class GetModelsDependencyModeEnabledIntegrationTestCaseMixin(object):
-    def test_dtmi_mismatch_casing(self):
+@pytest.mark.describe(".get_models() - Dependency Mode: Enabled")
+class TestGetModelsDependencyModeEnabled(AzureRecordedTestCase):
+    def test_dtmi_mismatch_casing(self, client):
         dtmi = "dtmi:com:example:thermostat;1"
-        with self.assertRaises(ModelError):
-            self.client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_ENABLED)
+        with pytest.raises(ModelError):
+            client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_ENABLED)
 
-    @parameterized.expand(
-        [
-            ("No semicolon", "dtmi:com:example:Thermostat:1"),
-            ("Double colon", "dtmi:com:example::Thermostat;1"),
-            ("No DTMI prefix", "com:example:Thermostat;1"),
-        ]
-    )
-    def test_invalid_dtmi_format(self, _, dtmi):
-        with self.assertRaises(ValueError):
-            self.client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_ENABLED)
+    @pytest.mark.parametrize("dtmi", [
+        pytest.param("dtmi:com:example:Thermostat:1", id="No semicolon"),
+        pytest.param("dtmi:com:example::Thermostat;1", id="Double colon"),
+        pytest.param("com:example:Thermostat;1", id="No DTMI prefix"),
+    ])
+    def test_invalid_dtmi_format(self, client, dtmi):
+        with pytest.raises(ValueError):
+            client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_ENABLED)
 
-    def test_nonexistant_dtdl_doc(self):
+    def test_nonexistant_dtdl_doc(self, client):
         dtmi = "dtmi:com:example:thermojax;999"
-        with self.assertRaises(ResourceNotFoundError):
-            self.client.get_models(dtmi)
+        with pytest.raises(ResourceNotFoundError):
+            client.get_models(dtmi)
 
-    def test_nonexistent_dependency_dtdl_doc(self):
+    def test_nonexistent_dependency_dtdl_doc(self, client):
         dtmi = "dtmi:com:example:invalidmodel;1"
-        with self.assertRaises(ResourceNotFoundError):
-            self.client.get_models(dtmi)
+        with pytest.raises(ResourceNotFoundError):
+            client.get_models(dtmi)
 
-    def test_single_dtmi_no_components_no_extends(self):
+    def test_single_dtmi_no_components_no_extends(self, client):
         dtmi = "dtmi:com:example:Thermostat;1"
-        model_map = self.client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_ENABLED)
+        model_map = client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_ENABLED)
 
-        self.assertTrue(len(model_map) == 1)
-        self.assertTrue(dtmi in model_map.keys())
+        assert len(model_map) == 1
+        assert dtmi in model_map.keys()
         model = model_map[dtmi]
-        self.assertTrue(model["@id"] == dtmi)
+        assert model["@id"] == dtmi
 
-    def test_multiple_dtmis_no_components_no_extends(self):
+    def test_multiple_dtmis_no_components_no_extends(self, client):
         dtmi1 = "dtmi:com:example:Thermostat;1"
         dtmi2 = "dtmi:azure:DeviceManagement:DeviceInformation;1"
-        model_map = self.client.get_models(
+        model_map = client.get_models(
             [dtmi1, dtmi2], dependency_resolution=DEPENDENCY_MODE_ENABLED
         )
 
-        self.assertTrue(len(model_map) == 2)
-        self.assertTrue(dtmi1 in model_map.keys())
-        self.assertTrue(dtmi2 in model_map.keys())
+        assert len(model_map) == 2
+        assert dtmi1 in model_map.keys()
+        assert dtmi2 in model_map.keys()
         model1 = model_map[dtmi1]
         model2 = model_map[dtmi2]
-        self.assertTrue(model1["@id"] == dtmi1)
-        self.assertTrue(model2["@id"] == dtmi2)
+        assert model1["@id"] == dtmi1
+        assert model2["@id"] == dtmi2
 
-    def test_single_dtmi_with_component_deps(self):
+    def test_single_dtmi_with_component_deps(self, client):
         root_dtmi = "dtmi:com:example:TemperatureController;1"
         expected_deps = [
             "dtmi:com:example:Thermostat;1",
             "dtmi:azure:DeviceManagement:DeviceInformation;1",
         ]
         expected_dtmis = [root_dtmi] + expected_deps
-        model_map = self.client.get_models(root_dtmi, dependency_resolution=DEPENDENCY_MODE_ENABLED)
+        model_map = client.get_models(root_dtmi, dependency_resolution=DEPENDENCY_MODE_ENABLED)
 
-        self.assertTrue(len(model_map) == len(expected_dtmis))
+        assert len(model_map) == len(expected_dtmis)
         for dtmi in expected_dtmis:
-            self.assertTrue(dtmi in model_map.keys())
+            assert dtmi in model_map.keys()
             model = model_map[dtmi]
-            self.assertTrue(model["@id"] == dtmi)
+            assert model["@id"] == dtmi
 
-    def test_multiple_dtmis_with_component_deps(self):
-        if self.client_type == REMOTE_REPO:
-            self.skipTest("Insufficient data")
+    @skip_remote
+    def test_multiple_dtmis_with_component_deps(self, client):
         root_dtmi1 = "dtmi:com:example:Phone;2"
         root_dtmi2 = "dtmi:com:example:TemperatureController;1"
         expected_deps = [
@@ -131,19 +131,18 @@ class GetModelsDependencyModeEnabledIntegrationTestCaseMixin(object):
             "dtmi:com:example:Camera;3",
         ]
         expected_dtmis = [root_dtmi1, root_dtmi2] + expected_deps
-        model_map = self.client.get_models(
+        model_map = client.get_models(
             [root_dtmi1, root_dtmi2], dependency_resolution=DEPENDENCY_MODE_ENABLED
         )
 
-        self.assertTrue(len(model_map) == len(expected_dtmis))
+        assert len(model_map) == len(expected_dtmis)
         for dtmi in expected_dtmis:
-            self.assertTrue(dtmi in model_map.keys())
+            assert dtmi in model_map.keys()
             model = model_map[dtmi]
-            self.assertTrue(model["@id"] == dtmi)
+            assert model["@id"] == dtmi
 
-    def test_multiple_dtmis_with_extends_deps_single_dtmi(self):
-        if self.client_type == REMOTE_REPO:
-            self.skipTest("Insufficient data")
+    @skip_remote
+    def test_multiple_dtmis_with_extends_deps_single_dtmi(self, client, client_type):
         root_dtmi1 = "dtmi:com:example:TemperatureController;1"
         root_dtmi2 = "dtmi:com:example:ConferenceRoom;1"
         expected_deps = [
@@ -152,19 +151,18 @@ class GetModelsDependencyModeEnabledIntegrationTestCaseMixin(object):
             "dtmi:com:example:Room;1",
         ]
         expected_dtmis = [root_dtmi1, root_dtmi2] + expected_deps
-        model_map = self.client.get_models(
+        model_map = client.get_models(
             [root_dtmi1, root_dtmi2], dependency_resolution=DEPENDENCY_MODE_ENABLED
         )
 
-        self.assertTrue(len(model_map) == len(expected_dtmis))
+        assert len(model_map) == len(expected_dtmis)
         for dtmi in expected_dtmis:
-            self.assertTrue(dtmi in model_map.keys())
+            assert dtmi in model_map.keys()
             model = model_map[dtmi]
-            self.assertTrue(model["@id"] == dtmi)
+            assert model["@id"] == dtmi
 
-    def test_multiple_dtmis_with_extends_deps_multiple_dtmi(self):
-        if self.client_type == REMOTE_REPO:
-            self.skipTest("Insufficient data")
+    @skip_remote
+    def test_multiple_dtmis_with_extends_deps_multiple_dtmi(self, client):
         root_dtmi1 = "dtmi:com:example:TemperatureController;1"
         root_dtmi2 = "dtmi:com:example:ColdStorage;1"
         expected_deps = [
@@ -174,244 +172,234 @@ class GetModelsDependencyModeEnabledIntegrationTestCaseMixin(object):
             "dtmi:com:example:Freezer;1",
         ]
         expected_dtmis = [root_dtmi1, root_dtmi2] + expected_deps
-        model_map = self.client.get_models(
+        model_map = client.get_models(
             [root_dtmi1, root_dtmi2], dependency_resolution=DEPENDENCY_MODE_ENABLED
         )
 
-        self.assertTrue(len(model_map) == len(expected_dtmis))
+        assert len(model_map) == len(expected_dtmis)
         for dtmi in expected_dtmis:
-            self.assertTrue(dtmi in model_map.keys())
+            assert dtmi in model_map.keys()
             model = model_map[dtmi]
-            self.assertTrue(model["@id"] == dtmi)
+            assert model["@id"] == dtmi
 
-    def test_single_dtmi_with_extends_single_model_inline(self):
-        if self.client_type == REMOTE_REPO:
-            self.skipTest("Insufficient data")
+    @skip_remote
+    def test_single_dtmi_with_extends_single_model_inline(self, client, client_type):
         dtmi = "dtmi:com:example:base;1"
-        model_map = self.client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_ENABLED)
+        model_map = client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_ENABLED)
 
-        self.assertTrue(len(model_map) == 1)
-        self.assertTrue(dtmi in model_map.keys())
+        assert len(model_map) == 1
+        assert dtmi in model_map.keys()
         model = model_map[dtmi]
-        self.assertTrue(model["@id"] == dtmi)
+        assert model["@id"] == dtmi
 
-    def test_single_dtmi_with_extends_mixed_inline_and_dtmi(self):
-        if self.client_type == REMOTE_REPO:
-            self.skipTest("Insufficient data")
+    @skip_remote
+    def test_single_dtmi_with_extends_mixed_inline_and_dtmi(self, client, client_type):
         root_dtmi = "dtmi:com:example:base;2"
         expected_deps = ["dtmi:com:example:Freezer;1", "dtmi:com:example:Thermostat;1"]
         expected_dtmis = [root_dtmi] + expected_deps
-        model_map = self.client.get_models(root_dtmi, dependency_resolution=DEPENDENCY_MODE_ENABLED)
+        model_map = client.get_models(root_dtmi, dependency_resolution=DEPENDENCY_MODE_ENABLED)
 
-        self.assertTrue(len(model_map) == len(expected_dtmis))
+        assert len(model_map) == len(expected_dtmis)
         for dtmi in expected_dtmis:
-            self.assertTrue(dtmi in model_map.keys())
+            assert dtmi in model_map.keys()
             model = model_map[dtmi]
-            self.assertTrue(model["@id"] == dtmi)
+            assert model["@id"] == dtmi
 
-    def test_duplicate_dtmi(self):
+    def test_duplicate_dtmi(self, client):
         dtmi1 = "dtmi:azure:DeviceManagement:DeviceInformation;1"
         dtmi2 = "dtmi:azure:DeviceManagement:DeviceInformation;1"
-        model_map = self.client.get_models(
+        model_map = client.get_models(
             [dtmi1, dtmi1], dependency_resolution=DEPENDENCY_MODE_ENABLED
         )
 
-        self.assertTrue(len(model_map) == 1)
-        self.assertTrue(dtmi1 in model_map.keys())
-        self.assertTrue(dtmi2 in model_map.keys())
+        assert len(model_map) == 1
+        assert dtmi1 in model_map.keys()
+        assert dtmi2 in model_map.keys()
         model = model_map[dtmi1]
-        self.assertTrue(model["@id"] == dtmi1 == dtmi2)
+        assert model["@id"] == dtmi1 == dtmi2
 
 
-class GetModelsDependencyModeDisabledIntegrationTestCaseMixin(object):
-    def test_dtmi_mismatch_casing(self):
+@pytest.mark.describe(".get_models() - Dependency Mode: Disabled")
+class TestGetModelsDependencyModeDisabled(AzureRecordedTestCase):
+    def test_dtmi_mismatch_casing(self, client):
         dtmi = "dtmi:com:example:thermostat;1"
-        with self.assertRaises(ModelError):
-            self.client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_DISABLED)
+        with pytest.raises(ModelError):
+            client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_DISABLED)
 
-    @parameterized.expand(
-        [
-            ("No semicolon", "dtmi:com:example:Thermostat:1"),
-            ("Double colon", "dtmi:com:example::Thermostat;1"),
-            ("No DTMI prefix", "com:example:Thermostat;1"),
-        ]
-    )
-    def test_invalid_dtmi_format(self, _, dtmi):
-        with self.assertRaises(ValueError):
-            self.client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_DISABLED)
+    @pytest.mark.parametrize("dtmi", [
+        pytest.param("dtmi:com:example:Thermostat:1", id="No semicolon"),
+        pytest.param("dtmi:com:example::Thermostat;1", id="Double colon"),
+        pytest.param("com:example:Thermostat;1", id="No DTMI prefix"),
+    ])
+    def test_invalid_dtmi_format(self, client, dtmi):
+        with pytest.raises(ValueError):
+            client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_DISABLED)
 
-    def test_nonexistant_dtdl_doc(self):
+    def test_nonexistant_dtdl_doc(self, client):
         dtmi = "dtmi:com:example:thermojax;999"
-        with self.assertRaises(ResourceNotFoundError):
-            self.client.get_models(dtmi)
+        with pytest.raises(ResourceNotFoundError):
+            client.get_models(dtmi)
 
-    def test_nonexistent_dependency_dtdl_doc(self):
+    def test_nonexistent_dependency_dtdl_doc(self, client):
         dtmi = "dtmi:com:example:invalidmodel;1"
-        with self.assertRaises(ResourceNotFoundError):
-            self.client.get_models(dtmi)
+        with pytest.raises(ResourceNotFoundError):
+            client.get_models(dtmi)
 
-    def test_single_dtmi_no_components_no_extends(self):
+    def test_single_dtmi_no_components_no_extends(self, client):
         dtmi = "dtmi:com:example:Thermostat;1"
-        model_map = self.client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_DISABLED)
+        model_map = client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_DISABLED)
 
-        self.assertTrue(len(model_map) == 1)
-        self.assertTrue(dtmi in model_map.keys())
+        assert len(model_map) == 1
+        assert dtmi in model_map.keys()
         model = model_map[dtmi]
-        self.assertTrue(model["@id"] == dtmi)
+        assert model["@id"] == dtmi
 
-    def test_multiple_dtmis_no_components_no_extends(self):
+    def test_multiple_dtmis_no_components_no_extends(self, client):
         dtmi1 = "dtmi:com:example:Thermostat;1"
         dtmi2 = "dtmi:azure:DeviceManagement:DeviceInformation;1"
-        model_map = self.client.get_models(
+        model_map = client.get_models(
             [dtmi1, dtmi2], dependency_resolution=DEPENDENCY_MODE_DISABLED
         )
 
-        self.assertTrue(len(model_map) == 2)
-        self.assertTrue(dtmi1 in model_map.keys())
-        self.assertTrue(dtmi2 in model_map.keys())
+        assert len(model_map) == 2
+        assert dtmi1 in model_map.keys()
+        assert dtmi2 in model_map.keys()
         model1 = model_map[dtmi1]
         model2 = model_map[dtmi2]
-        self.assertTrue(model1["@id"] == dtmi1)
-        self.assertTrue(model2["@id"] == dtmi2)
+        assert model1["@id"] == dtmi1
+        assert model2["@id"] == dtmi2
 
-    def test_single_dtmi_with_component_deps(self):
+    def test_single_dtmi_with_component_deps(self, client):
         dtmi = "dtmi:com:example:TemperatureController;1"
-        model_map = self.client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_DISABLED)
+        model_map = client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_DISABLED)
 
-        self.assertTrue(len(model_map) == 1)
-        self.assertTrue(dtmi in model_map.keys())
+        assert len(model_map) == 1
+        assert dtmi in model_map.keys()
         model = model_map[dtmi]
-        self.assertTrue(model["@id"] == dtmi)
+        assert model["@id"] == dtmi
 
-    def test_multiple_dtmis_with_component_deps(self):
-        if self.client_type == REMOTE_REPO:
-            self.skipTest("Insufficient data")
+    @skip_remote
+    def test_multiple_dtmis_with_component_deps(self, client):
         dtmi1 = "dtmi:com:example:Phone;2"
         dtmi2 = "dtmi:com:example:TemperatureController;1"
-        model_map = self.client.get_models(
+        model_map = client.get_models(
             [dtmi1, dtmi2], dependency_resolution=DEPENDENCY_MODE_DISABLED
         )
 
-        self.assertTrue(len(model_map) == 2)
-        self.assertTrue(dtmi1 in model_map.keys())
-        self.assertTrue(dtmi2 in model_map.keys())
+        assert len(model_map) == 2
+        assert dtmi1 in model_map.keys()
+        assert dtmi2 in model_map.keys()
         model1 = model_map[dtmi1]
         model2 = model_map[dtmi2]
-        self.assertTrue(model1["@id"] == dtmi1)
-        self.assertTrue(model2["@id"] == dtmi2)
+        assert model1["@id"] == dtmi1
+        assert model2["@id"] == dtmi2
 
-    def test_multiple_dtmis_with_extends_deps_single_dtmi(self):
-        if self.client_type == REMOTE_REPO:
-            self.skipTest("Insufficient data")
+    @skip_remote
+    def test_multiple_dtmis_with_extends_deps_single_dtmi(self, client):
         dtmi1 = "dtmi:com:example:TemperatureController;1"
         dtmi2 = "dtmi:com:example:ConferenceRoom;1"
-        model_map = self.client.get_models(
+        model_map = client.get_models(
             [dtmi1, dtmi2], dependency_resolution=DEPENDENCY_MODE_DISABLED
         )
 
-        self.assertTrue(len(model_map) == 2)
-        self.assertTrue(dtmi1 in model_map.keys())
-        self.assertTrue(dtmi2 in model_map.keys())
+        assert len(model_map) == 2
+        assert dtmi1 in model_map.keys()
+        assert dtmi2 in model_map.keys()
         model1 = model_map[dtmi1]
         model2 = model_map[dtmi2]
-        self.assertTrue(model1["@id"] == dtmi1)
-        self.assertTrue(model2["@id"] == dtmi2)
+        assert model1["@id"] == dtmi1
+        assert model2["@id"] == dtmi2
 
-    def test_multiple_dtmis_with_extends_deps_multiple_dtmi(self):
-        if self.client_type == REMOTE_REPO:
-            self.skipTest("Insufficient data")
+    @skip_remote
+    def test_multiple_dtmis_with_extends_deps_multiple_dtmi(self, client):
         dtmi1 = "dtmi:com:example:TemperatureController;1"
         dtmi2 = "dtmi:com:example:ColdStorage;1"
-        model_map = self.client.get_models(
+        model_map = client.get_models(
             [dtmi1, dtmi2], dependency_resolution=DEPENDENCY_MODE_DISABLED
         )
 
-        self.assertTrue(len(model_map) == 2)
-        self.assertTrue(dtmi1 in model_map.keys())
-        self.assertTrue(dtmi2 in model_map.keys())
+        assert len(model_map) == 2
+        assert dtmi1 in model_map.keys()
+        assert dtmi2 in model_map.keys()
         model1 = model_map[dtmi1]
         model2 = model_map[dtmi2]
-        self.assertTrue(model1["@id"] == dtmi1)
-        self.assertTrue(model2["@id"] == dtmi2)
+        assert model1["@id"] == dtmi1
+        assert model2["@id"] == dtmi2
 
-    def test_single_dtmi_with_extends_single_model_inline(self):
-        if self.client_type == REMOTE_REPO:
-            self.skipTest("Insufficient data")
+    @skip_remote
+    def test_single_dtmi_with_extends_single_model_inline(self, client):
         dtmi = "dtmi:com:example:base;1"
-        model_map = self.client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_DISABLED)
+        model_map = client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_DISABLED)
 
-        self.assertTrue(len(model_map) == 1)
-        self.assertTrue(dtmi in model_map.keys())
+        assert len(model_map) == 1
+        assert dtmi in model_map.keys()
         model = model_map[dtmi]
-        self.assertTrue(model["@id"] == dtmi)
+        assert model["@id"] == dtmi
 
-    def test_single_dtmi_with_extends_mixed_inline_and_dtmi(self):
-        if self.client_type == REMOTE_REPO:
-            self.skipTest("Insufficient data")
+    @skip_remote
+    def test_single_dtmi_with_extends_mixed_inline_and_dtmi(self, client):
         dtmi = "dtmi:com:example:base;2"
-        model_map = self.client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_DISABLED)
+        model_map = client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_DISABLED)
 
-        self.assertTrue(len(model_map) == 1)
-        self.assertTrue(dtmi in model_map.keys())
+        assert len(model_map) == 1
+        assert dtmi in model_map.keys()
         model = model_map[dtmi]
-        self.assertTrue(model["@id"] == dtmi)
+        assert model["@id"] == dtmi
 
-    def test_duplicate_dtmi(self):
+    def test_duplicate_dtmi(self, client):
         dtmi1 = "dtmi:azure:DeviceManagement:DeviceInformation;1"
         dtmi2 = "dtmi:azure:DeviceManagement:DeviceInformation;1"
-        model_map = self.client.get_models(
+        model_map = client.get_models(
             [dtmi1, dtmi1], dependency_resolution=DEPENDENCY_MODE_DISABLED
         )
 
-        self.assertTrue(len(model_map) == 1)
-        self.assertTrue(dtmi1 in model_map.keys())
-        self.assertTrue(dtmi2 in model_map.keys())
+        assert len(model_map) == 1
+        assert dtmi1 in model_map.keys()
+        assert dtmi2 in model_map.keys()
         model = model_map[dtmi1]
-        self.assertTrue(model["@id"] == dtmi1 == dtmi2)
+        assert model["@id"] == dtmi1 == dtmi2
 
 
-class GetModelsDependencyModeTryFromExpandedIntegrationTestCaseMixin(object):
-    def test_dtmi_mismatch_casing(self):
+@pytest.mark.describe(".get_models() - Dependency Mode: Try From Expanded")
+class TestGetModelsDependencyModeTryFromExpanded(AzureRecordedTestCase):
+    def test_dtmi_mismatch_casing(self, client):
         dtmi = "dtmi:com:example:thermostat;1"
-        with self.assertRaises(ModelError):
-            self.client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_ENABLED)
+        with pytest.raises(ModelError):
+            client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_TRY_FROM_EXPANDED)
 
-    @parameterized.expand(
-        [
-            ("No semicolon", "dtmi:com:example:Thermostat:1"),
-            ("Double colon", "dtmi:com:example::Thermostat;1"),
-            ("No DTMI prefix", "com:example:Thermostat;1"),
-        ]
-    )
-    def test_invalid_dtmi_format(self, _, dtmi):
-        with self.assertRaises(ValueError):
-            self.client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_ENABLED)
+    @pytest.mark.parametrize("dtmi", [
+        pytest.param("dtmi:com:example:Thermostat:1", id="No semicolon"),
+        pytest.param("dtmi:com:example::Thermostat;1", id="Double colon"),
+        pytest.param("com:example:Thermostat;1", id="No DTMI prefix"),
+    ])
+    def test_invalid_dtmi_format(self, dtmi, client):
+        with pytest.raises(ValueError):
+            client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_TRY_FROM_EXPANDED)
 
-    def test_nonexistant_dtdl_doc(self):
+    def test_nonexistant_dtdl_doc(self, client):
         dtmi = "dtmi:com:example:thermojax;999"
-        with self.assertRaises(ResourceNotFoundError):
-            self.client.get_models(dtmi)
+        with pytest.raises(ResourceNotFoundError):
+            client.get_models(dtmi)
 
-    def test_single_dtmi_with_component_deps_expanded_json(self):
+    def test_single_dtmi_with_component_deps_expanded_json(self, client):
         root_dtmi = "dtmi:com:example:TemperatureController;1"
         expected_deps = [
             "dtmi:com:example:Thermostat;1",
             "dtmi:azure:DeviceManagement:DeviceInformation;1",
         ]
         expected_dtmis = [root_dtmi] + expected_deps
-        model_map = self.client.get_models(
+        model_map = client.get_models(
             root_dtmi, dependency_resolution=DEPENDENCY_MODE_TRY_FROM_EXPANDED
         )
 
-        self.assertTrue(len(model_map) == len(expected_dtmis))
+        assert len(model_map) == len(expected_dtmis)
         for dtmi in expected_dtmis:
-            self.assertTrue(dtmi in model_map.keys())
+            assert dtmi in model_map.keys()
             model = model_map[dtmi]
-            self.assertTrue(model["@id"] == dtmi)
+            assert model["@id"] == dtmi
 
-    def test_single_dtmi_with_component_deps_no_expanded_json(self):
-        if self.client_type == REMOTE_REPO:
-            self.skipTest("Insufficient data")
+    @skip_remote
+    def test_single_dtmi_with_component_deps_no_expanded_json(self, client):
         # this tests the fallback procedure when no expanded doc exists
         root_dtmi = "dtmi:com:example:Phone;2"
         expected_deps = [
@@ -420,19 +408,18 @@ class GetModelsDependencyModeTryFromExpandedIntegrationTestCaseMixin(object):
             "dtmi:com:example:Camera;3",
         ]
         expected_dtmis = [root_dtmi] + expected_deps
-        model_map = self.client.get_models(
+        model_map = client.get_models(
             root_dtmi, dependency_resolution=DEPENDENCY_MODE_TRY_FROM_EXPANDED
         )
 
-        self.assertTrue(len(model_map) == len(expected_dtmis))
+        assert len(model_map) == len(expected_dtmis)
         for dtmi in expected_dtmis:
-            self.assertTrue(dtmi in model_map.keys())
+            assert dtmi in model_map.keys()
             model = model_map[dtmi]
-            self.assertTrue(model["@id"] == dtmi)
+            assert model["@id"] == dtmi
 
-    def test_multiple_dtmis_with_component_deps_no_expanded_json(self):
-        if self.client_type == REMOTE_REPO:
-            self.skipTest("Insufficient data")
+    @skip_remote
+    def test_multiple_dtmis_with_component_deps_no_expanded_json(self, client):
         # this tests the fallback procedure when no expanded doc exists
         root_dtmi1 = "dtmi:com:example:Phone;2"
         root_dtmi2 = "dtmi:com:example:Freezer;1"
@@ -443,19 +430,18 @@ class GetModelsDependencyModeTryFromExpandedIntegrationTestCaseMixin(object):
             "dtmi:com:example:Thermostat;1",
         ]
         expected_dtmis = [root_dtmi1, root_dtmi2] + expected_deps
-        model_map = self.client.get_models(
+        model_map = client.get_models(
             [root_dtmi1, root_dtmi2], dependency_resolution=DEPENDENCY_MODE_TRY_FROM_EXPANDED
         )
 
-        self.assertTrue(len(model_map) == len(expected_dtmis))
+        assert len(model_map) == len(expected_dtmis)
         for dtmi in expected_dtmis:
-            self.assertTrue(dtmi in model_map.keys())
+            assert dtmi in model_map.keys()
             model = model_map[dtmi]
-            self.assertTrue(model["@id"] == dtmi)
+            assert model["@id"] == dtmi
 
-    def test_multiple_dtmis_with_component_deps_extends_deps_mixed_expanded_json(self):
-        if self.client_type == REMOTE_REPO:
-            self.skipTest("Insufficient data")
+    @skip_remote
+    def test_multiple_dtmis_with_component_deps_extends_deps_mixed_expanded_json(self, client):
         root_dtmi1 = "dtmi:com:example:ColdStorage;1"  # no expanded doc
         root_dtmi2 = "dtmi:com:example:TemperatureController;1"  # has expanded doc
         expected_deps = [
@@ -465,75 +451,30 @@ class GetModelsDependencyModeTryFromExpandedIntegrationTestCaseMixin(object):
             "dtmi:com:example:Freezer;1",
         ]
         expected_dtmis = [root_dtmi1, root_dtmi2] + expected_deps
-        model_map = self.client.get_models(
-            [root_dtmi1, root_dtmi2], dependency_resolution=DEPENDENCY_MODE_ENABLED
+        model_map = client.get_models(
+            [root_dtmi1, root_dtmi2], dependency_resolution=DEPENDENCY_MODE_TRY_FROM_EXPANDED
         )
 
-        self.assertTrue(len(model_map) == len(expected_dtmis))
+        assert len(model_map) == len(expected_dtmis)
         for dtmi in expected_dtmis:
-            self.assertTrue(dtmi in model_map.keys())
+            assert dtmi in model_map.keys()
             model = model_map[dtmi]
-            self.assertTrue(model["@id"] == dtmi)
+            assert model["@id"] == dtmi
 
-    def test_dangling_expanded(self):
-        if self.client_type == REMOTE_REPO:
-            self.skipTest("Insufficient data")
+    @skip_remote
+    def test_dangling_expanded(self, client):
         root_dtmi = "dtmi:com:example:DanglingExpanded;1"
         expected_deps = [
             "dtmi:com:example:Thermostat;1",
             "dtmi:azure:DeviceManagement:DeviceInformation;1",
         ]
         expected_dtmis = [root_dtmi] + expected_deps
-        model_map = self.client.get_models(
+        model_map = client.get_models(
             root_dtmi, dependency_resolution=DEPENDENCY_MODE_TRY_FROM_EXPANDED
         )
 
-        self.assertTrue(len(model_map) == len(expected_dtmis))
+        assert len(model_map) == len(expected_dtmis)
         for dtmi in expected_dtmis:
-            self.assertTrue(dtmi in model_map.keys())
+            assert dtmi in model_map.keys()
             model = model_map[dtmi]
-            self.assertTrue(model["@id"] == dtmi)
-
-
-#######################
-# Actual Test Classes #
-#######################
-
-
-class TestIntegrationGetModelsDependencyModeEnabledLocalRepository(
-    GetModelsDependencyModeEnabledIntegrationTestCaseMixin, LocalRepositoryMixin, AzureTestCase
-):
-    pass
-
-
-class TestIntegrationGetModelsDependencyModeDisabledLocalRepository(
-    GetModelsDependencyModeDisabledIntegrationTestCaseMixin, LocalRepositoryMixin, AzureTestCase
-):
-    pass
-
-
-class TestIntegrationGetModelsDependencyModeTryFromExpandedLocalRepository(
-    GetModelsDependencyModeTryFromExpandedIntegrationTestCaseMixin,
-    LocalRepositoryMixin,
-    AzureTestCase,
-):
-    pass
-
-
-class TestIntegrationGetModelsDependencyModeEnabledRemoteRepository(
-    GetModelsDependencyModeEnabledIntegrationTestCaseMixin, RemoteRepositoryMixin, AzureTestCase
-):
-    pass
-
-class TestIntegrationGetModelsDependencyModeDisabledRemoteRepository(
-    GetModelsDependencyModeDisabledIntegrationTestCaseMixin, RemoteRepositoryMixin, AzureTestCase
-):
-    pass
-
-
-class TestIntegrationGetModelsDependencyModeTryFromExpandedRemoteRepository(
-    GetModelsDependencyModeTryFromExpandedIntegrationTestCaseMixin,
-    RemoteRepositoryMixin,
-    AzureTestCase,
-):
-    pass
+            assert model["@id"] == dtmi
