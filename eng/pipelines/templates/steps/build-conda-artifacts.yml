@@ -84,13 +84,13 @@ steps:
       ArtifactPath: '$(Agent.BuildDirectory)/conda/output'
       ArtifactName: 'conda'
 
-  # - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
-  #   displayName: 'Upload Conda Package SBOM'
-  #   condition: succeededOrFailed()
-  #   inputs:
-  #     BuildDropPath: '$(Agent.BuildDirectory)/conda/manifest'
+  - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+    displayName: 'Upload Conda Package SBOM'
+    condition: succeededOrFailed()
+    inputs:
+      BuildDropPath: '$(Agent.BuildDirectory)/conda/manifest'
 
-  # - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-  #   parameters:
-  #     ArtifactPath: '$(Agent.BuildDirectory)/conda/manifest/_manifest'
-  #     ArtifactName: 'conda_manifest'
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Agent.BuildDirectory)/conda/manifest/_manifest'
+      ArtifactName: 'conda_manifest'

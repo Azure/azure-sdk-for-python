@@ -70,19 +70,19 @@ steps:
       twine check $(Build.ArtifactStagingDirectory)/**/*.zip
     displayName: 'Verify Readme'
 
-  # - task: PythonScript@0
-  #   displayName: 'Generate Docs'
-  #   condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
-  #   inputs:
-  #     scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-  #     arguments: >-
-  #       "$(TargetingString)" 
-  #       --service="${{ parameters.ServiceDirectory }}" 
-  #       --toxenv=sphinx
+  - task: PythonScript@0
+    displayName: 'Generate Docs'
+    condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: >-
+        "$(TargetingString)" 
+        --service="${{ parameters.ServiceDirectory }}" 
+        --toxenv=sphinx
 
-  # - template: /eng/pipelines/templates/steps/run_apistub.yml
-  #   parameters:
-  #     ServiceDirectory: ${{ parameters.ServiceDirectory }}
+  - template: /eng/pipelines/templates/steps/run_apistub.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - ${{ parameters.BeforePublishSteps }}
 
@@ -91,20 +91,20 @@ steps:
       ArtifactPath: '$(Build.ArtifactStagingDirectory)'
       ArtifactName: 'packages'
 
-  # - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-  #   parameters:
-  #     ArtifactPath: '$(Build.SourcesDirectory)/_docs'
-  #     CustomCondition: ${{ parameters.BuildDocs }}
-  #     ArtifactName: 'documentation'
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.SourcesDirectory)/_docs'
+      CustomCondition: ${{ parameters.BuildDocs }}
+      ArtifactName: 'documentation'
 
-  # - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
-  #   displayName: 'Generate BOM'
-  #   condition: succeededOrFailed()
-  #   inputs:
-  #     BuildDropPath: $(Build.ArtifactStagingDirectory)
+  - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+    displayName: 'Generate BOM'
+    condition: succeededOrFailed()
+    inputs:
+      BuildDropPath: $(Build.ArtifactStagingDirectory)
 
-  # - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-  #   parameters:
-  #     ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
-  #     ArtifactName: 'manifest'
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
+      ArtifactName: 'manifest'
 
