@@ -231,9 +231,3 @@ class TestCustomText(TextAnalyticsTest):
             for classification in result.classifications:
                 assert classification.category
                 assert classification.confidence_score
-            for entity in result.entities:
-                assert entity.text
-                assert entity.category
-                assert entity.offset is not None
-                assert entity.length is not None
-                assert entity.confidence_score is not None
