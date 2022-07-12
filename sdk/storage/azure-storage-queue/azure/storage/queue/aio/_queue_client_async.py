@@ -8,43 +8,36 @@
 import functools
 import warnings
 from typing import (  # pylint: disable=unused-import
-    Optional,
-    Any,
-    Dict,
-    List,
-    TYPE_CHECKING,
-)
+    Any, Dict, List, Optional,
+    TYPE_CHECKING)
 
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from azure.core.async_paging import AsyncItemPaged
-
 from .._serialize import get_api_version
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers, serialize_iso
 from .._shared.response_handlers import (
     return_response_headers,
     process_storage_error,
     return_headers_and_deserialized,
 )
-from .._deserialize import deserialize_queue_properties, deserialize_queue_creation
 from .._generated.aio import AzureQueueStorage
-from .._generated.models import SignedIdentifier
-from .._generated.models import QueueMessage as GenQueueMessage
-
+from .._generated.models import SignedIdentifier, QueueMessage as GenQueueMessage
+from .._deserialize import deserialize_queue_properties, deserialize_queue_creation
+from .._encryption import StorageEncryptionMixin
 from .._models import QueueMessage, AccessPolicy
-from ._models import MessagesPaged
-from .._shared.policies_async import ExponentialRetry
 from .._queue_client import QueueClient as QueueClientBase
-
+from ._models import MessagesPaged
 
 if TYPE_CHECKING:
     from .._models import QueueProperties
 
 
-class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
+class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncryptionMixin):
     """A client to interact with a specific Queue.
 
     :param str account_url:
@@ -103,6 +96,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
                                          pipeline=self._pipeline, loop=loop)  # type: ignore
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._loop = loop
+        self._configure_encryption(kwargs)
 
     @distributed_trace_async
     async def create_queue(self, **kwargs):

@@ -5,13 +5,14 @@
 
 import pytest
 import functools
+import datetime
 from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer, is_public_cloud
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
-from azure.ai.textanalytics._lro import TextAnalyticsLROPoller
 from azure.ai.textanalytics import (
-    TextAnalyticsClient
+    TextAnalyticsClient,
+    TextAnalyticsLROPoller
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -34,6 +35,37 @@ class TestCustomText(TextAnalyticsTest):
 
     def _interval(self):
         return 5 if self.is_live else 0
+
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsCustomPreparer()
+    @recorded_by_proxy
+    def test_poller_metadata(
+            self,
+            textanalytics_custom_text_endpoint,
+            textanalytics_custom_text_key,
+            textanalytics_custom_entities_project_name,
+            textanalytics_custom_entities_deployment_name
+    ):
+        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        docs = [{"id": "56", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."}]
+
+        poller = client.begin_recognize_custom_entities(
+            docs,
+            project_name=textanalytics_custom_entities_project_name,
+            deployment_name=textanalytics_custom_entities_deployment_name,
+            show_stats=True,
+            display_name="testing",
+            polling_interval=self._interval(),
+        )
+        poller.result()
+
+        assert isinstance(poller, TextAnalyticsLROPoller)
+        assert isinstance(poller.details["created_on"], datetime.datetime)
+        assert isinstance(poller.details["expires_on"], datetime.datetime)
+        assert isinstance(poller.details["last_modified_on"], datetime.datetime)
+        assert poller.details["display_name"] == 'testing'
+        assert poller.details["id"]
 
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
@@ -199,3 +231,9 @@ class TestCustomText(TextAnalyticsTest):
             for classification in result.classifications:
                 assert classification.category
                 assert classification.confidence_score
+            for entity in result.entities:
+                assert entity.text
+                assert entity.category
+                assert entity.offset is not None
+                assert entity.length is not None
+                assert entity.confidence_score is not None

@@ -65,7 +65,7 @@ class TestLogging(FormRecognizerTest):
         logger.addHandler(mock_handler)
         logger.setLevel(logging.INFO)
 
-        result = client.get_account_info()
+        result = client.get_resource_info()
 
         for message in mock_handler.messages:
             if message.levelname == "INFO":

@@ -9,73 +9,47 @@
         "Connection": "keep-alive",
         "Content-Length": "36",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
         "urlSource": "https://blob_sas_url"
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "50b34ded-48b7-4b61-a7b8-692ddbadc7d8",
+        "apim-request-id": "a98c6a2f-ee11-418e-bad3-e5031a464c15",
         "Content-Length": "0",
-        "Date": "Wed, 25 May 2022 21:40:02 GMT",
-        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/50b34ded-48b7-4b61-a7b8-692ddbadc7d8?api-version=2022-06-30-preview",
+        "Date": "Thu, 23 Jun 2022 23:55:46 GMT",
+        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/a98c6a2f-ee11-418e-bad3-e5031a464c15?api-version=2022-06-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "227"
+        "x-envoy-upstream-service-time": "127"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/50b34ded-48b7-4b61-a7b8-692ddbadc7d8?api-version=2022-06-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/a98c6a2f-ee11-418e-bad3-e5031a464c15?api-version=2022-06-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "32d78899-ab8f-4efd-8f0d-d1ed68d240d0",
+        "apim-request-id": "e8b78e83-444a-4734-9db5-24dc4468dda3",
+        "Content-Length": "82447",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 25 May 2022 21:40:07 GMT",
+        "Date": "Thu, 23 Jun 2022 23:55:52 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "22"
-      },
-      "ResponseBody": {
-        "status": "running",
-        "createdDateTime": "2022-05-25T21:40:02Z",
-        "lastUpdatedDateTime": "2022-05-25T21:40:07Z"
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/50b34ded-48b7-4b61-a7b8-692ddbadc7d8?api-version=2022-06-30-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "b0c09f54-3fb7-4544-b1f7-17b8851b6f5c",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 25 May 2022 21:40:12 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "47"
+        "x-envoy-upstream-service-time": "68"
       },
       "ResponseBody": {
         "status": "succeeded",
-        "createdDateTime": "2022-05-25T21:40:02Z",
-        "lastUpdatedDateTime": "2022-05-25T21:40:08Z",
+        "createdDateTime": "2022-06-23T23:55:47Z",
+        "lastUpdatedDateTime": "2022-06-23T23:55:52Z",
         "analyzeResult": {
           "apiVersion": "2022-06-30-preview",
           "modelId": "prebuilt-receipt",
@@ -101,7 +75,7 @@
                     2.9225,
                     2.8025
                   ],
-                  "confidence": 0.9968395,
+                  "confidence": 0.996,
                   "span": {
                     "offset": 0,
                     "length": 7
@@ -119,7 +93,7 @@
                     1.891,
                     2.8932
                   ],
-                  "confidence": 0.8010327,
+                  "confidence": 0.801,
                   "span": {
                     "offset": 8,
                     "length": 7
@@ -137,7 +111,7 @@
                     1.8671,
                     3.2274
                   ],
-                  "confidence": 0.9934961,
+                  "confidence": 0.993,
                   "span": {
                     "offset": 16,
                     "length": 3
@@ -155,7 +129,7 @@
                     2.1346,
                     3.2895
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 20,
                     "length": 4
@@ -173,7 +147,7 @@
                     2.5548,
                     3.3898
                   ],
-                  "confidence": 0.9972517,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 25,
                     "length": 6
@@ -191,7 +165,7 @@
                     1.848,
                     3.5521
                   ],
-                  "confidence": 0.9614176,
+                  "confidence": 0.961,
                   "span": {
                     "offset": 32,
                     "length": 8
@@ -209,7 +183,7 @@
                     2.6598,
                     3.724
                   ],
-                  "confidence": 0.9976913,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 41,
                     "length": 2
@@ -227,7 +201,7 @@
                     2.9463,
                     3.7574
                   ],
-                  "confidence": 0.9973674,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 44,
                     "length": 5
@@ -245,7 +219,7 @@
                     1.8098,
                     4.2205
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 50,
                     "length": 12
@@ -263,7 +237,7 @@
                     1.7669,
                     4.9319
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 63,
                     "length": 9
@@ -281,7 +255,7 @@
                     2.5691,
                     4.9987
                   ],
-                  "confidence": 0.9974644,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 73,
                     "length": 5
@@ -299,7 +273,7 @@
                     1.7573,
                     5.2517
                   ],
-                  "confidence": 0.9973729,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 79,
                     "length": 5
@@ -317,7 +291,7 @@
                     2.2539,
                     5.2947
                   ],
-                  "confidence": 0.9568331,
+                  "confidence": 0.956,
                   "span": {
                     "offset": 85,
                     "length": 10
@@ -335,7 +309,7 @@
                     3.1517,
                     5.3377
                   ],
-                  "confidence": 0.9880154,
+                  "confidence": 0.988,
                   "span": {
                     "offset": 96,
                     "length": 4
@@ -353,7 +327,7 @@
                     1.7239,
                     6.0204
                   ],
-                  "confidence": 0.9953336,
+                  "confidence": 0.995,
                   "span": {
                     "offset": 101,
                     "length": 1
@@ -371,7 +345,7 @@
                     1.891,
                     6.0299
                   ],
-                  "confidence": 0.9615223,
+                  "confidence": 0.961,
                   "span": {
                     "offset": 103,
                     "length": 10
@@ -389,7 +363,7 @@
                     4.3216,
                     5.9679
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 114,
                     "length": 5
@@ -407,7 +381,7 @@
                     1.6857,
                     6.7652
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 120,
                     "length": 1
@@ -425,7 +399,7 @@
                     1.8815,
                     6.7652
                   ],
-                  "confidence": 0.9974012,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 122,
                     "length": 5
@@ -443,7 +417,7 @@
                     2.5357,
                     6.7652
                   ],
-                  "confidence": 0.9768595,
+                  "confidence": 0.976,
                   "span": {
                     "offset": 128,
                     "length": 1
@@ -461,7 +435,7 @@
                     2.7219,
                     6.77
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 130,
                     "length": 4
@@ -479,7 +453,7 @@
                     2.039,
                     7.1901
                   ],
-                  "confidence": 0.992963,
+                  "confidence": 0.992,
                   "span": {
                     "offset": 135,
                     "length": 13
@@ -497,7 +471,7 @@
                     4.4124,
                     7.1233
                   ],
-                  "confidence": 0.9922431,
+                  "confidence": 0.992,
                   "span": {
                     "offset": 149,
                     "length": 4
@@ -515,7 +489,7 @@
                     1.657,
                     7.4813
                   ],
-                  "confidence": 0.9358277,
+                  "confidence": 0.935,
                   "span": {
                     "offset": 154,
                     "length": 3
@@ -533,7 +507,7 @@
                     4.7801,
                     7.4288
                   ],
-                  "confidence": 0.7527434,
+                  "confidence": 0.752,
                   "span": {
                     "offset": 158,
                     "length": 2
@@ -551,7 +525,7 @@
                     2.3208,
                     7.9874
                   ],
-                  "confidence": 0.9636676,
+                  "confidence": 0.963,
                   "span": {
                     "offset": 161,
                     "length": 9
@@ -569,7 +543,7 @@
                     2.316,
                     8.3741
                   ],
-                  "confidence": 0.9979765,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 171,
                     "length": 3
@@ -587,7 +561,7 @@
                     2.3208,
                     8.8134
                   ],
-                  "confidence": 0.9937562,
+                  "confidence": 0.993,
                   "span": {
                     "offset": 175,
                     "length": 3
@@ -605,7 +579,7 @@
                     2.2969,
                     9.2335
                   ],
-                  "confidence": 0.9796354,
+                  "confidence": 0.979,
                   "span": {
                     "offset": 179,
                     "length": 5
@@ -623,7 +597,7 @@
                     4.2452,
                     7.9683
                   ],
-                  "confidence": 0.980655,
+                  "confidence": 0.98,
                   "span": {
                     "offset": 185,
                     "length": 1
@@ -641,7 +615,7 @@
                     4.4076,
                     7.9683
                   ],
-                  "confidence": 0.9974425,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 187,
                     "length": 5
@@ -659,7 +633,7 @@
                     4.3789,
                     8.3694
                   ],
-                  "confidence": 0.9913268,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 193,
                     "length": 1
@@ -677,7 +651,7 @@
                     4.5413,
                     8.3694
                   ],
-                  "confidence": 0.9872441,
+                  "confidence": 0.987,
                   "span": {
                     "offset": 195,
                     "length": 4
@@ -695,7 +669,7 @@
                     4.0542,
                     8.7656
                   ],
-                  "confidence": 0.9946323,
+                  "confidence": 0.994,
                   "span": {
                     "offset": 200,
                     "length": 1
@@ -713,7 +687,7 @@
                     4.1927,
                     8.7656
                   ],
-                  "confidence": 0.703036,
+                  "confidence": 0.703,
                   "span": {
                     "offset": 202,
                     "length": 4
@@ -731,7 +705,7 @@
                     4.0972,
                     9.224
                   ],
-                  "confidence": 0.7091472,
+                  "confidence": 0.709,
                   "span": {
                     "offset": 207,
                     "length": 6
@@ -1185,7 +1159,7 @@
                     2.8508,
                     2.1962
                   ],
-                  "confidence": 0.9967055,
+                  "confidence": 0.996,
                   "span": {
                     "offset": 214,
                     "length": 7
@@ -1203,7 +1177,7 @@
                     1.9579,
                     2.9219
                   ],
-                  "confidence": 0.9935614,
+                  "confidence": 0.993,
                   "span": {
                     "offset": 222,
                     "length": 7
@@ -1221,7 +1195,7 @@
                     1.9674,
                     3.2609
                   ],
-                  "confidence": 0.9980585,
+                  "confidence": 0.998,
                   "span": {
                     "offset": 230,
                     "length": 3
@@ -1239,7 +1213,7 @@
                     2.1728,
                     3.2609
                   ],
-                  "confidence": 0.9891222,
+                  "confidence": 0.989,
                   "span": {
                     "offset": 234,
                     "length": 4
@@ -1257,7 +1231,7 @@
                     2.5213,
                     3.2656
                   ],
-                  "confidence": 0.9974045,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 239,
                     "length": 6
@@ -1275,7 +1249,7 @@
                     1.9435,
                     3.5569
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 246,
                     "length": 8
@@ -1293,7 +1267,7 @@
                     2.5787,
                     3.576
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 255,
                     "length": 2
@@ -1311,7 +1285,7 @@
                     2.8174,
                     3.5712
                   ],
-                  "confidence": 0.9974201,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 258,
                     "length": 5
@@ -1329,7 +1303,7 @@
                     1.9244,
                     4.1775
                   ],
-                  "confidence": 0.9736971,
+                  "confidence": 0.973,
                   "span": {
                     "offset": 264,
                     "length": 12
@@ -1347,7 +1321,7 @@
                     1.9006,
                     4.8698
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 277,
                     "length": 9
@@ -1365,7 +1339,7 @@
                     2.5261,
                     4.8746
                   ],
-                  "confidence": 0.9941329,
+                  "confidence": 0.994,
                   "span": {
                     "offset": 287,
                     "length": 5
@@ -1383,7 +1357,7 @@
                     1.9006,
                     5.1944
                   ],
-                  "confidence": 0.9973793,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 293,
                     "length": 5
@@ -1401,7 +1375,7 @@
                     2.2635,
                     5.1944
                   ],
-                  "confidence": 0.9937853,
+                  "confidence": 0.993,
                   "span": {
                     "offset": 299,
                     "length": 10
@@ -1419,7 +1393,7 @@
                     2.9654,
                     5.1944
                   ],
-                  "confidence": 0.987649,
+                  "confidence": 0.987,
                   "span": {
                     "offset": 310,
                     "length": 4
@@ -1437,7 +1411,7 @@
                     1.9913,
                     5.8581
                   ],
-                  "confidence": 0.9877631,
+                  "confidence": 0.987,
                   "span": {
                     "offset": 315,
                     "length": 1
@@ -1455,7 +1429,7 @@
                     2.082,
                     5.8628
                   ],
-                  "confidence": 0.9965249,
+                  "confidence": 0.996,
                   "span": {
                     "offset": 317,
                     "length": 7
@@ -1473,7 +1447,7 @@
                     2.6455,
                     5.8628
                   ],
-                  "confidence": 0.9979846,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 325,
                     "length": 3
@@ -1491,7 +1465,7 @@
                     2.9129,
                     5.8628
                   ],
-                  "confidence": 0.9980585,
+                  "confidence": 0.998,
                   "span": {
                     "offset": 329,
                     "length": 1
@@ -1509,7 +1483,7 @@
                     2.1059,
                     6.2114
                   ],
-                  "confidence": 0.9977559,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 331,
                     "length": 5
@@ -1527,7 +1501,7 @@
                     2.5404,
                     6.2209
                   ],
-                  "confidence": 0.9909545,
+                  "confidence": 0.99,
                   "span": {
                     "offset": 337,
                     "length": 1
@@ -1545,7 +1519,7 @@
                     2.6216,
                     6.2209
                   ],
-                  "confidence": 0.9386592,
+                  "confidence": 0.938,
                   "span": {
                     "offset": 339,
                     "length": 5
@@ -1563,7 +1537,7 @@
                     2.9654,
                     6.2257
                   ],
-                  "confidence": 0.9884652,
+                  "confidence": 0.988,
                   "span": {
                     "offset": 345,
                     "length": 4
@@ -1581,7 +1555,7 @@
                     3.2997,
                     6.2257
                   ],
-                  "confidence": 0.9577712,
+                  "confidence": 0.957,
                   "span": {
                     "offset": 350,
                     "length": 2
@@ -1599,7 +1573,7 @@
                     3.443,
                     6.2209
                   ],
-                  "confidence": 0.994107,
+                  "confidence": 0.994,
                   "span": {
                     "offset": 353,
                     "length": 1
@@ -1617,7 +1591,7 @@
                     2.0868,
                     6.5503
                   ],
-                  "confidence": 0.9944781,
+                  "confidence": 0.994,
                   "span": {
                     "offset": 355,
                     "length": 3
@@ -1635,7 +1609,7 @@
                     2.3638,
                     6.5551
                   ],
-                  "confidence": 0.9979608,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 359,
                     "length": 3
@@ -1653,7 +1627,7 @@
                     2.7171,
                     6.5599
                   ],
-                  "confidence": 0.9942803,
+                  "confidence": 0.994,
                   "span": {
                     "offset": 363,
                     "length": 7
@@ -1671,7 +1645,7 @@
                     3.8011,
                     6.5742
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 371,
                     "length": 1
@@ -1689,7 +1663,7 @@
                     3.9157,
                     6.5742
                   ],
-                  "confidence": 0.9933864,
+                  "confidence": 0.993,
                   "span": {
                     "offset": 373,
                     "length": 6
@@ -1707,7 +1681,7 @@
                     1.9531,
                     7.2522
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 380,
                     "length": 1
@@ -1725,7 +1699,7 @@
                     2.0486,
                     7.2474
                   ],
-                  "confidence": 0.994439,
+                  "confidence": 0.994,
                   "span": {
                     "offset": 382,
                     "length": 10
@@ -1743,7 +1717,7 @@
                     3.8871,
                     7.2808
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 393,
                     "length": 1
@@ -1761,7 +1735,7 @@
                     4.0017,
                     7.2808
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 395,
                     "length": 5
@@ -1779,7 +1753,7 @@
                     2.4115,
                     7.9253
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 401,
                     "length": 9
@@ -1797,7 +1771,7 @@
                     3.7725,
                     7.9731
                   ],
-                  "confidence": 0.9935403,
+                  "confidence": 0.993,
                   "span": {
                     "offset": 411,
                     "length": 1
@@ -1815,7 +1789,7 @@
                     3.8728,
                     7.9731
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 413,
                     "length": 7
@@ -1833,7 +1807,7 @@
                     2.7028,
                     8.2357
                   ],
-                  "confidence": 0.9979843,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 421,
                     "length": 3
@@ -1851,7 +1825,7 @@
                     3.825,
                     8.3121
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 425,
                     "length": 1
@@ -1869,7 +1843,7 @@
                     3.9301,
                     8.3121
                   ],
-                  "confidence": 0.9958895,
+                  "confidence": 0.995,
                   "span": {
                     "offset": 427,
                     "length": 6
@@ -1887,7 +1861,7 @@
                     2.6407,
                     8.9566
                   ],
-                  "confidence": 0.7717391,
+                  "confidence": 0.771,
                   "span": {
                     "offset": 434,
                     "length": 5
@@ -1905,7 +1879,7 @@
                     3.8393,
                     5.4618
                   ],
-                  "confidence": 0.8769289,
+                  "confidence": 0.876,
                   "span": {
                     "offset": 440,
                     "length": 1
@@ -1923,7 +1897,7 @@
                     3.911,
                     5.457
                   ],
-                  "confidence": 0.9906293,
+                  "confidence": 0.99,
                   "span": {
                     "offset": 442,
                     "length": 1
@@ -1941,7 +1915,7 @@
                     4.207,
                     5.4618
                   ],
-                  "confidence": 0.9813359,
+                  "confidence": 0.981,
                   "span": {
                     "offset": 444,
                     "length": 2
@@ -1959,7 +1933,7 @@
                     3.7343,
                     8.9709
                   ],
-                  "confidence": 0.9672883,
+                  "confidence": 0.967,
                   "span": {
                     "offset": 447,
                     "length": 1
@@ -1977,7 +1951,7 @@
                     3.8346,
                     8.9805
                   ],
-                  "confidence": 0.9948203,
+                  "confidence": 0.994,
                   "span": {
                     "offset": 449,
                     "length": 7
@@ -3063,7 +3037,28 @@
               "content": "$ 1203.39"
             }
           ],
-          "styles": [],
+          "styles": [
+            {
+              "confidence": 0.7,
+              "spans": [
+                {
+                  "offset": 200,
+                  "length": 6
+                }
+              ],
+              "isHandwritten": true
+            },
+            {
+              "confidence": 0.9,
+              "spans": [
+                {
+                  "offset": 207,
+                  "length": 6
+                }
+              ],
+              "isHandwritten": true
+            }
+          ],
           "documents": [
             {
               "docType": "receipt.retailMeal",

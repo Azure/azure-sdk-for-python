@@ -60,6 +60,7 @@ REQUEST_RESPONSE_GET_RULES_OPERATION = VENDOR + b":enumerate-rules"
 CONTAINER_PREFIX = "servicebus.pysdk-"
 JWT_TOKEN_SCOPE = "https://servicebus.azure.net//.default"
 USER_AGENT_PREFIX = "azsdk-python-servicebus"
+CONSUMER_IDENTIFIER = VENDOR + b":receiver-name"
 
 MANAGEMENT_PATH_SUFFIX = "/$management"
 

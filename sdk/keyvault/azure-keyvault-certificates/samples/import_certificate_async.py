@@ -43,7 +43,7 @@ async def run_sample():
     # Assuming you already have a PFX containing your key pair, you can import it into Key Vault.
     # You can do this without setting a policy, but the policy is needed if you want the private key to be exportable
     # or to configure actions when a certificate is close to expiration.
-    pfx_cert_name = "pfxCert"
+    pfx_cert_name = "pfxCertAsync"
     with open(os.environ["PFX_CERT_PATH"], "rb") as f:
         pfx_cert_bytes = f.read()
     imported_pfx_cert = await client.import_certificate(
@@ -54,7 +54,7 @@ async def run_sample():
     # Now let's import a PEM-formatted certificate.
     # To import a PEM-formatted certificate, you must provide a CertificatePolicy that sets the content_type to
     # CertificateContentType.pem or the certificate will fail to import (the default content type is PFX).
-    pem_cert_name = "pemCert"
+    pem_cert_name = "pemCertAsync"
     with open(os.environ["PEM_CERT_PATH"], "rb") as f:
         pem_cert_bytes = f.read()
     pem_cert_policy = CertificatePolicy(issuer_name=WellKnownIssuerNames.self, content_type=CertificateContentType.pem)

@@ -322,7 +322,7 @@ class DataLakeFileClient(PathClient):
             .set_expiry(expiry_options, expires_on=expires_on, **kwargs)  # pylint: disable=protected-access
 
     def _upload_options(  # pylint:disable=too-many-statements
-            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
             **kwargs
         ):
@@ -367,7 +367,7 @@ class DataLakeFileClient(PathClient):
 
         return kwargs
 
-    def upload_data(self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+    def upload_data(self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
                     length=None,  # type: Optional[int]
                     overwrite=False,  # type: Optional[bool]
                     **kwargs):
@@ -444,7 +444,7 @@ class DataLakeFileClient(PathClient):
 
     @staticmethod
     def _append_data_options(
-            data, # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+            data, # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
             offset, # type: int
             scheme, # type: str
             length=None, # type: Optional[int]
@@ -476,7 +476,7 @@ class DataLakeFileClient(PathClient):
         options.update(kwargs)
         return options
 
-    def append_data(self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+    def append_data(self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
                     offset,  # type: int
                     length=None,  # type: Optional[int]
                     **kwargs):
@@ -776,9 +776,7 @@ class DataLakeFileClient(PathClient):
             "{}://{}".format(self.scheme, self.primary_hostname), new_file_system, file_path=new_path,
             credential=self._raw_credential or new_file_sas,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function
+            _location_mode=self._location_mode
         )
         new_file_client._rename_path(  # pylint: disable=protected-access
             '/{}/{}{}'.format(quote(unquote(self.file_system_name)),

@@ -9,20 +9,20 @@
         "Connection": "keep-alive",
         "Content-Length": "36",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
         "urlSource": "https://blob_sas_url"
       },
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "837fbb62-e2b6-4a43-83ef-93147e892e60",
+        "apim-request-id": "3af75eb7-0341-4cc1-8aaf-73764faa3746",
+        "Content-Length": "199",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 25 May 2022 21:40:40 GMT",
+        "Date": "Thu, 23 Jun 2022 23:56:05 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "349"
+        "x-envoy-upstream-service-time": "117"
       },
       "ResponseBody": {
         "error": {
