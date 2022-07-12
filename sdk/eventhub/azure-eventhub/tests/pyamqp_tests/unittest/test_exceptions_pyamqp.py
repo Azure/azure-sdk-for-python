@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Type
 import pytest
 
 from azure.eventhub._pyamqp import SendClient, Connection, authentication
