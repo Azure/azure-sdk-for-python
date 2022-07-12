@@ -24,7 +24,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         client = self.create_client_from_credential(
             ConfidentialLedgerClient,
             credential=credential,
-            ledger_uri=endpoint,
+            endpoint=endpoint,
             # self.network_certificate_path is set via self.set_ledger_identity
             ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
@@ -46,7 +46,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             )
             client = ConfidentialLedgerClient(
                 credential=credential,
-                ledger_uri=endpoint,
+                endpoint=endpoint,
                 # self.network_certificate_path is set via self.set_ledger_identity
                 ledger_certificate_path=self.network_certificate_path,  # type: ignore
             )

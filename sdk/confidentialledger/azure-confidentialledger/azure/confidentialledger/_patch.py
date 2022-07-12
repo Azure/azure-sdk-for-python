@@ -53,9 +53,9 @@ class ConfidentialLedgerClient(GeneratedClient):
 
     :ivar confidential_ledger: ConfidentialLedgerOperations operations
     :vartype confidential_ledger: azure.confidentialledger.operations.ConfidentialLedgerOperations
-    :param ledger_uri: The Confidential Ledger URL, for example
+    :param endpoint: The Confidential Ledger URL, for example
      https://contoso.confidentialledger.azure.com.
-    :type ledger_uri: str
+    :type endpoint: str
     :param credential: A credential object for authenticating with the Confidential Ledger.
     :type credential: Union[
         ~azure.confidentialledger.ConfidentialLedgerCertificateCredential,
@@ -71,7 +71,7 @@ class ConfidentialLedgerClient(GeneratedClient):
 
     def __init__(
         self,
-        ledger_uri: str,
+        endpoint: str,
         credential: Union[ConfidentialLedgerCertificateCredential, TokenCredential],
         *,
         ledger_certificate_path: Union[bytes, str, os.PathLike],
@@ -82,7 +82,7 @@ class ConfidentialLedgerClient(GeneratedClient):
             identity_service_client = ConfidentialLedgerCertificateClient(**kwargs)
 
             # Ledger URIs are of the form https://<ledger id>.confidential-ledger.azure.com.
-            ledger_id = ledger_uri.replace("https://", "").split(".")[0]
+            ledger_id = endpoint.replace("https://", "").split(".")[0]
             ledger_cert = identity_service_client.get_ledger_identity(ledger_id, **kwargs)
 
             with open(ledger_certificate_path, "w", encoding="utf-8") as outfile:
@@ -106,4 +106,4 @@ class ConfidentialLedgerClient(GeneratedClient):
         # Customize the underlying client to use a self-signed TLS certificate.
         kwargs["connection_verify"] = kwargs.get("connection_verify", ledger_certificate_path)
 
-        super().__init__(ledger_uri, **kwargs)
+        super().__init__(endpoint, **kwargs)

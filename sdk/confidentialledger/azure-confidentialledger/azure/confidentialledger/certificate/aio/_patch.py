@@ -28,19 +28,19 @@ def patch_sdk():
 
 class ConfidentialLedgerCertificateClient(GeneratedClient):
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, identity_service_uri: Optional[str] = None, **kwargs: Any
+        self, certificate_endpoint: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :param identity_service_uri: The Identity Service URL, for example
+        :param certificate_endpoint: The Identity Service URL, for example
             https://identity.confidential-ledger.core.azure.com, defaults to None. If not provided,
             "https://identity.confidential-ledger.core.azure.com" will be used.
-        :type identity_service_uri: Optional[str], optional
+        :type certificate_endpoint: Optional[str], optional
         :keyword api_version: Api Version. Default value is "2022-05-13". Note that overriding this
         default value may result in unsupported behavior.
         :paramtype api_version: str
         """
 
-        if not identity_service_uri:
-            identity_service_uri = "https://identity.confidential-ledger.core.azure.com"
+        if not certificate_endpoint:
+            certificate_endpoint = "https://identity.confidential-ledger.core.azure.com"
 
-        super().__init__(identity_service_uri, **kwargs)
+        super().__init__(certificate_endpoint, **kwargs)
