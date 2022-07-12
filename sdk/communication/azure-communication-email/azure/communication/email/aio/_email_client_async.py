@@ -4,11 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from typing import Union
 from uuid import uuid4
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
-from typing import Union
 from .._shared.utils import parse_connection_str, get_current_utc_time
 from .._shared.policy import HMACCredentialsPolicy
 from .._generated.aio._azure_communication_email_service import AzureCommunicationEmailService
