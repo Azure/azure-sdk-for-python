@@ -3,45 +3,23 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
+from typing import Dict, List, Optional, AnyStr
 
-from collections import namedtuple
-import sys
+from .outcomes import SETTLEMENT_TYPES
+from .error import AMQPError
+from .endpoints import Source, Target
+from .types import (
+    Performative,
+    AMQPTypes,
+    FieldDefinition,
+    ObjDefinition,
+    AMQP_STRUCTURED_TYPES,
+    FIELD
+)
 
-from .types import AMQPTypes, FieldDefinition, ObjDefinition
-from .constants import FIELD
 
-_CAN_ADD_DOCSTRING = sys.version_info.major >= 3
-
-
-OpenFrame = namedtuple(
-    'open',
-    [
-        'container_id',
-        'hostname',
-        'max_frame_size',
-        'channel_max',
-        'idle_timeout',
-        'outgoing_locales',
-        'incoming_locales',
-        'offered_capabilities',
-        'desired_capabilities',
-        'properties'
-    ])
-OpenFrame._code = 0x00000010  # pylint:disable=protected-access
-OpenFrame._definition = (  # pylint:disable=protected-access
-    FIELD("container_id", AMQPTypes.string, True, None, False),
-    FIELD("hostname", AMQPTypes.string, False, None, False),
-    FIELD("max_frame_size", AMQPTypes.uint, False, 4294967295, False),
-    FIELD("channel_max", AMQPTypes.ushort, False, 65535, False),
-    FIELD("idle_timeout", AMQPTypes.uint, False, None, False),
-    FIELD("outgoing_locales", AMQPTypes.symbol, False, None, True),
-    FIELD("incoming_locales", AMQPTypes.symbol, False, None, True),
-    FIELD("offered_capabilities", AMQPTypes.symbol, False, None, True),
-    FIELD("desired_capabilities", AMQPTypes.symbol, False, None, True),
-    FIELD("properties", FieldDefinition.fields, False, None, False))
-if _CAN_ADD_DOCSTRING:
-    OpenFrame.__doc__ = """
-    OPEN performative. Negotiate Connection parameters.
+class OpenFrame(Performative):
+    """OPEN performative. Negotiate Connection parameters.
 
     The first frame sent on a connection in either direction MUST contain an Open body.
     (Note that theConnection header which is sent first on the Connection is *not* a frame.)
@@ -73,60 +51,60 @@ if _CAN_ADD_DOCSTRING:
         an error explaining why (eg, because it is too small). If the value is not set, then the sender does not
         have an idle time-out. However, senders doing this should be aware that implementations MAY choose to use
         an internal default to efficiently manage a peer's resources.
-    :param list(str) outgoing_locales: Locales available for outgoing text.
+    :param List[AnyStr] outgoing_locales: Locales available for outgoing text.
         A list of the locales that the peer supports for sending informational text. This includes Connection,
         Session and Link error descriptions. A peer MUST support at least the en-US locale. Since this value
         is always supported, it need not be supplied in the outgoing-locales. A null value or an empty list implies
         that only en-US is supported.
-    :param list(str) incoming_locales: Desired locales for incoming text in decreasing level of preference.
+    :param List[AnyStr] incoming_locales: Desired locales for incoming text in decreasing level of preference.
         A list of locales that the sending peer permits for incoming informational text. This list is ordered in
         decreasing level of preference. The receiving partner will chose the first (most preferred) incoming locale
         from those which it supports. If none of the requested locales are supported, en-US will be chosen. Note
         that en-US need not be supplied in this list as it is always the fallback. A peer may determine which of the
         permitted incoming locales is chosen by examining the partner's supported locales asspecified in the
         outgoing_locales field. A null value or an empty list implies that only en-US is supported.
-    :param list(str) offered_capabilities: The extension capabilities the sender supports.
+    :param List[AnyStr] offered_capabilities: The extension capabilities the sender supports.
         If the receiver of the offered-capabilities requires an extension capability which is not present in the
         offered-capability list then it MUST close the connection. A list of commonly defined connection capabilities
         and their meanings can be found here: http://www.amqp.org/specification/1.0/connection-capabilities.
-    :param list(str) required_capabilities: The extension capabilities the sender may use if the receiver supports
+    :param List[AnyStr] required_capabilities: The extension capabilities the sender may use if the receiver supports
         them. The desired-capability list defines which extension capabilities the sender MAY use if the receiver
         offers them (i.e. they are in the offered-capabilities list received by the sender of the
         desired-capabilities). If the receiver of the desired-capabilities offers extension capabilities which are
         not present in the desired-capability list it received, then it can be sure those (undesired) capabilities
         will not be used on the Connection.
-    :param dict properties: Connection properties.
+    :param Dict[AnyStr, AMQP_STRUCTURED_TYPES] properties: Connection properties.
         The properties map contains a set of fields intended to indicate information about the connection and its
         container. A list of commonly defined connection properties and their meanings can be found
         here: http://www.amqp.org/specification/1.0/connection-properties.
     """
+    _code: int = 0x00000010
+    _definition: List[Optional[FIELD]] = [
+        FIELD(AMQPTypes.string, False),
+        FIELD(AMQPTypes.string, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.ushort, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.symbol, True),
+        FIELD(AMQPTypes.symbol, True),
+        FIELD(AMQPTypes.symbol, True),
+        FIELD(AMQPTypes.symbol, True),
+        FIELD(FieldDefinition.fields, False)
+    ]
+    container_id: AnyStr
+    hostname: Optional[AnyStr] = None
+    max_frame_size: int = 4294967295
+    channel_max: int = 65535
+    idle_timeout: Optional[int] = None
+    outgoing_locales: Optional[List[AnyStr]] = None
+    incoming_locales: Optional[List[AnyStr]] = None
+    offered_capabilities: Optional[List[AnyStr]] = None
+    desired_capabilities: Optional[List[AnyStr]] = None
+    properties: Optional[Dict[AnyStr, AMQP_STRUCTURED_TYPES]] = None
 
 
-BeginFrame = namedtuple(
-    'begin',
-    [
-        'remote_channel',
-        'next_outgoing_id',
-        'incoming_window',
-        'outgoing_window',
-        'handle_max',
-        'offered_capabilities',
-        'desired_capabilities',
-        'properties'
-    ])
-BeginFrame._code = 0x00000011  # pylint:disable=protected-access
-BeginFrame._definition = (  # pylint:disable=protected-access
-    FIELD("remote_channel", AMQPTypes.ushort, False, None, False),
-    FIELD("next_outgoing_id", AMQPTypes.uint, True, None, False),
-    FIELD("incoming_window", AMQPTypes.uint, True, None, False),
-    FIELD("outgoing_window", AMQPTypes.uint, True, None, False),
-    FIELD("handle_max", AMQPTypes.uint, False, 4294967295, False),
-    FIELD("offered_capabilities", AMQPTypes.symbol, False, None, True),
-    FIELD("desired_capabilities", AMQPTypes.symbol, False, None, True),
-    FIELD("properties", FieldDefinition.fields, False, None, False))
-if _CAN_ADD_DOCSTRING:
-    BeginFrame.__doc__ = """
-    BEGIN performative. Begin a Session on a channel.
+class BeginFrame(Performative):
+    """BEGIN performative. Begin a Session on a channel.
 
     Indicate that a Session has begun on the channel.
 
@@ -150,55 +128,39 @@ if _CAN_ADD_DOCSTRING:
         The handle-max value is the highest handle value that may be used on the Session. A peer MUST NOT attempt
         to attach a Link using a handle value outside the range that its partner can handle. A peer that receives
         a handle outside the supported range MUST close the Connection with the framing-error error-code.
-    :param list(str) offered_capabilities: The extension capabilities the sender supports.
+    :param List[AnyStr] offered_capabilities: The extension capabilities the sender supports.
         A list of commonly defined session capabilities and their meanings can be found
         here: http://www.amqp.org/specification/1.0/session-capabilities.
-    :param list(str) desired_capabilities: The extension capabilities the sender may use if the receiver
+    :param List[AnyStr] desired_capabilities: The extension capabilities the sender may use if the receiver
         supports them.
-    :param dict properties: Session properties.
+    :param Dict[AnyStr, AMQP_STRUCTURED_TYPES] properties: Session properties.
         The properties map contains a set of fields intended to indicate information about the session and its
         container. A list of commonly defined session properties and their meanings can be found
         here: http://www.amqp.org/specification/1.0/session-properties.
     """
+    _code = 0x00000011
+    _definition: List[Optional[FIELD]] = [
+        FIELD(AMQPTypes.ushort, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.symbol, True),
+        FIELD(AMQPTypes.symbol, True),
+        FIELD(FieldDefinition.fields, False)
+    ]
+    remote_channel: Optional[int]
+    next_outgoing_id: int
+    incoming_window: int
+    outgoing_window: int
+    handle_max: int = 4294967295
+    offered_capabilities: Optional[List[AnyStr]] = None
+    desired_capabilities: Optional[List[AnyStr]] = None
+    properties: Optional[Dict[AnyStr, AMQP_STRUCTURED_TYPES]] = None
 
 
-AttachFrame = namedtuple(
-    'attach',
-    [
-        'name',
-        'handle',
-        'role',
-        'send_settle_mode',
-        'rcv_settle_mode',
-        'source',
-        'target',
-        'unsettled',
-        'incomplete_unsettled',
-        'initial_delivery_count',
-        'max_message_size',
-        'offered_capabilities',
-        'desired_capabilities',
-        'properties'
-    ])
-AttachFrame._code = 0x00000012  # pylint:disable=protected-access
-AttachFrame._definition = (  # pylint:disable=protected-access
-    FIELD("name", AMQPTypes.string, True, None, False),
-    FIELD("handle", AMQPTypes.uint, True, None, False),
-    FIELD("role", AMQPTypes.boolean, True, None, False),
-    FIELD("send_settle_mode", AMQPTypes.ubyte, False, 2, False),
-    FIELD("rcv_settle_mode", AMQPTypes.ubyte, False, 0, False),
-    FIELD("source", ObjDefinition.source, False, None, False),
-    FIELD("target", ObjDefinition.target, False, None, False),
-    FIELD("unsettled", AMQPTypes.map, False, None, False),
-    FIELD("incomplete_unsettled", AMQPTypes.boolean, False, False, False),
-    FIELD("initial_delivery_count", AMQPTypes.uint, False, None, False),
-    FIELD("max_message_size", AMQPTypes.ulong, False, None, False),
-    FIELD("offered_capabilities", AMQPTypes.symbol, False, None, True),
-    FIELD("desired_capabilities", AMQPTypes.symbol, False, None, True),
-    FIELD("properties", FieldDefinition.fields, False, None, False))
-if _CAN_ADD_DOCSTRING:
-    AttachFrame.__doc__ = """
-    ATTACH performative. Attach a Link to a Session.
+class AttachFrame(Performative):
+    """ATTACH performative. Attach a Link to a Session.
 
     The attach frame indicates that a Link Endpoint has been attached to the Session. The opening flag
     is used to indicate that the Link Endpoint is newly created.
@@ -221,13 +183,13 @@ if _CAN_ADD_DOCSTRING:
         Determines the settlement policy for unsettled deliveries received at the Receiver. When set at the Sender
         this indicates the desired value for the settlement mode at the Receiver. When set at the Receiver this
         indicates the actual settlement mode in use.
-    :param ~uamqp.messaging.Source source: The source for Messages.
+    :param ~pyamqp.Source source: The source for Messages.
         If no source is specified on an outgoing Link, then there is no source currently attached to the Link.
         A Link with no source will never produce outgoing Messages.
-    :param ~uamqp.messaging.Target target: The target for Messages.
+    :param ~pyamqp.Target target: The target for Messages.
         If no target is specified on an incoming Link, then there is no target currently attached to the Link.
         A Link with no target will never permit incoming Messages.
-    :param dict unsettled: Unsettled delivery state.
+    :param Dict[AnyStr, SETTLEMENT_TYPES] unsettled: Unsettled delivery state.
         This is used to indicate any unsettled delivery states when a suspended link is resumed. The map is keyed
         by delivery-tag with values indicating the delivery state. The local and remote delivery states for a given
         delivery-tag MUST be compared to resolve any in-doubt deliveries. If necessary, deliveries MAY be resent,
@@ -249,50 +211,51 @@ if _CAN_ADD_DOCSTRING:
         This field indicates the maximum message size supported by the link endpoint. Any attempt to deliver a
         message larger than this results in a message-size-exceeded link-error. If this field is zero or unset,
         there is no maximum size imposed by the link endpoint.
-    :param list(str) offered_capabilities: The extension capabilities the sender supports.
+    :param List[AnyStr] offered_capabilities: The extension capabilities the sender supports.
         A list of commonly defined session capabilities and their meanings can be found
         here: http://www.amqp.org/specification/1.0/link-capabilities.
-    :param list(str) desired_capabilities: The extension capabilities the sender may use if the receiver
+    :param List[AnyStr] desired_capabilities: The extension capabilities the sender may use if the receiver
         supports them.
-    :param dict properties: Link properties.
+    :param Dict[AnyStr, AMQP_STRUCTURED_TYPES] properties: Link properties.
         The properties map contains a set of fields intended to indicate information about the link and its
         container. A list of commonly defined link properties and their meanings can be found
         here: http://www.amqp.org/specification/1.0/link-properties.
     """
+    _code = 0x00000012
+    _definition: List[Optional[FIELD]] = [
+        FIELD(AMQPTypes.string, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.boolean, False),
+        FIELD(AMQPTypes.ubyte, False),
+        FIELD(AMQPTypes.ubyte, False),
+        FIELD(ObjDefinition.source, False),
+        FIELD(ObjDefinition.target, False),
+        FIELD(AMQPTypes.map, False),
+        FIELD(AMQPTypes.boolean, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.ulong, False),
+        FIELD(AMQPTypes.symbol, True),
+        FIELD(AMQPTypes.symbol, True),
+        FIELD(FieldDefinition.fields, False)
+    ]
+    name: str
+    handle: int
+    role: bool
+    send_settle_mode: int = 2
+    rcv_settle_mode: int = 0
+    source: Optional[Source] = None
+    target: Optional[Target] = None
+    unsettled: Dict[AnyStr, SETTLEMENT_TYPES] = None
+    incomplete_unsettled: bool = False
+    initial_delivery_count: Optional[int] = None
+    max_message_size: Optional[int] = None
+    offered_capabilities: Optional[List[AnyStr]] = None
+    desired_capabilities: Optional[List[AnyStr]] = None
+    properties: Optional[Dict[AnyStr, AMQP_STRUCTURED_TYPES]] = None
 
 
-FlowFrame = namedtuple(
-    'flow',
-    [
-        'next_incoming_id',
-        'incoming_window',
-        'next_outgoing_id',
-        'outgoing_window',
-        'handle',
-        'delivery_count',
-        'link_credit',
-        'available',
-        'drain',
-        'echo',
-        'properties'
-    ])
-FlowFrame.__new__.__defaults__ = (None, None, None, None, None, None, None)
-FlowFrame._code = 0x00000013  # pylint:disable=protected-access
-FlowFrame._definition = (  # pylint:disable=protected-access
-    FIELD("next_incoming_id", AMQPTypes.uint, False, None, False),
-    FIELD("incoming_window", AMQPTypes.uint, True, None, False),
-    FIELD("next_outgoing_id", AMQPTypes.uint, True, None, False),
-    FIELD("outgoing_window", AMQPTypes.uint, True, None, False),
-    FIELD("handle", AMQPTypes.uint, False, None, False),
-    FIELD("delivery_count", AMQPTypes.uint, False, None, False),
-    FIELD("link_credit", AMQPTypes.uint, False, None, False),
-    FIELD("available", AMQPTypes.uint, False, None, False),
-    FIELD("drain", AMQPTypes.boolean, False, False, False),
-    FIELD("echo", AMQPTypes.boolean, False, False, False),
-    FIELD("properties", FieldDefinition.fields, False, None, False))
-if _CAN_ADD_DOCSTRING:
-    FlowFrame.__doc__ = """
-    FLOW performative. Update link state.
+class FlowFrame(Performative):
+    """FLOW performative. Update link state.
 
     Updates the flow state for the specified Link.
 
@@ -327,45 +290,39 @@ if _CAN_ADD_DOCSTRING:
         sender. When flow state is sent from the receiver to the sender, this field contains the desired drain
         mode of the receiver. When the handle field is not set, this field MUST NOT be set.
     :param bool echo: Request link state from other endpoint.
-    :param dict properties: Link state properties.
+    :param Dict[AnyStr, AMQP_STRUCTURED_TYPES] properties: Link state properties.
         A list of commonly defined link state properties and their meanings can be found
         here: http://www.amqp.org/specification/1.0/link-state-properties.
     """
+    _code: int = 0x00000013
+    _definition: List[Optional[FIELD]] = [
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.boolean, False),
+        FIELD(AMQPTypes.boolean, False),
+        FIELD(FieldDefinition.fields, False)
+    ]
+    next_incoming_id: int
+    incoming_window: int
+    next_outgoing_id: int
+    outgoing_window: int
+    handle: Optional[int] = None
+    delivery_count: Optional[int] = None
+    link_credit: Optional[int] = None
+    available: Optional[int] = None
+    drain: bool = False
+    echo: bool = False
+    properties: Optional[Dict[AnyStr, AMQP_STRUCTURED_TYPES]] = None
 
 
-TransferFrame = namedtuple(
-    'transfer',
-    [
-        'handle',
-        'delivery_id',
-        'delivery_tag',
-        'message_format',
-        'settled',
-        'more',
-        'rcv_settle_mode',
-        'state',
-        'resume',
-        'aborted',
-        'batchable',
-        'payload'
-    ])
-TransferFrame._code = 0x00000014  # pylint:disable=protected-access
-TransferFrame._definition = (  # pylint:disable=protected-access
-    FIELD("handle", AMQPTypes.uint, True, None, False),
-    FIELD("delivery_id", AMQPTypes.uint, False, None, False),
-    FIELD("delivery_tag", AMQPTypes.binary, False, None, False),
-    FIELD("message_format", AMQPTypes.uint, False, 0, False),
-    FIELD("settled", AMQPTypes.boolean, False, None, False),
-    FIELD("more", AMQPTypes.boolean, False, False, False),
-    FIELD("rcv_settle_mode", AMQPTypes.ubyte, False, None, False),
-    FIELD("state", ObjDefinition.delivery_state, False, None, False),
-    FIELD("resume", AMQPTypes.boolean, False, False, False),
-    FIELD("aborted", AMQPTypes.boolean, False, False, False),
-    FIELD("batchable", AMQPTypes.boolean, False, False, False),  
-    None)
-if _CAN_ADD_DOCSTRING:
-    TransferFrame.__doc__ = """
-    TRANSFER performative. Transfer a Message.
+class TransferFrame(Performative):
+    """TRANSFER performative. Transfer a Message.
 
     The transfer frame is used to send Messages across a Link. Messages may be carried by a single transfer up
     to the maximum negotiated frame size for the Connection. Larger Messages may be split across several
@@ -432,29 +389,37 @@ if _CAN_ADD_DOCSTRING:
         for the delivery. The batchable value does not form part of the transfer state, and is not retained if a
         link is suspended and subsequently resumed.
     """
+    _code: int = 0x00000014
+    _definition: List[Optional[FIELD]] = [
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.binary, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.boolean, False),
+        FIELD(AMQPTypes.boolean, False),
+        FIELD(AMQPTypes.ubyte, False),
+        FIELD(ObjDefinition.delivery_state, False),
+        FIELD(AMQPTypes.boolean, False),
+        FIELD(AMQPTypes.boolean, False),
+        FIELD(AMQPTypes.boolean, False),  
+        None
+    ]
+    handle: int
+    delivery_id: Optional[int] = None
+    delivery_tag: Optional[bytes] = None
+    message_format: int = 0
+    settled: Optional[bool] = None
+    more: bool = False
+    rcv_settle_mode: Optional[int] = None
+    state: Optional[SETTLEMENT_TYPES] = None
+    resume: bool = False
+    aborted: bool = False
+    batchable: bool = False
+    payload: Optional[bytes] = None
 
 
-DispositionFrame = namedtuple(
-    'disposition',
-    [
-        'role',
-        'first',
-        'last',
-        'settled',
-        'state',
-        'batchable'
-    ])
-DispositionFrame._code = 0x00000015  # pylint:disable=protected-access
-DispositionFrame._definition = (  # pylint:disable=protected-access
-    FIELD("role", AMQPTypes.boolean, True, None, False),
-    FIELD("first", AMQPTypes.uint, True, None, False),
-    FIELD("last", AMQPTypes.uint, False, None, False),
-    FIELD("settled", AMQPTypes.boolean, False, False, False),
-    FIELD("state", ObjDefinition.delivery_state, False, None, False),
-    FIELD("batchable", AMQPTypes.boolean, False, False, False))
-if _CAN_ADD_DOCSTRING:
-    DispositionFrame.__doc__ = """
-    DISPOSITION performative. Inform remote peer of delivery state changes.
+class DispositionFrame(Performative):
+    """DISPOSITION performative. Inform remote peer of delivery state changes.
 
     The disposition frame is used to inform the remote peer of local changes in the state of deliveries.
     The disposition frame may reference deliveries from many different links associated with a session,
@@ -476,93 +441,101 @@ if _CAN_ADD_DOCSTRING:
         this is taken to be the same as first.
     :param bool settled: Indicates deliveries are settled.
         If true, indicates that the referenced deliveries are considered settled by the issuing endpoint.
-    :param bytes state: Indicates state of deliveries.
+    :param ~pyamqp.SETTLEMENT_TYPES state: Indicates state of deliveries.
         Communicates the state of all the deliveries referenced by this disposition.
     :param bool batchable: Batchable hint.
         If true, then the issuer is hinting that there is no need for the peer to urgently communicate the impact
         of the updated delivery states. This hint may be used to artificially increase the amount of batching an
         implementation uses when communicating delivery states, and thereby save bandwidth.
     """
+    _code: int = 0x00000015
+    _definition: List[Optional[FIELD]] = [
+        FIELD(AMQPTypes.boolean, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.boolean, False),
+        FIELD(ObjDefinition.delivery_state, False),
+        FIELD(AMQPTypes.boolean, False)
+    ]
+    role: bool
+    first: int
+    last: Optional[int] = None
+    settled: bool = False
+    state: Optional[SETTLEMENT_TYPES] = None
+    batchable: bool = False
 
-DetachFrame = namedtuple('detach', ['handle', 'closed', 'error'])
-DetachFrame._code = 0x00000016  # pylint:disable=protected-access
-DetachFrame._definition = (  # pylint:disable=protected-access
-    FIELD("handle", AMQPTypes.uint, True, None, False),
-    FIELD("closed", AMQPTypes.boolean, False, False, False),
-    FIELD("error", ObjDefinition.error, False, None, False))
-if _CAN_ADD_DOCSTRING:
-    DetachFrame.__doc__ = """
-    DETACH performative. Detach the Link Endpoint from the Session.
+
+class DetachFrame(Performative):
+    """DETACH performative. Detach the Link Endpoint from the Session.
 
     Detach the Link Endpoint from the Session. This un-maps the handle and makes it available for
     use by other Links
 
     :param int handle: The local handle of the link to be detached.
     :param bool handle: If true then the sender has closed the link.
-    :param ~uamqp.error.AMQPError error: Error causing the detach.
+    :param ~pyamqp.AMQPError error: Error causing the detach.
         If set, this field indicates that the Link is being detached due to an error condition.
         The value of the field should contain details on the cause of the error.
     """
+    _code: int = 0x00000016
+    _definition: List[Optional[FIELD]] = [
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.boolean, False),
+        FIELD(ObjDefinition.error, False)
+    ]
+    handle: int
+    closed: bool = False
+    error: Optional[AMQPError] = None
 
 
-EndFrame = namedtuple('end', ['error'])
-EndFrame._code = 0x00000017  # pylint:disable=protected-access
-EndFrame._definition = (FIELD("error", ObjDefinition.error, False, None, False),)  # pylint:disable=protected-access
-if _CAN_ADD_DOCSTRING:
-    EndFrame.__doc__ = """
-    END performative. End the Session.
+class EndFrame(Performative):
+    """END performative. End the Session.
 
     Indicates that the Session has ended.
 
-    :param ~uamqp.error.AMQPError error: Error causing the end.
+    :param ~pyamqp.AMQPError error: Error causing the end.
         If set, this field indicates that the Session is being ended due to an error condition.
         The value of the field should contain details on the cause of the error.
     """
+    _code: int = 0x00000017
+    _definition: List[Optional[FIELD]] = [FIELD(ObjDefinition.error, False)]
+    error: Optional[AMQPError] = None
 
 
-CloseFrame = namedtuple('close', ['error'])
-CloseFrame._code = 0x00000018  # pylint:disable=protected-access
-CloseFrame._definition = (FIELD("error", ObjDefinition.error, False, None, False),)  # pylint:disable=protected-access
-if _CAN_ADD_DOCSTRING:
-    CloseFrame.__doc__ = """
-    CLOSE performative. Signal a Connection close.
+class CloseFrame(Performative):
+    """CLOSE performative. Signal a Connection close.
 
     Sending a close signals that the sender will not be sending any more frames (or bytes of any other kind) on
     the Connection. Orderly shutdown requires that this frame MUST be written by the sender. It is illegal to
     send any more frames (or bytes of any other kind) after sending a close frame.
 
-    :param ~uamqp.error.AMQPError error: Error causing the close.
+    :param ~pyamqp.AMQPError error: Error causing the close.
         If set, this field indicates that the Connection is being closed due to an error condition.
         The value of the field should contain details on the cause of the error.
     """
+    _code: int = 0x00000018
+    _definition: List[Optional[FIELD]] = [FIELD(ObjDefinition.error, False)]
+    error: Optional[AMQPError] = None
 
 
-SASLMechanism = namedtuple('sasl_mechanism', ['sasl_server_mechanisms'])
-SASLMechanism._code = 0x00000040  # pylint:disable=protected-access
-SASLMechanism._definition = (FIELD('sasl_server_mechanisms', AMQPTypes.symbol, True, None, True),)  # pylint:disable=protected-access
-if _CAN_ADD_DOCSTRING:
-    SASLMechanism.__doc__ = """
-    Advertise available sasl mechanisms.
+class SASLMechanism(Performative):
+    """Advertise available sasl mechanisms.
 
     dvertises the available SASL mechanisms that may be used for authentication.
 
-    :param list(bytes) sasl_server_mechanisms: Supported sasl mechanisms.
+    :param List[AnyStr] sasl_server_mechanisms: Supported sasl mechanisms.
         A list of the sasl security mechanisms supported by the sending peer.
         It is invalid for this list to be null or empty. If the sending peer does not require its partner to
         authenticate with it, then it should send a list of one element with its value as the SASL mechanism
         ANONYMOUS. The server mechanisms are ordered in decreasing level of preference.
     """
+    _code: int = 0x00000040
+    _definition: List[Optional[FIELD]] = [FIELD(AMQPTypes.symbol, True)]
+    sasl_server_mechanisms: List[AnyStr]
 
 
-SASLInit = namedtuple('sasl_init', ['mechanism', 'initial_response', 'hostname'])
-SASLInit._code = 0x00000041  # pylint:disable=protected-access
-SASLInit._definition = (  # pylint:disable=protected-access
-    FIELD('mechanism', AMQPTypes.symbol, True, None, False),
-    FIELD('initial_response', AMQPTypes.binary, False, None, False),
-    FIELD('hostname', AMQPTypes.string, False, None, False))
-if _CAN_ADD_DOCSTRING:
-    SASLInit.__doc__ = """
-    Initiate sasl exchange.
+class SASLInit(Performative):
+    """Initiate sasl exchange.
 
     Selects the sasl mechanism and provides the initial response if needed.
 
@@ -583,43 +556,44 @@ if _CAN_ADD_DOCSTRING:
         in RFC-4366, if a TLS layer is used, in which case this field SHOULD benull or contain the same value.
         It is undefined what a different value to those already specific means.
     """
+    _code: int = 0x00000041
+    _definition: List[Optional[FIELD]] = [
+        FIELD('mechanism', AMQPTypes.symbol, True, None, False),
+        FIELD('initial_response', AMQPTypes.binary, False, None, False),
+        FIELD('hostname', AMQPTypes.string, False, None, False)
+    ]
+    mechanism: AnyStr
+    initial_response: Optional[bytes] = None
+    hostname: Optional[AnyStr] = None
 
 
-SASLChallenge = namedtuple('sasl_challenge', ['challenge'])
-SASLChallenge._code = 0x00000042  # pylint:disable=protected-access
-SASLChallenge._definition = (FIELD('challenge', AMQPTypes.binary, True, None, False),)  # pylint:disable=protected-access
-if _CAN_ADD_DOCSTRING:
-    SASLChallenge.__doc__ = """
-    Security mechanism challenge.
+class SASLChallenge(Performative):
+    """Security mechanism challenge.
 
     Send the SASL challenge data as defined by the SASL specification.
 
     :param bytes challenge: Security challenge data.
         Challenge information, a block of opaque binary data passed to the security mechanism.
     """
+    _code: int = 0x00000042
+    _definition: List[Optional[FIELD]] = [FIELD(AMQPTypes.binary, False)]
+    challenge: bytes
 
 
-SASLResponse = namedtuple('sasl_response', ['response'])
-SASLResponse._code = 0x00000043  # pylint:disable=protected-access
-SASLResponse._definition = (FIELD('response', AMQPTypes.binary, True, None, False),)  # pylint:disable=protected-access
-if _CAN_ADD_DOCSTRING:
-    SASLResponse.__doc__ = """
-    Security mechanism response.
+class SASLResponse(Performative):
+    """Security mechanism response.
 
     Send the SASL response data as defined by the SASL specification.
 
     :param bytes response: Security response data.
     """
+    _code: int = 0x00000043
+    _definition: List[Optional[FIELD]] = [FIELD(AMQPTypes.binary, False)]
+    response: bytes
 
 
-SASLOutcome = namedtuple('sasl_outcome', ['code', 'additional_data'])
-SASLOutcome._code = 0x00000044  # pylint:disable=protected-access
-SASLOutcome._definition = (  # pylint:disable=protected-access
-    FIELD('code', AMQPTypes.ubyte, True, None, False),
-    FIELD('additional_data', AMQPTypes.binary, False, None, False))
-if _CAN_ADD_DOCSTRING:
-    SASLOutcome.__doc__ = """
-    Indicates the outcome of the sasl dialog.
+class SASLOutcome(Performative):
+    """Indicates the outcome of the sasl dialog.
 
     This frame indicates the outcome of the SASL dialog. Upon successful completion of the SASL dialog the
     Security Layer has been established, and the peers must exchange protocol headers to either starta nested
@@ -631,3 +605,10 @@ if _CAN_ADD_DOCSTRING:
         The additional-data field carries additional data on successful authentication outcomeas specified by
         the SASL specification (RFC-4422). If the authentication is unsuccessful, this field is not set.
     """
+    _code: int = 0x00000044
+    _definition: List[Optional[FIELD]] = [
+        FIELD(AMQPTypes.ubyte, False),
+        FIELD(AMQPTypes.binary, False)
+    ]
+    code: int
+    additional_data: Optional[bytes] = None

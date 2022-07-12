@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-from collections import namedtuple
 from enum import Enum
 import struct
 
@@ -63,8 +62,6 @@ INCOMING_WINDOW = 64 * 1024
 OUTGOING_WIDNOW = 64 * 1024
 
 DEFAULT_LINK_CREDIT = 10000
-
-FIELD = namedtuple('field', 'name, type, mandatory, default, multiple')
 
 STRING_FILTER = b"apache.org:selector-filter:string"
 

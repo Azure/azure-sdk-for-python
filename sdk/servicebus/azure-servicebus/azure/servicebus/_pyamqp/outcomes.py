@@ -25,21 +25,14 @@
 #     - received: indicates partial message data seen by the receiver as well as the starting point for a
 #         resumed transfer
 
-from collections import namedtuple
+from typing import AnyStr, Dict, List, Optional, Union
 
-from .types import AMQPTypes, FieldDefinition, ObjDefinition
-from .constants import FIELD
-from .performatives import _CAN_ADD_DOCSTRING
+from .types import AMQPTypes, FieldDefinition, ObjDefinition, FIELD, Performative, AMQP_STRUCTURED_TYPES
+from .error import AMQPError
 
 
-Received = namedtuple('received', ['section_number', 'section_offset'])
-Received._code = 0x00000023
-Received._definition = (
-    FIELD("section_number", AMQPTypes.uint, True, None, False),
-    FIELD("section_offset", AMQPTypes.ulong, True, None, False))
-if _CAN_ADD_DOCSTRING:
-    Received.__doc__ = """
-    At the target the received state indicates the furthest point in the payload of the message
+class Received(Performative):
+    """At the target the received state indicates the furthest point in the payload of the message
     which the target will not need to have resent if the link is resumed. At the source the received state represents
     the earliest point in the payload which the Sender is able to resume transferring at in the case of link
     resumption. When resuming a delivery, if this state is set on the first transfer performative it indicates
@@ -62,14 +55,17 @@ if _CAN_ADD_DOCSTRING:
         Received(section-number=X+1, section-offset=0). The state Received(sectionnumber=0, section-offset=0)
         indicates that no message data at all has been transferred.
     """
+    _code: int = 0x00000023
+    _definition: List[Optional[FIELD]] = [
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.ulong, False)
+    ]
+    section_number: int
+    section_offset: int
 
 
-Accepted = namedtuple('accepted', [])
-Accepted._code = 0x00000024
-Accepted._definition = ()
-if _CAN_ADD_DOCSTRING:
-    Accepted.__doc__ = """
-    The accepted outcome.
+class Accepted(Performative):
+    """The accepted outcome.
 
     At the source the accepted state means that the message has been retired from the node, and transfer of
     payload data will not be able to be resumed if the link becomes suspended. A delivery may become accepted at
@@ -80,15 +76,11 @@ if _CAN_ADD_DOCSTRING:
     to transition the delivery to the accepted state at the source. The accepted outcome does not increment the
     delivery-count in the header of the accepted Message.
     """
+    _code: int = 0x00000024
 
 
-Rejected = namedtuple('rejected', ['error'])
-Rejected.__new__.__defaults__ = (None,) * len(Rejected._fields)
-Rejected._code = 0x00000025
-Rejected._definition = (FIELD("error", ObjDefinition.error, False, None, False),)
-if _CAN_ADD_DOCSTRING:
-    Rejected.__doc__ = """
-    The rejected outcome.
+class Rejected(Performative):
+    """The rejected outcome.
 
     At the target, the rejected outcome is used to indicate that an incoming Message is invalid and therefore
     unprocessable. The rejected outcome when applied to a Message will cause the delivery-count to be incremented
@@ -100,14 +92,13 @@ if _CAN_ADD_DOCSTRING:
         The value supplied in this field will be placed in the delivery-annotations of the rejected Message
         associated with the symbolic key "rejected".
     """
+    _code: int = 0x00000025
+    _definition: List[Optional[FIELD]] = [FIELD(ObjDefinition.error, False)]
+    error: Optional[AMQPError] = None
 
 
-Released = namedtuple('released', [])
-Released._code = 0x00000026
-Released._definition = ()
-if _CAN_ADD_DOCSTRING:
-    Released.__doc__ = """
-    The released outcome.
+class Released(Performative):
+    """The released outcome.
 
     At the source the released outcome means that the message is no longer acquired by the receiver, and has been
     made available for (re-)delivery to the same or other targets receiving from the node. The message is unchanged
@@ -121,18 +112,11 @@ if _CAN_ADD_DOCSTRING:
 
     At the target, the released outcome is used to indicate that a given transfer was not and will not be acted upon.
     """
+    _code: int = 0x00000026
 
 
-Modified = namedtuple('modified', ['delivery_failed', 'undeliverable_here', 'message_annotations'])
-Modified.__new__.__defaults__ = (None,) * len(Modified._fields)
-Modified._code = 0x00000027
-Modified._definition = (
-    FIELD('delivery_failed', AMQPTypes.boolean, False, None, False),
-    FIELD('undeliverable_here', AMQPTypes.boolean, False, None, False),
-    FIELD('message_annotations', FieldDefinition.fields, False, None, False))
-if _CAN_ADD_DOCSTRING:
-    Modified.__doc__ = """
-    The modified outcome.
+class Modified(Performative):
+    """The modified outcome.
 
     At the source the modified outcome means that the message is no longer acquired by the receiver, and has been
     made available for (re-)delivery to the same or other targets receiving from the node. The message has been
@@ -157,3 +141,15 @@ if _CAN_ADD_DOCSTRING:
         entry in this field, the value in this field associated with that key replaces the one in the existing
         headers; where the existing message-annotations has no such value, the value in this map is added.
     """
+    _code: int = 0x00000027
+    _definition: List[Optional[FIELD]] = [
+        FIELD(AMQPTypes.boolean, False),
+        FIELD(AMQPTypes.boolean, False),
+        FIELD(FieldDefinition.fields, False)
+    ]
+    delivery_failed: Optional[bool] = None
+    undeliverable_here: Optional[bool] = None
+    message_annotations: Optional[Dict[AnyStr, AMQP_STRUCTURED_TYPES]] = None
+
+
+SETTLEMENT_TYPES = Union[Received, Released, Accepted, Modified, Rejected]

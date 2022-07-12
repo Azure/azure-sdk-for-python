@@ -14,14 +14,21 @@
 #   - the behavior of Messages which have been transferred on the Link, but have not yet reached a
 #     terminal state at the receiver, when the source is destroyed.
 
-from collections import namedtuple
+from enum import IntEnum, Enum
+from typing import AnyStr, Dict, List, Optional, Tuple
 
-from .types import AMQPTypes, FieldDefinition, ObjDefinition
-from .constants import FIELD
-from .performatives import _CAN_ADD_DOCSTRING
+from .outcomes import SETTLEMENT_TYPES
+from .types import (
+    AMQPTypes,
+    FieldDefinition,
+    ObjDefinition,
+    FIELD,
+    Performative,
+    AMQP_STRUCTURED_TYPES
+)
 
 
-class TerminusDurability(object):
+class TerminusDurability(IntEnum):
     """Durability policy for a terminus.
 
     <type name="terminus-durability" class="restricted" source="uint">
@@ -33,15 +40,15 @@ class TerminusDurability(object):
     Determines which state of the terminus is held durably.
     """
     #: No Terminus state is retained durably
-    NoDurability = 0
+    NoDurability: int = 0
     #: Only the existence and configuration of the Terminus is retained durably.
-    Configuration = 1
+    Configuration: int = 1
     #: In addition to the existence and configuration of the Terminus, the unsettled state for durable
     #: messages is retained durably.
-    UnsettledState = 2
+    UnsettledState: int = 2
 
 
-class ExpiryPolicy(object):
+class ExpiryPolicy(bytes, Enum):
     """Expiry policy for a terminus.
 
     <type name="terminus-expiry-policy" class="restricted" source="symbol">
@@ -57,16 +64,16 @@ class ExpiryPolicy(object):
     re-met, the expiry timer restarts from its originally configured timeout value.
     """
     #: The expiry timer starts when Terminus is detached.
-    LinkDetach = b"link-detach"
+    LinkDetach: bytes = b"link-detach"
     #: The expiry timer starts when the most recently associated session is ended.
-    SessionEnd = b"session-end"
+    SessionEnd: bytes = b"session-end"
     #: The expiry timer starts when most recently associated connection is closed.
-    ConnectionClose = b"connection-close"
+    ConnectionClose: bytes = b"connection-close"
     #: The Terminus never expires.
-    Never = b"never"
+    Never: bytes = b"never"
 
 
-class DistributionMode(object):
+class DistributionMode(bytes, Enum):
     """Link distribution policy.
 
     <type name="std-dist-mode" class="restricted" source="symbol" provides="distribution-mode">
@@ -78,87 +85,57 @@ class DistributionMode(object):
     """
     #: Once successfully transferred over the link, the message will no longer be available
     #: to other links from the same node.
-    Move = b'move'
+    Move: bytes = b'move'
     #: Once successfully transferred over the link, the message is still available for other
     #: links from the same node.
-    Copy = b'copy'
+    Copy: bytes = b'copy'
 
 
-class LifeTimePolicy(object):
+class LifeTimePolicy(IntEnum):
     #: Lifetime of dynamic node scoped to lifetime of link which caused creation.
     #: A node dynamically created with this lifetime policy will be deleted at the point that the link
     #: which caused its creation ceases to exist.
-    DeleteOnClose = 0x0000002b
+    DeleteOnClose: int = 0x0000002b
     #: Lifetime of dynamic node scoped to existence of links to the node.
     #: A node dynamically created with this lifetime policy will be deleted at the point that there remain
     #: no links for which the node is either the source or target.
-    DeleteOnNoLinks = 0x0000002c
+    DeleteOnNoLinks: int = 0x0000002c
     #: Lifetime of dynamic node scoped to existence of messages on the node.
     #: A node dynamically created with this lifetime policy will be deleted at the point that the link which
     #: caused its creation no longer exists and there remain no messages at the node.
-    DeleteOnNoMessages = 0x0000002d
+    DeleteOnNoMessages: int = 0x0000002d
     #: Lifetime of node scoped to existence of messages on or links to the node.
     #: A node dynamically created with this lifetime policy will be deleted at the point that the there are no
     #: links which have this node as their source or target, and there remain no messages at the node.
-    DeleteOnNoLinksOrMessages = 0x0000002e
+    DeleteOnNoLinksOrMessages: int = 0x0000002e
 
 
-class SupportedOutcomes(object):
+class SupportedOutcomes(bytes, Enum):
     #: Indicates successful processing at the receiver.
-    accepted = b"amqp:accepted:list"
+    accepted: bytes = b"amqp:accepted:list"
     #: Indicates an invalid and unprocessable message.
-    rejected = b"amqp:rejected:list"
+    rejected: bytes = b"amqp:rejected:list"
     #: Indicates that the message was not (and will not be) processed.
-    released = b"amqp:released:list"
+    released: bytes = b"amqp:released:list"
     #: Indicates that the message was modified, but not processed.
-    modified = b"amqp:modified:list"
+    modified: bytes = b"amqp:modified:list"
 
 
-class ApacheFilters(object):
+class ApacheFilters(bytes, Enum):
     #: Exact match on subject - analogous to legacy AMQP direct exchange bindings.
-    legacy_amqp_direct_binding = b"apache.org:legacy-amqp-direct-binding:string"
+    legacy_amqp_direct_binding: bytes = b"apache.org:legacy-amqp-direct-binding:string"
     #: Pattern match on subject - analogous to legacy AMQP topic exchange bindings.
-    legacy_amqp_topic_binding = b"apache.org:legacy-amqp-topic-binding:string"
+    legacy_amqp_topic_binding: bytes = b"apache.org:legacy-amqp-topic-binding:string"
     #: Matching on message headers - analogous to legacy AMQP headers exchange bindings.
-    legacy_amqp_headers_binding = b"apache.org:legacy-amqp-headers-binding:map"
+    legacy_amqp_headers_binding: bytes = b"apache.org:legacy-amqp-headers-binding:map"
     #: Filter out messages sent from the same connection as the link is currently associated with.
-    no_local_filter = b"apache.org:no-local-filter:list"
+    no_local_filter: bytes = b"apache.org:no-local-filter:list"
     #: SQL-based filtering syntax.
-    selector_filter = b"apache.org:selector-filter:string"
+    selector_filter: bytes = b"apache.org:selector-filter:string"
 
 
-Source = namedtuple(
-    'source',
-    [
-        'address',
-        'durable',
-        'expiry_policy',
-        'timeout',
-        'dynamic',
-        'dynamic_node_properties',
-        'distribution_mode',
-        'filters',
-        'default_outcome',
-        'outcomes',
-        'capabilities'
-    ])
-Source.__new__.__defaults__ = (None,) * len(Source._fields)
-Source._code = 0x00000028
-Source._definition = (
-    FIELD("address", AMQPTypes.string, False, None, False),
-    FIELD("durable", AMQPTypes.uint, False, "none", False),
-    FIELD("expiry_policy", AMQPTypes.symbol, False, ExpiryPolicy.SessionEnd, False),
-    FIELD("timeout", AMQPTypes.uint, False, 0, False),
-    FIELD("dynamic", AMQPTypes.boolean, False, False, False),
-    FIELD("dynamic_node_properties", FieldDefinition.node_properties, False, None, False),
-    FIELD("distribution_mode", AMQPTypes.symbol, False, None, False),
-    FIELD("filters", FieldDefinition.filter_set, False, None, False),
-    FIELD("default_outcome", ObjDefinition.delivery_state, False, None, False),
-    FIELD("outcomes", AMQPTypes.symbol, False, None, True),
-    FIELD("capabilities", AMQPTypes.symbol, False, None, True))
-if _CAN_ADD_DOCSTRING:
-    Source.__doc__ = """
-    For containers which do not implement address resolution (and do not admit spontaneous link
+class Source(Performative):
+    """For containers which do not implement address resolution (and do not admit spontaneous link
     attachment from their partners) but are instead only used as producers of messages, it is unnecessary to provide
     spurious detail on the source. For this purpose it is possible to use a "minimal" source in which all the
     fields are left unset.
@@ -214,32 +191,35 @@ if _CAN_ADD_DOCSTRING:
     :param list(bytes) capabilities: The extension capabilities the sender supports/desires.
         See http://www.amqp.org/specification/1.0/source-capabilities.
     """
+    _code: int = 0x00000028
+    _definition: List[Optional[FIELD]] = [
+        FIELD(AMQPTypes.string, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.symbol, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.boolean, False),
+        FIELD(FieldDefinition.node_properties, False),
+        FIELD(AMQPTypes.symbol, False),
+        FIELD(FieldDefinition.filter_set, False),
+        FIELD(ObjDefinition.delivery_state, False),
+        FIELD(AMQPTypes.symbol, True),
+        FIELD(AMQPTypes.symbol, True)
+    ]
+    address: Optional[str] = None
+    durable: int = TerminusDurability.NoDurability
+    expiry_policy: bytes = ExpiryPolicy.SessionEnd
+    timeout: int = 0
+    dynamic: bool = False
+    dynamic_node_properties: Optional[Dict[AnyStr, AMQP_STRUCTURED_TYPES]] = None
+    distribution_mode: Optional[bytes] = None
+    filters: Optional[Dict[AnyStr, Optional[Tuple[AnyStr, AMQP_STRUCTURED_TYPES]]]] = None
+    default_outcome: Optional[SETTLEMENT_TYPES] = None
+    outcomes: Optional[List[AnyStr]] = None
+    capabilities: Optional[List[AnyStr]] = None
 
 
-Target = namedtuple(
-    'target',
-    [
-        'address',
-        'durable',
-        'expiry_policy',
-        'timeout',
-        'dynamic',
-        'dynamic_node_properties',
-        'capabilities'
-    ])
-Target._code = 0x00000029
-Target.__new__.__defaults__ = (None,) * len(Target._fields)
-Target._definition = (
-    FIELD("address", AMQPTypes.string, False, None, False),
-    FIELD("durable", AMQPTypes.uint, False, "none", False),
-    FIELD("expiry_policy", AMQPTypes.symbol, False, ExpiryPolicy.SessionEnd, False),
-    FIELD("timeout", AMQPTypes.uint, False, 0, False),
-    FIELD("dynamic", AMQPTypes.boolean, False, False, False),
-    FIELD("dynamic_node_properties", FieldDefinition.node_properties, False, None, False),
-    FIELD("capabilities", AMQPTypes.symbol, False, None, True))
-if _CAN_ADD_DOCSTRING:
-    Target.__doc__ = """
-    For containers which do not implement address resolution (and do not admit spontaneous link attachment
+class Target(Performative):
+    """For containers which do not implement address resolution (and do not admit spontaneous link attachment
     from their partners) but are instead only used as consumers of messages, it is unnecessary to provide spurious
     detail on the source. For this purpose it is possible to use a 'minimal' target in which all the
     fields are left unset.
@@ -275,3 +255,20 @@ if _CAN_ADD_DOCSTRING:
     :param list(bytes) capabilities: The extension capabilities the sender supports/desires.
         See http://www.amqp.org/specification/1.0/source-capabilities.
     """
+    _code: int = 0x00000029
+    _definition: List[Optional[FIELD]] = [
+        FIELD(AMQPTypes.string, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.symbol, False),
+        FIELD(AMQPTypes.uint, False),
+        FIELD(AMQPTypes.boolean, False),
+        FIELD(FieldDefinition.node_properties, False),
+        FIELD(AMQPTypes.symbol, True)
+    ]
+    address: Optional[str] = None
+    durable: int = TerminusDurability.NoDurability
+    expiry_policy: bytes = ExpiryPolicy.SessionEnd
+    timeout: int = 0
+    dynamic: bool = False
+    dynamic_node_properties: Optional[Dict[AnyStr, AMQP_STRUCTURED_TYPES]] = None
+    capabilities: Optional[List[AnyStr]] = None
