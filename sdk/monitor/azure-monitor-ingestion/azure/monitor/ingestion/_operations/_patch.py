@@ -42,7 +42,7 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
         requests = _create_gzip_requests(logs)
         results = []
         status = UploadLogsStatus.SUCCESS
-        parallel = max_concurrency > 1 and len(requests) > 1
+        parallel = max_concurrency and max_concurrency > 1 and len(requests) > 1
         if parallel:
             with concurrent.futures.ThreadPoolExecutor(max_concurrency) as executor:
                 future_to_req = {
