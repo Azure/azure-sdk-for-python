@@ -17,7 +17,7 @@ from azure.confidentialledger.aio._client import (
 )
 
 # Since we can't `await` in __init__, use the sync client for the Identity Service.
-from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
+from azure.confidentialledger.certificate import ConfidentialLedgerCertificateClient
 from azure.confidentialledger._patch import ConfidentialLedgerCertificateCredential
 
 __all__: List[str] = [
@@ -66,7 +66,7 @@ class ConfidentialLedgerClient(GeneratedClient):
     ) -> None:
         if os.path.isfile(ledger_certificate_path) is False:
             # We'll need to fetch the TLS certificate.
-            identity_service_client = ConfidentialLedgerIdentityServiceClient(**kwargs)
+            identity_service_client = ConfidentialLedgerCertificateClient(**kwargs)
 
             # Ledger URIs are of the form https://<ledger id>.confidential-ledger.azure.com.
             ledger_id = ledger_uri.replace("https://", "").split(".")[0]

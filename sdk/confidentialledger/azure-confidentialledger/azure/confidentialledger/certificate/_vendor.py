@@ -8,7 +8,7 @@
 from abc import ABC
 from typing import TYPE_CHECKING
 
-from ._configuration import ConfidentialLedgerIdentityServiceClientConfiguration
+from ._configuration import ConfidentialLedgerCertificateClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -32,6 +32,6 @@ class MixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
 
     _client: "PipelineClient"
-    _config: ConfidentialLedgerIdentityServiceClientConfiguration
+    _config: ConfidentialLedgerCertificateClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"

@@ -7,24 +7,24 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
-from azure.core import AsyncPipelineClient
-from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core import PipelineClient
+from azure.core.rest import HttpRequest, HttpResponse
 
-from .._serialization import Deserializer, Serializer
-from ._configuration import ConfidentialLedgerIdentityServiceClientConfiguration
-from ._operations import ConfidentialLedgerIdentityServiceClientOperationsMixin
+from ._configuration import ConfidentialLedgerCertificateClientConfiguration
+from ._operations import ConfidentialLedgerCertificateClientOperationsMixin
+from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Dict
 
 
-class ConfidentialLedgerIdentityServiceClient(
-    ConfidentialLedgerIdentityServiceClientOperationsMixin
+class ConfidentialLedgerCertificateClient(
+    ConfidentialLedgerCertificateClientOperationsMixin
 ):  # pylint: disable=client-accepts-api-version-keyword
-    """The ConfidentialLedgerIdentityServiceClient is used to retrieve the TLS certificate required
+    """The ConfidentialLedgerCertificateClient is used to retrieve the TLS certificate required
     for connecting to a Confidential Ledger.
 
     :param identity_service_uri: The Identity Service URL, for example
@@ -39,23 +39,23 @@ class ConfidentialLedgerIdentityServiceClient(
         self, identity_service_uri: str, **kwargs: Any
     ) -> None:
         _endpoint = "{identityServiceUri}"
-        self._config = ConfidentialLedgerIdentityServiceClientConfiguration(
+        self._config = ConfidentialLedgerCertificateClientConfiguration(
             identity_service_uri=identity_service_uri, **kwargs
         )
-        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = await client.send_request(request)
-        <AsyncHttpResponse: 200 OK>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
@@ -63,7 +63,7 @@ class ConfidentialLedgerIdentityServiceClient(
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.AsyncHttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
 
         request_copy = deepcopy(request)
@@ -76,12 +76,15 @@ class ConfidentialLedgerIdentityServiceClient(
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
-    async def close(self) -> None:
-        await self._client.close()
+    def close(self):
+        # type: () -> None
+        self._client.close()
 
-    async def __aenter__(self) -> "ConfidentialLedgerIdentityServiceClient":
-        await self._client.__aenter__()
+    def __enter__(self):
+        # type: () -> ConfidentialLedgerCertificateClient
+        self._client.__enter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
-        await self._client.__aexit__(*exc_details)
+    def __exit__(self, *exc_details):
+        # type: (Any) -> None
+        self._client.__exit__(*exc_details)

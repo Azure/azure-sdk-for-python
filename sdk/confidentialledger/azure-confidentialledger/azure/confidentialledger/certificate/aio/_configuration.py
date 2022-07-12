@@ -14,10 +14,10 @@ from azure.core.pipeline import policies
 from .._version import VERSION
 
 
-class ConfidentialLedgerIdentityServiceClientConfiguration(
+class ConfidentialLedgerCertificateClientConfiguration(
     Configuration
 ):  # pylint: disable=too-many-instance-attributes
-    """Configuration for ConfidentialLedgerIdentityServiceClient.
+    """Configuration for ConfidentialLedgerCertificateClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -31,7 +31,7 @@ class ConfidentialLedgerIdentityServiceClientConfiguration(
     """
 
     def __init__(self, identity_service_uri: str, **kwargs: Any) -> None:
-        super(ConfidentialLedgerIdentityServiceClientConfiguration, self).__init__(**kwargs)
+        super(ConfidentialLedgerCertificateClientConfiguration, self).__init__(**kwargs)
         api_version = kwargs.pop("api_version", "2022-05-13")  # type: str
 
         if identity_service_uri is None:

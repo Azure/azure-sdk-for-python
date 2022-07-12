@@ -4,8 +4,8 @@ import tempfile
 
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 
-from azure.confidentialledger.identity_service import (
-    ConfidentialLedgerIdentityServiceClient,
+from azure.confidentialledger.certificate import (
+    ConfidentialLedgerCertificateClient,
 )
 
 from .constants import USER_CERTIFICATE
@@ -47,7 +47,7 @@ class ConfidentialLedgerTestCase(AzureTestCase):
 
     def set_ledger_identity(self, confidentialledger_id):
         client = self.create_client_from_credential(
-            ConfidentialLedgerIdentityServiceClient,
+            ConfidentialLedgerCertificateClient,
             credential=None,
         )
 

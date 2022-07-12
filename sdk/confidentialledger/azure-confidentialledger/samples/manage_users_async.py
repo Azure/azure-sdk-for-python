@@ -23,8 +23,8 @@ import sys
 import tempfile
 
 from azure.confidentialledger.aio import ConfidentialLedgerClient
-from azure.confidentialledger.identity_service.aio import (
-    ConfidentialLedgerIdentityServiceClient,
+from azure.confidentialledger.certificate.aio import (
+    ConfidentialLedgerCertificateClient,
 )
 from azure.identity.aio import DefaultAzureCredential
 
@@ -56,7 +56,7 @@ async def main():
     # i.e. https://<ledger id>.confidential-ledger.azure.com
     ledger_id = ledger_endpoint.replace("https://", "").split(".")[0]
 
-    identity_service_client = ConfidentialLedgerIdentityServiceClient()
+    identity_service_client = ConfidentialLedgerCertificateClient()
     async with identity_service_client:
         ledger_certificate = await identity_service_client.get_ledger_identity(
             ledger_id

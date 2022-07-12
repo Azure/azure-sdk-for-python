@@ -8,12 +8,12 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import Any, List, Optional
 
-from azure.confidentialledger.identity_service._client import (
-    ConfidentialLedgerIdentityServiceClient as GeneratedClient,
+from azure.confidentialledger.certificate._client import (
+    ConfidentialLedgerCertificateClient as GeneratedClient,
 )
 
 __all__: List[str] = [
-    "ConfidentialLedgerIdentityServiceClient"
+    "ConfidentialLedgerCertificateClient"
 ]  # Add all objects you want publicly available to users at this package level
 
 
@@ -26,7 +26,7 @@ def patch_sdk():
     """
 
 
-class ConfidentialLedgerIdentityServiceClient(GeneratedClient):
+class ConfidentialLedgerCertificateClient(GeneratedClient):
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self, identity_service_uri: Optional[str] = None, **kwargs: Any
     ) -> None:

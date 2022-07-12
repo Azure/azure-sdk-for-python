@@ -1,17 +1,17 @@
 from devtools_testutils import AzureTestCase
 
-from azure.confidentialledger.identity_service import (
-    ConfidentialLedgerIdentityServiceClient,
+from azure.confidentialledger.certificate import (
+    ConfidentialLedgerCertificateClient,
 )
 
 from .testcase import ConfidentialLedgerPreparer
 
 
-class ConfidentialLedgerIdentityServiceClientTest(AzureTestCase):
+class ConfidentialLedgerCertificateClientTest(AzureTestCase):
     @ConfidentialLedgerPreparer()
     def test_get_ledger_identity(self, confidentialledger_id):
         client = self.create_client_from_credential(
-            ConfidentialLedgerIdentityServiceClient,
+            ConfidentialLedgerCertificateClient,
             credential=None,
         )
 

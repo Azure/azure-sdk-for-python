@@ -17,12 +17,13 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
-from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import case_insensitive_dict
 
-from ..._operations._operations import build_get_ledger_identity_request
-from .._vendor import MixinABC
+from .._serialization import Serializer
+from .._vendor import MixinABC, _format_url_section
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -30,12 +31,39 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
 
-class ConfidentialLedgerIdentityServiceClientOperationsMixin(MixinABC):
-    @distributed_trace_async
-    async def get_ledger_identity(self, ledger_id: str, **kwargs: Any) -> JSON:
+def build_get_ledger_identity_request(ledger_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/ledgerIdentity/{ledgerId}"
+    path_format_arguments = {
+        "ledgerId": _SERIALIZER.url("ledger_id", ledger_id, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class ConfidentialLedgerCertificateClientOperationsMixin(MixinABC):
+    @distributed_trace
+    def get_ledger_identity(self, ledger_id: str, **kwargs: Any) -> JSON:
         """Gets identity information for a Confidential Ledger instance.
 
         Gets identity information for a Confidential Ledger instance.
@@ -77,7 +105,7 @@ class ConfidentialLedgerIdentityServiceClientOperationsMixin(MixinABC):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
