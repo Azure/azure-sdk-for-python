@@ -66,6 +66,7 @@ def _upload_file_helper(
         file_last_write_time="now",
         file_permission=None,
         file_permission_key=None,
+        progress_hook=None,
         **kwargs):
     try:
         if size is None or size < 0:
@@ -93,6 +94,7 @@ def _upload_file_helper(
             stream=stream,
             max_concurrency=max_concurrency,
             validate_content=validate_content,
+            progress_hook=progress_hook,
             timeout=timeout,
             **kwargs
         )
@@ -489,6 +491,11 @@ class ShareFileClient(StorageAccountHostsMixin):
             .. versionadded:: 12.1.0
 
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :keyword progress_hook:
+            A callback to track the progress of a long running upload. The signature is
+            function(current: int, total: Optional[int]) where current is the number of bytes transferred
+            so far, and total is the size of the blob or None if the size is unknown.
+        :paramtype progress_hook: Callable[[int, Optional[int]], None]
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword str encoding:
@@ -509,6 +516,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         content_settings = kwargs.pop('content_settings', None)
         max_concurrency = kwargs.pop('max_concurrency', 1)
         validate_content = kwargs.pop('validate_content', False)
+        progress_hook = kwargs.pop('progress_hook', None)
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
 
@@ -542,6 +550,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             file_last_write_time=file_last_write_time,
             file_permission=file_permission,
             file_permission_key=permission_key,
+            progress_hook=progress_hook,
             **kwargs)
 
     @distributed_trace
@@ -740,6 +749,11 @@ class ShareFileClient(StorageAccountHostsMixin):
             .. versionadded:: 12.1.0
 
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :keyword progress_hook:
+            A callback to track the progress of a long running download. The signature is
+            function(current: int, total: int) where current is the number of bytes transferred
+            so far, and total is the total size of the download.
+        :paramtype progress_hook: Callable[[int, int], None]
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A streaming object (StorageStreamDownloader)

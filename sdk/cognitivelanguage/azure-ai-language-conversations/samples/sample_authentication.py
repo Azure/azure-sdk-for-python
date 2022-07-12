@@ -11,7 +11,8 @@ FILE: sample_authentication.py
 
 DESCRIPTION:
     This sample demonstrates how to authenticate to the Conversational Language Understanding service.
-    We authenticate using an AzureKeyCredential from azure.core.credentials.
+    We authenticate using an AzureKeyCredential from azure.core.credentials or a token credential from the
+    azure-identity client library.
 
     See more details about authentication here:
     https://docs.microsoft.com/azure/cognitive-services/authentication
@@ -35,12 +36,27 @@ def sample_authentication_api_key():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.conversations import ConversationAnalysisClient
 
-
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     key = os.environ["AZURE_CONVERSATIONS_KEY"]
 
     clu_client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
     # [END create_clu_client_with_key]
 
+
+def sample_authentication_with_azure_active_directory():
+    """DefaultAzureCredential will use the values from these environment
+    variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+    """
+    print("\n.. authentication_with_azure_active_directory")
+    from azure.ai.language.conversations import ConversationAnalysisClient
+    from azure.identity import DefaultAzureCredential
+
+    endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
+    credential = DefaultAzureCredential()
+
+    clu_client = ConversationAnalysisClient(endpoint, credential=credential)
+
+
 if __name__ == '__main__':
     sample_authentication_api_key()
+    sample_authentication_with_azure_active_directory()

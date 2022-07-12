@@ -10,7 +10,7 @@ import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
-from azure.ai.formrecognizer import DocumentModel
+from azure.ai.formrecognizer import DocumentModelInfo
 from azure.ai.formrecognizer import DocumentModelAdministrationClient
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -119,7 +119,7 @@ class TestCopyModel(FormRecognizerTest):
         def callback(response, _, headers):
             op_response = client._deserialize(GetOperationResponse, response)
             model_info = client._deserialize(ModelInfo, op_response.result)
-            document_model = DocumentModel._from_generated(model_info)
+            document_model = DocumentModelInfo._from_generated(model_info)
             raw_response.append(model_info)
             raw_response.append(document_model)
 
@@ -156,7 +156,7 @@ class TestCopyModel(FormRecognizerTest):
         poller_2 = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
         model_2 = poller_2.result()
 
-        composed_poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id])
+        composed_poller = client.begin_compose_model([model_1.model_id, model_2.model_id])
         composed_model = composed_poller.result()
 
         target = client.get_copy_authorization()

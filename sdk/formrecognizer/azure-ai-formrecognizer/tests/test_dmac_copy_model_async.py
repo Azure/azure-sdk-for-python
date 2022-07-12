@@ -11,7 +11,7 @@ from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
-from azure.ai.formrecognizer import DocumentModel
+from azure.ai.formrecognizer import DocumentModelInfo
 from azure.ai.formrecognizer.aio import FormTrainingClient, DocumentModelAdministrationClient
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
@@ -120,7 +120,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
         def callback(response, _, headers):
             op_response = client._deserialize(GetOperationResponse, response)
             model_info = client._deserialize(ModelInfo, op_response.result)
-            document_model = DocumentModel._from_generated(model_info)
+            document_model = DocumentModelInfo._from_generated(model_info)
             raw_response.append(model_info)
             raw_response.append(document_model)
 
@@ -163,7 +163,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             poller_2 = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
             model_2 = await poller_2.result()
 
-            composed_poller = await client.begin_create_composed_model([model_1.model_id, model_2.model_id])
+            composed_poller = await client.begin_compose_model([model_1.model_id, model_2.model_id])
             composed_model = await composed_poller.result()
 
             target = await client.get_copy_authorization()

@@ -1,10 +1,10 @@
 # Release History
 
-## 12.8.0 (Unreleased)
+## 12.8.0 (2022-07-07)
 
 ### Features Added
-
-### Bugs Fixed
+- Stable release of features from 12.8.0b1.
+- Removed support for `expiry_options` from file `create` APIs. With this change, `expires_on` now covers all functionality `expiry_options` offered.
 
 ## 12.8.0b1 (2022-06-15)
 

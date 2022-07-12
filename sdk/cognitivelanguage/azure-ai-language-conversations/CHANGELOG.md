@@ -1,5 +1,31 @@
 # Release History
 
+## 1.1.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.1.0b2 (2022-07-01)
+
+### Features Added
+* Added Azure Active Directory (AAD) authentication support
+* Added support for authoring operations with `ConversationAuthoringClient` under the `azure.ai.language.conversations.authoring` namespace.
+
+## 1.0.0 (2022-06-27)
+
+### Features Added
+* Added Azure Active Directory (AAD) authentication support
+* Added more resolution types for entities
+* Added support for authoring operations with `ConversationAuthoringClient` under the `azure.ai.language.conversations.authoring` namespace.
+
+### Breaking Changes
+* Client now uses python dictionaries for method parameters and results instead of classes.
+
 ## 1.1.0b1 (2022-05-26)
 
 ### Features Added
@@ -9,15 +35,6 @@
 ### Breaking Changes
 * Client now uses python dictionaries for method parameters and results instead of classes.
 * Many input and result parameter name changes in `analyze_conversation()` method
-
-## 1.0.0 (Unreleased)
-
-### Features Added
-* Added more resolution types for entities
-* Added support for authoring operations with `ConversationAuthoringClient` under the `azure.ai.language.conversations.authoring` namespace.
-
-### Breaking Changes
-* Client now uses python dictionaries for method parameters and results instead of classes.
 
 ## 1.0.0b3 (2022-04-19)
 
