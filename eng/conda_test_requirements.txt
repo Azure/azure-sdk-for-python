@@ -10,4 +10,5 @@ typing_extensions>=3.7.2
 futures==3.3.0; python_version <= '2.7'
 cryptography
 adal
+setuptools==46.4.0
 -e sdk/core/azure-core/tests/testserver_tests/coretestserver
