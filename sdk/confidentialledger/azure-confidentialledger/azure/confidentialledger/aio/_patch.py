@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import os
 from typing import Any, List, Union
 
-from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline import policies
 
 from azure.confidentialledger.aio._client import (
@@ -46,7 +46,7 @@ class ConfidentialLedgerClient(GeneratedClient):
     :param credential: A credential object for authenticating with the Confidential Ledger.
     :type credential: Union[
         ~azure.confidentialledger.ConfidentialLedgerCertificateCredential,
-        ~azure.core.credentials.TokenCredential]
+        ~azure.core.credentials_async.AsyncTokenCredential]
     :param ledger_certificate_path: The path to the Confidential Ledger's TLS certificate. If this
         file does not exist yet, the Confidential Ledger's TLS certificate will be fetched and saved
         to this file.
@@ -59,7 +59,7 @@ class ConfidentialLedgerClient(GeneratedClient):
     def __init__(
         self,
         ledger_uri: str,
-        credential: Union[ConfidentialLedgerCertificateCredential, TokenCredential],
+        credential: Union[ConfidentialLedgerCertificateCredential, AsyncTokenCredential],
         *,
         ledger_certificate_path: Union[bytes, str, os.PathLike],
         **kwargs: Any,
