@@ -395,7 +395,7 @@ Refer to [IoT Hub Connection String Sample](https://github.com/Azure/azure-sdk-f
 
 ## Troubleshooting
 
-See the `azure-eventhubs` [troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/TROUBLESHOOTING.md) for details on how to diagnose various failure scenarios.
+See the `azure-eventhubs` [troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/TROUBLESHOOTING.md) for details on how to diagnose various failure scenarios.
 
 ## Next steps
 
