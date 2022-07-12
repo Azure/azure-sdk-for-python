@@ -8,7 +8,7 @@
 from functools import partial
 from io import BytesIO
 from typing import (
-    Any, AnyStr, Dict, IO, Iterable, List, Optional, Tuple, Type, TypeVar, Union,
+    Any, AnyStr, Dict, IO, Iterable, List, Optional, overload, Tuple, Type, TypeVar, Union,
     TYPE_CHECKING
 )
 from urllib.parse import urlparse, quote, unquote
@@ -777,9 +777,31 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         options.update(kwargs)
         return options
 
+    @overload
+    def download_blob(
+            self, offset: int = None,
+            length: int = None,
+            *,
+            encoding: str,
+            **kwargs) -> StorageStreamDownloader[str]:
+        ...
+
+    @overload
+    def download_blob(
+            self, offset: int = None,
+            length: int = None,
+            *,
+            encoding: None = None,
+            **kwargs) -> StorageStreamDownloader[bytes]:
+        ...
+
     @distributed_trace
-    def download_blob(self, offset=None, length=None, **kwargs):
-        # type: (Optional[int], Optional[int], **Any) -> StorageStreamDownloader
+    def download_blob(
+            self, offset: int = None,
+            length: int = None,
+            *,
+            encoding: Optional[str] = None,
+            **kwargs) -> StorageStreamDownloader[bytes | str]:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
@@ -853,7 +875,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
         :returns: A streaming object (StorageStreamDownloader)
-        :rtype: ~azure.storage.blob.StorageStreamDownloader
+        :rtype: ~azure.storage.blob.StorageStreamDownloader[bytes | str]
 
         .. admonition:: Example:
 

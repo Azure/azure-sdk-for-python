@@ -7,7 +7,7 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Any, AnyStr, AsyncIterator, Dict, List, IO, Iterable, Optional, Union,
+    Any, AnyStr, AsyncIterator, Dict, List, IO, Iterable, Optional, overload, Union,
     TYPE_CHECKING
 )
 
@@ -928,9 +928,34 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             timeout=timeout,
             **kwargs)
 
+    @overload
+    async def download_blob(
+            self, blob: Union[str, BlobProperties],
+            offset: int = None,
+            length: int = None,
+            *,
+            encoding: str,
+            **kwargs) -> StorageStreamDownloader[str]:
+        ...
+
+    @overload
+    async def download_blob(
+            self, blob: Union[str, BlobProperties],
+            offset: int = None,
+            length: int = None,
+            *,
+            encoding: None = None,
+            **kwargs) -> StorageStreamDownloader[bytes]:
+        ...
+
     @distributed_trace_async
-    async def download_blob(self, blob, offset=None, length=None, **kwargs):
-        # type: (Union[str, BlobProperties], Optional[int], Optional[int], Any) -> StorageStreamDownloader
+    async def download_blob(
+            self, blob: Union[str, BlobProperties],
+            offset: int = None,
+            length: int = None,
+            *,
+            encoding: Optional[str] = None,
+            **kwargs) -> StorageStreamDownloader[bytes | str]:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.
@@ -1007,7 +1032,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
         :returns: A streaming object. (StorageStreamDownloader)
-        :rtype: ~azure.storage.blob.aio.StorageStreamDownloader
+        :rtype: ~azure.storage.blob.aio.StorageStreamDownloader[bytes | str]
         """
         blob_client = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)

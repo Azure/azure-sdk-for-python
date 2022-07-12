@@ -8,7 +8,7 @@
 import warnings
 from functools import partial
 from typing import (  # pylint: disable=unused-import
-    Any, AnyStr, Dict, IO, Iterable, List, Tuple, Optional, Union,
+    Any, AnyStr, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
 
@@ -405,9 +405,31 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             return await upload_page_blob(**options)
         return await upload_append_blob(**options)
 
+    @overload
+    async def download_blob(
+            self, offset: int = None,
+            length: int = None,
+            *,
+            encoding: str,
+            **kwargs) -> StorageStreamDownloader[str]:
+        ...
+
+    @overload
+    async def download_blob(
+            self, offset: int = None,
+            length: int = None,
+            *,
+            encoding: None = None,
+            **kwargs) -> StorageStreamDownloader[bytes]:
+        ...
+
     @distributed_trace_async
-    async def download_blob(self, offset=None, length=None, **kwargs):
-        # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
+    async def download_blob(
+            self, offset: int = None,
+            length: int = None,
+            *,
+            encoding: Optional[str] = None,
+            **kwargs) -> StorageStreamDownloader[bytes | str]:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.

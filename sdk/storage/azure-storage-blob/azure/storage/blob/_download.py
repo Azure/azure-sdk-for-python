@@ -9,7 +9,7 @@ import threading
 import time
 import warnings
 from io import BytesIO
-from typing import Iterator, Union
+from typing import Generic, Iterator, TypeVar
 
 import requests
 from azure.core.exceptions import HttpResponseError, ServiceResponseError
@@ -25,6 +25,8 @@ from ._encryption import (
     is_encryption_v2,
     parse_encryption_data
 )
+
+T = TypeVar('T', bytes, str)
 
 
 def process_range_and_offset(start_range, end_range, length, encryption_options, encryption_data):
@@ -281,7 +283,7 @@ class _ChunkIterator(object):
         return chunk_data
 
 
-class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attributes
+class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-attributes
     """A streaming object to download from Azure Storage.
 
     :ivar str name:
@@ -546,11 +548,11 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             chunk_size=self._config.max_chunk_get_size)
 
     def readall(self):
-        # type: () -> Union[bytes, str]
+        # type: () -> T
         """Download the contents of this blob.
 
         This operation is blocking until all data is downloaded.
-        :rtype: bytes or str
+        :rtype: T
         """
         stream = BytesIO()
         self.readinto(stream)
