@@ -681,7 +681,7 @@ def validate_cache_staleness_value(max_integrated_cache_staleness):
 def stringify_auto_scale(offer):
     auto_scale_params = None
     max_throughput = offer.auto_scale_max_throughput
-    increment_percent = offer.auto_scale_increment_percentage
+    increment_percent = offer.auto_scale_increment_percent
     if max_throughput is not None:
         auto_scale_params = {"maxThroughput": max_throughput}
         if increment_percent is not None:
