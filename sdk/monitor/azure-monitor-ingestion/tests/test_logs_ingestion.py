@@ -6,6 +6,7 @@ from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from preparer import IngestionPreparer
 
 class TestLogsIngestionClient(AzureRecordedTestCase):
+    @pytest.mark.live_test_only
     @IngestionPreparer()
     @recorded_by_proxy
     def test_send_logs(self, variables, azure_monitor_dce, azure_monitor_dcr_id, monitor_client_id, monitor_client_secret, monitor_tenant_id):
@@ -13,8 +14,7 @@ class TestLogsIngestionClient(AzureRecordedTestCase):
         client_id = monitor_client_id,
         client_secret = monitor_client_secret,
         tenant_id = monitor_tenant_id
-    )
-
+        )
         client = LogsIngestionClient(endpoint=azure_monitor_dce, credential=credential)
         body = [
             {
