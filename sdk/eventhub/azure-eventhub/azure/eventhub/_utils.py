@@ -29,12 +29,13 @@ from ._constants import (
     PROP_TIMESTAMP,
 )
 
-# Python 3 Type Checking imports
-from ._transport._base import AmqpTransport
-
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
-    from uamqp import types
+    from ._transport._base import AmqpTransport
+    try:
+        from uamqp import uamqp_types
+    except ImportError:
+        uamqp_types = None
     from azure.core.tracing import AbstractSpan
     from azure.core.credentials import AzureSasCredential
     from ._common import EventData
@@ -77,8 +78,8 @@ def utc_from_timestamp(timestamp):
 
 
 def create_properties(
-    user_agent: Optional[str] = None, *, amqp_transport: AmqpTransport
-) -> Dict["types.AMQPSymbol", str]:
+    user_agent: Optional[str] = None, *, amqp_transport: "AmqpTransport"
+) -> Dict[Union["uamqp_types.AMQPSymbol", str], str]:
     """
     Format the properties with which to instantiate the connection.
     This acts like a user agent over HTTP.
@@ -88,25 +89,19 @@ def create_properties(
     properties = {}
     properties[amqp_transport.PRODUCT_SYMBOL] = USER_AGENT_PREFIX
     properties[amqp_transport.VERSION_SYMBOL] = VERSION
-    framework = "Python/{}.{}.{}".format(
-        sys.version_info[0], sys.version_info[1], sys.version_info[2]
-    )
+    framework = f"Python/{sys.version_info[0]}.{sys.version_info[1]}.{sys.version_info[2]}"
     properties[amqp_transport.FRAMEWORK_SYMBOL] = framework
     platform_str = platform.platform()
     properties[amqp_transport.PLATFORM_SYMBOL] = platform_str
 
-    final_user_agent = "{}/{} {} ({})".format(
-        USER_AGENT_PREFIX, VERSION, framework, platform_str
-    )
+    final_user_agent = f"{USER_AGENT_PREFIX}/{VERSION} {framework} ({platform_str})"
     if user_agent:
-        final_user_agent = "{} {}".format(user_agent, final_user_agent)
+        final_user_agent = f"{user_agent} {final_user_agent}"
 
     if len(final_user_agent) > MAX_USER_AGENT_LENGTH:
         raise ValueError(
-            "The user-agent string cannot be more than {} in length."
-            "Current user_agent string is: {} with length: {}".format(
-                MAX_USER_AGENT_LENGTH, final_user_agent, len(final_user_agent)
-            )
+            f"The user-agent string cannot be more than {MAX_USER_AGENT_LENGTH} in length."
+            f"Current user_agent string is: {final_user_agent} with length: {len(final_user_agent)}"
         )
     properties[amqp_transport.USER_AGENT_SYMBOL] = final_user_agent
     return properties
@@ -185,15 +180,13 @@ def event_position_selector(value, inclusive=False):
             value.microsecond / 1000
         )
         return (
-            "amqp.annotation.x-opt-enqueued-time {} '{}'".format(
-                operator, int(timestamp)
-            )
+            f"amqp.annotation.x-opt-enqueued-time {operator} '{int(timestamp)}'"
         ).encode("utf-8")
     elif isinstance(value, six.integer_types):
         return (
-            "amqp.annotation.x-opt-sequence-number {} '{}'".format(operator, value)
+            f"amqp.annotation.x-opt-sequence-number {operator} '{value}'"
         ).encode("utf-8")
-    return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, value)).encode(
+    return (f"amqp.annotation.x-opt-offset {operator} '{value}'").encode(
         "utf-8"
     )
 
@@ -264,12 +257,12 @@ def transform_outbound_single_message(message, message_type, to_outgoing_amqp_me
     """
     try:
         # pylint: disable=protected-access
-        # TODO:EventData.message stores uamqp/pyamqp.Message during sending
+        # EventData.message stores uamqp/pyamqp.Message during sending
         message.message = to_outgoing_amqp_message(message.raw_amqp_message)
         return message  # type: ignore
     except AttributeError:
         # pylint: disable=protected-access
-        # TODO:AmqpAnnotatedMessage is converted to uamqp/pyamqp.Message during sending
+        # AmqpAnnotatedMessage is converted to uamqp/pyamqp.Message during sending
         amqp_message = to_outgoing_amqp_message(message)
         return message_type._from_message(
             message=amqp_message, raw_amqp_message=message  # type: ignore

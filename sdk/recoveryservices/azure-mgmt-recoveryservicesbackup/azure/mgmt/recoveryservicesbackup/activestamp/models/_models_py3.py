@@ -128,7 +128,7 @@ class ProtectionContainer(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'container_type': {'AzureSqlContainer': 'AzureSqlContainer', 'AzureWorkloadContainer': 'AzureWorkloadContainer', 'DPMContainer': 'DpmContainer', 'GenericContainer': 'GenericContainer', 'IaaSVMContainer': 'IaaSVMContainer', 'StorageContainer': 'AzureStorageContainer', 'Windows': 'MabContainer'}
+        'container_type': {'AzureSqlContainer': 'AzureSqlContainer', 'AzureWorkloadContainer': 'AzureWorkloadContainer', 'DPMContainer': 'DpmContainer', 'GenericContainer': 'GenericContainer', 'IaasVMContainer': 'IaaSVMContainer', 'StorageContainer': 'AzureStorageContainer', 'Windows': 'MabContainer'}
     }
 
     def __init__(
@@ -1889,7 +1889,7 @@ class IaaSVMContainer(ProtectionContainer):
         :paramtype resource_group: str
         """
         super(IaaSVMContainer, self).__init__(friendly_name=friendly_name, backup_management_type=backup_management_type, registration_status=registration_status, health_status=health_status, protectable_object_type=protectable_object_type, **kwargs)
-        self.container_type = 'IaaSVMContainer'  # type: str
+        self.container_type = 'IaasVMContainer'  # type: str
         self.virtual_machine_id = virtual_machine_id
         self.virtual_machine_version = virtual_machine_version
         self.resource_group = resource_group
@@ -3700,8 +3700,18 @@ class AzureIaaSVMJobV2(Job):
 class AzureIaaSVMProtectedItemExtendedInfo(msrest.serialization.Model):
     """Additional information on Azure IaaS VM specific backup item.
 
-    :ivar oldest_recovery_point: The oldest backup copy available for this backup item.
+    :ivar oldest_recovery_point: The oldest backup copy available for this backup item across all
+     tiers.
     :vartype oldest_recovery_point: ~datetime.datetime
+    :ivar oldest_recovery_point_in_vault: The oldest backup copy available for this backup item in
+     vault tier.
+    :vartype oldest_recovery_point_in_vault: ~datetime.datetime
+    :ivar oldest_recovery_point_in_archive: The oldest backup copy available for this backup item
+     in archive tier.
+    :vartype oldest_recovery_point_in_archive: ~datetime.datetime
+    :ivar newest_recovery_point_in_archive: The latest backup copy available for this backup item
+     in archive tier.
+    :vartype newest_recovery_point_in_archive: ~datetime.datetime
     :ivar recovery_point_count: Number of backup copies available for this backup item.
     :vartype recovery_point_count: int
     :ivar policy_inconsistent: Specifies if backup policy associated with the backup item is
@@ -3711,6 +3721,9 @@ class AzureIaaSVMProtectedItemExtendedInfo(msrest.serialization.Model):
 
     _attribute_map = {
         'oldest_recovery_point': {'key': 'oldestRecoveryPoint', 'type': 'iso-8601'},
+        'oldest_recovery_point_in_vault': {'key': 'oldestRecoveryPointInVault', 'type': 'iso-8601'},
+        'oldest_recovery_point_in_archive': {'key': 'oldestRecoveryPointInArchive', 'type': 'iso-8601'},
+        'newest_recovery_point_in_archive': {'key': 'newestRecoveryPointInArchive', 'type': 'iso-8601'},
         'recovery_point_count': {'key': 'recoveryPointCount', 'type': 'int'},
         'policy_inconsistent': {'key': 'policyInconsistent', 'type': 'bool'},
     }
@@ -3719,13 +3732,26 @@ class AzureIaaSVMProtectedItemExtendedInfo(msrest.serialization.Model):
         self,
         *,
         oldest_recovery_point: Optional[datetime.datetime] = None,
+        oldest_recovery_point_in_vault: Optional[datetime.datetime] = None,
+        oldest_recovery_point_in_archive: Optional[datetime.datetime] = None,
+        newest_recovery_point_in_archive: Optional[datetime.datetime] = None,
         recovery_point_count: Optional[int] = None,
         policy_inconsistent: Optional[bool] = None,
         **kwargs
     ):
         """
-        :keyword oldest_recovery_point: The oldest backup copy available for this backup item.
+        :keyword oldest_recovery_point: The oldest backup copy available for this backup item across
+         all tiers.
         :paramtype oldest_recovery_point: ~datetime.datetime
+        :keyword oldest_recovery_point_in_vault: The oldest backup copy available for this backup item
+         in vault tier.
+        :paramtype oldest_recovery_point_in_vault: ~datetime.datetime
+        :keyword oldest_recovery_point_in_archive: The oldest backup copy available for this backup
+         item in archive tier.
+        :paramtype oldest_recovery_point_in_archive: ~datetime.datetime
+        :keyword newest_recovery_point_in_archive: The latest backup copy available for this backup
+         item in archive tier.
+        :paramtype newest_recovery_point_in_archive: ~datetime.datetime
         :keyword recovery_point_count: Number of backup copies available for this backup item.
         :paramtype recovery_point_count: int
         :keyword policy_inconsistent: Specifies if backup policy associated with the backup item is
@@ -3734,6 +3760,9 @@ class AzureIaaSVMProtectedItemExtendedInfo(msrest.serialization.Model):
         """
         super(AzureIaaSVMProtectedItemExtendedInfo, self).__init__(**kwargs)
         self.oldest_recovery_point = oldest_recovery_point
+        self.oldest_recovery_point_in_vault = oldest_recovery_point_in_vault
+        self.oldest_recovery_point_in_archive = oldest_recovery_point_in_archive
+        self.newest_recovery_point_in_archive = newest_recovery_point_in_archive
         self.recovery_point_count = recovery_point_count
         self.policy_inconsistent = policy_inconsistent
 
@@ -3758,6 +3787,11 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
     :ivar retention_policy: Retention policy with the details on backup copy retention ranges.
     :vartype retention_policy:
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.RetentionPolicy
+    :ivar tiering_policy: Tiering policy to automatically move RPs to another tier
+     Key is Target Tier, defined in RecoveryPointTierType enum.
+     Tiering policy specifies the criteria to move RP to the target tier.
+    :vartype tiering_policy: dict[str,
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.TieringPolicy]
     :ivar instant_rp_retention_range_in_days: Instant RP retention policy range in days.
     :vartype instant_rp_retention_range_in_days: int
     :ivar time_zone: TimeZone optional input as string. For example: TimeZone = "Pacific Standard
@@ -3779,6 +3813,7 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
         'instant_rp_details': {'key': 'instantRPDetails', 'type': 'InstantRPAdditionalDetails'},
         'schedule_policy': {'key': 'schedulePolicy', 'type': 'SchedulePolicy'},
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
+        'tiering_policy': {'key': 'tieringPolicy', 'type': '{TieringPolicy}'},
         'instant_rp_retention_range_in_days': {'key': 'instantRpRetentionRangeInDays', 'type': 'int'},
         'time_zone': {'key': 'timeZone', 'type': 'str'},
         'policy_type': {'key': 'policyType', 'type': 'str'},
@@ -3792,6 +3827,7 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
         instant_rp_details: Optional["InstantRPAdditionalDetails"] = None,
         schedule_policy: Optional["SchedulePolicy"] = None,
         retention_policy: Optional["RetentionPolicy"] = None,
+        tiering_policy: Optional[Dict[str, "TieringPolicy"]] = None,
         instant_rp_retention_range_in_days: Optional[int] = None,
         time_zone: Optional[str] = None,
         policy_type: Optional[Union[str, "IAASVMPolicyType"]] = None,
@@ -3811,6 +3847,11 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
         :keyword retention_policy: Retention policy with the details on backup copy retention ranges.
         :paramtype retention_policy:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RetentionPolicy
+        :keyword tiering_policy: Tiering policy to automatically move RPs to another tier
+         Key is Target Tier, defined in RecoveryPointTierType enum.
+         Tiering policy specifies the criteria to move RP to the target tier.
+        :paramtype tiering_policy: dict[str,
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.TieringPolicy]
         :keyword instant_rp_retention_range_in_days: Instant RP retention policy range in days.
         :paramtype instant_rp_retention_range_in_days: int
         :keyword time_zone: TimeZone optional input as string. For example: TimeZone = "Pacific
@@ -3825,6 +3866,7 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
         self.instant_rp_details = instant_rp_details
         self.schedule_policy = schedule_policy
         self.retention_policy = retention_policy
+        self.tiering_policy = tiering_policy
         self.instant_rp_retention_range_in_days = instant_rp_retention_range_in_days
         self.time_zone = time_zone
         self.policy_type = policy_type
@@ -6037,8 +6079,18 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
 class AzureVmWorkloadProtectedItemExtendedInfo(msrest.serialization.Model):
     """Additional information on Azure Workload for SQL specific backup item.
 
-    :ivar oldest_recovery_point: The oldest backup copy available for this backup item.
+    :ivar oldest_recovery_point: The oldest backup copy available for this backup item across all
+     tiers.
     :vartype oldest_recovery_point: ~datetime.datetime
+    :ivar oldest_recovery_point_in_vault: The oldest backup copy available for this backup item in
+     vault tier.
+    :vartype oldest_recovery_point_in_vault: ~datetime.datetime
+    :ivar oldest_recovery_point_in_archive: The oldest backup copy available for this backup item
+     in archive tier.
+    :vartype oldest_recovery_point_in_archive: ~datetime.datetime
+    :ivar newest_recovery_point_in_archive: The latest backup copy available for this backup item
+     in archive tier.
+    :vartype newest_recovery_point_in_archive: ~datetime.datetime
     :ivar recovery_point_count: Number of backup copies available for this backup item.
     :vartype recovery_point_count: int
     :ivar policy_state: Indicates consistency of policy object and policy applied to this backup
@@ -6051,6 +6103,9 @@ class AzureVmWorkloadProtectedItemExtendedInfo(msrest.serialization.Model):
 
     _attribute_map = {
         'oldest_recovery_point': {'key': 'oldestRecoveryPoint', 'type': 'iso-8601'},
+        'oldest_recovery_point_in_vault': {'key': 'oldestRecoveryPointInVault', 'type': 'iso-8601'},
+        'oldest_recovery_point_in_archive': {'key': 'oldestRecoveryPointInArchive', 'type': 'iso-8601'},
+        'newest_recovery_point_in_archive': {'key': 'newestRecoveryPointInArchive', 'type': 'iso-8601'},
         'recovery_point_count': {'key': 'recoveryPointCount', 'type': 'int'},
         'policy_state': {'key': 'policyState', 'type': 'str'},
         'recovery_model': {'key': 'recoveryModel', 'type': 'str'},
@@ -6060,14 +6115,27 @@ class AzureVmWorkloadProtectedItemExtendedInfo(msrest.serialization.Model):
         self,
         *,
         oldest_recovery_point: Optional[datetime.datetime] = None,
+        oldest_recovery_point_in_vault: Optional[datetime.datetime] = None,
+        oldest_recovery_point_in_archive: Optional[datetime.datetime] = None,
+        newest_recovery_point_in_archive: Optional[datetime.datetime] = None,
         recovery_point_count: Optional[int] = None,
         policy_state: Optional[str] = None,
         recovery_model: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword oldest_recovery_point: The oldest backup copy available for this backup item.
+        :keyword oldest_recovery_point: The oldest backup copy available for this backup item across
+         all tiers.
         :paramtype oldest_recovery_point: ~datetime.datetime
+        :keyword oldest_recovery_point_in_vault: The oldest backup copy available for this backup item
+         in vault tier.
+        :paramtype oldest_recovery_point_in_vault: ~datetime.datetime
+        :keyword oldest_recovery_point_in_archive: The oldest backup copy available for this backup
+         item in archive tier.
+        :paramtype oldest_recovery_point_in_archive: ~datetime.datetime
+        :keyword newest_recovery_point_in_archive: The latest backup copy available for this backup
+         item in archive tier.
+        :paramtype newest_recovery_point_in_archive: ~datetime.datetime
         :keyword recovery_point_count: Number of backup copies available for this backup item.
         :paramtype recovery_point_count: int
         :keyword policy_state: Indicates consistency of policy object and policy applied to this backup
@@ -6079,6 +6147,9 @@ class AzureVmWorkloadProtectedItemExtendedInfo(msrest.serialization.Model):
         """
         super(AzureVmWorkloadProtectedItemExtendedInfo, self).__init__(**kwargs)
         self.oldest_recovery_point = oldest_recovery_point
+        self.oldest_recovery_point_in_vault = oldest_recovery_point_in_vault
+        self.oldest_recovery_point_in_archive = oldest_recovery_point_in_archive
+        self.newest_recovery_point_in_archive = newest_recovery_point_in_archive
         self.recovery_point_count = recovery_point_count
         self.policy_state = policy_state
         self.recovery_model = recovery_model
@@ -18990,12 +19061,18 @@ class SubProtectionPolicy(msrest.serialization.Model):
     :ivar retention_policy: Retention policy with the details on backup copy retention ranges.
     :vartype retention_policy:
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.RetentionPolicy
+    :ivar tiering_policy: Tiering policy to automatically move RPs to another tier.
+     Key is Target Tier, defined in RecoveryPointTierType enum.
+     Tiering policy specifies the criteria to move RP to the target tier.
+    :vartype tiering_policy: dict[str,
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.TieringPolicy]
     """
 
     _attribute_map = {
         'policy_type': {'key': 'policyType', 'type': 'str'},
         'schedule_policy': {'key': 'schedulePolicy', 'type': 'SchedulePolicy'},
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
+        'tiering_policy': {'key': 'tieringPolicy', 'type': '{TieringPolicy}'},
     }
 
     def __init__(
@@ -19004,6 +19081,7 @@ class SubProtectionPolicy(msrest.serialization.Model):
         policy_type: Optional[Union[str, "PolicyType"]] = None,
         schedule_policy: Optional["SchedulePolicy"] = None,
         retention_policy: Optional["RetentionPolicy"] = None,
+        tiering_policy: Optional[Dict[str, "TieringPolicy"]] = None,
         **kwargs
     ):
         """
@@ -19016,11 +19094,17 @@ class SubProtectionPolicy(msrest.serialization.Model):
         :keyword retention_policy: Retention policy with the details on backup copy retention ranges.
         :paramtype retention_policy:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RetentionPolicy
+        :keyword tiering_policy: Tiering policy to automatically move RPs to another tier.
+         Key is Target Tier, defined in RecoveryPointTierType enum.
+         Tiering policy specifies the criteria to move RP to the target tier.
+        :paramtype tiering_policy: dict[str,
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.TieringPolicy]
         """
         super(SubProtectionPolicy, self).__init__(**kwargs)
         self.policy_type = policy_type
         self.schedule_policy = schedule_policy
         self.retention_policy = retention_policy
+        self.tiering_policy = tiering_policy
 
 
 class TargetAFSRestoreInfo(msrest.serialization.Model):
@@ -19105,6 +19189,73 @@ class TargetRestoreInfo(msrest.serialization.Model):
         self.container_id = container_id
         self.database_name = database_name
         self.target_directory_for_file_restore = target_directory_for_file_restore
+
+
+class TieringPolicy(msrest.serialization.Model):
+    """Tiering Policy for a target tier.
+If the policy is not specified for a given target tier, service retains the existing configured tiering policy for that tier.
+
+    :ivar tiering_mode: Tiering Mode to control automatic tiering of recovery points. Supported
+     values are:
+    
+    
+     #. TierRecommended: Tier all recovery points recommended to be tiered
+     #. TierAfter: Tier all recovery points after a fixed period, as specified in duration +
+     durationType below.
+     #. DoNotTier: Do not tier any recovery points. Possible values include: "Invalid",
+     "TierRecommended", "TierAfter", "DoNotTier".
+    :vartype tiering_mode: str or ~azure.mgmt.recoveryservicesbackup.activestamp.models.TieringMode
+    :ivar duration: Number of days/weeks/months/years to retain backups in current tier before
+     tiering.
+     Used only if TieringMode is set to TierAfter.
+    :vartype duration: int
+    :ivar duration_type: Retention duration type: days/weeks/months/years
+     Used only if TieringMode is set to TierAfter. Possible values include: "Invalid", "Days",
+     "Weeks", "Months", "Years".
+    :vartype duration_type: str or
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.RetentionDurationType
+    """
+
+    _attribute_map = {
+        'tiering_mode': {'key': 'tieringMode', 'type': 'str'},
+        'duration': {'key': 'duration', 'type': 'int'},
+        'duration_type': {'key': 'durationType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        tiering_mode: Optional[Union[str, "TieringMode"]] = None,
+        duration: Optional[int] = None,
+        duration_type: Optional[Union[str, "RetentionDurationType"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword tiering_mode: Tiering Mode to control automatic tiering of recovery points. Supported
+         values are:
+        
+        
+         #. TierRecommended: Tier all recovery points recommended to be tiered
+         #. TierAfter: Tier all recovery points after a fixed period, as specified in duration +
+         durationType below.
+         #. DoNotTier: Do not tier any recovery points. Possible values include: "Invalid",
+         "TierRecommended", "TierAfter", "DoNotTier".
+        :paramtype tiering_mode: str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.TieringMode
+        :keyword duration: Number of days/weeks/months/years to retain backups in current tier before
+         tiering.
+         Used only if TieringMode is set to TierAfter.
+        :paramtype duration: int
+        :keyword duration_type: Retention duration type: days/weeks/months/years
+         Used only if TieringMode is set to TierAfter. Possible values include: "Invalid", "Days",
+         "Weeks", "Months", "Years".
+        :paramtype duration_type: str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.RetentionDurationType
+        """
+        super(TieringPolicy, self).__init__(**kwargs)
+        self.tiering_mode = tiering_mode
+        self.duration = duration
+        self.duration_type = duration_type
 
 
 class TokenInformation(msrest.serialization.Model):

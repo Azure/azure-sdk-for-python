@@ -10,10 +10,10 @@ import time
 import functools
 import collections
 from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
-
+from datetime import timedelta
 from urllib.parse import urlparse
-
 import six
+
 from azure.core.credentials import (
     AccessToken,
     AzureSasCredential,
@@ -24,6 +24,7 @@ from azure.core.pipeline.policies import RetryMode
 
 
 from ._transport._uamqp_transport import UamqpTransport
+from ._transport._pyamqp_transport import PyamqpTransport
 from .exceptions import ClientClosedError
 from ._configuration import Configuration
 from ._utils import utc_from_timestamp, parse_sas_credential
@@ -31,15 +32,36 @@ from ._connection_manager import get_connection_manager
 from ._constants import (
     CONTAINER_PREFIX,
     JWT_TOKEN_SCOPE,
-    MGMT_OPERATION,
-    MGMT_PARTITION_OPERATION,
+    READ_OPERATION,
     MGMT_STATUS_CODE,
     MGMT_STATUS_DESC,
-    READ_OPERATION,
+    MGMT_OPERATION,
+    MGMT_PARTITION_OPERATION,
 )
-if TYPE_CHECKING:
-    from uamqp import Message, authentication
+from ._pyamqp import utils as pyamqp_utils, error as errors
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
+    try:
+        from uamqp import Message as uamqp_Message
+        from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+        from ._transport._uamqp_transport import (
+            EventHubSharedKeyCredential as uamqp_EventHubSharedKeyCredential,
+        )
+    except ImportError:
+        uamqp_Message = None
+        uamqp_JWTTokenAuth = None
+        uamqp_EventHubSharedKeyCredential = None
+    from ._pyamqp.message import Message
+    from ._pyamqp.authentication import JWTTokenAuth
+
+    CredentialTypes = Union[
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+        uamqp_EventHubSharedKeyCredential,
+        "EventHubSharedKeyCredential",
+        TokenCredential,
+    ]
 
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
@@ -130,6 +152,21 @@ def _parse_conn_str(conn_str, **kwargs):
     )
 
 
+def _generate_sas_token(uri, policy, key, expiry=None):
+    # type: (str, str, str, Optional[timedelta]) -> AccessToken
+    """Create a shared access signiture token as a string literal.
+    :returns: SAS token as string literal.
+    :rtype: str
+    """
+    if not expiry:
+        expiry = timedelta(hours=1)  # Default to 1 hour.
+
+    abs_expiry = int(time.time()) + expiry.seconds
+
+    token = pyamqp_utils.generate_sas_token(uri, policy, key, abs_expiry).encode()
+    return AccessToken(token=token, expires_on=abs_expiry)
+
+
 def _build_uri(address, entity):
     # type: (str, Optional[str]) -> str
     parsed = urlparse(address)
@@ -145,8 +182,49 @@ def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
     if retry_mode == RetryMode.Fixed:
         backoff_value = backoff_factor
     else:
-        backoff_value = backoff_factor * (2 ** retried_times)
+        backoff_value = backoff_factor * (2**retried_times)
     return min(backoff_max, backoff_value)
+
+
+class EventHubSharedKeyCredential(object):
+    """The shared access key credential used for authentication.
+
+    :param str policy: The name of the shared access policy.
+    :param str key: The shared access key.
+    """
+
+    def __init__(self, policy, key):
+        # type: (str, str) -> None
+        self.policy = policy
+        self.key = key
+        self.token_type = b"servicebus.windows.net:sastoken"
+
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (str, Any) -> AccessToken
+        if not scopes:
+            raise ValueError("No token scope provided.")
+
+        return _generate_sas_token(scopes[0], self.policy, self.key)
+
+
+class EventhubAzureNamedKeyTokenCredential(object):
+    """The named key credential used for authentication.
+
+    :param credential: The AzureNamedKeyCredential that should be used.
+    :type credential: ~azure.core.credentials.AzureNamedKeyCredential
+    """
+
+    def __init__(self, azure_named_key_credential):
+        # type: (AzureNamedKeyCredential) -> None
+        self._credential = azure_named_key_credential
+        self.token_type = b"servicebus.windows.net:sastoken"
+
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (str, Any) -> AccessToken
+        if not scopes:
+            raise ValueError("No token scope provided.")
+        name, key = self._credential.named_key
+        return _generate_sas_token(scopes[0], name, key)
 
 
 class EventHubSASTokenCredential(object):
@@ -202,25 +280,19 @@ class EventhubAzureSasTokenCredential(object):
         return AccessToken(signature, expiry)
 
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-    from ._transport._uamqp_transport import EventHubSharedKeyCredential # TODO: update when pyamqp added
-    CredentialTypes = Union[
-        AzureSasCredential,
-        AzureNamedKeyCredential,
-        EventHubSharedKeyCredential,
-        TokenCredential
-    ]
-
-
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
-    def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
-        # type: (str, str, CredentialTypes, Any) -> None
-        self._uamqp_transport = kwargs.pop("uamqp_transport", True)
-        if self._uamqp_transport:
-            self._amqp_transport = UamqpTransport()
+    def __init__(
+        self,
+        fully_qualified_namespace: str,
+        eventhub_name: str,
+        credential: CredentialTypes,
+        **kwargs: Any,
+    ) -> None:
+        self._uamqp_transport = kwargs.pop("uamqp_transport", False)
+        if not self._uamqp_transport:
+            self._amqp_transport = PyamqpTransport()
         else:
-            raise NotImplementedError('pyamqp transport')
+            self._amqp_transport = UamqpTransport()
 
         self.eventhub_name = eventhub_name
         if not eventhub_name:
@@ -231,16 +303,22 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         if isinstance(credential, AzureSasCredential):
             self._credential = EventhubAzureSasTokenCredential(credential)
         elif isinstance(credential, AzureNamedKeyCredential):
-            if self._uamqp_transport:
-                self._credential = UamqpTransport.create_named_key_token_credential(credential)  # type: ignore
-            else:
-                raise NotImplementedError('pyamqp named key token credential')
+            self._credential = EventhubAzureNamedKeyTokenCredential(credential)
+            # TODO: see if pyamqp generated token works for uamqp
+            # if self._uamqp_transport:
+            #    self._credential = UamqpTransport.create_named_key_token_credential(credential)  # type: ignore
+            # else:
+            #    raise NotImplementedError('pyamqp named key token credential')
         else:
             self._credential = credential  # type: ignore
         self._keep_alive = kwargs.get("keep_alive", 30)
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
-        self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
-        self._config = Configuration(**kwargs)
+        self._auth_uri = f"sb://{self._address.hostname}{self._address.path}"
+        self._config = Configuration(
+            uamqp_transport=self._uamqp_transport,
+            hostname=self._address.hostname,
+            **kwargs,
+        )
         self._debug = self._config.network_tracing
         self._conn_manager = get_connection_manager(**kwargs)
         self._idle_timeout = kwargs.get("idle_timeout", None)
@@ -256,15 +334,15 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         if token and token_expiry:
             kwargs["credential"] = EventHubSASTokenCredential(token, token_expiry)
         elif policy and key:
-            # TODO: pyamqp by default here, else uamqp
-            kwargs["credential"] = UamqpTransport.create_shared_key_credential(policy, key)
+            # TODO: see if pyamqp generated token works for uamqp. pyamqp by default here, else uamqp
+            kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
+            # kwargs["credential"] = UamqpTransport.create_shared_key_credential(policy, key)
         return kwargs
 
-    def _create_auth(self):
-        # type: () -> authentication.JWTTokenAuth
+    def _create_auth(self) -> Union["uamqp_JWTTokenAuth", "JWTTokenAuth"]:
         """
-        Create an ~uamqp.authentication.SASTokenAuth instance to authenticate
-        the session.
+        Create an ~uamqp.authentication.SASTokenAuth or pyamqp.JWTTokenAuth instance
+         to authenticate the session.
         """
         try:
             # ignore mypy's warning because token_type is Optional
@@ -277,14 +355,14 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 functools.partial(self._credential.get_token, self._auth_uri),
                 token_type=token_type,
                 config=self._config,
-                update_token=True   # TODO: discarded by pyamqp transport
+                update_token=True,  # TODO: discarded by pyamqp transport
             )
         return self._amqp_transport.create_token_auth(
             self._auth_uri,
             functools.partial(self._credential.get_token, JWT_TOKEN_SCOPE),
             token_type=token_type,
             config=self._config,
-            update_token=False
+            update_token=False,
         )
 
     def _close_connection(self):
@@ -319,8 +397,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             )
             raise last_exception
 
-    def _management_request(self, mgmt_msg, op_type):
-        # type: ("Message", bytes) -> Any
+    def _management_request(
+        self, mgmt_msg: Union["uamqp_Message", "Message"], op_type: bytes
+    ) -> Any:
         # pylint:disable=assignment-from-none
         retried_times = 0
         last_exception = None
@@ -333,7 +412,10 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 mgmt_client.open()
                 while not mgmt_client.client_ready():
                     time.sleep(0.05)
-                mgmt_msg.application_properties["security_token"] = self._amqp_transport.get_updated_token(mgmt_auth)
+                # TODO: below might not be needed
+                mgmt_msg.application_properties[
+                    "security_token"
+                ] = self._amqp_transport.get_updated_token(mgmt_auth)
                 response = self._amqp_transport.mgmt_client_request(
                     mgmt_client,
                     mgmt_msg,
@@ -353,19 +435,26 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 if status_code in [401]:
                     raise self._amqp_transport.get_error(
                         self._amqp_transport.AUTH_EXCEPTION,
-                        f"Management authentication failed. Status code: {status_code}, Description: {description!r}"
+                        f"Management authentication failed. Status code: {status_code}, Description: {description!r}",
+                        condition=errors.ErrorCondition.UnauthorizedAccess,
                     )
-                if status_code in [404]:  # TODO: make sure the error surfaced is the same across pyamqp and uamqp
+                if status_code in [
+                    404
+                ]:  # TODO: make sure the error surfaced is the same across pyamqp and uamqp
                     return self._amqp_transport.get_error(
                         self._amqp_transport.CONNECTION_ERROR,
-                        f"Management connection failed. Status code: {status_code}, Description: {description!r}"
+                        f"Management connection failed. Status code: {status_code}, Description: {description!r}",
+                        condition=errors.ErrorCondition.NotFound,
                     )
                 return self._amqp_transport.get_error(
                     self._amqp_transport.AMQP_CONNECTION_ERROR,
-                    f"Management request error. Status code: {status_code}, Description: {description!r}"
+                    f"Management request error. Status code: {status_code}, Description: {description!r}",
+                    condition=errors.ErrorCondition.UnknownError,
                 )
             except Exception as exception:  # pylint: disable=broad-except
-                last_exception = self._amqp_transport._handle_exception(exception, self)
+                last_exception = self._amqp_transport._handle_exception(
+                    exception, self
+                )  # pylint: disable=protected-access
                 self._backoff(
                     retried_times=retried_times, last_exception=last_exception
                 )
@@ -373,7 +462,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 if retried_times > self._config.max_retries:
                     _LOGGER.info(
                         "%r returns an exception %r", self._container_id, last_exception
-                   )
+                    )
                     raise last_exception
             finally:
                 mgmt_client.close()
@@ -384,12 +473,13 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         span.add_attribute("message_bus.destination", self._address.path)
         span.add_attribute("peer.address", self._address.hostname)
 
-    def _get_eventhub_properties(self):
-        # type:() -> Dict[str, Any]
-        mgmt_msg = self._amqp_transport.MESSAGE(application_properties={"name": self.eventhub_name})
+    def _get_eventhub_properties(self) -> Dict[str, Any]:
+        mgmt_msg = self._amqp_transport.MESSAGE(
+            application_properties={"name": self.eventhub_name}
+        )
         response = self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
         output = {}
-        eh_info = response.value  # type: Dict[bytes, Any]
+        eh_info: Dict[bytes, Any] = response.value
         if eh_info:
             output["eventhub_name"] = eh_info[b"name"].decode("utf-8")
             output["created_at"] = utc_from_timestamp(
@@ -398,7 +488,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             output["partition_ids"] = [
                 p.decode("utf-8") for p in eh_info[b"partition_ids"]
             ]
-        return output   # TODO: pyamqp - might need to be indented?
+        return output
 
     def _get_partition_ids(self):
         # type:() -> List[str]
@@ -451,9 +541,7 @@ class ConsumerProducerMixin(object):
     def _check_closed(self):
         if self.closed:
             raise ClientClosedError(
-                "{} has been closed. Please create a new one to handle event data.".format(
-                    self._name
-                )
+                f"{self._name} has been closed. Please create a new one to handle event data."
             )
 
     def _open(self):
@@ -468,7 +556,7 @@ class ConsumerProducerMixin(object):
             while not self._handler.client_ready():
                 time.sleep(0.05)
             self._max_message_size_on_link = (
-                self._amqp_transport.get_link_max_message_size(self._handler)
+                self._amqp_transport.get_remote_max_message_size(self._handler)
                 or self._amqp_transport.MAX_FRAME_SIZE_BYTES
             )
             self.running = True
@@ -483,9 +571,17 @@ class ConsumerProducerMixin(object):
         self._client._conn_manager.reset_connection_if_broken()  # pylint: disable=protected-access
 
     def _handle_exception(self, exception):
-        if not self.running and isinstance(exception, self._amqp_transport.TIMEOUT_EXCEPTION):
-            exception = self._amqp_transport.get_error("Authorization timeout.")
-        return self._amqp_transport._handle_exception(exception, self)    # pylint: disable=protected-access
+        if not self.running and isinstance(
+            exception, self._amqp_transport.TIMEOUT_EXCEPTION
+        ):
+            exception = self._amqp_transport.get_error(
+                self._amqp_transport.AUTH_EXCEPTION,
+                "Authorization timeout.",
+                condition=errors.ErrorCondition.InternalError,
+            )
+        return self._amqp_transport._handle_exception(
+            exception, self
+        )  # pylint: disable=protected-access
 
     def _do_retryable_operation(self, operation, timeout=None, **kwargs):
         # pylint:disable=protected-access
@@ -503,7 +599,7 @@ class ConsumerProducerMixin(object):
                     return operation(
                         timeout_time=timeout_time,
                         last_exception=last_exception,
-                        **kwargs
+                        **kwargs,
                     )
                 return operation()
             except Exception as exception:  # pylint:disable=broad-except

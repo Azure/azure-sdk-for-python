@@ -40,7 +40,7 @@ def test_send_with_partition_key(connstr_receivers):
 
     found_partition_keys = {}
     for index, partition in enumerate(receivers):
-        received = partition.receive_message_batch(timeout=5000)
+        received = partition.receive_message_batch(timeout=5)
         for message in received:
             try:
                 event_data = EventData._from_message(message)
@@ -64,7 +64,7 @@ def test_send_and_receive_large_body_size(connstr_receivers):
 
     received = []
     for r in receivers:
-        received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=10000)])
+        received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=10)])
 
     assert len(received) == 1
     assert len(list(received[0].body)[0]) == payload
@@ -197,7 +197,7 @@ def test_send_and_receive_small_body(connstr_receivers, payload):
         client.send_batch(batch)
     received = []
     for r in receivers:
-        received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=5000)])
+        received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=5)])
 
     assert len(received) == 1
     assert list(received[0].body)[0] == payload
@@ -218,8 +218,8 @@ def test_send_partition(connstr_receivers):
         batch.add(EventData(b"Data"))
         client.send_batch(batch)
 
-    partition_0 = receivers[0].receive_message_batch(timeout=5000)
-    partition_1 = receivers[1].receive_message_batch(timeout=5000)
+    partition_0 = receivers[0].receive_message_batch(timeout=5)
+    partition_1 = receivers[1].receive_message_batch(timeout=5)
     assert len(partition_0) + len(partition_1) == 2
 
     with client:
@@ -232,8 +232,8 @@ def test_send_partition(connstr_receivers):
         batch.add(EventData(b"Data"))
         client.send_batch(batch)
 
-    partition_0 = receivers[0].receive_message_batch(timeout=5000)
-    partition_1 = receivers[1].receive_message_batch(timeout=5000)
+    partition_0 = receivers[0].receive_message_batch(timeout=5)
+    partition_1 = receivers[1].receive_message_batch(timeout=5)
     assert len(partition_0) + len(partition_1) == 2
 
 
@@ -250,8 +250,8 @@ def test_send_non_ascii(connstr_receivers):
     # receive_message_batch() returns immediately once it receives any messages before the max_batch_size
     # and timeout reach. Could be 1, 2, or any number between 1 and max_batch_size.
     # So call it twice to ensure the two events are received.
-    partition_0 = [EventData._from_message(x) for x in receivers[0].receive_message_batch(timeout=5000)] + \
-                  [EventData._from_message(x) for x in receivers[0].receive_message_batch(timeout=5000)]
+    partition_0 = [EventData._from_message(x) for x in receivers[0].receive_message_batch(timeout=5)] + \
+                  [EventData._from_message(x) for x in receivers[0].receive_message_batch(timeout=5)]
     assert len(partition_0) == 2
     assert partition_0[0].body_as_str() == u"é,è,à,ù,â,ê,î,ô,û"
     assert partition_0[1].body_as_json() == {"foo": u"漢字"}
@@ -277,16 +277,17 @@ def test_send_multiple_partitions_with_app_prop(connstr_receivers):
         batch.add(ed1)
         client.send_batch(batch)
 
-    partition_0 = [EventData._from_message(x) for x in receivers[0].receive_message_batch(timeout=5000)]
+    partition_0 = [EventData._from_message(x) for x in receivers[0].receive_message_batch(timeout=5)]
     assert len(partition_0) == 1
     assert partition_0[0].properties[b"raw_prop"] == b"raw_value"
-    partition_1 = [EventData._from_message(x) for x in receivers[1].receive_message_batch(timeout=5000)]
+    partition_1 = [EventData._from_message(x) for x in receivers[1].receive_message_batch(timeout=5)]
     assert len(partition_1) == 1
     assert partition_1[0].properties[b"raw_prop"] == b"raw_value"
 
 
 @pytest.mark.liveTest
 def test_send_over_websocket_sync(connstr_receivers):
+    pytest.skip("websocket not supported")
     connection_str, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket)
 
@@ -297,7 +298,7 @@ def test_send_over_websocket_sync(connstr_receivers):
 
     time.sleep(1)
     received = []
-    received.extend(receivers[0].receive_message_batch(max_batch_size=5, timeout=10000))
+    received.extend(receivers[0].receive_message_batch(max_batch_size=5, timeout=10))
     assert len(received) == 1
 
 
@@ -320,7 +321,7 @@ def test_send_with_create_event_batch_with_app_prop_sync(connstr_receivers):
         client.send_batch(event_data_batch)
         received = []
         for r in receivers:
-            received.extend(r.receive_message_batch(timeout=5000))
+            received.extend(r.receive_message_batch(timeout=5))
         assert len(received) >= 1
         assert EventData._from_message(received[0]).properties[b"raw_prop"] == b"raw_value"
 
@@ -334,7 +335,7 @@ def test_send_list(connstr_receivers):
         client.send_batch([EventData(payload)])
     received = []
     for r in receivers:
-        received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=10000)])
+        received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=10)])
 
     assert len(received) == 1
     assert received[0].body_as_str() == payload
@@ -347,7 +348,7 @@ def test_send_list_partition(connstr_receivers):
     payload = "A1"
     with client:
         client.send_batch([EventData(payload)], partition_id="0")
-        message = receivers[0].receive_message_batch(timeout=10000)[0]
+        message = receivers[0].receive_message_batch(timeout=10)[0]
         received = EventData._from_message(message)
     assert received.body_as_str() == payload
 

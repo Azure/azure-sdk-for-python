@@ -85,14 +85,6 @@ class EventHubConsumerClient(ClientBase):   # pylint: disable=client-accepts-api
     :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
      if there is no further activity. By default the value is None, meaning that the client will not shutdown due to
      inactivity unless initiated by the service.
-    :keyword transport_type: The type of transport protocol that will be used for communicating with
-     the Event Hubs service. Default is `TransportType.Amqp` in which case port 5671 is used.
-     If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
-     be used instead which uses port 443 for communication.
-    :paramtype transport_type: ~azure.eventhub.TransportType
-    :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
-     keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
-     Additionally the following keys may also be present: `'username', 'password'`.
     :keyword checkpoint_store: A manager that stores the partition load-balancing and checkpoint data
      when receiving events. The checkpoint store will be used in both cases of receiving from all partitions
      or a single partition. In the latter case load-balancing does not apply.
@@ -222,9 +214,6 @@ class EventHubConsumerClient(ClientBase):   # pylint: disable=client-accepts-api
         :param str consumer_group: Receive events from the Event Hub for this consumer group.
         :keyword str eventhub_name: The path of the specific Event Hub to connect the client to.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
-        :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
-         keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
-         Additionally the following keys may also be present: `'username', 'password'`.
         :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
          The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
         :keyword str user_agent: If specified, this will be added in front of the user agent string.
@@ -254,6 +243,9 @@ class EventHubConsumerClient(ClientBase):   # pylint: disable=client-accepts-api
          If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
          be used instead which uses port 443 for communication.
         :paramtype transport_type: ~azure.eventhub.TransportType
+        :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+         keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+         Additionally the following keys may also be present: `'username', 'password'`.
         :keyword checkpoint_store: A manager that stores the partition load-balancing and checkpoint data
          when receiving events. The checkpoint store will be used in both cases of receiving from all partitions
          or a single partition. In the latter case load-balancing does not apply.
@@ -285,8 +277,8 @@ class EventHubConsumerClient(ClientBase):   # pylint: disable=client-accepts-api
         :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
          authenticate the identity of the connection endpoint.
          Default is None in which case `certifi.where()` will be used.
-
         :rtype: ~azure.eventhub.EventHubConsumerClient
+
 
         .. admonition:: Example:
 

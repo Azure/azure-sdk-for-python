@@ -6,25 +6,25 @@ import asyncio
 import logging
 
 from typing import Any, Union, TYPE_CHECKING, List, Optional, Dict, cast
-from uamqp import constants
+
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 from ..exceptions import ConnectError, EventHubError
 from ..amqp import AmqpAnnotatedMessage
 from ._client_base_async import ClientBaseAsync
 from ._producer_async import EventHubProducer
-from .._constants import ALL_PARTITIONS
+from .._constants import ALL_PARTITIONS, MAX_MESSAGE_LENGTH_BYTES
 from .._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
-    from ._client_base_async import CredentialTypes
-    from uamqp.constants import TransportType  # pylint: disable=ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
 
 SendEventTypes = List[Union[EventData, AmqpAnnotatedMessage]]
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubProducerClient(ClientBaseAsync):   # pylint: disable=client-accepts-api-version-keyword
+class EventHubProducerClient(ClientBaseAsync):
     """
     The EventHubProducerClient class defines a high level interface for
     sending events to the Azure Event Hubs service.
@@ -88,7 +88,9 @@ class EventHubProducerClient(ClientBaseAsync):   # pylint: disable=client-accept
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: "CredentialTypes",
+        credential: Union[
+            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential
+        ],
         **kwargs
     ) -> None:
         super(EventHubProducerClient, self).__init__(
@@ -129,8 +131,8 @@ class EventHubProducerClient(ClientBaseAsync):   # pylint: disable=client-accept
                 self._max_message_size_on_link = (
                     cast(  # type: ignore
                         EventHubProducer, self._producers[ALL_PARTITIONS]
-                    )._handler.message_handler._link.peer_max_message_size
-                    or constants.MAX_MESSAGE_LENGTH_BYTES
+                    )._handler._link.remote_max_message_size
+                    or MAX_MESSAGE_LENGTH_BYTES
                 )
 
     async def _start_producer(
@@ -187,11 +189,9 @@ class EventHubProducerClient(ClientBaseAsync):   # pylint: disable=client-accept
         *,
         eventhub_name: Optional[str] = None,
         logging_enable: bool = False,
-        http_proxy: Optional[Dict[str, Union[str, int]]] = None,
         auth_timeout: float = 60,
         user_agent: Optional[str] = None,
         retry_total: int = 3,
-        transport_type: Optional["TransportType"] = None,
         **kwargs: Any
     ) -> "EventHubProducerClient":
         """Create an EventHubProducerClient from a connection string.
@@ -248,11 +248,9 @@ class EventHubProducerClient(ClientBaseAsync):   # pylint: disable=client-accept
             conn_str,
             eventhub_name=eventhub_name,
             logging_enable=logging_enable,
-            http_proxy=http_proxy,
             auth_timeout=auth_timeout,
             user_agent=user_agent,
             retry_total=retry_total,
-            transport_type=transport_type,
             **kwargs
         )
         return cls(**constructor_args)

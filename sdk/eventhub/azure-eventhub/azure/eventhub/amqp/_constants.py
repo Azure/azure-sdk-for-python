@@ -4,7 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 from enum import Enum
-
 from azure.core import CaseInsensitiveEnumMeta
 
 

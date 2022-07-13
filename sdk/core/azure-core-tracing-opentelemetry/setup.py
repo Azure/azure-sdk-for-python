@@ -43,23 +43,22 @@ setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         'Programming Language :: Python',
+        'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
     packages=[
         'azure.core.tracing.ext.opentelemetry_span',
     ],
-    python_requires=">=3.6.0",
+    python_requires=">=3.6",
     install_requires=[
         'opentelemetry-api<2.0.0,>=1.0.0',
         'azure-core<2.0.0,>=1.13.0',
     ],
-    extras_require={
-        ":python_version<'3.5'": ['typing'],
-    }
 )

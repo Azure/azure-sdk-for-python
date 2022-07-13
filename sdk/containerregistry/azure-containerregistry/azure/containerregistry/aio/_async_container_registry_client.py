@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Dict, TYPE_CHECKING, Optional, overload, Union
+from typing import TYPE_CHECKING, Any, Optional, overload, Union
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -23,11 +23,13 @@ from .._models import RepositoryProperties, ArtifactManifestProperties, Artifact
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
+    from typing import Dict
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(
-        self, endpoint: str, credential: Optional["AsyncTokenCredential"] = None, *, audience, **kwargs: Any) -> None:
+        self, endpoint: str, credential: "Optional['AsyncTokenCredential']" = None, *, audience: str, **kwargs: "Any"
+    ) -> None:
         """Create a ContainerRegistryClient from an ACR endpoint and a credential.
 
         :param str endpoint: An ACR endpoint.
@@ -75,7 +77,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return tag_props.digest
 
     @distributed_trace_async
-    async def delete_repository(self, repository: str, **kwargs: Any) -> None:
+    async def delete_repository(self, repository: str, **kwargs: "Any") -> None:
         """Delete a repository. If the repository cannot be found or a response status code of
         404 is returned an error will not be raised.
 
@@ -96,7 +98,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         await self._client.container_registry.delete_repository(repository, **kwargs)
 
     @distributed_trace
-    def list_repository_names(self, **kwargs: Any) -> AsyncItemPaged[str]:
+    def list_repository_names(self, **kwargs: "Any") -> "AsyncItemPaged[str]":
         """List all repositories
 
         :keyword results_per_page: Number of repositories to return per page
@@ -204,7 +206,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get_repository_properties(self, repository: str, **kwargs: Any) -> RepositoryProperties:
+    async def get_repository_properties(self, repository: str, **kwargs: "Any") -> "RepositoryProperties":
         """Get the properties of a repository
 
         :param str repository: Name of the repository
@@ -216,7 +218,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def list_manifest_properties(self, repository: str, **kwargs: Any) -> AsyncItemPaged[ArtifactManifestProperties]:
+    def list_manifest_properties(
+        self, repository: str, **kwargs: "Any"
+    ) -> "AsyncItemPaged[ArtifactManifestProperties]":
         """List the manifests of a repository
 
         :param str repository: Name of the repository
@@ -334,33 +338,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def delete_manifest(self, repository: str, tag_or_digest: str, **kwargs: Any) -> None:
-        """Delete a manifest. If the manifest cannot be found or a response status code of
-        404 is returned an error will not be raised.
-
-        :param str repository: Repository the manifest belongs to
-        :param str tag_or_digest: Tag or digest of the manifest to be deleted.
-        :returns: None
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example
-
-        .. code-block:: python
-
-            from azure.containerregistry.aio import ContainerRegistryClient
-            from azure.identity.aio import DefaultAzureCredential
-            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="my_audience")
-            await client.delete_manifest("my_repository", "my_tag_or_digest")
-        """
-        if _is_tag(tag_or_digest):
-            tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
-
-        await self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
-
-    @distributed_trace_async
-    async def delete_tag(self, repository: str, tag: str, **kwargs: Any) -> None:
+    async def delete_tag(self, repository: str, tag: str, **kwargs: "Any") -> None:
         """Delete a tag from a repository. If the tag cannot be found or a response status code of
         404 is returned an error will not be raised.
 
@@ -385,8 +363,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace_async
     async def get_manifest_properties(
-        self, repository: str, tag_or_digest: str, **kwargs: Any
-    ) -> ArtifactManifestProperties:
+        self, repository: str, tag_or_digest: str, **kwargs: "Any"
+    ) -> "ArtifactManifestProperties":
         """Get the properties of a registry artifact
 
         :param str repository: Name of the repository
@@ -415,7 +393,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace_async
-    async def get_tag_properties(self, repository: str, tag: str, **kwargs: Any) -> ArtifactTagProperties:
+    async def get_tag_properties(self, repository: str, tag: str, **kwargs: "Any") -> "ArtifactTagProperties":
         """Get the properties for a tag
 
         :param str repository: Repository the tag belongs to
@@ -441,7 +419,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def list_tag_properties(self, repository: str, **kwargs: Any) -> AsyncItemPaged[ArtifactTagProperties]:
+    def list_tag_properties(self, repository: str, **kwargs: "Any") -> "AsyncItemPaged[ArtifactTagProperties]":
         """List the tags for a repository
 
         :param str repository: Name of the repository
@@ -572,18 +550,18 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @overload
     def update_repository_properties(
-        self, repository: str, properties: RepositoryProperties, **kwargs: Any
+        self, repository: str, properties: "RepositoryProperties", **kwargs: "Any"
     ) -> RepositoryProperties:
         ...
 
     @overload
-    def update_repository_properties(self, repository: str, **kwargs: Any) -> RepositoryProperties:
+    def update_repository_properties(self, repository: str, **kwargs: "Any") -> "RepositoryProperties":
         ...
 
     @distributed_trace_async
     async def update_repository_properties(
-        self, *args: Union[str, RepositoryProperties], **kwargs: Any
-    ) -> RepositoryProperties:
+        self, *args: "Union[str, RepositoryProperties]", **kwargs: "Any"
+    ) -> "RepositoryProperties":
         """Set the permission properties of a repository.
 
         The updatable properties include: `can_delete`, `can_list`, `can_read`, and `can_write`.
@@ -620,20 +598,20 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @overload
     def update_manifest_properties(
-        self, repository: str, tag_or_digest: str, properties: ArtifactManifestProperties, **kwargs: Any
-    ) -> ArtifactManifestProperties:
+        self, repository: str, tag_or_digest: str, properties: "ArtifactManifestProperties", **kwargs: "Any"
+    ) -> "ArtifactManifestProperties":
         ...
 
     @overload
     def update_manifest_properties(
-        self, repository: str, tag_or_digest: str, **kwargs: Any
-    ) -> ArtifactManifestProperties:
+        self, repository: str, tag_or_digest: str, **kwargs: "Any"
+    ) -> "ArtifactManifestProperties":
         ...
 
     @distributed_trace_async
     async def update_manifest_properties(
-        self, *args: Union[str, ArtifactManifestProperties], **kwargs: Any
-    ) -> ArtifactManifestProperties:
+        self, *args: "Union[str, ArtifactManifestProperties]", **kwargs: "Any"
+    ) -> "ArtifactManifestProperties":
         """Set the permission properties for a manifest.
 
         The updatable properties include: `can_delete`, `can_list`, `can_read`, and `can_write`.
@@ -697,18 +675,18 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @overload
     def update_tag_properties(
-        self, repository: str, tag: str, properties: ArtifactTagProperties, **kwargs: Any
-    ) -> ArtifactTagProperties:
+        self, repository: str, tag: str, properties: "ArtifactTagProperties", **kwargs: "Any"
+    ) -> "ArtifactTagProperties":
         ...
 
     @overload
-    def update_tag_properties(self, repository: str, tag: str, **kwargs: Any) -> ArtifactTagProperties:
+    def update_tag_properties(self, repository: str, tag: str, **kwargs: "Any") -> "ArtifactTagProperties":
         ...
 
     @distributed_trace_async
     async def update_tag_properties(
-        self, *args: Union[str, ArtifactTagProperties], **kwargs: Any
-    ) -> ArtifactTagProperties:
+        self, *args: "Union[str, ArtifactTagProperties]", **kwargs: "Any"
+    ) -> "ArtifactTagProperties":
         """Set the permission properties for a tag.
 
         The updatable properties include: `can_delete`, `can_list`, `can_read`, and `can_write`.
@@ -762,3 +740,29 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             ),
             repository=repository,
         )
+
+    @distributed_trace_async
+    async def delete_manifest(self, repository: str, tag_or_digest: str, **kwargs: "Any") -> None:
+        """Delete a manifest. If the manifest cannot be found or a response status code of
+        404 is returned an error will not be raised.
+
+        :param str repository: Repository the manifest belongs to
+        :param str tag_or_digest: Tag or digest of the manifest to be deleted.
+        :returns: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example
+
+        .. code-block:: python
+
+            from azure.containerregistry.aio import ContainerRegistryClient
+            from azure.identity.aio import DefaultAzureCredential
+            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="my_audience")
+            await client.delete_manifest("my_repository", "my_tag_or_digest")
+        """
+        if _is_tag(tag_or_digest):
+            tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
+
+        await self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)

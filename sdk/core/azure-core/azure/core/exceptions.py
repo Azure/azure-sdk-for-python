@@ -53,6 +53,8 @@ __all__ = [
     "StreamConsumedError",
     "StreamClosedError",
     "ResponseNotReadError",
+    "SerializationError",
+    "DeserializationError",
 ]
 
 
@@ -494,3 +496,11 @@ class ResponseNotReadError(AzureError):
             )
         )
         super(ResponseNotReadError, self).__init__(message)
+
+class SerializationError(ValueError):
+    """Raised if an error is encountered during serialization."""
+    ...
+
+class DeserializationError(ValueError):
+    """Raised if an error is encountered during deserialization."""
+    ...

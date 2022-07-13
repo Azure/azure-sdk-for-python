@@ -6,99 +6,97 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from copy import deepcopy
+from typing import Any, TYPE_CHECKING
 
-from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
+
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.mgmt.core import ARMPipelineClient
+
+from . import models
+from ._configuration import ChaosManagementClientConfiguration
+from .operations import CapabilitiesOperations, CapabilityTypesOperations, ExperimentsOperations, Operations, TargetTypesOperations, TargetsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._configuration import ChaosManagementClientConfiguration
-from .operations import CapabilitiesOperations
-from .operations import ExperimentsOperations
-from .operations import Operations
-from .operations import TargetsOperations
-from .operations import TargetTypesOperations
-from .operations import CapabilityTypesOperations
-from . import models
-
-
-class ChaosManagementClient(object):
+class ChaosManagementClient:
     """Chaos Management Client.
 
     :ivar capabilities: CapabilitiesOperations operations
-    :vartype capabilities: chaos_management_client.operations.CapabilitiesOperations
+    :vartype capabilities: azure.mgmt.chaos.operations.CapabilitiesOperations
     :ivar experiments: ExperimentsOperations operations
-    :vartype experiments: chaos_management_client.operations.ExperimentsOperations
+    :vartype experiments: azure.mgmt.chaos.operations.ExperimentsOperations
     :ivar operations: Operations operations
-    :vartype operations: chaos_management_client.operations.Operations
+    :vartype operations: azure.mgmt.chaos.operations.Operations
     :ivar targets: TargetsOperations operations
-    :vartype targets: chaos_management_client.operations.TargetsOperations
+    :vartype targets: azure.mgmt.chaos.operations.TargetsOperations
     :ivar target_types: TargetTypesOperations operations
-    :vartype target_types: chaos_management_client.operations.TargetTypesOperations
+    :vartype target_types: azure.mgmt.chaos.operations.TargetTypesOperations
     :ivar capability_types: CapabilityTypesOperations operations
-    :vartype capability_types: chaos_management_client.operations.CapabilityTypesOperations
+    :vartype capability_types: azure.mgmt.chaos.operations.CapabilityTypesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: GUID that represents an Azure subscription ID.
     :type subscription_id: str
-    :param str base_url: Service URL
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :type base_url: str
+    :keyword api_version: Api Version. Default value is "2021-09-15-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        if not base_url:
-            base_url = 'https://management.azure.com'
-        self._config = ChaosManagementClientConfiguration(credential, subscription_id, **kwargs)
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: str = "https://management.azure.com",
+        **kwargs: Any
+    ) -> None:
+        self._config = ChaosManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
+        self._serialize.client_side_validation = False
+        self.capabilities = CapabilitiesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.experiments = ExperimentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.targets = TargetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.target_types = TargetTypesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.capability_types = CapabilityTypesOperations(self._client, self._config, self._serialize, self._deserialize)
 
-        self.capabilities = CapabilitiesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.experiments = ExperimentsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.targets = TargetsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.target_types = TargetTypesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.capability_types = CapabilityTypesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, http_request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+    def _send_request(
+        self,
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'),
-        }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None

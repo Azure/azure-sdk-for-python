@@ -46,6 +46,7 @@ OMITTED_CI_PACKAGES = [
     "azure-storage",
     "azure-monitor",
     "azure-mgmt-regionmove",
+    "azure-eventhub-checkpointstoreblob-aio"
 ]
 MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",

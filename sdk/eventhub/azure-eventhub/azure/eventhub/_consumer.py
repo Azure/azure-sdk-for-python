@@ -3,12 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import unicode_literals
+from multiprocessing import Event
 
 import time
 import uuid
 import logging
 from collections import deque
-from typing import TYPE_CHECKING, Callable, Dict, Optional, Any
+from typing import TYPE_CHECKING, Callable, Dict, Optional, Any, Deque, Union
 
 from ._common import EventData
 from ._client_base import ConsumerProducerMixin
@@ -21,8 +22,17 @@ from ._constants import (
 
 if TYPE_CHECKING:
     from typing import Deque
-    from uamqp import ReceiveClient, Message
-    from uamqp.authentication import JWTTokenAuth
+    try:
+        from uamqp import ReceiveClient as uamqp_ReceiveClient, Message as uamqp_Message
+        from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+    except ImportError:
+        uamqp_ReceiveClient = None
+        uamqp_Message = None
+        uamqp_JWTTokenAuth = None
+
+    from ._pyamqp import ReceiveClient
+    from ._pyamqp.message import Message
+    from ._pyamqp.authentication import JWTTokenAuth
     from ._consumer_client import EventHubConsumerClient
 
 
@@ -49,7 +59,7 @@ class EventHubConsumer(
     :param client: The parent EventHubConsumerClient.
     :type client: ~azure.eventhub.EventHubConsumerClient
     :param source: The source EventHub from which to receive events.
-    :type source: ~uamqp.address.Source
+    :type source: ~azure.eventhub._pyamqp.endpoints.Source
     :keyword event_position: The position from which to start receiving.
     :paramtype event_position: int, str, datetime.datetime
     :keyword int prefetch: The number of events to prefetch from the service
@@ -65,8 +75,7 @@ class EventHubConsumer(
         It is set to `False` by default.
     """
 
-    def __init__(self, client, source, **kwargs):
-        # type: (EventHubConsumerClient, str, Any) -> None
+    def __init__(self, client: "EventHubConsumerClient", source: str, **kwargs: Any) -> None:
         event_position = kwargs.get("event_position", None)
         prefetch = kwargs.get("prefetch", 300)
         owner_level = kwargs.get("owner_level", None)
@@ -83,9 +92,9 @@ class EventHubConsumer(
         self.handler_ready = False
 
         self._amqp_transport = kwargs.pop("amqp_transport")
-        self._on_event_received = kwargs[
+        self._on_event_received: Callable[[EventData], None] = kwargs[
             "on_event_received"
-        ]  # type: Callable[[EventData], None]
+        ]
         self._client = client
         self._source = source
         self._offset = event_position
@@ -94,15 +103,15 @@ class EventHubConsumer(
         self._owner_level = owner_level
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
-        self._retry_policy = self._amqp_transport.create_retry_policy(retry_total=self._client._config.max_retries)
+        self._retry_policy = self._amqp_transport.create_retry_policy(self._client._config)
         self._reconnect_backoff = 1
-        link_properties = {}  # type: Dict[bytes, int]
+        link_properties: Dict[bytes, int] = {}
         self._error = None
         self._timeout = 0
         self._idle_timeout = (idle_timeout * self._amqp_transport.IDLE_TIMEOUT_FACTOR) if idle_timeout else None
         partition = self._source.split("/")[-1]
         self._partition = partition
-        self._name = "EHConsumer-{}-partition{}".format(uuid.uuid4(), partition)
+        self._name = f"EHConsumer-{uuid.uuid4()}-partition{partition}"
         if owner_level is not None:
             link_properties[EPOCH_SYMBOL] = int(owner_level)
         link_property_timeout_ms = (
@@ -110,13 +119,13 @@ class EventHubConsumer(
         ) * self._amqp_transport.IDLE_TIMEOUT_FACTOR
         link_properties[TIMEOUT_SYMBOL] = int(link_property_timeout_ms)
         self._link_properties = self._amqp_transport.create_link_properties(link_properties)
-        self._handler = None  # type: Optional[ReceiveClient]
+        self._handler: Optional[Union["ReceiveClient", "uamqp_ReceiveClient"]] = None
         self._track_last_enqueued_event_properties = (
             track_last_enqueued_event_properties
         )
-        self._message_buffer = deque()  # type: Deque[Message]
-        self._last_received_event = None  # type: Optional[EventData]
-        self._receive_start_time = None  # type: Optional[float]
+        self._message_buffer: Deque[Union["Message", "uamqp_Message"]] = deque()
+        self._last_received_event: Optional[EventData] = None
+        self._receive_start_time: Optional[float]= None
 
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
@@ -146,12 +155,10 @@ class EventHubConsumer(
             message_received_callback=self._message_received,
         )
 
-    def _open_with_retry(self):
-        # type: () -> None
+    def _open_with_retry(self) -> None:
         self._do_retryable_operation(self._open, operation_need_param=False)
 
-    def _message_received(self, message):
-        # type: (Message) -> None
+    def _message_received(self, message: Union["Message", "uamqp_Message"]) -> None:
         # pylint:disable=protected-access
         self._message_buffer.append(message)
 
@@ -162,8 +169,7 @@ class EventHubConsumer(
         self._last_received_event = event_data
         return event_data
 
-    def _open(self):
-        # type: () -> bool
+    def _open(self) -> bool:
         """Open the EventHubConsumer/EventHubProducer using the supplied connection.
         """
         # pylint: disable=protected-access
@@ -188,10 +194,15 @@ class EventHubConsumer(
         self._receive_start_time = self._receive_start_time or time.time()
         deadline = self._receive_start_time + (max_wait_time or 0)  # max_wait_time can be None
         if len(self._message_buffer) < max_batch_size:
+            # TODO: the retry here is a bit tricky as we are using low-level api from the amqp client.
+            #  Currently we create a new client with the latest received event's offset per retry.
+            #  Ideally we should reuse the same client reestablishing the connection/link with the latest offset.
             while retried_times <= max_retries:
                 try:
                     if self._open():
-                        self._handler.do_work()  # type: ignore     # TODO: for pyamqp, this will pass in batch. But, in the ReceiveClient._client_run, can pass (batch=self._link_credit)
+                        # TODO: for pyamqp, this will pass in batch. But, in the ReceiveClient._client_run,
+                        # can pass (batch=self._link_credit)
+                        self._handler.do_work()  # type: ignore
                     break
                 except Exception as exception:  # pylint: disable=broad-except
                     if (

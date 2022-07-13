@@ -33,7 +33,7 @@ async def test_client_secret_credential_async(live_eventhub):
         batch.add(EventData(body='A single message'))
         await producer_client.send_batch(batch)
 
-    def on_event(partition_context, event):
+    async def on_event(partition_context, event):
         on_event.called = True
         on_event.partition_id = partition_context.partition_id
         on_event.event = event

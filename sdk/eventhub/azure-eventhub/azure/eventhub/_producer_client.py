@@ -11,18 +11,22 @@ from .exceptions import ConnectError, EventHubError
 from .amqp import AmqpAnnotatedMessage
 from ._client_base import ClientBase
 from ._producer import EventHubProducer
-from ._constants import ALL_PARTITIONS
+from ._constants import ALL_PARTITIONS, MAX_MESSAGE_LENGTH_BYTES
 from ._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
-    from ._client_base import CredentialTypes
+    from azure.core.credentials import (
+        TokenCredential,
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+    )
 
 SendEventTypes = List[Union[EventData, AmqpAnnotatedMessage]]
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api-version-keyword
+class EventHubProducerClient(ClientBase):
     """The EventHubProducerClient class defines a high level interface for
     sending events to the Azure Event Hubs service.
 
@@ -86,7 +90,7 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
         self,
         fully_qualified_namespace,  # type: str
         eventhub_name,  # type: str
-        credential,  # type: CredentialTypes
+        credential,  # type: Union[AzureSasCredential, TokenCredential, AzureNamedKeyCredential]
         **kwargs  # type: Any
     ):
         # type:(...) -> None
@@ -126,10 +130,10 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
                     EventHubProducer, self._producers[ALL_PARTITIONS]
                 )._open_with_retry()
                 self._max_message_size_on_link = (
-                    self._producers[  # type: ignore
-                        ALL_PARTITIONS
-                    ]._handler.message_handler._link.peer_max_message_size  # TODO: fix to fit pyamqp
-                    or self._amqp_transport.MAX_FRAME_SIZE_BYTES
+                    self._amqp_transport.get_remote_max_message_size(
+                        self._producers[ALL_PARTITIONS]._handler  # type: ignore
+                    )
+                    or MAX_MESSAGE_LENGTH_BYTES
                 )
 
     def _start_producer(self, partition_id, send_timeout):
@@ -182,9 +186,6 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
         :param str conn_str: The connection string of an Event Hub.
         :keyword str eventhub_name: The path of the specific Event Hub to connect the client to.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
-        :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
-         keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
-         Additionally the following keys may also be present: `'username', 'password'`.
         :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
          The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
         :keyword str user_agent: If specified, this will be added in front of the user agent string.
@@ -208,6 +209,9 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
          If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
          be used instead which uses port 443 for communication.
         :paramtype transport_type: ~azure.eventhub.TransportType
+        :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+         keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+         Additionally the following keys may also be present: `'username', 'password'`.
         :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
          the Event Hubs service, allowing network requests to be routed through any application gateways or
          other paths needed for the host environment. Default is None.

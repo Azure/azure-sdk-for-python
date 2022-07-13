@@ -12,12 +12,15 @@ class AmqpTransport(ABC):
     BATCH_MESSAGE = None
     MAX_FRAME_SIZE_BYTES = None
     IDLE_TIMEOUT_FACTOR = None
+    MESSAGE = None
 
+    # define symbols
     PRODUCT_SYMBOL = None
     VERSION_SYMBOL = None
     FRAMEWORK_SYMBOL = None
     PLATFORM_SYMBOL = None
     USER_AGENT_SYMBOL = None
+    PROP_PARTITION_KEY_AMQP_SYMBOL = None
 
     # errors
     AMQP_LINK_ERROR = None
@@ -29,15 +32,32 @@ class AmqpTransport(ABC):
     @abstractmethod
     def to_outgoing_amqp_message(self, annotated_message):
         """
-        Converts an AmqpAnnotatedMessage into an Amqp Transport Message.
-        :rtype: TransportMessageBase
+        Converts an AmqpAnnotatedMessage into an Amqp Message.
+        :param AmqpAnnotatedMessage annotated_message: AmqpAnnotatedMessage to convert.
+        :rtype: uamqp.Message or pyamqp.Message
         """
 
     @abstractmethod
-    def create_retry_policy(self, retry_total):
+    def get_message_encoded_size(self, message):
         """
-        Creates and returns the error retry policy.
-        :param int retry_total: Max number of retries.
+        Gets the message encoded size given an underlying Message.
+        :param uamqp.Message or pyamqp.Message message: Message to get encoded size of.
+        :rtype: int
+        """
+
+    @abstractmethod
+    def get_remote_max_message_size(self, handler):
+        """
+        Returns max peer message size.
+        :param AMQPClient handler: Client to get remote max message size on link from.
+        :rtype: int
+        """
+
+    @abstractmethod
+    def create_retry_policy(self, config):
+        """
+        Creates the error retry policy.
+        :param ~azure.eventhub._configuration.Configuration config: Configuration.
         """
 
     @abstractmethod
@@ -75,12 +95,13 @@ class AmqpTransport(ABC):
         :param logger: Logger.
         """
 
-    @abstractmethod
-    def get_batch_message_data(self, batch_message):
-        """
-        Gets the data body of the BatchMessage.
-        :param batch_message: BatchMessage to retrieve data body from.
-        """
+    # TODO: delete after data property added to uamqp.BatchMessage
+    #@abstractmethod
+    #def get_batch_message_data(self, batch_message):
+    #    """
+    #    Gets the data body of the BatchMessage.
+    #    :param batch_message: BatchMessage to retrieve data body from.
+    #    """
 
     @abstractmethod
     def set_message_partition_key(self, message, partition_key, **kwargs):
@@ -92,13 +113,23 @@ class AmqpTransport(ABC):
         """
 
     @abstractmethod
-    def create_source(self, source, offset, filter):
+    def add_batch(self, batch_message, outgoing_event_data, event_data):
+        """
+        Add EventData to the data body of the BatchMessage.
+        :param batch_message: BatchMessage to add data to.
+        :param outgoing_event_data: Transformed EventData for sending.
+        :param event_data: EventData to add to internal batch events. uamqp use only.
+        :rtype: None
+        """
+
+    @abstractmethod
+    def create_source(self, source, offset, selector):
         """
         Creates and returns the Source.
 
         :param str source: Required.
         :param int offset: Required.
-        :param bytes filter: Required.
+        :param bytes selector: Required.
         """
 
     @abstractmethod
@@ -179,11 +210,4 @@ class AmqpTransport(ABC):
         :param error: The error to raise.
         :param str message: Error message.
         :param condition: Optional error condition. Will not be used by uamqp.
-        """
-
-    @abstractmethod
-    def get_link_max_message_size(self, handler):
-        """
-        Returns max peer message size.
-        :param AMQPClient handler: Client to get remote max message size on link from.
         """

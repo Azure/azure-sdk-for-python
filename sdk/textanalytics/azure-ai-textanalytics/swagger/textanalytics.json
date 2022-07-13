@@ -3,7 +3,7 @@
   "info": {
     "title": "Microsoft Cognitive Language Service",
     "description": "The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction, language detection and question answering. Further documentation can be found in <a href=\"https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview\">https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview</a>.0",
-    "version": "2022-03-01-preview"
+    "version": "2022-04-01-preview"
   },
   "securityDefinitions": {
     "apim_key": {
@@ -196,6 +196,9 @@
         "operationId": "AnalyzeText_CancelJob",
         "summary": "Cancel a long-running Text Analysis job",
         "parameters": [
+          {
+            "$ref": "common.json#/parameters/ApiVersionParameter"
+          },
           {
             "$ref": "#/parameters/JobId"
           }
@@ -534,10 +537,10 @@
       "type": "object",
       "description": "Parameters object for a text analysis task using custom models.",
       "properties": {
-        "project-name": {
+        "projectName": {
           "type": "string"
         },
-        "deployment-name": {
+        "deploymentName": {
           "type": "string"
         }
       },
@@ -547,8 +550,8 @@
         }
       ],
       "required": [
-        "project-name",
-        "deployment-name"
+        "projectName",
+        "deploymentName"
       ]
     },
     "CustomResult": {
@@ -784,6 +787,13 @@
       "type": "object",
       "description": "Supported parameters for a Healthcare task.",
       "properties": {
+        "fhirVersion": {
+          "type": "string",
+          "description": "The FHIR Spec version that the result will use to format the fhirBundle. For additional information see https://www.hl7.org/fhir/overview.html.",
+          "enum":[
+            "4.0.1"
+          ]
+        },
         "stringIndexType": {
           "$ref": "common.json#/definitions/StringIndexType"
         }
@@ -847,6 +857,11 @@
           "items": {
             "$ref": "#/definitions/HealthcareRelation"
           }
+        },
+        "fhirBundle": {
+          "type": "object",
+          "description": "JSON bundle containing a FHIR compatible object for consumption in other Healthcare tools. For additional information see https://www.hl7.org/fhir/overview.html.",
+          "additionalProperties": {}
         }
       },
       "allOf": [

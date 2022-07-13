@@ -1,10 +1,10 @@
 import platform
 import pytest
-import uamqp
 from packaging import version
 from azure.eventhub._transport._uamqp_transport import UamqpTransport
 from azure.eventhub.amqp import AmqpAnnotatedMessage
 from azure.eventhub import _common
+from azure.eventhub._pyamqp.message import Message, Properties
 
 pytestmark = pytest.mark.skipif(platform.python_implementation() == "PyPy", reason="This is ignored for PyPy")
 
@@ -56,23 +56,41 @@ def test_app_properties():
     assert event_data.properties["a"] == "b"
 
 
+# TODO: fix and add uamqp
 def test_sys_properties():
-    properties = uamqp.message.MessageProperties()
-    properties.message_id = "message_id"
-    properties.user_id = "user_id"
-    properties.to = "to"
-    properties.subject = "subject"
-    properties.reply_to = "reply_to"
-    properties.correlation_id = "correlation_id"
-    properties.content_type = "content_type"
-    properties.content_encoding = "content_encoding"
-    properties.absolute_expiry_time = 1
-    properties.creation_time = 1
-    properties.group_id = "group_id"
-    properties.group_sequence = 1
-    properties.reply_to_group_id = "reply_to_group_id"
-    message = uamqp.message.Message(properties=properties)
-    message.annotations = {_common.PROP_OFFSET: "@latest"}
+    #properties = uamqp.message.MessageProperties()
+    #properties.message_id = "message_id"
+    #properties.user_id = "user_id"
+    #properties.to = "to"
+    #properties.subject = "subject"
+    #properties.reply_to = "reply_to"
+    #properties.correlation_id = "correlation_id"
+    #properties.content_type = "content_type"
+    #properties.content_encoding = "content_encoding"
+    #properties.absolute_expiry_time = 1
+    #properties.creation_time = 1
+    #properties.group_id = "group_id"
+    #properties.group_sequence = 1
+    #properties.reply_to_group_id = "reply_to_group_id"
+    #message = uamqp.message.Message(properties=properties)
+    #message.annotations = {_common.PROP_OFFSET: "@latest"}
+    properties = Properties(
+        message_id="message_id",
+        user_id="user_id",
+        to="to",
+        subject="subject",
+        reply_to="reply_to",
+        correlation_id="correlation_id",
+        content_type="content_type",
+        content_encoding="content_encoding",
+        absolute_expiry_time=1,
+        creation_time=1,
+        group_id="group_id",
+        group_sequence=1,
+        reply_to_group_id="reply_to_group_id"
+    )
+    message_annotations = {_common.PROP_OFFSET: "@latest"}
+    message = Message(properties=properties, message_annotations=message_annotations)
     ed = EventData._from_message(message)  # type: EventData
 
     assert ed.system_properties[_common.PROP_OFFSET] == "@latest"
@@ -97,30 +115,31 @@ def test_event_data_batch():
     assert str(batch) == "EventDataBatch(max_size_in_bytes=110, partition_id=None, partition_key='par', event_count=1)"
     assert repr(batch) == "EventDataBatch(max_size_in_bytes=110, partition_id=None, partition_key='par', event_count=1)"
 
-    # In uamqp v1.2.8, the encoding size of a message has changed. delivery_count in message header is now set to 0
-    # instead of None according to the C spec.
-    # This uamqp change is transparent to EH users so it's not considered as a breaking change. However, it's breaking
-    # the unit test here. The solution is to add backward compatibility in test.
-    if version.parse(uamqp.__version__) >= version.parse("1.2.8"):
-        assert batch.size_in_bytes == 101 and len(batch) == 1
-    else:
-        assert batch.size_in_bytes == 93 and len(batch) == 1
+    # TODO: uamqp uses 93 bytes for encode, while python amqp uses 99 bytes
+    #  we should understand why extra bytes are needed to encode the content and how it could be improved
+    assert batch.size_in_bytes == 99 and len(batch) == 1
+
     with pytest.raises(ValueError):
         batch.add(EventData("A"))
 
+
+# TODO: fix and add uamqp
 def test_event_data_from_message():
-    message = uamqp.message.Message('A')
+    #message = uamqp.message.Message('A')
+    message = Message(data=b'A')
     event = EventData._from_message(message)
     assert event.content_type is None
     assert event.correlation_id is None
     assert event.message_id is None
 
     event.content_type = 'content_type'
-    event.correlation_id =  'correlation_id'
+    event.correlation_id = 'correlation_id'
     event.message_id = 'message_id'
     assert event.content_type == 'content_type'
-    assert event.correlation_id ==  'correlation_id'
+    assert event.correlation_id == 'correlation_id'
     assert event.message_id == 'message_id'
+    assert event.body == b'A'
+
 
 def test_amqp_message_str_repr():
     data_body = b'A'

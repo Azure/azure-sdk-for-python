@@ -143,7 +143,7 @@ class UamqpTransport(AmqpTransport):
     # define constants
     BATCH_MESSAGE = BatchMessage
     MAX_FRAME_SIZE_BYTES = constants.MAX_MESSAGE_LENGTH_BYTES
-    IDLE_TIMEOUT_FACTOR = 1000 # pyamqp = 1
+    IDLE_TIMEOUT_FACTOR = 1000
     MESSAGE = Message
 
     # define symbols
@@ -165,6 +165,8 @@ class UamqpTransport(AmqpTransport):
     def to_outgoing_amqp_message(self, annotated_message):
         """
         Converts an AmqpAnnotatedMessage into an Amqp Message.
+        :param AmqpAnnotatedMessage annotated_message: AmqpAnnotatedMessage to convert.
+        :rtype: uamqp.Message
         """
         message_header = None
         if annotated_message.header:
@@ -227,12 +229,36 @@ class UamqpTransport(AmqpTransport):
     def create_shared_key_credential(cls, policy, key):
         return EventHubSharedKeyCredential(policy, key)
 
-    def create_retry_policy(self, retry_total):
+    def get_batch_message_encoded_size(self, message):
+        """
+        Gets the batch message encoded size given an underlying Message.
+        :param uamqp.BatchMessage message: Message to get encoded size of.
+        :rtype: int
+        """
+        return message.gather()[0].get_message_encoded_size()
+
+    def get_message_encoded_size(self, message):
+        """
+        Gets the message encoded size given an underlying Message.
+        :param uamqp.Message message: Message to get encoded size of.
+        :rtype: int
+        """
+        return message.get_message_encoded_size()
+
+    def get_remote_max_message_size(self, handler):
+        """
+        Returns max peer message size.
+        :param AMQPClient handler: Client to get remote max message size on link from.
+        :rtype: int
+        """
+        return handler.message_handler._link.peer_max_message_size  # pylint:disable=protected-access
+
+    def create_retry_policy(self, config):
         """
         Creates the error retry policy.
-        :param retry_total: Max number of retries.
+        :param ~azure.eventhub._configuration.Configuration config: Configuration.
         """
-        return errors.ErrorPolicy(max_retries=retry_total, on_error=_error_handler)
+        return errors.ErrorPolicy(max_retries=config.max_retries, on_error=_error_handler)
 
     def create_link_properties(self, link_properties):
         """
@@ -290,6 +316,7 @@ class UamqpTransport(AmqpTransport):
         :param logger: Logger.
         """
         # pylint: disable=protected-access
+        producer._open()
         producer._unsent_events[0].on_send_complete = producer._on_outcome
         self._set_msg_timeout(producer, timeout_time, last_exception, logger)
         producer._handler.queue_message(*producer._unsent_events)  # type: ignore
@@ -301,12 +328,13 @@ class UamqpTransport(AmqpTransport):
             if producer._condition:
                 raise producer._condition
 
-    def get_batch_message_data(self, batch_message):
-        """
-        Gets the data body of the BatchMessage.
-        :param batch_message: BatchMessage to retrieve data body from.
-        """
-        return batch_message._body_gen  # pylint:disable=protected-access
+    # TODO: can delete this method, if data prop is added to uamqp.BatchMessage
+    #def get_batch_message_data(self, batch_message):
+    #    """
+    #    Gets the data body of the BatchMessage.
+    #    :param batch_message: BatchMessage to retrieve data body from.
+    #    """
+    #    return batch_message._body_gen  # pylint:disable=protected-access
 
     def set_message_partition_key(self, message, partition_key, **kwargs):  # pylint:disable=unused-argument
         # type: (Message, Optional[Union[bytes, str]], Any) -> None
@@ -321,20 +349,33 @@ class UamqpTransport(AmqpTransport):
             if annotations is None:
                 annotations = {}
             annotations[
-                UamqpTransport.PROP_PARTITION_KEY_AMQP_SYMBOL
+                UamqpTransport.PROP_PARTITION_KEY_AMQP_SYMBOL   # TODO: see if setting non-amqp symbol is valid
             ] = partition_key
             header = MessageHeader()
             header.durable = True
             message.annotations = annotations
             message.header = header
 
-    def create_source(self, source, offset, filter):
+    def add_batch(self, batch_message, outgoing_event_data, event_data):
+        """
+        Add EventData to the data body of the BatchMessage.
+        :param batch_message: BatchMessage to add data to.
+        :param outgoing_event_data: Transformed EventData for sending.
+        :param event_data: EventData to add to internal batch events. uamqp use only.
+        :rtype: None
+        """
+        batch_message._internal_events.append(event_data)
+        batch_message.message._body_gen.append(
+            outgoing_event_data
+        )
+
+    def create_source(self, source, offset, selector):
         """
         Creates and returns the Source.
 
         :param str source: Required.
         :param int offset: Required.
-        :param bytes filter: Required.
+        :param bytes selector: Required.
         """
         source = Source(source)
         if offset is not None:
@@ -413,9 +454,10 @@ class UamqpTransport(AmqpTransport):
         :param bytes token_type: Token type.
         :param ~azure.eventhub._configuration.Configuration config: EH config.
 
-        :keyword bool update_token: Whether to update token. If not updating token, then pass 300 to refresh_window.
+        :keyword bool update_token: Required. Whether to update token. If not updating token,
+         then pass 300 to refresh_window.
         """
-        update_token = kwargs.pop("update_token", False)
+        update_token = kwargs.pop("update_token")
         refresh_window = 300
         if update_token:
             refresh_window = 0
@@ -486,13 +528,6 @@ class UamqpTransport(AmqpTransport):
         :param condition: Optional error condition. Will not be used by uamqp.
         """
         return error(message)
-
-    def get_link_max_message_size(self, handler):
-        """
-        Returns max peer message size.
-        :param AMQPClient handler: Client to get remote max message size on link from.
-        """
-        return handler.message_handler._link.peer_max_message_size  # pylint: disable=protected-access
 
     def _create_eventhub_exception(self, exception):
         if isinstance(exception, errors.AuthenticationException):

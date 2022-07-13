@@ -16,8 +16,8 @@ from azure.identity import EnvironmentCredential
 from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.eventhub import EventHubManagementClient
 from azure.eventhub import EventHubProducerClient
-from uamqp import ReceiveClient
-from uamqp.authentication import SASTokenAuth
+from azure.eventhub._pyamqp import ReceiveClient
+from azure.eventhub._pyamqp.authentication import SASTokenAuth
 
 from devtools_testutils import get_region_override
 
@@ -194,15 +194,16 @@ def connstr_receivers(live_eventhub):
     receivers = []
     for p in partitions:
         uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
-        sas_auth = SASTokenAuth.from_shared_access_key(
-            uri, live_eventhub['key_name'], live_eventhub['access_key'])
+        sas_auth = SASTokenAuth(
+            uri, uri, live_eventhub['key_name'], live_eventhub['access_key']
+        )
 
         source = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
             live_eventhub['hostname'],
             live_eventhub['event_hub'],
             live_eventhub['consumer_group'],
             p)
-        receiver = ReceiveClient(source, auth=sas_auth, debug=False, timeout=0, prefetch=500)
+        receiver = ReceiveClient(live_eventhub['hostname'], source, auth=sas_auth, debug=False, timeout=0, link_credit=500)
         receiver.open()
         receivers.append(receiver)
     yield connection_str, receivers

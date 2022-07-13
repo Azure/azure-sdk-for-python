@@ -21,10 +21,10 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "13d62893-0f57-429f-a430-53b562414e5d",
+        "apim-request-id": "7c9102a8-b692-4463-b4b5-28369ec2e296",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
-        "Date": "Mon, 25 Apr 2022 22:49:15 GMT",
+        "Date": "Tue, 03 May 2022 00:17:06 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",

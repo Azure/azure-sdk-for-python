@@ -22,9 +22,9 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "c8ca7a7d-228c-4b5c-a0c2-73b32b916846",
-        "Date": "Mon, 25 Apr 2022 23:13:02 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/583a6861-fbf3-404b-a6af-02f562ebe4b5",
+        "apim-request-id": "399910d9-1250-440c-ae83-4e569e717aa4",
+        "Date": "Tue, 03 May 2022 00:11:53 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/6e9e64b1-377f-4fd7-b983-a8b36c8f2c60",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
@@ -33,7 +33,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/583a6861-fbf3-404b-a6af-02f562ebe4b5",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/6e9e64b1-377f-4fd7-b983-a8b36c8f2c60",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -44,19 +44,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "830c9465-e11d-42b9-9428-eba44071bd76",
+        "apim-request-id": "d952cbd0-9aab-4acb-9c3b-45f144fe8278",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 25 Apr 2022 23:13:07 GMT",
+        "Date": "Tue, 03 May 2022 00:11:58 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "50"
+        "x-envoy-upstream-service-time": "36"
       },
       "ResponseBody": {
-        "jobId": "583a6861-fbf3-404b-a6af-02f562ebe4b5",
-        "lastUpdateDateTime": "2022-04-25T23:13:03Z",
-        "createdDateTime": "2022-04-25T23:13:03Z",
-        "expirationDateTime": "2022-04-26T23:13:03Z",
+        "jobId": "6e9e64b1-377f-4fd7-b983-a8b36c8f2c60",
+        "lastUpdateDateTime": "2022-05-03T00:11:54Z",
+        "createdDateTime": "2022-05-03T00:11:53Z",
+        "expirationDateTime": "2022-05-04T00:11:53Z",
         "status": "succeeded",
         "errors": [],
         "results": {

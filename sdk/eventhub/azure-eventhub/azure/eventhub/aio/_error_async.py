@@ -6,14 +6,14 @@ import asyncio
 import logging
 from typing import TYPE_CHECKING, Union, cast
 
-from uamqp import errors
-
 from ..exceptions import (
     _create_eventhub_exception,
     EventHubError,
     EventDataSendError,
     EventDataError,
 )
+
+from .._pyamqp import error as errors
 
 if TYPE_CHECKING:
     from ._client_base_async import ClientBaseAsync, ConsumerProducerMixin
@@ -39,20 +39,21 @@ async def _handle_exception(  # pylint:disable=too-many-branches, too-many-state
     elif isinstance(exception, EventHubError):
         await cast("ConsumerProducerMixin", closable)._close_handler_async()
         raise error
-    elif isinstance(
-        exception,
-        (
-            errors.MessageAccepted,
-            errors.MessageAlreadySettled,
-            errors.MessageModified,
-            errors.MessageRejected,
-            errors.MessageReleased,
-            errors.MessageContentTooLarge,
-        ),
-    ):
-        _LOGGER.info("%r Event data error (%r)", name, exception)
-        error = EventDataError(str(exception), exception)
-        raise error
+    # TODO: The following errors seem to be useless in EH
+    # elif isinstance(
+    #     exception,
+    #     (
+    #         errors.MessageAccepted,
+    #         errors.MessageAlreadySettled,
+    #         errors.MessageModified,
+    #         errors.MessageRejected,
+    #         errors.MessageReleased,
+    #         errors.MessageContentTooLarge,
+    #     ),
+    # ):
+    #     _LOGGER.info("%r Event data error (%r)", name, exception)
+    #     error = EventDataError(str(exception), exception)
+    #     raise error
     elif isinstance(exception, errors.MessageException):
         _LOGGER.info("%r Event data send error (%r)", name, exception)
         error = EventDataSendError(str(exception), exception)
@@ -60,15 +61,18 @@ async def _handle_exception(  # pylint:disable=too-many-branches, too-many-state
     else:
         try:
             if isinstance(exception, errors.AuthenticationException):
-                await closable._close_connection_async()
-            elif isinstance(exception, errors.LinkDetach):
-                await cast("ConsumerProducerMixin", closable)._close_handler_async()
-            elif isinstance(exception, errors.ConnectionClose):
-                await closable._close_connection_async()
-            elif isinstance(exception, errors.MessageHandlerError):
-                await cast("ConsumerProducerMixin", closable)._close_handler_async()
-            else:  # errors.AMQPConnectionError, compat.TimeoutException, and any other errors
-                await closable._close_connection_async()
+                await closable._close_connection_async()  # pylint:disable=protected-access
+            elif isinstance(exception, errors.AMQPLinkError):
+                await closable._close_handler_async()  # pylint:disable=protected-access
+            elif isinstance(exception, errors.AMQPConnectionError):
+                await closable._close_connection_async()  # pylint:disable=protected-access
+            # TODO: add MessageHandlerError in amqp?
+            # elif isinstance(exception, errors.MessageHandlerError):
+            #     if hasattr(closable, "_close_handler"):
+            #         closable._close_handler()  # pylint:disable=protected-access
+            else:  # errors.AMQPConnectionError, compat.TimeoutException
+                await closable._close_connection_async()  # pylint:disable=protected-access
+            return _create_eventhub_exception(exception)
         except AttributeError:
             pass
         return _create_eventhub_exception(exception)

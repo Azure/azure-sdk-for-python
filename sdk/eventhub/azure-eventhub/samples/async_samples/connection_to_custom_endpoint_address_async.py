@@ -9,6 +9,8 @@
 Examples to show how to create async EventHubProducerClient and EventHubConsumerClient that connect to custom endpoint.
 """
 
+# pylint: disable=C0111
+
 import os
 import asyncio
 from azure.eventhub import EventData
