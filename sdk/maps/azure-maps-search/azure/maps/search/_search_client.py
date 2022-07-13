@@ -650,7 +650,6 @@ class MapsSearchClient(MapsSearchClientBase):
     def search_point_of_interest_category(
         self,
         query,  # type: str
-        *,
         coordinates,  # type: Union[str, LatLon]
         **kwargs  # type: Any
     ):
@@ -668,7 +667,6 @@ class MapsSearchClient(MapsSearchClientBase):
     def search_point_of_interest_category(
         self,
         query,  # type: str
-        *,
         country_filter,  # type list[str]
         **kwargs  # type: Any
     ):
@@ -687,6 +685,7 @@ class MapsSearchClient(MapsSearchClientBase):
     def search_point_of_interest_category(
         self,
         query,  # type: str
+        *,
         coordinates=None, # type: Optional[Union[str, LatLon]]
         country_filter=None, # type Optional[list[str]]
         **kwargs  # type: Any
