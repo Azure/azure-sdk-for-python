@@ -1,5 +1,5 @@
 # Release History
 
-## 0.1.0 (Unreleased)
+## 1.0.0b1 (Unreleased)
 
 * Initial Release
