@@ -5,8 +5,10 @@
 from __future__ import annotations
 import uuid
 import logging
+import time
+import asyncio
 from collections import deque
-from typing import TYPE_CHECKING, Callable, Awaitable, Dict, Optional, Union, List
+from typing import TYPE_CHECKING, Callable, Awaitable, Dict, Optional, Union, List, cast
 
 from ._client_base_async import ConsumerProducerMixin
 from ._async_utils import get_dict_with_loop_if_needed
@@ -14,6 +16,7 @@ from .._common import EventData
 from .._utils import create_properties, event_position_selector
 from .._constants import EPOCH_SYMBOL, TIMEOUT_SYMBOL, RECEIVER_RUNTIME_METRIC_SYMBOL, NO_RETRY_ERRORS, \
     CUSTOM_CONDITION_BACKOFF
+from .._pyamqp import error
 
 if TYPE_CHECKING:
     from typing import Deque
@@ -151,7 +154,67 @@ class EventHubConsumer(
         self._last_received_event = event_data
         return event_data
 
+    async def _callback_task(self, batch, max_batch_size, max_wait_time):
+        while self._callback_task_run:
+            async with self._message_buffer_lock:
+                messages = [
+                    self._message_buffer.popleft() for _ in range(min(max_batch_size, len(self._message_buffer)))
+                ]
+            events = [EventData._from_message(message) for message in messages]
+            now_time = time.time()
+            if len(events) > 0:
+                await self._on_event_received(events if batch else events[0])
+                self._last_callback_called_time = now_time
+            else:
+                if max_wait_time and (now_time - self._last_callback_called_time) > max_wait_time:
+                    # no events received, and need to callback
+                    await self._on_event_received([] if batch else None)
+                    self._last_callback_called_time = now_time
+                # backoff a bit to avoid throttling CPU when no events are coming
+                await asyncio.sleep(0.05)
+
+    async def _receive_task(self):
+        max_retries = (
+            self._client._config.max_retries  # pylint:disable=protected-access
+        )
+        retried_times = 0
+        while retried_times <= max_retries:
+            try:
+                await self._open()
+                await cast(ReceiveClientAsync, self._handler).do_work_async()
+            except asyncio.CancelledError:  # pylint: disable=try-except-raise
+                raise
+            except Exception as exception:  # pylint: disable=broad-except
+                if (
+                        isinstance(exception, error.AMQPLinkError)
+                        and exception.condition == error.ErrorCondition.LinkStolen  # pylint: disable=no-member
+                ):
+                    raise await self._handle_exception(exception)
+                if not self.running:  # exit by close
+                    return
+                if self._last_received_event:
+                    self._offset = self._last_received_event.offset
+                last_exception = await self._handle_exception(exception)
+                retried_times += 1
+                if retried_times > max_retries:
+                    _LOGGER.info(
+                        "%r operation has exhausted retry. Last exception: %r.",
+                        self._name,
+                        last_exception,
+                    )
+                    raise last_exception
+
     async def receive(
         self, batch=False, max_batch_size=300, max_wait_time=None
     ) -> None:
         await self._amqp_transport.receive_messages(self, batch, max_batch_size, max_wait_time)
+        self._callback_task_run = True
+        self._last_callback_called_time = time.time()
+        callback_task = asyncio.ensure_future(self._callback_task(batch, max_batch_size, max_wait_time))
+        receive_task = asyncio.ensure_future(self._receive_task())
+
+        try:
+            await receive_task
+        finally:
+            self._callback_task_run = False
+            await callback_task
