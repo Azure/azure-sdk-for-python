@@ -8,7 +8,7 @@ from preparer import IngestionPreparer
 class TestLogsIngestionClient(AzureRecordedTestCase):
     @IngestionPreparer()
     @recorded_by_proxy
-    def test_send_logs(self, azure_monitor_dce, azure_monitor_dcr_id, monitor_client_id, monitor_client_secret, monitor_tenant_id):
+    def test_send_logs(self, variables, azure_monitor_dce, azure_monitor_dcr_id, monitor_client_id, monitor_client_secret, monitor_tenant_id):
         credential = ClientSecretCredential(
         client_id = monitor_client_id,
         client_secret = monitor_client_secret,

@@ -11,7 +11,7 @@ from preparer import IngestionPreparer
 class TestLogsIngestionClientAsync(AzureRecordedTestCase):
     @IngestionPreparer()
     @recorded_by_proxy_async
-    async def test_send_logs_async(self, azure_monitor_dce, azure_monitor_dcr_id, monitor_client_id, monitor_client_secret, monitor_tenant_id):
+    async def test_send_logs_async(self, variables, azure_monitor_dce, azure_monitor_dcr_id, monitor_client_id, monitor_client_secret, monitor_tenant_id):
         credential = ClientSecretCredential(
         client_id = monitor_client_id,
         client_secret = monitor_client_secret,
