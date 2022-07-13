@@ -32,7 +32,7 @@ class AzureCliCredential(AsyncContextManager):
 
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
     """
-    def __init__(self, tenant_id = None):
+    def __init__(self, tenant_id: str = None):
         AsyncContextManager.__init__(self)
 
         self.tenant_id = tenant_id
