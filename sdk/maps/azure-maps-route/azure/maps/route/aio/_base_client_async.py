@@ -34,16 +34,17 @@ class AsyncMapsRouteClientBase:
     ):
         # type: (...) -> None
 
-        self._route_client = _MapsRouteClient(
+        self._maps_client = _MapsRouteClient(
             credential=credential,  # type: ignore
             api_version=kwargs.pop("api_version", VERSION),
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
             **kwargs
-        ).route
+        )
+        self._route_client = self._maps_client.route
 
-    def __enter__(self):
-        self._route_client.__enter__()  # pylint:disable=no-member
+    async def __aenter__(self):
+        await self._maps_client.__aenter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args):
-        self._route_client.__exit__(*args)  # pylint:disable=no-member
+    async def __aexit__(self, *args):
+        return await self._maps_client.__aexit__(*args)  # pylint:disable=no-member
