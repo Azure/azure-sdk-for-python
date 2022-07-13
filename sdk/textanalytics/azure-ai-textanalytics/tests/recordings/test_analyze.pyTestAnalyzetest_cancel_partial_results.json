@@ -79,54 +79,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "da9b9aeb-74c6-464c-a827-535d89aabbe2",
+        "apim-request-id": "b1d6f1f3-b513-4ac3-bbbb-1683370e192a",
         "Content-Length": "0",
-        "Date": "Tue, 12 Jul 2022 22:38:21 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/2a930de6-ddb8-471c-9d47-6fc1824dbd85?api-version=2022-05-01",
+        "Date": "Wed, 13 Jul 2022 23:01:51 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8044ab23-d6fc-45ce-ac66-330a5c87e749?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "417"
+        "x-envoy-upstream-service-time": "302"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/2a930de6-ddb8-471c-9d47-6fc1824dbd85?api-version=2022-05-01\u0026showStats=True",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "298ee2de-dec4-41ec-a79b-c701a686d466",
-        "Content-Length": "280",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 12 Jul 2022 22:38:21 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "7"
-      },
-      "ResponseBody": {
-        "jobId": "2a930de6-ddb8-471c-9d47-6fc1824dbd85",
-        "lastUpdatedDateTime": "2022-07-12T22:38:21Z",
-        "createdDateTime": "2022-07-12T22:38:21Z",
-        "expirationDateTime": "2022-07-13T22:38:21Z",
-        "status": "running",
-        "errors": [],
-        "tasks": {
-          "completed": 0,
-          "failed": 0,
-          "inProgress": 5,
-          "total": 5,
-          "items": []
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/2a930de6-ddb8-471c-9d47-6fc1824dbd85:cancel?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8044ab23-d6fc-45ce-ac66-330a5c87e749:cancel?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -138,18 +102,18 @@
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "8d73c132-c724-44d0-af3d-c50bb14da2a9",
+        "apim-request-id": "c9729bfa-5fb5-4e7f-b294-9799bbc68b05",
         "Content-Length": "0",
-        "Date": "Tue, 12 Jul 2022 22:38:21 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/2a930de6-ddb8-471c-9d47-6fc1824dbd85?api-version=2022-05-01",
+        "Date": "Wed, 13 Jul 2022 23:01:51 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8044ab23-d6fc-45ce-ac66-330a5c87e749?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "16"
+        "x-envoy-upstream-service-time": "24"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/2a930de6-ddb8-471c-9d47-6fc1824dbd85?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ab24f7ba-9217-433e-af63-d6fd2babe32e?api-version=2022-05-01\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -160,53 +124,31 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "ec337535-009c-4f34-8819-0ecacb3570ff",
-        "Content-Length": "1037",
+        "apim-request-id": "02de38c8-0936-4aba-9d7b-436a8a8bace0",
+        "Content-Length": "847",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 12 Jul 2022 22:38:27 GMT",
+        "Date": "Wed, 13 Jul 2022 23:01:55 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "8"
+        "x-envoy-upstream-service-time": "10"
       },
       "ResponseBody": {
-        "jobId": "2a930de6-ddb8-471c-9d47-6fc1824dbd85",
-        "lastUpdatedDateTime": "2022-07-12T22:38:23Z",
-        "createdDateTime": "2022-07-12T22:38:21Z",
-        "expirationDateTime": "2022-07-13T22:38:21Z",
+        "jobId": "ab24f7ba-9217-433e-af63-d6fd2babe32e",
+        "lastUpdatedDateTime": "2022-07-13T23:01:56Z",
+        "createdDateTime": "2022-07-13T23:01:50Z",
+        "expirationDateTime": "2022-07-14T23:01:50Z",
         "status": "running",
         "errors": [],
         "tasks": {
           "completed": 0,
           "failed": 0,
-          "inProgress": 1,
+          "inProgress": 2,
           "total": 5,
           "items": [
             {
-              "kind": "EntityRecognitionLROResults",
-              "taskName": "0",
-              "lastUpdateDateTime": "2022-07-12T22:38:21.7886105Z",
-              "status": "cancelled",
-              "results": {
-                "documents": [],
-                "errors": [],
-                "modelVersion": "latest"
-              }
-            },
-            {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-07-12T22:38:23.6408837Z",
-              "status": "cancelled",
-              "results": {
-                "documents": [],
-                "errors": [],
-                "modelVersion": "latest"
-              }
-            },
-            {
-              "kind": "EntityRecognitionLROResults",
-              "taskName": "2",
-              "lastUpdateDateTime": "2022-07-12T22:38:21.8205563Z",
+              "lastUpdateDateTime": "2022-07-13T23:01:53.2983343Z",
               "status": "cancelled",
               "results": {
                 "documents": [],
@@ -217,7 +159,18 @@
             {
               "kind": "EntityLinkingLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-07-12T22:38:21.8341564Z",
+              "lastUpdateDateTime": "2022-07-13T23:01:51.6488583Z",
+              "status": "cancelled",
+              "results": {
+                "documents": [],
+                "errors": [],
+                "modelVersion": "latest"
+              }
+            },
+            {
+              "kind": "SentimentAnalysisLROResults",
+              "taskName": "4",
+              "lastUpdateDateTime": "2022-07-13T23:01:51.6604842Z",
               "status": "cancelled",
               "results": {
                 "documents": [],
@@ -230,7 +183,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/2a930de6-ddb8-471c-9d47-6fc1824dbd85?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8044ab23-d6fc-45ce-ac66-330a5c87e749?api-version=2022-05-01\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -241,23 +194,23 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "a117321e-e43e-424e-b34d-aca7eaae794b",
-        "Content-Length": "4385",
+        "apim-request-id": "ee9c5f5c-a23b-420f-ac30-45d748b7269d",
+        "Content-Length": "1229",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 12 Jul 2022 22:38:31 GMT",
+        "Date": "Wed, 13 Jul 2022 23:01:56 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "70"
+        "x-envoy-upstream-service-time": "37"
       },
       "ResponseBody": {
-        "jobId": "2a930de6-ddb8-471c-9d47-6fc1824dbd85",
-        "lastUpdatedDateTime": "2022-07-12T22:38:30Z",
-        "createdDateTime": "2022-07-12T22:38:21Z",
-        "expirationDateTime": "2022-07-13T22:38:21Z",
+        "jobId": "8044ab23-d6fc-45ce-ac66-330a5c87e749",
+        "lastUpdatedDateTime": "2022-07-13T23:01:52Z",
+        "createdDateTime": "2022-07-13T23:01:52Z",
+        "expirationDateTime": "2022-07-14T23:01:52Z",
         "status": "cancelled",
         "errors": [],
         "tasks": {
-          "completed": 1,
+          "completed": 0,
           "failed": 0,
           "inProgress": 0,
           "total": 5,
@@ -265,7 +218,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-07-12T22:38:21.7886105Z",
+              "lastUpdateDateTime": "2022-07-13T23:01:52.5390094Z",
               "status": "cancelled",
               "results": {
                 "documents": [],
@@ -276,7 +229,7 @@
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-07-12T22:38:23.6408837Z",
+              "lastUpdateDateTime": "2022-07-13T23:01:52.5509976Z",
               "status": "cancelled",
               "results": {
                 "documents": [],
@@ -287,7 +240,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-07-12T22:38:21.8205563Z",
+              "lastUpdateDateTime": "2022-07-13T23:01:52.5627037Z",
               "status": "cancelled",
               "results": {
                 "documents": [],
@@ -298,7 +251,7 @@
             {
               "kind": "EntityLinkingLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-07-12T22:38:21.8341564Z",
+              "lastUpdateDateTime": "2022-07-13T23:01:52.5732117Z",
               "status": "cancelled",
               "results": {
                 "documents": [],
@@ -309,154 +262,12 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-07-12T22:38:30.0097516Z",
-              "status": "succeeded",
+              "lastUpdateDateTime": "2022-07-13T23:01:52.5876787Z",
+              "status": "cancelled",
               "results": {
-                "statistics": {
-                  "documentsCount": 5,
-                  "validDocumentsCount": 5,
-                  "erroneousDocumentsCount": 0,
-                  "transactionsCount": 5
-                },
-                "documents": [
-                  {
-                    "id": "0",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "1",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "2",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "3",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "4",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
+                "documents": [],
                 "errors": [],
-                "modelVersion": "2022-06-01"
+                "modelVersion": "latest"
               }
             }
           ]

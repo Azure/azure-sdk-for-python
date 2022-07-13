@@ -321,9 +321,14 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
 
     @property
     def id(self):
-        if not self._current_body:
-            return None
-        return self._current_body.job_id
+        if self._current_body:
+            return self._current_body.job_id
+        return self._get_id_from_headers()
+
+    def _get_id_from_headers(self) -> str:
+        return self._initial_response.http_response.headers[
+            "Operation-Location"
+        ].split("/jobs/")[1].split("?")[0]
 
     def get_continuation_token(self):
         # type: () -> str
@@ -394,7 +399,7 @@ class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
             polling_method  # type: ignore
         )
 
-    async def cancel(self, **kwargs: Any) -> None: # pylint: disable=unused-argument
+    async def cancel(self) -> None:
         """Cancel the operation currently being polled.
 
         :return: None
@@ -402,14 +407,8 @@ class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
         :raises ~azure.core.exceptions.HttpResponseError: When the operation has already reached a terminal state.
         """
 
-        client = getattr(
-            self._polling_method, "_text_analytics_client"
-        )
-
-        # Get a final status update.
-        await getattr(self._polling_method, "update_status")()
-
         try:
+            client = self._polling_method._text_analytics_client
             await client.begin_analyze_text_cancel_job(self.id, polling=False)
         except ValueError:
             raise ValueError("Cancellation not supported by API versions v3.0, v3.1.")

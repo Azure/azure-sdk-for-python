@@ -158,49 +158,15 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "523ae293-8a6e-4287-aa5e-42e43fb3671f",
-        "Date": "Tue, 12 Jul 2022 22:13:44 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/4cd8778e-6532-42fd-851b-5e84ddcc2d2b",
+        "apim-request-id": "cc9bc7bc-dfc6-40d7-9d87-113a960bad7a",
+        "Date": "Wed, 13 Jul 2022 23:02:31 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/4ec3edd5-c880-4f1b-85f3-c36d669e1030",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "903"
+        "x-envoy-upstream-service-time": "918"
       },
       "ResponseBody": null
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/4cd8778e-6532-42fd-851b-5e84ddcc2d2b?showStats=True",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "48efddf2-bfbd-44f6-86ba-1c1502f35365",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 12 Jul 2022 22:13:44 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "8"
-      },
-      "ResponseBody": {
-        "jobId": "4cd8778e-6532-42fd-851b-5e84ddcc2d2b",
-        "lastUpdateDateTime": "2022-07-12T22:13:44Z",
-        "createdDateTime": "2022-07-12T22:13:43Z",
-        "expirationDateTime": "2022-07-13T22:13:43Z",
-        "status": "notStarted",
-        "errors": [],
-        "tasks": {
-          "completed": 0,
-          "failed": 0,
-          "inProgress": 5,
-          "total": 5
-        }
-      }
     }
   ],
   "Variables": {}

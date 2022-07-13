@@ -150,9 +150,14 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
 
     @property
     def id(self):
-        if not self._current_body:
-            return None
-        return self._current_body.job_id
+        if self._current_body:
+            return self._current_body.job_id
+        return self._get_id_from_headers()
+
+    def _get_id_from_headers(self) -> str:
+        return self._initial_response.http_response.headers[
+            "Operation-Location"
+        ].split("/jobs/")[1].split("?")[0]
 
     @property
     def display_name(self):
@@ -270,9 +275,6 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType]):
             # Join the thread so we no longer have to wait for a result from it.
             getattr(self, "_thread").join(timeout=0)
 
-            # Get a final status update.
-            getattr(self._polling_method, "update_status")()
-
             client = getattr(
                 self._polling_method, "_text_analytics_client"
             )
@@ -352,9 +354,14 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
 
     @property
     def id(self):
-        if not self._current_body:
-            return None
-        return self._current_body.job_id
+        if self._current_body:
+            return self._current_body.job_id
+        return self._get_id_from_headers()
+
+    def _get_id_from_headers(self) -> str:
+        return self._initial_response.http_response.headers[
+            "Operation-Location"
+        ].split("/jobs/")[1].split("?")[0]
 
     def get_continuation_token(self):
         # type: () -> str
@@ -425,7 +432,7 @@ class AnalyzeActionsLROPoller(LROPoller[PollingReturnType]):
             polling_method
         )
 
-    def cancel(self, **kwargs: Any) -> None: # pylint: disable=unused-argument
+    def cancel(self) -> None:
         """Cancel the operation currently being polled.
 
         :return: None
@@ -433,17 +440,11 @@ class AnalyzeActionsLROPoller(LROPoller[PollingReturnType]):
         :raises ~azure.core.exceptions.HttpResponseError: When the operation has already reached a terminal state.
         """
 
-        client = getattr(
-            self._polling_method, "_text_analytics_client"
-        )
-
         # Join the thread so we no longer have to wait for a result from it.
-        getattr(self, "_thread").join(timeout=0)
-
-        # Get a final status update.
-        getattr(self._polling_method, "update_status")()
+        self._thread.join(timeout=0)
 
         try:
+            client = self._polling_method._text_analytics_client
             client.begin_analyze_text_cancel_job(self.id, polling=False)
         except ValueError:
             raise ValueError("Cancellation not supported by API versions v3.0, v3.1.")

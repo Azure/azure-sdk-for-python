@@ -356,7 +356,6 @@ class TestHealth(TextAnalyticsTest):
         ).result()
         assert res == "cls result"
 
-    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14303656/")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
