@@ -3,7 +3,6 @@
 > Note: The samples included in this folder are aimed at providing additional context for processing information for the Form Recognizer library clients. These samples currently show usage with a preview version of the library and may be subject to change during later releases.
 
 These code samples show more advanced scenario operations with the Azure Form Recognizer client library.
-The async versions of the samples require Python 3.7 or later.
 
 All of these samples need the endpoint to your Form Recognizer resource ([instructions on how to get endpoint][get-endpoint-instructions]), and your Form Recognizer API key ([instructions on how to get key][get-key-instructions]).
 
