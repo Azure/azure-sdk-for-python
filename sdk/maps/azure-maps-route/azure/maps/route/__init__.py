@@ -7,9 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._version import VERSION
-from ._route_client import RouteClient
+from ._route_client import MapsRouteClient
 
 __all__ = [
-    'RouteClient'
+    'MapsRouteClient'
 ]
 __version__ = VERSION

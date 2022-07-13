@@ -1,35 +1,37 @@
-# Azure Search
+# Azure Maps Route for Python
 
 > see https://aka.ms/autorest
 
-This is the AutoRest configuration file for Search Client
+## Setup
 
----
+```ps
 
-## Getting Started
+npm install -g autorest
+```
 
-To build the SDK for Route, simply [Install AutoRest](https://aka.ms/autorest/install) and in this folder, run:
+## Generation
 
-> `autorest`
+```ps
 
-To see additional help and options, run:
+cd <swagger-folder>
+autorest SWAGGER.md
+```
 
-> `autorest --help`
+To generate this file, simply type
 
----
+```ps
 
-## Configuration
+autorest swagger/README.md --python-sdks-folder=<location-of-your-sdk-dir>
+```
 
-### Basic Information
+We automatically hardcode in that this is `python`.
 
-These are the global settings for Route Client.
+## Basic Information
 
-``` yaml
-title: RouteClient
-openapi-type: data-plane
+```yaml
 tag: 1.0-preview
-license-header: MICROSOFT_MIT_NO_VERSION
-add-credential: true
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/maps/data-plane/Route/readme.md
+output-folder: ../azure/maps/route/_generated
 namespace: azure.maps.route
 package-name: azure-maps-route
 package-version: 1.0-preview
@@ -38,11 +40,9 @@ credential-scopes: https://atlas.microsoft.com/.default
 clear-output-folder: true
 no-namespace-folders: true
 python: true
-multiapi: true
-```
-
-``` yaml $(tag) == '1.0-preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/maps/data-plane/Route/preview/1.0/route.json
-no-namespace-folders: true
-output-folder: ../azure/maps/route/_generated
+no-async: false
+add-credential: false
+title: MapsRouteClient
+disable-async-iterators: true
+python-sdks-folder: $(python-sdks-folder)
 ```

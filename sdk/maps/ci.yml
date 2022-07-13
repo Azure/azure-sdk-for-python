@@ -10,7 +10,6 @@ trigger:
   paths:
     include:
     - sdk/maps/
-    - sdk/core/
 
 pr:
   branches:
@@ -23,7 +22,6 @@ pr:
   paths:
     include:
     - sdk/maps/
-    - sdk/core/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
