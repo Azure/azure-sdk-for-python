@@ -33,6 +33,7 @@ These sample programs show common scenarios for the Text Analytics client's offe
 |[sample_single_category_classify.py][single_category_classify_sample] and [sample_single_category_classify_async.py][single_category_classify_sample_async]|Use a custom model to classify documents into a single category|
 |[sample_multi_category_classify.py][multi_category_classify_sample] and [sample_multi_category_classify_async.py][multi_category_classify_sample_async]|Use a custom model to classify documents into multiple categories|
 |[sample_model_version.py][sample_model_version] and [sample_model_version_async.py][sample_model_version_async]|Set the model version for pre-built Text Analytics models|
+|[sample_analyze_action_healthcare.py][sample_analyze_action_healthcare] and [sample_analyze_action_healthcare_async.py][sample_analyze_action_healthcare_async]|Run a healthcare and PII analysis together|
 
 ## Prerequisites
 * Python 3.6 or later is required to use this package
@@ -109,6 +110,8 @@ what you can do with the Azure Text Analytics client library.
 [multi_category_classify_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_multi_category_classify_async.py
 [sample_model_version]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_model_version.py
 [sample_model_version_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_model_version_async.py
+[sample_analyze_action_healthcare]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples
+[sample_analyze_action_healthcare_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples
 [pip]: https://pypi.org/project/pip/
 [azure_subscription]: https://azure.microsoft.com/free/
 [azure_language_account]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=singleservice%2Cwindows
