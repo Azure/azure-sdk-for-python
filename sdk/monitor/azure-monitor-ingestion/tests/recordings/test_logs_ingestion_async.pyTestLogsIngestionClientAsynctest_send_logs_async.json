@@ -1,0 +1,67 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/11x11111-1x1x-1x1x-9999-11x1x1x11x11/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "179",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.7.3 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": "client_id=11x11111-1x1x-1x1x-9999-11x1x1x11x11\u0026client_secret=1x11111x-1x1x-111x-x1dx-111xx1x1xx11\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fmonitor.azure.com%2F%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "Content-Length": "1319",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 13 Jul 2022 18:25:47 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": [
+          "fpc=AqQqo9JyBPREu4SZYrfKQ7Nto0NPAQAAACsFYdoOAAAA; expires=Fri, 12-Aug-2022 18:25:48 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.13201.7 - SCUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IjJaUXBKM1VwYmpBWVhZR2FYRUpsOGxWMFRPSSIsImtpZCI6IjJaUXBKM1VwYmpBWVhZR2FYRUpsOGxWMFRPSSJ9.eyJhdWQiOiJodHRwczovL21vbml0b3IuYXp1cmUuY29tLyIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJpYXQiOjE2NTc3MzY0NDgsIm5iZiI6MTY1NzczNjQ0OCwiZXhwIjoxNjU3ODIzMTQ4LCJhaW8iOiJFMlpnWUdBOFBmdDkvWnpkKzJlTFJIb3BIMTV3REFBPSIsImFwcGlkIjoiMTdkMDU5MDgtYTdkMC00ZTlmLTkxMjUtMjFiMmI3YzM4ZDk5IiwiYXBwaWRhY3IiOiIxIiwiaWRwIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsIm9pZCI6ImZiNjU3ODc2LWUyOTktNDgzZi05MDAyLTE5MDkzMDJjYmNkOCIsInJoIjoiMC5BUm9BdjRqNWN2R0dyMEdScXkxODBCSGJSd2U5TS1udTBoMVBrenczVXJnWlZuc2FBQUEuIiwic3ViIjoiZmI2NTc4NzYtZTI5OS00ODNmLTkwMDItMTkwOTMwMmNiY2Q4IiwidGlkIjoiNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3IiwidXRpIjoibWZzc0RLLWlpa0NzOWhqLUl2NDVBQSIsInZlciI6IjEuMCJ9.hhABkveLWn1RtiSwGAiXkiiLB-G4Gj_3doWDYxrEKOivhjSdY-U7lYSKQiDtCxHmKKCp6yMCX5eAVTkKeCDgMFobX1LQw_T0mUsnVTqclTfylleuwEsJyuohHyMJ2MxMbJcZ89QleHtqbK5IxDd75qApHG0C3272wkf_F2eCBe_ExmIHdWf5PlBqpzW0tjxhXHkBntq4N-ZTcFZQlKgX72-IEuER34BsVsDgvxZZhvk1Xzi-Oux9QgSZH7QRgym0FXBDC1Gie00nwiHFTkCxPgFCtm89bgudMkxXJtEHIlYz5Ntw043H6gnqYNFBahvLrPJH-d0-fqWXYm40MkTsRQ"
+      }
+    },
+    {
+      "RequestUri": "https://fake-logsingestion-dcr-lrz3.westus2-1.ingest.monitor.azure.com/dataCollectionRules/dcr-fake66661d12345f9876f32a07af6f34/streams/Custom-MyTableRawData?api-version=2021-11-01-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Encoding": "gzip",
+        "Content-Length": "199",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-monitoringestionclient/unknown Python/3.7.3 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": [
+        "\u001F\uFFFD\b\u0000\u0000\u0000\u0000\u0000\u0000\n",
+        "\uFFFD\uFFFDV\n",
+        "\uFFFD\uFFFDMU\uFFFDRP2202\uFFFD54\uFFFD5\uFFFD\b12\uFFFD25\uFFFD24\uFFFD344012\uFFFD\uFFFDR\uFFFDQPr\uFFFD\uFFFD-(-I-\u0002\uFFFD\uFFFD\uFFFD\r",
+        "A\u0012\uFFFD))\uFFFD%\uFFFD\uFFFDy\uFFFD9\uFFFD\uFFFDy%\uFFFD\u0015% \u0015\u0149I\u0019\uFFFDE\uFFFDe\uFFFDFJ\uFFFD:\n",
+        "\uFFFD\uFFFDbD\uFFFD\u0016\uFFFD\uFFFDX\u0000\uFFFDH\uFFFD \uFFFD\u0000\u0000\u0000"
+      ],
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Date": "Wed, 13 Jul 2022 18:25:48 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}
