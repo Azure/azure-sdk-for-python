@@ -310,6 +310,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         name=None,
         container=None,
         encoding=None,
+        download_cls=None,
         **kwargs
     ):
         self.name = name
@@ -334,6 +335,10 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._non_empty_ranges = None
         self._response = None
         self._encryption_data = None
+
+        # The cls is passed in via download_cls to avoid conflicting arg name with Generic.__new__
+        # but needs to be changed to cls in the request options.
+        self._request_options['cls'] = download_cls
 
         if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
             self._get_encryption_data_request()

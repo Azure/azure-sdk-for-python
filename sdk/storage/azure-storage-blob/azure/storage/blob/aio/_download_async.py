@@ -207,18 +207,19 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
     """
 
     def __init__(
-            self,
-            clients=None,
-            config=None,
-            start_range=None,
-            end_range=None,
-            validate_content=None,
-            encryption_options=None,
-            max_concurrency=1,
-            name=None,
-            container=None,
-            encoding=None,
-            **kwargs
+        self,
+        clients=None,
+        config=None,
+        start_range=None,
+        end_range=None,
+        validate_content=None,
+        encryption_options=None,
+        max_concurrency=1,
+        name=None,
+        container=None,
+        encoding=None,
+        download_cls=None,
+        **kwargs
     ):
         self.name = name
         self.container = container
@@ -245,6 +246,10 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         self._initial_range = None
         self._initial_offset = None
+
+        # The cls is passed in via download_cls to avoid conflicting arg name with Generic.__new__
+        # but needs to be changed to cls in the request options.
+        self._request_options['cls'] = download_cls
 
         # The service only provides transactional MD5s for chunks under 4MB.
         # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first

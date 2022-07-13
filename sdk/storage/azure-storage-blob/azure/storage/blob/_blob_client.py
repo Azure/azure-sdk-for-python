@@ -768,7 +768,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
             'cpk_info': cpk_info,
-            'cls': kwargs.pop('cls', None) or deserialize_blob_stream,
+            'download_cls': kwargs.pop('cls', None) or deserialize_blob_stream,
             'max_concurrency':kwargs.pop('max_concurrency', 1),
             'encoding': encoding,
             'timeout': kwargs.pop('timeout', None),
