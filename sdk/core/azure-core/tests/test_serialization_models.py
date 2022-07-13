@@ -848,6 +848,7 @@ def test_model_recursion_complex():
     assert isinstance(model.list_of_dict_of_me[0]["me"], RecursiveModel)
 
     assert json.loads(json.dumps(dict(model))) == model == dict_response
+    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == model == dict_response
 
 def test_literals():
 
