@@ -202,8 +202,8 @@ def _reraise_error(decoded_error):
     not_implemented = "The requested operation is not implemented on the specified resource"
     properties_need_value = "The values are not specified for all properties in the entity"
     table_does_not_exist = "The table specified does not exist"
-    
-    if (error_code == "InvalidQueryParameterValue" and invalid_query_parameter_value in message or
+
+    if (error_code == "InvalidQueryParameterValue" and invalid_query_parameter_value in message or # pylint: disable=too-many-boolean-expressions
         error_code == "InvalidInput" and invalid_input in message or
         error_code == "NotImplemented" and not_implemented in message or
         error_code == "PropertiesNeedValue" and properties_need_value in message or
@@ -212,7 +212,7 @@ def _reraise_error(decoded_error):
         raise ValueError(
             message + "\nNote: Try to remove the table name in the end of endpoint if it has."
         )
-    
+
     _, _, exc_traceback = sys.exc_info()
     try:
         raise decoded_error.with_traceback(exc_traceback)
