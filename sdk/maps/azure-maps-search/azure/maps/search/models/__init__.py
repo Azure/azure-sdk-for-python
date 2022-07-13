@@ -13,9 +13,9 @@ from .._generated.models import (
     LocalizedMapView,
     ElectricVehicleConnector,
     OperatingHoursRange,
-    GeoJsonObject,
     RoadUseType,
-    PointOfInterestExtendedPostalCodes
+    PointOfInterestExtendedPostalCodes,
+    GeoJsonObjectType
 )
 
 from ._models import (
@@ -24,6 +24,16 @@ from ._models import (
     BoundingBox,
     AddressRanges,
     EntryPoint,
+    GeoJsonObject,
+    GeoJsonFeatureData,
+    GeoJsonFeature,
+    GeoJsonFeatureCollection,
+    GeoJsonGeometry,
+    GeoJsonMultiLineString,
+    GeoJsonMultiPoint,
+    GeoJsonMultiPolygon,
+    GeoJsonPoint,
+    GeoJsonPolygon,
     SearchAddressResultItem,
     ReverseSearchAddressResultItem,
     SearchSummary,
@@ -62,5 +72,15 @@ __all__ = [
     'ElectricVehicleConnector',
     'OperatingHoursRange',
     'GeoJsonObject',
-    'PointOfInterestExtendedPostalCodes'
+    'GeoJsonFeatureData',
+    'GeoJsonObjectType',
+    'PointOfInterestExtendedPostalCodes',
+    'GeoJsonFeature',
+    'GeoJsonFeatureCollection',
+    'GeoJsonGeometry',
+    'GeoJsonMultiLineString',
+    'GeoJsonMultiPoint',
+    'GeoJsonMultiPolygon',
+    'GeoJsonPoint',
+    'GeoJsonPolygon'
 ]

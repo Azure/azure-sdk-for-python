@@ -14,12 +14,12 @@ from ._generated.models import (
     PointOfInterestCategory,
     ReverseSearchCrossStreetAddressResult,
     SearchAlongRouteRequest,
-    GeoJsonObject,
     SearchAddressBatchResult,
     Polygon,
 )
 from .models import (
     LatLon,
+    GeoJsonObject,
     StructuredAddress,
     SearchAddressResult,
     ReverseSearchAddressResult,
@@ -414,7 +414,7 @@ class MapsSearchClient(MapsSearchClientBase):
         :type query: str
         :param geometry: This represents the geometry for one or more geographical features (parks,
          state boundary etc.) to search in and should be a GeoJSON compliant type.
-        :type geometry: ~azure.maps.search.models.SearchInsideGeometryRequest
+        :type geometry: ~azure.maps.search._models.GeoJsonObject
         :keyword int top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
          maximum: 100.
         :keyword str language: Language in which search results should be returned. Should be one of
