@@ -11,7 +11,7 @@ from github import Github
 from github.Repository import Repository
 
 from utils import IssuePackage, REQUEST_REPO, AUTO_ASSIGN_LABEL, AUTO_PARSE_LABEL, get_origin_link_and_tag,\
-    MULTI_LINK_LABEL
+    MULTI_LINK_LABEL, INCONSISTENT_TAG
 
 _LOG = logging.getLogger(__name__)
 
@@ -159,7 +159,9 @@ class IssueProcess:
         self.issue_package.issue.edit(body=issue_body_up)
 
     def check_tag_consistency(self) -> None:
+        self.target_readme_tag = self.target_readme_tag.replace('tag-', '')
         if self.default_readme_tag != self.target_readme_tag:
+            self.add_label(INCONSISTENT_TAG)
             self.comment(f'Hi, @{self.owner}, according to [rule](https://github.com/Azure/azure-rest-api-specs/blob/'
                          f'main/documentation/release-request/rules-for-release-request.md#3-readme-tag-to-be-released),'
                          f' your **Readme Tag** is `{self.target_readme_tag}`, but in [readme.md]({self.readme_link}#basic-information) '
@@ -174,7 +176,8 @@ class IssueProcess:
         issue_body_list = self.get_issue_body()
 
         # Get the origin link and readme tag in issue body
-        origin_link, self.target_readme_tag = get_origin_link_and_tag(issue_body_list)
+        origin_link, target_readme_tag = get_origin_link_and_tag(issue_body_list)
+        self.target_readme_tag = target_readme_tag if not self.target_readme_tag else self.target_readme_tag
 
         # get readme_link
         self.get_readme_link(origin_link)
@@ -252,6 +255,10 @@ class IssueProcess:
         if MULTI_LINK_LABEL in self.issue_package.labels_name:
             self.bot_advice.append('multi readme link!')
 
+    def inconsistent_tag_policy(self):
+        if INCONSISTENT_TAG in self.issue_package.labels_name:
+            self.bot_advice.append('Attention to inconsistent tag')
+
     def remind_logic(self) -> bool:
         return abs(self.date_from_target) <= 2
 
@@ -267,6 +274,7 @@ class IssueProcess:
         self.new_comment_policy()
         self.multi_link_policy()
         self.date_remind_policy()
+        self.inconsistent_tag_policy()
 
     def get_target_date(self):
         body = self.get_issue_body()
