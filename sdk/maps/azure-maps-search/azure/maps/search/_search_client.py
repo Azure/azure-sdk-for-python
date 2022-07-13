@@ -93,14 +93,14 @@ class MapsSearchClient(MapsSearchClientBase):
          -122.125679"). Must be properly URL encoded.
         :type query: str
         :param coordinates: coordinates
-        :type coordinates: ~azure.maps.search._models.LatLon
+        :type coordinates: ~azure.maps.search._models.LatLon or str
         """
 
     @overload
     def fuzzy_search(
         self,
         query,  # type: str
-        country_filter,  # type list[str]
+        country_filter,  # type: list[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -121,7 +121,7 @@ class MapsSearchClient(MapsSearchClientBase):
         query,  # type: str
         *,
         coordinates=None, # type: Optional[Union[str, LatLon]]
-        country_filter=None, # Optional[type list[str]]
+        country_filter=None, # type: Optional[list[str]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -158,14 +158,12 @@ class MapsSearchClient(MapsSearchClientBase):
         :type coordinates: ~azure.maps.search._models.LatLon
         :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
-        :param top_left: Top left position of the bounding box. E.g. 37.553,-122.453.
-        :type top_left: BoundingBox
-        :param btm_right: Bottom right position of the bounding box. E.g. 37.553,-122.453.
-        :type btm_right: BoundingBox
+        :keyword BoundingBox top_left: Top left position of the bounding box. E.g. 37.553,-122.453.
+        :keyword BoundingBox btm_right: Bottom right position of the bounding box. E.g. 37.553,-122.453.
         :keyword str language: Language in which search results should be returned. Should be one of
          supported IETF language tags, case insensitive. When data in specified language is not
          available for a specific field, default language is used.
-        :keyword  extended_postal_codes_for: Indexes for which extended postal codes should be included in
+        :keyword extended_postal_codes_for: Indexes for which extended postal codes should be included in
          the results.
         :paramtype extended_postal_codes_for: list[str or ~azure.maps.search.models.SearchIndexes]
         :keyword int min_fuzzy_level: Minimum fuzziness level to be used.
@@ -561,10 +559,8 @@ class MapsSearchClient(MapsSearchClientBase):
         :type coordinates: ~azure.maps.search._models.LatLon
         :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
-        :param top_left: Top left position of the bounding box. E.g. 37.553,-122.453.
-        :type top_left: str
-        :param btm_right: Bottom right position of the bounding box. E.g. 37.553,-122.453.
-        :type btm_right: str
+        :keyword BoundingBox top_left: Top left position of the bounding box. E.g. 37.553,-122.453.
+        :keyword BoundingBox btm_right: Bottom right position of the bounding box. E.g. 37.553,-122.453.
         :keyword str language: Language in which search results should be returned.
         :keyword extended_postal_codes_for: Indexes for which extended postal codes should be included in
          the results.
@@ -716,10 +712,8 @@ class MapsSearchClient(MapsSearchClientBase):
         :type country_filter: list[str]
         :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
-        :param top_left: Top left position of the bounding box. E.g. 37.553,-122.453.
-        :type top_left: str
-        :param btm_right: Bottom right position of the bounding box. E.g. 37.553,-122.453.
-        :type btm_right: str
+        :keyword BoundingBox top_left: Top left position of the bounding box. E.g. 37.553,-122.453.
+        :keyword BoundingBox btm_right: Bottom right position of the bounding box. E.g. 37.553,-122.453.
         :keyword str language: Language in which search results should be returned.
         :keyword extended_postal_codes_for: Indexes for which extended postal codes should be included in
          the results.
@@ -786,10 +780,8 @@ class MapsSearchClient(MapsSearchClientBase):
         :type coordinates: ~azure.maps.search._models.LatLon
         :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
-        :param top_left: Top left position of the bounding box. E.g. 37.553,-122.453.
-        :type top_left: str
-        :param btm_right: Bottom right position of the bounding box. E.g. 37.553,-122.453.
-        :type btm_right: str
+        :keyword BoundingBox top_left: Top left position of the bounding box. E.g. 37.553,-122.453.
+        :keyword BoundingBox btm_right: Bottom right position of the bounding box. E.g. 37.553,-122.453.
         :keyword str language: Language in which search results should be returned.
         :keyword extended_postal_codes_for: Indexes for which extended postal codes should be included in
          the results.
