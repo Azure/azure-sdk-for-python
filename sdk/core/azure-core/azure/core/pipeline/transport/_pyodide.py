@@ -1,12 +1,41 @@
-from collections.abc import AsyncIterator
+# --------------------------------------------------------------------------
+#
+# Copyright (c) Microsoft Corporation. All rights reserved.
+#
+# The MIT License (MIT)
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the ""Software""), to
+# deal in the Software without restriction, including without limitation the
+# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+# sell copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+# IN THE SOFTWARE.
+#
+# --------------------------------------------------------------------------
 
+from collections.abc import AsyncIterator
 from io import BytesIO
+
 from azure.core.exceptions import HttpResponseError
-from ._requests_asyncio import AsyncioRequestsTransport
+from azure.core.pipeline import Pipeline
 from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl
-from pyodide.http import pyfetch  # pylint: disable=import-error
 from pyodide import JsException  # pylint: disable=import-error
+from pyodide.http import pyfetch  # pylint: disable=import-error
 from requests.structures import CaseInsensitiveDict  # FIXME
+
+from ._requests_asyncio import AsyncioRequestsTransport
+
 
 class PyodideTransport(AsyncioRequestsTransport):
     """Implements a basic HTTP sender using the pyodide javascript fetch api."""
@@ -73,9 +102,12 @@ class PyodideTransportResponse(AsyncHttpResponseImpl):
 class PyodideStreamDownloadGenerator(AsyncIterator):
     """Simple stream download generator that returns the contents of
     a request.
+
+    :param pipeline: The pipeline object
+    :param response: The response object.
     """
 
-    def __init__(self, pipeline, response: PyodideTransportResponse, **__) -> None:
+    def __init__(self, pipeline: Pipeline, response: PyodideTransportResponse, **__) -> None:
         self.pipeline = pipeline
         self.block_size = response.block_size
         self.response = response
